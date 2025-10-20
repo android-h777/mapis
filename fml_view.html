@@ -1,0 +1,584 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>배합 View</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/common_neo.css">
+    <link type="text/css" rel="stylesheet" href="/css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script>
+      $(document).ready(function(){
+        addClassByVisualColIndex("#fmlTb table", [0, 1, 2, 3, 6, 9, 12], "bdR1");
+      });
+
+      function addClassByVisualColIndex(tableSelector, targetColIndices, className, cellSelector = "td, th") {
+        $(tableSelector).each(function() {
+          const table = this;
+          table._usedCells = {};
+ 
+          // thead, tbody, tfoot 상관없이 모든 tr을 대상으로
+          $(table).find("tr").each(function(rowIndex) {
+            let colIndex = 0;
+
+            $(this).children(cellSelector).each(function() {
+              const cell = $(this);
+              const colspan = parseInt(cell.attr("colspan")) || 1;
+              const rowspan = parseInt(cell.attr("rowspan")) || 1;
+
+              // 이미 차지된 colIndex는 건너뛰기
+              while (table._usedCells[rowIndex]?.[colIndex]) {
+                colIndex++;
+              }
+
+              const trueColIndex = colIndex;
+
+              if (targetColIndices.includes(trueColIndex)) {
+                cell.addClass(className);
+              }
+
+              // rowspan, colspan 영역 마킹
+              for (let i = 0; i < rowspan; i++) {
+                for (let j = 0; j < colspan; j++) {
+                  if (!table._usedCells[rowIndex + i]) {
+                    table._usedCells[rowIndex + i] = {};
+                  }
+                  table._usedCells[rowIndex + i][colIndex + j] = true;
+                }
+              }
+
+              colIndex += colspan;
+            });
+          });
+        });
+      }
+
+    </script>
+</head>
+<body style="background-color: #f0e9e0;">
+  <article class="z-depth-2">
+    <section class="navbar-fixed">
+      <nav class="mocha25 white-text bdTp0">
+        <i class="material-icons titIcon ml0">science</i> 
+        <div class="logo" style="overflow: hidden;text-overflow: ellipsis;white-space: nowrap;width: calc(100% - 200px);">
+          배합 View - 
+          <span id="designTaskInfo">[P24-127] [ROOM 002] 효과성테스트</span>
+          <span id="DESIGN_INFO" class="designReg">최은성 책임 중앙연구소.자동차도료연구팀.자동차도료연구 (2025-04-03)</span>
+        </div>
+      </nav>
+    </section>
+  </article>
+  <article class="pd20">
+    <div class="newCardBox">
+      <div class="fixedTable typeH hScoll" style="max-height: calc(100% - 160px);" id="fmlTb">
+        <table>
+          <thead>
+            <tr>
+              <th rowspan="2">Material</th>
+              <th rowspan="2">SiH</th>
+              <th rowspan="2">SiVi</th>
+              <th rowspan="2">Viscosity</th>
+              <th colspan="3" class="bdR1">LGE03<br>STD<br>25.01.14</th>
+              <th colspan="3" class="bdR1">LGE03<br>STD (10:1)<br>25.01.14</th>
+              <th colspan="3" class="bdR1">LGE04<br>본출비 변경 9:1<br>25.01.14</th>
+              <th colspan="3">LGE05<br>본출비 변경 8:1<br>25.01.14</th>
+            </tr>
+            <tr>
+              <th>A</th>
+              <th>B</th>
+              <th>Mix</th>
+              <th>A</th>
+              <th>B</th>
+              <th>Mix</th>
+              <th>A</th>
+              <th>B</th>
+              <th>Mix</th>
+              <th>A</th>
+              <th>B</th>
+              <th>Mix</th>
+            </tr>
+          </thead>
+          <tbody>
+            <!-- CR-57 -->
+            <tr>
+              <td>[AEN01465] CR-57</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>25,910</td>
+              <td>25,910</td>
+              <td>4,090</td>
+              <td>25,910</td>
+              <td>2,851</td>
+              <td>4,090</td>
+              <td>44,994</td>
+              <td>25,351</td>
+              <td>28,501</td>
+              <td>44,994</td>
+              <td>25,351</td>
+              <td>28,501</td>
+            </tr>
+            <!-- VDT-20(BD) -->
+            <tr>
+              <td>[AEN01465] VDT-20(BD)</td>
+              <td>-</td>
+              <td>0.24</td>
+              <td>-</td>
+              <td>4,090</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>4,499</td>
+              <td>-</td>
+              <td>-</td>
+              <td>4,499</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            <!-- V-MT-28(BD) -->
+            <tr>
+              <td>[AEN01465] V-MT-28(BD)</td>
+              <td>-</td>
+              <td>2.29</td>
+              <td>17500</td>
+              <td>17,000</td>
+              <td>18,000</td>
+              <td>4,000</td>
+              <td>17,000</td>
+              <td>14,300</td>
+              <td>4,000</td>
+              <td>44,004</td>
+              <td>17,270</td>
+              <td>14,300</td>
+              <td>44,004</td>
+              <td>17,270</td>
+              <td>14,300</td>
+            </tr>
+            <!-- H-VDT/MQ -->
+            <tr>
+              <td>H-VDT/MQ</td>
+              <td>-</td>
+              <td>0.65</td>
+              <td>145000</td>
+              <td>40,000</td>
+              <td>40,000</td>
+              <td>40,000</td>
+              <td>40,000</td>
+              <td>44,000</td>
+              <td>40,000</td>
+              <td>39,600</td>
+              <td>44,000</td>
+              <td>39,111</td>
+              <td>40,000</td>
+              <td>44,000</td>
+              <td>39,111</td>
+            </tr>
+            <!-- TDPS -->
+            <tr>
+              <td>TDPS</td>
+              <td>-</td>
+              <td>0.07</td>
+              <td>5</td>
+              <td>9,000</td>
+              <td>9,000</td>
+              <td>1,000</td>
+              <td>9,000</td>
+              <td>9,000</td>
+              <td>1,000</td>
+              <td>8,910</td>
+              <td>9,000</td>
+              <td>9,000</td>
+              <td>8,910</td>
+              <td>9,000</td>
+              <td>9,000</td>
+            </tr>
+            <!-- VMC -->
+            <tr>
+              <td>VMC</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>1,000</td>
+              <td>1,000</td>
+              <td>1,000</td>
+              <td>1,000</td>
+              <td>1,100</td>
+              <td>1,000</td>
+              <td>1,000</td>
+              <td>1,100</td>
+              <td>1,000</td>
+              <td>1,000</td>
+              <td>1,100</td>
+              <td>1,000</td>
+            </tr>
+            <!-- ECH -->
+            <tr>
+              <td>ECH</td>
+              <td>-</td>
+              <td>16.10</td>
+              <td>-</td>
+              <td>1,000</td>
+              <td>1,000</td>
+              <td>1,000</td>
+              <td>1,000</td>
+              <td>1,100</td>
+              <td>1,000</td>
+              <td>990</td>
+              <td>1,100</td>
+              <td>1,000</td>
+              <td>990</td>
+              <td>1,100</td>
+              <td>1,000</td>
+            </tr>
+            <!-- YCS962 -->
+            <tr>
+              <td>YCS962</td>
+              <td>-</td>
+              <td>2.04</td>
+              <td>-</td>
+              <td>1,000</td>
+              <td>1,000</td>
+              <td>1,000</td>
+              <td>1,000</td>
+              <td>1,100</td>
+              <td>1,000</td>
+              <td>990</td>
+              <td>1,100</td>
+              <td>1,000</td>
+              <td>990</td>
+              <td>1,100</td>
+              <td>1,000</td>
+            </tr>
+            <!-- KBM-503 -->
+            <tr>
+              <td>KBM-503</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>5,501</td>
+              <td>5,550</td>
+              <td>5,501</td>
+              <td>5,501</td>
+              <td>5,550</td>
+              <td>5,501</td>
+            </tr>
+            <!-- PT-TS/TSG-1 OPS -->
+            <tr>
+              <td>PT-TS/TSG-1 OPS</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>550</td>
+              <td>550</td>
+              <td>550</td>
+              <td>611</td>
+              <td>611</td>
+              <td>611</td>
+            </tr>
+            <!-- A-908 -->
+            <tr>
+              <td>A-908</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>783</td>
+              <td>783</td>
+              <td>783</td>
+              <td>783</td>
+              <td>783</td>
+              <td>783</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+              <td>0</td>
+            </tr>
+            <!-- Sum -->
+            <tr>
+              <td>Sum</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>100,000</td>
+              <td>100,000</td>
+              <td>100,000</td>
+              <td>100,000</td>
+              <td>100,000</td>
+              <td>100,000</td>
+              <td>100,000</td>
+              <td>100,000</td>
+              <td>100,000</td>
+              <td>100,000</td>
+              <td>100,000</td>
+              <td>100,000</td>
+            </tr>
+            <!-- Mix Ratio -->
+            <tr>
+              <td>Mix Ratio</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            <!-- SRI -->
+            <tr>
+              <td>SRI</td>
+              <td>SI-H</td>
+              <td>-</td>
+              <td>-</td>
+              <td>109.7</td>
+              <td>109.7</td>
+              <td>81.7</td>
+              <td>109.7</td>
+              <td>120.6</td>
+              <td>81.7</td>
+              <td>108.6</td>
+              <td>120.6</td>
+              <td>111.6</td>
+              <td>107.2</td>
+              <td>120.6</td>
+              <td>111.6</td>
+            </tr>
+            <!-- SRI/SVI -->
+            <tr>
+              <td>SRI/SVI</td>
+              <td>SI-H/SVI</td>
+              <td>-</td>
+              <td>-</td>
+              <td>91.9</td>
+              <td>91.9</td>
+              <td>1.9</td>
+              <td>91.9</td>
+              <td>1.8</td>
+              <td>1.9</td>
+              <td>89.9</td>
+              <td>1.8</td>
+              <td>1.8</td>
+              <td>89.3</td>
+              <td>1.8</td>
+              <td>1.8</td>
+            </tr>
+            <!-- Pt -->
+            <tr>
+              <td>Pt</td>
+              <td>with TiO2</td>
+              <td>-</td>
+              <td>-</td>
+              <td>67.49</td>
+              <td>67.49</td>
+              <td>-</td>
+              <td>67.49</td>
+              <td>73.98</td>
+              <td>-</td>
+              <td>-</td>
+              <td>81.85</td>
+              <td>-</td>
+              <td>-</td>
+              <td>81.85</td>
+              <td>-</td>
+            </tr>
+            <!-- ECH -->
+            <tr>
+              <td>ECH</td>
+              <td>with TiO2</td>
+              <td>-</td>
+              <td>-</td>
+              <td>13,497</td>
+              <td>13,497</td>
+              <td>-</td>
+              <td>13,497</td>
+              <td>13,315</td>
+              <td>-</td>
+              <td>-</td>
+              <td>13,095</td>
+              <td>-</td>
+              <td>-</td>
+              <td>13,095</td>
+              <td>-</td>
+            </tr>
+            <!-- Viscosity -->
+            <tr>
+              <td rowspan="3">Viscosity</td>
+              <td>1/s</td>
+              <td>-</td>
+              <td>-</td>
+              <td>3130</td>
+              <td>3200</td>
+              <td>6600</td>
+              <td>3130</td>
+              <td>3200</td>
+              <td>6600</td>
+              <td>3130</td>
+              <td>3200</td>
+              <td>6600</td>
+              <td>3130</td>
+              <td>3200</td>
+              <td>6600</td>
+            </tr>
+            <tr>
+              <td>10/s</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>1/s = 10/s</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>#DIV/0!</td>
+              <td>#DIV/0!</td>
+              <td>#DIV/0!</td>
+              <td>#DIV/0!</td>
+              <td>#DIV/0!</td>
+              <td>#DIV/0!</td>
+              <td>#DIV/0!</td>
+              <td>#DIV/0!</td>
+              <td>#DIV/0!</td>
+              <td>#DIV/0!</td>
+              <td>#DIV/0!</td>
+            </tr>
+            <!-- Thixotropic Index -->
+            <tr>
+              <td>Thixotropic Index</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            <!-- Hardness -->
+            <tr>
+              <td>Hardness</td>
+              <td>Type A</td>
+              <td>-</td>
+              <td>-</td>
+              <td>87-78</td>
+              <td>-</td>
+              <td>-</td>
+              <td>87-78</td>
+              <td>-</td>
+              <td>-</td>
+              <td>87-78</td>
+              <td>-</td>
+              <td>-</td>
+              <td>87-78</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            <!-- Surface Shrink -->
+            <tr>
+              <td>Surface Shrink</td>
+              <td>Type D</td>
+              <td>-</td>
+              <td>-</td>
+              <td>30-21</td>
+              <td>-</td>
+              <td>-</td>
+              <td>30-21</td>
+              <td>-</td>
+              <td>-</td>
+              <td>30-21</td>
+              <td>-</td>
+              <td>-</td>
+              <td>30-21</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            <!-- Contraction -->
+            <tr>
+              <td>Contraction</td>
+              <td>100 micron</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+            <!-- 6T, Hardness Specimen -->
+            <tr>
+              <td>6T, Hardness Specimen</td>
+              <td>-</td>
+              <td>-</td>
+              <td>-</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+              <td>0</td>
+              <td>-</td>
+              <td>-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </article>
+</body>
+</html>

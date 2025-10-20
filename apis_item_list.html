@@ -1,0 +1,612 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="/css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script src="js/highcharts/highcharts.js"></script>
+    <script>
+
+        $(document).ready(function(){
+
+          $(".pjTit, .rightSection .cardTit, #newPjBtn").click(function(){
+            window.open("apis_item_pop.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
+          });
+
+          $(".mainList li").click(function(){
+            $(".mainList li").removeClass("on");
+            $(".timeline .bdBox").removeClass("animate__flipInX");
+
+            $("#dtTit").text($(this).find(".pjTit").text());
+            $("#dtContVal1").text($(this).find(".contVal1").text());
+            $("#dtContVal2").text($(this).find(".statusBox").text());
+            $("#dtContVal3").text($(this).find(".contVal2").text());
+            $("#dtContVal4").text($(this).find(".contVal3").text());
+            $("#dtContVal6").text($(this).find(".contVal4").text());
+            $("#dtContVal7").text($(this).find(".userNm").text());
+
+            $(this).addClass("on");
+            refreshChart();
+          });
+
+          $("#mainSrchInput").focus(function(){
+            $(".bgLayer").show();
+            $(".contArea").addClass("blur");
+            $(".srchDtArea, .srchRstArea").slideDown();
+          });
+
+          $(".bgLayer").click(function(){
+            $(".bgLayer").hide();
+            $(".contArea").removeClass("blur");
+            $(".srchRstArea, .srchDtArea").slideUp();
+          });
+
+          $("#srchOptBtn").click(function(){
+            $('.modal').modal('close');
+          });
+
+          $(document).on("mouseenter", ".srchRstArea li", function() {
+            var $this = $(this);
+
+            $(".srchRstArea .rstDt").hide();
+            $(".srchDtArea").addClass("on");
+            $('.srchDtArea').one('transitionend', function() {
+              $("#"+$this.attr("data-id")).show();
+              $(".srchAIArea").show();
+            });
+          }).on("mouseleave", ".srchRstArea li", function() {
+            var $this = $(this);
+            var $related = $(event.relatedTarget);
+            if (!$related.closest(".srchAIArea").length) {
+              $(".srchDtArea").removeClass("on");
+              $(".srchAIArea").hide();
+              $("#" + $this.attr("data-id")).hide();
+            }
+          });
+         
+          $('.modal').modal();
+          $('select').formSelect();
+
+          //createChart();
+
+
+          const listItems = document.querySelectorAll('.mainList ul li');
+          const classNameToAdd = 'animate__flipInX'; // 추가할 클래스 이름
+
+          listItems.forEach((li, index) => {
+            setTimeout(() => {
+              li.classList.add(classNameToAdd);
+            }, index * 100); // 1초 간격
+          });
+        });
+
+
+        let chart;
+
+        function createChart() {
+            chart = Highcharts.chart('container', {
+                chart: {
+                    zoomType: 'xy'
+                },
+                title: {
+                    text: ''
+                },
+                xAxis: [{
+                    categories: ['2024-05', '2024-06', '2024-07', '2024-08', '2024-09', '2024-10',
+                        '2024-11', '2024-12', '2025-01', '2025-02', '2025-03', '2025-04'],
+                    crosshair: true
+                }],
+                yAxis: [{
+                    title: {
+                        text: 'Estimated Unit Price (KRW)'
+                    },
+                    min: 400,
+                    max: 1600
+                }, {
+                    title: {
+                        text: 'Input Volume'
+                    },
+                    opposite: true,
+                    min: 0,
+                    max: 2400000
+                }],
+                tooltip: {
+                    shared: true
+                },
+                series: [{
+                    name: 'Input Volume',
+                    type: 'column',
+                    yAxis: 1,
+                    data: [2200000, 2150000, 2100000, 2000000, 1950000, 2200000, 2050000, 2000000, 1700000, 1850000, 1950000, 2100000],
+                    color: '#cac494'
+                }, {
+                    name: 'Estimated Unit Price',
+                    type: 'spline',
+                    data: [1100, 1080, 1050, 1020, 1000, 900, 780, 1150, 800, 850, 1500, 950],
+                    color: '#9d4b8d'
+                }],
+                credits: {enabled: false}
+            });
+        }
+
+        function refreshChart() {
+            // 옵션이 변할 경우 destroy하고 다시 생성 가능
+            chart.destroy(); 
+            createChart();
+        }
+  </script>
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <article class="navTop">
+        <section class="leftSection">
+          <div class="menuIcon">
+            <div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
+          </div>
+          <div><a href="/apis_main.html"><img src="/img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
+        </section>
+        <section class="centerSection">
+          <div class="srchArea">
+            <i class="material-icons prefix">search</i>
+            <input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput">
+          </div>
+        </section>
+        <section class="rightSection">
+          <div class="notiArea">
+            <div class="notiIcon"><i class="material-icons">assignment_turned_in</i></div>
+            <div class="notiCnt pulse"><span>3</span></div>
+          </div>
+          <div class="userInfo">
+            <div><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+          </div>
+        </section>
+      </article>
+    </nav>
+  </header>
+  <article class="contArea typeList type2">
+    <div class="leftSection">
+      <section class="mainTitArea">
+        <div class="mainTit">Raw Material Hub</div>
+        <div class="btnArea">
+          <div style="display: flex;">
+            <a href="javascript:;" class="waves-effect waves-light hBtn hGreen wd120px mr10"><i class="material-icons left">auto_awesome</i><span class="label">Excel</span></a>
+            <a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn viva wd120px modal-trigger" data-target="bucketModal"><i class="material-icons left">search</i><span class="label">Search</span></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="mainList cardBox">
+        <ul class="hScroll">
+
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Raw Material
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[ACE00750] Epoxy Resin YDCN500-90P</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Additives</div>
+                  <div class="roundBox contVal2">CAS# : 1309-37-1</div>
+                  <div class="roundBox contVal3">ELECT.MATLS -WTFD, ELECT.MATERIALS-OHTA</div>
+                  <div class="roundBox contVal4">RM-Pigments</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Raw Material
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[BAB00536]EMC Silica MSR-2212</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Additives</div>
+                  <div class="roundBox contVal2">CAS# : 1309-37-1</div>
+                  <div class="roundBox contVal3">ELECT.MATLS -WTFD, ELECT.MATERIALS-OHTA</div>
+                  <div class="roundBox contVal4">RM-Pigments</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated on">
+            <section class="statusBox type2">
+              Raw Material
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[145376] RED IRON OXIDE CATHAYCOAT RA11A</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Additives</div>
+                  <div class="roundBox contVal2">CAS# : 1309-37-1</div>
+                  <div class="roundBox contVal3">ELECT.MATLS -WTFD, ELECT.MATERIALS-OHTA</div>
+                  <div class="roundBox contVal4">RM-Pigments</div>
+                </div>
+              </div>
+            </section>
+          </li>
+
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Raw Material
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[ACE00750] Epoxy Resin YDCN500-90P</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Additives</div>
+                  <div class="roundBox contVal2">CAS# : 1309-37-1</div>
+                  <div class="roundBox contVal3">ELECT.MATLS -WTFD, ELECT.MATERIALS-OHTA</div>
+                  <div class="roundBox contVal4">RM-Pigments</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Raw Material
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[BAB00536]EMC Silica MSR-2212</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Additives</div>
+                  <div class="roundBox contVal2">CAS# : 1309-37-1</div>
+                  <div class="roundBox contVal3">ELECT.MATLS -WTFD, ELECT.MATERIALS-OHTA</div>
+                  <div class="roundBox contVal4">RM-Pigments</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Raw Material
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[BAB00529]EMC Silica FB-600X</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Additives</div>
+                  <div class="roundBox contVal2">CAS# : 1309-37-1</div>
+                  <div class="roundBox contVal3">ELECT.MATLS -WTFD, ELECT.MATERIALS-OHTA</div>
+                  <div class="roundBox contVal4">RM-Pigments</div>
+                </div>
+              </div>
+            </section>
+          </li>
+
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Raw Material
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[ACE00750] Epoxy Resin YDCN500-90P</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Additives</div>
+                  <div class="roundBox contVal2">CAS# : 1309-37-1</div>
+                  <div class="roundBox contVal3">ELECT.MATLS -WTFD, ELECT.MATERIALS-OHTA</div>
+                  <div class="roundBox contVal4">RM-Pigments</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Raw Material
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[BAB00536]EMC Silica MSR-2212</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Additives</div>
+                  <div class="roundBox contVal2">CAS# : 1309-37-1</div>
+                  <div class="roundBox contVal3">ELECT.MATLS -WTFD, ELECT.MATERIALS-OHTA</div>
+                  <div class="roundBox contVal4">RM-Pigments</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Raw Material
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[BAB00529]EMC Silica FB-600X</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Additives</div>
+                  <div class="roundBox contVal2">CAS# : 1309-37-1</div>
+                  <div class="roundBox contVal3">ELECT.MATLS -WTFD, ELECT.MATERIALS-OHTA</div>
+                  <div class="roundBox contVal4">RM-Pigments</div>
+                </div>
+              </div>
+            </section>
+          </li>
+
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Raw Material
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[BAB00529]EMC Silica FB-600X</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Additives</div>
+                  <div class="roundBox contVal2">CAS# : 1309-37-1</div>
+                  <div class="roundBox contVal3">ELECT.MATLS -WTFD, ELECT.MATERIALS-OHTA</div>
+                  <div class="roundBox contVal4">RM-Pigments</div>
+                </div>
+              </div>
+            </section>
+          </li>
+
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Raw Material
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[ACE00750] Epoxy Resin YDCN500-90P</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Additives</div>
+                  <div class="roundBox contVal2">CAS# : 1309-37-1</div>
+                  <div class="roundBox contVal3">ELECT.MATLS -WTFD, ELECT.MATERIALS-OHTA</div>
+                  <div class="roundBox contVal4">RM-Pigments</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Raw Material
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[BAB00536]EMC Silica MSR-2212</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Additives</div>
+                  <div class="roundBox contVal2">CAS# : 1309-37-1</div>
+                  <div class="roundBox contVal3">ELECT.MATLS -WTFD, ELECT.MATERIALS-OHTA</div>
+                  <div class="roundBox contVal4">RM-Pigments</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Raw Material
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[BAB00529]EMC Silica FB-600X</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Additives</div>
+                  <div class="roundBox contVal2">CAS# : 1309-37-1</div>
+                  <div class="roundBox contVal3">ELECT.MATLS -WTFD, ELECT.MATERIALS-OHTA</div>
+                  <div class="roundBox contVal4">RM-Pigments</div>
+                </div>
+              </div>
+            </section>
+          </li>
+
+        </ul>
+      </section>
+    </div>
+
+    <div class="rightSection">
+      <div class="cardBox">
+        <div class="cardTit"><span class="link" id="dtTit">[145376] RED IRON OXIDE CATHAYCOAT RA11A</span></div>
+        <div class="row subPjInfo">
+          <div class="col s4">Vendors</div>
+          <div class="col s8 val" id="dtContVal1">
+            <span class="summaryRound"><a href="javascript:fnSearchMain('PETROL KIMYA','');">PETROL KIMYA [TR]</a></span>
+            <span class="summaryRound"><a href="javascript:fnSearchMain('JIANGMEN HANDSOME CHEMICAL DEVELOPMENT LIMITED','');">JIANGMEN HANDSOME CHEMICAL [CN]</a></span>
+            <span class="summaryRound"><a href="javascript:fnSearchMain('JINGSU HUALUN CHEMIACL INDUSTRY CO.,LTD','');">JINGSU HUALUN CHEMIACL [CN]</a></span>
+            <span class="summaryRound"><a href="javascript:fnSearchMain('RELIANCE','');">RELIANCE [IN]</a></span>
+          </div>
+          <div class="col s4">Std. Cost/kg</div>
+          <div class="col s8 val" id="dtContVal2"><span class="mpmOrange fontM">$6.01</span></div>
+          <div class="col s4">Most Recent Purchase Date</div>
+          <div class="col s8 val" id="dtContVal3">June-20-2025</div>
+          <div class="col s4">Plants</div>
+          <div class="col s8 val" id="dtContVal4">
+            <span class="summaryRound">Waterford</span>
+            <span class="summaryRound">Ohta</span>
+          </div>
+          <div class="col s4">Product Synonyms</div>
+          <div class="col s8 val" id="dtContVal5">Red Iron Oxide</div>
+          <div class="col s4">Proc. Chemical Name</div>
+          <div class="col s8 val" id="dtContVal6">RED IRON OXIDE</div>
+          <div class="col s4">PS Equivalent Material</div>
+          <div class="col s8 val" id="dtContVal7">
+            <div class="link lineH25 smPop">[170003] RED IRON OXIDE CATHAYCOAT RA11A</div>
+            <div class="link lineH25 smPop">[172893] RED IRON OXIDE CATHAYCOAT RA11A-EXP SAMP</div>
+          </div>
+
+
+          <div class="col s12 mt20">
+            <div class="fontM">Standard Composition</div>
+            <div class="fixedTable mt0">
+              <table>
+                <colgroup>
+                  <col style="width: auto;">
+                  <col style="width: auto;">
+                  <col style="width: auto;">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>Cas Number</th>
+                    <th>Cas Name</th>
+                    <th>%</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="ar">1309-37-1</td>
+                    <td>Red Iron Oxide</td>
+                    <td class="ar">99%</td>
+                  </tr>
+                  <tr>
+                    <td class="ar">7732-18-5</td>
+                    <td>Water</td>
+                    <td class="ar">1%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+          <div class="col s12 mt20">
+            <div class="fontM">Physical & Chemical Properties</div>
+            <div class="fixedTable mt0">
+              <table>
+                <colgroup>
+                  <col style="width: auto;">
+                  <col style="width: auto;">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>Properties</th>
+                    <th>Reference Value</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td>Physical state</td>
+                    <td>solid</td>
+                  </tr>
+                  <tr>
+                    <td>Form</td>
+                    <td>Powder</td>
+                  </tr>
+                  <tr>
+                    <td>Color</td>
+                    <td>Red</td>
+                  </tr>
+                  <tr>
+                    <td>Odor</td>
+                    <td>Odorless</td>
+                  </tr>
+                  <tr>
+                    <td>pH</td>
+                    <td>5 - 8 (50 g/l, 25 °C)</td>
+                  </tr>
+                  <tr>
+                    <td>Melting point/freezing point</td>
+                    <td>1,565 °C</td>
+                  </tr>
+                  <tr>
+                    <td>Density</td>
+                    <td>5 g/cm3 (20 °C)</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article id="bucketModal" class="modal" style="width: 800px;">
+    <div class="modal-header mochaBg">
+      <h5>Seach</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div class="srchOptBox">
+        <div class="row">
+          <div class="col s2 tit">CAS Number</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+          <div class="col s2 tit">Synonyms</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Material Number</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+          <div class="col s2 tit">Chemical Group</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Material Desc.</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+          <div class="col s2 tit">Site</div>
+          <div class="col s4">
+            <select>
+              <option value="0">ALL</option>
+              <option value="1">Waterford [WTFD]</option>
+              <option value="2">Sistersville [SVLL]</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Sort</div>
+          <div class="col s4">
+            <select>
+              <option value="0">Register Date</option>
+              <option value="1">Alphabet</option>
+              <option value="2">Site</option>
+            </select>
+          </div>
+          <div class="col s2 tit">Period</div>
+          <div class="col s4">
+            <select>
+              <option value="0">All</option>
+              <option value="1">1 Month</option>
+              <option value="2">3 Month</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="btnArea">
+        <a href="javascript:;" class="waves-effect waves-light hBtn hViva wd100px" id="srchOptBtn"><i class="material-icons left">search</i><span class="label">Search</span></a>
+      </div>
+    </div>
+  </article>
+  <article class="bgLayer"></article>
+</body>
+</html>

@@ -1,0 +1,450 @@
+<!DOCTYPE html lang="ko">
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MPM APIS</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/common_neo.css">
+    <link rel="stylesheet" type="text/css" href="css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+ 	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <style>
+        @font-face {
+        font-family: 'Roboto-Light';
+        font-style: normal;
+        src: url('/fonts/Roboto-Light.ttf') format('truetype');
+        }
+        @font-face {
+        font-family: 'Roboto-Regular';
+        font-style: normal;
+        src: url('/fonts/Roboto-Regular.ttf') format('truetype');
+        }
+        @font-face {
+        font-family: 'Roboto-Medium';
+        font-style: normal;
+        src: url('/fonts/Roboto-Medium.ttf') format('truetype');
+        }
+        @font-face {
+        font-family: 'Roboto-Bold';
+        font-style: normal;
+        src: url('/fonts/Roboto-Bold.ttf') format('truetype');
+        } 
+        @font-face {
+            font-family: 'Roboto-LOGO';
+            font-style: normal;
+            src: url('/fonts/Roboto-BoldItalic.ttf') format('truetype');
+        }
+
+        .layout {display: flex; padding: 20px 100px; flex-direction: row; align-items: center; height: 100vh;}
+        .flexContainer {flex-direction: column; display: flex; flex: 1; align-items: flex-start;}
+        .flexRow {flex-direction: row; display: flex; width: 100%;}
+        .flexColumn {flex-direction: column; display: flex; width: 100%;}
+        .flexRowDt {
+            display: flex; 
+            flex: 1; 
+            flex-direction: column; 
+            position: relative; 
+            margin: 10px; 
+            border-radius: 20px; 
+            text-align: center;
+            background: linear-gradient(135deg,#a47764, #000, #000, #000);
+            box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(255, 255, 255, 0.12), 8px 8px 10px -7px rgba(255, 255, 255, 0.4);}
+        .flexRow img {border-radius: 20px;}
+        .flexRowDt:hover {
+            box-shadow: 0 16px 24px 4px rgba(0, 0, 0, 0.28), 0 6px 30px 10px rgba(255, 255, 255, 0.24), 8px 8px 10px -7px rgba(255, 255, 255, 0.8);
+        }
+        .tit {padding: 20px; position: relative; font-family: 'Roboto-Medium'; font-size: 40px; justify-content: center;}
+        .subText {padding: 0px 20px 20px 20px; position: relative; color: #fff; font-family: 'Roboto-Medium'; font-size: 20px;}
+        .subText.type2 {    
+            background: rgba(0, 0, 0, 0.5);
+            padding-top: 20px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+        .iconBox {height: 200px;
+                align-items: center;
+                display: flex;
+                background: linear-gradient(135deg, #696aad 30%, #8d0073);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;  
+            }
+        .iconBox2 {height: 200px;
+            align-items: center;
+            display: flex;
+            background: linear-gradient(135deg, #1de9b6, #1a237e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .iconBox3 {
+            background: linear-gradient(135deg, #fdd835 30%, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .iconBox4 {
+            background: linear-gradient(135deg, #BB2649 45%, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .iconBox5 {
+            background: linear-gradient(135deg,#9d4b8d);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .iconBox6 {height: 200px;
+                align-items: center;
+                display: flex;
+                background: linear-gradient(135deg, #fff 35%, #8d0073);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+        }
+        .iconBox7 {
+                background: linear-gradient(135deg, #fff 35%, #0011ff);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+        }        
+        .imgBg::before {
+            content: "";
+            background: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpj4CrrvwR-UDlYB7NbqxjqV3SynpzlDm6KQ&usqp=CAU);
+            background-size: cover;
+            opacity: 0.3;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            border-radius: 20px;
+        }
+        .imgBg2::before {
+            content: "";
+            background: url(img/usability-maintenance-seat-at-the-table-lead.jpg);
+            background-size: cover;
+            opacity: 0.3;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            border-radius: 20px;
+        }
+        .imgBg3::before {
+            content: "";
+            background: url(img/color.PNG);
+            background-position-x: -175px;
+            background-size: cover;
+            opacity: 1;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            border-radius: 20px;
+        }
+        .imgBg4::before {
+            content: "";
+            background: url(img/unnamed.jpg);
+            background-size: cover;
+            opacity: 1;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            border-radius: 20px;
+            background-position: 0px -40px;
+        }
+
+        .imgBg5::before {
+            content: "";
+            background: url(img/img.jpg);
+            background-size: cover;
+            opacity: 0.5;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            border-radius: 20px;
+            background-position: 0px 25px;
+        }
+        .imgBg6::before {
+            content: "";
+            background: url(img/0_7VyEZgzwUhQMeBqb.webp);
+            background-size: cover;
+            opacity: 0.2;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            border-radius: 20px;
+            background-position: 0px 0px;
+        }      
+        
+        .aiBox {
+            overflow: unset;
+        }
+
+        .aiBox:before {
+            content: '';
+            background: linear-gradient(90deg, #ff8a80, #ff80ab, #ea80fc, #b388ff, #8c9eff, #82b1ff, #80d8ff, #84ffff, #a7ffeb, #b9f6ca, #ccff90, #f4ff81, #ffff8d, #ffe57f, #ffd180, #ff9e80, #ff8a80);
+            position: absolute;
+            top: -5px;
+            left:-5px;
+            background-size: 400%;
+            z-index: -1;
+            filter: blur(8px);
+            width: calc(100% + 10px);
+            height: calc(100% + 10px);
+            animation: glowing 30s linear infinite;
+            opacity: 1;
+            transition: opacity .3s ease-in-out;
+            border-radius: 20px;
+        }
+        .aiBox:after {
+            z-index: -1;
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url(img/flasks.png);
+            background-size: cover;
+            background-position: 0px 0px;
+            left: 0;
+            top: 0;
+            border-radius: 20px;
+            opacity: 0.8;
+        }
+        .aiBox:hover::before {
+            animation: glowing 5s linear infinite;
+        }
+        .aiBox.type1:after {
+            background: url(img/20230628113241.jpg);
+            background-size: cover;
+            background-position: 0px -140px;
+            opacity: 0.9;
+        }
+        .aiBox.type2:after {
+            background: url(img/4-Caveats-For-LD-Professionals-When-Using-Chat-GPT.jpg);
+            background-size: cover;
+            background-position: 0px -110px;
+            opacity: 0.9;
+            background-position-x: center;
+        }
+        .aiBox.type3:after {
+            background: url(img/img.jpg);
+            background-size: cover;
+            background-position: 0px -50px;
+            opacity: 0.9;
+        }
+        .aiBox.type4:after {
+            background: url(img/business_writing_on_paper_1200x627.webp);
+            background-size: cover;
+            background-position: bottom;
+            opacity: 0.8;
+        }
+
+        .overlay {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+            display: none;
+        }
+        .waves-ripple {
+            z-index: 1 !important;
+        }
+        .modalCont{
+            position: absolute;
+            min-width: 500px;
+            min-height: 500px;
+            box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -7px rgba(0, 0, 0, 0.2);
+            z-index: 11;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            display: none;
+        }
+        .actCard.on {
+            box-shadow: 0 24px 38px 3px rgba(0, 0, 0, 0.14),  0 9px 46px 8px rgba(255, 255, 255, 0.12), 0 11px 15px -7px rgba(255, 255, 255, 0.4);
+            z-index: 10;
+        }
+
+        .gradient-text {
+            font-weight: 700; /* 글자 굵기 */
+            background: linear-gradient(90deg, #ff6f61, #de47ac, #6e40c9, #ff6f61); /* 그라데이션 색상 */
+            background-size: 400% 400%; /* 배경 크기를 키워 애니메이션 효과를 부드럽게 */
+            -webkit-background-clip: text; /* 배경을 텍스트에 클리핑 */
+            background-clip: text; /* 표준 속성 */
+            color: transparent; /* 텍스트 색상을 투명하게 설정해 그라데이션만 보이게 */
+            animation: moveGradient 4s linear infinite; /* 애니메이션 적용 */
+        }
+
+        /* 그라데이션 이동 애니메이션 */
+        @keyframes moveGradient {
+            0% {
+                background-position: 0% 50%;
+            }
+            50% {
+                background-position: 100% 50%;
+            }
+            100% {
+                background-position: 0% 50%;
+            }
+        }
+        .logo {
+            background: linear-gradient(135deg, rgb(0, 107, 213), rgb(141, 0, 115)) text;
+        }
+        
+        .titLogo {
+            font-family: "Roboto-LOGO";
+            text-align: center;
+            border-radius: 20px;
+            backdrop-filter: blur(10px);
+        }
+        .titLogo .tit {
+            padding: 40px;
+        }
+        .titLogo .tit span, nav .logo .tit span, .popup .logo {
+            font-family: "Roboto-LOGO";
+            font-size: 100px;
+            font-weight: 700;
+            filter: drop-shadow(2px 2px 1px rgba(0, 0, 0, 0.1)); /* drop-shadow 사용 */
+            color: #e87e05;
+            padding-left: 5px;
+        }
+        .titLogo .tit span.sfa, nav .logo .tit span.sfa {
+            background: linear-gradient(135deg, #e87e05, #e87e05, #004098, #004098);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .titLogo .tit span.apis, nav .logo .tit span.apis, .popup .logo {
+            background: linear-gradient(135deg, #e87e05, #e87e05, #bb2649, #bb2649);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .titLogo .tit span.tqm {
+            background: linear-gradient(135deg, #e87e05, #e87e05, #006766, #006766);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        
+        .titLogo .sub {
+            font-size: 13px;
+            letter-spacing: 0px;
+            margin-top: -10px;
+            display: inline-block;
+        }
+    </style>
+
+<script>
+    $(document).ready(function(){
+        $("#cont1 .flexRowDt").addClass("animate__animated").addClass("animate__zoomIn");
+    });
+</script>
+
+</head>
+<body style="background: #424242;">
+    <article class="layout row" id="cont1">
+        <div class="flexContainer col s4 pd0">
+            <div class="flexColumn">
+                <div class="flexRow">
+                    <div class="flexRowDt imgBg4">
+                        <div class="tit iconBox" style="-webkit-text-fill-color: #fff; height: 200px;">
+                            <div>Material Design</div>
+                        </div>
+                        <div class="subText">Base on Material Design by Google</div>
+                    </div>
+                </div>
+                <div class="flexRow">
+                    <div class="flexRowDt">
+                        <div class="tit iconBox2">
+                            <span class="material-icons" style="font-size: 160px;">spatial_audio_off</span>
+                        </div>
+                        <div class="subText">Immersive Design</div>
+                    </div>
+                </div>
+                <div class="flexRow">
+                    <a href="javascript:;" style="width: 100%;">
+                        <div class="flexRowDt waves-effect waves-red" id="cont2Btn">
+                            <div class="tit iconBox" style="height: 200px;"><div class="gradient-text">Roboto Fonts</div></div>
+                            <div class="subText">Fonts by Google</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="flexContainer col s4 pd0">
+            <div class="flexColumn">
+                <div class="flexRow">
+                    <div class="flexRowDt waves-effect waves-red aiBox" style="background: linear-gradient(135deg, #546e7a, #000);" id="cont2Btn" onclick="location.href='apis_main.html'">
+                        <div class="tit iconBox" style="height: 475px;">
+                            <div class="titLogo">
+                                <div class="tit"><span class="apis">APIS</span></div>
+                            </div>
+                        </div>
+                        <div class="subText">Momentive APIS</div>
+                    </div>
+                </div>
+                <div class="flexRow">
+                    <a href="https://www.pantone.com/color-of-the-year/2025#:~:text=For%202025%2C%20the%20Pantone%20Color%20Institute%20selects,answering%20our%20desire%20for%20comfort.%20Learn%20More." target="_blank" style="width: 100%;">
+                    <div class="flexRowDt waves-effect waves-red imgBg3">
+                        <div class="tit iconBox" style="-webkit-text-fill-color: #fff; height: 200px;">Mocha Mousse</div>
+                        <div class="subText">Color of the Year 2025</div>
+                    </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="flexContainer col s4 pd0">
+            <div class="flexRow">
+                <div class="flexRowDt">
+                    <div class="tit iconBox4" style="height: 200px; align-items: center;  display: flex; color: #fff; "><span class="material-symbols-outlined" style="font-size: 122px;">mouse</span></div>
+                    <div class="subText">Micro Interactions</div>
+                </div>
+                <div class="flexRowDt">
+                    <div class="tit iconBox2" style="height: 200px; align-items: center;  display: flex;"><span class="material-icons" style="font-size: 122px;">bar_chart</span></div>
+                    <div class="subText">Various Charts</div>
+                </div>
+            </div>
+            <div class="flexRow">
+                <div class="flexRowDt imgBg6" onclick="window.open('/notePop.html','원료Pool','height=880, width=1520');">
+                    <div class="tit iconBox7"><span class="material-icons" style="font-size: 120px;  padding: 20px;">dashboard</span></div>
+                    <div class="subText">Summary Map & TimeLine</div>
+                </div>
+            </div>
+            <div class="flexRow">
+                <div class="flexRowDt imgBg5">
+                    <div class="tit" style="height: 200px; align-items: center;  display: flex; color: #fff; "><span class="material-symbols-outlined" style="font-size: 122px;">search</span></div>
+                    <div class="subText">Powerful Unified Search</div>
+                </div>
+                <div class="flexRowDt">
+                    <div class="tit iconBox3" style="height: 200px; align-items: center;  display: flex;"><span class="material-icons" style="font-size: 122px;">auto_awesome</span></div>
+                    <div class="subText">APIS A.I.</div>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <article class="modalCont animate__animated animate__zoomIn" id="modalCont1" style="top:60px; left: 700px;">
+        <div class="tit">Auto ML</div>
+
+    </article>
+
+    <article class="modalCont animate__animated animate__zoomIn" id="modalCont2" style="top:120px; left: 700px;">
+        <div class="tit">GPT 4o</div>
+
+    </article>
+
+
+    <article class="overlay"></article>
+
+</body>
+</html>  

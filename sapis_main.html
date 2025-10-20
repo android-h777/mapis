@@ -1,0 +1,674 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="/css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script>
+        var aesopColor = ['#cac494', '#ebc39e', '#cfcecc', '#f0efe0', '#ece3d3', '#ded8d4', '#f5ece4', '#f7f1ec', '#e9f0e3', '#ebeadf', '#fefef2', '#c2c2af', '#c2c2af'];
+
+        $(document).ready(function(){
+          Highcharts.chart('container', {
+            colors: aesopColor,
+            chart: {
+                type: 'column',
+                style: {
+                  fontFamily: 'SF-Light'
+                }
+            },
+            title: {
+                text: ''
+            },
+            xAxis: {
+                categories: ['Core Silicones & Intermediates', 'Coparate', 'Formulated Specialities', 'Performance Additives']
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: ''
+                },
+                stackLabels: {
+                    enabled: true
+                }
+            },
+            legend: {
+                align: 'left',
+                x: 35,
+                verticalAlign: 'top',
+                y: -10,
+                floating: true,
+                backgroundColor:
+                    Highcharts.defaultOptions.legend.backgroundColor || 'white',
+                borderColor: '#CCC',
+                borderWidth: 1,
+                shadow: false
+            },
+            tooltip: {
+                headerFormat: '<b>{category}</b><br/>',
+                pointFormat: '{series.name}: {point.y}<br/>Total: {point.stackTotal}'
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal',
+                    borderRadius: '5%',
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
+            },
+            series: [{
+                          name: 'Pending',
+                          data: [7, 2, 72, 37]
+                      }, {
+                          name: 'Granted[<5Yrs]',
+                          data: [0, 22, 168, 185]
+                      }, {
+                        name: 'Granted[>5Yrs]',
+                        data: [0, 0, 108, 98]
+            }],
+            credits: {enabled: false}
+          });
+
+          Highcharts.chart('container2', {
+            chart: {
+                zoomType: 'xy'
+            },
+            title: {
+                text: ''
+            },
+            subtitle: {
+                text: ''
+            },
+            xAxis: {
+                categories: ['PA', 'Ela', 'Seal', 'PC', 'CAS', 'EM', 'P/R', 'HCE', 'LSR', '해외'],
+                crosshair: true
+            },
+            yAxis: [{
+                title: {
+                    text: '제안 수'
+                }
+            }, {
+                title: {
+                    text: '채택률 (%)'
+                },
+                opposite: true
+            }],
+            legend: {
+                align: 'right',
+                verticalAlign: 'top',
+                layout: 'vertical'
+            },
+            plotOptions: {
+                column: {
+                    stacking: 'normal',
+                    dataLabels: {
+                        enabled: true
+                    }
+                }
+            },
+            series: [{
+                colors: ['#cac494', '#ebc39e', '#cfcecc', '#f0efe0'],
+                type: 'column',
+                name: '채택',
+                data: [1, 1, 1, 6, 1, 7, 4, 4, 3, 5],
+                color: '#cac494'
+            }, {
+                type: 'column',
+                name: '검토중',
+                data: [0, 0, 0, 1, 4, 1, 1, 0, 0, 0],
+                color: '#ebc39e'
+            }, {
+                type: 'column',
+                name: 'Drop',
+                data: [0, 0, 0, 0, 1, 1, 0, 0, 0, 0],
+                color: '#cfcecc'
+            }, {
+                type: 'spline',
+                name: '채택률',
+                data: [100, 100, 100, 86, 20, 78, 80, 100, 100, 100],
+                color: '#004098',
+                yAxis: 1,
+                dataLabels: {
+                    enabled: true,
+                    format: '{y}%'
+                }
+            }],
+            credits: {enabled: false}
+          });
+
+
+          Highcharts.chart('container3', {
+              chart: {
+                  type: 'bar',
+                  style: {
+                    fontFamily: 'SF-Light'
+                  }
+              },
+              title: {
+                  text: ''
+              },
+              xAxis: {
+                  categories: ['AOP<br>Target', 'Current<br>Plan', 'Actual<br>Launches'],
+                  title: {
+                      text: null
+                  },
+                  lineWidth: 0,
+                  gridLineWidth: 0
+              },
+              yAxis: {
+                  min: 0,
+                  title: {
+                      text: ''
+                  },
+                  gridLineWidth: 0,
+                  labels: {
+                      enabled: false // y축 숫자 제거
+                  }
+              },
+              legend: {
+                  enabled: false
+              },
+              plotOptions: {
+                  bar: {
+                    borderRadius: '50%',
+                    dataLabels: {
+                        enabled: true,
+                        format: '{point.y:.0f}'
+                    }
+                  }
+              },
+              series: [{
+                  name: 'Beneficial',
+                  colors: ['#cac494', '#ebc39e', '#cfcecc', '#f0efe0'],
+                  colorByPoint: true,
+                  data: [
+                    ['Beneficial', 99],
+                    ['Negative', 76],
+                    ['Neutral', 42]
+                  ]
+              }],
+            credits: {enabled: false}
+          });
+
+          Highcharts.chart('container4', {
+              chart: {
+                  type: 'pie',
+                  style: {
+                    fontFamily: 'SF-Light'
+                  }
+              },
+              title: {
+                  text: ''
+              },
+              plotOptions: {
+                  pie: {
+                      innerSize: '60%', // 도넛 차트 만들기
+                      borderRadius: '20%',
+                      dataLabels: {
+                          enabled: true,
+                          useHTML: true, // HTML 사용 가능하게 설정
+                          formatter: function() {
+                              return '<div style="text-align:center; white-space: nowrap;">' + 
+                                    this.point.name + '<br><b>' + this.point.y + '%</b></div>'; 
+                          },
+                          style: {
+                              fontSize: '12px'
+                          },
+                          distance: 0,
+                          align: 'center'
+                      }
+                  }
+              },
+              series: [{
+                  name: 'Launch Status',
+                  colors: ['#cac494', '#ebc39e', '#cfcecc', '#f0efe0'],
+                  colorByPoint: true,
+                  data: [
+                      { name: 'On-Time', y: 52 },
+                      { name: 'Late-Launch', y: 23 },
+                      { name: 'Delayed', y: 25 }
+                  ]
+              }],
+              credits: {
+                  enabled: false
+              }
+          }, function(chart) {
+              // 가운데 텍스트 추가
+              chart.renderer.text('On-Time<br>Target :<br>>50%', 
+                  chart.plotLeft + chart.plotWidth / 2, 
+                  chart.plotTop + chart.plotHeight / 2 - 10)
+                  .css({
+                      fontSize: '11px',
+                      textAnchor: 'middle'
+                  })
+                  .add();
+          });
+
+          Highcharts.chart('container7', {
+              chart: {
+                  type: 'pie',
+                  style: {
+                    fontFamily: 'SF-Light'
+                  }
+              },
+              title: {
+                  text: ''
+              },
+              plotOptions: {
+                  pie: {
+                      innerSize: '60%', // 도넛 차트 만들기
+                      borderRadius: '20%',
+                      dataLabels: {
+                          enabled: true,
+                          useHTML: true, // HTML 사용 가능하게 설정
+                          formatter: function() {
+                              return '<div style="text-align:center; white-space: nowrap;">' + 
+                                    this.point.name + '<br><b>' + this.point.y + ' (' + this.percentage.toFixed(1) + '%)</b></div>'; 
+                          },
+                          style: {
+                              fontSize: '12px'
+                          },
+                          distance: 10, // 조금 더 바깥쪽으로 조정
+                          align: 'center',
+                          crop: false, // 잘리지 않도록 설정
+                          overflow: 'justify' // 차트 영역 밖으로도 표시 가능하게
+                      }
+                  }
+              },
+              series: [{
+                  name: 'Launch Status',
+                  colors: ['#cac494', '#ebc39e', '#cfcecc', '#f0efe0'],
+                  colorByPoint: true,
+                  data: [
+                      { name: 'Adopted', y: 37 },
+                      { name: 'Review', y: 7 },
+                      { name: 'Drop', y: 1, dataLabels: { allowOverlap: true } }
+                  ]
+              }],
+              credits: {
+                  enabled: false
+              }
+          }, function(chart) {
+              // 가운데 텍스트 추가
+              chart.renderer.text('Tot<br>Suggestions<br>45', 
+                  chart.plotLeft + chart.plotWidth / 2, 
+                  chart.plotTop + chart.plotHeight / 2 - 10)
+                  .css({
+                      fontSize: '11px',
+                      textAnchor: 'middle'
+                  })
+                  .add();
+          });
+
+          $(".asideTit i").click(function(){
+            $(".statusAside").animate({"right": -300},function(){
+              $(".contArea").animate({"margin-right": 0},500);
+              $("#viewOptBtn").show();
+            });
+          })
+
+          $("#viewOptBtn").click(function(){
+            $(this).hide();
+            $(".contArea").animate({"margin-right": 250},function(){
+              $(".statusAside").animate({"right": 0},500);
+            });
+          })
+
+          $('select').formSelect();
+          fnSetAniNum();
+        });
+
+        function fnSetAniNum(){
+          const counters = document.querySelectorAll('.value');
+          const speed = 1000;
+
+          counters.forEach( counter => {
+            const animate = () => {
+                const value = +counter.getAttribute('akhi');
+                const data = +counter.innerText;
+              
+                const time = value / speed;
+              if(data < value) {
+                counter.innerText = Math.ceil(data + time);
+                setTimeout(animate, 1);
+              }else{
+                counter.innerText = value;
+              }
+            }
+            animate();
+          });
+        }
+
+  </script>
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <section class="leftSection">
+        <div class="menuIcon">
+          <div><i class="material-icons">menu</i></div>
+          <div class="iconTit">MENU</div>
+        </div>
+        <div class="logo">
+          <div class="tit"><span class="apis">APIS</span></div>
+        </div>
+      </section>
+      <section class="rightSection">
+        <div class="userInfo">
+          <div><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+          <div class="iconTit">IAN</div>
+        </div>
+      </section>
+    </nav>
+  </header>
+
+  <article class="contArea row">
+    <section class="mainTitArea">
+      <div class="mainTit">Dashboard</div>
+      <div><a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light btn-small animate__animated animate__backInLeft" style="display: none;"><i class="material-icons left">add</i>View Option</a></div>
+    </section>
+
+    <section class="col s12 animate__animated animate__zoomIn">
+      <div class="cardBox pb0">
+        <div class="row mainNumArea">
+          <div class="col s3">
+            <div class="colTit">5-Yr NPI Sales ($MM)</div>
+            <div>
+              <div class="fLine flexEnd mt10">
+                <div class="mainNum up value" akhi="170.0">0</div>
+                <div class="unit mb10">(YTD)</div>
+              </div>
+              <div class="fLine flexEnd col s6">
+                <div class="fontB blackTxt">AOP</div>
+                <div class="unit">(YTD) :</div>
+                <div class="ar fontM font18 kccBlue mr10">151.2</div>
+              </div>
+              <div class="fLine flexEnd col s6 pl0 pr0">
+                <div class="fontB blackTxt">AOP</div>
+                <div class="unit">(FY 2024) :</div>
+                <div class="ar fontM font18 blackTxt">204.5</div>
+              </div>
+            </div>
+          </div>
+          <div class="col s2">
+            <div class="colTit">5-Yr STD MoM ($MM)</div>
+            <div class="fLine flexEnd">
+              <div class="mainNum mt10 value" akhi="100.9">0</div>
+            </div>
+            <div class="fLine flexEnd">
+              <div class="ar fontM font18 blackTxt">[59.3%]</div>
+            </div>
+          </div>
+          <div class="col s2">
+            <div class="colTit">NPI Vitality (5-Yr Sales)</div>
+            <div class="fLine flexEnd">
+              <div class="mainNum mt10 value" akhi="12.4">0</div>
+              <div class="unit mb10">%</div>
+            </div>
+            <div class="fLine flexEnd">
+              <div class="ar fontM font18 blackTxt">&nbsp;</div>
+            </div>
+          </div>
+          <div class="col s3">
+            <div class="colTit">1-Yr NPI Sales ($MM)</div>
+            <div>
+              <div class="fLine flexEnd mt10">
+                <div class="mainNum up value" akhi="35.1">0</div>
+                <div class="unit mb10">(YTD)</div>
+              </div>
+              <div class="fLine flexEnd col s6">
+                <div class="fontB blackTxt">AOP</div>
+                <div class="unit">(YTD) :</div>
+                <div class="ar fontM font18 kccBlue mr10">24.7</div>
+              </div>
+              <div class="fLine flexEnd col s6 pr0">
+                <div class="fontB blackTxt">AOP</div>
+                <div class="unit">(FY 2024) :</div>
+                <div class="ar fontM font18 blackTxt">36.5</div>
+              </div>
+            </div>
+          </div>
+          <div class="col s2">
+            <div class="colTit">1-Yr STD MoM ($MM)</div>
+            <div class="fLine flexEnd mr10">
+              <div class="mainNum mt10">17.9</div>
+            </div>
+            <div class="fLine flexEnd mr10">
+              <div class="ar fontM font18 blackTxt">[51.0%]</div>
+            </div>
+          </div>
+        </div>
+        <div class="dataInfo">All sales data is updated daily</div>
+      </div>
+    </section>
+
+    <section class="col s3 mt20 animate__animated animate__zoomIn">
+      <div class="cardBox pb0">
+        <div class="cardTitArea">
+          <div class="cardTit"><span class="linkTit">NPI Launch Execution Status</span></div>
+        </div>
+        <div class="mt10">
+          <div id="container3" style="height: 187px;"></div>
+        </div>
+        <div class="dataInfo">Updated daily</div>
+      </div>
+    </section>
+
+    <section class="col s5 mt20 animate__animated animate__zoomIn">
+      <div class="cardBox pb5">
+        <div class="cardTitArea">
+          <div class="cardTit"><span class="linkTit">Active Patent Portfolio</span></div>
+          <div class="wd100px">
+            <select>
+              <option>(All)</option>
+            </select>
+          </div>
+        </div>
+        <div class="mt10">
+          <div id="container" style="height: 220px;"></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="col s4 mt20 animate__animated animate__zoomIn">
+      <div class="cardBox pb0">
+        <div class="cardTitArea">
+          <div class="cardTit"><span class="linkTit">Ontime Launch Performance</span><span class="mpmOrange font13 ml10">(va Current Target Dates)</span></div>
+        </div>
+        <div class="mt10">
+          <div id="container4" style="height: 187px;"></div>
+        </div>
+        <div class="dataInfo">Updated daily</div>
+      </div>
+    </section>
+
+    <section class="col s4 mt20 animate__animated animate__zoomIn">
+      <div class="cardBox pb5">
+        <div class="cardTitArea">
+          <div class="cardTit"><span class="linkTit">Project Status</span></div>
+          <div class="cardTitArea">
+            <div class="wd70px mr20">
+              <select>
+                <option>2025</option>
+              </select>
+            </div>
+            <div class="wd100px">
+              <select>
+                <option>Business</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        <div class="fixedTable hScroll" style="overflow: auto; height: 177px;">
+          <table>
+            <colgroup>
+              <col style="width: auto">
+              <col style="width: 51px;">
+              <col style="width: 51px;">
+              <col style="width: 51px;">
+              <col style="width: 51px;">
+              <col style="width: 51px;">
+              <col style="width: 51px;">
+              <col style="width: 51px;">
+              <col style="width: 51px;">
+              <col style="width: 51px;">
+            </colgroup>
+            <thead>
+              <tr>
+                <th rowspan="2" class="bdR">BU</th>
+                <th rowspan="2" class="bdR">Tot</th>
+                <th colspan="3" class="bdR">Idea</th>
+                <th colspan="4" class="bdR">PIC</th>
+                <th rowspan="2">A.R.<br>(%)</th>
+              </tr>
+              <tr>
+                <th>Review</th>
+                <th>DROP</th>
+                <th class="bdR">GO</th>
+                <th>TBD</th>
+                <th>Std<br>Proj</th>
+                <th>Rpd<br>Proj</th>
+                <th class="bdR">DROP</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr>
+                <td class="fontM">PA</td>
+                <td class="ar">3</td>
+                <td class="ar">0</td>
+                <td class="ar">0</td>
+                <td class="ar">3</td>
+                <td class="ar">0</td>
+                <td class="ar">3</td>
+                <td class="ar">0</td>
+                <td class="ar">0</td>
+                <td class="ar">50%</td>
+              </tr>
+              <tr>
+                <td class="fontM">FS</td>
+                <td class="ar">3</td>
+                <td class="ar">0</td>
+                <td class="ar">0</td>
+                <td class="ar">3</td>
+                <td class="ar">0</td>
+                <td class="ar">3</td>
+                <td class="ar">0</td>
+                <td class="ar">0</td>
+                <td class="ar">74%</td>
+              </tr>
+            </tbody>
+            <tfoot>
+              <tr>
+                <td class="fontM">Tot</td>
+                <td class="ar">3</td>
+                <td class="ar">0</td>
+                <td class="ar">0</td>
+                <td class="ar">3</td>
+                <td class="ar">0</td>
+                <td class="ar">3</td>
+                <td class="ar">0</td>
+                <td class="ar">0</td>
+                <td class="ar">78%</td>
+              </tr>
+            </tfoot>
+          </table>
+          
+        </div>
+        <div class="dataInfo">Updated daily</div>
+      </div>
+    </section>
+
+    <section class="col s3 mt20 animate__animated animate__zoomIn">
+      <div class="cardBox pb5">
+        <div class="cardTitArea">
+          <div class="cardTit"><span class="linkTit">Proposal Status</span></div>
+        </div>
+        <div class="mt10">
+          <div id="container7" style="height: 187px;"></div>
+        </div>
+        <div class="dataInfo">Updated daily</div>
+      </div>
+    </section>
+
+    <section class="col s5 mt20 animate__animated animate__zoomIn">
+      <div class="cardBox pb5">
+        <div class="cardTitArea">
+          <div class="cardTit"><span class="linkTit">Proposal Status</span></div>
+        </div>
+        <div class="mt10">
+          <div id="container2" style="height: 187px;"></div>
+        </div>
+        <div class="dataInfo">Updated daily</div>
+      </div>
+    </section>
+
+
+  </article>
+  <aside class="statusAside cardBox">
+    <section>
+      <div class="asideTit">
+        <div class="dpInlineBlock">View Option</div>
+        <div class="right"><i class="material-icons">close</i></div>
+      </div>
+      <div class="input-field">
+        <select>
+          <option value="" disabled selected>ALL</option>
+          <option value="1">Option 1</option>
+          <option value="2">Option 2</option>
+          <option value="3">Option 3</option>
+        </select>
+        <label>Select BU</label>
+      </div>
+      <div class="input-field mt30">
+        <select>
+          <option value="" disabled selected>ALL</option>
+          <option value="1">Option 1</option>
+          <option value="2">Option 2</option>
+          <option value="3">Option 3</option>
+        </select>
+        <label>Select Segment</label>
+      </div>
+      <div class="input-field mt30">
+        <select>
+          <option value="1">2024</option>
+          <option value="2">Option 2</option>
+          <option value="3">Option 3</option>
+        </select>
+        <label>Select Year</label>
+      </div>
+      <div class="input-field mt30">
+        <select>
+          <option value="" disabled selected>ALL</option>
+          <option value="1">Option 1</option>
+          <option value="2">Option 2</option>
+          <option value="3">Option 3</option>
+        </select>
+        <label>Select Quarter</label>
+      </div>
+    </section>
+
+    <section>
+      <div class="link ac font15">Links to Detailed Views/Reports</div>
+      <div class="mt10">
+        <a href="javascript:;" id="btn_newRoom" class="waves-effect waves-light btn-small asideBtn">Active NPI List & Status</a>
+        <a href="javascript:;" id="btn_newRoom" class="waves-effect waves-light btn-small asideBtn">Detailed NPI Launch Report</a>
+        <a href="javascript:;" id="btn_newRoom" class="waves-effect waves-light btn-small asideBtn">NPI Sales Summary</a>
+        <a href="javascript:;" id="btn_newRoom" class="waves-effect waves-light btn-small asideBtn">NPI Sales by Program</a>
+        <a href="javascript:;" id="btn_newRoom" class="waves-effect waves-light btn-small asideBtn">NPI Forecast Summary</a>
+        <a href="javascript:;" id="btn_newRoom" class="waves-effect waves-light btn-small asideBtn">Tech, Investment Dashboard</a>
+        <a href="javascript:;" id="btn_newRoom" class="waves-effect waves-light btn-small asideBtn">ERA Tracker on SharePoint</a>
+        <a href="javascript:;" id="btn_newRoom" class="waves-effect waves-light btn-small asideBtn">Active IP PortFolio</a>
+      </div>
+    </section>
+    
+  </aside>
+</body>
+</html>

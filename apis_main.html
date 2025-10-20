@@ -1,0 +1,367 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="/css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script>
+        var aesopColor = ['#cac494', '#ebc39e', '#cfcecc', '#f0efe0', '#ece3d3', '#ded8d4', '#f5ece4', '#f7f1ec', '#e9f0e3', '#ebeadf', '#fefef2', '#c2c2af', '#c2c2af'];
+
+        $(document).ready(function(){
+          $('.sidenav').sidenav();
+          $(document).on('click', '.sidenav-overlay, .closeBtns', function() {
+              $('.sidenav').sidenav('close');
+          });
+
+          //$('.sidenav').sidenav('open');
+
+          $('#mainSrchInput').on('focusin', function() {
+            $(this).parents(".srchArea").addClass('active');
+          });
+          $('#mainSrchInput').on('focusout', function() {
+            $(this).parents(".srchArea").removeClass('active');
+          });
+
+          $(document).on("mouseenter", ".myMenuList li", function() {
+            $(this).find(".menuIcon").show();
+          }).on("mouseleave", ".myMenuList li", function() {
+            $(this).find(".menuIcon").hide();
+          });
+
+          $('.myMenuList ul li').each(function(i){
+            setTimeout(() => {
+              $(this).addClass("animate__flipInY");
+            }, i * 100);
+          });
+          $('.widgetCont section').each(function(i){
+            setTimeout(() => {
+              $(this).show().addClass("animate__flipInX");
+            }, i * 100);
+          });
+          setTimeout(() => {
+            $(".fixed-action-btn").show().addClass("animate__bounceInLeft")
+          }, 1000);
+
+          $('.fixed-action-btn').floatingActionButton();
+          $('.tooltipped').tooltip();
+          $('select').formSelect();
+          $("#mainMyMenuModal").modal();
+        });
+
+    </script>
+</head>
+<body>
+  <header class="navbar-fixed mainTop">
+    <nav>
+      <article class="navTop">
+        <section class="leftSection">
+          <div class="menuIcon">
+            <div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
+          </div>
+          <div><a href="/apis_main.html"><img src="/img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
+        </section>
+        <section class="rightSection">
+          <div class="notiArea">
+            <div class="notiIcon"><i class="material-icons">assignment_turned_in</i></div>
+            <div class="notiCnt pulse"><span>3</span></div>
+          </div>
+          <div class="userInfo">
+            <div><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+          </div>
+        </section>
+      </article>
+    </nav>
+  </header>
+
+  <aside class="menuAside">
+    <div id="slide-out" class="sidenav glassBox">
+      <div class="userInfoArea">
+        <div class="photo"><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+        <div class="userInfo">
+          <div class="fontB">JONGHO LEE</div>
+          <div>IT Procurement/HR/R&D Team</div>
+        </div>
+      </div>
+      <div class="menuList">
+        <ul>
+          <li class="waves-effect waves-hColor on"><i class="material-icons left">home</i>Home</li>
+          <li class="waves-effect waves-hColor"><a href="apis dash.html"><i class="material-icons left">dashboard</i>Dashboard</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>NPDI</a></li>
+          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">snippet_folder</i>NPT</a></li>
+          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">build</i>Tech Support</a></li>
+          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">trending_up</i>Productivity</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub​</a></li>
+          <li class="waves-effect waves-hColor"><a href="mfmea_list.html" target="_blank"><i class="material-icons left">playlist_add_check_circle</i>FMEA​</a></li>
+          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">addchart</i>PSA​</a></li>
+          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">assignment_late</i>CoC​</a></li>
+          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">analytics</i>Analytics​</a></li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <article class="contArea mainCont row">
+    <section class="mainSrchArea">
+      <div class="srchArea">
+        <i class="material-icons prefix">search</i>
+        <input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput">
+      </div>
+    </section>
+    
+    <section class="myMenuArea">
+      <div class="myMenuList">
+        <ul>
+          <li class="animate__animated">
+            <div><a href="apis_npdi_list.html"><div class="menuIconBox waves-effect waves-light"><i class="material-icons">lightbulb</i></div></a></div>
+            <div class="menuTit">NPDI</div>
+            <div class="menuIcon waves-effect waves-hColort modal-trigger" data-target="mainMyMenuModal" style="display: none;"><i class="material-icons">more_vert</i></div>
+          </li>
+          <li class="animate__animated">
+            <div><a href="javascript:;"><div class="menuIconBox waves-effect waves-light"><i class="material-icons">build</i></div></a></div>
+            <div class="menuTit">Tech Support​</div>
+            <div class="menuIcon waves-effect waves-hColort modal-trigger" data-target="mainMyMenuModal" style="display: none;"><i class="material-icons">more_vert</i></div>
+          </li>
+          <li class="animate__animated">
+            <div><a href="mfmea_list.html" target="_blank"><div class="menuIconBox waves-effect waves-light"><i class="material-icons">playlist_add_check_circle</i></div></a></div>
+            <div class="menuTit">FMEA​​</div>
+            <div class="menuIcon waves-effect waves-hColort modal-trigger" data-target="mainMyMenuModal" style="display: none;"><i class="material-icons">more_vert</i></div>
+          </li>
+          <li class="animate__animated">
+            <div><a href="apis_item_list.html"><div class="menuIconBox waves-effect waves-light"><i class="material-icons">colorize</i></div></a></div>
+            <div class="menuTit">Raw Material Hub​</div>
+            <div class="menuIcon waves-effect waves-hColort modal-trigger" data-target="mainMyMenuModal" style="display: none;"><i class="material-icons">more_vert</i></div>
+          </li>
+          <li class="animate__animated">
+            <div><a href="apis_dash.html"><div class="menuIconBox waves-effect waves-light"><i class="material-icons">dashboard</i></div></a></div>
+            <div class="menuTit">dashboard​</div>
+            <div class="menuIcon waves-effect waves-hColort modal-trigger" data-target="mainMyMenuModal" style="display: none;"><i class="material-icons">more_vert</i></div>
+          </li>
+          <li class="animate__animated">
+            <div class="menuIconBox waves-effect waves-light modal-trigger" data-target="mainMyMenuModal"><i class="material-icons">add</i></div>
+            <div class="menuTit">Add Shortcut</div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <div class="widgetCont">
+      <section class="col s5 animate__animated">
+        <div class="cardBox">
+          <div class="cardTitArea">
+            <div class="cardTit">Notification</div>
+          </div>
+          <div class="contArea boardArea">
+            <div class="titArea">
+              <div class="tit">MAPIS | Raw Material Hub| Training & Implementation Schedule</div>
+              <div class="date">10/02/2025</div>
+            </div>
+            <div class="cont">Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.
+              ✅ Open to All
+              These sessions are open to everyone, regardless of department or role.
+              🌐 Language of Instruction
+              All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.
+              📅 Didn’t Receive an Invite?  
+              If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <section class="col s3 animate__animated">
+        <div class="cardBox">
+          <div class="cardTitArea">
+            <div class="cardTit">Approval</div>
+          </div>
+          <div class="contArea">
+            <div class="row">
+              <div class="col s5 iconBoxArea">
+                <div class="mainIconBox"><i class="material-icons">assignment_turned_in</i></div>
+              </div>
+              <div class="col s7 mainCntArea">
+                <div class="mainCntBox">
+                  <div class="tit">Pending</div>
+                  <div class="roundBox viva pulse">3</div>
+                </div>
+                <div class="mainCntBox">
+                  <div class="tit">Draft</div>
+                  <div class="roundBox blue">11</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+      
+      <section class="col s4 animate__animated">
+        <div class="cardBox">
+          <div class="cardTitArea">
+            <div class="cardTit">My To-Do List</div>
+            <div>
+              <div class="roundBox orange">8 more</div>
+            </div>
+          </div>
+          <div class="contArea">
+            <ul class="mainListUl">
+              <li>
+                <span class="codeSpan">[A25-4099]</span>
+                <span class="tit">Request for analysis of foreign matter/dirt generated from the HMMI (Hyundai Motor Indonesia) Sangdo oven filter</span>
+              </li>
+              <li>
+                <span class="codeSpan">Final Evaluation [Pass]</span>
+                <span class="tit">[S23120009-Ulsan] LUPEROX DTA</span>
+              </li>
+              <li>
+                <span class="codeSpan">[P25-226]</span>
+                <span class="tit">Improvement of Appearance and Workability of Medium-Coat Paint for Water-Soluble 3C1B at HMMME (Saudi CKD) New Plant</span>
+              </li>
+              <li>
+                <span class="codeSpan">[P25-227]</span>
+                <span class="tit">Improvement of the quality of medium- to high-quality paints by applying a shortened conversion to HMMI-type water-soluble 3C1B.</span>
+              </li>
+              <li>
+                <span class="codeSpan">[P25-1]</span>
+                <span class="tit">Quality Improvement of Matte Clear SVR Upgrading Paint for Automotive Bodies</span>
+              </li>
+              <li>
+                <span class="codeSpan">[P25-226]</span>
+                <span class="tit">Improvement of Appearance and Workability of Medium-Coat Paint for Water-Soluble 3C1B at HMMME (Saudi CKD) New Plant</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="col s4 animate__animated">
+        <div class="cardBox">
+          <div class="cardTitArea">
+            <div class="cardTit">My recent activities</div>
+          </div>
+          <div class="contArea">
+            <ul class="mainListUl">
+              <li>
+                <span class="codeSpan">[A25-4099]</span>
+                <span class="tit">Request for analysis of foreign matter/dirt generated from the HMMI (Hyundai Motor Indonesia) Sangdo oven filter</span>
+              </li>
+              <li>
+                <span class="codeSpan">[ACU02413]</span>
+                <span class="tit">Urethane resin DAOTAN TW 6450 30WA</span>
+              </li>
+              <li>
+                <span class="codeSpan">[P25-226]</span>
+                <span class="tit">Improvement of Appearance and Workability of Medium-Coat Paint for Water-Soluble 3C1B at HMMME (Saudi CKD) New Plant</span>
+              </li>
+              <li>
+                <span class="codeSpan">[ACM00374]</span>
+                <span class="tit">Melamine resin LUWIPAL 052</span>
+              </li>
+              <li>
+                <span class="codeSpan">[P25-13]</span>
+                <span class="tit">Quality Improvement of Matte Clear SVR Upgrading Paint for Automotive Bodies</span>
+              </li>
+              <li>
+                <span class="codeSpan">[P25-226]</span>
+                <span class="tit">Improvement of Appearance and Workability of Medium-Coat Paint for Water-Soluble 3C1B at HMMME (Saudi CKD) New Plant</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <section class="col s8 animate__animated">
+        <div class="cardBox">
+          <div class="cardTitArea">
+            <div class="cardTit">My Project List</div>
+          </div>
+          <div class="contArea">
+            <ul class="mainListUl">
+              <li>
+                <span class="roundBox green">NPDI</span>
+                <span class="codeSpan">[P25-226]</span>
+                <span class="tit">Improvement of Appearance and Workability of Medium-Coat Paint for Water-Soluble 3C1B at HMMME (Saudi CKD) New Plant</span>
+              </li>
+              <li>
+                <span class="roundBox green">NPDI</span>
+                <span class="codeSpan">[P25-227]</span>
+                <span class="tit">Improvement of the quality of medium- to high-quality paints by applying a shortened conversion to HMMI-type water-soluble 3C1B.</span>
+              </li>
+              <li>
+                <span class="roundBox blue">NPT</span>
+                <span class="codeSpan">[N25-1]</span>
+                <span class="tit">Quality Improvement of Matte Clear SVR Upgrading Paint for Automotive Bodies</span>
+              </li>
+              <li>
+                <span class="roundBox green">NPDI</span>
+                <span class="codeSpan">[P25-14]</span>
+                <span class="tit">Quality Improvement of Matte Clear SVR Upgrading Paint for Automotive Bodies</span>
+              </li>
+              <li>
+                <span class="roundBox grey">Tech</span>
+                <span class="codeSpan">[T25-11]</span>
+                <span class="tit">Melamine resin LUWIPAL 052</span>
+              </li>
+              <li>
+                <span class="roundBox green">NPDI</span>
+                <span class="codeSpan">[P25-41]</span>
+                <span class="tit">Quality Improvement of Matte Clear SVR Upgrading Paint for Automotive Bodies</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+    </div>
+  </article>
+
+  <article class="fixed-action-btn animate__animated" style="display: none;">
+    <a class="waves-effect waves-hColor btn-floating btn-large mpmBg2 pulse tooltipped" data-position="left" data-tooltip="Create Project">
+      <i class="large material-icons">add</i>
+    </a>
+    <ul>
+      <li><a class="waves-effect waves-hColor btn-floating mochaBg tooltipped" data-position="left" data-tooltip="Productivity​"><i class="material-icons">trending_up</i></a></li>
+      <li><a class="waves-effect waves-hColor btn-floating mochaBg tooltipped" data-position="left" data-tooltip="Custom NPI"><i class="material-icons">integration_instructions</i></a></li>
+      <li><a class="waves-effect waves-hColor btn-floating mochaBg tooltipped" data-position="left" data-tooltip="Tech Suppor​t"><i class="material-icons">build</i></a></li>
+      <li><a class="waves-effect waves-hColor btn-floating mochaBg tooltipped" data-position="left" data-tooltip="New Product Translations​"><i class="material-icons">snippet_folder</i></a></li>
+      <li><a class="waves-effect waves-hColor btn-floating mochaBg tooltipped" data-position="left" data-tooltip="NPDI​"><i class="material-icons">lightbulb</i></a></li>
+    </ul>
+  </article>
+
+  <article id="mainMyMenuModal" class="modal" style="width: 400px;">
+    <div class="modal-header mpmBg2">
+      <h5>Add Shortcut</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div  style="min-height: 400px;">
+        <select>
+          <option value="0">Select Menu</option>
+          <option value="1">Dashboard</option>
+          <option value="2">NPDI</option>
+          <option value="3">NPT</option>
+          <option value="4">Tech Support</option>
+          <option value="5">Custom NPI</option>
+          <option value="6">Productivity</option>
+          <option value="7">Raw Material Hub</option>
+          <option value="8">FMEA</option>
+          <option value="9">PSA</option>
+          <option value="10">CoC</option>
+          <option value="11">Analytics</option>
+        </select>
+      </div>
+      <div class="btnArea">
+        <a href="javascript:;" class="waves-effect waves-light hBtn hBlue wd100px" id="newPjBtn"><i class="material-icons left">save</i><span class="label">Save</span></a>
+        <a href="javascript:;" class="waves-effect waves-light hBtn hGrey wd100px ml10"><i class="material-icons left">delete</i><span class="label">Delete</span></a>
+      </div>
+    </div>
+  </article>
+
+</body>
+</html>

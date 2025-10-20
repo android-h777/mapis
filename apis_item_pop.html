@@ -1,0 +1,1376 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="/css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script src="js/highcharts/highcharts.js"></script>
+    <script src="/js/highcharts/modules/exporting.js"></script>
+    <script src="https://3dmol.csb.pitt.edu/build/3Dmol-min.js"></script>
+    <script src="https://unpkg.com/@dotlottie/player-component@2.7.12/dist/dotlottie-player.mjs" type="module"></script>
+    <script>
+        $(document).ready(function(){
+          $('.tabs').tabs();
+          $('select').formSelect();
+
+          $(".smPop").click(function(){
+            window.open("apis_item_pop.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
+          });
+
+          $(window).on('scroll', function() {
+            const scrollPosition = $(window).scrollTop() + 70; // 상단 바 보정값
+
+            $('.cardBox[id]').each(function() {
+              const sectionTop = $(this).offset().top;
+              const sectionBottom = sectionTop + $(this).outerHeight();
+              const sectionId = $(this).attr('id');
+
+              if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                $('.menu-item').removeClass('active');
+                $('.menu-item[data-target="' + sectionId + '"]').addClass('active');
+              }
+            });
+          });
+
+          $('.menu-item').on('click', function() {
+            const targetId = $(this).data('target');
+            const targetElement = $('#' + targetId);
+
+            if (targetElement.length) {
+              $('html, body').animate({
+                scrollTop: targetElement.offset().top - 65
+              }, 500);
+            }
+
+            $('.menu-item').removeClass('active');
+            $(this).addClass('active');
+          });
+
+          $("#allPropCheckBox").click(function(){
+            var isChecked = $(this).is(':checked');
+            if (isChecked) {
+                $("#pjContCard4 .valOn").show();
+            } else {
+                $("#pjContCard4 .valOn").hide();
+            }
+          });
+          $('.modal').modal();
+
+          createChart();
+          $('.collapsible').collapsible({accordion: false});
+          $('.collapsible').collapsible("open","0");
+
+        });
+
+        function createChart() {
+            chart = Highcharts.chart('container', {
+                chart: {
+                    zoomType: 'xy'
+                },
+                title: {
+                    text: ''
+                },
+                xAxis: [{
+                    categories: ['2024-05', '2024-06', '2024-07', '2024-08', '2024-09', '2024-10',
+                        '2024-11', '2024-12', '2025-01', '2025-02', '2025-03', '2025-04'],
+                    crosshair: true
+                }],
+                yAxis: [{
+                    title: {
+                        text: 'Unit Cost (USD/kg)'
+                    }
+                }, {
+                    title: {
+                        text: 'Quantity (kg)'
+                    },
+                    opposite: true
+                }],
+                tooltip: {
+                    shared: true
+                },
+                series: [{
+                    name: 'Quantity (kg)',
+                    type: 'column',
+                    yAxis: 1,
+                    data: [22000, 21500, 21000, 20000, 19500, 22000, 20500, 20000, 17000, 18500, 19500, 21000],
+                    color: '#cac494'
+                }, {
+                    name: 'Unit Cost (USD/kg)',
+                    type: 'spline',
+                    data: [11, 10, 10, 10, 10, 9, 7, 11, 8, 8, 15, 9],
+                    color: '#9d4b8d'
+                }],
+                exporting: {
+                  enabled: true // 내보내기 버튼 활성화
+                },
+                credits: {enabled: false}
+            });
+            
+            fnGetChemDraw('1309-37-1', 'Red Iron Oxide', 'chemCont1');
+            // fnGetChemDraw('0001185-55-3', 'Trimethoxy(methyl)silane', 'chemCont2');
+        }
+
+        function fnGetChemDraw(valCas,valName,targetId){
+		
+          var param = {
+              cas: valCas, //cas-no:0001330-20-7 왼쪽에 0 제거
+              name: valName
+              }
+          $.ajax({
+            type: 'GET', 
+            async: true,
+            dataType: 'json',
+            contentType: 'application/json',
+            data: param,
+            url: 'https://apisml.kccworld.co.kr:5112/chemDraw/',
+            success:function(data){
+              console.log(data);
+              if(data.mol){
+                let viewer = $3Dmol.createViewer(targetId, { //id값
+                    backgroundColor: "white"
+                  });
+                viewer.addModel(data.mol, "mol"); 
+                $.each(data.molecule, function(i,o){
+                  viewer.addLabel(o.name, { 
+                        'position': {'x': parseFloat(o.position[0]), 'y': parseFloat(o.position[1]), 'z': parseFloat(o.position[2])}, 
+                        'backgroundOpacity': 0.8,  //배경투명
+                        'backgroundColor' : "#a47764",
+                        'fontColor': 'black',     // 진한 빨강
+                        'outlineWidth': 0.3,
+                        'fontSize': 14
+                    });
+                });
+                viewer.setStyle({}, {stick: {}});
+                viewer.addLabel(data.formula, {   
+                  'position': {'x': 2, 'y': 0, 'z': 0},//라벨위치
+                  'fontSize': 20,
+                  'backgroundOpacity': 0.8,  //배경투명
+                  'fontColor': '#fff',  //글씨색
+                  'backgroundColor' : "#56453f",
+                  'fontWeight': 'bold',
+                  'inFront': true //라벨 오브젝트보다 항상앞
+                })
+                viewer.zoomTo();
+                setTimeout(() => {
+                  viewer.zoom(3); //확대
+                  viewer.render(); 
+                }, 0); 
+                viewer.spin(true); //회전
+
+                const canvas = viewer.getCanvas();
+                canvas.addEventListener('mouseover', () => viewer.spin(false));
+                canvas.addEventListener('mouseout', () => viewer.spin(true));
+              }
+            }, error: function (e) { 
+              if(e.responseText != ''){
+                var rs = $.parseJSON(e.responseText);   
+                alert(rs.errMsg);
+              }
+            }
+          });  
+        }
+  </script>
+</head>
+<body class="popup type2">
+  <header class="z-depth-1">
+    <section class="titArea">
+      <div class="logo"><span class="apis">APIS</span></div>
+      <div class="tit">[145376] RED IRON OXIDE CATHAYCOAT RA11A</div>
+    </section>
+  </header>
+  <aside class="leftAside z-depth-1 blurArea">
+    <section>
+      <ul>
+        <li class="menu-item waves-effect waves-hColor active" data-target="pjContCard1"><i class="material-icons left">inventory_2</i><span>Basic Data</span></li>
+        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard2"><i class="material-icons left">sell</i><span>Vendor Data</span></li>
+        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard3"><i class="material-icons left">health_and_safety</i><span>Regulatory</span></li>
+        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard4"><i class="material-icons left">bubble_chart</i><span>PhysChem Data</span></li>
+        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard5"><i class="material-icons left">warehouse</i><span>Inventory Data</span></li>
+        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard6"><i class="material-icons left">device_hub</i><span>Where Used</span></li>
+        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard7"><i class="material-icons left">sync_alt</i><span>MoC</span></li>
+        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard8"><i class="material-icons left">task_alt</i><span>Quality</span></li>
+        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard9"><i class="material-icons left">sticky_note_2</i><span>SME Notes</span></li>
+      </ul>
+    </section>
+    <section class="btnArea">
+      <div><a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn hGreen"><i class="material-icons left">launch</i><span class="label">Export</span></a></div>
+    </section>
+    <!-- <section class="btnArea">
+      <div><a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn hBlue"><i class="material-icons left">save</i><span class="label">Save</span></a></div>
+    </section> -->
+  </aside>
+  <article class="contArea">
+    <section class="cardBox" id="pjContCard1">
+      <div class="cardTit2"><i class="material-icons left">inventory_2</i>Basic Material Data</div>
+      <div id="cont1-1">
+        <div class="inputArea mt20">
+          <div class="row">
+            <div class="col s2 ar">Material Number</div>
+            <div class="col s10 val">145376</div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Basic Data Text (English)</div>
+            <div class="col s10 val">RED IRON OXIDE CATHAYCOAT RA11A</div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Basic Data Text (Local)</div>
+            <div class="col s10 val">RED IRON OXIDE CATHAYCOAT RA11A</div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Material Description</div>
+            <div class="col s10 val">RED IRON OXIDE CATHAYCOAT RA11A</div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Material Type</div>
+            <div class="col s10 val">[ROH] Material Type Name</div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Procurement Chemical Name</div>
+            <div class="col s10 val">RED IRON OXIDE</div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Chemical Group</div>
+            <div class="col s10 val">Additives</div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Material Group</div>
+            <div class="col s10 val">060 : RM-Pigments</div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Shelf Life</div>
+            <div class="col s10 val">90 Days</div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Temp. at Customer</div>
+            <div class="col s10 val">1 - ambient</div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Temp. at Shipment</div>
+            <div class="col s10 val">Z1 - Store-Ship Ambient</div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Temp. at Warehouse</div>
+            <div class="col s10 val">A5 - Indoor Storage</div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Business Unit/Profit Center</div>
+            <div class="col s4 val">[510WD] ELECT.MATLS -WTFD</div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Profit Center</div>
+            <div class="col s10 val">
+              <span class="roundBox font12">510WD (Description : ELECT.MATLS -WTFD)</span>
+              <span class="roundBox font12">510OT (Description : ELECT.MATERIALS-OHTA)</span>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Plants</div>
+            <div class="col s10 val">
+              <span class="roundBox font12">WTFD</span>
+              <span class="roundBox font12">OT01</span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s2 ar">Materials with Chemically Equivalent Composition</div>
+          <div class="col s10 val">
+            <div class="link lineH25 smPop">[170003] RED IRON OXIDE CATHAYCOAT RA11A</div>
+            <div class="link lineH25 smPop">[172893] RED IRON OXIDE CATHAYCOAT RA11A-EXP SAMP</div>
+          </div>
+        </div>
+        <div class="chemList mainChem">
+          <div class="chemTitArea">
+            <div class="chemTit">Key Component :  [1309-37-1] Red Iron Oxide</div>
+          </div>
+          <div class="chemImgCont">
+            <div id="chemCont1" style="position:relative;width:100%;height:300px;"></div>
+            <div class="helpIcon">
+              <dotlottie-player
+              src="https://lottie.host/69f515d6-067f-42b8-926c-6178f054037d/02Lx6Ep3Tl.lottie"
+              background="transparent"
+              speed="1"
+              style="width: 50px; height: 50px"
+              loop
+              autoplay
+            ></dotlottie-player>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cardBox mt10" id="pjContCard2">
+      <div class="cardTit2 type2">
+        <div><i class="material-icons left">receipt_long</i>Vendor Data</div>
+        <div style="width: 230px;">
+          <select>
+            <option value="1">[70724] OXERRA AMERICAS INC</option>
+            <option value="2">JIANGMEN HANDSOME CHEMICAL [CN]</option>
+            <option value="3">JINGSU HUALUN CHEMIACL [CN]</option>
+            <option value="3">RELIANCE [IN]</option>
+          </select>
+        </div>      
+      </div>
+      <div class="cardSubTit mt20">Purchase Information</div>
+      <div class="inputArea mt20">
+        <div class="row">
+          <div class="col s2 ar">Vendor</div>
+          <div class="col s10 val">[70724] OXERRA AMERICAS INC</div>
+        </div>
+        <div class="row">
+          <div class="col s2 ar">Preferred</div>
+          <div class="col s4 val">Y</div>
+          <div class="col s2 ar">Blocked</div>
+          <div class="col s4 val">N</div>
+        </div>
+        <div class="row">
+          <div class="col s2 ar">Valid From</div>
+          <div class="col s4 val">Jul.02.2024</div>
+          <div class="col s2 ar">Valid To</div>
+          <div class="col s4 val">Jul.02.2025</div>
+        </div>
+
+        <div class="row">
+          <div class="col s2 ar">Standard Material Cost (per Kg)</div>
+          <div class="col s4 val" style="	display: flex;">
+            <div style="width: 150px;" class="mr20">
+              <select>
+                <option value="1" selected>Waterford [WTFD]</option>
+                <option value="2">Sistersville [SVLL]</option>
+              </select>      
+            </div>
+            <div class="mpmOrange fontM font18">$6.009</div>
+          </div>
+          <div class="col s2 ar">Most Recent Cost (per Kg)</div>
+          <div class="col s4 val" style="	display: flex;">
+            <div style="width: 150px;" class="mr20">
+              <select>
+                <option value="1" selected>Waterford [WTFD]</option>
+                <option value="2">Sistersville [SVLL]</option>
+              </select>      
+            </div>
+            <div class="mpmOrange fontM font18">$6.009</div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s2 ar">Commodity Manger</div>
+          <div class="col s10 val">Randy Mallory</div>
+        </div>
+        <div class="row">
+          <div class="col s2 ar">Unit price/usage trend</div>
+        </div>
+        <div id="container" style="width:100%; height:300px;" class="mt10"></div>
+      </div>
+
+      <div class="cardSubTit mt20">Documents</div>
+      <div class="inputArea mt10">
+        <div class="row">
+          <div class="col s2 ar">MSDS</div>
+          <div class="col s4 val">
+            <div class="link">MSDS US - English</div>
+            <div class="link">MSDS US - French</div>
+            <div class="link">MSDS US - Spanish</div>
+            <div class="link">MSDS_DE - German</div>
+            <div class="link">MSDS_JP - English</div>
+            <div class="link">MSDS_JP - Japanese</div>
+          </div>
+          <div class="col s2 ar">CoA</div>
+          <div class="col s4 val"><div class="link">520217_18XRA12A04.pdf</div></div>
+        </div>
+      </div>
+    </section>
+
+    <section class="cardBox mt10" id="pjContCard3">
+      <div class="cardTit2"><i class="material-icons left">health_and_safety</i>Regulatory</div>
+      <div class="cardSubTit mt20">Basic EHS Information</div>
+      <div class="inputArea">
+        <div class="row">
+          <div class="col s2 ar">Real Substance Number</div>
+          <div class="col s4 val">000000073480</div>
+          <div class="col s2 ar">Synonym Product</div>
+          <div class="col s4 val">Red Iron Oxide</div>
+        </div>
+        <div class="row">
+          <div class="col s2 ar">Cas Name</div>
+          <div class="col s4 val">Red Iron Oxide</div>
+          <div class="col s2 ar">Cas Number</div>
+          <div class="col s4 val">1309-37-1</div>
+        </div>
+        <div class="row">
+          <div class="col s2 ar">NAM Prods</div>
+          <div class="col s4 val">Red Iron Oxide</div>
+        </div>
+      </div>
+
+      <div class="cardSubTit mt20">Composition</div>
+      <div class="inputArea">
+        <div class="row">
+          <div class="col s6">
+            <div class="fontM">Standard Composition</div>
+            <div class="fixedTable mt0">
+              <table>
+                <colgroup>
+                  <col style="width: 140px;">
+                  <col style="width: auto;">
+                  <col style="width: 80px;">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>Cas Number <i class="material-icons vaM">arrow_drop_down</i></th>
+                    <th>Cas Name <i class="material-icons vaM">arrow_drop_down</i></th>
+                    <th>% <i class="material-icons vaM">arrow_drop_down</i></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="ar">1309-37-1</td>
+                    <td>Red Iron Oxide</td>
+                    <td class="ar">99%</td>
+                  </tr>
+                  <tr>
+                    <td class="ar">7732-18-5</td>
+                    <td>Water</td>
+                    <td class="ar">1%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col s6">
+            <div class="fontM">REACH Composition (Legal Comp)</div>
+            <div class="fixedTable mt0">
+              <table>
+                <colgroup>
+                  <col style="width: 140px;">
+                  <col style="width: auto;">
+                  <col style="width: 80px;">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th>Cas Number <i class="material-icons vaM">arrow_drop_down</i></th>
+                    <th>Cas Name <i class="material-icons vaM">arrow_drop_down</i></th>
+                    <th>% <i class="material-icons vaM">arrow_drop_down</i></th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <td class="ar">1309-37-1</td>
+                    <td>Red Iron Oxide</td>
+                    <td class="ar">100%</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- <div class="chemList mt10 row">
+        <div class="col s6">
+          <div class="chemTitArea">
+            <div class="chemTit">[1309-37-1] Red Iron Oxide</div>
+          </div>
+          <div class="chemImgCont">
+            <div id="chemCont1" style="position:relative;width:100%;height:300px;"></div>
+            <div class="helpIcon">
+              <dotlottie-player
+              src="https://lottie.host/69f515d6-067f-42b8-926c-6178f054037d/02Lx6Ep3Tl.lottie"
+              background="transparent"
+              speed="1"
+              style="width: 50px; height: 50px"
+              loop
+              autoplay
+            ></dotlottie-player>
+            </div>
+          </div>
+        </div>
+        <div class="col s6">
+          <div class="chemTitArea">
+            <div class="chemTit">[0001185-55-3] Trimethoxy(methyl)silane</div>
+          </div>
+          <div class="chemImgCont">
+            <div id="chemCont2" style="position:relative;width:100%;height:300px;"></div>  
+            <div class="helpIcon">
+              <dotlottie-player
+              src="https://lottie.host/69f515d6-067f-42b8-926c-6178f054037d/02Lx6Ep3Tl.lottie"
+              background="transparent"
+              speed="1"
+              style="width: 50px; height: 50px"
+              loop
+              autoplay
+            ></dotlottie-player>
+            </div>
+          </div>
+        </div>
+      </div> -->
+
+    </section>
+
+    <section class="cardBox mt10" id="pjContCard4">
+      <div class="cardTit2 type2">
+        <div><i class="material-icons left">bubble_chart</i>Physical & Chemical Properties</div>
+        <div class="switch right">
+          <label>
+            <span class="font15 blue-text">See All</span>
+            <input type="checkbox" id="allPropCheckBox">
+            <span class="lever"></span>
+            </label>
+        </div>
+      </div>
+      <div class="fixedTable mt10">
+        <table>
+          <colgroup>
+            <col style="width: 400px;">
+            <col style="width: auto;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Properties <i class="material-icons vaM">arrow_drop_down</i></th>
+              <th>Reference Value <i class="material-icons vaM">arrow_drop_down</i></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>Physical state</td>
+              <td>solid</td>
+            </tr>
+            <tr>
+              <td>Form</td>
+              <td>Powder</td>
+            </tr>
+            <tr>
+              <td>Color</td>
+              <td>Red</td>
+            </tr>
+            <tr>
+              <td>Odor</td>
+              <td>Odorless</td>
+            </tr>
+            <tr>
+              <td>pH</td>
+              <td>5 - 8 (50 g/l, 25 °C)</td>
+            </tr>
+            <tr>
+              <td>Melting point/freezing point</td>
+              <td>1,565 °C</td>
+            </tr>
+            <tr class="valOn">
+              <td>Initial boiling point and boiling range</td>
+              <td>-</td>
+            </tr>
+            <tr class="valOn">
+              <td>Flash Point</td>
+              <td>-</td>
+            </tr>
+            <tr class="valOn">
+              <td>Evaporation rate</td>
+              <td>-</td>
+            </tr>
+            <tr class="valOn">
+              <td>Flammability (solid, gas)</td>
+              <td>-</td>
+            </tr>
+            <tr class="valOn">
+              <td>Flammability limit - upper (%)</td>
+              <td>-</td>
+            </tr>
+            <tr class="valOn">
+              <td>Flammability limit - lower (%)</td>
+              <td>-</td>
+            </tr>
+            <tr class="valOn">
+              <td>Heat of combustion</td>
+              <td>-</td>
+            </tr>
+            <tr class="valOn">
+              <td>Vapor pressure</td>
+              <td>-</td>
+            </tr>
+            <tr class="valOn">
+              <td>Vapor density</td>
+              <td>-</td>
+            </tr>
+            <tr>
+              <td>Density</td>
+              <td>5 g/cm3 (20 °C)</td>
+            </tr>
+            <tr class="valOn">
+              <td>Relative density</td>
+              <td>-</td>
+            </tr>
+            <tr class="valOn">
+              <td>Auto-ignition temperature</td>
+              <td>-</td>
+            </tr>
+            <tr class="valOn">
+              <td>Decomposition temperature</td>
+              <td>-</td>
+            </tr>
+            <tr class="valOn">
+              <td>SADT</td>
+              <td>-</td>
+            </tr>
+            <tr class="valOn">
+              <td>Viscosity, dynamic</td>
+              <td>-</td>
+            </tr>
+            <tr class="valOn">
+              <td>Viscosity, kinematic</td>
+              <td>-</td>
+            </tr>
+            <tr class="valOn">
+              <td>VOC</td>
+              <td>-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <section class="cardBox mt10" id="pjContCard5">
+      <div class="cardTit2 type2">
+        <div><i class="material-icons left">warehouse</i>Inventory Data</div>
+        <select>
+          <option value="1">ALL</option>
+          <option value="2" selected>Waterford [WTFD]</option>
+          <option value="3">Sistersville [SVLL]</option>
+        </select>      
+      </div>
+      <div class="fixedTable mt10">
+        <table>
+          <colgroup>
+            <col style="width: 120px;">
+            <col style="width: auto;">
+            <col style="width: 120px;">
+            <col style="width: 160px;">
+            <col style="width: 120px;">
+            <col style="width: 120px;">
+            <col style="width: 120px;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Material <i class="material-icons vaM">arrow_drop_down</i></th>
+              <th>Material Description <i class="material-icons vaM">arrow_drop_down</i></th>
+              <th>Site <i class="material-icons vaM">arrow_drop_down</i></th>
+              <th>Storage Location <i class="material-icons vaM">arrow_drop_down</i></th>
+              <th>Batch <i class="material-icons vaM">arrow_drop_down</i></th>
+              <th>Unrestricted <i class="material-icons vaM">arrow_drop_down</i></th>
+              <th>UoM <i class="material-icons vaM">arrow_drop_down</i></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ar">145376</td>
+              <td>RED IRON OXIDE CATHAYCOAT RA11A</td>
+              <td class="ac">WTFD</td>
+              <td class="ac">1201</td>
+              <td class="ac">23N003</td>
+              <td class="ar">528.456</td>
+              <td class="ac">KG</td>
+            </tr>
+            <tr>
+              <td class="ar">145376</td>
+              <td>RED IRON OXIDE CATHAYCOAT RA11A</td>
+              <td class="ac">WTFD</td>
+              <td class="ac">4301</td>
+              <td class="ac">24H002</td>
+              <td class="ar">454</td>
+              <td class="ac">KG</td>
+            </tr>
+            <tr>
+              <td class="ar">145376</td>
+              <td>RED IRON OXIDE CATHAYCOAT RA11A</td>
+              <td class="ac">WTFD</td>
+              <td class="ac">4301</td>
+              <td class="ac">25B001</td>
+              <td class="ar">998.8</td>
+              <td class="ac">KG</td>
+            </tr>
+            <tr>
+              <td class="ar">145376</td>
+              <td>RED IRON OXIDE CATHAYCOAT RA11A</td>
+              <td class="ac">WTFD</td>
+              <td class="ac">W301</td>
+              <td class="ac">24H002</td>
+              <td class="ar">415.41</td>
+              <td class="ac">KG</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </section>
+
+    <section class="cardBox mt10" id="pjContCard6">
+      <div class="cardTit2 type2">
+        <div><i class="material-icons left">device_hub</i>Where Used</div>
+        <select>
+          <option value="1" selected>ALL</option>
+          <option value="2" selected>Waterford [WTFD]</option>
+          <option value="3">Sistersville [SVLL]</option>
+        </select>      
+      </div>
+
+      <div class="fixedTable mt10">
+        <table>
+          <colgroup>
+            <col style="width: 140px;">
+            <col style="width: auto;">
+            <col style="width: 120px;">
+            <col style="width: 200px;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Product Code <i class="material-icons vaM">arrow_drop_down</i></th>
+              <th>Product Description <i class="material-icons vaM">arrow_drop_down</i></th>
+              <th>Site <i class="material-icons vaM">arrow_drop_down</i></th>
+              <th>Amount Used per 100kg <i class="material-icons vaM">arrow_drop_down</i></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ar">9321</td>
+              <td>RTV116 55G-Drum (450.0LBS-204.30KG)</td>
+              <td class="ac">WTFD</td>
+              <td class="ar">25,250kg</td>
+            </tr>
+            <tr>
+              <td class="ar">13935</td>
+              <td>RTV159 55G-Drum (450.0LBS-204.30KG)</td>
+              <td class="ac">WTFD</td>
+              <td class="ar">19,965kg</td>
+            </tr>
+            <tr>
+              <td class="ar">35652</td>
+              <td>FRV1106P-(1.0LBS-0.454KG)</td>
+              <td class="ac">WTFD</td>
+              <td class="ar">27,253kg</td>
+            </tr>
+            <tr>
+              <td class="ar">37955</td>
+              <td>^RTV159-(1.0LBS-0.454KG)</td>
+              <td class="ac">WTFD</td>
+              <td class="ar">22,809kg</td>
+            </tr>
+            <tr>
+              <td class="ar">39173</td>
+              <td>SE5701D-(1.0LBS-0.454KG)</td>
+              <td class="ac">WTFD</td>
+              <td class="ar">23,837kg</td>
+            </tr>
+            <tr>
+              <td class="ar">39173</td>
+              <td>SE5701D-(1.0LBS-0.454KG)</td>
+              <td class="ac">WTFD</td>
+              <td class="ar">23,837kg</td>
+            </tr>
+            <tr>
+              <td class="ar">39173</td>
+              <td>SE5701D-(1.0LBS-0.454KG)</td>
+              <td class="ac">WTFD</td>
+              <td class="ar">23,837kg</td>
+            </tr>
+            <tr>
+              <td class="ar">150552</td>
+              <td>^FRV2106A/1.0LBS-0.454KGS - TECHLAB</td>
+              <td class="ac">WTFD</td>
+              <td class="ar">186,818kg</td>
+            </tr>
+            <tr>
+              <td class="ar">155526</td>
+              <td>FRV1106FC /1.0LBS-0.454KG</td>
+              <td class="ac">WTFD</td>
+              <td class="ar">190,410kg</td>
+            </tr>
+            <tr>
+              <td class="ar">156354</td>
+              <td>1497-132-04/(1.0LBS-0.454KG)</td>
+              <td class="ac">WTFD</td>
+              <td class="ar">190,991kg</td>
+            </tr>
+            <tr>
+              <td class="ar">161567</td>
+              <td>^1498-9-9 55G/DRUM/450.0LBS-204.30KG</td>
+              <td class="ac">WTFD</td>
+              <td class="ar">194,060kg</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="cardBox mt10" id="pjContCard7">
+      <div class="cardTit2"><i class="material-icons left">sync_alt</i>Procurement Management of Change</div>
+      <div class="itemPopCollap">
+        <ul class="collapsible expandable">
+          <li>
+            <div class="collapsible-header waves-effect waves-hColor">
+              <div class="collTit">[114] SAP# 145376 Red Iron Oxide Cathaycoat RA11A Change in Distributor</div>
+              <div>
+                <div class="roundBox blue">Status : Open</div>
+              </div>
+            </div>
+            <div class="collapsible-body">
+              <div class="inputArea">
+                <div class="row">
+                  <div class="col s2 ar">Date Initiated</div>
+                  <div class="col s4 val">26-Sep-2023</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Material SAP #</div>
+                  <div class="col s4 val">145376</div>
+                  <div class="col s2 ar">Material Description</div>
+                  <div class="col s4 val">Red Iron Oxide Cathaycoat RA11A</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Chemical Name</div>
+                  <div class="col s4 val">Red Iron Oxide Cathaycoat RA11A</div>
+                  <div class="col s2 ar">CAS #</div>
+                  <div class="col s4 val">1309-37-1</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Location</div>
+                  <div class="col s4 val">Waterford, New York</div>
+                  <div class="col s2 ar">Segment</div>
+                  <div class="col s4 val">Electronic Materials</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Current Vendor SAP#</div>
+                  <div class="col s4 val">60944</div>
+                  <div class="col s2 ar">Current Vendor Name</div>
+                  <div class="col s4 val">Van Horn Metz</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">New vendor Number</div>
+                  <div class="col s4 val">70724</div>
+                  <div class="col s2 ar">New Vendor Name</div>
+                  <div class="col s4 val">Oxerra Americas Inc.</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Reason for change</div>
+                  <div class="col s10 val">Vendor Driven Change</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Technical Basis</div>
+                  <div class="col s10 val">
+                    <div>Oxerra (formerly Cathay) has decided to manage Momentive account directly.  Previously RA11A was sourced through distribution - Van Horn Metz.  Van Horn Metz will no longer service our account rather we will source directly from Oxerra.  There is no change to the manufacturer or manufacturing process as a result of this change.</div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Commodity Manager</div>
+                  <div class="col s4 val">Test Commodity Manager</div>
+                  <div class="col s2 ar">Technology Leader</div>
+                  <div class="col s4 val">Gascoyne, David (20000791)</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Change Requested By</div>
+                  <div class="col s4 val">Mallory, Randy (20002634)</div>
+                  <div class="col s2 ar">Latest Updated Date</div>
+                  <div class="col s4 val">5/17/2024  4:35:00 AM</div>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="collapsible-header waves-effect waves-hColor">
+              <div class="collTit">[109] Material  67208 - UCON 50-A- SIL - new vendor introduction</div>
+              <div>
+                <div class="roundBox green">Status : Draft</div>
+              </div>
+            </div>
+            <div class="collapsible-body">
+              <div class="inputArea">
+                <div class="row">
+                  <div class="col s2 ar">Date Initiated</div>
+                  <div class="col s4 val">07-Sep-2023</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Material SAP #</div>
+                  <div class="col s4 val">67208</div>
+                  <div class="col s2 ar">Material Description</div>
+                  <div class="col s4 val">50-A-SIL/BULK</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Chemical Name</div>
+                  <div class="col s4 val">50-A-SIL</div>
+                  <div class="col s2 ar">CAS #</div>
+                  <div class="col s4 val">9038-95-3</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Location</div>
+                  <div class="col s4 val">Termoli, Italy</div>
+                  <div class="col s2 ar">Segment</div>
+                  <div class="col s4 val">Rigid Molded Specialties Foam</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Current Vendor SAP#</div>
+                  <div class="col s4 val">46545</div>
+                  <div class="col s2 ar">Current Vendor Name</div>
+                  <div class="col s4 val">INEOS EUROPE AG</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">New vendor Number</div>
+                  <div class="col s4 val">70724</div>
+                  <div class="col s2 ar">New Vendor Name</div>
+                  <div class="col s4 val">Oxerra Americas Inc.</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Reason for change</div>
+                  <div class="col s10 val">Vendor Driven Change</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Technical Basis</div>
+                  <div class="col s10 val">
+                    <div>Oxerra (formerly Cathay) has decided to manage Momentive account directly.  Previously RA11A was sourced through distribution - Van Horn Metz.  Van Horn Metz will no longer service our account rather we will source directly from Oxerra.  There is no change to the manufacturer or manufacturing process as a result of this change.</div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Commodity Manager</div>
+                  <div class="col s4 val">Test Commodity Manager</div>
+                  <div class="col s2 ar">Technology Leader</div>
+                  <div class="col s4 val">Gascoyne, David (20000791)</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Change Requested By</div>
+                  <div class="col s4 val">Mallory, Randy (20002634)</div>
+                  <div class="col s2 ar">Latest Updated Date</div>
+                  <div class="col s4 val">5/17/2024  4:35:00 AM</div>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="collapsible-header waves-effect waves-hColor">
+              <div class="collTit">[407] New Vendor Qualification Jiangsu Zhongshan Chemical CO., LTD.-Material 50-HB-260</div>
+              <div>
+                <div class="roundBox grey">Status : Closed</div>
+              </div>
+            </div>
+            <div class="collapsible-body">
+              <div class="inputArea">
+                <div class="row">
+                  <div class="col s2 ar">Date Initiated</div>
+                  <div class="col s4 val">07-Sep-2023</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Material SAP #</div>
+                  <div class="col s4 val">67208</div>
+                  <div class="col s2 ar">Material Description</div>
+                  <div class="col s4 val">50-A-SIL/BULK</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Chemical Name</div>
+                  <div class="col s4 val">50-A-SIL</div>
+                  <div class="col s2 ar">CAS #</div>
+                  <div class="col s4 val">9038-95-3</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Location</div>
+                  <div class="col s4 val">Termoli, Italy</div>
+                  <div class="col s2 ar">Segment</div>
+                  <div class="col s4 val">Rigid Molded Specialties Foam</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Current Vendor SAP#</div>
+                  <div class="col s4 val">46545</div>
+                  <div class="col s2 ar">Current Vendor Name</div>
+                  <div class="col s4 val">INEOS EUROPE AG</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">New vendor Number</div>
+                  <div class="col s4 val">70724</div>
+                  <div class="col s2 ar">New Vendor Name</div>
+                  <div class="col s4 val">Oxerra Americas Inc.</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Reason for change</div>
+                  <div class="col s10 val">Vendor Driven Change</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Technical Basis</div>
+                  <div class="col s10 val">
+                    <div>Oxerra (formerly Cathay) has decided to manage Momentive account directly.  Previously RA11A was sourced through distribution - Van Horn Metz.  Van Horn Metz will no longer service our account rather we will source directly from Oxerra.  There is no change to the manufacturer or manufacturing process as a result of this change.</div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Commodity Manager</div>
+                  <div class="col s4 val">Test Commodity Manager</div>
+                  <div class="col s2 ar">Technology Leader</div>
+                  <div class="col s4 val">Gascoyne, David (20000791)</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Change Requested By</div>
+                  <div class="col s4 val">Mallory, Randy (20002634)</div>
+                  <div class="col s2 ar">Latest Updated Date</div>
+                  <div class="col s4 val">5/17/2024  4:35:00 AM</div>
+                </div>
+              </div>
+            </div>
+          </li>
+          <li>
+            <div class="collapsible-header waves-effect waves-hColor">
+              <div class="collTit">[476] New Vendor Qualification ZHEJIANG HUANGMA CHEMICAL TRADE .-Material 50-HB-260</div>
+              <div>
+                <div class="roundBox grey">Status : Closed</div>
+              </div>
+            </div>
+            <div class="collapsible-body">
+              <div class="inputArea">
+                <div class="row">
+                  <div class="col s2 ar">Date Initiated</div>
+                  <div class="col s4 val">07-Sep-2023</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Material SAP #</div>
+                  <div class="col s4 val">67208</div>
+                  <div class="col s2 ar">Material Description</div>
+                  <div class="col s4 val">50-A-SIL/BULK</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Chemical Name</div>
+                  <div class="col s4 val">50-A-SIL</div>
+                  <div class="col s2 ar">CAS #</div>
+                  <div class="col s4 val">9038-95-3</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Location</div>
+                  <div class="col s4 val">Termoli, Italy</div>
+                  <div class="col s2 ar">Segment</div>
+                  <div class="col s4 val">Rigid Molded Specialties Foam</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Current Vendor SAP#</div>
+                  <div class="col s4 val">46545</div>
+                  <div class="col s2 ar">Current Vendor Name</div>
+                  <div class="col s4 val">INEOS EUROPE AG</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">New vendor Number</div>
+                  <div class="col s4 val">70724</div>
+                  <div class="col s2 ar">New Vendor Name</div>
+                  <div class="col s4 val">Oxerra Americas Inc.</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Reason for change</div>
+                  <div class="col s10 val">Vendor Driven Change</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Technical Basis</div>
+                  <div class="col s10 val">
+                    <div>Oxerra (formerly Cathay) has decided to manage Momentive account directly.  Previously RA11A was sourced through distribution - Van Horn Metz.  Van Horn Metz will no longer service our account rather we will source directly from Oxerra.  There is no change to the manufacturer or manufacturing process as a result of this change.</div>
+                  </div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Commodity Manager</div>
+                  <div class="col s4 val">Test Commodity Manager</div>
+                  <div class="col s2 ar">Technology Leader</div>
+                  <div class="col s4 val">Gascoyne, David (20000791)</div>
+                </div>
+                <div class="row">
+                  <div class="col s2 ar">Change Requested By</div>
+                  <div class="col s4 val">Mallory, Randy (20002634)</div>
+                  <div class="col s2 ar">Latest Updated Date</div>
+                  <div class="col s4 val">5/17/2024  4:35:00 AM</div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+
+    <section class="cardBox mt10" id="pjContCard8">
+      <div class="cardTit2 type2">
+        <div><i class="material-icons left">task_alt</i>Quality Specifications / Result Summary</div>
+        <select>
+          <option value="1">ALL</option>
+          <option value="2" selected>Waterford [WTFD]</option>
+          <option value="3">Sistersville [SVLL]</option>
+        </select>      
+      </div>      
+      <div class="fixedTable mt10">
+        <table>
+          <colgroup>
+            <col style="width: auto;">
+            <col style="width: 80px;">
+            <col style="width: 100px;">
+            <col style="width: 100px;">
+            <col style="width: 100px;">
+            <col style="width: 100px;">
+            <col style="width: 100px;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th rowspan="2">Inspection Properties <i class="material-icons vaM">arrow_drop_down</i></th>
+              <th rowspan="2">Unit of Measure</th>
+              <th colspan="2">Specification</th>
+              <th colspan="3">Result</th>
+            </tr>
+            <tr>
+              <th>Min <i class="material-icons vaM">arrow_drop_down</i></th>
+              <th>Max <i class="material-icons vaM">arrow_drop_down</i></th>
+              <th>Min <i class="material-icons vaM">arrow_drop_down</i></th>
+              <th>Max <i class="material-icons vaM">arrow_drop_down</i></th>
+              <th>Mean <i class="material-icons vaM">arrow_drop_down</i></th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>VENDOR CERT DATA | A+CERT: VEND</td>
+              <td class="ac">-</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+            </tr>
+            <tr>
+              <td>VENDOR CERT DATA  | A+CERT: VEND LOT#</td>
+              <td class="ac">-</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+            </tr>
+            <tr>
+              <td>VENDOR CERT DATA | CHEM: ASSAY</td>
+              <td class="ac">-</td>
+              <td class="ar">95</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+            </tr>
+            <tr>
+              <td>VEND CERT DATA | MESH: % RETAINED ON 325</td>
+              <td class="ac">%</td>
+              <td class="ar">-</td>
+              <td class="ar">0.01</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+            </tr>
+            <tr>
+              <td>VENDOR CERT DATA | MOISTR: % WATER</td>
+              <td class="ac">%</td>
+              <td class="ar">-</td>
+              <td class="ar">1</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+            </tr>
+            <tr>
+              <td>VENDOR CERT DATA | PHYS: SLURRY PH</td>
+              <td class="ac">-</td>
+              <td class="ar">6</td>
+              <td class="ar">8</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+            </tr>
+            <tr>
+              <td>VENDOR CERT DATA  | PHYS: TINT STRENGTH</td>
+              <td class="ac">%</td>
+              <td class="ar">95</td>
+              <td class="ar">105</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+              <td class="ar">-</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </section>
+
+    <section class="cardBox mt10" id="pjContCard9">
+      <div class="cardTit2 type2">
+        <div><i class="material-icons left">sticky_note_2</i>Subject Matter Expert Notes</div>
+        <div class="mr10"><a href="javascript:;" class="waves-effect waves-light hBtn hBlue modal-trigger" data-target="bucketModal"><i class="material-icons left">create</i><span class="label">New Post</span></a></div>
+      </div>
+      <div class="itemPopCollap">
+        <ul class="collapsible expandable">
+          <li>
+            <div class="collapsible-header waves-effect waves-hColor">
+              <div class="collTit">[145376] Red Iron Oxide Cathaycoat RA11A – Distributor Change & Implications</div>
+              <div>
+                <div class="roundBox mr10">Last Updated by : Brendan O'Keefe</div>
+                <div class="roundBox">Last Updated On : 25-Jun-2025</div>
+              </div>
+            </div>
+            <div class="collapsible-body">
+              <div class="btnArea mt0 mb10">
+                <div class="mr10"><a href="javascript:;" class="waves-effect waves-light hBtn hBlue wd150px"><i class="material-icons left">edit</i><span class="label">Edit Post</span></a></div>
+                <div class="mr10"><a href="javascript:;" class="waves-effect waves-light hBtn hGrey wd150px"><i class="material-icons left">delete</i><span class="label">Delete Post</span></a></div>
+              </div>
+
+              <div class="inputArea">
+                <div class="row">
+                  <div class="col s12 val">
+                    <div class="fontM">Background</div>
+                    <div>Red Iron Oxide Cathaycoat RA11A (Material #145376) has been widely used as a pigment in our water-based architectural coatings. It offers excellent dispersibility, color stability, and compatibility with our emulsion systems.</div>
+                    <br>
+                    <div class="fontM">Issue Summary</div>
+                    <div>As of September 2023, our procurement team reported a change in the distributor for RA11A due to regional restructuring by the manufacturer, Cathay Industries. Initial batches from the new distributor (DeltaChem Korea) raised concerns related to:</div>
+                    <div>Slight increase in median particle size (D50 ~0.45 μm vs. spec 0.3–0.4 μm)</div>
+                    <div>Increased batch-to-batch color variation (∆E > 1.0 in some cases)</div>
+                    <div>Reduced performance in gloss retention during accelerated weathering tests</div>
+                    <br>
+                    <div class="fontM">Investigation</div>
+                    <div>QC and Application Lab jointly conducted revalidation tests. XRD and SEM-EDX results indicate no change in crystal phase or impurity levels. However, the dispersion stability in acrylic binder showed slightly higher viscosity rise over 1 week (Brookfield @ 25°C: +8%).</div>
+                    <br>
+                    <div class="fontM">Action Taken</div>
+                    <div>Feedback shared with new distributor; tighter particle size control requested.</div>
+                    <div>Temporary hold placed on large-scale reformulation using RA11A until spec deviation is resolved.</div>
+                    <div>Alternative pigment grades (e.g., RA11B, Bayer 130M) are under screening for possible substitution.</div>
+                    <br>
+                    <div class="fontM">Recommendations</div>
+                    <div>Continue using RA11A for low-performance grades under internal-use-only label.</div>
+                    <div>For exterior or high-gloss applications, proceed only after additional QC confirmation.</div>
+                    <div>Cross-functional alignment between procurement, lab, and QA is essential for ongoing monitoring.</div>
+                    <div class="ac"><img src="/img/a894b185-0609-4a66-8d37-01af4a609e62.png" style="width: 400px;"></div>
+                    <div class="ac">[Figure 1. Particle size distribution comparison of RA11A from existing and new suppliers]</div>
+                  </div>
+                </div>
+              </div>
+
+              <div class="notesRply">
+                <ul>
+                  <li>
+                    <div class="rplyCont">
+                      <div class="usrPic"><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+                      <div class="cntArea">
+                        <div class="cntTitArea">
+                          <div>
+                            <span class="usr">JONGHO LEE</span>
+                            <span class="date">27-Jun-2025</span>
+                          </div>
+                          <div class="btns">
+                            <a href="javascript:;" class="waves-effect waves-light hBtn hGreen hSmall mr10"><span class="label">Mody</span></a>
+                            <a href="javascript:;" class="waves-effect waves-light hBtn hgrey hSmall"><span class="label">Del</span></a>
+                          </div>
+                        </div>
+                        <div class="cont">It's so nice!</div>
+                      </div>
+                    </div>
+                  </li>
+                  <li>
+                    <div class="rplyCont">
+                      <div class="usrPic"><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+                      <div class="cntArea">
+                        <div class="cntTitArea">
+                          <div>
+                            <span class="usr">JONGHO LEE</span>
+                            <span class="date">27-Jun-2025</span>
+                          </div>
+                          <div class="btns">
+                            <a href="javascript:;" class="waves-effect waves-light hBtn hGreen hSmall mr10"><span class="label">Mody</span></a>
+                            <a href="javascript:;" class="waves-effect waves-light hBtn hgrey hSmall"><span class="label">Del</span></a>
+                          </div>
+                        </div>
+                        <div class="cont">This is a very informative comparison. The tighter particle size distribution from the new supplier looks promising, especially for consistency in formulation. It's great to see cross-functional alignment emphasized—ensuring collaboration between procurement, QA, and lab teams is key for long-term stability. Looking forward to updates after QC confirmation on exterior applications.</div>
+                      </div>                    
+                    </div>
+
+                  </li>
+                </ul>
+              </div>
+
+              <div class="notesRply typeReg">
+                <ul>
+                  <li>
+                    <div class="rplyCont">
+                      <div class="usrPic"><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+                      <div class="cntArea">
+                        <div class="cntTitArea">
+                          <div>
+                            <span class="usr">JONGHO LEE</span>
+                          </div>
+                          <div class="btns">
+                            <a href="javascript:;" class="waves-effect waves-light hBtn hBlue hSmall"><span class="label">Add</span></a>
+                          </div>
+                        </div>
+                        <div><textarea></textarea></div>
+                      </div>                    
+                    </div>
+                  </li>
+                </ul>
+              </div>
+
+            </div>
+          </li>
+          <li>
+            <div class="collapsible-header waves-effect waves-hColor">
+              <div class="collTit">Surface Defects in Silicone Resin Coatings: Root Causes & Mitigation Strategies</div>
+              <div>
+                <div class="roundBox mr10">Last Updated by : Joe Zampella</div>
+                <div class="roundBox">Last Updated On : 05-Jun-2025</div>
+              </div>
+            </div>
+            <div class="collapsible-body">
+              <div class="inputArea">
+                <div class="row">
+                  <div class="col s12 val">
+                    <div class="fontM">Background</div>
+                    <div>During recent application testing of our methyl silicone resin system (SR-880 series), several surface defects—including cratering, pinholes, and fisheyes—were observed on coated aluminum substrates. These defects were inconsistent across batches and appeared more prominently after viscosity adjustments.</div>
+                    <br>
+                    <div class="fontM">Root Cause Analysis</div>
+                    <div>Cratering: Identified as caused by localized contamination (likely surfactant residue) or poor substrate wetting.</div>
+                    <div>Pinholes: Correlated with fast solvent evaporation during spray application. Environmental RH < 35% was a contributing factor.</div>
+                    <div>Fisheyes: Traced back to cross-contamination from incompatible silicone fluids in shared equipment.</div>
+                    <br>
+                    <div class="fontM">Corrective Measures</div>
+                    <div>Implemented stricter solvent filtration and substrate pre-cleaning (IPA wipe + baked drying).</div>
+                    <div>Modified formulation to include 0.1% flow agent (Silwet L-7500) to improve leveling.</div>
+                    <div>Added flash-off delay before thermal cure step to reduce entrapped volatiles.</div>
+                    <br>
+                    <div class="fontM">Results</div>
+                    <div>Post-implementation, surface smoothness improved by over 85% (visual inspection and 3D surface scan), and defect rate dropped below 1%. Internal spec alignment has been updated accordingly.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </article>
+
+  <article id="bucketModal" class="modal" style="width: 80%;">
+    <div class="modal-header mochaBg">
+      <h5>New Post</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">              
+      <div class="inputArea">
+        <div class="row">
+          <div class="col s1 ar">Title</div>
+          <div class="col s11 val">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+          <div class="col s1 ar">content</div>
+          <div class="col s11 val">
+            <div><img src="/img/edit.PNG" style="width: 100%;"></div>
+          </div>
+        </div>
+      </div>
+      <div class="btnArea">
+        <a href="javascript:;" class="waves-effect waves-light hBtn hBlue wd100px mr10" id="newPjBtn"><i class="material-icons left">save</i><span class="label">Save</span></a>
+        <a href="javascript:;" class="waves-effect waves-light hBtn hGrey wd100px"><i class="material-icons left">cancel</i><span class="label">Cancel</span></a>
+      </div>
+    </div>
+  </article>
+
+  <article class="bgLayer"></article>
+</body> 
+</html>

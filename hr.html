@@ -1,0 +1,280 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/hr_common.css">
+    <link type="text/css" rel="stylesheet" href="/css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script>
+      $(document).ready(function(){
+        $(".personList li").click(function(){
+          $('.modal').modal('open');
+        });
+
+
+        $('.modal').modal();
+        // $('.modal').modal('open');
+      });
+    </script>
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <section class="leftSection">
+        <div class="logo">
+          <div class="tit"><span class="apis">JobSync</span></div>
+        </div>
+      </section>
+      <section class="rightSection">
+      </section>
+    </nav>
+  </header>
+
+  <article class="contArea row mt30">
+    <section class="col s4">
+      <div class="cardBox">
+        <div class="cardTit">직무분류</div>
+        <div class="searchBox">
+          <div class="wd100p"><input type="text" class="browser-default" placeholder="검색" value="평가"></div>
+        </div>
+        <div class="treeMap hScroll" style="max-height: calc(100vh - 240px);">
+          <ul>
+            <li class="waves-effect waves-orange lv1 on">KCC</li>
+            <div>
+              <ul>
+                <li class="waves-effect waves-orange lv2">경영일반</li>
+                <li class="waves-effect waves-orange lv2 on">관리</li>
+                <div>
+                  <ul>
+                    <li class="waves-effect waves-orange lv3 on">인사</li>
+                    <div>
+                      <ul>
+                        <li class="waves-effect waves-orange lv4">조직/정원관리</li>
+                        <li class="waves-effect waves-orange lv4">직무관리</li>
+                        <li class="waves-effect waves-orange lv4">채용</li>
+                        <li class="waves-effect waves-orange lv4 on">
+                          <span class="srchVal">평가</span>
+                          <div class="modyArea">
+                            <i class="material-icons mpmOrange">add_box</i>
+                            <i class="material-icons">indeterminate_check_box</i>
+                          </div>
+                        </li>
+                        <div>
+                          <ul>
+                            <li class="treeInput lv5 cont">
+                              <div class="aniInput">
+                                <input type="text" value="" class="browser-default">
+                                <span class="focus-border"></span>
+                              </div>
+                              <div class="modyArea">
+                                <i class="material-icons mpmOrange">check_box</i>
+                                <i class="material-icons">indeterminate_check_box</i>
+                              </div>
+                            </li>
+                            <li class="waves-effect waves-orange lv5 cont">수습근무<span class="srchVal">평가</span></li>
+                            <li class="waves-effect waves-orange lv5 cont">촉탁근무<span class="srchVal">평가</span></li>
+                            <li class="waves-effect waves-orange lv5 cont">집단<span class="srchVal">평가</span></li>
+                            <li class="waves-effect waves-orange lv5 cont slctd">인사<span class="srchVal">평가</span></li>
+                            <li class="waves-effect waves-orange lv5 cont">저성과자 관리</li>
+                          </ul>
+                        </div>
+                        <li class="waves-effect waves-orange lv4">승진</li>
+                        <li class="waves-effect waves-orange lv4">이동관리</li>
+                        <li class="waves-effect waves-orange lv4">복무관리</li>
+                        <li class="waves-effect waves-orange lv4">노무관리</li>
+                        <li class="waves-effect waves-orange lv4">급여/성과급</li>
+                        <li class="waves-effect waves-orange lv4">후생복리</li>
+                      </ul>
+                    </div>
+                    <li class="waves-effect waves-orange lv3">교육</li>
+                    <li class="waves-effect waves-orange lv3">총무</li>
+                    <li class="waves-effect waves-orange lv3">자산</li>
+                    <li class="waves-effect waves-orange lv3">구매/자재</li>
+                    <li class="waves-effect waves-orange lv3">보안</li>
+                    <li class="waves-effect waves-orange lv3">준법/법무</li>
+                    <li class="waves-effect waves-orange lv3">전산</li>
+                    <li class="waves-effect waves-orange lv3">회계_세무회계</li>
+                    <li class="waves-effect waves-orange lv3">회계_재무회계</li>
+                    <li class="waves-effect waves-orange lv3">회계_관리회계</li>
+                    <li class="waves-effect waves-orange lv3">재정</li>
+                    <li class="waves-effect waves-orange lv3">경영전략_기획</li>
+                    <li class="waves-effect waves-orange lv3">경영전략_홍보</li>
+                    <li class="waves-effect waves-orange lv3">스포츠지원</li>
+                    <li class="waves-effect waves-orange lv3">ESG</li>
+                  </ul>
+                </div>
+                <li class="waves-effect waves-orange lv2">생산</li>
+                <li class="waves-effect waves-orange lv2">연구</li>
+                <li class="waves-effect waves-orange lv2">영업</li>
+              </ul>
+            </div>
+          </ul>
+        </div>
+      </div>
+    </section>
+    <section class="col s4">
+      <div class="cardBox">
+        <div class="cardTit">상세업무</div>
+        <div class="taskArea">
+          <div class="waves-effect waves-green taskBox">인사평가 기준 수립</div>
+          <div class="waves-effect waves-green taskBox on">평가자 지정(Matrix평가 포함)</div>
+          <div class="waves-effect waves-green taskBox">평가 실시</div>
+          <div class="waves-effect waves-green taskBox">평가회의 실시</div>
+          <div class="waves-effect waves-green taskBox">평가지수 산출</div>
+          <div class="waves-effect waves-green taskBox addBox"><i class="material-icons left">add</i>업무추가하기</div>
+          <div class="waves-effect waves-green taskBox addBox">
+            <div class="aniInput">
+              <input type="text" value="" class="browser-default wd200px">
+              <span class="focus-border"></span>
+            </div>
+            <div class="ht24">
+              <i class="material-icons mpmOrange ml10 mr0">check_box</i>
+              <i class="material-icons mr0" style="color: #555;">indeterminate_check_box</i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+    <section class="col s4">
+      <div class="cardBox">
+        <div class="cardTit">수행인원</div>
+        <div class="searchBox">
+          <div>
+            <div class="switch">
+              <label>
+                전체 인원
+                <input type="checkbox">
+                <span class="lever"></span>
+              </label>
+            </div>
+          </div>
+          <div><input type="text" class="browser-default" placeholder="사람 검색"></div>
+        </div>
+
+        <div class="personList hScroll" style="max-height: calc(100vh - 240px);">
+          <ul >
+            <li class="waves-effect waves-orange">
+              <div class="personInfo">
+                <div class="pName"><i class="material-icons left">person</i>황웅환<span class="badgeInfo">확정</span></div>
+                <div><span>인사팀</span> | <span>010-1234-4567</span></div>
+              </div>
+              <div class="mt10">
+                <div class="roundBox">평가회의 실시</div>
+                <div class="roundBox">평가지수 산출</div>
+              </div>
+            </li>
+            <li class="waves-effect waves-orange">
+              <div class="personInfo">
+                <div class="pName"><i class="material-icons left">person</i>황웅환</div>
+                <div><span>인사팀</span> | <span>010-1234-4567</span></div>
+              </div>
+            </li>
+            <li class="waves-effect waves-orange">
+              <div class="personInfo">
+                <div class="pName"><i class="material-icons left">person</i>황웅환</div>
+                <div><span>인사팀</span> | <span>010-1234-4567</span></div>
+              </div>
+            </li>
+            <li class="waves-effect waves-orange">
+              <div class="personInfo">
+                <div class="pName"><i class="material-icons left">person</i>황웅환</div>
+                <div><span>인사팀</span> | <span>010-1234-4567</span></div>
+              </div>
+            </li>
+            <li class="waves-effect waves-orange">
+              <div class="personInfo">
+                <div class="pName"><i class="material-icons left">person</i>황웅환</div>
+                <div><span>인사팀</span> | <span>010-1234-4567</span></div>
+              </div>
+            </li>
+            <li class="waves-effect waves-orange">
+              <div class="personInfo">
+                <div class="pName"><i class="material-icons left">person</i>황웅환</div>
+                <div><span>인사팀</span> | <span>010-1234-4567</span></div>
+              </div>
+            </li>
+            <li class="waves-effect waves-orange">
+              <div class="personInfo">
+                <div class="pName"><i class="material-icons left">person</i>황웅환</div>
+                <div><span>인사팀</span> | <span>010-1234-4567</span></div>
+              </div>
+            </li>
+            <li class="waves-effect waves-orange">
+              <div class="personInfo">
+                <div class="pName"><i class="material-icons left">person</i>황웅환</div>
+                <div><span>인사팀</span> | <span>010-1234-4567</span></div>
+              </div>
+            </li>
+            <li class="waves-effect waves-orange">
+              <div class="personInfo">
+                <div class="pName"><i class="material-icons left">person</i>황웅환</div>
+                <div><span>인사팀</span> | <span>010-1234-4567</span></div>
+              </div>
+            </li>
+            <li class="waves-effect waves-orange">
+              <div class="personInfo">
+                <div class="pName"><i class="material-icons left">person</i>황웅환</div>
+                <div><span>인사팀</span> | <span>010-1234-4567</span></div>
+              </div>
+            </li>
+            <li class="waves-effect waves-orange">
+              <div class="personInfo">
+                <div class="pName"><i class="material-icons left">person</i>황웅환</div>
+                <div><span>인사팀</span> | <span>010-1234-4567</span></div>
+              </div>
+            </li>
+            <li class="waves-effect waves-orange">
+              <div class="personInfo">
+                <div class="pName"><i class="material-icons left">person</i>황웅환</div>
+                <div><span>인사팀</span> | <span>010-1234-4567</span></div>
+              </div>
+            </li>
+          </ul>
+        </div>
+      </div>
+    </section>
+  </article>
+
+  <article id="personModal" class="modal" style="width: 800px;">
+    <div class="modal-header mochaBg">
+      <h5><i class="material-icons left">person</i>직무 요약</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div class="userInfo">
+        <div class="pName"><i class="material-icons left">person</i>황웅환</div>
+        <div><span>인사팀</span> | <span>010-1234-4567</span></div>
+      </div>
+      <div class="userInfo mt20">
+        <div>
+          <div class="pName dpInlineBlock mr10">상세업무</div>
+          <div class="dpInlineBlock">평가자 지정(Matrix평가 포함)</div>
+        </div>
+        <div>
+          <div class="switch">
+            <label>
+              <input type="checkbox">
+              <span class="lever"></span>
+              담당자 지정
+            </label>
+          </div>
+        </div>
+      </div>
+      <div class="userCont">
+        한국 내 HR 및 노동 관계 업무를 수행하며, 현지 운영 관리자 및 HR 팀과 협력하여 HR 프로세스의 원활한 운영을 지원하는 역할입니다.<br>주요 업무에는 채용, 직원 관계, 교육 및 개발, 성과 관리, 복리후생 및 급여, 노사 관계, 정부 대응 등이 포함됩니다.<br> 또한, 노사협의회(LMC)와 협력하여 긍정적인 근로 환경을 조성하고, 회사 정책 및 법규를 준수하며 HR 관련 자문을 제공합니다.
+      </div>
+      <div class="btnArea">
+        <a href="javascript:;" class="waves-effect waves-light btn-small mochaBg"><i class="material-icons left mr10">preview</i>직무기술서</a>
+        <a href="javascript:;" class="waves-effect waves-light btn-small kccBlueBg"><i class="material-icons left">save</i>저장하기</a>
+      </div>
+    </div>
+  </article>
+</body>
+</html>

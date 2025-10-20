@@ -1,0 +1,960 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SFA MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_SFA_common.css">
+    <link type="text/css" rel="stylesheet" href="/css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/funnel.js"></script> <!-- 🔥 Funnel 모듈 추가 -->
+    <script src="https://code.highcharts.com/modules/item-series.js"></script>
+
+    <script>
+        $(window).scroll(function() {
+          if($(document).scrollTop() < 60){
+            $("nav").removeClass("on", 100);
+          }else{
+            $("nav").addClass("on", 100);
+          }
+        });
+
+      $(document).ready(function(){
+        Highcharts.chart('container', {
+            chart: {
+                type: 'column',
+                style: {
+                  fontFamily: 'SF-Light'
+                }
+            },
+            title: {
+                text: ''
+            },
+            xAxis: {
+                categories: [
+                    'Q1 CY2019', 'Q3 CY2019', 'Q1 CY2020', 'Q3 CY2020', 'Q1 CY2021', 'Q3 CY2021',17
+                    'Q1 CY2022', 'Q3 CY2022', 'Q1 CY2023', 'Q3 CY2023', 'Q1 CY2024', 'Q3 CY2024'
+                ], 
+                crosshair: true
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: 'Sum of Actual Sales ($M)'
+                },
+                labels: {
+                    formatter: function() {
+                        return '$' + this.value + 'M';
+                    }
+                }
+            },
+            series: [{
+                name: 'Posting Date',
+                data: [17, 25, 21, 19, 18, 25, 23, 28, 25, 30, 26, 33], // 데이터 값 (백만 달러 단위)
+                color: '#cac494', // 파란색 계열
+                dataLabels: {
+                    enabled: true, // 숫자 표시 활성화
+                    format: '${y}M', // 숫자 형식
+                    inside: true, // 막대 안에 표시
+                    rotation: -90, // 🔥 숫자를 세로로 표시
+                    verticalAlign: 'middle', // 막대 중앙 정렬
+                    align: 'center', // 가로 정렬
+                    style: {
+                        color: 'black', // 글자 색상 (어두운 배경에서는 흰색)
+                        fontWeight: 'bold',
+                        textOutline: 'none' // 테두리 없애기
+                    }
+                }
+            }],
+            tooltip: {
+                pointFormat: '<b>${point.y}M</b>'
+            },
+            plotOptions: {
+                column: {
+                    dataLabels: {
+                        enabled: true // 막대 안에 숫자 표시
+                    }
+                }
+            },
+            credits: {enabled: false}
+        });
+
+        Highcharts.chart('container2', {
+            chart: {
+                type: 'funnel',
+                style: {
+                  fontFamily: 'SF-Light'
+                }
+            },
+            title: {
+                text: 'Sum of Estimated Amount (USD): $200k',
+                style: {
+                    fontSize: '15px'
+                }
+            },
+            legend: {
+                enabled: true, // 🔥 범례 활성화
+                labelFormatter: function () {
+                    let index = this.index + 1; // 1부터 시작하는 번호 추가
+                    return index + ') ' + this.name; // "1) New/Price Open" 형식으로 표시
+                },
+                align: 'right', // 🔥 범례 오른쪽 정렬
+                verticalAlign: 'top', // 🔥 위쪽 정렬
+                layout: 'vertical' // 🔥 세로 방향 정렬
+            },
+            plotOptions: {
+                series: {
+                    dataLabels: {
+                        enabled: true,
+                        format: '${y}k', // 🔥 값 표시 ($100k 형식)
+                        inside: true, // 🔥 도형 안에 배치
+                        verticalAlign: 'middle', // 🔥 세로 중앙 정렬
+                        align: 'center', // 가로 중앙 정렬
+                        style: {
+                            fontSize: '18px',
+                            fontWeight: 'bold',
+                            color: 'black', // 글자를 흰색으로 변경 (파란색 배경 대비)
+                            textOutline: 'none' // 테두리 제거
+                        }
+                    },
+                    neckWidth: '30%',
+                    neckHeight: '20%',
+                    width: '80%'
+                }
+            },
+            series: [{
+                name: 'Stage',
+                data: [
+                    ['New/Price Open', 100],
+                    ['Negotiating', 100]
+                ],
+                colors: ['#cac494', '#ebc39e']
+            }],
+            credits: {enabled: false}
+        });
+
+        Highcharts.chart('container3', {
+          chart: {
+            type: 'bar',
+            style: {
+              fontFamily: 'SF-Light'
+            }
+          },
+          title: {
+              text: 'Sum of Line Item Amount $',
+              style: {
+                  fontSize: '15px'
+              }
+          },
+          xAxis: {
+            categories: ['Q1 CY2023', 'Q2 CY2023', 'Q3 CY2023', 'Q4 CY2023', 'Q3 CY2024', 'Q4 CY2024', 'Q1 CY2025', 'Q2 CY2025'],
+            title: {
+              text: null
+            },
+            labels: {
+              style: {
+                fontSize: '12px'
+              }
+            }
+          },
+          yAxis: {
+            min: 0,
+            max: 10000000,
+            title: {
+              text: null
+            },
+            labels: {
+              formatter: function() {
+                if (this.value >= 1000000) {
+                  return this.value / 1000000 + 'M';
+                } else {
+                  return this.value / 1000 + 'k';
+                }
+              }
+            },
+            gridLineWidth: 0.5,
+            gridLineDashStyle: 'Dot',
+            tickPositions: [0, 5000000, 10000000]
+          },
+          plotOptions: {
+            bar: {
+              dataLabels: {
+                enabled: true,
+                formatter: function() {
+                  if (this.y >= 1000000) {
+                    return (this.y / 1000000).toFixed(1) + 'M';
+                  } else if (this.y >= 1000) {
+                    return (this.y / 1000).toFixed(0) + 'k';
+                  } else {
+                    return this.y;
+                  }
+                }
+              }
+            }
+          },
+          legend: {
+            enabled: false
+          },
+          credits: {
+            enabled: false
+          },
+          series: [{
+            name: 'Amount',
+            data: [1800000, 8900000, 1100000, 243000, 288000, 1000000, 335000, 631.4],
+            color: '#d19c97'
+          }],
+          tooltip: {
+            formatter: function() {
+              if (this.y >= 1000000) {
+                return this.x + ': ' + (this.y / 1000000).toFixed(1) + 'M';
+              } else if (this.y >= 1000) {
+                return this.x + ': ' + (this.y / 1000).toFixed(0) + 'k';
+              } else {
+                return this.x + ': ' + this.y;
+              }
+            }
+          }
+        });
+
+        Highcharts.chart('container4', {
+            colors: ['#899f6a', '#7391c9', '#a793b9', '#d19c97', '#a47764', '#a89a8f', '#9a8b4e', '#f0e9e0'],
+            chart: {
+                type: 'bar',
+                style: {
+                  fontFamily: 'SF-Light'
+                }
+            },
+            title: {
+                text: 'Sum of Actual Sales',
+                style: {
+                    fontSize: '15px'
+                }
+            },
+            xAxis: {
+                categories: [
+                    'Q1 CY2019', 'Q2 CY2019', 'Q3 CY2019', 'Q4 CY2019',
+                    'Q1 CY2020', 'Q2 CY2020', 'Q3 CY2020', 'Q4 CY2020',
+                    'Q1 CY2021', 'Q2 CY2021'
+                ]
+            },
+            yAxis: {
+                title: {
+                    text: 'Sales (in million)'
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: true, // 데이터 라벨 표시
+                        formatter: function () {
+                            // 데이터 라벨도 M 또는 K 단위로 표시
+                            if (this.y >= 1000000) {
+                                return '$' + (this.y / 1000000) + 'M';
+                            } else if (this.y >= 1000) {
+                                return '$' + (this.y / 1000) + 'K';
+                            }
+                            return this.y;
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: 'Sales',
+                data: [12000000, 18000000, 15000000, 17000000, 12000000, 6900000, 15000000, 15000000, 16000000, 14000000],
+                colorByPoint: true
+            }],
+            credits: {enabled: false}
+        });
+
+        const people = [
+            { name: 'Shin Duho', image: 'https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259' },
+            { name: 'Jeong Changmoo', image: 'https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20806011' },
+            { name: 'JOO SANGWON', image: 'https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20503079' },
+            { name: 'JI YOUNGCHAN', image: 'https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20702451' },
+            { name: 'LEE JONGHO', image: 'https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804' }
+        ];
+
+        // Highcharts 차트 생성
+        Highcharts.chart('container5', {
+            chart: {
+                type: 'bar',
+                style: {
+                  fontFamily: 'SF-Light'
+                }
+            },
+            title: {
+                text: 'Sum of Estimated Amount (USD)',
+                style: {
+                    fontSize: '15px'
+                }
+            },
+            xAxis: {
+                categories: people.map(person => person.name), // X축 카테고리 (이름)
+                title: {
+                    text: null
+                },
+                labels: {
+                    useHTML: true, // HTML 사용 활성화
+                    formatter: function () {
+                        const person = people[this.pos]; // 현재 카테고리 인덱스에 해당하는 인물 정보
+                        return `
+                            <div style="display: flex; align-items: center;">
+                                <span>${person.name}</span>
+                                <img src="${person.image}" class="label-image" alt="${person.name}"/>
+                            </div>
+                        `;
+                    }
+                }
+            },
+            yAxis: {
+                min: 0,
+                title: {
+                    text: '',
+                    align: 'high'
+                },
+                labels: {
+                    formatter: function () {
+                        // 금액을 M(백만) 또는 K(천) 단위로 표시
+                        if (this.value >= 1000000) {
+                            return '$' + (this.value / 1000000) + 'M';
+                        } else if (this.value >= 1000) {
+                            return '$' + (this.value / 1000) + 'K';
+                        }
+                        return this.value;
+                    }
+                }
+            },
+            legend: {
+                enabled: false
+            },
+            tooltip: {
+                valuePrefix: '$', // 툴팁에 표시될 값 앞에 $ 추가
+                valueSuffix: ' USD' // 툴팁에 표시될 값 뒤에 USD 추가
+            },
+            plotOptions: {
+                bar: {
+                    dataLabels: {
+                        enabled: true, // 데이터 라벨 표시
+                        formatter: function () {
+                            // 데이터 라벨도 M 또는 K 단위로 표시
+                            if (this.y >= 1000000) {
+                                return '$' + (this.y / 1000000) + 'M';
+                            } else if (this.y >= 1000) {
+                                return '$' + (this.y / 1000) + 'K';
+                            }
+                            return this.y;
+                        }
+                    }
+                }
+            },
+            series: [{
+                name: 'Amount',
+                data: [6900000, 6700000, 2900000, 1900000, 50000], // 금액 데이터를 숫자로 입력 (USD 단위)
+                color: '#7391c9' // 막대 색상 (이미지에서 파란색 사용)
+            }],
+            credits: {enabled: false}
+        });
+
+        $(document).on("mouseenter", ".srchRstArea .exLi", function() {
+          var $this = $(this);
+
+          $(".srchRstArea .rstDt").hide();
+          $(".srchDtArea").addClass("on");
+          $('.srchDtArea').one('transitionend', function() {
+            $("#"+$this.attr("data-id")).show();
+            $(".srchAIArea").show();
+          });
+        }).on("mouseleave", ".srchRstArea .exLi", function() {
+          var $this = $(this);
+          var $related = $(event.relatedTarget);
+          if (!$related.closest(".srchAIArea").length) {
+            $(".srchDtArea").removeClass("on");
+            $(".srchAIArea").hide();
+            $("#" + $this.attr("data-id")).hide();
+          }
+        });
+
+        $(".bgLayer").click(function(){
+          $(".bgLayer").hide();
+          $(".contArea").removeClass("blur");
+          $(".srchRstArea, .srchDtArea").slideUp();
+        });
+
+        $("#mainSrchInput").focus(function(){
+          $(".bgLayer").show();
+          $(".contArea").addClass("blur");
+          $(".srchDtArea, .srchRstArea").slideDown();
+        });
+
+        $('select').formSelect();
+        
+        fnSetAniNum();
+      });
+
+      function fnSetAniNum(){
+        const counters = document.querySelectorAll('.value');
+        const speed = 1000;
+
+        counters.forEach( counter => {
+          const animate = () => {
+              const value = +counter.getAttribute('akhi');
+              const data = +counter.innerText;
+            
+              const time = value / speed;
+            if(data < value) {
+              counter.innerText = Math.ceil(data + time);
+              setTimeout(animate, 1);
+            }else{
+              counter.innerText = value;
+            }
+          }
+          animate();
+        });
+      }
+    </script>
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <article class="navTop">
+        <section class="leftSection">
+          <div class="menuIcon">
+            <div><i class="material-icons">apps</i></div>
+          </div>
+          <div class="logo">
+            <div class="tit"><span class="sfa">SFA</span></div>
+          </div>
+        </section>
+        <section class="centerSection">
+          <div class="srchArea">
+            <i class="material-icons prefix">search</i>
+            <input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput">
+          </div>
+          <div class="srchDtArea aiBtnLi" style="display: none;">
+            <div class="srchBox">
+              <div class="srchArea">
+                <i class="material-icons prefix">search</i>
+                <input type="text" class="browser-default" placeholder="Search" value="">
+              </div>
+              <div class="srchRstArea" style="display: none;">
+                <div class="srchRstList">
+                  <ul>
+                    <li>
+                      <i class="material-icons left">search</i>
+                      <div class="liTit">my accounts</div>
+                    </li>
+                    <li>
+                      <i class="material-icons left">search</i>
+                      <div class="liTit">accounts with account type direct</div>
+                    </li>
+                    <li>
+                      <i class="material-icons left">search</i>
+                      <div class="liTit">my accounts</div>
+                    </li>
+                  </ul>
+                  <ul class="iconUl">
+                    <li class="exLi" data-id="rstDt1">
+                      <div class="iconBox viola">
+                        <i class="material-icons">speed</i>
+                      </div>
+                      <div class="subList">
+                        <div class="liSubTit">Commercial Leader Home Page Dashboard</div>
+                        <div class="font12">Dashboard</div>
+                      </div>
+                    </li>
+                    <li class="exLi" data-id="rstDt2">
+                      <div class="iconBox tendril">
+                        <i class="material-icons">assignment</i>
+                      </div>
+                      <div class="subList">
+                        <div class="liSubTit">Sales Trend Report = LEX</div>
+                        <div class="font12">Report</div>
+                      </div>
+                    </li>
+                    <li class="exLi" data-id="rstDt3">
+                      <div class="iconBox tendril">
+                        <i class="material-icons">assignment</i>
+                      </div>
+                      <div class="subList">
+                        <div class="liSubTit">2020 Q3 NPS Call Report</div>
+                        <div class="font12">Report</div>
+                      </div>
+                    </li>
+                    <li class="exLi" data-id="rstDt4">
+                      <div class="iconBox viola">
+                        <i class="material-icons">speed</i>
+                      </div>
+                      <div class="subList">
+                        <div class="liSubTit">Account Manager Dashboard - CST Andrews</div>
+                        <div class="font12">Dashboard</div>
+                      </div>
+                    </li>
+                    <li class="exLi" data-id="rstDt5">
+                      <div class="iconBox viola">
+                        <i class="material-icons">speed</i>
+                      </div>
+                      <div class="subList">
+                        <div class="liSubTit">Copy of Sample Request - Current & Previous CY (Rosy)</div>
+                        <div class="font12">Dashboard</div>
+                      </div>
+                    </li>
+                  </ul>
+                  <ul class="iconUl">
+                    <li>
+                      <i class="material-icons mr10">format_list_bulleted</i>
+                      <div class="subList">
+                        <div class="liSubTit">Recently Viewed Accounts</div>
+                        <div class="font12">Accounts List</div>
+                      </div>
+                    </li>
+                    <li>
+                      <i class="material-icons mr10">format_list_bulleted</i>
+                      <div class="subList">
+                        <div class="liSubTit">Global Accounts</div>
+                        <div class="font12">Accounts List</div>
+                      </div>
+                    </li>
+                    <li>
+                      <i class="material-icons mr10">format_list_bulleted</i>
+                      <div class="subList">
+                        <div class="liSubTit">Recently Viewed Contacts</div>
+                        <div class="font12">Accounts List</div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="srchAIArea" style="display: none;">
+
+                  <div id="rstDt1" class="rstDt animate__animated animate__fadeIn" style="display: none;">
+                    <div class="rstDtHeader">
+                      <div class="iconBox viola">
+                        <i class="material-icons">speed</i>
+                      </div>
+                      <div class="subList">
+                        <div class="font16 link fontM">Commercial Leader Home Page Dashboard</div>
+                        <div class="font14">Dashboard</div>
+                      </div>
+                    </div>
+                    <div class="rstDtBody">
+                      <div class="leftArea">
+                        <div>Description</div>
+                        <div class="mt10">Created By</div>
+                        <div class="link">Rosa maria Montemurro</div>
+                        <div class="mt10">Last Modified By</div>
+                        <div class="link">Rosa maria Montemurro</div>
+                      </div>
+                      <div class="rightArea">
+                        <div class="font15 blackTxt fontM">Related List Quick Links</div>
+                        <div class="mt30 ac font14 greenTxt fontM">No related Lists to display</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div id="rstDt2" class="rstDt animate__animated animate__fadeIn" style="display: none;">
+                    <div class="rstDtHeader">
+                      <div class="iconBox tendril">
+                        <i class="material-icons">assignment</i>
+                      </div>
+                      <div class="subList">
+                        <div class="font16 link fontM">Sales Trend Report = LEX</div>
+                        <div class="font14">Report</div>
+                      </div>
+                    </div>
+                    <div class="rstDtBody">
+                      <div class="leftArea">
+                        <div>Description</div>
+                        <div class="mt10">Created By</div>
+                        <div class="link">Jon Feldman</div>
+                        <div class="mt10">Last Modified By</div>
+                        <div class="link">Ramzil Roxann Cleopas</div>
+                      </div>
+                      <div class="rightArea">
+                        <div class="font15 blackTxt fontM">Related List Quick Links</div>
+                        <div class="mt30 ac font14 greenTxt fontM">No related Lists to display</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div id="rstDt3" class="rstDt animate__animated animate__fadeIn" style="display: none;">
+                    <div class="rstDtHeader">
+                      <div class="iconBox tendril">
+                        <i class="material-icons">assignment</i>
+                      </div>
+                      <div class="subList">
+                        <div class="font16 link fontM">2020 Q3 NPS Call Report</div>
+                        <div class="font14">Report</div>
+                      </div>
+                    </div>
+                    <div class="rstDtBody">
+                      <div class="leftArea">
+                        <div>Description</div>
+                        <div class="mt10">Created By</div>
+                        <div class="link">Rosa maria Montemurro</div>
+                        <div class="mt10">Last Modified By</div>
+                        <div class="link">Jon Feldman</div>
+                      </div>
+                      <div class="rightArea">
+                        <div class="font15 blackTxt fontM">Related List Quick Links</div>
+                        <div class="mt30 ac font14 greenTxt fontM">No related Lists to display</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div id="rstDt4" class="rstDt animate__animated animate__fadeIn" style="display: none;">
+                    <div class="rstDtHeader">
+                      <div class="iconBox viola">
+                        <i class="material-icons">speed</i>
+                      </div>
+                      <div class="subList">
+                        <div class="font16 link fontM">Account Manager Dashboard - CST Andrews</div>
+                        <div class="font14">Dashboard</div>
+                      </div>
+                    </div>
+                    <div class="rstDtBody">
+                      <div class="leftArea">
+                        <div>Description</div>
+                        <div class="mt10">Created By</div>
+                        <div class="link">Jon Feldman</div>
+                        <div class="mt10">Last Modified By</div>
+                        <div class="link">Ramzil Roxann Cleopas</div>
+                      </div>
+                      <div class="rightArea">
+                        <div class="font15 blackTxt fontM">Related List Quick Links</div>
+                        <div class="mt30 ac font14 greenTxt fontM">No related Lists to display</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div id="rstDt5" class="rstDt animate__animated animate__fadeIn" style="display: none;">
+                    <div class="rstDtHeader">
+                      <div class="iconBox viola">
+                        <i class="material-icons">speed</i>
+                      </div>
+                      <div class="subList">
+                        <div class="font16 link fontM">Copy of Sample Request - Current & Previous CY (Rosy)</div>
+                        <div class="font14">Dashboard</div>
+                      </div>
+                    </div>
+                    <div class="rstDtBody">
+                      <div class="leftArea">
+                        <div>Description</div>
+                        <div class="mt10">Created By</div>
+                        <div class="link">Rosa maria Montemurro</div>
+                        <div class="mt10">Last Modified By</div>
+                        <div class="link">Rosa maria Montemurro</div>
+                      </div>
+                      <div class="rightArea">
+                        <div class="font15 blackTxt fontM">Related List Quick Links</div>
+                        <div class="mt30 ac font14 greenTxt fontM">No related Lists to display</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+        <section class="rightSection">
+          <div class="userInfo">
+            <div><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+          </div>
+        </section>
+      </article>
+      <article class="menuArea">
+        <ul>
+          <li class="on"><a href="mpm_sfa_list.html">Accounts<i class="material-icons prefix">close</i></a></li>
+          <li>Sales Activitys<i class="material-icons prefix">close</i></li>
+          <li>Contacts<i class="material-icons prefix">close</i></li>
+        </ul>
+      </article>
+
+      <article class="menuNavi">
+        <ul>
+          <li class="TypeList waves-effect waves-blue">Accounts</li>
+          <li>Chemistry Connection 1 | Accounts View<i class="material-icons prefix">close</i></li>
+          <li class="on">Chanel Parfums Beaute | Accounts View<i class="material-icons prefix">close</i></li>
+          <li>LEM | Accounts View <i class="material-icons prefix">close</i></li>
+          <li>SACHS CHEMICAL | Accounts View <i class="material-icons prefix">close</i></li>
+          <li>DyStar | Accounts View <i class="material-icons prefix">close</i></li>
+          <li>Valeo Annemasse | Accounts View <i class="material-icons prefix">close</i></li>
+          <li>RAMPF (Taicang) Co., Ltd | Accounts View <i class="material-icons prefix">close</i></li>
+        </ul>        
+      </article>
+      <!--
+      -->
+    </nav>
+  </header>
+
+  <article class="contArea mainCont">
+    <div class="contDt">
+      <div class="contDtArea row mr0">
+        <section>
+          <div class="cardBox">
+            <div class="titHeader">
+              <div class="titArea">
+                <div class="iconBox viola">
+                  <i class="material-icons">speed</i>
+                </div>
+                <div class="titBox">
+                  <div class="menuNm">Dashboard</div>
+                  <div class="tit">Commercial Leader Home Page Dashboard</div>
+                </div>
+              </div>
+              <div class="btnArea">
+                <a href="javascript:;" class="waves-effect waves-blue hBtn wd100px"><i class="material-icons left">add</i>Follow</a>
+                <a href="javascript:;" class="waves-effect waves-blue hBtn wd100px dropdown-trigger" data-target='dropdown1'><i class="material-icons left">auto_fix_high</i>Tools</a>
+                <ul id='dropdown1' class='dropdown-content'>
+                  <li><a href="#!">New Note</a></li>
+                  <li><a href="#!">Create Sample Request</a></li>
+                  <li><a href="#!">Create Price Request</a></li>
+                  <li><a href="#!">Edit</a></li>
+                  <li><a href="#!">Delete</a></li>
+                  <li><a href="#!">Sharing</a></li>
+                  <li><a href="#!">New Task</a></li>
+                  <li><a href="#!">New End User</a></li>
+                  <li><a href="#!">Enable As Partner</a></li>
+                </ul>
+              </div>
+            </div>
+            <div class="mt5">As of Feb 20, 2025 6:48 PMViewing as Sangwon Joo <span class="link">Change</span></div>
+          </div>
+        </section>
+
+        <section class="col s3">
+          <div class="cardBox r1">
+            <div class="cardTit">Total Open Order$ (My team)</div>
+            <div class="mainNumArea">
+              <div class="mainNum value" akhi="11">0</div>
+              <div class="mainUnit">M</div>
+            </div>
+            <div class="linkInfo mt20">View Report (My Team Account with open order line)</div>
+          </div>
+  
+          <div class="cardBox r1 mt10">
+            <div class="cardTit">Total Open Order$ (My team)</div>
+            <div class="mainNumArea">
+              <div class="mainNum value" akhi="229">0</div>
+              <div class="mainUnit">K</div>
+            </div>
+            <div class="linkInfo mt20">View Report (Cancelled orders - COVID-V (My team))</div>
+          </div>
+
+          <div class="cardBox r2 mt10">
+            <div class="cardTit">Open Order $ by RDD</div>
+            <div class="mt20" id="container3" style="height: 384px;"></div>
+            <div class="linkInfo">View Report (My Team Account with open order line)</div>
+          </div>
+        </section>
+
+        <section class="col s5">
+          <div class="cardBox r2">
+            <div class="cardTit">Quarterly sales history (My team)</div>
+            <div class="mt20" id="container" style="height: 384px;"></div>
+            <div class="linkInfo">View Report (My team - Actual Sales history) </div>
+          </div>
+
+          <div class="cardBox r2 mt10">
+            <div class="cardTit">My Teams - Actual Sales history</div>
+            <div class="mt20" id="container4" style="height: 384px;"></div>
+            <div class="linkInfo">View Report (My Teams - Actual Sales history) </div>
+          </div>
+        </section>
+
+        <section class="col s4">
+          <div class="cardBox r2">
+            <div class="cardTit">My Teams Pipeline by Stage (CY & Next)</div>
+            <div class="mt20" id="container2" style="height: 384px;"></div>
+            <div class="linkInfo">View Report (My Teams Pipeline by Stage (CY & Next))</div>
+          </div>
+
+          <div class="cardBox r2 mt10">
+            <div class="cardTit">My Teams's delinquent Opportunities</div>
+            <div class="mt20" id="container5" style="height: 384px;"></div>
+            <div class="linkInfo">View Report (My Teams's delinquent Opportunities)</div>
+          </div>
+        </section>
+
+      </div>
+
+      <div class="contDtSubArea">
+        <div class="cardBox r1">
+          <div class="cardTit">All Overdue Tasks</div>
+          <div class="toDoList mt10 mb20">
+            <ul>
+              <li>
+                <div class="item">
+                  <label>
+                    <input type="checkbox" class="filled-in" checked="checked" />
+                    <span>Opportunity pipeline clean up</span>
+                  </label>
+                </div>
+                <div class="date">20-Mar-2020</div>
+              </li>
+              <li>
+                <div class="item">
+                  <label>
+                    <input type="checkbox" class="filled-in" />
+                    <span>Tidy up Opportunities</span>
+                  </label>
+                </div>
+                <div class="date">20-Mar-2020</div>
+              </li>
+              <li>
+                <div class="item">
+                  <label>
+                    <input type="checkbox" class="filled-in" checked="checked" />
+                    <span>Opportunity pipeline clean up</span>
+                  </label>
+                </div>
+                <div class="date">20-Mar-2020</div>
+              </li>
+              <li>
+                <div class="item">
+                  <label>
+                    <input type="checkbox" class="filled-in" />
+                    <span>Opportunity pipeline clean up</span>
+                  </label>
+                </div>
+                <div class="date">20-Mar-2020</div>
+              </li>
+            </ul>
+          </div>
+          <div class="ar mt10 pt10" style="border-top: 1px dashed #a47764">
+            <a href="javascript:;" class="waves-effect waves-blue hBtn wd120px"><i class="material-icons left">add</i>View All</a>
+          </div>
+        </div>
+
+        <div class="cardBox mt10">
+          <div class="cardTit">Items to Approve</div>
+          <div class="lineH20 mt5">
+            <div class="link">SR177709</div>
+            <div>Sample Request · Submitted  by JOO SANGWON</div>
+          </div>
+          <div class="lineH20 mt10">
+            <div class="link">SR195163</div>
+            <div>Sample Request · Submitted  by LEE JONGHO</div>
+          </div>
+          <div class="lineH20 mt10">
+            <div class="link">SR195525</div>
+            <div>Sample Request · Submitted  by JOO SANGWON</div>
+          </div>
+        </div>
+
+        <div class="cardBox mt10" style="padding-bottom: 13px;">
+          <div class="cardTit">Helpful Links</div>
+          <div class="lineH18 mt5">
+            <div class="link">Web Order Center</div>
+          </div>
+          <div class="lineH18 mt5">
+            <div class="link">Momentive.com</div>
+          </div>
+          <div class="lineH18 mt5">
+            <div class="link">CMC Samples Inventory</div>
+          </div>
+        </div>
+
+        <div class="cardBox mt10">
+          <div class="row">
+            <div class="input-field col s4">
+              <select>
+                <option value="2">Latest Posts</option>
+                <option value="1" selected>Most Recent Activity</option>
+              </select>
+              <label>Sort by:</label>  
+            </div>
+            <div class="input-field col s2">
+            </div>
+            <div class="input-field col s6">
+              <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+              </div>
+              <input placeholder="Placeholder" id="first_name" type="text" class="validate" style="display: none;">
+              <label for="first_name">Search this feed</label>
+            </div>
+          </div>
+          <div class="feed-container">
+            <div class="post">
+                <div class="post-header">
+                    <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" alt="Shin Duho">
+                    <div>
+                        <div class="username">User Support Community (Archived) — Shin Duho</div>
+                        <div class="archived">September 1, 2021 at 10:11 AM</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    If you haven’t already, please be sure to set up your opportunity teams! The following tip sheet will show you how.
+                    <br><br>
+                    <a href="#">Default Opportunity Teams</a>
+                    <br><br>
+                    <a href="#">Tip Sheet - Opport..</a>
+                </div>
+                <div class="post-actions">
+                    <span>👍 Like</span> <span>💬 Comment</span> <span>🔗 Share</span>
+                    <span class="comments">3 comments</span>
+                </div>
+                <div class="comment-section">
+                    <div class="comment">
+                        <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" alt="LEE JONGHO">
+                        <div class="comment-text">LEE JONGHO likes this.</div>
+                    </div>
+                    <div class="comment">
+                        <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" alt="Shin Duho">
+                        <div class="comment-text">Shin Duho noted and thanks, JONGHO.</div>
+                    </div>
+                </div>
+                <div class="write-comment">
+                    <input type="text" placeholder="Write a comment...">
+                </div>
+            </div>
+    
+            <div class="post">
+                <div class="post-header">
+                    <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20503079" alt="JOO SANGWON">
+                    <div>
+                        <div class="username">SPACEX — Alexandre Atilio Romani Pontes to Momentive Performance Materials</div>
+                        <div class="archived">August 17, 2021 at 2:30 PM</div>
+                    </div>
+                </div>
+                <div class="post-content">
+                    @JI YOUNGCHAN, I am trying to place a sample request on SFDC for this customer and get this block message: "An error occurred while trying to update the record. Please try again. Value does not exist or does not match filter criteria." Can you please check what is wrong here?
+                </div>
+                <div class="post-actions">
+                    <span>👍 Like</span> <span>💬 Comment</span> <span>🔗 Share</span>
+                    <span class="comments">4 comments</span>
+                </div>
+                <div class="comment-section">
+                    <div class="comment">
+                        <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20702451" alt="JOO SANGWON">
+                        <div class="comment-text">@JOO SANGWON Atilio Romani Pontes No I don't think there is any block. Earlier before 2018 these type of account were in use for samples via SAP but later introduction to sample request in salesforce they seems to be discontinued.</div>
+                    </div>
+                </div>
+                <div class="write-comment">
+                    <input type="text" placeholder="Write a comment...">
+                </div>
+            </div>
+
+          </div>
+
+        </div>
+
+      </div>
+    </div>
+  </article>
+
+  <article class="bgLayer">
+
+  </article>
+</body>
+</html>

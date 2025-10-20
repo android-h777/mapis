@@ -1,0 +1,426 @@
+<!DOCTYPE html lang="ko">
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS Workshop</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/common_neo.css">
+    <link rel="stylesheet" type="text/css" href="css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+ 	<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+ 
+    <script>
+
+    </script>
+
+    <style>
+        .layout {display: flex; padding: 20px 100px; flex-direction: row; align-items: center; height: 100vh;}
+        .flexContainer {flex-direction: column; display: flex; flex: 1; align-items: flex-start;}
+        .flexRow {flex-direction: row; display: flex; width: 100%;}
+        .flexColumn {flex-direction: column; display: flex; width: 100%;}
+        .flexRowDt {display: flex; flex: 1; flex-direction: column; position: relative; background: rgba(0,0,0,0.3); margin: 10px; border-radius: 20px; text-align: center; box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(255, 255, 255, 0.12), 8px 8px 10px -7px rgba(255, 255, 255, 0.4);}
+        .flexRow img {border-radius: 20px;}
+        .tit {padding: 20px; color: #696aad; position: relative; font-family: 'SUIT-Medium'; font-size: 40px; justify-content: center;}
+        .subText {padding: 0px 20px 20px 20px; position: relative; color: #fff; font-family: 'SUIT-Medium'; font-size: 20px;}
+        .subText.type2 {    
+            background: rgba(0, 0, 0, 0.5);
+            padding-top: 20px;
+            border-bottom-left-radius: 20px;
+            border-bottom-right-radius: 20px;
+        }
+        .iconBox {height: 200px;
+                align-items: center;
+                display: flex;
+                background: linear-gradient(135deg, #696aad 30%, #8d0073);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+            }
+        .iconBox2 {height: 200px;
+            align-items: center;
+            display: flex;
+            background: linear-gradient(135deg, #1de9b6, #1a237e);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .iconBox3 {
+            background: linear-gradient(135deg, #fdd835 30%, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .iconBox4 {
+            background: linear-gradient(135deg, #BB2649 45%, #fff);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .iconBox5 {
+            background: linear-gradient(135deg, #fff 50%, #ff0000);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .iconBox6 {height: 200px;
+                align-items: center;
+                display: flex;
+                background: linear-gradient(135deg, #fff 35%, #8d0073);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+        }
+        .iconBox7 {
+                background: linear-gradient(135deg, #fff 35%, #0011ff);
+                -webkit-background-clip: text;
+                -webkit-text-fill-color: transparent;
+        }        
+        .titLogo {
+            font-family: "Exo 2";
+            width: 100%;
+            text-align: center;
+        }
+        .titLogo .aTit span {
+            font-size: 88px;
+            font-weight: 700;
+            font-style: italic;
+            text-shadow: 2px 2px rgba(0, 0, 0, 0.14);
+            background: linear-gradient(135deg, #006bd5, #8d0073);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            width: 220px;
+            display: inline-block;
+        }
+        .titLogo .sub {
+            font-size: 13px;
+            letter-spacing: 0px;
+            margin-top: -10px;
+            display: inline-block;
+            color: #fff;
+        }
+        .imgBg::before {
+            content: "";
+            background: url(https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcSpj4CrrvwR-UDlYB7NbqxjqV3SynpzlDm6KQ&usqp=CAU);
+            background-size: cover;
+            opacity: 0.3;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            border-radius: 10px;
+        }
+        .imgBg2::before {
+            content: "";
+            background: url(img/usability-maintenance-seat-at-the-table-lead.jpg);
+            background-size: cover;
+            opacity: 0.3;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            border-radius: 10px;
+        }
+        .imgBg3::before {
+            content: "";
+            background: url(https://www.pantone.com/media/wysiwyg/color-of-the-year/2023/intro/pantone-color-of-the-year-intro-hero-main-no-slug.jpg);
+            background-size: cover;
+            opacity: 1;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            border-radius: 10px;
+        }
+        .imgBg4::before {
+            content: "";
+            background: url(img/h2o-automl.png);
+            background-size: cover;
+            opacity: 1;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            border-radius: 10px;
+            background-position: 0px -100px;
+        }
+
+        .imgBg5::before {
+            content: "";
+            background: url(img/img.jpg);
+            background-size: cover;
+            opacity: 0.5;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            border-radius: 10px;
+            background-position: 0px -107px;
+        }
+        .imgBg6::before {
+            content: "";
+            background: url(img/0_7VyEZgzwUhQMeBqb.webp);
+            background-size: cover;
+            opacity: 0.2;
+            position: absolute;
+            top: 0px;
+            left: 0px;
+            right: 0px;
+            bottom: 0px;
+            border-radius: 10px;
+            background-position: 0px 0px;
+        }      
+        
+        .aiBox {
+            overflow: unset;
+        }
+
+        .aiBox:before {
+            content: '';
+            background: linear-gradient(90deg, #ff8a80, #ff80ab, #ea80fc, #b388ff, #8c9eff, #82b1ff, #80d8ff, #84ffff, #a7ffeb, #b9f6ca, #ccff90, #f4ff81, #ffff8d, #ffe57f, #ffd180, #ff9e80, #ff8a80);
+            position: absolute;
+            top: -5px;
+            left:-5px;
+            background-size: 400%;
+            z-index: -1;
+            filter: blur(8px);
+            width: calc(100% + 10px);
+            height: calc(100% + 10px);
+            animation: glowing 30s linear infinite;
+            opacity: 1;
+            transition: opacity .3s ease-in-out;
+            border-radius: 20px;
+        }
+        .aiBox:after {
+            z-index: -1;
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 100%;
+            background: url(img/unnamed.jpg);
+            background-size: cover;
+            left: 0;
+            top: 0;
+            border-radius: 20px;
+            opacity: 0.8;
+        }
+        .aiBox.type1:after {
+            background: url(img/20230628113241.jpg);
+            background-size: cover;
+            background-position: 0px -140px;
+            opacity: 0.9;
+        }
+        .aiBox.type2:after {
+            background: url(img/4-Caveats-For-LD-Professionals-When-Using-Chat-GPT.jpg);
+            background-size: cover;
+            background-position: 0px -110px;
+            opacity: 0.9;
+        }
+        .aiBox.type3:after {
+            background: url(img/img.jpg);
+            background-size: cover;
+            background-position: 0px -50px;
+            opacity: 0.9;
+        }
+        .aiBox.type4:after {
+            background: url(img/business_writing_on_paper_1200x627.webp);
+            background-size: cover;
+            background-position: bottom;
+            opacity: 0.8;
+        }
+
+        .overlay {
+            position: absolute;
+            width: 100vw;
+            height: 100vh;
+            top: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            z-index: 1;
+            display: none;
+        }
+        .waves-ripple {
+            z-index: 1 !important;
+        }
+        .modalCont{
+            position: absolute;
+            min-width: 500px;
+            min-height: 500px;
+            box-shadow: 0 16px 24px 2px rgba(0, 0, 0, 0.14), 0 6px 30px 5px rgba(0, 0, 0, 0.12), 0 8px 10px -7px rgba(0, 0, 0, 0.2);
+            z-index: 11;
+            background-color: rgba(255, 255, 255, 0.9);
+            border-radius: 20px;
+            padding: 30px;
+            display: none;
+        }
+        .actCard.on {
+            box-shadow: 0 24px 38px 3px rgba(0, 0, 0, 0.14),  0 9px 46px 8px rgba(255, 255, 255, 0.12), 0 11px 15px -7px rgba(255, 255, 255, 0.4);
+            z-index: 10;
+        }
+    </style>
+
+<script>
+    $(document).ready(function(){
+        $("#cont1 .flexRowDt").addClass("animate__animated").addClass("animate__zoomIn");
+
+        $("#cont2Btn").click(function(){
+            $("#cont1").fadeOut(function(){
+                $("#cont2").show().find(".flexRowDt").addClass("animate__animated").addClass("animate__zoomIn");
+            });
+        });
+
+        $(".overlay").click(function(){
+            $(".actCard").removeClass("on");
+            $(this).fadeOut();
+            $(".modalCont").fadeOut();
+        });
+
+        $(".actCard").click(function(){
+            $(".overlay").show();
+            $(this).addClass("on");
+            $("#"+$(this).attr("data-id")).show();
+        });
+            
+    });
+</script>
+
+</head>
+<body style="background: #424242;">
+    <article class="layout row" id="cont1">
+        <div class="flexContainer col s4 pd0">
+            <div class="flexColumn">
+                <div class="flexRow">
+                    <div class="flexRowDt actCard imgBg4 waves-effect waves-red" data-id="modalCont1">
+                        <div class="tit" style="height: 200px;">
+                        </div>
+                        <div class="subText">Pycaret</div>
+                    </div>
+                </div>
+                <div class="flexRow">
+                    <div class="flexRowDt waves-effect waves-red actCard" style="background-color: #0fa47f;" data-id="modalCont2">
+                        <div class="tit" style="height: 190px; display: flex; align-items: center;">
+                            <img src="img/gpt.PNG" style="height: 120px; margin-top: 10px;">
+                        </div>
+                        <div class="subText">GPT 4o</div>
+                    </div>
+                    <div class="flexRowDt waves-effect waves-red actCard">
+                        <div class="tit" style="height: 190px; display: flex; align-items: center;">
+                            <img src="img/Azure-Logo-PNG.png" style="height: 120px;">
+                        </div>
+                        <div class="subText">MS Azure AI</div>
+                    </div>
+                </div>
+                <div class="flexRow">
+                    <div class="flexRowDt imgBg5">
+                        <div class="tit"><span class="material-icons" style="font-size: 120px; color: #fff; padding: 20px;">post_add</span></div>
+                        <div class="subText">Based on Mass Production + Test Data</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="flexContainer col s4 pd0">
+            <div class="flexColumn">
+                <div class="flexRow">
+                    <div class="flexRowDt waves-effect waves-red aiBox" style="background: linear-gradient(135deg, #546e7a, #000);" id="cont2Btn">
+                        <div class="tit iconBox5"><span class="material-icons" style="font-size: 270px; height: 424px; padding-top: 90px;">auto_awesome</span></div>
+                        <div class="subText">APIS AI</div>
+                    </div>
+                </div>
+                <div class="flexRow">
+                    <a href="javascript:;" style="width: 100%;">
+                        <div class="flexRowDt imgBg5  waves-effect waves-red" id="cont2Btn">
+                            <div class="tit iconBox3"><span class="material-icons" style="font-size: 120px; color: #fff; padding: 20px;">support_agent</span></div>
+                            <div class="subText">AI Secretary</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="flexContainer col s4 pd0">
+            <div class="flexRow">
+                <div class="flexRowDt imgBg2">
+                    <div class="tit" style="height: 200px; align-items: center;  display: flex; color: #fff; "><span class="material-symbols-outlined" style="font-size: 122px;">report_problem</span></div>
+                    <div class="subText">Error Measures</div>
+                </div>
+                <div class="flexRowDt">
+                    <div class="tit iconBox2" style="height: 200px; align-items: center;  display: flex;"><span class="material-icons" style="font-size: 122px;">update</span></div>
+                    <div class="subText">Auto Schedule</div>
+                </div>
+            </div>
+            <div class="flexRow">
+                <div class="flexRowDt imgBg6" style="background: linear-gradient(135deg, #546e7a, #000);" onclick="window.open('/notePop.html','원료Pool','height=880, width=1520');">
+                    <div class="tit iconBox7"><span class="material-icons" style="font-size: 120px;  padding: 20px;">design_services</span></div>
+                    <div class="subText">Reconstruction of Formula ToolBox</div>
+                </div>
+            </div>
+            <div class="flexRow">
+                <div class="flexRowDt imgBg2">
+                    <div class="tit" style="height: 200px; align-items: center;  display: flex; color: #fff; "><span class="material-symbols-outlined" style="font-size: 122px;">report_problem</span></div>
+                    <div class="subText">Error Measures</div>
+                </div>
+                <div class="flexRowDt">
+                    <div class="tit iconBox2" style="height: 200px; align-items: center;  display: flex;"><span class="material-icons" style="font-size: 122px;">update</span></div>
+                    <div class="subText">Auto Schedule</div>
+                </div>
+            </div>
+        </div>
+    </article>
+
+    <article class="modalCont animate__animated animate__zoomIn" id="modalCont1" style="top:60px; left: 700px;">
+        <div class="tit">Auto ML</div>
+
+    </article>
+
+    <article class="modalCont animate__animated animate__zoomIn" id="modalCont2" style="top:120px; left: 700px;">
+        <div class="tit">GPT 4o</div>
+
+    </article>
+
+
+    <article class="overlay"></article>
+
+    <article class="layout row" id="cont2" style="display: none;">
+        <div class="flexContainer col s6">
+            <div class="flexColumn">
+                <div class="flexRow">
+                    <a href="http://apistest.kccworld.co.kr/formula/2.0/formulaList" style="width: 100%;" target="_blank">
+                        <div class="flexRowDt waves-effect waves-red aiBox type1" style="background: linear-gradient(135deg, #546e7a, #000);">
+                            <div class="tit iconBox5"><span class="material-icons" style="font-size: 200px; height: 45%; padding-top: 40px;">assistant</span></div>
+                            <div class="subText type2">AI 배합 추천</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="flexRow" style="padding-top: 0.75rem;">
+                    <a href="http://apistest.kccworld.co.kr/formula/2.0/formulaList" style="width: 100%;" target="_blank">
+                        <div class="flexRowDt waves-effect waves-red aiBox type3" style="background: linear-gradient(135deg, #546e7a, #000);">
+                            <div class="tit iconBox5"><span class="material-icons" style="font-size: 200px; height: 45%; padding-top: 40px;">tune</span></div>
+                            <div class="subText type2">AI 최적 배합</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+        <div class="flexContainer col s6 pd0">
+            <div class="flexColumn">
+                <div class="flexRow">
+                    <a href="http://apistest.kccworld.co.kr/main" style="width: 100%;" target="_blank">
+                        <div class="flexRowDt waves-effect waves-red aiBox type2" style="background: linear-gradient(135deg, #546e7a, #000);">
+                            <div class="tit iconBox7"><span class="material-icons" style="font-size: 200px; height: 45%; padding-top: 40px;">question_answer</span></div>
+                            <div class="subText type2">APIS GPT</div>
+                        </div>
+                    </a>
+                </div>
+                <div class="flexRow" style="padding-top: 0.75rem;">
+                    <a href="http://apistest.kccworld.co.kr/note/2.0/newPopup/noteDetailPopup?NOTE_GROUP_CD=G20240617001" style="width: 100%;" target="_blank">
+                        <div class="flexRowDt waves-effect waves-red aiBox type4" style="background: linear-gradient(135deg, #546e7a, #000);">
+                            <div class="tit"><span class="material-icons" style="font-size: 200px; height: 45%; padding-top: 40px;  color: #fff;">note_add</span></div>
+                            <div class="subText type2">AI 연구노트</div>
+                        </div>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </article>
+</body>
+</html>

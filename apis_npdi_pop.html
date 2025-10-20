@@ -1,0 +1,240 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="/css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script>
+        $(document).ready(function(){
+          $('.tabs').tabs();
+          $('select').formSelect();
+
+          $('.menu-item').on('click', function() {
+            const targetId = $(this).data('target');
+            const targetElement = $('#' + targetId);
+
+            if (targetElement.length) {
+              $('html, body').animate({
+                scrollTop: targetElement.offset().top - 115
+              }, 500);
+            }
+          });
+
+        });
+  </script>
+</head>
+<body class="popup">
+  <header class="z-depth-1">
+    <section class="titArea">
+      <div><img src="/img/MAPISLogo-25.png"></div>
+      <div class="tit">[03704] New preservative for Silsoft</div>
+    </section>
+    <section class="statusArea">
+      <div class="bdBox fin"><i class="material-icons left">check_circle</i>NPC</div>
+      <div class="arw"><i class="material-icons">navigate_next</i></div>
+      <div class="bdBox fin"><i class="material-icons left">check_circle</i>NPI Go</div>
+      <div class="arw"><i class="material-icons">navigate_next</i></div>
+      <div class="bdBox fin"><i class="material-icons left">check_circle</i>Lab Formulation</div>
+      <div class="arw"><i class="material-icons">navigate_next</i></div>
+      <div class="bdBox fin"><i class="material-icons left">check_circle</i>Scale-up</div>
+      <div class="arw"><i class="material-icons">navigate_next</i></div>
+      <div class="bdBox ing"><i class="material-icons left">play_circle_outline</i>Commercial Go</div>
+      <div class="arw"><i class="material-icons">navigate_next</i></div>
+      <div class="bdBox"><i class="material-icons left">radio_button_unchecked</i>Post Launch Review</div>
+    </section>
+  </header>
+  <aside class="leftAside z-depth-1 blurArea">
+    <section>
+      <ul>
+        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard1"><i class="material-icons left">preview</i><span>OverView</span></li>
+        <li class="menu-item waves-effect waves-hColor active" data-target="pjContCard2"><i class="material-icons left">account_tree</i><span>Relationships</span></li>
+        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard3"><i class="material-icons left">description</i><span>Documents and Notes</span></li>
+        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard4"><i class="material-icons left">miscellaneous_services</i><span>Miscellaneous</span></li>
+        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard5"><i class="material-icons left">verified</i><span>Decision Point Approvers</span></li>
+        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard6"><i class="material-icons left">local_library</i><span>Lessons Learned</span></li>
+        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard7"><i class="material-icons left">calculate</i><span>NPV<br>Calculator</span></li>
+        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard8"><i class="material-icons left">reviews</i><span>Post Launch<br>Reviews Summary</span></li>
+      </ul>
+    </section>
+    <section class="btnArea">
+      <div><a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn hBlue"><i class="material-icons left">save</i><span class="label">Save</span></a></div>
+    </section>
+  </aside>
+  <article class="contArea">
+    <section class="cardBox" id="pjContCard1">
+      <div class="cardTit2"><i class="material-icons left">preview</i>OverView</div>
+      <div class="mt10">
+        <ul class="tabs">
+          <li class="tab"><a href="#cont1-1" class="active">General Information</a></li>
+          <li class="tab"><a href="#cont1-2">Additional Information</a></li>
+          <li class="tab"><a href="#cont1-3">Classification</a></li>
+          <li class="tab"><a href="#cont1-4">Financial Information</a></li>
+          <li class="tab"><a href="#cont1-5">Capacity Information</a></li>
+        </ul>
+      </div>
+      <div id="cont1-1">
+        <div class="cardSubTit mt20">Key Information</div>
+        <div class="inputArea">
+          <div class="row">
+            <div class="col s2 ar"><span class="essential">*</span>Name</div>
+            <div class="col s4">
+              <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+              </div>
+            </div>
+            <div class="col s2 ar">ID</div>
+            <div class="col s4 val">03704</div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Status</div>
+            <div class="col s4">
+              <div class="wd120px">
+                <select>
+                  <option value="1">Assessment</option>
+                  <option value="2">Option 2</option>
+                  <option value="3">Option 3</option>
+                </select>
+              </div>
+            </div>
+            <div class="col s2 ar">Type</div>
+            <div class="col s4 val">NPI</div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Project Management Template</div>
+            <div class="col s4">
+              <div class="wd120px">
+                <select>
+                  <option value="1"></option>
+                  <option value="2">Option 2</option>
+                  <option value="3">Option 3</option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Description</div>
+            <div class="col s10"><img src="/img/edit.PNG" style="width: 1023px;"></div>
+          </div>
+        </div>
+
+        <div class="cardSubTit bd">Detail Program Information</div>
+        <div class="inputArea">
+          <div class="row">
+            <div class="col s2 ar"><span class="essential">*</span>Knowledge of Technology</div>
+            <div class="col s4">
+              <div>
+                <select>
+                  <option value="1"></option>
+                </select>
+              </div>
+            </div>
+            <div class="col s3 ar">Sustainabillity Numerical Score</div>
+            <div class="col s3">
+              <div class="aniInput wd100px">
+                <input type="text" value="0" class="browser-default ar" disabled>
+                <span class="focus-border"></span>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar"><span class="essential">*</span>Knowledge of Market</div>
+            <div class="col s4">
+              <div>
+                <select>
+                  <option value="1"></option>
+                </select>
+              </div>
+            </div>
+            <div class="col s3 ar"><span class="essential">*</span>Sustainabillity Assessment Category</div>
+            <div class="col s3">
+              <div>
+                <select>
+                  <option value="1"></option>
+                </select>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Innovation Category</div>
+            <div class="col s4">
+              <div class="aniInput wd100px">
+                <input type="text" value="" class="browser-default ar" disabled>
+                <span class="focus-border"></span>
+              </div>
+            </div>
+            <div class="col s3 ar">AOP Commercial Go date</div>
+            <div class="col s3">
+              <div class="aniInput wd100px">
+                <input type="text" value="" class="browser-default ar" disabled>
+                <span class="focus-border"></span>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s2 ar">Primary R&D Location</div>
+            <div class="col s4">
+              <div>
+                <select>
+                  <option value="1"></option>
+                </select>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="cardSubTit bd">Project Team</div>
+
+      </div>
+      <div id="cont1-2">
+        Additional Information
+      </div>
+      <div id="cont1-3">
+        Classification
+      </div>
+      <div id="cont1-4">
+        Financial Information
+      </div>
+      <div id="cont1-5">
+        Capacity Information
+      </div>
+    </section>
+
+    <section class="cardBox mt10" id="pjContCard2">
+      <div class="cardTit2"><i class="material-icons left">account_tree</i>Relationships</div>
+    </section>
+
+    <section class="cardBox mt10" id="pjContCard3">
+      <div class="cardTit2"><i class="material-icons left">description</i>Documents and Notes</div>
+    </section>
+
+    <section class="cardBox mt10" id="pjContCard4">
+      <div class="cardTit2"><i class="material-icons left">miscellaneous_services</i>Miscellaneous</div>
+    </section>
+
+    <section class="cardBox mt10" id="pjContCard5">
+      <div class="cardTit2"><i class="material-icons left">verified</i>Decision Point Approvers</div>
+    </section>
+
+    <section class="cardBox mt10" id="pjContCard6">
+      <div class="cardTit2"><i class="material-icons left">local_library</i>Lessons Learned</div>
+    </section>
+
+    <section class="cardBox mt10" id="pjContCard7">
+      <div class="cardTit2"><i class="material-icons left">calculate</i>NPV Calculator</div>
+    </section>
+
+    <section class="cardBox mt10" id="pjContCard8">
+      <div class="cardTit2"><i class="material-icons left">reviews</i>Post Launch Reviews Summary</div>
+    </section>
+
+  </article>
+</body> 
+</html>

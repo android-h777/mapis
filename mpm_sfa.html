@@ -1,0 +1,653 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SFA MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_SFA_common.css">
+    <link type="text/css" rel="stylesheet" href="/css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script>
+      $(document).ready(function(){
+        $(window).scroll(function() {
+          if($(document).scrollTop() < 60){
+            $(".contHeader, .contDt").removeClass("on", 100).find(".titCont").slideDown(300);
+          }else{
+            $(".contHeader, .contDt").addClass("on", 200).find(".titCont").slideUp(100);
+          }
+        });
+
+        $(document).on("mouseenter", ".infoCol", function() {
+            if (!$(this).closest(".infoViewArea").hasClass("on")) {
+              $(this).find(".edit").show();
+            }
+        }).on("mouseleave", ".infoCol", function() {
+            if (!$(this).closest(".infoViewArea").hasClass("on")) {
+              $(this).find(".edit").hide();
+            }
+        });
+        
+        $(".edit").click(function(){
+          $(this).hide();
+
+          $(".infoViewArea").addClass("on");
+          $(".chngVal").hide();
+          $(".infoViewArea .aniInput, .saveLayer").show();
+
+          $(".modyChckBox").attr("disabled", false);
+        });
+
+        $(".saveBtn").click(function(){
+          $(".infoViewArea").removeClass("on");
+          $(".chngVal").show();
+          $(".infoViewArea .aniInput, .saveLayer").hide();
+
+          $(".modyChckBox").attr("disabled", true);
+        });
+
+        $('.dropdown-trigger').dropdown();
+        $('.tabs').tabs();
+        $('.collapsible').collapsible({accordion: false});
+
+        $(".contHeader .cardBox").addClass("animate__animated animate__zoomIn").promise().done(function(){
+          $(".contDtArea .cardBox").addClass("animate__animated animate__zoomIn").promise().done(function(){
+          });
+        });
+        setTimeout(function() {
+          $('.tabs').tabs("updateTabIndicator");
+          $(".hstList li").addClass("animate__animated animate__flipInX");
+        }, 1000);
+      });
+    </script>
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <article class="navTop">
+        <section class="leftSection">
+          <div class="menuIcon">
+            <div><i class="material-icons">apps</i></div>
+          </div>
+          <div class="logo">
+            <div class="tit"><span class="sfa">SFA</span></div>
+          </div>
+        </section>
+        <section class="centerSection">
+          <div class="srchArea">
+            <i class="material-icons prefix">search</i>
+            <input type="text" class="browser-default" placeholder="Search" value="">
+          </div>
+        </section>
+        <section class="rightSection">
+          <div class="userInfo">
+            <div><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+          </div>
+        </section>
+      </article>
+      <article class="menuArea">
+        <ul>
+          <li><a href="mpm_sfa_main.html">Home</a></li>
+          <li class="on">Accounts<i class="material-icons prefix">keyboard_arrow_down</i></li>
+          <li>Opportunities<i class="material-icons prefix">keyboard_arrow_down</i></li>
+          <li>Contacts<i class="material-icons prefix">keyboard_arrow_down</i></li>
+          <li>Leads<i class="material-icons prefix">keyboard_arrow_down</i></li>
+          <li>Cases<i class="material-icons prefix">keyboard_arrow_down</i></li>
+          <li>Campaigns<i class="material-icons prefix">keyboard_arrow_down</i></li>
+          <li>Chatter<i class="material-icons prefix">keyboard_arrow_down</i></li>
+          <li>Sample Requests<i class="material-icons prefix">keyboard_arrow_down</i></li>
+          <li>Reports<i class="material-icons prefix">keyboard_arrow_down</i></li>
+          <li>Dashboards<i class="material-icons prefix">keyboard_arrow_down</i></li>
+          <li>Tasks<i class="material-icons prefix">keyboard_arrow_down</i></li>
+          <li>Calendar<i class="material-icons prefix">keyboard_arrow_down</i></li>
+          <li>Profit Centers<i class="material-icons prefix">keyboard_arrow_down</i></li>
+          <li>More<i class="material-icons prefix">arrow_drop_down</i></li>
+        </ul>
+      </article>
+    </nav>
+  </header>
+
+  <article class="contArea">
+
+    <section class="contHeader">
+      <div class="cardBox">
+        <div class="titHeader">
+          <div class="titArea">
+            <div class="iconBox">
+              <i class="material-icons">business</i>
+            </div>
+            <div class="titBox">
+              <div class="menuNm">Account</div>
+              <div class="tit">SAINT GOBAIN-GRANVILLE (UAD)</div>
+            </div>
+          </div>
+          <div class="btnArea">
+            <a href="javascript:;" class="waves-effect waves-blue hBtn"><i class="material-icons left">add</i>Follow</a>
+            <a href="javascript:;" class="waves-effect waves-blue hBtn hGreen dropdown-trigger" data-target='dropdown1'><i class="material-icons left">auto_fix_high</i>Tools</a>
+            <ul id='dropdown1' class='dropdown-content'>
+              <li><a href="#!">New Note</a></li>
+              <li><a href="#!">Create Sample Request</a></li>
+              <li><a href="#!">Create Price Request</a></li>
+              <li><a href="#!">Edit</a></li>
+              <li><a href="#!">Delete</a></li>
+              <li><a href="#!">Sharing</a></li>
+              <li><a href="#!">New Task</a></li>
+              <li><a href="#!">New End User</a></li>
+              <li><a href="#!">Enable As Partner</a></li>
+            </ul>
+          </div>
+        </div>
+        <div class="titCont">
+          <div class="item">
+            <div class="label">Account Record Type</div>
+            <div class="valCont">Sold To Accounts</div>
+          </div>
+          <div class="item">
+            <div class="label">Account Number</div>
+            <div class="valCont">100486</div>
+          </div>
+          <div class="item wd200px">
+            <div class="label">Shipping Address</div>
+            <div class="valCont link">505 HOOVER ST<br>Farwell, MI 48622-9114<br>US</div>
+          </div>
+          <div class="item">
+            <div class="label">Customer Class</div>
+            <div class="valCont">B</div>
+          </div>
+          <div class="item">
+            <div class="label">CSR</div>
+            <div class="valCont">OPEN CSR ACCOUNT</div>
+          </div>
+          <div class="item">
+            <div class="label">Account Owner</div>
+            <div class="valCont">
+              <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="mr5">
+              <span class="dashLink">JONGHO LEE</span>
+              <i class="material-icons ml10">people</i>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="contDt">
+      <div class="contDtArea">
+        <div class="cardBox">
+          <ul class="tabs">
+            <li class="tab"><a href="#cont1-1">Details</a></li>
+            <li class="tab"><a href="#cont1-2">Related</a></li>
+            <li class="tab"><a href="#cont1-3">Account Overview</a></li>
+          </ul>
+          <section id="cont1-1">
+            <div class="row infoViewArea mt20">
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Account Name</div>
+                <div class="col s8 val">
+                  <span class="chngVal">RENOSOL SYSTEMS LLC</span>
+                  <div class="aniInput">
+                    <input type="text" value="RENOSOL SYSTEMS LLC" class="browser-default">
+                    <span class="focus-border"></span>
+                  </div>
+                  <i class="material-icons edit">edit</i></div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Account Owner</div>
+                <div class="col s8 val">
+                  <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="mr5">
+                  <span class="dashLink lineH15">JONGHO LEE</span>
+                  <i class="material-icons ml10">people</i>
+                </div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Account Number</div>
+                <div class="col s8 val">100486</div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Account Record Type</div>
+                <div class="col s8 val">Sold To Accounts</div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">SAP Alt Name</div>
+                <div class="col s8 val"></div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Type</div>
+                <div class="col s8 val">Direct</div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Parent Account</div>
+                <div class="col s8 val "><span class="dashLink lineH15">RENOSOL SYSTEMS</span></div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Customer Group</div>
+                <div class="col s8 val">10</div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Global Account</div>
+                <div class="col s8 val">
+                  <label>
+                    <input type="checkbox" class="filled-in" disabled="disabled"/>
+                    <span></span>
+                  </label>
+                </div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Phone</div>
+                <div class="col s8 val link">989 588 6181</div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Strategic Account</div>
+                <div class="col s8 val">
+                  <label>
+                    <input type="checkbox" class="filled-in modyChckBox" disabled="disabled" />
+                    <span></span>
+                  </label>
+                  <i class="material-icons edit">edit</i>
+                </div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Phone Long Form</div>
+                <div class="col s8 val">989 588 6181</div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">CSR</div>
+                <div class="col s8 val">
+                  <span class="chngVal">OPEN CSR ACCOUNT</span>
+                  <div class="aniInput">
+                    <input type="text" value="OPEN CSR ACCOUNT" class="browser-default">
+                    <span class="focus-border"></span>
+                  </div>
+                  <i class="material-icons edit">edit</i></div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Fax</div>
+                <div class="col s8 val link">989 588 6591</div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Website</div>
+                <div class="col s8 val">
+                  <span class="chngVal"></span>
+                  <div class="aniInput">
+                    <input type="text" value="" class="browser-default">
+                    <span class="focus-border"></span>
+                  </div>
+                  <i class="material-icons edit">edit</i>
+                </div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Fax Long Form</div>
+                <div class="col s8 val">989 588 6591</div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Available Salesorg</div>
+                <div class="col s8 val">AM01</div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">SAP Account Group</div>
+                <div class="col s8 val"></div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Customer Class</div>
+                <div class="col s8 val">
+                  <span class="chngVal">B</span>
+                  <div class="aniInput">
+                    <input type="text" value="B" class="browser-default">
+                    <span class="focus-border"></span>
+                  </div>
+                  <i class="material-icons edit">edit</i>
+                </div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Light Account</div>
+                <div class="col s8 val">
+                  <label>
+                    <input type="checkbox" class="filled-in" disabled="disabled"/>
+                    <span></span>
+                  </label>
+                </div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">SAP Order Block</div>
+                <div class="col s8 val">
+                  <label>
+                    <input type="checkbox" class="filled-in" disabled="disabled"/>
+                    <span></span>
+                  </label>
+                </div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Purchasing Platform</div>
+                <div class="col s8 val"></div>
+              </div>
+              <div class="col s6 infoCol">
+                <div class="col s4 label">Order Entry Contact</div>
+                <div class="col s8 val"></div>
+              </div>
+            </div>
+            <div>
+              <ul class="collapsible expandable">
+                <li class="active">
+                  <div class="collapsible-header"><i class="material-icons">keyboard_arrow_down</i>Address Information</div>
+                  <div class="collapsible-body">
+                    <div class="row">
+                      <div class="col s6">
+                        <div class="col s4">Billing Address</div>
+                        <div class="col s8">
+                          <div class="link mb10">
+                            505 HOOVER ST<br>
+                            Farwell, MI 48622-9114<br>
+                            US
+                          </div>
+                          <iframe 
+                              src="https://www.google.com/maps?q=505+HOOVER+ST+Farwell,+MI+48622-9114+US&output=embed" 
+                              width="300" 
+                              height="150" 
+                              style="border:0;" 
+                              allowfullscreen="" 
+                              loading="lazy">
+                          </iframe>
+                        </div>
+                      </div>
+                      <div class="col s6">
+                        <div class="col s4">Shipping Address</div>
+                        <div class="col s8">
+                          <div class="link mb10">
+                            505 HOOVER ST<br>
+                            Farwell, MI 48622-9114<br>
+                            US
+                          </div>
+                          <iframe 
+                              src="https://www.google.com/maps?q=505+HOOVER+ST+Farwell,+MI+48622-9114+US&output=embed" 
+                              width="300" 
+                              height="150" 
+                              style="border:0;" 
+                              allowfullscreen="" 
+                              loading="lazy">
+                          </iframe>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="active">
+                  <div class="collapsible-header"><i class="material-icons">keyboard_arrow_down</i>Description Information</div>
+                  <div class="collapsible-body">
+                    <div class="row infoViewArea">
+                      <div class="col s6 infoCol">
+                        <div class="col s4 label">Description</div>
+                        <div class="col s8 val"></div>
+                      </div>
+                      <div class="col s6 infoCol">
+                        <div class="col s4 label">Collaborator Type</div>
+                        <div class="col s8 val"></div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="active">
+                  <div class="collapsible-header"><i class="material-icons">keyboard_arrow_down</i>Additional Information</div>
+                  <div class="collapsible-body">
+                    <div class="row infoViewArea">
+                      <div class="col s6 infoCol">
+                        <div class="col s4 label">Sales Agreement</div>
+                        <div class="col s8 val"></div>
+                      </div>
+                      <div class="col s6 infoCol">
+                        <div class="col s4 label">Machine Type</div>
+                        <div class="col s8 val"></div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+                <li class="active">
+                  <div class="collapsible-header"><i class="material-icons">keyboard_arrow_down</i>System Information</div>
+                  <div class="collapsible-body">
+                    <div class="row infoViewArea">
+                      <div class="col s6 infoCol">
+                        <div class="col s4 label">Created By</div>
+                        <div class="col s8 val">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="mr5">
+                          <span class="dashLink lineH15">JONGHO LEE</span>
+                          <i class="material-icons ml10">people</i>
+                          <span class="ml10">, 4/20/2016 5:31 AM</span>
+                        </div>
+                      </div>
+                      <div class="col s6 infoCol">
+                        <div class="col s4 label">Last Modified By</div>
+                        <div class="col s8 val">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="mr5">
+                          <span class="dashLink lineH15">JONGHO LEE</span>
+                          <i class="material-icons ml10">people</i>
+                          <span class="ml10">, 3/5/2025 2:32 AM</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+          </section>
+          <section id="cont1-2">
+            test
+          </section>
+        </div>
+        <div class="saveLayer animate__animated animate__backInUp">
+          <a href="javascript:;" class="waves-effect waves-blue hBtn mr10 wd100px saveBtn"><i class="material-icons left">close</i>cancel</a>
+          <a href="javascript:;" class="waves-effect waves-blue hBtn hBlue wd100px saveBtn"><i class="material-icons left">save</i>Save</a>
+        </div>
+      </div>
+
+      <div class="contDtSubArea">
+        <div class="cardBox animate__animated">
+          <div class="cardTit">Create New Opportunity</div>
+          <div class="mt20 ml10">
+            <div><span class="vivaTxt">*</span><span class="blackTxt">Opportunity Record Type</span></div>
+            <div class="mt5">
+              <label>
+                <input class="with-gap" name="group1" type="radio"  />
+                <span>12 Month Opportunity</span>
+              </label>
+            </div>
+            <div>
+              <label>
+                <input class="with-gap" name="group1" type="radio"  />
+                <span>Multi-Year Opportunity</span>
+              </label>
+            </div>
+          </div>
+          <div class="mt10 ml10 blackTxt">Click Create to start a new opportunity</div>
+          <div class="cardBtnArea ar">
+            <a href="javascript:;" class="waves-effect waves-blue hBtn hBlue"><i class="material-icons left">edit</i>Create</a>
+          </div>
+        </div>
+
+        <div class="cardBox animate__animated mt10">
+          <ul class="tabs">
+            <li class="tab"><a href="#cont2-1">Activity</a></li>
+            <li class="tab"><a href="#cont2-2">Chatter</a></li>
+          </ul>
+          <section id="cont1">
+            <div class="histArea">
+              <ul class="collapsible expandable">
+                <li class="active">
+                  <div class="collapsible-header">
+                    <div class="tit fontM"><i class="material-icons">keyboard_arrow_down</i>October • 2022</div>
+                    <div class="fontM">3 Years Ago</div>
+                  </div>
+                  <div class="collapsible-body">
+                    <div class="hstList">
+                      <ul>
+                        <li>
+                          <div class="iconBoxArea">
+                            <div class="iconBox tendril"><i class="material-icons">fact_check</i></div>
+                            <div class="timeLine"></div>
+                          </div>
+                          <div class="cont">
+                            <div class="titArea">
+                              <div class="tit link">Pardot Mic Email: Where Should We Optimize for Better Engagement?</div>
+                              <div class="wd100px ar">Oct 22, 2022</div>
+                            </div>
+                            <div class="mt5 ml5">
+                              <span class="dashLink lineH15">Integration User</span> had a task with <span class="dashLink lineH15">David Elliott</span>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+                <li class="active">
+                  <div class="collapsible-header">
+                    <div class="tit fontM"><i class="material-icons">keyboard_arrow_down</i>September • 2022</div>
+                    <div class="fontM">3 Years Ago</div>
+                  </div>
+                  <div class="collapsible-body">
+                    <div class="hstList">
+                      <ul>
+                        <li>
+                          <div class="iconBoxArea">
+                            <div class="iconBox tendril"><i class="material-icons">fact_check</i></div>
+                            <div class="timeLine"></div>
+                          </div>
+                          <div class="cont">
+                            <div class="titArea">
+                              <div class="tit link">Pardot Mic Email: Where Should We Optimize for Better Engagement?</div>
+                              <div class="wd100px ar">Oct 22, 2022</div>
+                            </div>
+                            <div class="mt5 ml5">
+                              <span class="dashLink lineH15">Integration User</span> had a task with <span class="dashLink lineH15">David Elliott</span>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+                <li class="active">
+                  <div class="collapsible-header">
+                    <div class="tit fontM"><i class="material-icons">keyboard_arrow_down</i>August • 2022</div>
+                    <div class="fontM">3 Years Ago</div>
+                  </div>
+                  <div class="collapsible-body">
+                    <div class="hstList">
+                      <ul>
+                        <li>
+                          <div class="iconBoxArea">
+                            <div class="iconBox tendril"><i class="material-icons">fact_check</i></div>
+                            <div class="timeLine"></div>
+                          </div>
+                          <div class="cont">
+                            <div class="titArea">
+                              <div class="tit link">Pardot Mic Email: Where Should We Optimize for Better Engagement?</div>
+                              <div class="wd100px ar">Oct 22, 2022</div>
+                            </div>
+                            <div class="mt5 ml5">
+                              <span class="dashLink lineH15">Integration User</span> had a task with <span class="dashLink lineH15">David Elliott</span>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+                <li class="active">
+                  <div class="collapsible-header">
+                    <div class="tit fontM"><i class="material-icons">keyboard_arrow_down</i>December • 2017</div>
+                    <div class="fontM">8 Years Ago</div>
+                  </div>
+                  <div class="collapsible-body">
+                    <div class="hstList">
+                      <ul>
+                        <li>
+                          <div class="iconBoxArea">
+                            <div class="iconBox blueTxt"><i class="material-icons">mail</i></div>
+                            <div class="timeLine"></div>
+                          </div>
+                          <div class="cont">
+                            <div class="titArea">
+                              <div class="tit link">Pardot Mic Email: Where Should We Optimize for Better Engagement?</div>
+                              <div class="wd100px ar">Oct 22, 2022</div>
+                            </div>
+                            <div class="mt5 ml5">
+                              <span class="dashLink lineH15">Integration User</span> had a task with <span class="dashLink lineH15">David Elliott</span>
+                            </div>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="iconBoxArea">
+                            <div class="iconBox blueTxt"><i class="material-icons">mail</i></div>
+                            <div class="timeLine"></div>
+                          </div>
+                          <div class="cont">
+                            <div class="titArea">
+                              <div class="tit link">Pardot Mic Email: Where Should We Optimize for Better Engagement?</div>
+                              <div class="wd100px ar">Oct 22, 2022</div>
+                            </div>
+                            <div class="mt5 ml5">
+                              <span class="dashLink lineH15">Integration User</span> had a task with <span class="dashLink lineH15">David Elliott</span>
+                            </div>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="iconBoxArea">
+                            <div class="iconBox blueTxt"><i class="material-icons">mail</i></div>
+                            <div class="timeLine"></div>
+                          </div>
+                          <div class="cont">
+                            <div class="titArea">
+                              <div class="tit link">Pardot Mic Email: Where Should We Optimize for Better Engagement?</div>
+                              <div class="wd100px ar">Oct 22, 2022</div>
+                            </div>
+                            <div class="mt5 ml5">
+                              <span class="dashLink lineH15">Integration User</span> had a task with <span class="dashLink lineH15">David Elliott</span>
+                            </div>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="iconBoxArea">
+                            <div class="iconBox blueTxt"><i class="material-icons">mail</i></div>
+                            <div class="timeLine"></div>
+                          </div>
+                          <div class="cont">
+                            <div class="titArea">
+                              <div class="tit link">Pardot Mic Email: Where Should We Optimize for Better Engagement?</div>
+                              <div class="wd100px ar">Oct 22, 2022</div>
+                            </div>
+                            <div class="mt5 ml5">
+                              <span class="dashLink lineH15">Integration User</span> had a task with <span class="dashLink lineH15">David Elliott</span>
+                            </div>
+                          </div>
+                        </li>
+                        <li>
+                          <div class="iconBoxArea">
+                            <div class="iconBox blueTxt"><i class="material-icons">mail</i></div>
+                            <div class="timeLine"></div>
+                          </div>
+                          <div class="cont">
+                            <div class="titArea">
+                              <div class="tit link">Pardot Mic Email: Where Should We Optimize for Better Engagement?</div>
+                              <div class="wd100px ar">Oct 22, 2022</div>
+                            </div>
+                            <div class="mt5 ml5">
+                              <span class="dashLink lineH15">Integration User</span> had a task with <span class="dashLink lineH15">David Elliott</span>
+                            </div>
+                          </div>
+                        </li>
+                      </ul>
+                    </div>
+                  </div>
+                </li>
+              </ul>
+            </div>
+
+          </section>
+        </div>
+      </div>
+    </section>
+  </article>
+</body>
+</html>

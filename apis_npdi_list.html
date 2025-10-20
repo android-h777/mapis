@@ -1,0 +1,543 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="/css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script>
+        $(document).ready(function(){
+          $('.sidenav').sidenav();
+          $(document).on('click', '.sidenav-overlay, .closeBtns', function() {
+              $('.sidenav').sidenav('close');
+          });
+
+          $(document).on("click", ".newAppleTab li", function(){
+              var offset = $(this).offset().left.toFixed(0) - $(this).parent().offset().left.toFixed(0);
+              
+              $(this).parents(".newAppleTab").find("li").removeClass("on");
+              $(this).parents(".newAppleTab").find(".tabBg").animate({left: offset-3});
+              $(this).addClass("on");
+              $('.mainList ul li').removeClass("animate__flipInX");
+              fnSetPrjList();
+          });
+
+          $(".pjTit, .rightSection .cardTit, #newPjBtn").click(function(){
+            window.open("apis_npdi_pop.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
+          });
+
+          $("#test").click(function() {
+            window.open("projectPopup.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
+          })
+
+          $(".mainList li").click(function(){
+            $(".mainList li").removeClass("on");
+            $(".timeline .bdBox").removeClass("animate__flipInX");
+
+            $("#dtTit").text($(this).find(".pjTit").text());
+            $("#dtContVal1").text($(this).find(".contVal1").text());
+            $("#dtContVal2").text($(this).find(".statusBox").text());
+            $("#dtContVal3").text($(this).find(".contVal2").text());
+            $("#dtContVal4").text($(this).find(".contVal3").text());
+            $("#dtContVal6").text($(this).find(".contVal4").text());
+            $("#dtContVal7").text($(this).find(".userNm").text());
+
+            $(this).addClass("on");
+            fnSetTimeLine();
+          });
+
+          $("#mainSrchInput").focus(function(){
+            $(".bgLayer").show();  
+            $(".contArea").addClass("blur");
+            $(".srchDtArea, .srchRstArea").slideDown();
+          });
+
+          $(".bgLayer").click(function(){
+            $(".bgLayer").hide();
+            $(".contArea").removeClass("blur");
+            $(".srchRstArea, .srchDtArea").slideUp();
+          });
+
+          $(document).on("mouseenter", ".srchRstArea li", function() {
+            var $this = $(this);
+
+            $(".srchRstArea .rstDt").hide();
+            $(".srchDtArea").addClass("on");
+            $('.srchDtArea').one('transitionend', function() {
+              $("#"+$this.attr("data-id")).show();
+              $(".srchAIArea").show();
+            });
+          }).on("mouseleave", ".srchRstArea li", function() {
+            var $this = $(this);
+            var $related = $(event.relatedTarget);
+            if (!$related.closest(".srchAIArea").length) {
+              $(".srchDtArea").removeClass("on");
+              $(".srchAIArea").hide();
+              $("#" + $this.attr("data-id")).hide();
+            }
+          });
+         
+          $('.modal').modal();
+          fnSetPrjList();
+          fnSetTimeLine();
+        });
+
+        function fnSetPrjList(){
+          document.querySelectorAll('.mainList ul li').forEach((li, index) => {
+            setTimeout(() => {
+              li.classList.add('animate__flipInX');
+            }, index * 100); // 1초 간격
+          });
+        }
+
+        function fnSetTimeLine(){
+          for (let i = 1; i <= 6; i++) {
+              $(`#timeLineItem${i}`).delay(200 * (i - 1)).queue(function(next) {
+                  $(this).addClass("animate__flipInX");
+                  next();
+              });
+          }
+        }
+  </script>
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <article class="navTop">
+        <section class="leftSection">
+          <div class="menuIcon">
+            <div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
+          </div>
+          <div><a href="/apis_main.html"><img src="/img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
+        </section>
+        <section class="centerSection">
+          <div class="srchArea">
+            <i class="material-icons prefix">search</i>
+            <input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput">
+          </div>
+        </section>
+        <section class="rightSection">
+          <div class="notiArea">
+            <div class="notiIcon"><i class="material-icons">assignment_turned_in</i></div>
+            <div class="notiCnt pulse"><span>3</span></div>
+          </div>
+          <div class="userInfo">
+            <div><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+          </div>
+        </section>
+      </article>
+    </nav>
+  </header>
+
+  <aside class="menuAside">
+    <div id="slide-out" class="sidenav glassBox">
+      <div class="userInfoArea">
+        <div class="photo"><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+        <div class="userInfo">
+          <div class="fontB">JONGHO LEE</div>
+          <div>IT Procurement/HR/R&D Team</div>
+        </div>
+      </div>
+      <div class="menuList">
+        <ul>
+          <li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>Home</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_dash.html"><i class="material-icons left">dashboard</i>Dashboard</a></li>
+          <li class="waves-effect waves-hColor on"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>NPDI</a></li>
+          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">snippet_folder</i>NPT</a></li>
+          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">build</i>Tech Support</a></li>
+          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">trending_up</i>Productivity</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub​</a></li>
+          <li class="waves-effect waves-hColor"><a href="mfmea_list.html" target="_blank"><i class="material-icons left">playlist_add_check_circle</i>FMEA​</a></li>
+          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">addchart</i>PSA​</a></li>
+          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">assignment_late</i>CoC​</a></li>
+          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">analytics</i>Analytics​</a></li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <article class="contArea typeList">
+    <div class="leftSection">
+      <section class="mainTitArea">
+        <div class="mainTit" id="test">Project List</div>
+        <div class="btnArea">
+        <div class="newAppleTab mr10">
+            <ul>
+              <li class="waves-effect waves-hColor on" cd="ALLW">ALL</li>
+              <li class="waves-effect waves-hColor" cd="PART">My List</li>
+              <div class="tabBg" style="left: 0px;"></div>
+            </ul>
+				  </div>
+          <div><a id="viewOptBtn" class="waves-effect waves-light hBtn hBlue wd160px mr10 modal-trigger" href="#bucketModal"><i class="material-icons left">add</i><span class="label">Create Project</span></a></div>
+          <div><a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn viva wd160px"><i class="material-icons left">search</i><span class="label">Search Option</span></a></div>
+        </div>
+      </section>
+
+      <section class="mainList cardBox">
+        <ul class="hScroll">
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Completed
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[01054] Electro 242-2 Grey FC</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">OTHER</div>
+                  <div class="roundBox contVal2">LITE</div>
+                  <div class="roundBox contVal3">Commercial Go</div>
+                  <div class="roundBox contVal4">Approved | 10.04.2008</div>
+                </div>
+                <div>
+                  Changed by <span class="fontM blackTxt userNm">BHOGALE</span>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Completed
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[03657] Low viscosity high vinyl polybutadiene</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">RLC</div>
+                  <div class="roundBox contVal2">STANDARD</div>
+                  <div class="roundBox contVal3">Commercial Go</div>
+                  <div class="roundBox contVal4">Approved | 14.06.2016</div>
+                </div>
+                <div>
+                  Changed by <span class="fontM blackTxt userNm">PRESSMAN</span>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated on">
+            <section class="statusBox type2">
+              Completed
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[03704] New preservative for Silsoft</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">MASS</div>
+                  <div class="roundBox contVal2">LITE</div>
+                  <div class="roundBox contVal3">Commercial Go</div>
+                  <div class="roundBox contVal4">Approved | 28.03.2017</div>
+                </div>
+                <div>
+                  Changed by <span class="fontM blackTxt userNm">FALKBY</span>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Completed
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[03701] Low Viscosity Binder Gel T</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">CONSUMER-NON TOXIC</div>
+                  <div class="roundBox contVal2">LITE</div>
+                  <div class="roundBox contVal3">Commercial Go</div>
+                  <div class="roundBox contVal4">Approved | 12.04.2016</div>
+                </div>
+                <div>
+                  Changed by <span class="fontM blackTxt userNm">SAMYAK</span>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Completed
+            </section>  
+            <section class="wd100p">
+              <div class="pjTit">[03702] 2.6W Conduction Cure T</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">AUTO-THERMAL</div>
+                  <div class="roundBox contVal2">LITE</div>
+                  <div class="roundBox contVal3">Commercial Go</div>
+                  <div class="roundBox contVal4">Approved | 12.04.2016</div>
+                </div>
+                <div>
+                  Changed by <span class="fontM blackTxt userNm">VENKATESH</span>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Completed
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[03703] 10 Watt Thermal Gel</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">AUTO-THERMAL</div>
+                  <div class="roundBox contVal2">STANDARD</div>
+                  <div class="roundBox contVal3">Commercial Go</div>
+                  <div class="roundBox contVal4">Approved | 13.01.2020</div>
+                </div>
+                <div>
+                  Changed by <span class="fontM blackTxt userNm">MILHOUSE</span>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type1">
+              On Hold
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[03705] Buffer coat silicone for OLED</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">OPTICAL DISPLAYS</div>
+                  <div class="roundBox contVal2">NEW STANDARD</div>
+                  <div class="roundBox contVal3">Customer Acceptance</div>
+                  <div class="roundBox contVal4">Assessment</div>
+                </div>
+                <div>
+                  Changed by <span class="fontM blackTxt userNm">QUANJ</span>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Completed
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[03689] Electro LSR 240 HVI Grey</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">ENERGY/INFRASTRUCTURE</div>
+                  <div class="roundBox contVal2">LITE</div>
+                  <div class="roundBox contVal3">Commercial Go</div>
+                  <div class="roundBox contVal4">Approved | 27.03.2017</div>
+                </div>
+                <div>
+                  Changed by <span class="fontM blackTxt userNm">VENKATESH</span>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Completed
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[03708] Electro LSR 342 HVI Grey FC</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">ENERGY/INFRASTRUCTURE</div>
+                  <div class="roundBox contVal2">LITE</div>
+                  <div class="roundBox contVal3">Commercial Go</div>
+                  <div class="roundBox contVal4">Approved | 27.03.2017</div>
+                </div>
+                <div>
+                  Changed by <span class="fontM blackTxt userNm">VENKATESH</span>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Completed
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[03711] Filtered version of FF170</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">FOAM CONTROL</div>
+                  <div class="roundBox contVal2">LITE</div>
+                  <div class="roundBox contVal3">Commercial Go</div>
+                  <div class="roundBox contVal4">Approved | 10.07.2017</div>
+                </div>
+                <div>
+                  Changed by <span class="fontM blackTxt userNm">VENKATESH</span>
+                </div>
+              </div>
+            </section>
+          </li>
+
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Completed
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[01054] Electro 242-2 Grey FC</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">OTHER</div>
+                  <div class="roundBox contVal2">LITE</div>
+                  <div class="roundBox contVal3">Commercial Go</div>
+                  <div class="roundBox contVal4">Approved | 10.04.2008</div>
+                </div>
+                <div>
+                  Changed by <span class="fontM blackTxt userNm">BHOGALE</span>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Completed
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[03657] Low viscosity high vinyl polybutadiene</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">RLC</div>
+                  <div class="roundBox contVal2">STANDARD</div>
+                  <div class="roundBox contVal3">Commercial Go</div>
+                  <div class="roundBox contVal4">Approved | 14.06.2016</div>
+                </div>
+                <div>
+                  Changed by <span class="fontM blackTxt userNm">PRESSMAN</span>
+                </div>
+              </div>
+            </section>
+          </li>
+
+        </ul>
+      </section>
+    </div>
+    <div class="rightSection">
+      <div class="cardBox">
+        <div class="cardTit"><span class="link" id="dtTit">[03704] New preservative for Silsoft</span></div>
+        <div class="row subPjInfo">
+          <div class="col s4">Bucket Name</div>
+          <div class="col s8 val" id="dtContVal1">MASS</div>
+          <div class="col s4">Status</div>
+          <div class="col s8 val" id="dtContVal2">Completed</div>
+          <div class="col s4">Type</div>
+          <div class="col s8 val" id="dtContVal3">LITE</div>
+          <div class="col s4">Decision Point</div>
+          <div class="col s8 val" id="dtContVal4">Commercial Go</div>
+          <div class="col s4">Decision Date</div>
+          <div class="col s8 val" id="dtContVal5">28.03.2017</div>
+          <div class="col s4">Actual Decision</div>
+          <div class="col s8 val" id="dtContVal6">Approved</div>
+          <div class="col s4">Changed By</div>
+          <div class="col s8 val" id="dtContVal7">FALKBY</div>
+        </div>
+        <div class="subTit mt20 ml10">TimeLine</div>
+        <div class="timeLine mt10">
+          <div class="bdBox animate__animated" id="timeLineItem1">
+            <div class="procTit fin"><i class="material-icons left">check_circle</i>NPC</div>
+            <div class="date">20.04.2015</div>
+          </div>
+          <div class="arrow"><i class="material-icons">expand_more</i></div>
+          <div class="bdBox animate__animated" id="timeLineItem2">
+            <div class="procTit fin"><i class="material-icons left">check_circle</i>NPI Go</div>
+            <div class="date">04.11.2015</div>
+          </div>
+          <div class="arrow"><i class="material-icons">expand_more</i></div>
+          <div class="bdBox animate__animated" id="timeLineItem3">
+            <div class="procTit fin"><i class="material-icons left">check_circle</i>Lab Formulation</div>
+            <div class="date">17.03.2016</div>
+          </div>
+          <div class="arrow"><i class="material-icons">expand_more</i></div>
+          <div class="bdBox animate__animated" id="timeLineItem4">
+            <div class="procTit fin"><i class="material-icons left">check_circle</i>Scale-up</div>
+            <div class="date">07.09.2016</div>
+          </div>
+          <div class="arrow"><i class="material-icons">expand_more</i></div>
+          <div class="bdBox ing animate__animated" id="timeLineItem5">
+            <div class="procTit"><i class="material-icons left">play_circle_outline</i>Commercial Go</div>
+            <div class="date"></div>
+          </div>
+          <div class="arrow"><i class="material-icons">expand_more</i></div>
+          <div class="bdBox animate__animated" id="timeLineItem6">
+            <div class="procTit"><i class="material-icons left">radio_button_unchecked</i>Post Launch Review</div>
+            <div class="date"></div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article id="bucketModal" class="modal" style="width: 800px;">
+    <div class="modal-header mochaBg">
+      <h5>Select Bucket</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div class="searchBox">
+        <div class="wd100p"><input type="text" class="browser-default" placeholder="검색" value="custom"></div>
+      </div>
+      <div class="treeMap hScroll" style="max-height: calc(100vh - 430px);">
+        <ul>
+          <li class="waves-effect waves-orange lv1">ADDITIVES</li>
+          <li class="waves-effect waves-orange lv1">BASICS</li>
+          <li class="waves-effect waves-orange lv1">CORE SILICONES & INTERMEDIATES</li>
+          <li class="waves-effect waves-orange lv1 on">FORMULATED PRODUCTS
+          <div>
+            <ul>
+              <li class="waves-effect waves-orange lv2">COATINGS</li>
+              <li class="waves-effect waves-orange lv2 on">ELASTOMERS</li>
+              <div>
+                <ul>
+                  <li class="waves-effect waves-orange lv3 on"><span class="srchVal">CUSTOM</span> COMPOUND</li>
+                  <div>
+                    <ul>
+                      <li class="waves-effect waves-orange lv4 cont">CONSUMER (<span class="srchVal">CUSTOM</span> COMPOUND)</li>
+                      <li class="waves-effect waves-orange lv4 cont">ENERGY (<span class="srchVal">CUSTOM</span> COMPOUND)</li>
+                      <li class="waves-effect waves-orange lv4 cont">HEALTHCARE (<span class="srchVal">CUSTOM</span> COMPOUND)</li>
+                      <li class="waves-effect waves-orange lv4 cont">TRANSPORTATION (<span class="srchVal">CUSTOM</span> COMPOUND)</li>
+                    </ul>
+                  </div>
+                  <li class="waves-effect waves-orange lv3">HCE</li>
+                  <li class="waves-effect waves-orange lv3">LSR</li>
+                </ul>
+              </div>
+              <li class="waves-effect waves-orange lv2">ELECTRONIC MATERIALS</li>
+              <li class="waves-effect waves-orange lv2">SEALANTS</li>
+            </ul>
+          </div>
+          <li class="waves-effect waves-orange lv1 on">FORMULATED SPECIALTIES</li>
+          <div>
+            <ul>
+              <li class="waves-effect waves-orange lv2">ELECTRONIC MATERIALS</li>
+              <li class="waves-effect waves-orange lv2">HDC / WSC</li>
+              <li class="waves-effect waves-orange lv2">RLC / PSA</li>
+              <li class="waves-effect waves-orange lv2">SPECIALTY ELASTOMERS</li>
+            </ul>
+          </div>
+          <li class="waves-effect waves-orange lv1">PERFORMANCE ADDITIVES</li>
+          <li class="waves-effect waves-orange lv1">TRANSFORMATIONAL GROWTH</li>
+        </ul>
+      </div>
+      <div class="btnArea">
+        <a href="javascript:;" class="waves-effect waves-light hBtn hBlue wd100px mr10" id="newPjBtn"><i class="material-icons left">save</i><span class="label">OK</span></a>
+        <a href="javascript:;" class="waves-effect waves-light hBtn hGrey wd100px"><i class="material-icons left">cancel</i><span class="label">Cancel</span></a>
+      </div>
+    </div>
+  </article>
+  <article class="bgLayer"></article>
+</body>
+</html>

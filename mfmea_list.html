@@ -1,0 +1,449 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mfmea_common.css">
+    <link type="text/css" rel="stylesheet" href="/css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script src="js/d3.v7.min.js"></script>
+    <script src="js/hierarchy.js" defer></script>
+    <script>
+
+        $(document).ready(function(){
+
+          $(".pjTit, .rightSection .cardTit, #newPjBtn").click(function(){
+            window.open("mfmea_pop.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
+          });
+
+          $(".mainList li").click(function(){
+            teardown();
+            $(".mainList li").removeClass("on");
+            $(".timeline .bdBox").removeClass("animate__flipInX");
+
+            $("#dtTit").text($(this).find(".pjTit").text());
+            $("#dtContVal1").text($(this).find(".contVal1").text());
+            $("#dtContVal2").text($(this).find(".statusBox").text());
+            $("#dtContVal3").text($(this).find(".contVal2").text());
+            $("#dtContVal4").text($(this).find(".contVal3").text());
+            $("#dtContVal6").text($(this).find(".contVal4").text());
+            $("#dtContVal7").text($(this).find(".userNm").text());
+
+            $(this).addClass("on");
+            buildTree();
+          });
+
+          $("#mainSrchInput").focus(function(){
+            $(".bgLayer").show();
+            $(".contArea").addClass("blur");
+            $(".srchDtArea, .srchRstArea").slideDown();
+          });
+
+          $(".bgLayer").click(function(){
+            $(".bgLayer").hide();
+            $(".contArea").removeClass("blur");
+            $(".srchRstArea, .srchDtArea").slideUp();
+          });
+
+          $("#srchOptBtn").click(function(){
+            $('.modal').modal('close');
+          });
+
+          $(document).on("mouseenter", ".srchRstArea li", function() {
+            var $this = $(this);
+
+            $(".srchRstArea .rstDt").hide();
+            $(".srchDtArea").addClass("on");
+            $('.srchDtArea').one('transitionend', function() {
+              $("#"+$this.attr("data-id")).show();
+              $(".srchAIArea").show();
+            });
+          }).on("mouseleave", ".srchRstArea li", function() {
+            var $this = $(this);
+            var $related = $(event.relatedTarget);
+            if (!$related.closest(".srchAIArea").length) {
+              $(".srchDtArea").removeClass("on");
+              $(".srchAIArea").hide();
+              $("#" + $this.attr("data-id")).hide();
+            }
+          });
+         
+          $('.modal').modal();
+          // $('#bucketModal').modal("open");
+          $('select').formSelect();
+
+          const listItems = document.querySelectorAll('.mainList ul li');
+          const classNameToAdd = 'animate__flipInX'; // 추가할 클래스 이름
+
+          listItems.forEach((li, index) => {
+            setTimeout(() => {
+              li.classList.add(classNameToAdd);
+            }, index * 100); // 1초 간격
+          });
+
+          buildTree();
+        });
+
+        const data = {
+          name: "Less/More RM Input",
+          children: [
+            {
+              name: "Viscosity defect",
+              children: [
+                {
+                  name: "Abnormal Flowmeter tuning Sensor",
+                  children : [{name:"Annual calibration"}, {name:"Periodic sensor check"}]
+                },
+                { name: "Inaccurate RM ratio control",
+                  children : [{name:"Dosing system check"}, {name:"Operator verification"}]
+                }
+              ]
+            },
+            {
+              name: "Hardness defect",
+              children: [
+                {
+                  name: "Low curing temperature",
+                  children : [{name:"Oven temperature monitoring"}, {name:"Sensor calibration"}]
+                },
+                { name: "Short curing time",
+                  children : [{name:"Timer setting verification"}, {name: "Production log review"}]
+                }
+              ]
+            }
+          ]
+        }; 
+
+  </script>
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <article class="navTop">
+        <section class="leftSection">
+          <img src="/img/mfmea-40.png">
+        </section>
+        <section class="rightSection">
+          <div class="notiArea">
+            <div class="notiIcon"><i class="material-icons">assignment_turned_in</i></div>
+            <div class="notiCnt pulse"><span>3</span></div>
+          </div>
+          <div class="userInfo">
+            <div><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+          </div>
+        </section>
+      </article>
+    </nav>
+  </header>
+  <article class="contArea typeList type2">
+    <div class="leftSection">
+      <section class="mainTitArea">
+        <div class="mainTit">FEMA List</div>
+        <div class="btnArea">
+          <div style="display: flex;">
+            <a href="javascript:;" class="waves-effect waves-light hBtn hViva wd140px mr10"><i class="material-icons left">add</i><span class="label">Add FMEA</span></a>
+            <!-- <a href="javascript:;" class="waves-effect waves-light hBtn hGreen wd120px mr10"><i class="material-icons left">grid_on</i><span class="label">Excel</span></a> -->
+            <a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn viva wd120px modal-trigger" data-target="bucketModal"><i class="material-icons left">search</i><span class="label">Search</span></a>
+          </div>
+        </div>
+      </section>
+
+      <section class="mainList cardBox">
+        <ul class="hScroll">
+
+          <li class="waves-effect waves-hColor animate__animated on">
+            <section class="statusBox type1">PFMEA</section>
+            <section class="wd100p">
+              <div class="pjTit">[NAN-#101] Comply with RM input Q'ty (range ±2%)</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Customer : ACTIA</div>
+                  <div class="roundBox contVal2">PRODUCT TYPE : TIA**(A)</div>
+                  <div class="roundBox contVal3">PRODUCT CODE : 84060</div>
+                  <div class="roundBox contVal4">PROCESS : Feeding</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">DFMEA</section>
+            <section class="wd100p">
+              <div class="pjTit">[OHT-#205] Meet all properties required by each ECM module</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Customer : BOSCH</div>
+                  <div class="roundBox contVal2">PRODUCT TYPE : TIA**(B)</div>
+                  <div class="roundBox contVal3">PRODUCT CODE : 67202</div>
+                  <div class="roundBox contVal4">PROCESS : -</div>
+                </div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">DFMEA</section>
+            <section class="wd100p">
+              <div class="pjTit">[OHT-#205] Meet all properties required by each ECM module</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Customer : BOSCH</div>
+                  <div class="roundBox contVal2">PRODUCT TYPE : TIA**(B)</div>
+                  <div class="roundBox contVal3">PRODUCT CODE : 67202</div>
+                  <div class="roundBox contVal4">PROCESS : -</div>
+                </div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">DFMEA</section>
+            <section class="wd100p">
+              <div class="pjTit">[OHT-#205] Meet all properties required by each ECM module</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Customer : BOSCH</div>
+                  <div class="roundBox contVal2">PRODUCT TYPE : TIA**(B)</div>
+                  <div class="roundBox contVal3">PRODUCT CODE : 67202</div>
+                  <div class="roundBox contVal4">PROCESS : -</div>
+                </div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">DFMEA</section>
+            <section class="wd100p">
+              <div class="pjTit">[OHT-#205] Meet all properties required by each ECM module</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Customer : BOSCH</div>
+                  <div class="roundBox contVal2">PRODUCT TYPE : TIA**(B)</div>
+                  <div class="roundBox contVal3">PRODUCT CODE : 67202</div>
+                  <div class="roundBox contVal4">PROCESS : -</div>
+                </div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">DFMEA</section>
+            <section class="wd100p">
+              <div class="pjTit">[OHT-#205] Meet all properties required by each ECM module</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Customer : BOSCH</div>
+                  <div class="roundBox contVal2">PRODUCT TYPE : TIA**(B)</div>
+                  <div class="roundBox contVal3">PRODUCT CODE : 67202</div>
+                  <div class="roundBox contVal4">PROCESS : -</div>
+                </div>
+              </div>
+            </section>
+          </li>
+
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type1">PFMEA</section>
+            <section class="wd100p">
+              <div class="pjTit">[NAN-#101] Comply with RM input Q'ty (range ±2%)</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Customer : ACTIA</div>
+                  <div class="roundBox contVal2">PRODUCT TYPE : TIA**(A)</div>
+                  <div class="roundBox contVal3">PRODUCT CODE : 84060</div>
+                  <div class="roundBox contVal4">PROCESS : Feeding</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">DFMEA</section>
+            <section class="wd100p">
+              <div class="pjTit">[OHT-#205] Meet all properties required by each ECM module</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Customer : BOSCH</div>
+                  <div class="roundBox contVal2">PRODUCT TYPE : TIA**(B)</div>
+                  <div class="roundBox contVal3">PRODUCT CODE : 67202</div>
+                  <div class="roundBox contVal4">PROCESS : -</div>
+                </div>
+              </div>
+            </section>
+          </li>
+
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type1">PFMEA</section>
+            <section class="wd100p">
+              <div class="pjTit">[NAN-#101] Comply with RM input Q'ty (range ±2%)</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Customer : ACTIA</div>
+                  <div class="roundBox contVal2">PRODUCT TYPE : TIA**(A)</div>
+                  <div class="roundBox contVal3">PRODUCT CODE : 84060</div>
+                  <div class="roundBox contVal4">PROCESS : Feeding</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">DFMEA</section>
+            <section class="wd100p">
+              <div class="pjTit">[OHT-#205] Meet all properties required by each ECM module</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Customer : BOSCH</div>
+                  <div class="roundBox contVal2">PRODUCT TYPE : TIA**(B)</div>
+                  <div class="roundBox contVal3">PRODUCT CODE : 67202</div>
+                  <div class="roundBox contVal4">PROCESS : -</div>
+                </div>
+              </div>
+            </section>
+          </li>
+
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type1">PFMEA</section>
+            <section class="wd100p">
+              <div class="pjTit">[NAN-#101] Comply with RM input Q'ty (range ±2%)</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Customer : ACTIA</div>
+                  <div class="roundBox contVal2">PRODUCT TYPE : TIA**(A)</div>
+                  <div class="roundBox contVal3">PRODUCT CODE : 84060</div>
+                  <div class="roundBox contVal4">PROCESS : Feeding</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">DFMEA</section>
+            <section class="wd100p">
+              <div class="pjTit">[OHT-#205] Meet all properties required by each ECM module</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Customer : BOSCH</div>
+                  <div class="roundBox contVal2">PRODUCT TYPE : TIA**(B)</div>
+                  <div class="roundBox contVal3">PRODUCT CODE : 67202</div>
+                  <div class="roundBox contVal4">PROCESS : -</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        </ul>
+      </section>
+    </div>
+
+    <div class="rightSection">
+      <div class="cardBox">
+        <div class="cardTit"><span class="link" id="dtTit">[NAN-#101] Comply with RM input Q'ty (range ±2%)</span></div>
+        <div class="row subPjInfo">
+          <div class="col s4">Customer</div>
+          <div class="col s8 val" id="dtContVal1">ACTIA</div>
+          <div class="col s4">PRODUCT TYPE</div>
+          <div class="col s8 val" id="dtContVal2">TIA**(A)</div>
+          <div class="col s4">PRODUCT CODE</div>
+          <div class="col s8 val" id="dtContVal3">84060</div>
+          <div class="col s4">FMEA Map</div>
+          <div class="nodeChart">
+            <svg width="600" height="420"></svg>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article id="bucketModal" class="modal" style="width: 800px;">
+    <div class="modal-header mochaBg">
+      <h5>Seach</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div class="srchOptBox">
+        <div class="row">
+          <div class="col s2 tit">Synonyms</div>
+          <div class="col s4">
+            <label>
+              <input class="with-gap" name="group1" type="radio" checked />
+              <span>All</span>
+            </label>
+            <label>
+              <input class="with-gap" name="group1" type="radio"  />
+              <span>D-FMEA</span>
+            </label>
+            <label>
+              <input class="with-gap" name="group1" type="radio"  />
+              <span>P-FMEA</span>
+            </label>
+          </div>
+          <div class="col s2 tit">Plant</div>
+          <div class="col s4">
+            <select>
+              <option value="0">ALL</option>
+              <option value="1">Waterford [WTFD]</option>
+              <option value="2">Sistersville [SVLL]</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Product</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+          <div class="col s2 tit">Issue No.</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">A.P</div>
+          <div class="col s4">
+            <select>
+              <option value="0">All</option>
+              <option value="1">H</option>
+              <option value="2">M</option>
+              <option value="3">L</option>
+            </select>
+          </div>
+          <div class="col s2 tit">Responsible by</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Fail Mode</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+          <div class="col s2 tit">Custom</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+        </div>
+
+
+      </div>
+      <div class="btnArea">
+        <a href="javascript:;" class="waves-effect waves-light hBtn hViva wd100px" id="srchOptBtn"><i class="material-icons left">search</i><span class="label">Search</span></a>
+      </div>
+    </div>
+  </article>
+  <article class="bgLayer"></article>
+</body>
+</html>

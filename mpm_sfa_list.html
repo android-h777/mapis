@@ -1,0 +1,220 @@
+<!DOCTYPE html lang="ko">
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SFA MPM - Accounts</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_SFA_common.css">
+    <link rel="stylesheet" type="text/css" href="/js/realgrid/realgrid-aesop.css">
+    <link type="text/css" rel="stylesheet" href="/css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+	<script type="text/javascript" charset="utf-8" src="/js/realgrid/realgrid-lic.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/js/realgrid/realgrid.2.1.0.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/js/realgrid/libs/jszip.min.js"></script>
+    <style>
+        table {font-size: 14px;}
+		.al {text-align: left !important;}
+		.ac {text-align: center !important;}
+		.rg-checkbar-head, 
+		.rg-rowindicator-head,
+		.rg-checkbar-cell > div,
+		.rg-rowindicator-cell,
+		.rg-rowindicator-foot {text-align: center;}
+		.rg-foot, .rg-footer {display: none;}
+    </style>
+    <script>
+		let fields = [];
+		const fieldsDefaultMulti = [
+			{fieldName: "field1", dataType: "text"}, // text, number, datetime, date, time, currency, float, boolean
+			{fieldName: "field2", dataType: "text"},
+			{fieldName: "field3", dataType: "text"},
+			{fieldName: "field4", dataType: "text"},
+			{fieldName: "field5", dataType: "datetime", datetimeFormat: "yyyy-MM-dd"},
+		];
+
+		let columns = [];
+		const columnsDefaultMulti = [
+			{name: "col1", fieldName: "field1", type: "data", width: "350", header: {text: "Opportunity Name"}, footer: {visible: false}, styleName: "link al"},
+			{name: "col2", fieldName: "field2", type: "data", width: "180", header: {text: "Stage"}, styleName: "al", footer: {visible: false}},
+			{name: "col3", fieldName: "field3", type: "data", width: "150", header: {text: "BU"}, styleName: "al", footer: {visible: false},},
+			{name: "col4", fieldName: "field4", type: "data", width: "140", header: {text: "Sub-Segment"}, styleName: "al", footer: {visible: false},},
+			{
+				name: "col5", fieldName: "field5", type: "data", width: "140", header: {text: "Date"}, styleName: "ac", footer: {visible: false},
+				editor: {
+					datetimeFormat: "yyyy-MM-dd"
+				}
+			},
+		];
+
+		let layout = [];
+		const layoutDefaultMulti = ["col1", "col2", "col3", "col4", "col5"];
+
+		$(function() {
+			$('.dropdown-trigger').dropdown();
+
+			fnCreateGrid(); 
+		});
+			
+		function fnCreateGrid() {
+			container = document.getElementById("realgrid");
+			createGrid(container);
+		}
+
+		function createGrid(container) {
+			provider = new RealGrid.LocalDataProvider(true);
+			
+			fields = [...fieldsDefaultMulti];
+			provider.setFields(fields);
+			
+			var rows = [];
+			rows.push({field1 : "Saint Gobain L-5614 EV New Project", field2: "1) New/Price Open", field3: "", field4: "", field5: "20250204"});
+			rows.push({field1 : "Saint Gobian L-5614", field2: "5) Closed Won", field3: "", field4: "", field5: "20250201"});
+			rows.push({field1 : "SAINT GOBAIN-GRANVILLE (UAD) - SR115044", field2: "6) Closed Lost", field3: "", field4: "", field5: "20250101"});
+			rows.push({field1 : "SAINT GOBAIN-GRANVILLE (UAD) - SR131999", field2: "6) Closed Lost", field3: "", field4: "", field5: "20240101"});
+			rows.push({field1 : "SAINT GOBAIN-GRANVILLE (UAD) - SR131998", field2: "6) Closed Lost", field3: "", field4: "", field5: "20230101"});
+			provider.setRows(rows);
+
+			gridView = new RealGrid.GridView(container);
+			gridView.setDataSource(provider);
+				
+			// 컬럼 초기화
+			columns = [...columnsDefaultMulti];
+
+			// 컬럼 생성
+			gridView.setColumns(columns);
+
+			gridView.displayOptions.rowResizable = true;
+			gridView.displayOptions.columnMovable = true;
+			gridView.sortingOptions.enabled = true;
+
+			gridView.displayOptions.rowHeight = "30";
+			
+			// 그리드 상태바 설정
+			gridView.setStateBar({
+				visible: false
+			});
+
+			// 그리드 체크바 설정
+			gridView.setCheckBar({
+				visible: true,
+				exclusive: false,
+				showAll: true
+			});
+
+			gridView.setHeader({
+				height : 40
+			});
+			
+			gridView.setRowIndicator({zeroBase: false, headText: ""});
+
+			gridView.setGroupPanel({
+				visible : false
+			});
+			
+			gridView.setEditOptions({
+				enterToTab: true,
+				enterToNextRow: true
+			});
+
+			gridView.setFooter({
+				visible: false
+			});
+
+			gridView.onCellClicked = function(grid, clickData) {
+				if (clickData.column == 'col1') {
+					//var clickRow = grid.getValues(clickData.itemIndex);
+					
+					location.href="mpm_sfa.html";
+				} 
+			};
+		}
+    </script>
+</head>
+<body>
+	<header class="navbar-fixed">
+		<nav>
+		  <article class="navTop">
+			<section class="leftSection">
+			  <div class="menuIcon">
+				<div><i class="material-icons">apps</i></div>
+			  </div>
+			  <div class="logo">
+				<div class="tit"><span class="sfa">SFA</span></div>
+			  </div>
+			</section>
+			<section class="centerSection">
+			  <div class="srchArea">
+				<i class="material-icons prefix">search</i>
+				<input type="text" class="browser-default" placeholder="Search" value="">
+			  </div>
+			</section>
+			<section class="rightSection">
+			  <div class="userInfo">
+				<div><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+			  </div>
+			</section>
+		  </article>
+		  <article class="menuArea">
+			<ul>
+				<li><a href="mpm_sfa_main.html">Home</a></li>
+				<li class="on">Accounts<i class="material-icons prefix">keyboard_arrow_down</i></li>
+				<li>Opportunities<i class="material-icons prefix">keyboard_arrow_down</i></li>
+				<li>Contacts<i class="material-icons prefix">keyboard_arrow_down</i></li>
+				<li>Leads<i class="material-icons prefix">keyboard_arrow_down</i></li>
+				<li>Cases<i class="material-icons prefix">keyboard_arrow_down</i></li>
+				<li>Campaigns<i class="material-icons prefix">keyboard_arrow_down</i></li>
+				<li>Chatter<i class="material-icons prefix">keyboard_arrow_down</i></li>
+				<li>Sample Requests<i class="material-icons prefix">keyboard_arrow_down</i></li>
+				<li>Reports<i class="material-icons prefix">keyboard_arrow_down</i></li>
+				<li>Dashboards<i class="material-icons prefix">keyboard_arrow_down</i></li>
+				<li>Tasks<i class="material-icons prefix">keyboard_arrow_down</i></li>
+				<li>Calendar<i class="material-icons prefix">keyboard_arrow_down</i></li>
+				<li>Profit Centers<i class="material-icons prefix">keyboard_arrow_down</i></li>
+				<li>More<i class="material-icons prefix">arrow_drop_down</i></li>
+			</ul>
+		  </article>
+		</nav>
+	  </header>
+	
+	<article class="contArea">
+		<div class="cardBox mg10">
+            <div class="titHeader">
+				<div class="titArea">
+				  <div class="iconBox">
+					<i class="material-icons">business</i>
+				  </div>
+				  <div class="titBox">
+					<div class="menuNm">Account</div>
+					<div class="tit">Recently Viewed</div>
+				  </div>
+				</div>
+				<div class="btnArea">
+					<a href="javascript:;" class="waves-effect waves-blue hBtn hBlue wd100px"><i class="material-icons left">add</i>New</a>
+					<a href="javascript:;" class="waves-effect waves-blue hBtn hGreen wd100px dropdown-trigger" data-target='dropdown1'><i class="material-icons left">auto_fix_high</i>Tools</a>
+					<ul id='dropdown1' class='dropdown-content'>
+						<li><a href="#!">Discoer Companies</a></li>
+						<li><a href="#!">Import</a></li>
+						<li><a href="#!">Intelligence View</a></li>
+						<li><a href="#!">Assign Label</a></li>
+					</ul>
+				</div>
+			</div>
+			<div class="listInfo">
+				<div>5 items • Updated a few seconds ago</div>
+				<div>
+					<div class="srchArea">
+						<i class="material-icons prefix">search</i>
+						<input type="text" class="browser-default" placeholder="Search" value="">
+					</div>
+				</div>
+			</div>
+			<div id="realgrid" class="designRealGrid mt10" style="height: calc(100% - 220px);"></div>
+		</div>
+	</article>
+</body>
+</html>

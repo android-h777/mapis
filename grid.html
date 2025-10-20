@@ -1,0 +1,126 @@
+<!DOCTYPE html lang="ko">
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>REALGRID SAMPLE</title>
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="/js/realgrid/realgrid-aesop.css">
+
+ 	<script type="text/javascript" src="/js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/js/realgrid/realgrid-lic.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/js/realgrid/realgrid.2.1.0.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="/js/realgrid/libs/jszip.min.js"></script>
+    <style>
+        table {font-size: 13px;}
+		.al {text-align: left !important;}
+		.ac {text-align: center !important;}
+		.link {color: #0d47a1;text-decoration: underline;cursor: pointer;}
+		.rg-checkbar-head, 
+		.rg-rowindicator-head,
+		.rg-checkbar-cell > div,
+		.rg-rowindicator-cell,
+		.rg-rowindicator-foot {text-align: center;}
+		.rg-foot, .rg-footer {display: none;}
+    </style>
+    <script>
+let fields = [];
+const fieldsDefaultMulti = [
+	{fieldName: "field1", dataType: "text"}, // text, number, datetime, date, time, currency, float, boolean
+	{fieldName: "field2", dataType: "text"},
+	{fieldName: "field3", dataType: "text"},
+	{fieldName: "field4", dataType: "text"},
+	{fieldName: "field5", dataType: "datetime", datetimeFormat: "yyyy-MM-dd"},
+];
+
+let columns = [];
+const columnsDefaultMulti = [
+	{name: "col1", fieldName: "field1", type: "data", width: "350", header: {text: "Opportunity Name"}, footer: {visible: false}, styleName: "link al"},
+    {name: "col2", fieldName: "field2", type: "data", width: "180", header: {text: "Stage"}, styleName: "al", footer: {visible: false}},
+	{name: "col3", fieldName: "field3", type: "data", width: "150", header: {text: "BU"}, styleName: "al", footer: {visible: false},},
+	{name: "col4", fieldName: "field4", type: "data", width: "140", header: {text: "Sub-Segment"}, styleName: "al", footer: {visible: false},},
+	{
+		name: "col5", fieldName: "field5", type: "data", width: "140", header: {text: "Date"}, styleName: "ac", footer: {visible: false},
+		editor: {
+			datetimeFormat: "yyyy-MM-dd"
+		}
+	},
+];
+
+let layout = [];
+const layoutDefaultMulti = ["col1", "col2", "col3", "col4", "col5"];
+
+$(function() {
+    fnCreateGrid(); 
+});
+    
+function fnCreateGrid() {
+    container = document.getElementById("realgrid");
+    createGrid(container);
+}
+
+function createGrid(container) {
+	provider = new RealGrid.LocalDataProvider(true);
+	
+	fields = [...fieldsDefaultMulti];
+	provider.setFields(fields);
+	
+	var rows = [];
+	rows.push({field1 : "Saint Gobain L-5614 EV New Project", field2: "1) New/Price Open", field3: "", field4: "", field5: "20250204"});
+	rows.push({field1 : "Saint Gobian L-5614", field2: "5) Closed Won", field3: "", field4: "", field5: "20250201"});
+    rows.push({field1 : "SAINT GOBAIN-GRANVILLE (UAD) - SR115044", field2: "6) Closed Lost", field3: "", field4: "", field5: "20250101"});
+    rows.push({field1 : "SAINT GOBAIN-GRANVILLE (UAD) - SR131999", field2: "6) Closed Lost", field3: "", field4: "", field5: "20240101"});
+    rows.push({field1 : "SAINT GOBAIN-GRANVILLE (UAD) - SR131998", field2: "6) Closed Lost", field3: "", field4: "", field5: "20230101"});
+	provider.setRows(rows);
+
+	gridView = new RealGrid.GridView(container);
+	gridView.setDataSource(provider);
+		
+	// 컬럼 초기화
+	columns = [...columnsDefaultMulti];
+
+	// 컬럼 생성
+	gridView.setColumns(columns);
+
+	gridView.displayOptions.rowResizable = true;
+	gridView.displayOptions.columnMovable = true;
+	gridView.sortingOptions.enabled = true;
+
+	// 그리드 상태바 설정
+	gridView.setStateBar({
+		visible: false
+	});
+
+	// 그리드 체크바 설정
+	gridView.setCheckBar({
+		visible: true,
+        exclusive: false,
+		showAll: true
+	});
+
+	gridView.setHeader({
+		height : 40
+	});
+	
+	gridView.setRowIndicator({zeroBase: false, headText: ""});
+
+	gridView.setGroupPanel({
+		visible : false
+	});
+	
+	gridView.setEditOptions({
+		enterToTab: true,
+		enterToNextRow: true
+	});
+
+    gridView.setFooter({
+		visible: false
+	});
+}
+    </script>
+</head>
+<body>
+    <div id="realgrid" class="designRealGrid" style="height: 200px;"></div>
+</body>
+</html>
