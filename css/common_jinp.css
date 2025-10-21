@@ -199,119 +199,6 @@ legend,
 	font-size: 0;
 	line-height: 0;
 }
-@font-face {
-	font-family: 'Roboto-Light';
-	font-style: normal;
-	src: url(/font/Roboto-Light.woff2) format('woff2'),
-		url(/font/Roboto-Light.woff) format('woff');
-}
-@font-face {
-	font-family: 'Roboto-Regular';
-	font-style: normal;
-	src: url(/font/Roboto-Regular.woff2) format('woff2'),
-		url(/font/Roboto-Regular.woff) format('woff');
-}
-@font-face {
-	font-family: 'Roboto-Medium';
-	font-style: normal;
-	src: url(/font/Roboto-Medium.woff2) format('woff2'),
-		url(/font/Roboto-Medium.woff) format('woff');
-}
-@font-face {
-	font-family: 'Roboto-Bold';
-	font-style: normal;
-	src: url(/font/Roboto-Bold.woff2) format('woff2'),
-		url(/font/Roboto-Bold.woff) format('woff');
-}
-@font-face {
-	font-family: 'Roboto-LOGO';
-	font-style: normal;
-	src: url(/font/Roboto-BoldItalic.woff) format('woff');
-}
-@font-face {
-	font-family: 'SUIT-Light';
-	font-style: normal;
-	src: url(/font/SUIT-Light.woff2) format('woff2'),
-		url(/font/SUIT-Light.otf) format('opentype');
-}
-@font-face {
-	font-family: 'SUIT-Regular';
-	font-style: normal;
-	src: url(/font/SUIT-Regular.woff2) format('woff2'),
-		url(/font/SUIT-Regular.otf) format('opentype');
-}
-@font-face {
-	font-family: 'SUIT-Medium';
-	font-style: normal;
-	src: url(/font/SUIT-Medium.woff2) format('woff2'),
-		url(/font/SUIT-Medium.otf) format('opentype');
-}
-@font-face {
-	font-family: 'SUIT-Bold';
-	font-style: normal;
-	src: url(/font/SUIT-Bold.woff2) format('woff2'),
-		url(/font/SUIT-Bold.otf) format('opentype');
-}
-@font-face {
-	font-family: 'NotoSansJP-Light';
-	font-style: normal;
-	src: url(/font/NotoSansJP-Light.ttf) format('truetype');
-}
-@font-face {
-	font-family: 'NotoSansJP-Regular';
-	font-style: normal;
-	src: url(/font/NotoSansJP-Regular.ttf) format('truetype');
-}
-@font-face {
-	font-family: 'NotoSansJP-Medium';
-	font-style: normal;
-	src: url(/font/NotoSansJP-Medium.ttf) format('truetype');
-}
-@font-face {
-	font-family: 'NotoSansJP-Bold';
-	font-style: normal;
-	src: url(/font/NotoSansJP-Bold.ttf) format('truetype');
-}
-@font-face {
-	font-family: 'NotoSansSC-Light';
-	font-style: normal;
-	src: url(/font/NotoSansSC-Light.ttf) format('truetype');
-}
-@font-face {
-	font-family: 'NotoSansSC-Regular';
-	font-style: normal;
-	src: url(/font/NotoSansSC-Regular.ttf) format('truetype');
-}
-@font-face {
-	font-family: 'NotoSansSC-Medium';
-	font-style: normal;
-	src: url(/font/NotoSansSC-Medium.ttf) format('truetype');
-}
-@font-face {
-	font-family: 'NotoSansSC-Bold';
-	font-style: normal;
-	src: url(/font/NotoSansSC-Bold.ttf) format('truetype');
-}
-@font-face {
-	font-family: 'NotoSansTC-Light';
-	font-style: normal;
-	src: url(/font/NotoSansTC-Light.ttf) format('truetype');
-}
-@font-face {
-	font-family: 'NotoSansTC-Regular';
-	font-style: normal;
-	src: url(/font/NotoSansTC-Regular.ttf) format('truetype');
-}
-@font-face {
-	font-family: 'NotoSansTC-Medium';
-	font-style: normal;
-	src: url(/font/NotoSansTC-Medium.ttf) format('truetype');
-}
-@font-face {
-	font-family: 'NotoSansTC-Bold';
-	font-style: normal;
-	src: url(/font/NotoSansTC-Bold.ttf) format('truetype');
-}
 
 .bdT1_lgrey {border-top: 1px solid #e0e0e0 !important;}
 .bdL1_lgrey {border-left: 1px solid #e0e0e0 !important;}
@@ -4608,4 +4495,18 @@ textarea.materialize-textarea:focus:not([readonly]) {
 	-webkit-box-shadow: 0 1px 0 0 #e87e05;
 			box-shadow: 0 1px 0 0 #e87e05;
 }
-  
+
+.verticalLine1 {
+	display: inline-block;
+	border-right: 1px solid #a47764;
+}
+
+#div_tev {
+	height: 400px;
+	border-top: 2px solid #9a8b4e;
+	border-bottom: 1px solid #9a8b4e;
+}
+.tev-bar {
+	position: absolute;
+	width: 20%;
+}

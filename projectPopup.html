@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org">
+<html>
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -8,13 +8,14 @@
     <link rel="stylesheet" type="text/css" href="css/materialize.css">
     <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
 	<link rel="stylesheet" type="text/css" href="css/common_jinp.css">
-    <link type="text/css" rel="stylesheet" href="/css/animate.min.css">
+    <link type="text/css" rel="stylesheet" href="css/animate.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
     <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/apis_util.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/highcharts/highcharts.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/jquery.inputmask.js"></script>
     <script>
         $(document).ready(function(){
 			$('.tabs').tabs();
@@ -40,13 +41,13 @@
 			
 			Highcharts.chart('segment_pie', {
 				chart: {
-					type: 'pie',
-					style: {
-						fontFamily: 'Roboto-Light'
-					}
+					type: 'pie'
 				},
 				title: {
-					text: ''
+					text: 'Revenue by Segment',
+					style: {
+						fontSize: '13px'
+					}
 				},
 				plotOptions: {
 					pie: {
@@ -80,6 +81,11 @@
 				}],
 				credits: {
 					enabled: false
+				},
+				legend: {
+					enabled: true,
+					align: 'center',
+					verticalAlign: 'bottom',
 				}
 			});
 
@@ -88,15 +94,132 @@
 				let count = $("#tbl_action tbody tr").length;
 				html += '<tr>';
 				html += '<td class="ac">'+(count+1)+'</td>';
-				html += '<td><div class="aniInput"><input type="text" class="browser-default ht25"><span class="focus-border"/></div></td>';
-				html += '<td><div class="aniInput"><input type="text" class="browser-default ht25"><span class="focus-border"/></div></td>';
+				html += '<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"/></div></td>';
+				html += '<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"/></div></td>';
 				html += '<td class="ac">Lee, Jongho</div></td>';
-				html += '<td><div class="aniInput"><input type="text" class="browser-default ht25"><span class="focus-border"/></div></td>';
+				html += '<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"/></div></td>';
 				html += '<td></td>';
 				html += '</tr>';
 				$("#tbl_action").append(html);
 			});
+			$("#btn_addProdPos").click(function(){
+				let html = '';
+				html += '<tr>';
+				html += '<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"/></div></td>';
+				html += '<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>';
+				html += '<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>';
+				html += '<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>';
+				html += '<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>';
+				html += '</tr>';
+				$("#tbl_prodPos").append(html);
+			});
+			
+			$("#tbl_tev input").on("input", fnSetTEVChart);
+			fnSetTEVChart();
+
+			$("select[name='sel_dfvrating']").on("change", function() {
+				let subTotalScore = 0;
+				let totalScore = 0;
+				const $tr = $("#cardDfv tbody tr");
+				$tr.each(function(idx, o) {
+					const $td = $(o).find("td");
+					if($td.length > 2) {
+						const weightText = parseFloat($td.eq($td.length - 3).text());
+						const ratingValue = $(o).find("select[name='sel_dfvrating']").val();
+						if(weightText !== "" && ratingValue) {
+							const weight = parseFloat(weightText) / 100;
+							const rating = parseFloat(ratingValue);
+							const score = weight * rating;
+							$td.eq($td.length - 1).text(score.toFixed(2));
+							subTotalScore += score;		
+						}
+					} 
+					// subtotal
+					else if($td.length == 2) {
+						$td.eq(1).text(subTotalScore.toFixed(2));
+						totalScore += subTotalScore;
+						subTotalScore = 0;
+					}
+					// total
+					if(idx == $tr.length - 1) {
+						$td.eq(1).text(totalScore.toFixed(2));
+					}
+				});
+			});
+
+			$(".num0").inputmask("numeric", {
+				nullable: false,
+				placeholder: "",
+				groupSeparator: ",",    //separator 설정
+				autoGroup: true,      //천단위 그룹
+				integerDigits: 18,        //자리수 설정
+				digits: 0
+			});
+			$(".num1").inputmask("numeric", {
+				nullable: false,
+				placeholder: "",
+				groupSeparator: ",",    //separator 설정
+				autoGroup: true,      //천단위 그룹
+				integerDigits: 18,        //자리수 설정
+				digits: 1
+			});
+			$(".num2").inputmask("numeric", {
+				nullable: false,
+				placeholder: "",
+				groupSeparator: ",",    //separator 설정
+				autoGroup: true,      //천단위 그룹
+				integerDigits: 18,        //자리수 설정
+				digits: 2
+			});
         });
+
+		function fnSetTEVChart() {
+			const compVal = $("#tbl_tev #inp_tev_compval").val();
+			const addVal = $("#tbl_tev #inp_tev_addval").val();
+			const costVal = $("#tbl_tev #inp_tev_cost").val();
+			if(compVal == "" || addVal == "" || costVal == "") {
+				$("#div_tev #div_tev_bar").hide();
+				$("#div_tev #div_tev_default").show();
+			} else {
+				const tevVal = au.NVL2(compVal) + au.NVL2(addVal) - au.NVL2(costVal); 
+				const diffVal = au.NVL2(tevVal) - au.NVL2(compVal);
+				
+				$("#tbl_tev #td_tev_diff").text(au.addComma(diffVal.toFixed(2))); 
+				$("#tbl_tev #td_tev_tev").text(au.addComma(tevVal.toFixed(2)));
+
+				const totalVal = au.NVL2(compVal) + au.NVL2(addVal);
+				$("#div_tev_bar_comp").html('<div class="wd100p" style="background-color: rgba(255,255,255,.3);">① The Competitor<br><b class="font14">'+au.addComma(au.NVL2(compVal).toFixed(2))+'</b></div>');
+				$("#div_tev_bar_addval").html('<div class="wd100p" style="background-color: rgba(255,255,255,.3);">② Unique Additional Value<br><b class="font14">'+au.addComma(au.NVL2(addVal).toFixed(2))+'</b></div>');
+				$("#div_tev_bar_cost").html('<div class="wd100p" style="background-color: rgba(255,255,255,.3);">③ Unique Costs<br><b class="font14">'+au.addComma(au.NVL2(costVal).toFixed(2))+'</b></div>');
+				$("#div_tev_bar_tev").html('<div class="wd100p" style="background-color: rgba(255,255,255,.3);"><b>④ Total Economic Value</b><br><b class="font14">'+au.addComma(tevVal.toFixed(2))+'</b></div>');
+
+				$("#div_tev_bar_comp").css("height", `${compVal/totalVal*100}%`).attr("data-height", `${compVal/totalVal*100}`);
+				$("#div_tev_bar_addval").css("height", `${addVal/totalVal*100}%`).attr("data-height", `${addVal/totalVal*100}`);
+				$("#div_tev_bar_cost").css("height", `${costVal/totalVal*100}%`).attr("data-height", `${costVal/totalVal*100}`);
+				$("#div_tev_bar_tev").css("height", `${tevVal/totalVal*100}%`).attr("data-height", `${tevVal/totalVal*100}`);
+
+				if(costVal <= au.NVL2(compVal) + au.NVL2(addVal)) {
+					$("#div_tev_bar_comp").css("top", "");
+					$("#div_tev_bar_comp").css("bottom", 0);
+					$("#div_tev_bar_addval").css("bottom", $("#div_tev_bar_comp").css("height"));
+					$("#div_tev_bar_tev").css("top", "");
+					$("#div_tev_bar_tev").css("bottom", 0);
+				} else {
+					const convRate = ((au.NVL2(compVal) + au.NVL2(addVal))/costVal);
+					$("#div_tev_bar_addval").css("top", 0);
+					$("#div_tev_bar_addval").css("height", $("#div_tev_bar_addval").attr("data-height") * convRate + "%");
+					$("#div_tev_bar_comp").css("top", $("#div_tev_bar_addval").css("height"));
+					$("#div_tev_bar_comp").css("height", $("#div_tev_bar_comp").attr("data-height") * convRate + "%");
+					$("#div_tev_bar_cost").css("height", "100%");
+					$("#div_tev_bar_tev").css("bottom", 0);
+					$("#div_tev_bar_tev").css("height", -1 * $("#div_tev_bar_tev").attr("data-height") * convRate + "%");
+				}
+				
+
+				$("#div_tev #div_tev_default").hide();
+				$("#div_tev #div_tev_bar").fadeIn();
+			}
+		}
   </script>
 </head>
 <body class="popup">
@@ -143,7 +266,7 @@
 				<div class="inputArea">
 					<div class="row">
 						<div class="col s2 ar pl0">ID</div>
-						<div class="col s4 val" dataconn data-col="project_id">05760</div>
+						<div class="col s4 val"dataconn data-col="project_id">05760</div>
 						<div class="col s2 ar pl0">Type</div>
 						<div class="col s4 val">NPI</div>
 					</div>
@@ -162,9 +285,9 @@
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">NPC Submitted by</div>
-						<div class="col s4 val" dataconn data-col="submitted_by">Spike MA</div>
+						<div class="col s4 val"dataconn data-col="submitted_by">Spike MA</div>
 						<div class="col s2 ar pl0">NPC Submitted at</div>
-						<div class="col s4 val" dataconn data-col="submitted_at">23.09.2025</div>
+						<div class="col s4 val"dataconn data-col="submitted_at">23.09.2025</div>
 					</div>
 					
 					<div class="row">
@@ -198,25 +321,25 @@
 					<div class="row">
 						<div class="col s2 ar pl0">Brief Description of Product/Application</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea" style="height: 70px;" dataconn data-col="text_descr" placeholder="Describe the new product concept/application?"></textarea>
+							<textarea class="materialize-textarea pd5" dataconn data-col="text_descr" placeholder="Describe the new product concept/application?"></textarea>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Target Market/Customers</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea" style="height: 70px;" dataconn data-col="text_target" placeholder="Who are the intended customers/application/market?"></textarea>
+							<textarea class="materialize-textarea pd5" dataconn data-col="text_target" placeholder="Who are the intended customers/application/market?"></textarea>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Source of Opportunity</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea" style="height: 70px;" dataconn data-col="text_from" placeholder="Where did this idea/concept come from?"></textarea>
+							<textarea class="materialize-textarea pd5" dataconn data-col="text_from" placeholder="Where did this idea/concept come from?"></textarea>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Competition</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea" style="height: 70px;" dataconn data-col="text_competition" placeholder="Describe the new product concept/application?"></textarea>
+							<textarea class="materialize-textarea pd5" dataconn data-col="text_competition" placeholder="Describe the new product concept/application?"></textarea>
 						</div>
 					</div>
 				</div>
@@ -320,8 +443,8 @@
 							<td>Product generally in line with segment strategy but not with the top priority elements</td>
 							<td>Product strongly aligned to the most important segment strategy elements</td>
 							<td class="ac">25%</td>
-							<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-							<td class="ar">7.5</td>
+							<td><div class="aniInput"><select class="browser-default ht25" name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></div></td>
+							<td class="ar">2.50</td>
 						</tr>
 						<tr>
 							<td>Customer Benefits (Outcomes)</td>
@@ -329,8 +452,8 @@
 							<td>Good</td>
 							<td>Very Good</td>
 							<td class="ac">40%</td>
-							<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-							<td class="ar">36</td>
+							<td><div class="aniInput"><select class="browser-default ht25" name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></div></td>
+							<td class="ar">4.00</td>
 						</tr>
 						<tr>
 							<td>Adaptive</td>
@@ -338,8 +461,8 @@
 							<td>Good</td>
 							<td>Very Good</td>
 							<td class="ac">25%</td>
-							<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-							<td class="ar">7.5</td>
+							<td><div class="aniInput"><select class="browser-default ht25" name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></div></td>
+							<td class="ar">2.50</td>
 						</tr>
 						<tr>
 							<td>Sustainable Competative Advantage</td>
@@ -347,12 +470,12 @@
 							<td>Good</td>
 							<td>Very Good</td>
 							<td class="ac">10%</td>
-							<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-							<td class="ar">3</td>
+							<td><div class="aniInput"><select class="browser-default ht25" name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></div></td>
+							<td class="ar">1.00</td>
 						</tr>
 						<tr class="btDLine">
 							<td colspan="7"></td>
-							<td class="cream25 ar">54</td>
+							<td class="cream25 ar">10.00</td>
 						</tr>
 						<tr class="btSLine">
 							<td colspan="8"></td>
@@ -364,8 +487,8 @@
 							<td>Good</td>
 							<td>Very Good</td>
 							<td class="ac">25%</td>
-							<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-							<td class="ar">2.5</td>
+							<td><div class="aniInput"><select class="browser-default ht25" name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></div></td>
+							<td class="ar">2.50</td>
 						</tr>
 						<tr>
 							<td>Technical Synergies</td>
@@ -373,8 +496,8 @@
 							<td>Good</td>
 							<td>Very Good</td>
 							<td class="ac">25%</td>
-							<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-							<td class="ar">7.5</td>
+							<td><div class="aniInput"><select class="browser-default ht25" name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></div></td>
+							<td class="ar">2.50</td>
 						</tr>
 						<tr>
 							<td>Manufacturing Synergies</td>
@@ -382,8 +505,8 @@
 							<td>Good</td>
 							<td>Very Good</td>
 							<td class="ac">25%</td>
-							<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-							<td class="ar">7.5</td>
+							<td><div class="aniInput"><select class="browser-default ht25" name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></div></td>
+							<td class="ar">2.50</td>
 						</tr>
 						<tr>
 							<td>Time to Commercialization</td>
@@ -391,12 +514,12 @@
 							<td>Good</td>
 							<td>Very Good</td>
 							<td class="ac">25%</td>
-							<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-							<td class="ar">7.5</td>
+							<td><div class="aniInput"><select class="browser-default ht25" name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></div></td>
+							<td class="ar">2.50</td>
 						</tr>
 						<tr class="btDLine">
 							<td colspan="7"></td>
-							<td class="cream25 ar">54</td>
+							<td class="cream25 ar">10.00</td>
 						</tr>
 						<tr class="btSLine">
 							<td colspan="8"></td>
@@ -408,8 +531,8 @@
 							<td>Good</td>
 							<td>Very Good</td>
 							<td class="ac">25%</td>
-							<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-							<td class="ar">7.5</td>
+							<td><div class="aniInput"><select class="browser-default ht25" name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></div></td>
+							<td class="ar">2.50</td>
 						</tr>
 						<tr>
 							<td>Target Market Size</td>
@@ -417,8 +540,8 @@
 							<td>Good</td>
 							<td>Very Good</td>
 							<td class="ac">25%</td>
-							<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-							<td class="ar">7.5</td>
+							<td><div class="aniInput"><select class="browser-default ht25" name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></div></td>
+							<td class="ar">2.50</td>
 						</tr>
 						<tr>
 							<td>Market Growth</td>
@@ -426,8 +549,8 @@
 							<td>Good</td>
 							<td>Very Good</td>
 							<td class="ac">25%</td>
-							<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-							<td class="ar">7.5</td>
+							<td><div class="aniInput"><select class="browser-default ht25" name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></div></td>
+							<td class="ar">2.50</td>
 						</tr>
 						<tr>
 							<td>Gross Margins</td>
@@ -435,19 +558,19 @@
 							<td>Good</td>
 							<td>Very Good</td>
 							<td class="ac">25%</td>
-							<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-							<td class="ar">7.5</td>
+							<td><div class="aniInput"><select class="browser-default ht25" name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></div></td>
+							<td class="ar">2.50</td>
 						</tr>
 						<tr class="btDLine">
 							<td colspan="7"></td>
-							<td class="cream25 ar">54</td>
+							<td class="cream25 ar">10.00</td>
 						</tr>
 						<tr class="btSLine">
 							<td colspan="8"></td>
 						</tr>
 						<tr class="btDLine">
 							<td colspan="7"></td>
-							<td class="mocha25 white-text ar">200</td>
+							<td class="mocha25 white-text ar">30.00</td>
 						</tr>
 					</tbody>
 				</table>
@@ -535,7 +658,7 @@
 				<div class="inputArea">
 					<div class="row">
 						<div class="col s2 ar pl0">ID</div>
-						<div class="col s4 val" dataconn data-col="project_id">05760</div>
+						<div class="col s4 val"dataconn data-col="project_id">05760</div>
 						<div class="col s2 ar pl0">Type</div>
 						<div class="col s4 val">NPI</div>
 					</div>
@@ -554,7 +677,7 @@
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">NPI Project Leader</div>
-						<div class="col s10 val" dataconn data-col="project_leader">Spike MA</div>
+						<div class="col s10 val"dataconn data-col="project_leader">Spike MA</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Development Location</div>
@@ -593,13 +716,13 @@
 					<div class="row">
 						<div class="col s2 ar pl0">Desirability</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea" style="height: 70px;" dataconn data-col="text_descr" placeholder="Describe the new product concept/application?"></textarea>
+							<textarea class="materialize-textarea pd5" dataconn data-col="text_descr" placeholder="Describe the new product concept/application?"></textarea>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Feasibility</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea" style="height: 70px;" dataconn data-col="text_target" placeholder="Who are the intended customers/application/market?"></textarea>
+							<textarea class="materialize-textarea pd5" dataconn data-col="text_target" placeholder="Who are the intended customers/application/market?"></textarea>
 						</div>
 					</div>
 					<div class="row">
@@ -627,23 +750,23 @@
 											<td class="headerTd">Volume (MT)</td>
 											<td class="headerTd"></td>
 											<td class="headerTd bdR1">Average SGM %</td>
-											<td class="headerTd"><div class="aniInput"><input type="text" class="browser-default ar"><span class="focus-border"/></div></td>
+											<td class="headerTd"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
 										</tr>
 										<tr>
 											<td class="headerTd bdT1 bdR1">PIM 1 (1st Year)</td>
-											<td class="bdT1"><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"/></div></td>
-											<td class="bdT1"><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"/></div></td>
+											<td class="bdT1"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
+											<td class="bdT1"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
 											<td class=""></td>
 											<td class="headerTd bdT1d_lgrey bdR1">% Maintenance (Avg)</td>
-											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"/></div></td>
+											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
 										</tr>
 										<tr>
 											<td class="headerTd bdT1d_lgrey bdR1">PIM 1-5 (5 Yrs Total)</td>
-											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"/></div></td>
-											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"/></div></td>
+											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
+											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
 											<td class=""></td>
 											<td class="headerTd bdT1d_lgrey bdR1">NPV ($MM)/IRR %</td>
-											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"/></div></td>
+											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
 										</tr>
 									</tbody>
 								</table>
@@ -684,14 +807,16 @@
 				<div class="inputArea">
 					<div class="row">
 						<div class="col s2 ar pl0"><span class="essential">*</span>Knowledge of Technology</div>
-						<div class="col s10">
-							<select class="browser-default ht25"><option value="">Extending Existing Products / Technology</option></select>
+						<div class="col s4">
+							<div class="aniInput">
+								<select class="browser-default ht25"><option value="">Extending Existing Products / Technology</option></select>
+							</div>
 						</div>
-					</div>
-					<div class="row">
 						<div class="col s2 ar pl0"><span class="essential">*</span>Knowledge of Market</div>
-						<div class="col s10">
-							<select class="browser-default ht25"><option value="">Enter Adjacent Markets (Now Unserved)</option></select>
+						<div class="col s4">
+							<div class="aniInput">
+								<select class="browser-default ht25"><option value="">Enter Adjacent Markets (Now Unserved)</option></select>
+							</div>
 						</div>
 					</div>
 					<div class="row">
@@ -706,14 +831,14 @@
 			<div>
 				<div class="inputArea">
 					<div class="row">
-						<div class="col s2 ar pl0">Sustainability Numerical Score</div>
-						<div class="col s10"><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"/></div></div>
-					</div>
-					<div class="row">
 						<div class="col s2 ar pl0"><span class="essential">*</span>Sustainability Assessment Category</div>
-						<div class="col s10">
-							<select class="browser-default ht25"><option value="">BENEFICAL IMPACT</option></select>
+						<div class="col s4">
+							<div class="aniInput">
+								<select class="browser-default ht25"><option value="">BENEFICAL IMPACT</option></select>
+							</div>
 						</div>
+						<div class="col s2 ar pl0">Sustainability Numerical Score</div>
+						<div class="col s4"><div class="aniInput"><input type="text" class="browser-default num0"><span class="focus-border"/></div></div>
 					</div>
 				</div>
 			</div>
@@ -1427,19 +1552,19 @@
 									<tbody>
 										<tr>
 											<td>NPI Project Leader</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Kim Jinpyeong"><span class="focus-border"></span></div></td>
 										</tr>
 										<tr>
 											<td>Segment (Mktg/Comm) Leader</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Olivia Hayes"><span class="focus-border"></span></div></td>
 										</tr>
 										<tr>
 											<td>Segment Tech Leader</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Michael Chang"><span class="focus-border"></span></div></td>
 										</tr>
 										<tr>
 											<td>Manufacturing Leader</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Rebecca Jones"><span class="focus-border"></span></div></td>
 										</tr>
 									</tbody>
 								</table>
@@ -1465,43 +1590,43 @@
 									<tbody>
 										<tr>
 											<td>Marketing</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Jessica Miller"><span class="focus-border"></span></div></td>
 											<td>Quality(QA&QC)</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Alex Rodriguez"><span class="focus-border"></span></div></td>
 										</tr>
 										<tr>
 											<td>BU Technology</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Ethan Hunt"><span class="focus-border"></span></div></td>
 											<td>SIOP</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Lauren Baker"><span class="focus-border"></span></div></td>
 										</tr>
 										<tr>
 											<td>Process Technology</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Kenji Tanaka"><span class="focus-border"></span></div></td>
 											<td>Regulatory/Product Stewardship</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Samantha Reed"><span class="focus-border"></span></div></td>
 										</tr>
 										<tr>
 											<td>Manufacturing</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Robert O'Connell"><span class="focus-border"></span></div></td>
 											<td>EHS</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Maria Gonzalez"><span class="focus-border"></span></div></td>
 										</tr>
 										<tr>
 											<td>Product Management</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Noah Schmidt"><span class="focus-border"></span></div></td>
 											<td>IP/Legal</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Victoria Chen"><span class="focus-border"></span></div></td>
 										</tr>
 										<tr>
 											<td>Application Development</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Chris Hayes"><span class="focus-border"></span></div></td>
 											<td>Global Trade Compliance</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Emma Winson"><span class="focus-border"></span></div></td>
 										</tr>
 										<tr>
 											<td>Corporate R&D</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Anonymous"><span class="focus-border"/></div></td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Anil Singh"><span class="focus-border"></span></div></td>
 											<td></td>
 											<td></td>
 										</tr>
@@ -1517,17 +1642,21 @@
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Capacity Planning</div>
 			<div>
 				<div class="inputArea">
-					<div class="mt10">
-						<span class="rectBox stone25">View: <select class="browser-default ht20 dpInlineBlock wdAuto"><option value="">[Standard View]</option></select></span>
-						<a class="rectBox stone25">Print Version</a>
-						<span class="rectBox stone25 fInline vCenter">Period Displayed: <input class="datepicker ht20 wd100px ac">~<input class="datepicker ht20 wd100px ac"></span>
-						<a class="rectBox stone25">Apply</a>
-						<span class="rectBox stone25">Filter: <select class="browser-default ht20 dpInlineBlock wdAuto"><option value="">All</option></select></span>
-						<a class="rectBox stone25">Edit Filter</a>
-						<a class="rectBox stone25">Display List</a>
-						<a class="rectBox stone25">Expand All</a>
+					<div class="mt10" style="overflow: hidden;">
+						<span class="dpInlineBlock mr10 left">View: <div class="aniInput dpInlineBlock wdAuto"><select class="browser-default ht20 wdAuto"><option value="">[Standard View]</option></select></div></span>
+						<div class="verticalLine1 ht24 mr10 left"></div>
+						<a class="roundBox stone25 fill mr10 left" href="javascript:;">Print Version</a>
+						<div class="verticalLine1 ht24 mr10 left"></div>
+						<span class="dpInlineBlock left">Period Displayed: <div class="aniInput dpInlineBlock wdAuto"><input placeholder="From" class="browser-default datepicker ht20 wd100px ac">~<input placeholder="To" class="browser-default datepicker ht20 wd100px ac"></div></span>
+						<a class="roundBox stone25 fill left" href="javascript:;">Apply</a>
+						<div class="verticalLine1 ht24 mr10 left"></div>
+						<span class="dpInlineBlock mr10 left">Filter: <div class="aniInput dpInlineBlock wdAuto"><select class="browser-default ht20 wdAuto"><option value="">All</option></select></div></span>
+						<a class="roundBox stone25 fill left" href="javascript:;">Edit Filter</a>
+						<div class="verticalLine1 ht24 mr10 left"></div>
+						<a class="roundBox stone25 fill left" href="javascript:;">Display List</a>
+						<a class="roundBox stone25 fill left" href="javascript:;">Expand All</a>
 					</div>
-					<div class="hFixedTable hBorderTable hScroll vMiddle">
+					<div class="hFixedTable hBorderTable hScroll vMiddle mg0 mt5">
 						<table id="" style="table-layout: fixed;">
 							<colgroup>
 								<col style="width: 200px;">
@@ -1620,17 +1749,21 @@
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Financial Forecasts</div>
 			<div>
 				<div class="inputArea">
-					<div class="mt10">
-						<span class="rectBox stone25">View: <select class="browser-default ht20 dpInlineBlock wdAuto"><option value="">[Standard View]</option></select></span>
-						<a class="rectBox stone25">Print Version</a>
-						<span class="rectBox stone25 fInline vCenter">Period Displayed: <input class="datepicker ht20 wd100px ac">~<input class="datepicker ht20 wd100px ac"></span>
-						<a class="rectBox stone25">Apply</a>
-						<span class="rectBox stone25">Filter: <select class="browser-default ht20 dpInlineBlock wdAuto"><option value="">All</option></select></span>
-						<a class="rectBox stone25">Edit Filter</a>
-						<a class="rectBox stone25">Display List</a>
-						<a class="rectBox stone25">Expand All</a>
+					<div class="mt10" style="overflow: hidden;">
+						<span class="dpInlineBlock mr10 left">View: <div class="aniInput dpInlineBlock wdAuto"><select class="browser-default ht20 wdAuto"><option value="">[Standard View]</option></select></div></span>
+						<div class="verticalLine1 ht24 mr10 left"></div>
+						<a class="roundBox stone25 fill mr10 left" href="javascript:;">Print Version</a>
+						<div class="verticalLine1 ht24 mr10 left"></div>
+						<span class="dpInlineBlock left">Period Displayed: <div class="aniInput dpInlineBlock wdAuto"><input placeholder="From" class="browser-default datepicker ht20 wd100px ac">~<input placeholder="To" class="browser-default datepicker ht20 wd100px ac"></div></span>
+						<a class="roundBox stone25 fill left" href="javascript:;">Apply</a>
+						<div class="verticalLine1 ht24 mr10 left"></div>
+						<span class="dpInlineBlock mr10 left">Filter: <div class="aniInput dpInlineBlock wdAuto"><select class="browser-default ht20 wdAuto"><option value="">All</option></select></div></span>
+						<a class="roundBox stone25 fill left" href="javascript:;">Edit Filter</a>
+						<div class="verticalLine1 ht24 mr10 left"></div>
+						<a class="roundBox stone25 fill left" href="javascript:;">Display List</a>
+						<a class="roundBox stone25 fill left" href="javascript:;">Expand All</a>
 					</div>
-					<div class="hFixedTable hBorderTable hScroll vMiddle">
+					<div class="hFixedTable hBorderTable hScroll vMiddle mg0 mt5">
 						<table id="" style="table-layout: fixed;">
 							<colgroup>
 								<col style="width: 200px;">
@@ -1777,7 +1910,7 @@
 					<div class="col s2 ar pl0">Discount Rate(%)</div>
 					<div class="col s1">
 						<div class="aniInput">
-							<input type="text" value="0.00" class="browser-default">
+							<input type="text" value="0.00" class="browser-default num2">
 							<span class="focus-border"/>
 						</div>
 					</div>
@@ -1844,133 +1977,133 @@
 					<tbody>
 						<tr>
 							<td class="fix-col ar">Technical Heads</td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
 						</tr>
 						<tr>
 							<td class="fix-col ar">Marketing Heads</td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
 						</tr>
 						<tr>
 							<td class="fix-col ar">Capital Costs ($M)</td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
 						</tr>
 						<tr>
 							<td class="fix-col ar">Other NPI Costs ($M)</td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
 						</tr>
 						<tr>
 							<td class="fix-col ar">Regulatory Costs ($M)</td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
 						</tr>
 						<tr>
 							<td class="fix-col ar">IP Costs ($M)</td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
 						</tr>
 						<tr>
 							<td class="fix-col ar fontBold">Total Costs ($M)</td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
 						</tr>
 						<tr>
 							<td class="fix-col ar">Sales ($M)</td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
 						</tr>
 						<tr>
 							<td class="fix-col ar">Margin (%)</td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
 						</tr>
 						<tr>
 							<td class="fix-col ar">Net Cash ($M)</td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
-							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
 						</tr>
 					</tbody>
 				</table>
@@ -1980,28 +2113,28 @@
 					<div class="col s2 ar pl0">NPV in NPI Go Year ($M)</div>
 					<div class="col s1">
 						<div class="aniInput">
-							<input type="text" value="0.00" class="browser-default">
+							<input type="text" value="0.00" class="browser-default num2">
 							<span class="focus-border"/>
 						</div>
 					</div>
 					<div class="col s2 ar pl0">Sum Of Costs ($M)</div>
 					<div class="col s1">
 						<div class="aniInput">
-							<input type="text" value="0.00" class="browser-default">
+							<input type="text" value="0.00" class="browser-default num2">
 							<span class="focus-border"/>
 						</div>
 					</div>
 					<div class="col s2 ar pl0">NPV/(Sum Of Costs)</div>
 					<div class="col s1">
 						<div class="aniInput">
-							<input type="text" value="0.00" class="browser-default">
+							<input type="text" value="0.00" class="browser-default num2">
 							<span class="focus-border"/>
 						</div>
 					</div>
 					<div class="col s2 ar pl0">IRR (%)</div>
 					<div class="col s1">
 						<div class="aniInput">
-							<input type="text" value="0.00" class="browser-default">
+							<input type="text" value="0.00" class="browser-default num2">
 							<span class="focus-border"/>
 						</div>
 					</div>
@@ -2137,24 +2270,25 @@
 					<div class="row">
 						<div class="col s2 ar pl0">Target Segment Description</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea" style="height: 70px;" dataconn data-col="text_descr" placeholder="Describe the new product concept/application?"></textarea>
+							<textarea class="materialize-textarea pd5" dataconn data-col="text_descr" placeholder="Describe the new product concept/application?"></textarea>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Growth Trends/Drivers</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea" style="height: 70px;" dataconn data-col="text_target" placeholder="Who are the intended customers/application/market?"></textarea>
+							<textarea class="materialize-textarea pd5" dataconn data-col="text_target" placeholder="Who are the intended customers/application/market?"></textarea>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Target MPM Market Opportunity</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea" style="height: 70px;" dataconn data-col="text_from" placeholder="Where did this idea/concept come from?"></textarea>
+							<textarea class="materialize-textarea pd5" dataconn data-col="text_from" placeholder="Where did this idea/concept come from?"></textarea>
 						</div>
 					</div>
+					<div class="cardSubTit mt20">Segmentation Data Chart</div>
 					<div class="row">
-						<div class="col s8 pl0">
-							<div class="fixedTable hBorderTable hScroll vMiddle" style="max-height: 250px;">
+						<div class="col s8">
+							<div class="fixedTable hBorderTable hScroll vMiddle mg0" style="max-height: 250px;">
 								<table id="">
 									<colgroup>
 										<col style="width: 200px;">
@@ -2172,134 +2306,34 @@
 									</thead>
 									<tbody>
 										<tr>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="Seg A" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="150" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="450" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="45.0%" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
+											<td><div class="aniInput"><input type="text" value="Seg A" class="browser-default"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="150" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="450" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="45.0" class="browser-default num1"><span class="focus-border"></span></div></td>
 										</tr>
 										<tr>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="Seg B" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="120" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="300" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="30.0%" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
+											<td><div class="aniInput"><input type="text" value="Seg B" class="browser-default"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="120" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="300" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="30.0" class="browser-default num1"><span class="focus-border"></span></div></td>
 										</tr>
 										<tr>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="Seg C" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="50" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="120" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="12.0%" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
+											<td><div class="aniInput"><input type="text" value="Seg C" class="browser-default"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="50" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="120" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="12.0" class="browser-default num1"><span class="focus-border"></span></div></td>
 										</tr>
 										<tr>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="Seg D" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="25" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="80" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="8.0%" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
+											<td><div class="aniInput"><input type="text" value="Seg D" class="browser-default"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="25" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="80" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="8.0" class="browser-default num1"><span class="focus-border"></span></div></td>
 										</tr>
 										<tr>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="Seg E" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="5" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="50" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
-											<td>
-												<div class="aniInput">
-													<input type="text" value="5.0%" class="browser-default">
-													<span class="focus-border"></span>
-												</div>
-											</td>
+											<td><div class="aniInput"><input type="text" value="Seg E" class="browser-default"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="5" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="50" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="5.0" class="browser-default num0"><span class="focus-border"></span></div></td>
 										</tr>
 									</tbody>
 								</table>
@@ -2307,6 +2341,2297 @@
 						</div>
 						<div class="col s4">
 							<div id="segment_pie" style="height: 250px;"></div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Product Positioning</div>
+			<div>
+				<div style="overflow: hidden;"><a class="waves-effect waves-light hBtn right" id="btn_addProdPos">Add a row</a></div>
+				<div class="fixedTable hBorderTable hScroll vMiddle" style="max-height: 500px;">
+					<table id="tbl_prodPos">
+						<colgroup>
+							<col style="width: 20%;">
+							<col style="width: 20%;">
+							<col style="width: 20%">
+							<col style="width: 20%;">
+							<col style="width: 20%;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>Target customer segments</th>
+								<th>Key features of the new product</th>
+								<th>Primary benefits the product</th>
+								<th>How do we plan to position</th>
+								<th>Other comments</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="End User">
+									</div>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Chemically stable, easy-to-use dispensing system, quick room-temperature cure time.</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Extended product lifespan due to superior weather resistance, non-toxic and low-odor application.</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Position as the 'Professional-Grade, Consumer-Friendly' sealant/adhesive solution.</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Focus marketing on DIY repair and small home improvement projects.</textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="OEM">
+									</div>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Ultra-low volatility (low D4/D5/D6 content), high thermal conductivity, precision bonding capability.</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Meets stringent automotive and electronics industry standards (e.g., thermal management in EVs), reduced inspection failures.</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Position as the 'Reliability Standard' component for high-performance electronic assemblies.</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Requires dedicated technical support for production line integration and testing.</textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="Distributor">
+									</div>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Long shelf life (18+ months), standardized packaging for easy stacking, competitive volume pricing.</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Reduced inventory waste, maximized warehouse efficiency, guaranteed profit margin.</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Position as the 'Inventory Anchor' product with high demand and low handling risk.</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Offer tiered rebate program based on quarterly volume commitment.</textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="Channel Partner">
+									</div>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Exclusive regional pricing, dedicated technical sales training modules, co-branded marketing materials.</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Increased profitability per sale, enhanced customer loyalty through specialized service offering.</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Position as a 'Strategic Partnership' where mutual growth is the primary goal.</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Mandate annual product knowledge certification for all sales representatives.</textarea>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Competitive Assessment</div>
+			<div class="inputArea">
+				<div class="row">
+					<div class="col s2 ar pl0">Current Competitors to new product</div>
+					<div class="col s10">
+						<textarea class="materialize-textarea pd5"></textarea>
+					</div>
+				</div>div>
+				<div class="row">
+					<div class="col s2 ar pl0">Key Opportunities & Threats for MPM</div>
+					<div class="col s10">
+						<textarea class="materialize-textarea pd5"></textarea>
+					</div>
+				</div>
+			</div>
+			<div>
+				<div class="cardSubTit mt20">Differentiation vs Competitive Products</div>
+				<div class="fixedTable hBorderTable hScroll vMiddle" style="max-height: 500px;">
+					<table id="tbl_prodPos">
+						<colgroup>
+							<col style="width: 15%;">
+							<col style="width: 17%;">
+							<col style="width: 17%;">
+							<col style="width: 17%;">
+							<col style="width: 17%;">
+							<col style="width: 17%;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>Key Customer Outcome / Benefit</th>
+								<th>Target value</th>
+								<th>New Product (MPM)</th>
+								<th>Competitor-1 Product</th>
+								<th>Competitor-2 Product</th>
+								<th>Competitor-3 Product</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="Long-Term Thermal Stability (°C)">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="250°C for 500 hrs">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="280°C (Exceeds Target)">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="230°C">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="250°C (Meets Target)">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="Not Specified">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="VOC Content (ppm)">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="< 100 ppm">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="< 50 ppm (Best in Class)">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="150 ppm (Non-compliant for new standards)">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="100 ppm (Meets Target)">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="80 ppm">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="Process Curing Time">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="< 5 minutes">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="3 minutes (Fastest Curing)">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="6 minutes">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="5 minutes">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="7 minutes">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="Adhesion Strength (MPa on Aluminum)">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="> 5 MPa">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="5.5 MPa">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="4.0 MPa">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="4.8 MPa">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="5.1 MPa">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="Price Per Kilogram ($)">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="$80 - $90">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="$85">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="$75">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="$95">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="$88">
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="Certifications/Compliance">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="AEC-Q100, REACH">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="AEC-Q100, REACH, UL Certified">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="REACH Only">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="AEC-Q100, REACH">
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="None">
+									</div>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Value Proposition Assumptions</div>
+			<div>
+				<div class="cardSubTit mt20">Commercial</div>
+				<div class="fixedTable hBorderTable hScroll vMiddle" style="max-height: 500px;">
+					<table id="tbl_valAssume">
+						<colgroup>
+							<col style="width: 20%;">
+							<col style="width: 40%;">
+							<col style="width: 40%;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>Assumption Category</th>
+								<th>Critical assumption(s) made <br>(that must be true for the project to succeed)</th>
+								<th>Current Status & Comments <br>(What proves this case? What would indicate failure? Experiment to test)</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Customer benefit / Problem you solve and Value you create</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Customers will pay a 20% premium for the integrated product due to the 50% reduction in installation time and labor cost.</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">STATUS: Initial customer interviews (n=10) confirm installation time is the main pain point. FAILURE INDICATION: If pilot customers balk at a >15% premium. EXPERIMENT: Run a price sensitivity test with the first 5 beta clients.</textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>Competitive environment and reaction</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Competitors (specifically Competitor-1) will require 9-12 months to replicate the core thermal stability feature.</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">STATUS: Competitor-1's existing R&D cycle averages 14 months for major feature releases. FAILURE INDICATION: If a competitor announces a similar feature within 6 months. EXPERIMENT: Monitor patent filings and technical job postings from Competitor-1 closely.</textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>Technical know-how and processes</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Our internal production process (Process X) can maintain the required 99.999% material purity at full scale without sacrificing yield (Target Yield: 95%).</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">STATUS: Pilot batch runs achieved 94% yield, slightly below target. FAILURE INDICATION: Yield drops below 90% during Q3 ramp-up. EXPERIMENT: Dedicated engineering team to optimize post-processing filtration stage.</textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>Pricing</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">Raw material costs (specifically Silicon Polymer Z) will remain stable or decrease slightly over the next 24 months, allowing us to maintain a 45% gross margin.</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">STATUS: Polymer Z pricing is currently stable, long-term contract signed with Vendor A. FAILURE INDICATION: If the commodity price index for key inputs increases by >10% in the next quarter. EXPERIMENT: Secure secondary supply contracts with Vendor B.</textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>Any Other (eg, time to revenue and profit goals, alliances, etc)</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">We will secure a strategic distribution alliance with 'Global Distributor Y' within 6 months of product launch, essential for penetrating the APAC market.</textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0">STATUS: Initial introductory meetings scheduled with Global Distributor Y next month. FAILURE INDICATION: If alliance is not finalized by the end of Q1 next year. EXPERIMENT: Prepare an alternative partnership plan with Regional Distributor Z.</textarea>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="cardSubTit mt20">Technical</div>
+				<div class="fixedTable hBorderTable hScroll vMiddle" style="max-height: 500px;">
+					<table id="tbl_valAssume">
+						<colgroup>
+							<col style="width: 20%;">
+							<col style="width: 40%;">
+							<col style="width: 40%;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>Assumption Category</th>
+								<th>Critical assumption(s) made <br>(that must be true for the project to succeed)</th>
+								<th>Current Status & Comments <br>(What proves this case? What would indicate failure? Experiment to test)</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td>Knowledge and skills</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0"></textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>Processes (R&D, Scale-up, Mfg. and Other)</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0"></textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>Resources (Time, Cost and availability etc.)</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0"></textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0"></textarea>
+								</td>
+							</tr>
+							<tr>
+								<td>Any Other</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0"></textarea>
+								</td>
+								<td>
+									<textarea class="materialize-textarea pd5 mb0"></textarea>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Total Economic Value Assessment</div>
+			<div class="row">
+				<div class="col s5">
+					<div class="fixedTable hBorderTable hScroll vMiddle" style="max-height: 250px;">
+						<table id="tbl_tev">
+							<colgroup>
+								<col style="width: 50%;">
+								<col style="width: 50%;">
+							</colgroup>
+							<thead>
+								<tr>
+									<th>Component</th>
+									<th>Value ($)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td><span class="cfblue25-text mr5">■</span>① The Competitor</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default num2" value="10" id="inp_tev_compval">
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td><span class="tendril25-text mr5">■</span>② Unique Additional Value</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default num2" value="30" id="inp_tev_addval">
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td><span class="rose25-text mr5">■</span>③ Unique Costs</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default num2" value="5" id="inp_tev_cost">
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td class="fontBold ht35"><span class="viola25-text mr5">■</span>④ Total Economic Value (① + ② - ③)</td>
+									<td id="td_tev_tev" class="fontBold ar"></td>
+								</tr>
+								<tr>
+									<td class="fontBold ht35"><span class="white-text mr5">■</span>⑤ Differentitaion Value (② - ③)</td>
+									<td id="td_tev_diff" class="fontBold ar"></td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+				<div class="col s7">
+					<div id="div_tev" class="mt10 pd20">
+						<div style="position: relative;height: 100%;">
+							<div id="div_tev_bar" style="display: none;">
+								<div id="div_tev_bar_comp" class="tev-bar fLine vCenter hCenter cfblue25 ac" style="left: 10%;"></div>
+								<div id="div_tev_bar_addval" class="tev-bar fLine vCenter hCenter tendril25 ac" style="left: 30%;"></div>
+								<div id="div_tev_bar_cost" class="tev-bar fLine vCenter hCenter rose25 ac" style="left: 50%;"></div>
+								<div id="div_tev_bar_tev" class="tev-bar fLine vCenter hCenter viola25 ac" style="left: 70%;"></div>
+							</div>
+							<div id="div_tev_default" class="fLine vCenter hCenter font16 wd100p" style="height: 100%;position: absolute;">
+								To draw the chart, fill in all values in the table on the left.
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="mt20">
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">Attachments</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="ATTACH_FILE_ID" value="">
+									<div class="btn" id="ATTACH_FILE_BTN">
+										<span>File</span>
+										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Go To Market Strategy</div>
+			<div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">Branding Approach</div>
+						<div class="col s10">
+							<textarea class="materialize-textarea pd5 mb0"></textarea>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Service Strategy</div>
+						<div class="col s10">
+							<textarea class="materialize-textarea pd5 mb0"></textarea>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Promotion Communication Strategy</div>
+						<div class="col s10">
+							<textarea class="materialize-textarea pd5 mb0"></textarea>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Pricing & Incentives Strategy</div>
+						<div class="col s10">
+							<textarea class="materialize-textarea pd5 mb0"></textarea>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Distribution Strategy</div>
+						<div class="col s10">
+							<textarea class="materialize-textarea pd5 mb0"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Commercialization Plan</div>
+			<div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">Commercialization Plan</div>
+						<div class="col s10">
+							<textarea class="materialize-textarea pd5 mb0">The commercialisation plan must be initiated prior to Customer Acceptance review.  This commercialisation plan must be aligned with regulatory registrations, as commercialisation may be delayed in some regions because of pending registrations.
+
+Key elements to be considered in Commercialization plan :
+- Regions/countries with launch dates (if not a global launch). Agreement with product stewardship.
+- Approved Technical Data Sheet. Approved by legal and Marcom.
+- Sales force / distributor /customer training information and roll-out plan. Agreement with commercial organisation and Marcom/Legal.
+- Press release and external communication plan in place. Exhibitions/trade show. Agreement with Marcom.
+- SAP material master set-up at all appropriate locations. Work with Product management.
+- Commercial inventory in place in preparation with launch. Agreement with Supply Chain.
+- Sample stock in place through normal sampling process or plans to sample from technology/ADE organisation. Work with Product management/Technology.</textarea>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Attachments</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="ATTACH_FILE_ID" value="">
+									<div class="btn" id="ATTACH_FILE_BTN">
+										<span>File</span>
+										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>VOC</div>
+			<div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">QFD Tool</div>
+						<div class="col s10">
+							Include link to QFD Tool
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Attachments</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="ATTACH_FILE_ID" value="">
+									<div class="btn" id="ATTACH_FILE_BTN">
+										<span>File</span>
+										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>CTQ Register</div>
+			<div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">CTQ</div>
+						<div class="col s10">
+							<div class="fixedTable hBorderTable hScroll vMiddle mt0" style="max-height: 300px;">
+								<table id="">
+									<colgroup>
+										<col style="width: auto;">
+										<col style="width: auto;">
+										<col style="width: auto;">
+										<col style="width: auto;">
+										<col style="width: auto;">
+										<col style="width: auto;">
+										<col style="width: auto;">
+										<col style="width: auto;">
+										<col style="width: auto;">
+										<col style="width: auto;">
+										<col style="width: auto;">
+										<col style="width: auto;">
+										<col style="width: auto;">
+										<col style="width: auto;">
+										<col style="width: auto;">
+										<col style="width: auto;">
+									</colgroup>
+									<thead>
+										<tr>
+											<th rowspan="2"></th>
+											<th rowspan="2">Customer Requirements</th>
+											<th rowspan="2">Product/Process Development CTQs</th>
+											<th rowspan="2">UoM</th>
+											<th colspan="3">Target</th>
+											<th colspan="3">CTQ Change Log</th>
+											<th rowspan="2">MSA Status</th>
+											<th colspan="3">Current Performance</th>
+											<th colspan="2">Verification/Validation Status</th>
+										</tr>
+										<tr>
+											<th>Min</th>
+											<th>Avg</th>
+											<th>Max</th>
+											<th>Changed since NPI Go?</th>
+											<th>Date of Change</th>
+											<th>Explanation for Changes</th>
+											<th>Min</th>
+											<th>Avg</th>
+											<th>Max</th>
+											<th>Result</th>
+											<th>Verification/Validation By</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>1</td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+										</tr>
+										<tr>
+											<td>2</td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+										</tr>
+										<tr>
+											<td>3</td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+											<td></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Attachments</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="ATTACH_FILE_ID" value="">
+									<div class="btn" id="ATTACH_FILE_BTN">
+										<span>File</span>
+										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Technical Approach</div>
+			<div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">Proposed Development Strategy</div>
+						<div class="col s10">
+							<textarea class="materialize-textarea pd5 mb0"></textarea>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Image (Chemisty/Process)</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="IMAGE_FILE_ID" value="">
+									<div class="btn" id="IMAGE_FILE_BTN">
+										<span>Image</span>
+										<div class="MultiFile-wrap" id="IMAGE_FILE_INPUT"><input type="file" id="IMAGE_FILE_INPUT" name="IMAGE_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+							</div>
+							<div class="mt10">
+								<img src="/img/flasks.png" style="height: 200px;">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Attachments</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="ATTACH_FILE_ID" value="">
+									<div class="btn" id="ATTACH_FILE_BTN">
+										<span>File</span>
+										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Existing/Previous Work</div>
+			<div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">Existing/Previous Work</div>
+						<div class="col s10">
+							<textarea class="materialize-textarea pd5 mb0"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Product/Formulation Design</div>
+			<div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">Product/Formulation Design</div>
+						<div class="col s10">
+							<textarea class="materialize-textarea pd5 mb0"></textarea>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Image (Product/Formulation)</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="IMAGE_FILE_ID" value="">
+									<div class="btn" id="IMAGE_FILE_BTN">
+										<span>Image</span>
+										<div class="MultiFile-wrap" id="IMAGE_FILE_INPUT"><input type="file" id="IMAGE_FILE_INPUT" name="IMAGE_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+							</div>
+							<div class="mt10">
+								<img src="/img/flasks.png" style="height: 200px;">
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Attachments</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="ATTACH_FILE_ID" value="">
+									<div class="btn" id="ATTACH_FILE_BTN">
+										<span>File</span>
+										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Customer Validation Summary</div>
+			<div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">Customer Validation Summary</div>
+						<div class="col s10">
+							<textarea class="materialize-textarea pd5 mb0"></textarea>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Attachments</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="ATTACH_FILE_ID" value="">
+									<div class="btn" id="ATTACH_FILE_BTN">
+										<span>File</span>
+										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Manufacturing Capability</div>
+			<div class="fixedTable hBorderTable hScroll vMiddle">
+				<table id="">
+					<colgroup>
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+					</colgroup>
+					<thead>
+						<tr>
+							<th></th>
+							<th>Task Name</th>
+							<th>Task Definition</th>
+							<th>Task Owner</th>
+							<th>STATUS<br>(Provide a summary of actual status and highlights for each task)</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td rowspan="1">NFC</td>
+							<td>Identification of high-level Risks (where applicable)</td>
+							<td>- Highlight any known major risks in Project Summary</td>
+							<td>NPC Requester</td>
+							<td><textarea class="materialize-textarea pd5"></textarea></td>
+						</tr>
+						<tr>
+							<td rowspan="3">NPI GO</td>
+							<td>Preliminary assessment :<br>Prior history, capacity, and cost</td>
+							<td>
+								<ul>
+									<li>- Review prior history of similar product; identify opportunities and risks</li>
+									<li>- Define target production volumes by year</li>
+									<li>- Define target production systems and available capacity</li>
+									<li>- Define target manufactured cost</li>
+								</ul>
+							</td>
+							<td>
+								Process Tech + QC<br>
+								Product Management + Process Tech<br>
+								Marketing + Process Tech
+							</td>
+							<td><textarea class="materialize-textarea pd5"></textarea></td>
+						</tr>
+						<tr>
+							<td>Scale Up</td>
+							<td>
+								<ul>
+									<li>- Prepare Prep &amp; Scale Up Request</li>
+									<li>- Assess scale up results; preliminary capability</li>
+									<li>- Update manufactured cost estimate</li>
+									<li>- Update capacity planning</li>
+								</ul>
+							</td>
+							<td>Process Tech + SIOP</td>
+							<td><textarea class="materialize-textarea pd5"></textarea></td>
+						</tr>
+						<tr>
+							<td>EHS Assessment</td>
+							<td>
+								<ul>
+									<li>- Complete appropriate safety reviews</li>
+									<li>- Update composition based on scale up</li>
+								</ul>
+							</td>
+							<td>Process Tech + EHS + Prod Stewardship</td>
+							<td><textarea class="materialize-textarea pd5"></textarea></td>
+						</tr>
+						<tr>
+							<td rowspan="1">Lab Formulation &amp; Scale-Up</td>
+							<td>Sourcing</td>
+							<td>
+								<ul>
+									<li>- Assess intermediate capacity vs. need</li>
+									<li>- Define raw material sourcing plan</li>
+								</ul>
+							</td>
+							<td>Process Tech + Procurement + SIOP</td>
+							<td><textarea class="materialize-textarea pd5"></textarea></td>
+						</tr>
+						<tr>
+							<td rowspan="2">Comm. GO</td>
+							<td>Product Management &amp; Inventory</td>
+							<td>
+								<ul>
+									<li>- Confirm raw material &amp; intermediate sourcing plans</li>
+									<li>- Define product lead times &amp; Inventory targets</li>
+									<li>- Enter demand into XXXXX</li>
+									<li>- Confirm capacity</li>
+								</ul>
+							</td>
+							<td>Product Management + SIOP + Process Tech</td>
+							<td><textarea class="materialize-textarea pd5"></textarea></td>
+						</tr>
+						<tr>
+							<td>Manufacturing Plan</td>
+							<td>
+								<ul>
+									<li>- Finalize manufacturing instructions</li>
+									<li>- Close out any open EHS risks</li>
+								</ul>
+							</td>
+							<td>Process Tech + Production</td>
+							<td><textarea class="materialize-textarea pd5"></textarea></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Volume / Capacity Analysis</div>
+			<div class="cardSubTit mt20">Expected product(s)/intermediates volume for first 5 years after launch(with split by pole)</div>
+			<div class="fixedTable hBorderTable hScroll vMiddle">
+				<table id="tbl_tev">
+					<colgroup>
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>Region/Pole</th>
+							<th>Parameter</th>
+							<th>Regional Mfg. Owner</th>
+							<th>Regional Quality Owner</th>
+							<th>PIM 1(YYYY)</th>
+							<th>PIM 2(YYYY)</th>
+							<th>PIM 3(YYYY)</th>
+							<th>PIM 4(YYYY)</th>
+							<th>PIM 1(YYYY)</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td rowspan="3">1. AMR</td>
+							<td>Volume</td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+						</tr>
+						<tr>
+							<td>Mfg. Location/Asset</td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+						</tr>
+						<tr>
+							<td>% Capacity available</td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+						</tr>
+						<tr>
+							<td rowspan="3">2. EUR</td>
+							<td>Volume</td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+						</tr>
+						<tr>
+							<td>Mfg. Location/Asset</td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+						</tr>
+						<tr>
+							<td>% Capacity available</td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+						</tr>
+						<tr>
+							<td rowspan="3">3. APAC</td>
+							<td>Volume</td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+						</tr>
+						<tr>
+							<td>Mfg. Location/Asset</td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+						</tr>
+						<tr>
+							<td>% Capacity available</td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+						</tr>
+						<tr>
+							<td rowspan="3">4. IMEA</td>
+							<td>Volume</td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+						</tr>
+						<tr>
+							<td>Mfg. Location/Asset</td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+						</tr>
+						<tr>
+							<td>% Capacity available</td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+						</tr>
+						<tr>
+							<td rowspan="2">1. AMR</td>
+							<td>Volume</td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+						</tr>
+						<tr>
+							<td>% Capacity available</td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value="0"></div></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Mfg. Cost Estimate</div>
+			<div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">Summary of Cost Estimate</div>
+						<div class="col s10">
+							<textarea class="materialize-textarea pd5 mb0"></textarea>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Scale-Up</div>
+			<div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">Scale-Up & Capability Summary</div>
+						<div class="col s10">
+							<textarea class="materialize-textarea pd5 mb0"></textarea>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Attachments</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="ATTACH_FILE_ID" value="">
+									<div class="btn" id="ATTACH_FILE_BTN">
+										<span>File</span>
+										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>SIOP Assessment</div>
+			<div class="cardSubTit mt20">New Raw Materials</div>
+			<div class="fixedTable hBorderTable hScroll vMiddle">
+				<table id="">
+					<colgroup>
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>Raw Material</th>
+							<th>Vendors Qualified</th>
+							<th>Required Volume</th>
+							<th>Pricing</th>
+							<th>Risks</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="cardSubTit mt20">Existing Raw Materials & Intermediates</div>
+			<div class="fixedTable hBorderTable hScroll vMiddle">
+				<table id="">
+					<colgroup>
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>Material</th>
+							<th>Raw / Intermediate</th>
+							<th>Required Volume</th>
+							<th>Risk</th>
+							<th>Action to Mitigate Risk</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Sustainability Summary</div>
+			<div class="cardSubTit mt20">PSA Summary</div>
+			<div class="fixedTable hBorderTable hScroll vMiddle">
+				<table id="">
+					<colgroup>
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>Project Stage</th>
+							<th>Sustainability Category for the Product</th>
+							<th>Sustainability Score for the Product</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>NPI GO</td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value=""></div></td>
+						</tr>
+						<tr>
+							<td>Lab Formulation</td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value=""></div></td>
+						</tr>
+						<tr>
+							<td>Scale-Up</td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value=""></div></td>
+						</tr>
+						<tr>
+							<td>Commercial GO</td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value=""></div></td>
+						</tr>
+						<tr>
+							<td>Post Launch Review</td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default num2" value=""></div></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="cardSubTit mt20">Sustainability Assessment Highlights</div>
+			<div class="fixedTable hBorderTable hScroll vMiddle">
+				<table id="">
+					<colgroup>
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+					</colgroup>
+					<thead>
+						<tr>
+							<th></th>
+							<th>PSA Assessment Question</th>
+							<th>Assessment Comments for the NPI/Product including potential actions if any</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>1</td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+						</tr>
+						<tr>
+							<td>3</td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+						</tr>
+						<tr>
+							<td>4</td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+							<td><div class="aniInput"><input type="text" class="browser-default" value=""></div></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Quality(QA/QC) Assessment</div>
+			<div class="fixedTable hBorderTable hScroll vMiddle">
+				<table id="">
+					<colgroup>
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+					</colgroup>
+					<thead>
+						<tr>
+							<th></th>
+							<th>Task Name</th>
+							<th>Task Definition</th>
+							<th>Task Owner</th>
+							<th>STATUS<br>(Provide a summary of actual status and highlights for each task)</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td rowspan="2">NPI GO</td>
+							<td>Identification of high level Risks (where applicable)</td>
+							<td>- Highlight any major risks/road blocks/needs with respect to QC/QA in Project Summary</td>
+							<td>BU Technology + QC/QA</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>Preliminary QC/QA needs assessment :<br>Prior history, resources, timelines</td>
+							<td>
+								<ul>
+									<li>- Review prior QC/QA history for similar products/process</li>
+									<li>- CTQs to address known QC/QA issues (if applicable)</li>
+									<li>- QC contact/resource needs assessment at intended Mfg locations</li>
+									<li>- Analytical test method availability for all major CTQs (resource &amp; investment needs based on initial CTQs)</li>
+								</ul>
+							</td>
+							<td>
+								BU Technology + QC<br>
+								BU Technology + QC + Global Analytical
+							</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td rowspan="3">Lab Formulation &amp; Scale-Up</td>
+							<td>Test Method Development</td>
+							<td>
+								<ul>
+									<li>- Confirm capability of standard test methods for all key CTQs</li>
+									<li>- Develop new test methods where required</li>
+									<li>- Plan and execute MSA – Required for NPIs subject to IATF compliance</li>
+								</ul>
+							</td>
+							<td>BU Technology + Global Analytical + QC</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>QC Plan</td>
+							<td>
+								<ul>
+									<li>- Initiate QC Plan Development (Details to be included in Prep &amp; Scale-up Request)</li>
+									<li>- Control plan in specified format required for NPIs subject to IATF compliance</li>
+								</ul>
+							</td>
+							<td>BU Tech. + Process Tech. + QC</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>Risk Assessment (Quality)</td>
+							<td>- Capture Quality Risks in project risk assessment</td>
+							<td>BU Tech. + Process Tech. + QC</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td rowspan="1">Comm. GO</td>
+							<td>QC Plan implementation and Product/Process Capability Verification</td>
+							<td>
+								<ul>
+									<li>- Confirm capability on all CTQs based on scale-up/test lot production</li>
+									<li>- Confirm QC plan implementation</li>
+									<li>- Review risk assessment for status (Quality items)</li>
+									<li>- Review and update MSA &amp; Control plans for NPIs subject to IATF compliance</li>
+								</ul>
+							</td>
+							<td>Technology IP, IP Legal</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>IP/LEGAL Assessment</div>
+			<div class="fixedTable hBorderTable hScroll vMiddle">
+				<table id="">
+					<colgroup>
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+					</colgroup>
+					<thead>
+						<tr>
+							<th></th>
+							<th>Task Name</th>
+							<th>Task Definition</th>
+							<th>Task Owner</th>
+							<th>STATUS<br>(Provide a summary of actual status and highlights for each task)</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td rowspan="2">NPI GO</td>
+							<td>Identification of high level Risk/Opportunity for IP</td>
+							<td>- Preliminary risk/opportunity assessment</td>
+							<td>NPC Requester</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>Preliminary IP assessment : Competitor Product Mapping & Technology Landscape :</td>
+							<td>- Preliminary insights on competition and Tech. landscape from an ideation, opportunity or risk point of view for the new concept.</td>
+							<td>BU Technology + IP</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td rowspan="5">Lab Formulation & Scale-Up</td>
+							<td>State of the Art / Patent Landscape Search</td>
+							<td>- Assessment of state of the Art for the product concept and provide insights on white spaces</td>
+							<td>Technology IP</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>Preliminary FTP assessment</td>
+							<td>- Assessment of the proposed solution/product for any major competitor patent blocks</td>
+							<td>Technology IP</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>Patentability Search/Opinion</td>
+							<td>- Perform search for prior arts relevant to patentability of the new product/solution</td>
+							<td>Technology IP, IP Legal</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>IDL Review (Where applicable)</td>
+							<td>- Perform review of the IDL, suggest changes if any and recommend experimentation if any</td>
+							<td>Technology IP, IP Legal</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>Patent Drafting & filing (Where Applicable)</td>
+							<td>- Draft and file patent applications</td>
+							<td>IP Legal</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td rowspan="2">Comm. GO</td>
+							<td>FTP Analysis and Opinion</td>
+							<td>- Advise if the developed product has freedom to practise in the countries of MPM interest</td>
+							<td>Technology IP, IP Legal</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>Execute NDA/CDA with the customer</td>
+							<td>- Provide NDA for execution with Customer before exchange of Technology related information</td>
+							<td>Technology IP, IP Legal</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>Comm. GO</td>
+							<td>IP Strategy Verification</td>
+							<td>- Confirm all required filings, publications, NDA/CDAs and FTP assessments are complete</td>
+							<td>Technology IP, IP Legal</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Product Stewardship Assessment</div>
+			<div class="fixedTable hBorderTable hScroll vMiddle">
+				<table id="">
+					<colgroup>
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+					</colgroup>
+					<thead>
+						<tr>
+							<th></th>
+							<th>Task Name</th>
+							<th>Task Definition</th>
+							<th>Task Owner</th>
+							<th>STATUS<br>(Provide a summary of actual status and highlights for each task)</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td rowspan="2">NPI GO</td>
+							<td>Identification of high level Risks (if any) related to Regulatory Aspects</td>
+							<td>- Preliminary risk identification</td>
+							<td>NPC Requester</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>
+								Preliminary Assessment of <br>
+								a) Regulatory Fit and Global Compliance Needs, and <br>
+								b) PS/Regulatory support needs for the Project
+							</td>
+							<td>
+								<ul>
+									<li>- Identify potential regulatory concerns/risks for the intended product/application</li>
+									<li>- Identify global registration and compliance needs as applicable</li>
+									<li>- Identify potential testing/data needs for regulatory compliance along with resource and funding needs</li>
+								</ul>
+							</td>
+							<td>(BU Technology + PS) Project Team members</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td rowspan="4">Lab Formulation & Scale-up</td>
+							<td>Regulatory Risks / Concerns</td>
+							<td>- Updated risk assessment related to regulatory aspects (including status on resolution/mitigation of previously identified risks/concerns)</td>
+							<td>Project Leader + BU Tech. & PS team members</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>MSDS</td>
+							<td>- Ensure MSDS are available for all new materials (inputs, intermediates, products) prior to SAP material master set-up</td>
+							<td>PS team member with input from BU Tech</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>Toxicological (and any other applicable) Testing</td>
+							<td>
+								<ul>
+									<li>- Testing plans developed.</li>
+									<li>- Provide summary of testing results if completed.</li>
+								</ul>
+							</td>
+							<td>PS team member + BU Tech</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>Chemical & Government Registrations</td>
+							<td>- Develop plan for all applicable Government and Chemical Registration Needs</td>
+							<td>PS team member + BU Technology</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td rowspan="3">Comm. GO</td>
+							<td>Regulatory Risks / Concerns</td>
+							<td>- Confirm all major regulatory risks / concerns are suitably resolved</td>
+							<td>BU Tech + PS team member</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>MSDS</td>
+							<td>- Confirm MSDS are available for all new materials (intermediates & finished products)</td>
+							<td>PS team member + BU Tech</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>Toxicological (and any other applicable) Testing</td>
+							<td>- Confirm all required testing have been completed</td>
+							<td>PS team member + BU Tech</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>Comm. GO</td>
+							<td>Chemical & Government Registrations</td>
+							<td>- Confirm all government and chemical required registrations (for all regions where the product will be launched) are complete</td>
+							<td>Mktg + PS team member</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>GTC Assessment</div>
+			<div class="fixedTable hBorderTable hScroll vMiddle">
+				<table id="">
+					<colgroup>
+						<col style="width: auto;">
+						<col style="width: auto;">
+					</colgroup>
+					<thead>
+						<tr>
+							<th>Assessment Topic</th>
+							<th>Provide Status / Comments here</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td colspan="2" class="grey lighten-2 ht35"><b class="font16">A. Intended Application & Industry Review</b> (Review to be completed prior to NPI GO)</td>
+						</tr>
+						<tr>
+							<td>1. What is the intended use or application? What industry sector?</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>2. Can the product get used in civil and military application? In case of military application, what specific application can it get used for?</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>
+								3. Is the product specially designed for military use (SDFMU)?
+								<br>• Yes or No (If yes, you need to consult with GTC prior next steps. Contact your regional GTC partner)
+							</td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"/></div></td>
+						</tr>
+						<tr>
+							<td>
+								4. Can the material get used in the upstream exploration and production process in O&G industry?
+								<br>• Yes or No (If yes, you need to consult with GTC prior next steps. Contact your regional GTC partner)
+							</td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"/></div></td>
+						</tr>
+						<tr>
+							<td>
+								5. Is the product getting developed exclusively for a new customer not having any other business yet?
+								<br>• Yes or No (If the answer is YES, you need to consult with GTC to have an ad-hoc screen of the business partner performed in EOD)
+							</td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"/></div></td>
+						</tr>
+						<tr>
+							<td colspan="2" class="grey lighten-2 ht35"><b class="font16">B. Product Formulation Review</b> (To be completed before Lab Formulation Review, review and Update before Commercial Go)</td>
+						</tr>
+						<tr>
+							<td>
+								6. Check substance content as part of considered formulations against restricted chemical substances subject to Import and/or Export controls,
+								e.g. CWC, PIC, Drug Precursors, etc.
+								(The full CAS number reference list can get obtained here: <a class="link" href="#">LINK</a>)
+							</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td colspan="2" class="grey lighten-2 ht35"><b class="font16">C. Proposed Supply Chain Review</b> (To be completed before Scale-up and review/update before Comm. Go)</td>
+						</tr>
+						<tr>
+							<td>
+								7. Which raw materials are needed and what potential sourcing options exist?
+								<br>(You may want to consult with the responsible Procurement Commodity Manager)
+							</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>8. What are the potential MPM plants to produce this product?</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>9. What are the key geographical markets targetted?</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>
+								10. What is the anticipated manufacturing process (Chemical Rule). Please refer to guidance on "Chemical Rules"
+								<a href="#" class="link">here</a>
+							</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div>• Based on answers to items 7 to 10 above, GTC can assess best trade model</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Generic Risk Assessment</div>
+			<div class="fixedTable hBorderTable hScroll vMiddle">
+				<table id="">
+					<colgroup>
+						<col style="width: auto;">
+						<col style="width: auto;">
+					</colgroup>
+					<thead>
+						<tr>
+							<th rowspan="2">Risk Category</th>
+							<th rowspan="2">Risk Item</th>
+							<th colspan="3">Initial Assessment</th>
+							<th rowspan="2">Abatement Action<br>(Required for risks with scores &gt;=15)</th>
+							<th colspan="3">Final Assessment</th>
+							<th colspan="2">Responsibility</th>
+						</tr>
+						<tr>
+							<th>Prob</th>
+							<th>Imp</th>
+							<th>Risk Score</th>
+							<th>Prob</th>
+							<th>Imp</th>
+							<th>Risk Score</th>
+							<th>Owner</th>
+							<th>Est. Comp. Date</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>Customer Risks</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Competitor Risks</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Product Development Risks</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Application Risks</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Process scale up and Manufacturing Risks</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Sourcing and Supply Risks</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Regulatory Risks</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Intellectual Property Risks</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Resource Risks</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>Financial Risks</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"></span></div></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>FMEA for IATF Compliance</div>
+			<div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">FMEA</div>
+						<div class="col s10">Include link to FMEA Tool</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Attachments</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="ATTACH_FILE_ID" value="">
+									<div class="btn" id="ATTACH_FILE_BTN">
+										<span>File</span>
+										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Design Performance Validation</div>
+			<div class="fixedTable hBorderTable hScroll vMiddle" style="max-height: 300px;">
+				<table id="">
+					<colgroup>
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+					</colgroup>
+					<thead>
+						<tr>
+							<th rowspan="2"></th>
+							<th rowspan="2">Customer Requirements</th>
+							<th rowspan="2">Product/Process Development CTQs</th>
+							<th rowspan="2">UoM</th>
+							<th colspan="3">Target</th>
+							<th colspan="3">CTQ Change Log</th>
+							<th rowspan="2">MSA Status</th>
+							<th colspan="3">Current Performance</th>
+							<th colspan="2">Verification/Validation Status</th>
+						</tr>
+						<tr>
+							<th>Min</th>
+							<th>Avg</th>
+							<th>Max</th>
+							<th>Changed since NPI Go?</th>
+							<th>Date of Change</th>
+							<th>Explanation for Changes</th>
+							<th>Min</th>
+							<th>Avg</th>
+							<th>Max</th>
+							<th>Result</th>
+							<th>Verification/Validation By</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>1</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>2</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+						<tr>
+							<td>3</td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+							<td></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">Attachments</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="ATTACH_FILE_ID" value="">
+									<div class="btn" id="ATTACH_FILE_BTN">
+										<span>File</span>
+										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Process Product Capability</div>
+			<div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s12 ac grey lighten-2" style="height: 200px;">Process Product Capability Table</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Attachments</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="ATTACH_FILE_ID" value="">
+									<div class="btn" id="ATTACH_FILE_BTN">
+										<span>File</span>
+										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Learnings Summary</div>
+			<div class="fixedTable hBorderTable hScroll vMiddle">
+				<table id="">
+					<colgroup>
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+						<col style="width: auto;">
+					</colgroup>
+					<thead>
+						<tr>
+							<th></th>
+							<th>Focus Area</th>
+							<th>Best Practices / Successes Observed</th>
+							<th>Opportunities for Improvement Identified</th>
+							<th>Action Plans / Recommendations</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td>1.00</td>
+							<td>Project Selection, Alignment to BU Strategy and Portfolio fit</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>2.00</td>
+							<td>Business Case Development and Front-end Value Proposition</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>3.00</td>
+							<td>Project Planning & Project Resources</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>4.00</td>
+							<td>Customer Requirements, VOC and CTQs</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>5.00</td>
+							<td>Product Development</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>6.00</td>
+							<td>Process Development & Scale-up</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>7.00</td>
+							<td>Overall Project Execution (Schedule, Budget, Cross-functional collaboration etc)</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>8.00</td>
+							<td>Results : Actual vs Plan (sales, margin, volume, costs etc)</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>9.00</td>
+							<td>NPI Process Effectiveness (Framework, tools & templates, Training etc)</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+						<tr>
+							<td>10.00</td>
+							<td>Other Areas/Aspects related to the Project</td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<div class="mt20">
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">Attachments</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="ATTACH_FILE_ID" value="">
+									<div class="btn" id="ATTACH_FILE_BTN">
+										<span>File</span>
+										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+		<section class="cardBox mt10" id="">
+			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Project Documentation</div>
+			<div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">Attachments</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="ATTACH_FILE_ID" value="">
+									<div class="btn" id="ATTACH_FILE_BTN">
+										<span>File</span>
+										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</div>
 						</div>
 					</div>
 				</div>
