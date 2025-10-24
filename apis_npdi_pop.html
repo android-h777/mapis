@@ -52,11 +52,11 @@
 			$('select').formSelect();
 
 			$(".stageBtn:not('.disabled')").click(function(){
-				fnSetStageCont(this,$(this).attr("data-type"), $(this).attr("data-gate"), '1', '1');
+				fnSetStageCont(this, $(this).attr("data-type"), $(this).attr("data-gate"), '1', null);
 			});
 
 			$(".npdiTabMenu #npdiTab li").click(function(){
-				fnSetLeftMenu($(this).attr("data-val"), '1');
+				fnSetLeftMenu($(this).attr("data-val"), null);
 			});
 
 			$("#processMapModal [onclick]").click(function(){
@@ -67,7 +67,7 @@
 				}
 			});
 
-			fnSetStageCont(this,'2','4','1','1');
+			fnSetStageCont(this,'2','4','1',null);
 
 			au.fnSetDatepicker(null, "dd.mm.yyyy");
 
@@ -283,10 +283,15 @@
 					$('#npdiTab').tabs("updateTabIndicator");
 				}, 400);
 
-				const delay = $("#menu_stage_"+leftMenuNum).find(".menu-item").length * 100;
-				setTimeout(() => {
-					$("#menu_stage_"+leftMenuNum).find(".menu-item[data-target='pjContCard_"+leftMenuNum+"-"+menuNum+"']").trigger("click");
-				}, delay);
+				if(au.NVL(menuNum) != "") {
+					 setTimeout(() => {
+						$("#menu_stage_"+leftMenuNum).find(".menu-item[data-target='pjContCard_"+leftMenuNum+"-"+menuNum+"']").trigger("click");
+					}, menuNum * 100);
+				} else {
+					setTimeout(() => {
+						$("#menu_stage_"+leftMenuNum).find(".menu-item[data-target='pjContCard_"+leftMenuNum+"-1']").trigger("click");
+					}, 0);
+				}
 			},0);
 		}
 		
@@ -5190,19 +5195,19 @@
 			</div>
 			<div class="row mt30">
 				<div class="col s2 fin">
-					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'1','1',null,'1');"><a>NPC</a></div>
+					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'1','1',null,null);"><a>NPC</a></div>
 					<div class="statusIcon sizeL"><i class="material-symbols-outlined">check_circle</i></div>
 				</div>
 				<div class="col s2 fin">
-					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'2','2','1','1');"><a>NPI GO</a></div>
+					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'2','2','1',null);"><a>NPI GO</a></div>
 					<div class="statusIcon sizeL"><i class="material-symbols-outlined">check_circle</i></div>
 				</div>
 				<div class="col s2 fin">
-					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'2','3','1','1');"><a>LAB FORMULATION</a></div>
+					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'2','3','1',null);"><a>LAB FORMULATION</a></div>
 					<div class="statusIcon sizeL"><i class="material-symbols-outlined">check_circle</i></div>
 				</div>
 				<div class="col s2 ing">
-					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'2','4','1','1');"><a>SCALE-UP</a></div>
+					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'2','4','1',null);"><a>SCALE-UP</a></div>
 					<div class="statusIcon sizeL"><i class="material-symbols-outlined">play_circle</i></div>
 				</div>
 				<div class="col s2 disabled cDefault">
@@ -5216,31 +5221,31 @@
 				<div class="col s2"></div>
 				<div class="col s8 ing">
 					<div class="pjtMapBox">
-						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','2','1');">
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','2',null);">
 							<a>MKTG<br>Overview</a>
 						</div>
-						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','4','1');">
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','4',null);">
 							<a>Mfg/SIOP<br>Assessment​</a>
 						</div>
-						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','6','1');">
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','6',null);">
 							<a>Quality<br>Assessment​</a>
 						</div>
-						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','7','1');">
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','7',null);">
 							<a>IP/Legal<br>Assessment​</a>
 						</div>
-						<div class="waves-effect waves-hBlue pjtMapSubBox ing" onclick="fnSetStageCont(this,'2','4','9','1');">
+						<div class="waves-effect waves-hBlue pjtMapSubBox ing" onclick="fnSetStageCont(this,'2','4','9',null);">
 							<a>Risk<br>Assessment​</a>
 						</div>
-						<div class="waves-effect waves-hBlue pjtMapSubBox ing" onclick="fnSetStageCont(this,'2','4','3','1');">
+						<div class="waves-effect waves-hBlue pjtMapSubBox ing" onclick="fnSetStageCont(this,'2','4','3',null);">
 							<a>Tech Dev<br>Approach​​</a>
 						</div>
-						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','3','1');">
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','3',null);">
 							<a>VOC/CTQ<br>Register​​</a>
 						</div>
-						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','8','1');">
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','8',null);">
 							<a>PS/Reg.<br>Assessment​</a>
 						</div>
-						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','5','1');">
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','5',null);">
 							<a>PSA<br>(Sustainability)​</a>
 						</div>
 					</div>
