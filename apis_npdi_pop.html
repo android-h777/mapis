@@ -241,8 +241,9 @@
 				$("body").addClass("npdiLayout");
 				$(".onArwArea").show();
 				$(".npdiTabMenu").slideDown();
-				fnSetNPDIArw();
-
+				setTimeout(() => {
+					fnSetNPDIArw();
+				},100);
 				leftMenuNum = dataType+'-'+tabNum;
 				setTimeout(() => {
 					$('#npdiTab').tabs("select", 'cont_stage_'+leftMenuNum);
@@ -391,7 +392,7 @@
 			</div>
 			<div class="mr10"><a id="processMapBtn" class="waves-effect waves-light hBtn hViva modal-trigger animate__animated animate__rubberBand" href="#processMapModal"><i class="material-symbols-outlined left">save</i><span class="label">ProcessMap</span></a></div>
 		</section>
-		<section class="npdiTabMenu">
+		<section class="npdiTabMenu" style="display: none;">
 			<ul class="tabs" id="npdiTab">
 				<li class="tab" data-val="2-1"><a href="#cont_stage_2-1" class="active">Overview</a>
 				</li><li class="tab" data-val="2-2"><a href="#cont_stage_2-2">Marketing</a>
