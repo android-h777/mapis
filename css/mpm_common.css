@@ -2866,6 +2866,7 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
     border: 2px solid transparent;
     border-radius: 10px;
 	transition: border 0.5s ease;
+	cursor: pointer;
 }
 .popup aside.leftAside ul li i {
 	margin-right: 10px;
