@@ -18,6 +18,9 @@
         $(document).ready(function(){
           $('.datepicker').datepicker();
           $('select').formSelect();
+          $('.dropdown-content').each(function() {
+            $('body').append($(this));
+          });
           // $('.modal').modal();
 
           $('#HierarchyViewModal').modal({

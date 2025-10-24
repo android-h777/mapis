@@ -11,230 +11,3225 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
-    <script>
+	<script type="text/javascript" charset="utf-8" src="js/apis_util.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/highcharts/highcharts.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/jquery.inputmask.js"></script>
+
+	<script>
+		let highchartsArray = [];
+		let currPos = {};
         $(document).ready(function(){
-          $('.tabs').tabs();
-          $('select').formSelect();
+			$(window).on('scroll', function() {
+				let scrollPosition = $(window).scrollTop() + 70; // 상단 바 보정값
+				
+				$('.cardBox[id]').each(function() {
+					const sectionTop = $(this).offset().top;
+					const sectionBottom = sectionTop + $(this).outerHeight();
+					const sectionId = $(this).attr('id');
 
-          $('.menu-item').on('click', function() {
-            const targetId = $(this).data('target');
-            const targetElement = $('#' + targetId);
+					if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+						$('.menu-item').removeClass('active');
+						$('.menu-item[data-target="' + sectionId + '"]').addClass('active');
+					}
+				});
+			});
 
-            if (targetElement.length) {
-              $('html, body').animate({
-                scrollTop: targetElement.offset().top - 115
-              }, 500);
-            }
-          });
+			$('#npdiTab').tabs();
+			$('select').formSelect();
+
+			$('.menu-item').on('click', function() {
+				const targetId = $(this).data('target');
+				const targetElement = $('#' + targetId);
+
+				if (targetElement.length) {
+					let scrollTop = targetElement.offset().top - 115;
+					if(["2","3","4","5"].indexOf(currPos.type) >= 0) {
+						scrollTop -= $('.npdiTabMenu').outerHeight();
+					}
+					$('html, body').animate({
+						scrollTop: scrollTop
+					}, 500);
+				}
+			});
+
+			$(".stageBtn").click(function(){
+				fnSetStageCont($(this).attr("data-type"), $(this).attr("data-gate"),'1');
+			});
+
+			$(".npdiTabMenu #npdiTab li").click(function(){
+				fnSetLeftMenu($(this).attr("data-val"));
+			});
+
+			$(".pjtMapBox").click(function(){
+				$('#processMapModal').modal('close');
+			});
+
+			fnSetStageCont('2','4','1');
+
+			setTimeout(function() {
+				$('#npdiTab').tabs("updateTabIndicator");
+				fnSetNPDIArw();
+			}, 500);
+
+			au.fnSetDatepicker(null, "dd.mm.yyyy");
+
+			$(window).on("resize", au.hFixedTableResize);
+			
+			$("#tbl_patent tbody").rowspan(0);
+			
+			let segmentChart = Highcharts.chart('segment_pie', {
+				chart: {
+					type: 'pie'
+				},
+				title: {
+					text: 'Revenue by Segment',
+					style: {
+						fontSize: '13px'
+					}
+				},
+				plotOptions: {
+					pie: {
+						cursor: "pointer",
+						borderRadius: '5px',
+						dataLabels: {
+							enabled: true,
+							useHTML: true, // HTML 사용 가능하게 설정
+							formatter: function() {
+								return '<div style="text-align:center; white-space: nowrap;">' + 
+										'<span >'+this.point.name+'</span><br><span class="mocha25-text">' + this.point.y + '</span> <span class="mocha25-text">(' + this.percentage.toFixed(1) + '%)</span></div>'; 
+							},
+							distance: 0,
+							align: 'center',
+							crop: false,
+							overflow: 'justify'
+						}
+					}
+				},
+				series: [{
+					name: 'Revenue',
+					colors: au.aesopColor,
+					colorByPoint: true,
+					data: [
+						{name: "Seg A", y: 450},
+						{name: "Seg B", y: 300},
+						{name: "Seg C", y: 120},
+						{name: "Seg D", y: 80},
+						{name: "Seg E", y: 50}
+					]
+				}],
+				credits: {
+					enabled: false
+				},
+				legend: {
+					enabled: true,
+					align: 'center',
+					verticalAlign: 'bottom',
+				}
+			});
+			highchartsArray.push(segmentChart);
+
+			$("#btn_addAction").click(function(){
+				let html = '';
+				let count = $("#tbl_action tbody tr").length;
+				html += '<tr>';
+				html += '<td class="ac">'+(count+1)+'</td>';
+				html += '<td><div class="aniInput"><input type="text" class="browser-default" placeholder="Decision Point"><span class="focus-border"/></div></td>';
+				html += '<td><div class="aniInput"><input type="text" class="browser-default" placeholder="Notes/Comments/Actions"><span class="focus-border"/></div></td>';
+				html += '<td class="ac">Lee Jongho</div></td>';
+				html += '<td><div class="aniInput"><input type="text" class="browser-default ac datepicker" placeholder="Target Date"><span class="focus-border"/></div></td>';
+				html += '<td></td>';
+				html += '</tr>';
+				$("#tbl_action").append(html);
+				au.fnSetDatepicker(null, "dd.mm.yyyy");
+			});
+			$("#btn_addProdPos").click(function(){
+				let html = '';
+				html += '<tr>';
+				html += '<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"/></div></td>';
+				html += '<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>';
+				html += '<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>';
+				html += '<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>';
+				html += '<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>';
+				html += '</tr>';
+				$("#tbl_prodPos").append(html);
+			});
+			
+			$("#tbl_tev input").on("input", fnSetTEVChart);
+			fnSetTEVChart();
+
+			$(document).on("change", "select[name='sel_dfvrating']", function() {
+				let subTotalScore = 0;
+				let totalScore = 0;
+				const $tr = $(this).closest("tbody").find("tr");
+				$tr.each(function(idx, o) {
+					const $td = $(o).find("td");
+					if($td.length > 2) {
+						const weightText = parseFloat($td.eq($td.length - 3).text());
+						const ratingValue = $(o).find("select[name='sel_dfvrating']").val();
+						if(weightText !== "" && ratingValue) {
+							const weight = parseFloat(weightText) / 100;
+							const rating = parseFloat(ratingValue);
+							const score = weight * rating;
+							$td.eq($td.length - 1).text(score.toFixed(2));
+							subTotalScore += score;		
+						}
+					} 
+					// subtotal
+					else if($td.length == 2) {
+						$td.eq(1).text(subTotalScore.toFixed(2));
+						totalScore += subTotalScore;
+						subTotalScore = 0;
+					}
+					// total
+					if(idx == $tr.length - 1) {
+						$td.eq(1).text(totalScore.toFixed(2));
+					}
+				});
+			});
+
+			$(".num0").inputmask("numeric", {
+				nullable: false,
+				placeholder: "",
+				groupSeparator: ",",    //separator 설정
+				autoGroup: true,      //천단위 그룹
+				integerDigits: 18,        //자리수 설정
+				digits: 0
+			});
+			$(".num1").inputmask("numeric", {
+				nullable: false,
+				placeholder: "",
+				groupSeparator: ",",    //separator 설정
+				autoGroup: true,      //천단위 그룹
+				integerDigits: 18,        //자리수 설정
+				digits: 1
+			});
+			$(".num2").inputmask("numeric", {
+				nullable: false,
+				placeholder: "",
+				groupSeparator: ",",    //separator 설정
+				autoGroup: true,      //천단위 그룹
+				integerDigits: 18,        //자리수 설정
+				digits: 2
+			});
+
+			$('#processMapModal').modal({
+				onOpenStart: function () {
+					$("header, aside, .contArea").addClass("modalBlur");
+				},
+				onCloseStart: function () {
+					$("header, aside, .contArea").removeClass("modalBlur");
+				}
+			});
+			// $('#processMapModal').modal('open');
+
+			$(".pjtMapSubBox").click(function(){
+
+			});
 
         });
+
+		function fnSetStageCont(dataType, stageNum, tabNum){
+			currPos = {type: dataType, gate: stageNum};
+			$(".stageBtn").removeClass("on");
+			$("#btn_stage_"+stageNum).addClass("on");
+			var leftMenuNum = dataType;
+
+			if(dataType == '1'){
+				$("body").removeClass("npdiLayout");
+				$(".onArwArea").hide();
+				$(".npdiTabMenu").slideUp();
+			}else{
+				$("body").addClass("npdiLayout");
+				$(".onArwArea").show();
+				$(".npdiTabMenu").slideDown();
+				fnSetNPDIArw();
+				leftMenuNum = dataType+'-'+tabNum;
+			}
+
+			$(".leftAside .menuTit").text($("#btn_stage_"+stageNum).find("span").text());
+			$('#npdiTab').tabs('select', 'cont_stage_2-1');
+			fnSetLeftMenu(leftMenuNum);
+		}
+
+		function fnSetLeftMenu(tabNum){
+			$(".menuUl, .contArticle").hide();
+			$(".cardBox, .menu-item").removeClass("animate__fadeInLeft").hide();
+
+			$("#menu_stage_"+tabNum).show(0,function(){
+				$(this).find("li").each(function(i){
+					setTimeout(() => {
+						$(this).css('display', 'flex').addClass("animate__fadeInLeft");
+
+						fnReApplySetting();
+					}, i * 100);
+				});
+			});
+			$("#cont_stage_"+tabNum).show(0,function(){
+				$(this).find(".cardBox").each(function(i){
+					setTimeout(() => {
+					$(this).show().addClass("animate__fadeInLeft");
+					}, i * 100);
+				});
+			});
+		}
+		
+		function fnReApplySetting() {
+			au.hFixedTableResize();
+			highchartsArray.forEach(chart => chart.reflow());
+		}
+
+		function fnSetNPDIArw(){
+			const $area = $('.statusArea');
+			const $on = $area.find('.on');
+			const $arrow = $area.find('.onArwArea');
+
+			if ($on.length && $arrow.length) {
+				const areaOffset = $area.offset();
+				const elemOffset = $on.offset();
+				const centerX = (elemOffset.left - areaOffset.left) + ($on.outerWidth() / 2);
+				const arrowHalf = $arrow.outerWidth() / 2;
+				$arrow.css('left', (centerX - arrowHalf) + 'px');
+			}
+		}
+
+		function fnSetTEVChart() {
+			const compVal = $("#tbl_tev #inp_tev_compval").val();
+			const addVal = $("#tbl_tev #inp_tev_addval").val();
+			const costVal = $("#tbl_tev #inp_tev_cost").val();
+			if(compVal == "" || addVal == "" || costVal == "") {
+				$("#div_tev #div_tev_bar").hide();
+				$("#div_tev #div_tev_default").show();
+			} else {
+				const tevVal = au.NVL2(compVal) + au.NVL2(addVal) - au.NVL2(costVal); 
+				const diffVal = au.NVL2(tevVal) - au.NVL2(compVal);
+				
+				$("#tbl_tev #td_tev_diff").text(au.addComma(diffVal.toFixed(2))); 
+				$("#tbl_tev #td_tev_tev").text(au.addComma(tevVal.toFixed(2)));
+
+				const totalVal = au.NVL2(compVal) + au.NVL2(addVal);
+				$("#div_tev_bar_comp").html('<div class="wd100p" style="background-color: rgba(255,255,255,.3);">① The Competitor<br><b class="font14">'+au.addComma(au.NVL2(compVal).toFixed(2))+'</b></div>');
+				$("#div_tev_bar_addval").html('<div class="wd100p" style="background-color: rgba(255,255,255,.3);">② Unique Additional Value<br><b class="font14">'+au.addComma(au.NVL2(addVal).toFixed(2))+'</b></div>');
+				$("#div_tev_bar_cost").html('<div class="wd100p" style="background-color: rgba(255,255,255,.3);">③ Unique Costs<br><b class="font14">'+au.addComma(au.NVL2(costVal).toFixed(2))+'</b></div>');
+				$("#div_tev_bar_tev").html('<div class="wd100p" style="background-color: rgba(255,255,255,.3);"><b>④ Total Economic Value</b><br><b class="font14">'+au.addComma(tevVal.toFixed(2))+'</b></div>');
+
+				$("#div_tev_bar_comp").css("height", `${compVal/totalVal*100}%`).attr("data-height", `${compVal/totalVal*100}`);
+				$("#div_tev_bar_addval").css("height", `${addVal/totalVal*100}%`).attr("data-height", `${addVal/totalVal*100}`);
+				$("#div_tev_bar_cost").css("height", `${costVal/totalVal*100}%`).attr("data-height", `${costVal/totalVal*100}`);
+				$("#div_tev_bar_tev").css("height", `${tevVal/totalVal*100}%`).attr("data-height", `${tevVal/totalVal*100}`);
+
+				if(costVal <= au.NVL2(compVal) + au.NVL2(addVal)) {
+					$("#div_tev_bar_comp").css("top", "");
+					$("#div_tev_bar_comp").css("bottom", 0);
+					$("#div_tev_bar_addval").css("bottom", $("#div_tev_bar_comp").css("height"));
+					$("#div_tev_bar_tev").css("top", "");
+					$("#div_tev_bar_tev").css("bottom", 0);
+				} else {
+					const convRate = ((au.NVL2(compVal) + au.NVL2(addVal))/costVal);
+					$("#div_tev_bar_addval").css("top", 0);
+					$("#div_tev_bar_addval").css("height", $("#div_tev_bar_addval").attr("data-height") * convRate + "%");
+					$("#div_tev_bar_comp").css("top", $("#div_tev_bar_addval").css("height"));
+					$("#div_tev_bar_comp").css("height", $("#div_tev_bar_comp").attr("data-height") * convRate + "%");
+					$("#div_tev_bar_cost").css("height", "100%");
+					$("#div_tev_bar_tev").css("bottom", 0);
+					$("#div_tev_bar_tev").css("height", -1 * $("#div_tev_bar_tev").attr("data-height") * convRate + "%");
+				}
+
+				$("#div_tev #div_tev_default").hide();
+				$("#div_tev #div_tev_bar").fadeIn();
+			}
+		}
   </script>
 </head>
-<body class="popup">
-  <header class="z-depth-1">
-    <section class="titArea">
-      <div><img src="/img/MAPISLogo-25.png"></div>
-      <div class="tit">[03704] New preservative for Silsoft</div>
-    </section>
-    <section class="statusArea">
-      <div class="bdBox fin"><i class="material-icons left">check_circle</i>NPC</div>
-      <div class="arw"><i class="material-icons">navigate_next</i></div>
-      <div class="bdBox fin"><i class="material-icons left">check_circle</i>NPI Go</div>
-      <div class="arw"><i class="material-icons">navigate_next</i></div>
-      <div class="bdBox fin"><i class="material-icons left">check_circle</i>Lab Formulation</div>
-      <div class="arw"><i class="material-icons">navigate_next</i></div>
-      <div class="bdBox fin"><i class="material-icons left">check_circle</i>Scale-up</div>
-      <div class="arw"><i class="material-icons">navigate_next</i></div>
-      <div class="bdBox ing"><i class="material-icons left">play_circle_outline</i>Commercial Go</div>
-      <div class="arw"><i class="material-icons">navigate_next</i></div>
-      <div class="bdBox"><i class="material-icons left">radio_button_unchecked</i>Post Launch Review</div>
-    </section>
-  </header>
-  <aside class="leftAside z-depth-1 blurArea">
-    <section>
-      <ul>
-        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard1"><i class="material-icons left">preview</i><span>OverView</span></li>
-        <li class="menu-item waves-effect waves-hColor active" data-target="pjContCard2"><i class="material-icons left">account_tree</i><span>Relationships</span></li>
-        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard3"><i class="material-icons left">description</i><span>Documents and Notes</span></li>
-        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard4"><i class="material-icons left">miscellaneous_services</i><span>Miscellaneous</span></li>
-        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard5"><i class="material-icons left">verified</i><span>Decision Point Approvers</span></li>
-        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard6"><i class="material-icons left">local_library</i><span>Lessons Learned</span></li>
-        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard7"><i class="material-icons left">calculate</i><span>NPV<br>Calculator</span></li>
-        <li class="menu-item waves-effect waves-hColor" data-target="pjContCard8"><i class="material-icons left">reviews</i><span>Post Launch<br>Reviews Summary</span></li>
-      </ul>
-    </section>
-    <section class="btnArea">
-      <div><a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn hBlue"><i class="material-icons left">save</i><span class="label">Save</span></a></div>
-    </section>
-  </aside>
-  <article class="contArea">
-    <section class="cardBox" id="pjContCard1">
-      <div class="cardTit2"><i class="material-icons left">preview</i>OverView</div>
-      <div class="mt10">
-        <ul class="tabs">
-          <li class="tab"><a href="#cont1-1" class="active">General Information</a></li>
-          <li class="tab"><a href="#cont1-2">Additional Information</a></li>
-          <li class="tab"><a href="#cont1-3">Classification</a></li>
-          <li class="tab"><a href="#cont1-4">Financial Information</a></li>
-          <li class="tab"><a href="#cont1-5">Capacity Information</a></li>
-        </ul>
-      </div>
-      <div id="cont1-1">
-        <div class="cardSubTit mt20">Key Information</div>
-        <div class="inputArea">
-          <div class="row">
-            <div class="col s2 ar"><span class="essential">*</span>Name</div>
-            <div class="col s4">
-              <div class="aniInput">
-                <input type="text" value="" class="browser-default">
-                <span class="focus-border"></span>
-              </div>
-            </div>
-            <div class="col s2 ar">ID</div>
-            <div class="col s4 val">03704</div>
-          </div>
-          <div class="row">
-            <div class="col s2 ar">Status</div>
-            <div class="col s4">
-              <div class="wd120px">
-                <select>
-                  <option value="1">Assessment</option>
-                  <option value="2">Option 2</option>
-                  <option value="3">Option 3</option>
-                </select>
-              </div>
-            </div>
-            <div class="col s2 ar">Type</div>
-            <div class="col s4 val">NPI</div>
-          </div>
-          <div class="row">
-            <div class="col s2 ar">Project Management Template</div>
-            <div class="col s4">
-              <div class="wd120px">
-                <select>
-                  <option value="1"></option>
-                  <option value="2">Option 2</option>
-                  <option value="3">Option 3</option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s2 ar">Description</div>
-            <div class="col s10"><img src="/img/edit.PNG" style="width: 1023px;"></div>
-          </div>
-        </div>
+<body class="popup npdiLayout">
+	<header class="z-depth-1">
+		<section class="titArea">
+			<div><i class="material-icons left">lightbulb</i></div>
+			<div class="tit">[03704] New preservative for Silsoft</div>
+		</section>
+		<section class="statusBox">
+			<div class="statusArea">
+				<div id="btn_stage_1" data-type="1" data-gate="1" class="bdBox waves-effect waves-green stageBtn fin">
+					<i class="material-icons left">check_circle</i><span>NPC</span>
+				</div>
+				<div class="arw"><i class="material-icons">navigate_next</i></div>
+				<div id="btn_stage_2" data-type="2" data-gate="2" class="bdBox waves-effect waves-green stageBtn fin">
+					<i class="material-icons left">check_circle</i><span>NPI Go</span>
+				</div>
+				<div class="arw"><i class="material-icons">navigate_next</i></div>
+				<div id="btn_stage_3" data-type="2" data-gate="3" class="bdBox waves-effect waves-green stageBtn fin">
+					<i class="material-icons left">check_circle</i><span>Lab Formulation</span>
+				</div>
+				<div class="arw"><i class="material-icons">navigate_next</i></div>
+				<div id="btn_stage_4" data-type="2" data-gate="4" class="bdBox waves-effect waves-green stageBtn ing">
+					<i class="material-icons left">play_circle_outline</i><span>Scale-up</span>
+				</div>
+				<div class="arw"><i class="material-icons">navigate_next</i></div>
+				<div id="btn_stage_5" data-type="2" data-gate="5" class="bdBox stageBtn">
+					<i class="material-icons left">radio_button_unchecked</i><span>Commercial Go</span>
+				</div>
+				<div class="arw"><i class="material-icons">navigate_next</i></div>
+				<div id="btn_stage_6" data-type="1" data-gate="6" class="bdBox stageBtn">
+					<i class="material-icons left">radio_button_unchecked</i><span>Post Launch Review</span>
+				</div>
+				<div class="onArwArea">
+					<svg width="15" height="10" viewBox="0 0 15 10">
+					<polygon points="7.5,0 0,10 15,10" fill="white"	stroke="none"/>
+					<polyline points="0,10 7.5,0 15,10"	fill="none"	stroke="#a47764" stroke-width="1" stroke-dasharray="3,2"/>
+					</svg>
+				</div>
+			</div>
+			<div class="mr10"><a id="processMapBtn" class="waves-effect waves-light hBtn hViva modal-trigger animate__animated animate__rubberBand" href="#processMapModal"><i class="material-icons left">save</i><span class="label">ProcessMap</span></a></div>
+		</section>
+		<section class="npdiTabMenu">
+			<ul class="tabs" id="npdiTab">
+				<li class="tab" data-val="2-1"><a href="#cont_stage_2-1" class="active">Overview</a></li>
+				<li class="tab" data-val="2-2"><a href="#cont_stage_2-2">Marketing</a></li>
+				<li class="tab" data-val="2-3"><a href="#cont_stage_2-3">Mfg/SIOP</a></li>
+				<li class="tab" data-val="2-4"><a href="#cont_stage_2-4">Quality</a></li>
+				<li class="tab" data-val="2-5"><a href="#cont_stage_2-5">IP/Legal</a></li>
+				<li class="tab" data-val="2-6"><a href="#cont_stage_2-6">Risk</a></li>
+				<li class="tab" data-val="2-7"><a href="#cont_stage_2-7">Tech Dev</a></li>
+				<li class="tab" data-val="2-8"><a href="#cont_stage_2-8">VOC/CTQ</a></li>
+				<li class="tab" data-val="2-9"><a href="#cont_stage_2-9">PS/Reg.</a></li>
+				<li class="tab" data-val="2-10"><a href="#cont_stage_2-10">PSA</a></li>
+			</ul>
+		</section>
+	</header>
 
-        <div class="cardSubTit bd">Detail Program Information</div>
-        <div class="inputArea">
-          <div class="row">
-            <div class="col s2 ar"><span class="essential">*</span>Knowledge of Technology</div>
-            <div class="col s4">
-              <div>
-                <select>
-                  <option value="1"></option>
-                </select>
-              </div>
-            </div>
-            <div class="col s3 ar">Sustainabillity Numerical Score</div>
-            <div class="col s3">
-              <div class="aniInput wd100px">
-                <input type="text" value="0" class="browser-default ar" disabled>
-                <span class="focus-border"></span>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s2 ar"><span class="essential">*</span>Knowledge of Market</div>
-            <div class="col s4">
-              <div>
-                <select>
-                  <option value="1"></option>
-                </select>
-              </div>
-            </div>
-            <div class="col s3 ar"><span class="essential">*</span>Sustainabillity Assessment Category</div>
-            <div class="col s3">
-              <div>
-                <select>
-                  <option value="1"></option>
-                </select>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s2 ar">Innovation Category</div>
-            <div class="col s4">
-              <div class="aniInput wd100px">
-                <input type="text" value="" class="browser-default ar" disabled>
-                <span class="focus-border"></span>
-              </div>
-            </div>
-            <div class="col s3 ar">AOP Commercial Go date</div>
-            <div class="col s3">
-              <div class="aniInput wd100px">
-                <input type="text" value="" class="browser-default ar" disabled>
-                <span class="focus-border"></span>
-              </div>
-            </div>
-          </div>
-          <div class="row">
-            <div class="col s2 ar">Primary R&D Location</div>
-            <div class="col s4">
-              <div>
-                <select>
-                  <option value="1"></option>
-                </select>
-              </div>
-            </div>
-          </div>
-        </div>
+	<aside class="leftAside z-depth-1 blurArea">
+		<div class="menuTit">NPC</div>
 
-        <div class="cardSubTit bd">Project Team</div>
+		<section>
+			<ul id="menu_stage_1" class="menuUl" style="display: none;">
+				<li class="menu-item animate__animated waves-effect waves-hColor active" data-target="pjContCard_1-1">
+					<i class="material-icons left">inventory_2</i><span>Basic Data</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_1-2">
+					<i class="material-icons left">preview</i><span>Concept Overview</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_1-3">
+					<i class="material-icons left">file_present</i><span>Attachments</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_1-4">
+					<i class="material-icons left">miscellaneous_services</i><span>Expected Opportunity Size</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_1-5">
+					<i class="material-icons left">verified</i><span>DFV Rating</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_1-6">
+					<i class="material-icons left">local_library</i><span>Approval Workflow</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_1-7">
+					<i class="material-icons left">calculate</i><span>Actions/Comments</span>
+				</li>
+			</ul>
+			
+			<ul id="menu_stage_2-1" class="menuUl" style="display: none;">
+				<li class="menu-item animate__animated waves-effect waves-hColor active" data-target="pjContCard_2-1-1">
+					<i class="material-icons left">preview</i><span>Basic Data</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_2-1-2">
+					<i class="material-icons left">preview</i><span>Categorization</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_2-1-3">
+					<i class="material-icons left">preview</i><span>Sustainability</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_2-1-4">
+					<i class="material-icons left">preview</i><span>Patent Info</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_2-1-5">
+					<i class="material-icons left">preview</i><span>Schedule & Status</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_2-1-6">
+					<i class="material-icons left">preview</i><span>Stakeholders</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_2-1-7">
+					<i class="material-icons left">preview</i><span>Capacity Planning</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_2-1-8">
+					<i class="material-icons left">preview</i><span>Financial</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_2-1-9">
+					<i class="material-icons left">preview</i><span>NPV Calculator</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_2-1-10">
+					<i class="material-icons left">preview</i><span>SKU Relationship</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_2-1-11">
+					<i class="material-icons left">preview</i><span>Comments</span>
+				</li>
+			</ul>
 
-      </div>
-      <div id="cont1-2">
-        Additional Information
-      </div>
-      <div id="cont1-3">
-        Classification
-      </div>
-      <div id="cont1-4">
-        Financial Information
-      </div>
-      <div id="cont1-5">
-        Capacity Information
-      </div>
-    </section>
+			<ul id="menu_stage_2-2" class="menuUl" style="display: none;">
+				<li class="menu-item animate__animated waves-effect waves-hColor active" data-target="pjContCard_2-2-1">
+					<i class="material-icons left">preview</i><span>Seg. Analysis</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_2-2-2">
+					<i class="material-icons left">preview</i><span>Prod. Position</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_2-2-3">
+					<i class="material-icons left">preview</i><span>Competitive Assess</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_2-2-4">
+					<i class="material-icons left">preview</i><span>Val Proposition</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_2-2-5">
+					<i class="material-icons left">preview</i><span>TEV Assess</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_2-2-6">
+					<i class="material-icons left">preview</i><span>Go To Market</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_2-2-7">
+					<i class="material-icons left">preview</i><span>Comm. Plan</span>
+				</li>
+				
+			</ul>
 
-    <section class="cardBox mt10" id="pjContCard2">
-      <div class="cardTit2"><i class="material-icons left">account_tree</i>Relationships</div>
-    </section>
+		</section>
+		<section class="btnArea">
+			<div><a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn hBlue"><i class="material-icons left">save</i><span class="label">Save</span></a></div>
+		</section>
+	</aside>
 
-    <section class="cardBox mt10" id="pjContCard3">
-      <div class="cardTit2"><i class="material-icons left">description</i>Documents and Notes</div>
-    </section>
+	<div class="contArea">
+		<article id="cont_stage_1" class="contArticle" style="display: none;">
+			<section class="cardBox animate__animated" id="pjContCard_1-1">
+				<div class="cardTit2"><i class="material-icons left">inventory_2</i>Basic Data</div>
+				<div>
+					<div class="inputArea">
+						<div class="row">
+							<div class="col s2 ar pl0">ID</div>
+							<div class="col s4 val"dataconn data-col="project_id">05760</div>
+							<div class="col s2 ar pl0">Type</div>
+							<div class="col s4 val">NPI</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Business Unit</div>
+							<div class="col s10 val">Formulated Specialties > Electronic Materials > Display - Electronics > Display & Micro > UV</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0"><span class="essential">*</span>Name</div>
+							<div class="col s10">
+								<div class="aniInput">
+									<input type="text" value="UV cure thermal adhesive for RGBOLED TV" class="browser-default">
+									<span class="focus-border"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">NPC Submitted by</div>
+							<div class="col s4 val"dataconn data-col="submitted_by">Spike MA</div>
+							<div class="col s2 ar pl0">NPC Submitted at</div>
+							<div class="col s4 val"dataconn data-col="submitted_at">23.09.2025</div>
+						</div>
+						
+						<div class="row">
+							<div class="col s2 ar pl0">Image (Proudct/Application)</div>
+							<div class="col s10">
+								<div>
+									<div class="input-field file-field mt0 mb0">
+										<input type="hidden" id="IMAGE_FILE_ID" value="">
+										<div class="btn" id="IMAGE_FILE_BTN">
+											<span>Image</span>
+											<div class="MultiFile-wrap" id="IMAGE_FILE_INPUT"><input type="file" id="IMAGE_FILE_INPUT" name="IMAGE_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+										</div>
+										<div class="file-path-wrapper">
+											<input type="text" class="file-path validate">
+										</div>
+									</div>
+								</div>
+								<div class="mt10">
+									<img src="/img/flasks.png" style="height: 200px;">
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
 
-    <section class="cardBox mt10" id="pjContCard4">
-      <div class="cardTit2"><i class="material-icons left">miscellaneous_services</i>Miscellaneous</div>
-    </section>
+			<section class="cardBox animate__animated mt10" id="pjContCard_1-2">
+				<div class="cardTit2"><i class="material-icons left">preview</i>Concept Overview</div>
+				<div>
+					<div class="inputArea">
+						<div class="row">
+							<div class="col s2 ar pl0">Brief Description of Product/Application</div>
+							<div class="col s10">
+								<div class="aniInput">
+									<textarea class="materialize-textarea" placeholder="Describe the new product concept/application?"></textarea>
+									<span class="focus-border"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Target Market/Customers</div>
+							<div class="col s10">
+								<div class="aniInput">
+									<textarea class="materialize-textarea" placeholder="Who are the intended customers/application/market?"></textarea>
+									<span class="focus-border"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Source of Opportunity</div>
+							<div class="col s10">
+								<div class="aniInput">
+									<textarea class="materialize-textarea" placeholder="Where did this idea/concept come from?"></textarea>
+									<span class="focus-border"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Competition</div>
+							<div class="col s10">
+								<div class="aniInput">
+									<textarea class="materialize-textarea" placeholder="Describe the new product concept/application?"></textarea>
+									<span class="focus-border"/>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
 
-    <section class="cardBox mt10" id="pjContCard5">
-      <div class="cardTit2"><i class="material-icons left">verified</i>Decision Point Approvers</div>
-    </section>
+			<section class="cardBox animate__animated mt10" id="pjContCard_1-3">
+				<div class="cardTit2"><i class="material-icons left">file_present</i>Attachments</div>
+				<div>
+					<div class="inputArea">
+						<div class="row">
+							<div class="col s2 ar pl0">Attachments</div>
+							<div class="col s10">
+								<div>
+									<div class="input-field file-field mt0 mb0">
+										<input type="hidden" id="ATTACH_FILE_ID" value="">
+										<div class="btn" id="ATTACH_FILE_BTN">
+											<span>File</span>
+											<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+										</div>
+										<div class="file-path-wrapper">
+											<input type="text" class="file-path validate">
+										</div>
+									</div>
+									<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
 
-    <section class="cardBox mt10" id="pjContCard6">
-      <div class="cardTit2"><i class="material-icons left">local_library</i>Lessons Learned</div>
-    </section>
+			<section class="cardBox animate__animated mt10" id="pjContCard_1-4">
+				<div class="cardTit2"><i class="material-icons left">miscellaneous_services</i>Expected Opportunity Size</div>
+				<div class="cardSubTit mt20">Expected Opportunity Size (Sales ($MM) / Volume (MT) Projection)</div>
+				<div class="fixedTable hBorderTable hScroll mt10">
+					<table>
+						<colgroup>
+							<col style="width: 25%;">
+							<col style="width: 25%;">
+							<col style="width: 25%;">
+							<col style="width: 25%;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>Timeframe</th>
+								<th>Sales ($MM)</th>
+								<th>Volume (MT)</th>
+								<th>Average SGM %</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="ac">5 Yrs Total</td>
+								<td class="ac">1,566,200</td>
+								<td class="ac">4,590</td>
+								<td class="ac">24.54%</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
 
-    <section class="cardBox mt10" id="pjContCard7">
-      <div class="cardTit2"><i class="material-icons left">calculate</i>NPV Calculator</div>
-    </section>
+			<section class="cardBox animate__animated mt10" id="pjContCard_1-5">
+				<div class="cardTit2"><i class="material-icons left">verified</i>DFV Rating</div>
+				<div class="cardSubTit mt20">NPC Screening Tool</div>
+				<div class="fixedTable hBorderTable hScroll mt10">
+					<table>
+						<colgroup>
+							<col style="width: 30px;">
+							<col style="width: 100px;">
+							<col style="width: 100px;">
+							<col style="width: 100px;">
+							<col style="width: 100px;">
+							<col style="width: 40px;">
+							<col style="width: 40px;">
+							<col style="width: 40px;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th colspan="2">Metric Definition</th>
+								<th colspan="3">Rating Scale & Definition</th>
+								<th rowspan="2">Weight</th>
+								<th colspan="2">NPC</th>
+							</tr>
+							<tr>
+								<th>Category</th>
+								<th>Metric</th>
+								<th>10 [LOW]</th>
+								<th>30 [MED]</th>
+								<th>90 [HIGH]</th>
+								<th>Rating</th>
+								<th>Score</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td rowspan="4" class="cnlcream25"><span class="font16 fontBold">D</span><br>Desirability</td>
+								<td>Segment Strategy Fit</td>
+								<td>No clear fit or indirect fit with current segment strategy</td>
+								<td>Product generally in line with segment strategy but not with the top priority elements</td>
+								<td>Product strongly aligned to the most important segment strategy elements</td>
+								<td class="ac">25%</td>
+								<td><select name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></td>
+								<td class="ar">2.50</td>
+							</tr>
+							<tr>
+								<td>Customer Benefits (Outcomes)</td>
+								<td>Product offers no unique benefits or features to the customers<br>Product essentially same as competition</td>
+								<td>Good</td>
+								<td>Very Good</td>
+								<td class="ac">40%</td>
+								<td><select name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></td>
+								<td class="ar">4.00</td>
+							</tr>
+							<tr>
+								<td>Adaptive</td>
+								<td>Customer may need significant investment and/or process adjustments for adaption</td>
+								<td>Good</td>
+								<td>Very Good</td>
+								<td class="ac">25%</td>
+								<td><select name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></td>
+								<td class="ar">2.50</td>
+							</tr>
+							<tr>
+								<td>Sustainable Competative Advantage</td>
+								<td>Significant composition, Product can be copied reasonably easily with some limited skills and analysis</td>
+								<td>Good</td>
+								<td>Very Good</td>
+								<td class="ac">10%</td>
+								<td><select name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></td>
+								<td class="ar">1.00</td>
+							</tr>
+							<tr class="btDLine">
+								<td colspan="7"></td>
+								<td class="cream25 ar">10.00</td>
+							</tr>
+							<tr class="btSLine">
+								<td colspan="8"></td>
+							</tr>
+							<tr class="btSLine">
+								<td rowspan="4" class="cnlcream25"><span class="font16 fontBold">F</span><br>Feasibility</td>
+								<td>Marketing Synergies</td>
+								<td>Currently no or very limited marketing expertise, experience or resources in this area</td>
+								<td>Good</td>
+								<td>Very Good</td>
+								<td class="ac">25%</td>
+								<td><select name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></td>
+								<td class="ar">2.50</td>
+							</tr>
+							<tr>
+								<td>Technical Synergies</td>
+								<td>Not good</td>
+								<td>Good</td>
+								<td>Very Good</td>
+								<td class="ac">25%</td>
+								<td><select name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></td>
+								<td class="ar">2.50</td>
+							</tr>
+							<tr>
+								<td>Manufacturing Synergies</td>
+								<td>Not good</td>
+								<td>Good</td>
+								<td>Very Good</td>
+								<td class="ac">25%</td>
+								<td><select name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></td>
+								<td class="ar">2.50</td>
+							</tr>
+							<tr>
+								<td>Time to Commercialization</td>
+								<td>Not good</td>
+								<td>Good</td>
+								<td>Very Good</td>
+								<td class="ac">25%</td>
+								<td><select name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></td>
+								<td class="ar">2.50</td>
+							</tr>
+							<tr class="btDLine">
+								<td colspan="7"></td>
+								<td class="cream25 ar">10.00</td>
+							</tr>
+							<tr class="btSLine">
+								<td colspan="8"></td>
+							</tr>
+							<tr class="btSLine">
+								<td rowspan="4" class="cnlcream25"><span class="font16 fontBold">V</span><br>Viability</td>
+								<td>Financial Impact</td>
+								<td>Not good</td>
+								<td>Good</td>
+								<td>Very Good</td>
+								<td class="ac">25%</td>
+								<td><select name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></td>
+								<td class="ar">2.50</td>
+							</tr>
+							<tr>
+								<td>Target Market Size</td>
+								<td>Not good</td>
+								<td>Good</td>
+								<td>Very Good</td>
+								<td class="ac">25%</td>
+								<td><select name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></td>
+								<td class="ar">2.50</td>
+							</tr>
+							<tr>
+								<td>Market Growth</td>
+								<td>Not good</td>
+								<td>Good</td>
+								<td>Very Good</td>
+								<td class="ac">25%</td>
+								<td><select name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></td>
+								<td class="ar">2.50</td>
+							</tr>
+							<tr>
+								<td>Gross Margins</td>
+								<td>Not good</td>
+								<td>Good</td>
+								<td>Very Good</td>
+								<td class="ac">25%</td>
+								<td><select name="sel_dfvrating"><option value="10">10 [LOW]</option><option value="30">30 [MED]</option><option value="90">90 [HIGH]</option></select></td>
+								<td class="ar">2.50</td>
+							</tr>
+							<tr class="btDLine">
+								<td colspan="7"></td>
+								<td class="cream25 ar">10.00</td>
+							</tr>
+							<tr class="btSLine">
+								<td colspan="8"></td>
+							</tr>
+							<tr class="btDLine">
+								<td colspan="7"></td>
+								<td class="mocha25 white-text ar">30.00</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
 
-    <section class="cardBox mt10" id="pjContCard8">
-      <div class="cardTit2"><i class="material-icons left">reviews</i>Post Launch Reviews Summary</div>
-    </section>
+			<section class="cardBox animate__animated mt10" id="pjContCard_1-6">
+				<div class="cardTit2"><i class="material-icons left">local_library</i>Approval Workflow</div>
+				<div>
+					<div class="inputArea">
+						<div class="cardSubTit mt20">Dates</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Forecasted Decision Date</div>
+							<div class="col s4 val">23.09.2025</div>
+							<div class="col s2 ar pl0">Planned Decision Date</div>
+							<div class="col s4 val">26.09.2025</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Actual Decision Date</div>
+							<div class="col s4 val">-</div>
+						</div>
+						<div class="cardSubTit mt20">Decision Point Approval Status</div>
+						<div class="fixedTable hBorderTable">
+							<table>
+								<colgroup>
+									<col style="width:auto;">
+									<col style="width:35%;">
+									<col style="width:160px;">
+									<col style="width:120px;">
+								</colgroup>
+								<thead>
+									<tr>
+										<th>Approval Type</th>
+										<th>Name</th>
+										<th>Date</th>
+										<th>Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr style="" class="">
+										<td class="ac">Marketing Leader</td>
+										<td class="ac">Jim Quan</td>
+										<td class="ac">26.09.2025</td>
+										<td class="ac"><span class="roundBox tendril25">Approved</span></td>
+									</tr>
+									<tr style="" class="">
+										<td class="ac">Technology Leader</td>
+										<td class="ac">Charles Kim</td>
+										<td class="ac">-</td>
+										<td class="ac"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+						<div class="cardSubTit mt20">Detailed Program Information</div>
+						<div class="row fLine vCenter">
+							<div class="col s2 ar pl0">NPC Review Document Attached</div>
+							<div class="col s4"><label><input class="filled-in" type="checkbox" checked><span class="pl0"></span></label></div>
+						</div>
+					</div>
+				</div>
+			</section>
 
-  </article>
+			<section class="cardBox animate__animated mt10" id="pjContCard_1-7">
+				<div class="cardTit2"><i class="material-icons left">calculate</i>Actions/Comments</div>
+				<div>
+					<div class="inputArea">
+						<div class="row">
+							<div class="col s2 ar pl0">Actions</div>
+							<div class="col s10 val">This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Comments</div>
+							<div class="col s10 val">There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...</div>
+						</div>
+					</div>
+				</div>
+			</section>
+		</article>
+
+		<article id="cont_stage_2-1" class="contArticle" style="display: none;">
+			<section class="cardBox animate__animated" id="pjContCard_2-1-1">
+				<div class="cardTit2"><i class="material-icons left">inventory_2</i>Basic Data</div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">ID</div>
+						<div class="col s4 val"dataconn data-col="project_id">05760</div>
+						<div class="col s2 ar pl0">Type</div>
+						<div class="col s4 val">NPI</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Business Unit</div>
+						<div class="col s10 val">Formulated Specialties > Electronic Materials > Display - Electronics > Display & Micro > UV</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0"><span class="essential">*</span>Name</div>
+						<div class="col s10">
+							<div class="aniInput">
+								<input type="text" value="UV cure thermal adhesive for RGBOLED TV" class="browser-default">
+								<span class="focus-border"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">NPI Project Leader</div>
+						<div class="col s10 val"dataconn data-col="project_leader">Spike MA</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Development Location</div>
+						<div class="col s4 val">R&D Location Name</div>
+						<div class="col s2 ar pl0">Manufacturing Location</div>
+						<div class="col s4 val">Manufacturing Site</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Image (Proudct/Application)</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="IMAGE_FILE_ID" value="">
+									<div class="btn" id="IMAGE_FILE_BTN">
+										<span>Image</span>
+										<div class="MultiFile-wrap" id="IMAGE_FILE_INPUT"><input type="file" id="IMAGE_FILE_INPUT" name="IMAGE_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+							</div>
+							<div class="mt10">
+								<img src="/img/flasks.png" style="height: 200px;">
+							</div>
+						</div>
+					</div>
+					
+					<div class="cardSubTit mt20">Project Summary (DFV)</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Desirability</div>
+						<div class="col s10">
+							<div class="aniInput">
+								<textarea class="materialize-textarea" dataconn data-col="text_descr" placeholder="Describe the new product concept/application?"></textarea>
+								<span class="focus-border"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Feasibility</div>
+						<div class="col s10">
+							<div class="aniInput">
+								<textarea class="materialize-textarea" dataconn data-col="text_target" placeholder="Who are the intended customers/application/market?"></textarea>
+								<span class="focus-border"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Viability</div>
+						<div class="col s10">
+							<div class="fixedTable hBorderTable hScroll mt0">
+								<table style="table-layout: fixed;">
+									<colgroup>
+										<col style="width: 22%;">
+										<col style="width: 18%;">
+										<col style="width: 18%;">
+										<col style="width: 2%;">
+										<col style="width: 22%;">
+										<col style="width: 18%;">
+									</colgroup>
+									<thead>
+										<tr>
+											<th class="mpm-bg lighten-4 al ht35 fontM" colspan="6">Target Economics (Sales ($MM) / Volume (MT) Projection)</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td class="headerTd bdR1"></td>
+											<td class="headerTd">Sales ($MM)</td>
+											<td class="headerTd">Volume (MT)</td>
+											<td class="headerTd"></td>
+											<td class="headerTd bdR1">Average SGM %</td>
+											<td class="headerTd"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
+										</tr>
+										<tr>
+											<td class="headerTd bdT1 bdR1">PIM 1 (1st Year)</td>
+											<td class="bdT1"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
+											<td class="bdT1"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
+											<td class=""></td>
+											<td class="headerTd bdT1d_lgrey bdR1">% Maintenance (Avg)</td>
+											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
+										</tr>
+										<tr>
+											<td class="headerTd bdT1d_lgrey bdR1">PIM 1-5 (5 Yrs Total)</td>
+											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
+											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
+											<td class=""></td>
+											<td class="headerTd bdT1d_lgrey bdR1">NPV ($MM)/IRR %</td>
+											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+
+					<div class="cardSubTit mt20">Attachments</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Attachments</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="ATTACH_FILE_ID" value="">
+									<div class="btn" id="ATTACH_FILE_BTN">
+										<span>File</span>
+										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</div>
+						</div>
+					</div>
+				</div>				
+
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-1-2">
+				<div class="cardTit2"><i class="material-icons left">inventory_2</i>Innovation Categorization</div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0"><span class="essential">*</span>Knowledge of Technology</div>
+						<div class="col s4"><select><option value="">Extending Existing Products / Technology</option></select></div>
+						<div class="col s2 ar pl0"><span class="essential">*</span>Knowledge of Market</div>
+						<div class="col s4"><select><option value="">Enter Adjacent Markets (Now Unserved)</option></select></div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Innovation Category</div>
+						<div class="col s10">ADJACENT</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-1-3">
+				<div class="cardTit2"><i class="material-icons left">inventory_2</i>Sustainability Rating</div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0"><span class="essential">*</span>Sustainability Assessment Category</div>
+						<div class="col s4"><select><option value="">BENEFICAL IMPACT</option></select></div>
+						<div class="col s2 ar pl0">Sustainability Numerical Score</div>
+						<div class="col s4"><div class="aniInput"><input type="text" class="browser-default num0"><span class="focus-border"/></div></div>
+					</div>
+				</div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-1-4">
+				<div class="cardTit2"><i class="material-icons left">inventory_2</i>Patent Information</div>
+				<div class="fixedTable hBorderTable hScroll mt0 vMiddle">
+					<table id="tbl_patent" style="table-layout: fixed;">
+						<colgroup>
+							<col style="width: 20%;">
+							<col style="width: 80%;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>Docket #</th>
+								<th class="al">Patent</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="ac">302134</td>
+								<td>
+									<a class="link">[WO2018070792A1] Silicone rubber composition and cured product thereof</a>
+								</td>
+							</tr>
+							<tr>
+								<td class="ac">302134</td>
+								<td>
+									<a class="link">[WO2018070792A1] Silicone rubber composition and cured product thereof2</a>
+								</td>
+							</tr>
+							<tr>
+								<td class="ac">22534</td>
+								<td>
+									<a class="link">[WO2018070792A1] Silicone rubber composition and cured product thereof</a>
+								</td>
+							</tr>
+							<tr>
+								<td class="ac">22534</td>
+								<td>
+									<a class="link">[WO2018070792A1] Silicone rubber composition and cured product thereof</a>
+								</td>
+							</tr>
+							<tr>
+								<td class="ac">22534</td>
+								<td>
+									<a class="link">[WO2018070792A1] Silicone rubber composition and cured product thereof</a>
+								</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-1-5">
+				<div class="cardTit2"><i class="material-icons left">inventory_2</i>Project Schedule & Status</div>
+				<div class="fixedTable hBorderTable hScroll mt20 vMiddle">
+					<table style="table-layout: fixed;">
+						<colgroup>
+							<col style="width: 11%;">
+							<col style="width: 13%;">
+							<col style="width: 13%;">
+							<col style="width: 13%;">
+							<col style="width: 13%;">
+							<col style="width: 13%;">
+							<col style="width: 13%;">
+							<col style="width: 11%;">
+						</colgroup>
+						<tbody>
+							<tr>
+								<td class="headerTd ar">Target Date</td>
+								<td>DD/MM/YYYY</td>
+								<td>DD/MM/YYYY</td>
+								<td>DD/MM/YYYY</td>
+								<td>DD/MM/YYYY</td>
+								<td>DD/MM/YYYY</td>
+								<td>DD/MM/YYYY</td>
+								<td>Overall Project Status</td>
+							</tr>
+							<tr>
+								<td class="headerTd ar">Decision Point</td>
+								<td><div class="arrow-step mpm-bg white-text">NPC Screening</div></td>
+								<td><div class="arrow-step mpm-bg white-text">NPI Go Review</div></td>
+								<td><div class="arrow-step mpm-bg white-text">Lab Formulation</div></td>
+								<td><div class="arrow-step mpm-bg white-text">Scale-Up Review</div></td>
+								<td><div class="arrow-step mpm-bg white-text">Commercial Go</div></td>
+								<td><div class="arrow-step mpm-bg white-text">Post Launch Review</div></td>
+								<td class="ac" rowspan="2"><i class="material-icons green-text font40">circle</i></td>
+							</tr>
+							<tr>
+								<td class="headerTd ar">Actual Completion</td>
+								<td>DD/MM/YYYY</td>
+								<td>DD/MM/YYYY</td>
+								<td>DD/MM/YYYY</td>
+								<td>DD/MM/YYYY</td>
+								<td>DD/MM/YYYY</td>
+								<td>DD/MM/YYYY</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="cardSubTit mt20">Detailed Schedule</div>
+				<div id="gantChartWrapper" class="newTaskGantt mt5">
+					<div id="ganttChart" class="reg ganttbox">
+						<div class="ganttview">
+							<div class="ganttview-vtheader">
+								<div class="ganttview-vtheader-tit fLine vCenter hCenter">Task Name</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name STAGE fLine vCenter" style="height: 31px;">Project Start</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name STEP" style="height: 31px;">Product in Concept</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Prepare NPC documentation and submit in NPDI</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">NPC Review(Mktg & Tech)</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">NPC Approval</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Review NPI GO and Schedule Review</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">NPI GO Review</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name STEP" style="height: 31px;">Product in Development</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Product Formulation Development</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Process Development & Scale-up</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Customer Validation</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name STEP" style="height: 31px;">Product in Market</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Process Transfer Report completed and issued</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Document project learnings</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Post Launch Review</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name STAGE fLine vCenter" style="height: 31px;">Project End</div>
+								</div>
+							</div>
+							<div class="ganttview-vtheader-date">
+								<div class="ganttview-vtheader-tit-2">Duration</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name-2 STAGE" stage="30" step="" type="STAGE" activity="" data-seq="" style="height: 31px;">
+										<div class="ganttview-vtheader-daysel-span-stage"></div>
+									</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name-2 STEP" stage="30" step="3010" type="STEP" activity="" data-seq="" style="height: 31px;">
+										<div class="ganttview-vtheader-daysel"></div>
+									</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3010" type="ACTIVITY" activity="3010004" data-seq="32967" style="height: 31px;">
+										<div class="ganttview-vtheader-weight" data-seq="32967"></div>
+									</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3010" type="ACTIVITY" activity="3010005" data-seq="32966" style="height: 31px;">
+										<div class="ganttview-vtheader-weight" data-seq="32966"></div>
+									</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3010" type="ACTIVITY" activity="3010002" data-seq="32965" style="height: 31px;">
+										<div class="ganttview-vtheader-weight" data-seq="32965"></div>
+									</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3010" type="ACTIVITY" activity="3010003" data-seq="32968" style="height: 31px;">
+										<div class="ganttview-vtheader-weight" data-seq="32968"></div>
+									</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3010" type="ACTIVITY" activity="3010001" data-seq="32964" style="height: 31px;">
+										<div class="ganttview-vtheader-weight" data-seq="32964"></div>
+									</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name-2 STEP" stage="30" step="3020" type="STEP" activity="" data-seq="" style="height: 31px;">
+										<div class="ganttview-vtheader-daysel"></div>
+									</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3020" type="ACTIVITY" activity="3020002" data-seq="32970" style="height: 31px;">
+										<div class="ganttview-vtheader-weight" data-seq="32970"></div>
+									</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3020" type="ACTIVITY" activity="3020001" data-seq="32969" style="height: 31px;">
+										<div class="ganttview-vtheader-weight" data-seq="32969"></div>
+									</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3020" type="ACTIVITY" activity="3020003" data-seq="32971" style="height: 31px;">
+										<div class="ganttview-vtheader-weight" data-seq="32971"></div>
+									</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name-2 STEP" stage="30" step="3030" type="STEP" activity="" data-seq="" style="height: 31px;">
+										<div class="ganttview-vtheader-daysel"></div>
+									</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3030" type="ACTIVITY" activity="3030002" data-seq="32972" style="height: 31px;">
+										<div class="ganttview-vtheader-weight" data-seq="32972"></div>
+									</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3030" type="ACTIVITY" activity="3030001" data-seq="32973" style="height: 31px;">
+										<div class="ganttview-vtheader-weight" data-seq="32973"></div>
+									</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3030" type="ACTIVITY" activity="3030003" data-seq="32974" style="height: 31px;">
+										<div class="ganttview-vtheader-weight" data-seq="32974"></div>
+									</div>
+								</div>
+								<div class="ganttview-vtheader-item">
+									<div class="ganttview-vtheader-item-name-2 STAGE" stage="30" step="" type="STAGE" activity="" data-seq="" style="height: 31px;">
+										<div class="ganttview-vtheader-daysel-span-stage"></div>
+									</div>
+								</div>
+							</div>
+							<div class="ganttview-slide-container">
+								<div class="ganttview-hzheader">
+									<div class="ganttview-hzheader-years" style="width: 380px;">
+										<div class="ganttview-hzheader-year" style="width: 140px;">2025</div>
+										<div class="ganttview-hzheader-year" style="width: 240px;">2026</div>
+									</div>
+									<div class="ganttview-hzheader-months" style="width: 380px;">
+										<div class="ganttview-hzheader-month" islast="N">6</div>
+										<div class="ganttview-hzheader-month" islast="N">7</div>
+										<div class="ganttview-hzheader-month" islast="N">8</div>
+										<div class="ganttview-hzheader-month" islast="N">9</div>
+										<div class="ganttview-hzheader-month" islast="N">10</div>
+										<div class="ganttview-hzheader-month" islast="N">11</div>
+										<div class="ganttview-hzheader-month" islast="Y">12</div>
+										<div class="ganttview-hzheader-month" islast="N">1</div>
+										<div class="ganttview-hzheader-month" islast="N">2</div>
+										<div class="ganttview-hzheader-month" islast="N">3</div>
+										<div class="ganttview-hzheader-month" islast="N">4</div>
+										<div class="ganttview-hzheader-month" islast="N">5</div>
+										<div class="ganttview-hzheader-month" islast="N">6</div>
+										<div class="ganttview-hzheader-month" islast="N">7</div>
+										<div class="ganttview-hzheader-month" islast="N">8</div>
+										<div class="ganttview-hzheader-month" islast="N">9</div>
+										<div class="ganttview-hzheader-month" islast="N">10</div>
+										<div class="ganttview-hzheader-month" islast="N">11</div>
+										<div class="ganttview-hzheader-month" islast="Y">12</div>
+									</div>
+								</div>
+								<div class="ganttview-grid" style="min-width: 100%; width: 380px;">
+									<div class="ganttview-grid-row" stage="30" step="" type="STAGE" style="width: 380px;">
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="Y"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+									</div>
+									<div class="ganttview-grid-row" stage="30" step="3010" type="STEP" style="width: 380px;">
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="Y"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+									</div>
+									<div class="ganttview-grid-row" stage="30" step="3010" type="ACTIVITY" style="width: 380px;" data-seq="32967">
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="Y"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+									</div>
+									<div class="ganttview-grid-row" stage="30" step="3010" type="ACTIVITY" style="width: 380px;" data-seq="32966">
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="Y"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+									</div>
+									<div class="ganttview-grid-row" stage="30" step="3010" type="ACTIVITY" style="width: 380px;" data-seq="32965">
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="Y"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+									</div>
+									<div class="ganttview-grid-row" stage="30" step="3010" type="ACTIVITY" style="width: 380px;" data-seq="32968">
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="Y"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+									</div>
+									<div class="ganttview-grid-row" stage="30" step="3010" type="ACTIVITY" style="width: 380px;" data-seq="32964">
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="Y"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+									</div>
+									<div class="ganttview-grid-row" stage="30" step="3020" type="STEP" style="width: 380px;">
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="Y"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+									</div>
+									<div class="ganttview-grid-row" stage="30" step="3020" type="ACTIVITY" style="width: 380px;" data-seq="32970">
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="Y"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+									</div>
+									<div class="ganttview-grid-row" stage="30" step="3020" type="ACTIVITY" style="width: 380px;" data-seq="32969">
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="Y"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+									</div>
+									<div class="ganttview-grid-row" stage="30" step="3020" type="ACTIVITY" style="width: 380px;" data-seq="32971">
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="Y"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+									</div>
+									<div class="ganttview-grid-row" stage="30" step="3030" type="STEP" style="width: 380px;">
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="Y"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+									</div>
+									<div class="ganttview-grid-row" stage="30" step="3030" type="ACTIVITY" style="width: 380px;" data-seq="32972">
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="Y"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+									</div>
+									<div class="ganttview-grid-row" stage="30" step="3030" type="ACTIVITY" style="width: 380px;" data-seq="32973">
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="Y"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+									</div>
+									<div class="ganttview-grid-row" stage="30" step="3030" type="ACTIVITY" style="width: 380px;" data-seq="32974">
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="Y"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+									</div>	
+									<div class="ganttview-grid-row" stage="30" step="" type="STAGE" style="width: 380px;">
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="Y"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+										<div class="ganttview-grid-row-cell" islast="N"></div>
+									</div>
+								</div>
+								<div class="ganttview-blocks">
+									<div class="ganttview-block-container" type="STAGE">
+										<div class="ganttview-block" title="계획" modifiable="N" stage="30" step="" data-seq="" datatype="STAGE" idx="0" style="width: 120px; margin-left: 0px; visibility: visible; background-color: rgb(161, 170, 198);">
+											<div class="ganttview-block-text">6</div>
+										</div>
+									</div>
+									<div class="ganttview-block-container" type="STEP">
+										<div class="ganttview-block" title="계획" modifiable="N" stage="30" step="3010" data-seq="" datatype="STEP" idx="1" style="width: 100px; margin-left: 0px; visibility: visible; background-color: rgb(161, 170, 198);">
+											<div class="ganttview-block-text">5</div>
+										</div>
+									</div>
+									<div class="ganttview-block-container" type="ACTIVITY">
+										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3010" data-seq="32967" datatype="ACTIVITY" idx="2" style="width: 60px; margin-left: 0px; visibility: visible; background-color: #9a8b4e;">
+											<div class="ganttview-block-text">3</div>
+										</div>
+									</div>
+									<div class="ganttview-block-container" type="ACTIVITY">
+										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3010" data-seq="32966" datatype="ACTIVITY" idx="3" style="width: 20px; margin-left: 80px; visibility: visible; background-color: #9a8b4e;">
+											<div class="ganttview-block-text">1</div>
+										</div>
+									</div>
+									<div class="ganttview-block-container" type="ACTIVITY">
+										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3010" data-seq="32965" datatype="ACTIVITY" idx="4" style="width: 20px; margin-left: 80px; visibility: visible; background-color: #9a8b4e;">
+											<div class="ganttview-block-text">1</div>
+										</div>
+									</div>
+									<div class="ganttview-block-container" type="ACTIVITY">
+										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3010" data-seq="32968" datatype="ACTIVITY" idx="5" style="width: 20px; margin-left: 80px; visibility: visible; background-color: #9a8b4e;">
+											<div class="ganttview-block-text">1</div>
+										</div>
+									</div>
+									<div class="ganttview-block-container" type="ACTIVITY">
+										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3010" data-seq="32964" datatype="ACTIVITY" idx="6" style="width: 40px; margin-left: 60px; visibility: visible; background-color: #9a8b4e;">
+											<div class="ganttview-block-text">2</div>
+										</div>
+									</div>
+									<div class="ganttview-block-container" type="STEP">
+										<div class="ganttview-block" title="계획" modifiable="N" stage="30" step="3020" data-seq="" datatype="STEP" idx="7" style="width: 120px; margin-left: 80px; visibility: visible; background-color: rgb(161, 170, 198);">
+											<div class="ganttview-block-text">6</div>
+										</div>
+									</div>
+									<div class="ganttview-block-container" type="ACTIVITY">
+										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3020" data-seq="32970" datatype="ACTIVITY" idx="8" style="width: 20px; margin-left: 100px; visibility: visible; background-color: #9a8b4e;">
+											<div class="ganttview-block-text">1</div>
+										</div>
+									</div>
+									<div class="ganttview-block-container" type="ACTIVITY">
+										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3020" data-seq="32969" datatype="ACTIVITY" idx="9" style="width: 20px; margin-left: 80px; visibility: visible; background-color: #9a8b4e;">
+											<div class="ganttview-block-text">1</div>
+										</div>
+									</div>
+									<div class="ganttview-block-container" type="ACTIVITY">
+										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3020" data-seq="32971" datatype="ACTIVITY" idx="10" style="width: 80px; margin-left: 120px; visibility: visible; background-color: #9a8b4e;">
+											<div class="ganttview-block-text">4</div>
+										</div>
+									</div>
+									<div class="ganttview-block-container" type="STEP">
+										<div class="ganttview-block" title="계획" modifiable="N" stage="30" step="3030" data-seq="" datatype="STEP" idx="11" style="width: 160px; margin-left: 200px; visibility: visible; background-color: rgb(161, 170, 198);">
+											<div class="ganttview-block-text">8</div>
+										</div>
+									</div>
+									<div class="ganttview-block-container" type="ACTIVITY">
+										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3030" data-seq="32972" datatype="ACTIVITY" idx="12" style="width: 40px; margin-left: 200px; visibility: visible; background-color: #9a8b4e;">
+											<div class="ganttview-block-text">2</div>
+										</div>
+									</div>
+									<div class="ganttview-block-container" type="ACTIVITY">
+										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3030" data-seq="32973" datatype="ACTIVITY" idx="13" style="width: 60px; margin-left: 240px; visibility: visible; background-color: #9a8b4e;">
+											<div class="ganttview-block-text">3</div>
+										</div>
+									</div>
+									<div class="ganttview-block-container" type="ACTIVITY">
+										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3030" data-seq="32974" datatype="ACTIVITY" idx="14" style="width: 60px; margin-left: 300px; visibility: visible; background-color: #9a8b4e;">
+											<div class="ganttview-block-text">3</div>
+										</div>
+									</div>
+								</div>
+							</div>			
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-1-6">
+				<div class="cardTit2"><i class="material-icons left">inventory_2</i>Stakeholders & Project Team</div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s4 al pl0"><div class="cardSubTit">Key Stakeholders</div></div>
+						<div class="col s8 al pl0"><div class="cardSubTit">Project Team Members</div></div>
+					</div>
+					<div class="row">
+						<div class="col s4 pl0">
+							<div class="fixedTable hBorderTable hScroll mt0 vMiddle">
+								<table id="tbl_members" style="table-layout: fixed;">
+									<colgroup>
+										<col style="width: 60%;">
+										<col style="width: 40%;">
+									</colgroup>
+									<thead>
+										<tr>
+											<th class="al">Function</th>
+											<th class="al">Name(s)</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>NPI Project Leader</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Lee Jongho"><span class="focus-border"></span></div></td>
+										</tr>
+										<tr>
+											<td>Segment (Mktg/Comm) Leader</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Olivia Hayes"><span class="focus-border"></span></div></td>
+										</tr>
+										<tr>
+											<td>Segment Tech Leader</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Michael Chang"><span class="focus-border"></span></div></td>
+										</tr>
+										<tr>
+											<td>Manufacturing Leader</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Rebecca Jones"><span class="focus-border"></span></div></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="col s8 pl0">
+							<div class="fixedTable hBorderTable hScroll mt0 vMiddle">
+								<table id="tbl_members" style="table-layout: fixed;">
+									<colgroup>
+										<col style="width: 30%;">
+										<col style="width: 20%;">
+										<col style="width: 30%;">
+										<col style="width: 20%;">
+									</colgroup>
+									<thead>
+										<tr>
+											<th class="al">Function</th>
+											<th class="al">Name(s)</th>
+											<th class="al">Function</th>
+											<th class="al">Name(s)</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td>Marketing</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Jessica Miller"><span class="focus-border"></span></div></td>
+											<td>Quality(QA&QC)</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Alex Rodriguez"><span class="focus-border"></span></div></td>
+										</tr>
+										<tr>
+											<td>BU Technology</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Ethan Hunt"><span class="focus-border"></span></div></td>
+											<td>SIOP</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Lauren Baker"><span class="focus-border"></span></div></td>
+										</tr>
+										<tr>
+											<td>Process Technology</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Kenji Tanaka"><span class="focus-border"></span></div></td>
+											<td>Regulatory/Product Stewardship</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Samantha Reed"><span class="focus-border"></span></div></td>
+										</tr>
+										<tr>
+											<td>Manufacturing</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Robert O'Connell"><span class="focus-border"></span></div></td>
+											<td>EHS</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Maria Gonzalez"><span class="focus-border"></span></div></td>
+										</tr>
+										<tr>
+											<td>Product Management</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Noah Schmidt"><span class="focus-border"></span></div></td>
+											<td>IP/Legal</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Victoria Chen"><span class="focus-border"></span></div></td>
+										</tr>
+										<tr>
+											<td>Application Development</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Chris Hayes"><span class="focus-border"></span></div></td>
+											<td>Global Trade Compliance</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Emma Winson"><span class="focus-border"></span></div></td>
+										</tr>
+										<tr>
+											<td>Corporate R&D</td>
+											<td><div class="aniInput"><input type="text" class="browser-default" value="Anil Singh"><span class="focus-border"></span></div></td>
+											<td></td>
+											<td></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-1-7">
+				<div class="cardTit2"><i class="material-icons left">inventory_2</i>Capacity Planning</div>
+				<div>
+					<div class="inputArea">
+						<div class="mt10 optLine" style="overflow: hidden;">
+							<div class="dpInlineBlock mr10 vaT">
+								<span class="mr10 left">View: <select><option value="">Standard View</option></select></span>
+								<div class="verticalLine1 ht24 left"></div>
+							</div>
+							<div class="dpInlineBlock mr10 vaT">
+								<a class="rectBox stone25 fill mr10 left" href="javascript:;">Print Version</a>
+								<div class="verticalLine1 ht24 left"></div>
+							</div>
+							<div class="dpInlineBlock mr10 vaT">
+								<span class="mr10 left">Period Displayed: <div class="aniInput dpInlineBlock wdAuto"><input placeholder="From" class="browser-default datepicker ht20 wd80px ac">~<input placeholder="To" class="browser-default datepicker ht20 wd80px ac"></div></span>
+								<a class="rectBox stone25 fill mr10 left" href="javascript:;">Apply</a>
+								<div class="verticalLine1 ht24 left"></div>
+							</div>
+							<div class="dpInlineBlock mr10 vaT">
+								<span class="mr10 left">Filter: <select><option value="">All</option></select></span>
+								<a class="rectBox stone25 fill mr10 left" href="javascript:;">Edit Filter</a>
+								<div class="verticalLine1 ht24 left"></div>
+							</div>
+							<div class="dpInlineBlock mr10 vaT">
+								<a class="rectBox stone25 fill mr10 left" href="javascript:;">Display List</a>
+								<a class="rectBox stone25 fill mr0 left" href="javascript:;">Expand All</a>
+							</div>
+						</div>
+						<div class="hFixedTable hBorderTable hScroll vMiddle mt10">
+							<table id="" style="table-layout: fixed;">
+								<colgroup>
+									<col style="width: 200px;">
+									<col style="width: 120px;">
+									<col style="width: 100px;">
+									<col style="width: 120px;">
+									<col style="width: 120px;">
+									<col style="width: 120px;">
+									<col style="width: 120px;">
+									<col style="width: 120px;">
+									<col style="width: 120px;">
+									<col style="width: 120px;">
+									<col style="width: 120px;">
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="fix-col al">View / Category / Group</th>
+										<th class="fix-col">Deactivated</th>
+										<th class="fix-col">Sponsor</th>
+										<th>1993</th>
+										<th>1994</th>
+										<th>1995</th>
+										<th>1996</th>
+										<th>1997</th>
+										<th>1998</th>
+										<th>1999</th>
+										<th>2000</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="fix-col">▼</td>
+										<td class="fix-col"></td>
+										<td class="fix-col"></td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+									</tr>
+									<tr>
+										<td class="fix-col">　▼ Forecast</td>
+										<td class="fix-col"></td>
+										<td class="fix-col"></td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+									</tr>
+									<tr>
+										<td class="fix-col">　　▶ Marketing Heads</td>
+										<td class="fix-col"></td>
+										<td class="fix-col"></td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+									</tr>
+									<tr>
+										<td class="fix-col">　　▶ Technology Heads</td>
+										<td class="fix-col"></td>
+										<td class="fix-col"></td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+										<td>0.00</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-1-8">
+				<div class="cardTit2"><i class="material-icons left">inventory_2</i>Financial Forecasts</div>
+				<div>
+					<div class="inputArea">
+						<div class="mt10 optLine" style="overflow: hidden;">
+							<div class="dpInlineBlock mr10 vaT">
+								<span class="mr10 left">View: <select><option value="">Standard View</option></select></span>
+								<div class="verticalLine1 ht24 left"></div>
+							</div>
+							<div class="dpInlineBlock mr10 vaT">
+								<a class="rectBox stone25 fill mr10 left" href="javascript:;">Print Version</a>
+								<div class="verticalLine1 ht24 left"></div>
+							</div>
+							<div class="dpInlineBlock mr10 vaT">
+								<span class="mr10 left">Period Displayed: <div class="aniInput dpInlineBlock wdAuto"><input placeholder="From" class="browser-default datepicker ht20 wd80px ac">~<input placeholder="To" class="browser-default datepicker ht20 wd80px ac"></div></span>
+								<a class="rectBox stone25 fill mr10 left" href="javascript:;">Apply</a>
+								<div class="verticalLine1 ht24 left"></div>
+							</div>
+							<div class="dpInlineBlock mr10 vaT">
+								<span class="mr10 left">Filter: <select><option value="">All</option></select></span>
+								<a class="rectBox stone25 fill mr10 left" href="javascript:;">Edit Filter</a>
+								<div class="verticalLine1 ht24 left"></div>
+							</div>
+							<div class="dpInlineBlock mr10 vaT">
+								<a class="rectBox stone25 fill mr10 left" href="javascript:;">Display List</a>
+								<a class="rectBox stone25 fill mr0 left" href="javascript:;">Expand All</a>
+							</div>
+						</div>
+						<div class="hFixedTable hBorderTable hScroll vMiddle mt10">
+							<table id="" style="table-layout: fixed;">
+								<colgroup>
+									<col style="width: 200px;">
+									<col style="width: 120px;">
+									<col style="width: 100px;">
+									<col style="width: 120px;">
+									<col style="width: 120px;">
+									<col style="width: 120px;">
+									<col style="width: 120px;">
+									<col style="width: 120px;">
+									<col style="width: 120px;">
+									<col style="width: 120px;">
+									<col style="width: 120px;">
+								</colgroup>
+								<thead>
+									<tr>
+										<th class="fix-col al">View / Category / Group</th>
+										<th class="fix-col">Deactivated</th>
+										<th class="fix-col">Sponsor</th>
+										<th class="fix-col">Initial Amount</th>
+										<th>1993/1Q</th>
+										<th>1993/2Q</th>
+										<th>1993/3Q</th>
+										<th>1993/4Q</th>
+										<th>1994/1Q</th>
+										<th>1994/2Q</th>
+										<th>1994/3Q</th>
+										<th>1994/4Q</th>
+										<th>1995/1Q</th>
+										<th>1995/2Q</th>
+										<th>1995/3Q</th>
+										<th>1995/4Q</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="fix-col">▼</td>
+										<td class="fix-col"></td>
+										<td class="fix-col"></td>
+										<td class="fix-col">0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+									</tr>
+									<tr>
+										<td class="fix-col">　▶ % Maintenance forecast</td>
+										<td class="fix-col"></td>
+										<td class="fix-col"></td>
+										<td class="fix-col">0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+									</tr>
+									<tr>
+										<td class="fix-col">　▶ % SGM Forecast</td>
+										<td class="fix-col"></td>
+										<td class="fix-col"></td>
+										<td class="fix-col">0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+									</tr>
+									<tr>
+										<td class="fix-col">　▶ AOP ($M)</td>
+										<td class="fix-col"></td>
+										<td class="fix-col"></td>
+										<td class="fix-col">0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+									</tr>
+									<tr>
+										<td class="fix-col">　▶ Current Forecast ($M)</td>
+										<td class="fix-col"></td>
+										<td class="fix-col"></td>
+										<td class="fix-col">0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+										<td>0</td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-1-9">
+				<div class="cardTit2"><i class="material-icons left">inventory_2</i>NPV Calculator</div>
+				<div class="cardSubTit mt20">Header Information</div>
+				<div class="inputArea">
+					<div class="row mt10">
+						<div class="col s2 ar pl0">NPI Go Year</div>
+						<div class="col s1">
+							<div class="aniInput">
+								<input type="text" value="0000" class="browser-default">
+								<span class="focus-border"/>
+							</div>
+						</div>
+						<div class="col s2 ar pl0">Discount Rate(%)</div>
+						<div class="col s1">
+							<div class="aniInput">
+								<input type="text" value="0.00" class="browser-default num2">
+								<span class="focus-border"/>
+							</div>
+						</div>
+						<div class="col s2 ar pl0">Est. Comm. Go Date</div>
+						<div class="col s1">
+							<div class="aniInput">
+								<input type="text" value="" class="browser-default">
+								<span class="focus-border"/>
+							</div>
+						</div>
+						<div class="col s2 ar pl0">Currency</div>
+						<div class="col s1">
+							<div class="aniInput">
+								<input type="text" value="USD" class="browser-default">
+								<span class="focus-border"/>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="cardSubTit mt20">NPV Calculation Information</div>
+				<div class="hFixedTable hBorderTable hScroll vMiddle inputArea">
+					<table id="" style="table-layout: fixed;">
+						<colgroup>
+							<col style="width: 180px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th class="fix-col"></th>
+								<th>0000</th>
+								<th>1</th>
+								<th>2</th>
+								<th>3</th>
+								<th>4</th>
+								<th>5</th>
+								<th>6</th>
+								<th>7</th>
+								<th>8</th>
+								<th>9</th>
+							</tr>
+							<tr>
+								<th class="fix-col"></th>
+								<th>Launch</th>
+								<th>Launch + 1</th>
+								<th>Launch + 2</th>
+								<th>Launch + 3</th>
+								<th>Launch + 4</th>
+								<th>Launch + 5</th>
+								<th>Launch + 6</th>
+								<th>Launch + 7</th>
+								<th>Launch + 8</th>
+								<th>Launch + 9</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="fix-col ar">Technical Heads</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar">Marketing Heads</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar">Capital Costs ($M)</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar">Other NPI Costs ($M)</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar">Regulatory Costs ($M)</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar">IP Costs ($M)</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar fontBold">Total Costs ($M)</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar">Sales ($M)</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar">Margin (%)</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar">Net Cash ($M)</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="inputArea">
+					<div class="row mt10">
+						<div class="col s2 ar pl0">NPV in NPI Go Year ($M)</div>
+						<div class="col s1">
+							<div class="aniInput">
+								<input type="text" value="0.00" class="browser-default num2">
+								<span class="focus-border"/>
+							</div>
+						</div>
+						<div class="col s2 ar pl0">Sum Of Costs ($M)</div>
+						<div class="col s1">
+							<div class="aniInput">
+								<input type="text" value="0.00" class="browser-default num2">
+								<span class="focus-border"/>
+							</div>
+						</div>
+						<div class="col s2 ar pl0">NPV/(Sum Of Costs)</div>
+						<div class="col s1">
+							<div class="aniInput">
+								<input type="text" value="0.00" class="browser-default num2">
+								<span class="focus-border"/>
+							</div>
+						</div>
+						<div class="col s2 ar pl0">IRR (%)</div>
+						<div class="col s1">
+							<div class="aniInput">
+								<input type="text" value="0.00" class="browser-default num2">
+								<span class="focus-border"/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-1-10">
+				<div class="cardTit2"><i class="material-icons left">inventory_2</i>SKU Relationship</div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">Object Type</div>
+						<div class="col s4"><select><option value="">Plant Material (MM)</option></select></div>
+						<div class="col s6 pl0"><label><input type="checkbox" class="filled-in"><span>Identify Object Later</span></label></div>
+					</div>
+				</div>
+				<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 250px;">
+					<table id="">
+						<colgroup>
+							<col style="width: 150px;">
+							<col style="width: 100px;">
+							<col style="width: 60px">
+							<col style="width: 200px;">
+							<col style="width: 120px;">
+							<col style="width: 60px;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>Identification</th>
+								<th>Material</th>
+								<th>Plant</th>
+								<th class="al">Linked Object Description</th>
+								<th>Object Type</th>
+								<th>Application</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="link ac">195754　　HK01</td>
+								<td class="ac">159754</td>
+								<td class="ac">HK01</td>
+								<td>SILSOFT EM260A EMULSION/DRUM/200KG</td>
+								<td class="ac">Plant Material (MM)</td>
+								<td class="ac">Open</td>
+							</tr>
+							<tr>
+								<td class="link ac">195756　　HK01</td>
+								<td class="ac">159756</td>
+								<td class="ac">HK01</td>
+								<td>SILSOFT EM260A EMULSION/PAIL/20KG</td>
+								<td class="ac">Plant Material (MM)</td>
+								<td class="ac">Open</td>
+							</tr>
+							<tr>
+								<td class="link ac">195757　　HK01</td>
+								<td class="ac">159757</td>
+								<td class="ac">HK01</td>
+								<td>SILSOFT EM260A EMULSION/SAMPLE/1KG</td>
+								<td class="ac">Plant Material (MM)</td>
+								<td class="ac">Open</td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-1-11">
+				<div class="cardTit2"><i class="material-icons left">inventory_2</i>Actions/Comments</div>
+				<div style="overflow: hidden;"><a class="waves-effect waves-light hBtn right" id="btn_addAction">Add an Action</a></div>
+					<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
+						<table id="tbl_action">
+							<colgroup>
+								<col style="width: 40px;">
+								<col style="width: 180px;">
+								<col style="width: auto;">
+								<col style="width: 140px;">
+								<col style="width: 120px;">
+								<col style="width: 120px;">
+							</colgroup>
+							<thead>
+								<tr>
+									<th>#</th>
+									<th class="al">Decision Point</th>
+									<th class="al">Notes/Comments/Actions</th>
+									<th>Responsibility</th>
+									<th>Target Date</th>
+									<th>Status</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td class="ac">1</td>
+									<td>Technology Assessment</td>
+									<td>Completed compatibility tests on Alloy X. Need procurement approval to order 50kg for next prototype build.</td>
+									<td class="ac">Lee Jongho</td>
+									<td class="ac">10.11.2025</td>
+									<td class="ac">In Progress</td>
+								</tr>
+								<tr>
+									<td class="ac">2</td>
+									<td>Quality Assessment</td>
+									<td>Scheduled technical review meeting for the new image recognition algorithm (Alpha 3.1). Need to prepare performance metrics presentation.</td>
+									<td class="ac">Alex Rodriguez</td>
+									<td class="ac">31.10.2025</td>
+									<td class="ac">Completed</td>
+								</tr>
+								<tr>
+									<td class="ac">3</td>
+									<td>Risk Assessment</td>
+									<td>Submitted the core concept description to Legal. Waiting for the preliminary freedom-to-operate and patentability report.</td>
+									<td class="ac">Victoria Chen</td>
+									<td class="ac">25.11.2025</td>
+									<td class="ac">Pending</td>
+								</tr>
+								<tr>
+									<td class="ac">4</td>
+									<td>PS/Regulatory Assessment</td>
+									<td>Requested 5 high-spec GPU servers for deep learning model training. Awaiting hardware delivery and network configuration by IT.</td>
+									<td class="ac">Samantha Reed</td>
+									<td class="ac">18.11.2025</td>
+									<td class="ac">Blocked</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+			</section>			
+		</article>
+
+		<article id="cont_stage_2-2" class="contArticle" style="display: none;">
+			<section class="cardBox animate__animated" id="pjContCard_2-2-1">
+				<div class="cardTit2"><i class="material-icons left">inventory_2</i>Segmentation Analysis</div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">Target Segment Description</div>
+						<div class="col s10">
+							<div class="aniInput">
+								<textarea class="materialize-textarea" dataconn data-col="text_descr" placeholder="Describe the new product concept/application?"></textarea>
+								<span class="focus-border"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Growth Trends/Drivers</div>
+						<div class="col s10">
+							<div class="aniInput">
+								<textarea class="materialize-textarea" dataconn data-col="text_target" placeholder="Who are the intended customers/application/market?"></textarea>
+								<span class="focus-border"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Target MPM Market Opportunity</div>
+						<div class="col s10">
+							<div class="aniInput">
+								<textarea class="materialize-textarea" dataconn data-col="text_from" placeholder="Where did this idea/concept come from?"></textarea>
+								<span class="focus-border"/>
+							</div>
+						</div>
+					</div>
+					<div class="cardSubTit mt20">Segmentation Data Chart</div>
+					<div class="row">
+						<div class="col s8">
+							<div class="fixedTable hBorderTable hScroll vMiddle mg0" style="max-height: 250px;">
+								<table id="">
+									<colgroup>
+										<col style="width: 200px;">
+										<col style="width: 100px;">
+										<col style="width: 100px;">
+										<col style="width: 90px;">
+									</colgroup>
+									<thead>
+										<tr>
+											<th>Segment</th>
+											<th>Volume (MT)</th>
+											<th>Revenue ($M)</th>
+											<th>% of Total</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td><div class="aniInput"><input type="text" value="Seg A" class="browser-default"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="150" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="450" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="45.0" class="browser-default num1"><span class="focus-border"></span></div></td>
+										</tr>
+										<tr>
+											<td><div class="aniInput"><input type="text" value="Seg B" class="browser-default"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="120" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="300" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="30.0" class="browser-default num1"><span class="focus-border"></span></div></td>
+										</tr>
+										<tr>
+											<td><div class="aniInput"><input type="text" value="Seg C" class="browser-default"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="50" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="120" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="12.0" class="browser-default num1"><span class="focus-border"></span></div></td>
+										</tr>
+										<tr>
+											<td><div class="aniInput"><input type="text" value="Seg D" class="browser-default"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="25" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="80" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="8.0" class="browser-default num1"><span class="focus-border"></span></div></td>
+										</tr>
+										<tr>
+											<td><div class="aniInput"><input type="text" value="Seg E" class="browser-default"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="5" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="50" class="browser-default num0"><span class="focus-border"></span></div></td>
+											<td><div class="aniInput"><input type="text" value="5.0" class="browser-default num0"><span class="focus-border"></span></div></td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="col s4">
+							<div id="segment_pie" style="height: 250px;"></div>
+						</div>
+					</div>
+				</div>
+			</section>
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-2-2">
+				<div class="cardTit2"><i class="material-icons left">inventory_2</i>Product Positioning</div>
+				<div>
+					<div style="overflow: hidden;"><a class="waves-effect waves-light hBtn right" id="btn_addProdPos">Add a row</a></div>
+					<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
+						<table id="tbl_prodPos">
+							<colgroup>
+								<col style="width: 20%;">
+								<col style="width: 20%;">
+								<col style="width: 20%">
+								<col style="width: 20%;">
+								<col style="width: 20%;">
+							</colgroup>
+							<thead>
+								<tr>
+									<th>Target customer segments</th>
+									<th>Key features of the new product</th>
+									<th>Primary benefits the product</th>
+									<th>How do we plan to position</th>
+									<th>Other comments</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="End User"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">Chemically stable, easy-to-use dispensing system, quick room-temperature cure time.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">Extended product lifespan due to superior weather resistance, non-toxic and low-odor application.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">Position as the 'Professional-Grade, Consumer-Friendly' sealant/adhesive solution.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">Focus marketing on DIY repair and small home improvement projects.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="OEM"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">Ultra-low volatility (low D4/D5/D6 content), high thermal conductivity, precision bonding capability.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">Meets stringent automotive and electronics industry standards (e.g., thermal management in EVs), reduced inspection failures.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">Position as the 'Reliability Standard' component for high-performance electronic assemblies.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">Requires dedicated technical support for production line integration and testing.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="Distributor"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">Long shelf life (18+ months), standardized packaging for easy stacking, competitive volume pricing.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">Reduced inventory waste, maximized warehouse efficiency, guaranteed profit margin.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<textarea class="materialize-textarea">Position as the 'Inventory Anchor' product with high demand and low handling risk.</textarea>
+									</td>
+									<td>
+										<textarea class="materialize-textarea">Offer tiered rebate program based on quarterly volume commitment.</textarea>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="Channel Partner"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<textarea class="materialize-textarea">Exclusive regional pricing, dedicated technical sales training modules, co-branded marketing materials.</textarea>
+									</td>
+									<td>
+										<textarea class="materialize-textarea">Increased profitability per sale, enhanced customer loyalty through specialized service offering.</textarea>
+									</td>
+									<td>
+										<textarea class="materialize-textarea">Position as a 'Strategic Partnership' where mutual growth is the primary goal.</textarea>
+									</td>
+									<td>
+										<textarea class="materialize-textarea">Mandate annual product knowledge certification for all sales representatives.</textarea>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</section>
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-2-3">
+				<div class="cardTit2"><i class="material-icons left">inventory_2</i>Competitive Assessment</div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">Current Competitors to new product</div>
+						<div class="col s10">
+							<textarea class="materialize-textarea"></textarea>
+						</div>
+					</div>div>
+					<div class="row">
+						<div class="col s2 ar pl0">Key Opportunities & Threats for MPM</div>
+						<div class="col s10">
+							<textarea class="materialize-textarea"></textarea>
+						</div>
+					</div>
+				</div>
+				<div>
+					<div class="cardSubTit mt20">Differentiation vs Competitive Products</div>
+					<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
+						<table id="">
+							<colgroup>
+								<col style="width: 15%;">
+								<col style="width: 17%;">
+								<col style="width: 17%;">
+								<col style="width: 17%;">
+								<col style="width: 17%;">
+								<col style="width: 17%;">
+							</colgroup>
+							<thead>
+								<tr>
+									<th>Key Customer Outcome / Benefit</th>
+									<th>Target value</th>
+									<th>New Product (MPM)</th>
+									<th>Competitor-1 Product</th>
+									<th>Competitor-2 Product</th>
+									<th>Competitor-3 Product</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="Long-Term Thermal Stability (°C)"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="250°C for 500 hrs"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="280°C (Exceeds Target)"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="230°C"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="250°C (Meets Target)"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="Not Specified"><span class="focus-border"/>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="VOC Content (ppm)"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="< 100 ppm"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="< 50 ppm (Best in Class)"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="150 ppm (Non-compliant for new standards)"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="100 ppm (Meets Target)"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="80 ppm"><span class="focus-border"/>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="Process Curing Time"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="< 5 minutes"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="3 minutes (Fastest Curing)"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="6 minutes"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="5 minutes"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="7 minutes"><span class="focus-border"/>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="Adhesion Strength (MPa on Aluminum)"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="> 5 MPa"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="5.5 MPa"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="4.0 MPa"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="4.8 MPa"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="5.1 MPa"><span class="focus-border"/>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="Price Per Kilogram ($)"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="$80 - $90"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="$85"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="$75"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="$95"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="$88"><span class="focus-border"/>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="Certifications/Compliance"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="AEC-Q100, REACH"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="AEC-Q100, REACH, UL Certified"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="REACH Only"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="AEC-Q100, REACH"><span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<input type="text" class="browser-default" value="None"><span class="focus-border"/>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</section>
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-2-4">
+				<div class="cardTit2"><i class="material-icons left">inventory_2</i>Value Proposition Assumptions</div>
+				<div>
+					<div class="cardSubTit mt20">Commercial</div>
+					<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
+						<table id="tbl_valAssume">
+							<colgroup>
+								<col style="width: 20%;">
+								<col style="width: 40%;">
+								<col style="width: 40%;">
+							</colgroup>
+							<thead>
+								<tr>
+									<th>Assumption Category</th>
+									<th>Critical assumption(s) made <br>(that must be true for the project to succeed)</th>
+									<th>Current Status & Comments <br>(What proves this case? What would indicate failure? Experiment to test)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Customer benefit / Problem you solve and Value you create</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">Customers will pay a 20% premium for the integrated product due to the 50% reduction in installation time and labor cost.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">STATUS: Initial customer interviews (n=10) confirm installation time is the main pain point. FAILURE INDICATION: If pilot customers balk at a >15% premium. EXPERIMENT: Run a price sensitivity test with the first 5 beta clients.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>Competitive environment and reaction</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">Competitors (specifically Competitor-1) will require 9-12 months to replicate the core thermal stability feature.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">STATUS: Competitor-1's existing R&D cycle averages 14 months for major feature releases. FAILURE INDICATION: If a competitor announces a similar feature within 6 months. EXPERIMENT: Monitor patent filings and technical job postings from Competitor-1 closely.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>Technical know-how and processes</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">Our internal production process (Process X) can maintain the required 99.999% material purity at full scale without sacrificing yield (Target Yield: 95%).</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">STATUS: Pilot batch runs achieved 94% yield, slightly below target. FAILURE INDICATION: Yield drops below 90% during Q3 ramp-up. EXPERIMENT: Dedicated engineering team to optimize post-processing filtration stage.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>Pricing</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">Raw material costs (specifically Silicon Polymer Z) will remain stable or decrease slightly over the next 24 months, allowing us to maintain a 45% gross margin.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">STATUS: Polymer Z pricing is currently stable, long-term contract signed with Vendor A. FAILURE INDICATION: If the commodity price index for key inputs increases by >10% in the next quarter. EXPERIMENT: Secure secondary supply contracts with Vendor B.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+								</tr>
+								<tr>
+									<td>Any Other (eg, time to revenue and profit goals, alliances, etc)</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">We will secure a strategic distribution alliance with 'Global Distributor Y' within 6 months of product launch, essential for penetrating the APAC market.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+									<td>
+										<div class="aniInput">
+											<textarea class="materialize-textarea">STATUS: Initial introductory meetings scheduled with Global Distributor Y next month. FAILURE INDICATION: If alliance is not finalized by the end of Q1 next year. EXPERIMENT: Prepare an alternative partnership plan with Regional Distributor Z.</textarea>
+											<span class="focus-border"/>
+										</div>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+					<div class="cardSubTit mt20">Technical</div>
+					<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
+						<table id="tbl_valAssume">
+							<colgroup>
+								<col style="width: 20%;">
+								<col style="width: 40%;">
+								<col style="width: 40%;">
+							</colgroup>
+							<thead>
+								<tr>
+									<th>Assumption Category</th>
+									<th>Critical assumption(s) made <br>(that must be true for the project to succeed)</th>
+									<th>Current Status & Comments <br>(What proves this case? What would indicate failure? Experiment to test)</th>
+								</tr>
+							</thead>
+							<tbody>
+								<tr>
+									<td>Knowledge and skills</td>
+									<td>
+										<textarea class="materialize-textarea"></textarea>
+									</td>
+									<td>
+										<textarea class="materialize-textarea"></textarea>
+									</td>
+								</tr>
+								<tr>
+									<td>Processes (R&D, Scale-up, Mfg. and Other)</td>
+									<td>
+										<textarea class="materialize-textarea"></textarea>
+									</td>
+									<td>
+										<textarea class="materialize-textarea"></textarea>
+									</td>
+								</tr>
+								<tr>
+									<td>Resources (Time, Cost and availability etc.)</td>
+									<td>
+										<textarea class="materialize-textarea"></textarea>
+									</td>
+									<td>
+										<textarea class="materialize-textarea"></textarea>
+									</td>
+								</tr>
+								<tr>
+									<td>Any Other</td>
+									<td>
+										<textarea class="materialize-textarea"></textarea>
+									</td>
+									<td>
+										<textarea class="materialize-textarea"></textarea>
+									</td>
+								</tr>
+							</tbody>
+						</table>
+					</div>
+				</div>
+			</section>
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-2-5">
+
+			</section>
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-2-6">
+
+			</section>
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-2-7">
+
+			</section>
+		</article>
+	</div>
+
+
+	<article id="processMapModal" class="modal" style="width: 90%;">
+		<div class="modal-header mochaBg">
+			<h5>Project Process Map</h5>
+			<div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+		</div>
+		<div class="modal-content pjtMapArea">
+			<div class="row">
+				<div class="col s2"></div>
+				<div class="col s8 fin">
+					<div class="pjtMapBox">
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin">
+							<a href="javascript:fnSetStageCont('2','4','1');">Projcet<br>Overview</a>
+						</div>
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin">
+							<a href="javascript:fnSetStageCont('2','4','1');">Project Team<br>Resource Plan</a>
+						</div>
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin">
+							<a href="javascript:fnSetStageCont('2','4','1');">Project<br>Schedule</a>
+						</div>
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin">
+							<a href="javascript:fnSetStageCont('2','4','1');">Project<br>Financials</a>
+						</div>
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin">
+							<a href="javascript:fnSetStageCont('2','4','1');">Action<br>Register</a>
+						</div>
+					</div>
+					<div class="statusIcon sizeL"><i class="material-icons">check_circle</i></div>
+				</div>
+				<div class="col s2"></div>
+			</div>
+			<div class="row mt30">
+				<div class="col s2 fin">
+					<div class="waves-effect waves-hBlue pjtMapBox"><a href="javascript:fnSetStageCont('1','1','1');">NPC</a></div>
+					<div class="statusIcon sizeL"><i class="material-icons">check_circle</i></div>
+				</div>
+				<div class="col s2 fin">
+					<div class="waves-effect waves-hBlue pjtMapBox"><a href="javascript:fnSetStageCont('2','2','1');">NPI GO</a></div>
+					<div class="statusIcon sizeL"><i class="material-icons">check_circle</i></div>
+				</div>
+				<div class="col s2 fin">
+					<div class="waves-effect waves-hBlue pjtMapBox"><a href="javascript:fnSetStageCont('2','3','1');">LAB FORMULATION</a></div>
+					<div class="statusIcon sizeL"><i class="material-icons">check_circle</i></div>
+				</div>
+				<div class="col s2 ing">
+					<div class="waves-effect waves-hBlue pjtMapBox"><a href="javascript:fnSetStageCont('2','4','1');">SCALE-UP</a></div>
+					<div class="statusIcon sizeL"><i class="material-icons">play_circle_outline</i></div>
+				</div>
+				<div class="col s2">
+					<div class="pjtMapBox">COMMERCIAL GO</div>
+				</div>
+				<div class="col s2">
+					<div class="pjtMapBox">POST LAUNCH<br>REVIEW</div>
+				</div>
+			</div>
+			<div class="row mt30">
+				<div class="col s2"></div>
+				<div class="col s8 ing">
+					<div class="pjtMapBox">
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin">
+							<a href="javascript:fnSetStageCont('2','4','2');">MKTG<br>Overview</a>
+						</div>
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin">
+							<a href="javascript:fnSetStageCont('2','4','3');">Mfg/SIOP<br>Assessment​</a>
+						</div>
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin">
+							<a href="javascript:fnSetStageCont('2','4','4');">Quality<br>Assessment​</a>
+						</div>
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin">
+							<a href="javascript:fnSetStageCont('2','4','5');">IP/Legal<br>Assessment​</a>
+						</div>
+						<div class="waves-effect waves-hBlue pjtMapSubBox ing">
+							<a href="javascript:fnSetStageCont('2','4','6');">Risk<br>Assessment​</a>
+						</div>
+						<div class="waves-effect waves-hBlue pjtMapSubBox ing">
+							<a href="javascript:fnSetStageCont('2','4','7');">Tech Dev<br>Approach​​</a>
+						</div>
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin">
+							<a href="javascript:fnSetStageCont('2','4','8');">VOC/CTQ<br>Register​​</a>
+						</div>
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin">
+							<a href="javascript:fnSetStageCont('2','4','9');">PS/Reg.<br>Assessment​</a>
+						</div>
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin">
+							<a href="javascript:fnSetStageCont('2','4','10');">PSA<br>(Sustainability)​</a>
+						</div>
+					</div>
+					<div class="statusIcon sizeL"><i class="material-icons">play_circle_outline</i></div>
+				</div>
+				<div class="col s2"></div>
+			</div>
+		</div>
+	</article>
+
 </body> 
 </html>

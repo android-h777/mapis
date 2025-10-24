@@ -1549,6 +1549,7 @@ au.fnSetDatepicker = function(parentEl, dateFormat) {
 			done: ''
 		}
 	});
+	$("body").append($(targetEl).siblings(".datepicker-modal"));
 }
 
 au.fnSetLoading = function(type, cnt = 1) {
@@ -2294,7 +2295,6 @@ au.hFixedTableResize = function() {
 	
 				const currentWidth = th.offsetWidth;
 				columnWidths.push(currentWidth);
-	
 				$(th).css("left", `${cumulativeWidth}px`);
 			});
 		});

@@ -9,12 +9,140 @@
     <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
     <link type="text/css" rel="stylesheet" href="/css/animate.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" crossorigin href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
+    <link rel="stylesheet" crossorigin href="https://fonts.googleapis.com/css2?family=Material+Symbols+Sharp" />
     <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
     <script src="https://code.highcharts.com/highcharts.js"></script>
     <script>
         var aesopColor = ['#cac494', '#ebc39e', '#cfcecc', '#f0efe0', '#ece3d3', '#ded8d4', '#f5ece4', '#f7f1ec', '#e9f0e3', '#ebeadf', '#fefef2', '#c2c2af', '#c2c2af'];
-
+        const materialData = [
+          { code: "47", name: "SILBYK 9400 - UNPACKED" }, { code: 2941, name: "^LSR 2250 B/UNPACKED" }, { code: 5772, name: "HYDROXY M 2 - UNPACKED" },
+          { code: "5831", name: "PERLIT SI SW - UNPACKED" }, { code: 6572, name: "^Silop.W 1000 - tote (1000l - 950kg)" }, { code: 6941, name: "^HV 4/413 CP2 - box (500kg)" },
+          { code: "7288", name: "Oil PN 1000 - pail (50l-50kg)" }, { code: 7289, name: "Oil PN 1000 - drum (200l-200kg)" }, { code: 7384, name: "^Octame.cy.tetrasil. - drum (200l-180kg)" },
+          { code: "7623", name: "Oil PN 1000 - tote (1000l-1000kg)" }, { code: 7702, name: "^IS BM - pail (19.2l - 23kg)" }, { code: 9239, name: "^PHC 587 B - pail (20l-15.876kg)" },
+          { code: "14901", name: "CRYSTALITE 5X" }, { code: 14903, name: "CRYSTALITE VX-R" }, { code: 14904, name: "CRYSTALITE VX-S" },
+          { code: "14905", name: "CRYSTALITE VX-S2" }, { code: 15082, name: "MINUSIL 10(1000K)" }, { code: 15084, name: "MINUSIL 5" },
+          { code: "15117", name: "NIKKOL NP-10" }, { code: 15119, name: "NIKKOL NP-2" }, { code: 15669, name: "nonion NS-220" },
+          { code: "15723", name: "firuta CN1202001-1.2mikuron" }, { code: 15724, name: "firutaCWF2-030S-1-.2mikuron" }, { code: 16187, name: "C-331TS" },
+          { code: "16189", name: "C-331YC" }, { code: 16190, name: "C-331YZ" }, { code: 16384, name: "EC1000" },
+          { code: "16710", name: "F-51-50" }, { code: 16783, name: "F-70A-4500" }, { code: 16814, name: "F-73B" },
+          { code: "16815", name: "F-73H" }, { code: 16860, name: "FC10-SP(A)" }, { code: 16861, name: "FC10-SP(B)" },
+          { code: "16865", name: "FC10-SPgan" }, { code: 16867, name: "FC10-SPnozuru6.3-17S" }, { code: 17199, name: "G-501R(A)" },
+          { code: "17200", name: "G-501R(B)" }, { code: 17219, name: "G-561I(A)" }, { code: 17220, name: "G-561I(B)" },
+          { code: "17221", name: "G-561R(A)" }, { code: 17222, name: "G-561R(B)" }, { code: 17289, name: "G-B0070(A)" },
+          { code: "17290", name: "G-B0070(B)" }, { code: 17292, name: "G-B3453(A)" }, { code: 17293, name: "G-B3453(B)" },
+          { code: "17517", name: "K-6111" }, { code: 17524, name: "K-702" }, { code: 17639, name: "L-455D" },
+          { code: "19182", name: "THE501R(A)" }, { code: 19184, name: "THE501R(B)" }, { code: 21472, name: "TSF4703DKS" },
+          { code: "21473", name: "TSF4704" }, { code: 21822, name: "TSM621" }, { code: 23168, name: "XE15-757(A)" },
+          { code: "23170", name: "XE15-757(B)" }, { code: 23244, name: "XE15-A9992(A)" }, { code: 23246, name: "XE15-A9992(B)" },
+          { code: "23254", name: "XE15-B0070(A)" }, { code: 23256, name: "XE15-B0070(B)" }, { code: 23259, name: "XE15-B0146(A)" },
+          { code: "23261", name: "XE15-B0146(B)" }, { code: 23306, name: "XE15-B3453(A)" }, { code: 23308, name: "XE15-B3453(B)" },
+          { code: "24319", name: "XF3873" }, { code: 24979, name: "XS69-801" }, { code: 25135, name: "YF33-1M" },
+          { code: "25138", name: "YF33-3000" }, { code: 25181, name: "YF3965" }, { code: 25279, name: "YR3270" },
+          { code: "28469", name: "F-51-30M(7116)" }, { code: 29261, name: "PUY1UY020J" }, { code: 29433, name: "F-87C-2MTK" },
+          { code: "29654", name: "PUY1UY200J" }, { code: 30043, name: "F-475VB" }, { code: 30070, name: "XS63-B9198" },
+          { code: "31230", name: "R160/40" }, { code: 33110, name: "81017-METHYLTRICHLOROSILANE(1LB-0.454KG)" }, { code: 41674, name: "PB-002(1100*905*0.20mm)" },
+          { code: "42467", name: "TSM6345" }, { code: 43334, name: "T-82KR" }, { code: 43899, name: "OEL PN 1000 - ROH" },
+          { code: "43901", name: "OEL PN 1000 KLUEBER - ROH" }, { code: 43991, name: "Oel PN 1000 Klueber - UNPACKED" }, { code: 43994, name: "Oel PN 1000 - UNPACKED" },
+          { code: "47391", name: "PERLIT SI SW - ROH" }, { code: 47392, name: "Oelemulsion TP 3207 - ROH" }, { code: 48593, name: "REOROSIL KS-30SC" },
+          { code: "49350", name: "H-BY730B" }, { code: 49804, name: "Magnasoft 725" }, { code: 50274, name: "B-1191" },
+          { code: "50430", name: "A-2660(A)" }, { code: 50431, name: "A-2660(B)" }, { code: 50547, name: "A-2670(B)" },
+          { code: "51695", name: "A-242-0(A)" }, { code: 51696, name: "A-242-0(B)" }, { code: 52407, name: "H-6403B" },
+          { code: "52408", name: "H-3921B" }, { code: 52411, name: "H-BY430B" }, { code: 53382, name: "Magnasoft BTS" },
+          { code: "53395", name: "Magnasoft CY-315" }, { code: 53397, name: "Magnasoft CY-330" }, { code: 53405, name: "Silicone Antifoam SAG-301" },
+          { code: "53557", name: "F-72BF" }, { code: 53913, name: "LSR 2030J B" }, { code: 55784, name: "SAG 510 SFG" },
+          { code: "55789", name: "MAGNASOFT 308 SFG" }, { code: 55798, name: "MAGNASOFT H-900 SFG" }, { code: 55801, name: "MAGNASOFT L-27 SFG" },
+          { code: "55802", name: "MAGNASOFT L-27HS SFG" }, { code: 55809, name: "SAG 822 SFG" }, { code: 56302, name: "Wacker Silane CMM2" },
+          { code: "56376", name: "F-70A-1MST" }, { code: 57839, name: "K-TIG1000" }, { code: 57840, name: "SCA-603(Top)" },
+          { code: "59163", name: "MAGNASOFT FF150" }, { code: 59372, name: "Gluconic Acid 250 KG-drum" }, { code: 59438, name: "PHTRI(CHINA)-drum < 205 >" },
+          { code: "59837", name: "firuta_96FP-10rofu" }, { code: 59841, name: "TOLUENO DIISOCIANATO - STH DR ( 20 KG )" }, { code: 59975, name: "Kawaraproichiban-kuro" },
+          { code: "60882", name: "IGS3110(A)*" }, { code: 60888, name: "Tospearl120*MP-A" }, { code: 60905, name: "EMULGEN409PV" },
+          { code: "61182", name: "TSE352 Flit Plug Encap" }, { code: 61652, name: "BUTANOL" }, { code: 61670, name: "PC 15 050 C" },
+          { code: "62398", name: "Silaace GC330" }, { code: 62583, name: "CAIXA 20KG" }, { code: 64440, name: "F-255-3000B" },
+          { code: "64507", name: "SILWET 618A (201KG DRUM)" }, { code: 65194, name: "F-87-700S-TK" }, { code: 65195, name: "F-87-700TK" },
+          { code: "64977", name: "LE(F-21-1000)" }, { code: 65508, name: "H-4452E" }, { code: 65595, name: "Widespec Sealant Scrap" },
+          { code: "65975", name: "RW DMF1000" }, { code: 65977, name: "RW DMF350" }, { code: 67767, name: "POLYOL U 24-03 (CP755) - drum (210kg)" },
+          { code: "68087", name: "4/80-HA-1050/BULK" }, { code: 68151, name: "4NA/NP 34-28/DRUM" }, { code: 69225, name: "4NA/FILTER, ACT CARB.ZETA + -use 1109846" },
+          { code: "74457", name: "Hicall K-350" }, { code: 74872, name: "RW CF-1213" }, { code: 74978, name: "VINYDIMETHYLETHOXYSILANE" },
+          { code: "76153", name: "P-145L" }, { code: 76717, name: "SNS28" }, { code: 77653, name: "SAG 855 SFG" },
+          { code: "78791", name: "P-120S-10K" }, { code: 78932, name: "Pro Silwet-618 1LTR" }, { code: 78933, name: "Pro Silwet-618 500ml" },
+          { code: "78934", name: "Pro Silwet-618 250ml" }, { code: 78935, name: "Pro Silwet-618 100ml" }, { code: 78984, name: "G-23-703U" },
+          { code: "79407", name: "ZZ-STEELBALL 80PAI" }, { code: 79411, name: "GS-Helium gas" }, { code: 80574, name: "XC96-C2813" },
+          { code: "80606", name: "TGF70-5000" }, { code: 81292, name: "ME41-B(OT)" }, { code: 81403, name: "M-8011DM(OT)" },
+          { code: "81439", name: "RW DMF100" }, { code: 81468, name: "RW DMF500" }, { code: 81737, name: "G-3854DS-W-NT" },
+          { code: "81777", name: "TSE3221-NT" }, { code: 81891, name: "NT/Acid Clay F20/BAG/25KG" }, { code: 81904, name: "NT/HCl 36% GR/BOTTLE/0.6KG" },
+          { code: "82519", name: "MAGNASOFT MPW-55 SFG" }, { code: 82537, name: "JH-I31" }, { code: 82705, name: "XE23-B2484(OT)" },
+          { code: "82809", name: "HYDREX 26130JX" }, { code: 83144, name: "EXO G-5626H" }, { code: 83643, name: "G-3854DS-W" },
+          { code: "84421", name: "XE14-B7627(B)#" }, { code: 85075, name: "XE14-B8085(B)#" }, { code: 85200, name: "A-2680FC(B)" },
+          { code: "85201", name: "A-2680FC(A)" }, { code: 85886, name: "EXO M-6012" }, { code: 86615, name: "Foil for SCS2350 Series" },
+          { code: "87778", name: "T-456ZL" }, { code: 88097, name: "XC99-B5263*" }, { code: 88136, name: "SH200-1CS" },
+          { code: "88270", name: "M-8011DMB(OT)" }, { code: 88309, name: "G-3477B" }, { code: 90146, name: "Linieren 16" },
+          { code: "90955", name: "SILICONE ELASTOMERS-WIDESPEC -SCRAP" }, { code: 91420, name: "Clay Desiccant-200g" }, { code: 91630, name: "Remix Oxime color" },
+          { code: "91631", name: "Remix Acetoxy color" }, { code: 91783, name: "M-714EST" }, { code: 91804, name: "NT/Vitamin E/Pail/20KG" },
+          { code: "91840", name: "Rhodium CAT in toluene" }, { code: 92435, name: "RW SL6961" }, { code: 92576, name: "Triplex III, EDTA 2 Na" },
+          { code: "93402", name: "LE DMF High Visc" }, { code: 93407, name: "TGF51-10,000-P-TH" }, { code: 93412, name: "TGF51-60,000-G-TH" },
+          { code: "93664", name: "A-15-757(C)" }, { code: 93657, name: "BSA 20% SOLUTION - UNPACKED" }, { code: 93710, name: "Potassium tert-butoxide" },
+          { code: "93877", name: "MAGNASOFT 88-TH" }, { code: 93928, name: "PRODUCT 27AI" }, { code: 94128, name: "P-4502NR" },
+          { code: "94696", name: "Silent Night HCC-32301" }, { code: 94962, name: "MAVICA BLUE" }, { code: 95730, name: "ANTIFOAM EMULSION SAG 672" },
+          { code: "95953", name: "ANTIFOAM EMULSION SAG7133" }, { code: 98727, name: "A-2660FC(B)" }, { code: 100036, name: "Bergamot Oil FCF" },
+          { code: "100486", name: "CINZA COM PLATINA" }, { code: 102080, name: "Shrink Selleys R&G Cottage Green" }, { code: 102083, name: "Shrink Selleys R&G Manor Red" },
+          { code: "102084", name: "Shrink Selleys R&G WHITE" }, { code: 102085, name: "Shrink Selleys R&G Classic CREAM" }, { code: 102087, name: "Shrink Selleys R&G GALVANISED GRAY" },
+          { code: "102088", name: "Shrink Selleys R&G WOODLAND GRAY" }, { code: 102508, name: "DINP/DRUM/200KG" }, { code: 103731, name: "BYK-UV3570/PAIL/25KG" },
+          { code: "107772", name: "MAGNASOFT 600C/BULK" }, { code: 109131, name: "OP2131SD" }, { code: 122142, name: "SM1307 BULK" },
+          { code: "123284", name: "MAGNASOFT 590/BULK" }, { code: 123319, name: "ETHOX 4646M/STHL DR/213 KG" }, { code: 125152, name: "Pro TSF 4703 IN TOL" },
+          { code: "126562", name: "Shrink Selleys R&G Black" }, { code: 126563, name: "Shrink Selleys R&G Grey" }, { code: 126564, name: "Shrink Selleys R&G Trans" },
+          { code: "126565", name: "Shrink Mirror Metal Glass" }, { code: 126566, name: "Shrink Wet Area Clear" }, { code: 126567, name: "Shrink Wet Area Ivory" },
+          { code: "126568", name: "Shrink Wet Area White" }, { code: 126701, name: "M-71365AB" }, { code: 127435, name: "Y-17979/SAMPLE/0.907KG" },
+          { code: "127948", name: "PROGE01530IN" }, { code: 128302, name: "SHRINK MULTI PURPOSE CLEAR" }, { code: 133864, name: "SHRINK SELLEYS R&G SURFMIST" },
+          { code: "133870", name: "SHRINK SELLEYS R&G MONUMENT" }, { code: 133871, name: "SHRINK SELLEYS R&G DEEPOCEAN" }, { code: 133879, name: "SHRINK SELLEYS R&G JASPER" },
+          { code: "133881", name: "SHRINK SELLEYS R&G IRONSTONE" }, { code: 133882, name: "SHRINK SELLEYS R&G PAPERBARK" }, { code: 133883, name: "SHRINK SELLEYS R&G DUNE" },
+          { code: "136902", name: "SM2059/BULK" }, { code: 136991, name: "NOIGEN EA-80E" }, { code: 137486, name: "AICA SILCONEACE PRO JK-80 C90 ICS-W*F" },
+          { code: "140073", name: "SHRINK SELLEYS DAVCO WHITE" }, { code: 140076, name: "SHRINK SELLEYS DAVCO CLEAR" }, { code: 143270, name: "SHRINK LONG-LASTING CLEAR" },
+          { code: "145141", name: "SM SOFT 50/BULK" }, { code: 145376, name: "RED IRON OXIDE CATHAYCOAT RA11A" },
+          { code: "145694", name: "SHRINK GOLD MOULD WHITE/0.300G" }, { code: 145695, name: "SHRINK GOLD MOULD CLEAR/0.300G" },
+          { code: "147570", name: "SHRINK NEUTRAL MOULD WHITE" }, { code: 148358, name: "AICA JK-81 C90-WHITE F" }, { code: 148414, name: "SF 1154 CRUDE/DRUM/200KG" },
+          { code: "152049", name: "SM1015 BULK" }, { code: 152053, name: "SMG55 BULK" }, { code: 155979, name: "P-7345WET" },
+          { code: "157018", name: "F-73HB" }, { code: 160088, name: "FOAM-CLEAR COMPOUND BC2735K/DRUM/200KG" }, { code: 160089, name: "PVA SOLUTION /TOTE/1000KG" },
+          { code: "160090", name: "AMINO MODIFIED SILICONE OF SI6023Z/DR180" }, { code: 160491, name: "BARREL PROCESS OIL 68P" }, { code: 163742, name: "Y-20917/DRUM/200 KG" },
+          { code: "164128", name: "EVONIK STC - ISO" }, { code: 164131, name: "EVONIK STC - RAILCAR" }, { code: 164371, name: "F-252ST-CS/DRUM/180KG" },
+          { code: "164889", name: "WHITE OIL AW 68/DRUM" }, { code: 166220, name: "SF2002ODK001/IBC/950KG" }, { code: 167122, name: "AS7205CLR-D" },
+          { code: "168567", name: "1385-10-126NATA-D" }, { code: 170080, name: "89223-OT/BULK" },
+          { code: "170477", name: "INDUSIL™ REL 330 EPHV LT/BULK" }, { code: 170965, name: "TIA520RV_O/UNPACKED" }, { code: 171790, name: "E-3832-RIO-D" },
+          { code: "173062", name: "XLA-1/UNPACKED" }, { code: 174053, name: "TP-201/DRUM/200KG" }, { code: 174054, name: "TP-201/JCN/25KG" },
+          { code: "174096", name: "SAG 47/JCN/25KG" }, { code: 174097, name: "SAG 47/DRUM/200KG" }, { code: 174218, name: "XN-100-03Z 3MM/BAG" },
+          { code: "174546", name: "TMR-2 25% DEG/DRUM/200KG" }, {code: 174581, name: "SILICON FLUID AK5000/IBC/950KG" },
+          { code: "174594", name: "XE15-B9056(B)JREP/UNPACKED" }, { code: 174738, name: "2883 FLUID/IBC/1000KG" }, { code: 174959, name: "1-DODECANOL (LAURYL ALCOHOL)/DRUM/170KG" },
+          { code: "175494", name: "Y-20113 LT/BULK" }, { code: 175495, name: "Y-20114 LT/BULK" }, { code: 175496, name: "Y-20117 LT/BULK" },
+          { code: "175499", name: "Y-20115 LT/BULK" }, { code: 175502, name: "Y-20116 LT/BULK" }, { code: 175548, name: "GENAPOL X 060/DRUM/200KG" },
+          { code: "175570", name: "TC-3-B" }, { code: 175778, name: "F-PG61/UNPACKED" }, { code: 175844, name: "SL4320/UNPACKED" },
+          { code: "175891", name: "UVHC1030/DRUM/180KG" }, { code: 175900, name: "F-250N-250ST-SPE/UNPACKED" }, { code: 175901, name: "H-519-SPE/UNPACKED" },
+          { code: "175902", name: "A-584-SPE/UNPACKED" }, { code: 175903, name: "Y-20988-SPE/UNPACKED" }, { code: 175904, name: "F-475VS-SPE/UNPACKED" },
+          { code: "175906", name: "GT-SE565-D" }, { code: 175907, name: "GT-SE503-D" }, { code: 175913, name: "GENAPOL LA 099/DRUM/200KG" },
+          { code: "175866", name: "PERKADOX BC-PD" }, { code: 175872, name: "F-51A-12500/UNPACKED" }, { code: 175875, name: "C16-18 TERMINATED SILICON OIL/DRUM/200KG" },
+          { code: "175930", name: "TESR TECH" }, { code: 175931, name: "COATOSIL™ FF 841/TOTE/950KG" }
+        ];
+        const projectData = [
+          { code: "01054", name: "Electro 242-2 Grey FC" },
+          { code: "03657", name: "Low viscosity high vinyl polybutadiene" },
+          { code: "03704", name: "New preservative for Silsoft" },
+          { code: "03701", name: "Low Viscosity Binder Gel T" },
+          { code: "03702", name: "2.6W Conduction Cure T" },
+          { code: "03703", name: "10 Watt Thermal Gel" },
+          { code: "03705", name: "Buffer coat silicone for OLED" },
+          { code: "03689", name: "Electro LSR 240 HVI Grey" },
+          { code: "03706", name: "Electro LSR 342 HVI Grey FC" },
+          { code: "03711", name: "Filtered version of FF1770" },
+          { code: "01054", name: "Electro 242-2 Grey FC" },
+          { code: "03657", name: "Low viscosity high vinyl polybutadiene" }
+        ];
+        const historyData = [
+          { code: "145376", name: "RED IRON OXIDE CATHAYCOAT RA11A", date: "10.22", type: "rm"},
+          { code: "174546", name: "TMR-2 25% DEG/DRUM/200KG", date: "10.15", type: "rm" },
+          { code: "174581", name: "SILICON FLUID AK5000/IBC/950KG", date: "10.14", type: "rm" },
+          { code: "167122", name: "AS7205CLR-D", date: "9.24", type: "rm" },
+          { code: "166220", name: "SF2002ODK001/IBC/950KG", date: "9.12", type: "rm" }
+        ];
         $(document).ready(function(){
           $('.sidenav').sidenav();
           $(document).on('click', '.sidenav-overlay, .closeBtns', function() {
@@ -24,10 +152,21 @@
           //$('.sidenav').sidenav('open');
 
           $('#mainSrchInput').on('focusin', function() {
-            $(this).parents(".srchArea").addClass('active');
+            $(this).closest(".srchArea").addClass('active');
+            $(".bgLayer").show();
+            $(".srchDtArea").show().addClass('active');
+            $("#dtSrchInput").trigger("input");
+            $(".srchRstArea").stop().slideDown();
+            $("#dtSrchInput").focus();
           });
           $('#mainSrchInput').on('focusout', function() {
-            $(this).parents(".srchArea").removeClass('active');
+            $(this).closest(".srchArea").removeClass('active');
+          });
+          $('#dtSrchInput').on('focusin', function() {
+            $(".srchDtArea").addClass('active');
+          });
+          $('#dtSrchInput').on('focusout', function() {
+            $(".srchDtArea").removeClass('active');
           });
 
           $(document).on("mouseenter", ".myMenuList li", function() {
@@ -54,6 +193,100 @@
           $('.tooltipped').tooltip();
           $('select').formSelect();
           $("#mainMyMenuModal").modal();
+
+          $(".bgLayer").click(function(){
+            $(".bgLayer").hide();
+            $(".srchRstArea").stop().slideUp(function() {
+              $(".srchDtArea").removeClass("active").hide();
+            });
+          });
+
+          $(".rightSection > div").on("mouseenter", function() {
+            $(this).find(".btnArea").stop().slideDown(200);
+          });
+          $(".rightSection > div").on("mouseleave", function() {
+            $(this).find(".btnArea").stop().slideUp(200);
+          });
+
+          $(document).on("click", ".srchRstList .viewBtn", function() {
+            const type = $(this).attr("data-type");
+            if(type == "rm") {
+              window.open("apis_item_pop.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
+            } else if(type == "npdi") {
+              window.open("apis_npdi_pop.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
+            }
+            $(".bgLayer").trigger("click");
+          });
+
+          $("#dtSrchInput").on("input", function() {
+            const input = $(this).val();
+            $("#mainSrchInput").val(input);
+            let html = '';
+
+            if(input == "") {
+              $.each(historyData, (idx, item) => {
+                html += `
+  <li>
+    <i class="material-icons left">history</i>
+    <div class="fLine hSB wd100p">
+      <div class="liTit">[${item.code}] ${item.name}</div>
+      <div class="liTitRight fLine hSB">
+        <div class="date">${item.date}</div>
+        <a class="viewBtn link" data-type="${item.type}">View</a>
+      </div>
+  </li>`;
+              });
+
+              $(".srchRstList ul").html(html);
+              $(".srchRstArea").show();
+            } else {
+              const materialData_hit = materialData.filter(item => item.name.toLowerCase().includes(input.toLowerCase()) || item.code.toString().includes(input));
+              let matHtml = '<li class="cateTitle">Raw Material Hub</li>';
+              $.each(materialData_hit, (idx, item) => {
+                if(idx >= 7) return false;
+
+                matHtml += `
+  <li>
+    <i class="material-icons left"></i>
+    <div class="fLine hSB wd100p">
+      <div class="liTit">[${item.code}] ${item.name}</div>
+      <div class="liTitRight fLine hSB">
+        <a class="viewBtn link" data-type="rm">View</a>
+      </div>
+    </div>
+  </li>`;
+                
+              });
+
+              const projectData_hit = projectData.filter(item => item.name.toLowerCase().includes(input.toLowerCase()) || item.code.toString().includes(input));
+              let projectHtml = '<li class="cateTitle">NPDI Projects</li>';
+              $.each(projectData_hit, (idx, item) => {
+                if(idx >= 7) return false;
+
+                projectHtml += `
+  <li>
+    <i class="material-icons left"></i>
+    <div class="fLine hSB wd100p">
+      <div class="liTit">[${item.code}] ${item.name}</div>
+      <div class="liTitRight fLine hSB">
+        <a class="viewBtn link" data-type="npdi">View</a>
+      </div>
+  </li>`;
+                
+              });
+              
+              if(materialData_hit.length > 0) html += matHtml;
+              if(projectData_hit.length > 0) html += projectHtml;
+              
+              if(html == '') {
+                $(".srchRstList ul").empty();
+                $(".srchRstArea").hide();
+              } else {
+                $(".srchRstList ul").html(html);
+                $(".srchRstArea").show();
+              }
+            }
+          });
         });
 
     </script>
@@ -69,12 +302,29 @@
           <div><a href="/apis_main.html"><img src="/img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
         </section>
         <section class="rightSection">
-          <div class="notiArea">
-            <div class="notiIcon"><i class="material-icons">assignment_turned_in</i></div>
-            <div class="notiCnt pulse"><span>3</span></div>
-          </div>
           <div class="userInfo">
-            <div><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+            <div class="mr10">
+              <span class="mocha25-text fontM">JONGHO LEE</span>
+            </div>
+            <i class="material-icons gardenia25 mocha25-text fLine vCenter hCenter mg0">person</i>
+            <div class="btnArea" style="height: 150px; padding-top: 20px; margin-top: 0px; padding-bottom: 20px; margin-bottom: 0px; display: none;">
+              <a id="profileBtn" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-sharp left">account_circle</span>
+                <span class="label">View Profile</span>
+              </a>
+              <a id="adminBtn" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-sharp left">admin_panel_settings</span><span class="label">Administrator</span>
+              </a>
+              <a id="logoutBtn" class="waves-effect waves-light hBtn hViva">
+                <span class="material-symbols-sharp left">logout</span><span class="label">Sign Out</span>
+              </a>
+            </div>
+          </div>
+          <div class="langInfo ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">language</i>
+            <div class="btnArea" style="height: 310px; padding-top: 20px; margin-top: 0px; padding-bottom: 20px; margin-bottom: 0px; display: none;">
+              <a class="waves-effect waves-light hBtn jc hViva on" data-lang="en">English</a><a class="waves-effect waves-light hBtn jc" data-lang="de">German</a><a class="waves-effect waves-light hBtn jc" data-lang="ko">Korean</a><a class="waves-effect waves-light hBtn jc" data-lang="ja">Japanese</a><a class="waves-effect waves-light hBtn jc" data-lang="zh">Chinese</a><a class="waves-effect waves-light hBtn jc" data-lang="it">Italian</a><a class="waves-effect waves-light hBtn jc" data-lang="es">Spanish</a>
+            </div>
           </div>
         </section>
       </article>
@@ -115,6 +365,19 @@
         <i class="material-icons prefix">search</i>
         <input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput">
       </div>
+      <div class="srchDtArea" style="display: none;">
+        <div class="srchBox">
+          <div class="srchArea">
+            <i class="material-icons prefix">search</i>
+            <input type="text" class="browser-default" placeholder="Search" value="" id="dtSrchInput" autocomplete="off">
+          </div>
+          <div class="srchRstArea" style="display: none;">
+            <div class="srchRstList">
+              <ul></ul>
+            </div>
+          </div>
+        </div>
+      </div>
     </section>
     
     <section class="myMenuArea">
@@ -142,7 +405,7 @@
           </li>
           <li class="animate__animated">
             <div><a href="apis_dash.html"><div class="menuIconBox waves-effect waves-light"><i class="material-icons">dashboard</i></div></a></div>
-            <div class="menuTit">dashboard​</div>
+            <div class="menuTit">Dashboard​</div>
             <div class="menuIcon waves-effect waves-hColort modal-trigger" data-target="mainMyMenuModal" style="display: none;"><i class="material-icons">more_vert</i></div>
           </li>
           <li class="animate__animated">
@@ -243,7 +506,7 @@
       <section class="col s4 animate__animated">
         <div class="cardBox">
           <div class="cardTitArea">
-            <div class="cardTit">My recent activities</div>
+            <div class="cardTit">My Recent Activities</div>
           </div>
           <div class="contArea">
             <ul class="mainListUl">
@@ -362,6 +625,6 @@
       </div>
     </div>
   </article>
-
+  <article class="bgLayer"></article>
 </body>
 </html>

@@ -7,7 +7,6 @@
     <title>APIS MPM</title>
     <link rel="stylesheet" type="text/css" href="css/materialize.css">
     <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
-	<link rel="stylesheet" type="text/css" href="css/common_jinp.css">
     <link type="text/css" rel="stylesheet" href="css/animate.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" />
@@ -20,6 +19,9 @@
         $(document).ready(function(){
 			$('.tabs').tabs();
 			$('select').formSelect();
+			$('.dropdown-content').each(function() {
+				$('body').append($(this));
+			});
 
 			$('.menu-item').on('click', function() {
 			const targetId = $(this).data('target');
@@ -106,10 +108,10 @@
 				let html = '';
 				html += '<tr>';
 				html += '<td><div class="aniInput"><input type="text" class="browser-default"><span class="focus-border"/></div></td>';
-				html += '<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>';
-				html += '<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>';
-				html += '<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>';
-				html += '<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>';
+				html += '<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>';
+				html += '<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>';
+				html += '<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>';
+				html += '<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>';
 				html += '</tr>';
 				$("#tbl_prodPos").append(html);
 			});
@@ -320,25 +322,37 @@
 					<div class="row">
 						<div class="col s2 ar pl0">Brief Description of Product/Application</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5" dataconn data-col="text_descr" placeholder="Describe the new product concept/application?"></textarea>
+							<div class="aniInput">
+								<textarea class="materialize-textarea" placeholder="Describe the new product concept/application?"></textarea>
+								<span class="focus-border"/>
+							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Target Market/Customers</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5" dataconn data-col="text_target" placeholder="Who are the intended customers/application/market?"></textarea>
+							<div class="aniInput">
+								<textarea class="materialize-textarea" placeholder="Who are the intended customers/application/market?"></textarea>
+								<span class="focus-border"/>
+							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Source of Opportunity</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5" dataconn data-col="text_from" placeholder="Where did this idea/concept come from?"></textarea>
+							<div class="aniInput">
+								<textarea class="materialize-textarea" placeholder="Where did this idea/concept come from?"></textarea>
+								<span class="focus-border"/>
+							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Competition</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5" dataconn data-col="text_competition" placeholder="Describe the new product concept/application?"></textarea>
+							<div class="aniInput">
+								<textarea class="materialize-textarea" placeholder="Describe the new product concept/application?"></textarea>
+								<span class="focus-border"/>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -363,7 +377,7 @@
 										<input type="text" class="file-path validate">
 									</div>
 								</div>
-								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 							</div>
 						</div>
 					</div>
@@ -613,7 +627,7 @@
 									<td class="ac">Marketing Leader</td>
 									<td class="ac">Jim Quan</td>
 									<td class="ac">26.09.2025</td>
-									<td class="ac"><span class="roundBoxMPM tendril25">Approved</span></td>
+									<td class="ac"><span class="roundBox tendril25">Approved</span></td>
 								</tr>
 								<tr style="" class="">
 									<td class="ac">Technology Leader</td>
@@ -715,13 +729,19 @@
 					<div class="row">
 						<div class="col s2 ar pl0">Desirability</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5" dataconn data-col="text_descr" placeholder="Describe the new product concept/application?"></textarea>
+							<div class="aniInput">
+								<textarea class="materialize-textarea" dataconn data-col="text_descr" placeholder="Describe the new product concept/application?"></textarea>
+								<span class="focus-border"/>
+							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Feasibility</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5" dataconn data-col="text_target" placeholder="Who are the intended customers/application/market?"></textarea>
+							<div class="aniInput">
+								<textarea class="materialize-textarea" dataconn data-col="text_target" placeholder="Who are the intended customers/application/market?"></textarea>
+								<span class="focus-border"/>
+							</div>
 						</div>
 					</div>
 					<div class="row">
@@ -793,7 +813,7 @@
 										<input type="text" class="file-path validate">
 									</div>
 								</div>
-								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 							</div>
 						</div>
 					</div>
@@ -1629,19 +1649,19 @@
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Capacity Planning</div>
 			<div>
 				<div class="inputArea">
-					<div class="mt10" style="overflow: hidden;">
-						<span class="dpInlineBlock mr10 left">View: <div class="aniInput dpInlineBlock wdAuto"><select class="browser-default ht20 wdAuto"><option value="">[Standard View]</option></select></div></span>
+					<div class="mt10 optLine" style="overflow: hidden;">
+						<span class="dpInlineBlock mr10 left">View: <select><option value="">Standard View</option></select></span>
 						<div class="verticalLine1 ht24 mr10 left"></div>
-						<a class="roundBox stone25 fill mr10 left" href="javascript:;">Print Version</a>
+						<a class="rectBox stone25 fill mr10 left" href="javascript:;">Print Version</a>
 						<div class="verticalLine1 ht24 mr10 left"></div>
-						<span class="dpInlineBlock left">Period Displayed: <div class="aniInput dpInlineBlock wdAuto"><input placeholder="From" class="browser-default datepicker ht20 wd100px ac">~<input placeholder="To" class="browser-default datepicker ht20 wd100px ac"></div></span>
-						<a class="roundBox stone25 fill left" href="javascript:;">Apply</a>
+						<span class="dpInlineBlock mr10 left">Period Displayed: <div class="aniInput dpInlineBlock wdAuto"><input placeholder="From" class="browser-default datepicker ht20 wd100px ac">~<input placeholder="To" class="browser-default datepicker ht20 wd100px ac"></div></span>
+						<a class="rectBox stone25 fill left" href="javascript:;">Apply</a>
 						<div class="verticalLine1 ht24 mr10 left"></div>
-						<span class="dpInlineBlock mr10 left">Filter: <div class="aniInput dpInlineBlock wdAuto"><select class="browser-default ht20 wdAuto"><option value="">All</option></select></div></span>
-						<a class="roundBox stone25 fill left" href="javascript:;">Edit Filter</a>
+						<span class="dpInlineBlock mr10 left">Filter: <select><option value="">All</option></select></span>
+						<a class="rectBox stone25 fill left" href="javascript:;">Edit Filter</a>
 						<div class="verticalLine1 ht24 mr10 left"></div>
-						<a class="roundBox stone25 fill left" href="javascript:;">Display List</a>
-						<a class="roundBox stone25 fill left" href="javascript:;">Expand All</a>
+						<a class="rectBox stone25 fill left" href="javascript:;">Display List</a>
+						<a class="rectBox stone25 fill left" href="javascript:;">Expand All</a>
 					</div>
 					<div class="hFixedTable hBorderTable hScroll vMiddle mg0 mt5">
 						<table id="" style="table-layout: fixed;">
@@ -1736,19 +1756,19 @@
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Financial Forecasts</div>
 			<div>
 				<div class="inputArea">
-					<div class="mt10" style="overflow: hidden;">
-						<span class="dpInlineBlock mr10 left">View: <div class="aniInput dpInlineBlock wdAuto"><select class="browser-default ht20 wdAuto"><option value="">[Standard View]</option></select></div></span>
+					<div class="mt10 optLine" style="overflow: hidden;">
+						<span class="dpInlineBlock mr10 left">View: <select><option value="">Standard View</option></select></span>
 						<div class="verticalLine1 ht24 mr10 left"></div>
-						<a class="roundBox stone25 fill mr10 left" href="javascript:;">Print Version</a>
+						<a class="rectBox stone25 fill mr10 left" href="javascript:;">Print Version</a>
 						<div class="verticalLine1 ht24 mr10 left"></div>
-						<span class="dpInlineBlock left">Period Displayed: <div class="aniInput dpInlineBlock wdAuto"><input placeholder="From" class="browser-default datepicker ht20 wd100px ac">~<input placeholder="To" class="browser-default datepicker ht20 wd100px ac"></div></span>
-						<a class="roundBox stone25 fill left" href="javascript:;">Apply</a>
+						<span class="dpInlineBlock mr10 left">Period Displayed: <div class="aniInput dpInlineBlock wdAuto"><input placeholder="From" class="browser-default datepicker ht20 wd100px ac">~<input placeholder="To" class="browser-default datepicker ht20 wd100px ac"></div></span>
+						<a class="rectBox stone25 fill left" href="javascript:;">Apply</a>
 						<div class="verticalLine1 ht24 mr10 left"></div>
-						<span class="dpInlineBlock mr10 left">Filter: <div class="aniInput dpInlineBlock wdAuto"><select class="browser-default ht20 wdAuto"><option value="">All</option></select></div></span>
-						<a class="roundBox stone25 fill left" href="javascript:;">Edit Filter</a>
+						<span class="dpInlineBlock mr10 left">Filter: <select><option value="">All</option></select></span>
+						<a class="rectBox stone25 fill left" href="javascript:;">Edit Filter</a>
 						<div class="verticalLine1 ht24 mr10 left"></div>
-						<a class="roundBox stone25 fill left" href="javascript:;">Display List</a>
-						<a class="roundBox stone25 fill left" href="javascript:;">Expand All</a>
+						<a class="rectBox stone25 fill left" href="javascript:;">Display List</a>
+						<a class="rectBox stone25 fill left" href="javascript:;">Expand All</a>
 					</div>
 					<div class="hFixedTable hBorderTable hScroll vMiddle mg0 mt5">
 						<table id="" style="table-layout: fixed;">
@@ -1918,7 +1938,7 @@
 				</div>
 			</div>
 			<div class="cardSubTit mt20">NPV Calculation Information</div>
-			<div class="hFixedTable hBorderTable hScroll vMiddle">
+			<div class="hFixedTable hBorderTable hScroll vMiddle inputArea">
 				<table id="" style="table-layout: fixed;">
 					<colgroup>
 						<col style="width: 180px;">
@@ -2138,7 +2158,7 @@
 						<div class="col s6 pl0"><label><input type="checkbox" class="filled-in"><span>Identify Object Later</span></label></div>
 					</div>
 				</div>
-				<div class="fixedTable hBorderTable hScroll vMiddle" style="max-height: 250px;">
+				<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 250px;">
 					<table id="">
 						<colgroup>
 							<col style="width: 150px;">
@@ -2192,7 +2212,7 @@
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Action Register</div>
 			<div>
 				<div style="overflow: hidden;"><a class="waves-effect waves-light hBtn right" id="btn_addAction">Add an Action</a></div>
-				<div class="fixedTable hBorderTable hScroll vMiddle" style="max-height: 500px;">
+				<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
 					<table id="tbl_action">
 						<colgroup>
 							<col style="width: 40px;">
@@ -2257,19 +2277,28 @@
 					<div class="row">
 						<div class="col s2 ar pl0">Target Segment Description</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5" dataconn data-col="text_descr" placeholder="Describe the new product concept/application?"></textarea>
+							<div class="aniInput">
+								<textarea class="materialize-textarea" dataconn data-col="text_descr" placeholder="Describe the new product concept/application?"></textarea>
+								<span class="focus-border"/>
+							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Growth Trends/Drivers</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5" dataconn data-col="text_target" placeholder="Who are the intended customers/application/market?"></textarea>
+							<div class="aniInput">
+								<textarea class="materialize-textarea" dataconn data-col="text_target" placeholder="Who are the intended customers/application/market?"></textarea>
+								<span class="focus-border"/>
+							</div>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Target MPM Market Opportunity</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5" dataconn data-col="text_from" placeholder="Where did this idea/concept come from?"></textarea>
+							<div class="aniInput">
+								<textarea class="materialize-textarea" dataconn data-col="text_from" placeholder="Where did this idea/concept come from?"></textarea>
+								<span class="focus-border"/>
+							</div>
 						</div>
 					</div>
 					<div class="cardSubTit mt20">Segmentation Data Chart</div>
@@ -2337,7 +2366,7 @@
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Product Positioning</div>
 			<div>
 				<div style="overflow: hidden;"><a class="waves-effect waves-light hBtn right" id="btn_addProdPos">Add a row</a></div>
-				<div class="fixedTable hBorderTable hScroll vMiddle" style="max-height: 500px;">
+				<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
 					<table id="tbl_prodPos">
 						<colgroup>
 							<col style="width: 20%;">
@@ -2359,77 +2388,107 @@
 							<tr>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="End User">
+										<input type="text" class="browser-default" value="End User"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Chemically stable, easy-to-use dispensing system, quick room-temperature cure time.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">Chemically stable, easy-to-use dispensing system, quick room-temperature cure time.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Extended product lifespan due to superior weather resistance, non-toxic and low-odor application.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">Extended product lifespan due to superior weather resistance, non-toxic and low-odor application.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Position as the 'Professional-Grade, Consumer-Friendly' sealant/adhesive solution.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">Position as the 'Professional-Grade, Consumer-Friendly' sealant/adhesive solution.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Focus marketing on DIY repair and small home improvement projects.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">Focus marketing on DIY repair and small home improvement projects.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 							</tr>
 							<tr>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="OEM">
+										<input type="text" class="browser-default" value="OEM"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Ultra-low volatility (low D4/D5/D6 content), high thermal conductivity, precision bonding capability.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">Ultra-low volatility (low D4/D5/D6 content), high thermal conductivity, precision bonding capability.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Meets stringent automotive and electronics industry standards (e.g., thermal management in EVs), reduced inspection failures.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">Meets stringent automotive and electronics industry standards (e.g., thermal management in EVs), reduced inspection failures.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Position as the 'Reliability Standard' component for high-performance electronic assemblies.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">Position as the 'Reliability Standard' component for high-performance electronic assemblies.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Requires dedicated technical support for production line integration and testing.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">Requires dedicated technical support for production line integration and testing.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 							</tr>
 							<tr>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="Distributor">
+										<input type="text" class="browser-default" value="Distributor"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Long shelf life (18+ months), standardized packaging for easy stacking, competitive volume pricing.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">Long shelf life (18+ months), standardized packaging for easy stacking, competitive volume pricing.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Reduced inventory waste, maximized warehouse efficiency, guaranteed profit margin.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">Reduced inventory waste, maximized warehouse efficiency, guaranteed profit margin.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Position as the 'Inventory Anchor' product with high demand and low handling risk.</textarea>
+									<textarea class="materialize-textarea">Position as the 'Inventory Anchor' product with high demand and low handling risk.</textarea>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Offer tiered rebate program based on quarterly volume commitment.</textarea>
+									<textarea class="materialize-textarea">Offer tiered rebate program based on quarterly volume commitment.</textarea>
 								</td>
 							</tr>
 							<tr>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="Channel Partner">
+										<input type="text" class="browser-default" value="Channel Partner"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Exclusive regional pricing, dedicated technical sales training modules, co-branded marketing materials.</textarea>
+									<textarea class="materialize-textarea">Exclusive regional pricing, dedicated technical sales training modules, co-branded marketing materials.</textarea>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Increased profitability per sale, enhanced customer loyalty through specialized service offering.</textarea>
+									<textarea class="materialize-textarea">Increased profitability per sale, enhanced customer loyalty through specialized service offering.</textarea>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Position as a 'Strategic Partnership' where mutual growth is the primary goal.</textarea>
+									<textarea class="materialize-textarea">Position as a 'Strategic Partnership' where mutual growth is the primary goal.</textarea>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Mandate annual product knowledge certification for all sales representatives.</textarea>
+									<textarea class="materialize-textarea">Mandate annual product knowledge certification for all sales representatives.</textarea>
 								</td>
 							</tr>
 						</tbody>
@@ -2443,20 +2502,20 @@
 				<div class="row">
 					<div class="col s2 ar pl0">Current Competitors to new product</div>
 					<div class="col s10">
-						<textarea class="materialize-textarea pd5"></textarea>
+						<textarea class="materialize-textarea"></textarea>
 					</div>
 				</div>div>
 				<div class="row">
 					<div class="col s2 ar pl0">Key Opportunities & Threats for MPM</div>
 					<div class="col s10">
-						<textarea class="materialize-textarea pd5"></textarea>
+						<textarea class="materialize-textarea"></textarea>
 					</div>
 				</div>
 			</div>
 			<div>
 				<div class="cardSubTit mt20">Differentiation vs Competitive Products</div>
-				<div class="fixedTable hBorderTable hScroll vMiddle" style="max-height: 500px;">
-					<table id="tbl_prodPos">
+				<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
+					<table id="">
 						<colgroup>
 							<col style="width: 15%;">
 							<col style="width: 17%;">
@@ -2479,192 +2538,192 @@
 							<tr>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="Long-Term Thermal Stability (°C)">
+										<input type="text" class="browser-default" value="Long-Term Thermal Stability (°C)"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="250°C for 500 hrs">
+										<input type="text" class="browser-default" value="250°C for 500 hrs"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="280°C (Exceeds Target)">
+										<input type="text" class="browser-default" value="280°C (Exceeds Target)"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="230°C">
+										<input type="text" class="browser-default" value="230°C"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="250°C (Meets Target)">
+										<input type="text" class="browser-default" value="250°C (Meets Target)"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="Not Specified">
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<div class="aniInput">
-										<input type="text" class="browser-default" value="VOC Content (ppm)">
-									</div>
-								</td>
-								<td>
-									<div class="aniInput">
-										<input type="text" class="browser-default" value="< 100 ppm">
-									</div>
-								</td>
-								<td>
-									<div class="aniInput">
-										<input type="text" class="browser-default" value="< 50 ppm (Best in Class)">
-									</div>
-								</td>
-								<td>
-									<div class="aniInput">
-										<input type="text" class="browser-default" value="150 ppm (Non-compliant for new standards)">
-									</div>
-								</td>
-								<td>
-									<div class="aniInput">
-										<input type="text" class="browser-default" value="100 ppm (Meets Target)">
-									</div>
-								</td>
-								<td>
-									<div class="aniInput">
-										<input type="text" class="browser-default" value="80 ppm">
+										<input type="text" class="browser-default" value="Not Specified"><span class="focus-border"/>
 									</div>
 								</td>
 							</tr>
 							<tr>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="Process Curing Time">
+										<input type="text" class="browser-default" value="VOC Content (ppm)"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="< 5 minutes">
+										<input type="text" class="browser-default" value="< 100 ppm"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="3 minutes (Fastest Curing)">
+										<input type="text" class="browser-default" value="< 50 ppm (Best in Class)"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="6 minutes">
+										<input type="text" class="browser-default" value="150 ppm (Non-compliant for new standards)"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="5 minutes">
+										<input type="text" class="browser-default" value="100 ppm (Meets Target)"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="7 minutes">
-									</div>
-								</td>
-							</tr>
-							<tr>
-								<td>
-									<div class="aniInput">
-										<input type="text" class="browser-default" value="Adhesion Strength (MPa on Aluminum)">
-									</div>
-								</td>
-								<td>
-									<div class="aniInput">
-										<input type="text" class="browser-default" value="> 5 MPa">
-									</div>
-								</td>
-								<td>
-									<div class="aniInput">
-										<input type="text" class="browser-default" value="5.5 MPa">
-									</div>
-								</td>
-								<td>
-									<div class="aniInput">
-										<input type="text" class="browser-default" value="4.0 MPa">
-									</div>
-								</td>
-								<td>
-									<div class="aniInput">
-										<input type="text" class="browser-default" value="4.8 MPa">
-									</div>
-								</td>
-								<td>
-									<div class="aniInput">
-										<input type="text" class="browser-default" value="5.1 MPa">
+										<input type="text" class="browser-default" value="80 ppm"><span class="focus-border"/>
 									</div>
 								</td>
 							</tr>
 							<tr>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="Price Per Kilogram ($)">
+										<input type="text" class="browser-default" value="Process Curing Time"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="$80 - $90">
+										<input type="text" class="browser-default" value="< 5 minutes"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="$85">
+										<input type="text" class="browser-default" value="3 minutes (Fastest Curing)"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="$75">
+										<input type="text" class="browser-default" value="6 minutes"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="$95">
+										<input type="text" class="browser-default" value="5 minutes"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="$88">
+										<input type="text" class="browser-default" value="7 minutes"><span class="focus-border"/>
 									</div>
 								</td>
 							</tr>
 							<tr>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="Certifications/Compliance">
+										<input type="text" class="browser-default" value="Adhesion Strength (MPa on Aluminum)"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="AEC-Q100, REACH">
+										<input type="text" class="browser-default" value="> 5 MPa"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="AEC-Q100, REACH, UL Certified">
+										<input type="text" class="browser-default" value="5.5 MPa"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="REACH Only">
+										<input type="text" class="browser-default" value="4.0 MPa"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="AEC-Q100, REACH">
+										<input type="text" class="browser-default" value="4.8 MPa"><span class="focus-border"/>
 									</div>
 								</td>
 								<td>
 									<div class="aniInput">
-										<input type="text" class="browser-default" value="None">
+										<input type="text" class="browser-default" value="5.1 MPa"><span class="focus-border"/>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="Price Per Kilogram ($)"><span class="focus-border"/>
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="$80 - $90"><span class="focus-border"/>
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="$85"><span class="focus-border"/>
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="$75"><span class="focus-border"/>
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="$95"><span class="focus-border"/>
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="$88"><span class="focus-border"/>
+									</div>
+								</td>
+							</tr>
+							<tr>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="Certifications/Compliance"><span class="focus-border"/>
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="AEC-Q100, REACH"><span class="focus-border"/>
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="AEC-Q100, REACH, UL Certified"><span class="focus-border"/>
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="REACH Only"><span class="focus-border"/>
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="AEC-Q100, REACH"><span class="focus-border"/>
+									</div>
+								</td>
+								<td>
+									<div class="aniInput">
+										<input type="text" class="browser-default" value="None"><span class="focus-border"/>
 									</div>
 								</td>
 							</tr>
@@ -2677,7 +2736,7 @@
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Value Proposition Assumptions</div>
 			<div>
 				<div class="cardSubTit mt20">Commercial</div>
-				<div class="fixedTable hBorderTable hScroll vMiddle" style="max-height: 500px;">
+				<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
 					<table id="tbl_valAssume">
 						<colgroup>
 							<col style="width: 20%;">
@@ -2695,53 +2754,83 @@
 							<tr>
 								<td>Customer benefit / Problem you solve and Value you create</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Customers will pay a 20% premium for the integrated product due to the 50% reduction in installation time and labor cost.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">Customers will pay a 20% premium for the integrated product due to the 50% reduction in installation time and labor cost.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">STATUS: Initial customer interviews (n=10) confirm installation time is the main pain point. FAILURE INDICATION: If pilot customers balk at a >15% premium. EXPERIMENT: Run a price sensitivity test with the first 5 beta clients.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">STATUS: Initial customer interviews (n=10) confirm installation time is the main pain point. FAILURE INDICATION: If pilot customers balk at a >15% premium. EXPERIMENT: Run a price sensitivity test with the first 5 beta clients.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 							</tr>
 							<tr>
 								<td>Competitive environment and reaction</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Competitors (specifically Competitor-1) will require 9-12 months to replicate the core thermal stability feature.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">Competitors (specifically Competitor-1) will require 9-12 months to replicate the core thermal stability feature.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">STATUS: Competitor-1's existing R&D cycle averages 14 months for major feature releases. FAILURE INDICATION: If a competitor announces a similar feature within 6 months. EXPERIMENT: Monitor patent filings and technical job postings from Competitor-1 closely.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">STATUS: Competitor-1's existing R&D cycle averages 14 months for major feature releases. FAILURE INDICATION: If a competitor announces a similar feature within 6 months. EXPERIMENT: Monitor patent filings and technical job postings from Competitor-1 closely.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 							</tr>
 							<tr>
 								<td>Technical know-how and processes</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Our internal production process (Process X) can maintain the required 99.999% material purity at full scale without sacrificing yield (Target Yield: 95%).</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">Our internal production process (Process X) can maintain the required 99.999% material purity at full scale without sacrificing yield (Target Yield: 95%).</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">STATUS: Pilot batch runs achieved 94% yield, slightly below target. FAILURE INDICATION: Yield drops below 90% during Q3 ramp-up. EXPERIMENT: Dedicated engineering team to optimize post-processing filtration stage.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">STATUS: Pilot batch runs achieved 94% yield, slightly below target. FAILURE INDICATION: Yield drops below 90% during Q3 ramp-up. EXPERIMENT: Dedicated engineering team to optimize post-processing filtration stage.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 							</tr>
 							<tr>
 								<td>Pricing</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">Raw material costs (specifically Silicon Polymer Z) will remain stable or decrease slightly over the next 24 months, allowing us to maintain a 45% gross margin.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">Raw material costs (specifically Silicon Polymer Z) will remain stable or decrease slightly over the next 24 months, allowing us to maintain a 45% gross margin.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">STATUS: Polymer Z pricing is currently stable, long-term contract signed with Vendor A. FAILURE INDICATION: If the commodity price index for key inputs increases by >10% in the next quarter. EXPERIMENT: Secure secondary supply contracts with Vendor B.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">STATUS: Polymer Z pricing is currently stable, long-term contract signed with Vendor A. FAILURE INDICATION: If the commodity price index for key inputs increases by >10% in the next quarter. EXPERIMENT: Secure secondary supply contracts with Vendor B.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 							</tr>
 							<tr>
 								<td>Any Other (eg, time to revenue and profit goals, alliances, etc)</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">We will secure a strategic distribution alliance with 'Global Distributor Y' within 6 months of product launch, essential for penetrating the APAC market.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">We will secure a strategic distribution alliance with 'Global Distributor Y' within 6 months of product launch, essential for penetrating the APAC market.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0">STATUS: Initial introductory meetings scheduled with Global Distributor Y next month. FAILURE INDICATION: If alliance is not finalized by the end of Q1 next year. EXPERIMENT: Prepare an alternative partnership plan with Regional Distributor Z.</textarea>
+									<div class="aniInput">
+										<textarea class="materialize-textarea">STATUS: Initial introductory meetings scheduled with Global Distributor Y next month. FAILURE INDICATION: If alliance is not finalized by the end of Q1 next year. EXPERIMENT: Prepare an alternative partnership plan with Regional Distributor Z.</textarea>
+										<span class="focus-border"/>
+									</div>
 								</td>
 							</tr>
 						</tbody>
 					</table>
 				</div>
 				<div class="cardSubTit mt20">Technical</div>
-				<div class="fixedTable hBorderTable hScroll vMiddle" style="max-height: 500px;">
+				<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
 					<table id="tbl_valAssume">
 						<colgroup>
 							<col style="width: 20%;">
@@ -2759,37 +2848,37 @@
 							<tr>
 								<td>Knowledge and skills</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0"></textarea>
+									<textarea class="materialize-textarea"></textarea>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0"></textarea>
+									<textarea class="materialize-textarea"></textarea>
 								</td>
 							</tr>
 							<tr>
 								<td>Processes (R&D, Scale-up, Mfg. and Other)</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0"></textarea>
+									<textarea class="materialize-textarea"></textarea>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0"></textarea>
+									<textarea class="materialize-textarea"></textarea>
 								</td>
 							</tr>
 							<tr>
 								<td>Resources (Time, Cost and availability etc.)</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0"></textarea>
+									<textarea class="materialize-textarea"></textarea>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0"></textarea>
+									<textarea class="materialize-textarea"></textarea>
 								</td>
 							</tr>
 							<tr>
 								<td>Any Other</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0"></textarea>
+									<textarea class="materialize-textarea"></textarea>
 								</td>
 								<td>
-									<textarea class="materialize-textarea pd5 mb0"></textarea>
+									<textarea class="materialize-textarea"></textarea>
 								</td>
 							</tr>
 						</tbody>
@@ -2801,7 +2890,7 @@
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Total Economic Value Assessment</div>
 			<div class="row">
 				<div class="col s5">
-					<div class="fixedTable hBorderTable hScroll vMiddle" style="max-height: 250px;">
+					<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 250px;">
 						<table id="tbl_tev">
 							<colgroup>
 								<col style="width: 50%;">
@@ -2815,31 +2904,34 @@
 							</thead>
 							<tbody>
 								<tr>
-									<td><span class="cfblue25-text mr5">■</span>① The Competitor</td>
+									<td><span class="cfblue25-text text-lighten-2 mr5">■</span>① The Competitor</td>
 									<td>
 										<div class="aniInput">
 											<input type="text" class="browser-default num2" value="10" id="inp_tev_compval">
+											<span class="focus-border"/>
 										</div>
 									</td>
 								</tr>
 								<tr>
-									<td><span class="tendril25-text mr5">■</span>② Unique Additional Value</td>
+									<td><span class="tendril25-text text-lighten-2 mr5">■</span>② Unique Additional Value</td>
 									<td>
 										<div class="aniInput">
 											<input type="text" class="browser-default num2" value="30" id="inp_tev_addval">
+											<span class="focus-border"/>
 										</div>
 									</td>
 								</tr>
 								<tr>
-									<td><span class="rose25-text mr5">■</span>③ Unique Costs</td>
+									<td><span class="rose25-text text-lighten-2 mr5">■</span>③ Unique Costs</td>
 									<td>
 										<div class="aniInput">
 											<input type="text" class="browser-default num2" value="5" id="inp_tev_cost">
+											<span class="focus-border"/>
 										</div>
 									</td>
 								</tr>
-								<tr>
-									<td class="fontBold ht35"><span class="viola25-text mr5">■</span>④ Total Economic Value (① + ② - ③)</td>
+								<tr class="btSLine">
+									<td class="fontBold ht35"><span class="viola25-text text-lighten-2 mr5">■</span>④ Total Economic Value (① + ② - ③)</td>
 									<td id="td_tev_tev" class="fontBold ar"></td>
 								</tr>
 								<tr>
@@ -2854,10 +2946,10 @@
 					<div id="div_tev" class="mt10 pd20">
 						<div style="position: relative;height: 100%;">
 							<div id="div_tev_bar" style="display: none;">
-								<div id="div_tev_bar_comp" class="tev-bar fLine vCenter hCenter cfblue25 ac" style="left: 10%;"></div>
-								<div id="div_tev_bar_addval" class="tev-bar fLine vCenter hCenter tendril25 ac" style="left: 30%;"></div>
-								<div id="div_tev_bar_cost" class="tev-bar fLine vCenter hCenter rose25 ac" style="left: 50%;"></div>
-								<div id="div_tev_bar_tev" class="tev-bar fLine vCenter hCenter viola25 ac" style="left: 70%;"></div>
+								<div id="div_tev_bar_comp" class="tev-bar fLine vCenter hCenter cfblue25 lighten-2 ac" style="left: 10%;"></div>
+								<div id="div_tev_bar_addval" class="tev-bar fLine vCenter hCenter tendril25 lighten-2 ac" style="left: 30%;"></div>
+								<div id="div_tev_bar_cost" class="tev-bar fLine vCenter hCenter rose25 lighten-2 ac" style="left: 50%;"></div>
+								<div id="div_tev_bar_tev" class="tev-bar fLine vCenter hCenter viola25 lighten-2 ac" style="left: 70%;"></div>
 							</div>
 							<div id="div_tev_default" class="fLine vCenter hCenter font16 wd100p" style="height: 100%;position: absolute;">
 								To draw the chart, fill in all values in the table on the left.
@@ -2882,7 +2974,7 @@
 										<input type="text" class="file-path validate">
 									</div>
 								</div>
-								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 							</div>
 						</div>
 					</div>
@@ -2896,31 +2988,31 @@
 					<div class="row">
 						<div class="col s2 ar pl0">Branding Approach</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5 mb0"></textarea>
+							<textarea class="materialize-textarea"></textarea>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Service Strategy</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5 mb0"></textarea>
+							<textarea class="materialize-textarea"></textarea>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Promotion Communication Strategy</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5 mb0"></textarea>
+							<textarea class="materialize-textarea"></textarea>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Pricing & Incentives Strategy</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5 mb0"></textarea>
+							<textarea class="materialize-textarea"></textarea>
 						</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Distribution Strategy</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5 mb0"></textarea>
+							<textarea class="materialize-textarea"></textarea>
 						</div>
 					</div>
 				</div>
@@ -2933,7 +3025,7 @@
 					<div class="row">
 						<div class="col s2 ar pl0">Commercialization Plan</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5 mb0">The commercialisation plan must be initiated prior to Customer Acceptance review.  This commercialisation plan must be aligned with regulatory registrations, as commercialisation may be delayed in some regions because of pending registrations.
+							<textarea class="materialize-textarea">The commercialisation plan must be initiated prior to Customer Acceptance review.  This commercialisation plan must be aligned with regulatory registrations, as commercialisation may be delayed in some regions because of pending registrations.
 
 Key elements to be considered in Commercialization plan :
 - Regions/countries with launch dates (if not a global launch). Agreement with product stewardship.
@@ -2959,7 +3051,7 @@ Key elements to be considered in Commercialization plan :
 										<input type="text" class="file-path validate">
 									</div>
 								</div>
-								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 							</div>
 						</div>
 					</div>
@@ -2990,7 +3082,7 @@ Key elements to be considered in Commercialization plan :
 										<input type="text" class="file-path validate">
 									</div>
 								</div>
-								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 							</div>
 						</div>
 					</div>
@@ -3124,7 +3216,7 @@ Key elements to be considered in Commercialization plan :
 										<input type="text" class="file-path validate">
 									</div>
 								</div>
-								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 							</div>
 						</div>
 					</div>
@@ -3138,7 +3230,7 @@ Key elements to be considered in Commercialization plan :
 					<div class="row">
 						<div class="col s2 ar pl0">Proposed Development Strategy</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5 mb0"></textarea>
+							<textarea class="materialize-textarea"></textarea>
 						</div>
 					</div>
 					<div class="row">
@@ -3175,7 +3267,7 @@ Key elements to be considered in Commercialization plan :
 										<input type="text" class="file-path validate">
 									</div>
 								</div>
-								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 							</div>
 						</div>
 					</div>
@@ -3189,7 +3281,7 @@ Key elements to be considered in Commercialization plan :
 					<div class="row">
 						<div class="col s2 ar pl0">Existing/Previous Work</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5 mb0"></textarea>
+							<textarea class="materialize-textarea"></textarea>
 						</div>
 					</div>
 				</div>
@@ -3202,7 +3294,7 @@ Key elements to be considered in Commercialization plan :
 					<div class="row">
 						<div class="col s2 ar pl0">Product/Formulation Design</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5 mb0"></textarea>
+							<textarea class="materialize-textarea"></textarea>
 						</div>
 					</div>
 					<div class="row">
@@ -3239,7 +3331,7 @@ Key elements to be considered in Commercialization plan :
 										<input type="text" class="file-path validate">
 									</div>
 								</div>
-								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 							</div>
 						</div>
 					</div>
@@ -3253,7 +3345,7 @@ Key elements to be considered in Commercialization plan :
 					<div class="row">
 						<div class="col s2 ar pl0">Customer Validation Summary</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5 mb0"></textarea>
+							<textarea class="materialize-textarea"></textarea>
 						</div>
 					</div>
 					<div class="row">
@@ -3270,7 +3362,7 @@ Key elements to be considered in Commercialization plan :
 										<input type="text" class="file-path validate">
 									</div>
 								</div>
-								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 							</div>
 						</div>
 					</div>
@@ -3279,7 +3371,7 @@ Key elements to be considered in Commercialization plan :
 		</section>
 		<section class="cardBox mt10" id="">
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Manufacturing Capability</div>
-			<div class="fixedTable hBorderTable hScroll vMiddle">
+			<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 				<table id="">
 					<colgroup>
 						<col style="width: auto;">
@@ -3303,7 +3395,7 @@ Key elements to be considered in Commercialization plan :
 							<td>Identification of high-level Risks (where applicable)</td>
 							<td>- Highlight any known major risks in Project Summary</td>
 							<td>NPC Requester</td>
-							<td><textarea class="materialize-textarea pd5"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td rowspan="3">NPI GO</td>
@@ -3321,7 +3413,7 @@ Key elements to be considered in Commercialization plan :
 								Product Management + Process Tech<br>
 								Marketing + Process Tech
 							</td>
-							<td><textarea class="materialize-textarea pd5"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>Scale Up</td>
@@ -3334,7 +3426,7 @@ Key elements to be considered in Commercialization plan :
 								</ul>
 							</td>
 							<td>Process Tech + SIOP</td>
-							<td><textarea class="materialize-textarea pd5"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>EHS Assessment</td>
@@ -3345,7 +3437,7 @@ Key elements to be considered in Commercialization plan :
 								</ul>
 							</td>
 							<td>Process Tech + EHS + Prod Stewardship</td>
-							<td><textarea class="materialize-textarea pd5"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td rowspan="1">Lab Formulation &amp; Scale-Up</td>
@@ -3357,7 +3449,7 @@ Key elements to be considered in Commercialization plan :
 								</ul>
 							</td>
 							<td>Process Tech + Procurement + SIOP</td>
-							<td><textarea class="materialize-textarea pd5"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td rowspan="2">Comm. GO</td>
@@ -3371,7 +3463,7 @@ Key elements to be considered in Commercialization plan :
 								</ul>
 							</td>
 							<td>Product Management + SIOP + Process Tech</td>
-							<td><textarea class="materialize-textarea pd5"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>Manufacturing Plan</td>
@@ -3382,7 +3474,7 @@ Key elements to be considered in Commercialization plan :
 								</ul>
 							</td>
 							<td>Process Tech + Production</td>
-							<td><textarea class="materialize-textarea pd5"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 					</tbody>
 				</table>
@@ -3391,7 +3483,7 @@ Key elements to be considered in Commercialization plan :
 		<section class="cardBox mt10" id="">
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Volume / Capacity Analysis</div>
 			<div class="cardSubTit mt20">Expected product(s)/intermediates volume for first 5 years after launch(with split by pole)</div>
-			<div class="fixedTable hBorderTable hScroll vMiddle">
+			<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 				<table id="tbl_tev">
 					<colgroup>
 						<col style="width: auto;">
@@ -3574,7 +3666,7 @@ Key elements to be considered in Commercialization plan :
 					<div class="row">
 						<div class="col s2 ar pl0">Summary of Cost Estimate</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5 mb0"></textarea>
+							<textarea class="materialize-textarea"></textarea>
 						</div>
 					</div>
 				</div>
@@ -3587,7 +3679,7 @@ Key elements to be considered in Commercialization plan :
 					<div class="row">
 						<div class="col s2 ar pl0">Scale-Up & Capability Summary</div>
 						<div class="col s10">
-							<textarea class="materialize-textarea pd5 mb0"></textarea>
+							<textarea class="materialize-textarea"></textarea>
 						</div>
 					</div>
 					<div class="row">
@@ -3604,7 +3696,7 @@ Key elements to be considered in Commercialization plan :
 										<input type="text" class="file-path validate">
 									</div>
 								</div>
-								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 							</div>
 						</div>
 					</div>
@@ -3614,7 +3706,7 @@ Key elements to be considered in Commercialization plan :
 		<section class="cardBox mt10" id="">
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>SIOP Assessment</div>
 			<div class="cardSubTit mt20">New Raw Materials</div>
-			<div class="fixedTable hBorderTable hScroll vMiddle">
+			<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 				<table id="">
 					<colgroup>
 						<col style="width: auto;">
@@ -3644,7 +3736,7 @@ Key elements to be considered in Commercialization plan :
 				</table>
 			</div>
 			<div class="cardSubTit mt20">Existing Raw Materials & Intermediates</div>
-			<div class="fixedTable hBorderTable hScroll vMiddle">
+			<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 				<table id="">
 					<colgroup>
 						<col style="width: auto;">
@@ -3677,7 +3769,7 @@ Key elements to be considered in Commercialization plan :
 		<section class="cardBox mt10" id="">
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Sustainability Summary</div>
 			<div class="cardSubTit mt20">PSA Summary</div>
-			<div class="fixedTable hBorderTable hScroll vMiddle">
+			<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 				<table id="">
 					<colgroup>
 						<col style="width: auto;">
@@ -3721,7 +3813,7 @@ Key elements to be considered in Commercialization plan :
 				</table>
 			</div>
 			<div class="cardSubTit mt20">Sustainability Assessment Highlights</div>
-			<div class="fixedTable hBorderTable hScroll vMiddle">
+			<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 				<table id="">
 					<colgroup>
 						<col style="width: auto;">
@@ -3762,7 +3854,7 @@ Key elements to be considered in Commercialization plan :
 		</section>
 		<section class="cardBox mt10" id="">
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Quality(QA/QC) Assessment</div>
-			<div class="fixedTable hBorderTable hScroll vMiddle">
+			<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 				<table id="">
 					<colgroup>
 						<col style="width: auto;">
@@ -3786,7 +3878,7 @@ Key elements to be considered in Commercialization plan :
 							<td>Identification of high level Risks (where applicable)</td>
 							<td>- Highlight any major risks/road blocks/needs with respect to QC/QA in Project Summary</td>
 							<td>BU Technology + QC/QA</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>Preliminary QC/QA needs assessment :<br>Prior history, resources, timelines</td>
@@ -3802,7 +3894,7 @@ Key elements to be considered in Commercialization plan :
 								BU Technology + QC<br>
 								BU Technology + QC + Global Analytical
 							</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td rowspan="3">Lab Formulation &amp; Scale-Up</td>
@@ -3815,7 +3907,7 @@ Key elements to be considered in Commercialization plan :
 								</ul>
 							</td>
 							<td>BU Technology + Global Analytical + QC</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>QC Plan</td>
@@ -3826,13 +3918,13 @@ Key elements to be considered in Commercialization plan :
 								</ul>
 							</td>
 							<td>BU Tech. + Process Tech. + QC</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>Risk Assessment (Quality)</td>
 							<td>- Capture Quality Risks in project risk assessment</td>
 							<td>BU Tech. + Process Tech. + QC</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td rowspan="1">Comm. GO</td>
@@ -3846,7 +3938,7 @@ Key elements to be considered in Commercialization plan :
 								</ul>
 							</td>
 							<td>Technology IP, IP Legal</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 					</tbody>
 				</table>
@@ -3854,7 +3946,7 @@ Key elements to be considered in Commercialization plan :
 		</section>
 		<section class="cardBox mt10" id="">
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>IP/LEGAL Assessment</div>
-			<div class="fixedTable hBorderTable hScroll vMiddle">
+			<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 				<table id="">
 					<colgroup>
 						<col style="width: auto;">
@@ -3878,64 +3970,64 @@ Key elements to be considered in Commercialization plan :
 							<td>Identification of high level Risk/Opportunity for IP</td>
 							<td>- Preliminary risk/opportunity assessment</td>
 							<td>NPC Requester</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>Preliminary IP assessment : Competitor Product Mapping & Technology Landscape :</td>
 							<td>- Preliminary insights on competition and Tech. landscape from an ideation, opportunity or risk point of view for the new concept.</td>
 							<td>BU Technology + IP</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td rowspan="5">Lab Formulation & Scale-Up</td>
 							<td>State of the Art / Patent Landscape Search</td>
 							<td>- Assessment of state of the Art for the product concept and provide insights on white spaces</td>
 							<td>Technology IP</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>Preliminary FTP assessment</td>
 							<td>- Assessment of the proposed solution/product for any major competitor patent blocks</td>
 							<td>Technology IP</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>Patentability Search/Opinion</td>
 							<td>- Perform search for prior arts relevant to patentability of the new product/solution</td>
 							<td>Technology IP, IP Legal</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>IDL Review (Where applicable)</td>
 							<td>- Perform review of the IDL, suggest changes if any and recommend experimentation if any</td>
 							<td>Technology IP, IP Legal</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>Patent Drafting & filing (Where Applicable)</td>
 							<td>- Draft and file patent applications</td>
 							<td>IP Legal</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td rowspan="2">Comm. GO</td>
 							<td>FTP Analysis and Opinion</td>
 							<td>- Advise if the developed product has freedom to practise in the countries of MPM interest</td>
 							<td>Technology IP, IP Legal</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>Execute NDA/CDA with the customer</td>
 							<td>- Provide NDA for execution with Customer before exchange of Technology related information</td>
 							<td>Technology IP, IP Legal</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>Comm. GO</td>
 							<td>IP Strategy Verification</td>
 							<td>- Confirm all required filings, publications, NDA/CDAs and FTP assessments are complete</td>
 							<td>Technology IP, IP Legal</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 					</tbody>
 				</table>
@@ -3943,7 +4035,7 @@ Key elements to be considered in Commercialization plan :
 		</section>
 		<section class="cardBox mt10" id="">
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Product Stewardship Assessment</div>
-			<div class="fixedTable hBorderTable hScroll vMiddle">
+			<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 				<table id="">
 					<colgroup>
 						<col style="width: auto;">
@@ -3967,7 +4059,7 @@ Key elements to be considered in Commercialization plan :
 							<td>Identification of high level Risks (if any) related to Regulatory Aspects</td>
 							<td>- Preliminary risk identification</td>
 							<td>NPC Requester</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>
@@ -3983,20 +4075,20 @@ Key elements to be considered in Commercialization plan :
 								</ul>
 							</td>
 							<td>(BU Technology + PS) Project Team members</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td rowspan="4">Lab Formulation & Scale-up</td>
 							<td>Regulatory Risks / Concerns</td>
 							<td>- Updated risk assessment related to regulatory aspects (including status on resolution/mitigation of previously identified risks/concerns)</td>
 							<td>Project Leader + BU Tech. & PS team members</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>MSDS</td>
 							<td>- Ensure MSDS are available for all new materials (inputs, intermediates, products) prior to SAP material master set-up</td>
 							<td>PS team member with input from BU Tech</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>Toxicological (and any other applicable) Testing</td>
@@ -4007,39 +4099,39 @@ Key elements to be considered in Commercialization plan :
 								</ul>
 							</td>
 							<td>PS team member + BU Tech</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>Chemical & Government Registrations</td>
 							<td>- Develop plan for all applicable Government and Chemical Registration Needs</td>
 							<td>PS team member + BU Technology</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td rowspan="3">Comm. GO</td>
 							<td>Regulatory Risks / Concerns</td>
 							<td>- Confirm all major regulatory risks / concerns are suitably resolved</td>
 							<td>BU Tech + PS team member</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>MSDS</td>
 							<td>- Confirm MSDS are available for all new materials (intermediates & finished products)</td>
 							<td>PS team member + BU Tech</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>Toxicological (and any other applicable) Testing</td>
 							<td>- Confirm all required testing have been completed</td>
 							<td>PS team member + BU Tech</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>Comm. GO</td>
 							<td>Chemical & Government Registrations</td>
 							<td>- Confirm all government and chemical required registrations (for all regions where the product will be launched) are complete</td>
 							<td>Mktg + PS team member</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 					</tbody>
 				</table>
@@ -4047,7 +4139,7 @@ Key elements to be considered in Commercialization plan :
 		</section>
 		<section class="cardBox mt10" id="">
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>GTC Assessment</div>
-			<div class="fixedTable hBorderTable hScroll vMiddle">
+			<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 				<table id="">
 					<colgroup>
 						<col style="width: auto;">
@@ -4065,11 +4157,11 @@ Key elements to be considered in Commercialization plan :
 						</tr>
 						<tr>
 							<td>1. What is the intended use or application? What industry sector?</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>2. Can the product get used in civil and military application? In case of military application, what specific application can it get used for?</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>
@@ -4101,7 +4193,7 @@ Key elements to be considered in Commercialization plan :
 								e.g. CWC, PIC, Drug Precursors, etc.
 								(The full CAS number reference list can get obtained here: <a class="link" href="#">LINK</a>)
 							</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td colspan="2" class="grey lighten-2 ht35"><b class="font16">C. Proposed Supply Chain Review</b> (To be completed before Scale-up and review/update before Comm. Go)</td>
@@ -4111,22 +4203,22 @@ Key elements to be considered in Commercialization plan :
 								7. Which raw materials are needed and what potential sourcing options exist?
 								<br>(You may want to consult with the responsible Procurement Commodity Manager)
 							</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>8. What are the potential MPM plants to produce this product?</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>9. What are the key geographical markets targetted?</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>
 								10. What is the anticipated manufacturing process (Chemical Rule). Please refer to guidance on "Chemical Rules"
 								<a href="#" class="link">here</a>
 							</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 					</tbody>
 				</table>
@@ -4135,7 +4227,7 @@ Key elements to be considered in Commercialization plan :
 		</section>
 		<section class="cardBox mt10" id="">
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Generic Risk Assessment</div>
-			<div class="fixedTable hBorderTable hScroll vMiddle">
+			<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 				<table id="">
 					<colgroup>
 						<col style="width: auto;">
@@ -4318,7 +4410,7 @@ Key elements to be considered in Commercialization plan :
 										<input type="text" class="file-path validate">
 									</div>
 								</div>
-								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 							</div>
 						</div>
 					</div>
@@ -4327,7 +4419,7 @@ Key elements to be considered in Commercialization plan :
 		</section>
 		<section class="cardBox mt10" id="">
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Design Performance Validation</div>
-			<div class="fixedTable hBorderTable hScroll vMiddle" style="max-height: 300px;">
+			<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 300px;">
 				<table id="">
 					<colgroup>
 						<col style="width: auto;">
@@ -4447,7 +4539,7 @@ Key elements to be considered in Commercialization plan :
 										<input type="text" class="file-path validate">
 									</div>
 								</div>
-								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 							</div>
 						</div>
 					</div>
@@ -4475,7 +4567,7 @@ Key elements to be considered in Commercialization plan :
 										<input type="text" class="file-path validate">
 									</div>
 								</div>
-								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 							</div>
 						</div>
 					</div>
@@ -4484,7 +4576,7 @@ Key elements to be considered in Commercialization plan :
 		</section>
 		<section class="cardBox mt10" id="">
 			<div class="cardTit2"><i class="material-icons left">inventory_2</i>Learnings Summary</div>
-			<div class="fixedTable hBorderTable hScroll vMiddle">
+			<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 				<table id="">
 					<colgroup>
 						<col style="width: auto;">
@@ -4506,72 +4598,72 @@ Key elements to be considered in Commercialization plan :
 						<tr>
 							<td>1.00</td>
 							<td>Project Selection, Alignment to BU Strategy and Portfolio fit</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>2.00</td>
 							<td>Business Case Development and Front-end Value Proposition</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>3.00</td>
 							<td>Project Planning & Project Resources</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>4.00</td>
 							<td>Customer Requirements, VOC and CTQs</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>5.00</td>
 							<td>Product Development</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>6.00</td>
 							<td>Process Development & Scale-up</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>7.00</td>
 							<td>Overall Project Execution (Schedule, Budget, Cross-functional collaboration etc)</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>8.00</td>
 							<td>Results : Actual vs Plan (sales, margin, volume, costs etc)</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>9.00</td>
 							<td>NPI Process Effectiveness (Framework, tools & templates, Training etc)</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 						<tr>
 							<td>10.00</td>
 							<td>Other Areas/Aspects related to the Project</td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
-							<td><textarea class="materialize-textarea pd5 mb0"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
+							<td><textarea class="materialize-textarea"></textarea></td>
 						</tr>
 					</tbody>
 				</table>
@@ -4592,7 +4684,7 @@ Key elements to be considered in Commercialization plan :
 										<input type="text" class="file-path validate">
 									</div>
 								</div>
-								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 							</div>
 						</div>
 					</div>
@@ -4617,7 +4709,7 @@ Key elements to be considered in Commercialization plan :
 										<input type="text" class="file-path validate">
 									</div>
 								</div>
-								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=1" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="1"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="/api/file/downloadFileAjax?id=9c357de7-d2e9-498f-82e2-65b7321a0631&amp;seq=0" data-id="9c357de7-d2e9-498f-82e2-65b7321a0631" data-seq="0"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-icons tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 							</div>
 						</div>
 					</div>
