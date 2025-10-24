@@ -41,9 +41,13 @@
 					let scrollTop = targetElement.offset().top - parseFloat($(".contArea").css("margin-top"));
 					$('html, body').animate({
 						scrollTop: scrollTop
-					}, 500, function() {
-						$('.menu-item').removeClass('active');
-						$('.menu-item[data-target="' + targetId + '"]').addClass('active');
+					}, {
+						queue: false,
+						duration: 500,
+						complete: function() {
+							$('.menu-item').removeClass('active');
+							$('.menu-item[data-target="' + targetId + '"]').addClass('active');
+						}
 					});
 				}
 			});
