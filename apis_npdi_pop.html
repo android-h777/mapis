@@ -262,18 +262,16 @@
 			$(".menuUl, .contArticle").hide();
 			setTimeout(() => {
 				$("#menu_stage_"+leftMenuNum).show(0,function(){
-					$(this).find(".menu-item").each(function(i){
+					const $menus = $(this).find(".menu-item");
+					$menus.each(function(i, o){
 						setTimeout(() => {
-							$(this).css("display", "").addClass("animate__fadeInLeft");
-							
-							if($(this).find(".hFixedTable").length > 0){
-								au.hFixedTableResize();
-							}
-							if($(this).find(".highcharts-container").length > 0){
-								highchartsArray.forEach(chart => chart.reflow());
-							}
+							$(o).css("display", "").addClass("animate__fadeInLeft");
 						}, i * 100);
 					});
+					setTimeout(() => {
+						au.hFixedTableResize();
+						highchartsArray.forEach(chart => chart.reflow());
+					}, $menus.length * 100);
 				});
 				$("#cont_stage_"+leftMenuNum).show(0,function(){
 					$(this).find(".cardBox").each(function(i){
@@ -399,7 +397,7 @@
 					</svg>
 				</div>
 			</div>
-			<div class="mr10"><a id="processMapBtn" class="waves-effect waves-light hBtn hViva modal-trigger animate__animated animate__rubberBand" href="#processMapModal"><i class="material-symbols-outlined left">save</i><span class="label">ProcessMap</span></a></div>
+			<div class="mr10"><a id="processMapBtn" class="waves-effect waves-light hBtn hViva modal-trigger animate__animated animate__rubberBand" href="#processMapModal"><i class="material-symbols-outlined left">account_tree</i><span class="label">ProcessMap</span></a></div>
 		</section>
 		<section class="npdiTabMenu" style="display: none;">
 			<ul class="tabs" id="npdiTab">
