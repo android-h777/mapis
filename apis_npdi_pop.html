@@ -222,6 +222,10 @@
 					$("header, aside, .contArea").removeClass("modalBlur");
 				}
 			});
+
+			$('.dropdown-content').each(function() {
+				$('body').append($(this));
+			});
         });
 
 		function fnSetStageCont(obj, dataType, stageNum, tabNum, menuNum){
@@ -425,20 +429,11 @@
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_1-2">
 					<i class="material-symbols-outlined left">preview</i><span>Concept Overview</span>
 				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_1-3">
-					<i class="material-symbols-outlined left">file_present</i><span>Attachments</span>
-				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_1-4">
-					<i class="material-symbols-outlined left">expand_content</i><span>Expected Opportunity Size</span>
-				</li>
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_1-5">
 					<i class="material-symbols-outlined left">verified</i><span>DFV Rating</span>
 				</li>
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_1-6">
 					<i class="material-symbols-outlined left">local_library</i><span>Approval Workflow</span>
-				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_1-7">
-					<i class="material-symbols-outlined left">comment</i><span>Actions/Comments</span>
 				</li>
 			</ul>
 			
@@ -629,7 +624,10 @@
 							<div class="col s2 ar pl0">NPC Submitted at</div>
 							<div class="col s4 val"dataconn data-col="submitted_at">23.09.2025</div>
 						</div>
-						
+						<div class="row">
+							<div class="col s2 ar pl0">Customer Desired Date</div>
+							<div class="col s4 val">Oct 2025</div>
+						</div>
 						<div class="row">
 							<div class="col s2 ar pl0">Image (Proudct/Application)</div>
 							<div class="col s10">
@@ -694,14 +692,73 @@
 								</div>
 							</div>
 						</div>
-					</div>
-				</div>
-			</section>
-
-			<section class="cardBox animate__animated mt10" id="pjContCard_1-3">
-				<div class="cardTit2"><i class="material-symbols-outlined left">file_present</i>Attachments</div>
-				<div>
-					<div class="inputArea">
+						<div class="row">
+							<div class="col s2 ar pl0">Comments</div>
+							<div class="col s10">
+								<div class="aniInput">
+									<textarea class="materialize-textarea" placeholder="Comments"></textarea>
+									<span class="focus-border"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Expected Opportunity Size<br>(Sales ($MM) / Volume (MT))</div>
+							<div class="col s10">
+								<div class="fixedTable hBorderTable hScroll mt10">
+								<table>
+									<colgroup>
+										<col style="width: 20%;">
+										<col style="width: 20%;">
+										<col style="width: 20%;">
+										<col style="width: 20%;">
+										<col style="width: 20%;">
+									</colgroup>
+									<thead>
+										<tr>
+											<th>Timeframe</th>
+											<th>Sales ($MM)</th>
+											<th>Volume (MT)</th>
+											<th>Average SGM %</th>
+											<th>Maintenance %</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td class="ac">
+												<select>
+													<option value="">5 Yrs Total</option>
+													<option value="">Peak Sales</option>
+												</select>
+											</td>
+											<td class="ac">
+												<div class="aniInput">
+													<input type="text" value="1,566,200" class="browser-default ar">
+													<span class="focus-border"/>
+												</div>                                  
+											</td>
+											<td class="ac">
+												<div class="aniInput">
+													<input type="text" value="4,590" class="browser-default ar">
+													<span class="focus-border"/>
+												</div>                                  
+											</td>
+											<td class="ar">
+												<div class="aniInput wd100px dpInlineBlock">
+													<input type="text" value="24.54" class="browser-default ar">
+													<span class="focus-border"/>
+												</div> %
+											</td>
+											<td class="ar">
+												<div class="aniInput wd100px dpInlineBlock">
+													<input type="text" value="24.54" class="browser-default ar">
+													<span class="focus-border"/>
+												</div> %
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
 						<div class="row">
 							<div class="col s2 ar pl0">Attachments</div>
 							<div class="col s10">
@@ -721,37 +778,6 @@
 							</div>
 						</div>
 					</div>
-				</div>
-			</section>
-
-			<section class="cardBox animate__animated mt10" id="pjContCard_1-4">
-				<div class="cardTit2"><i class="material-symbols-outlined left">expand_content</i>Expected Opportunity Size</div>
-				<div class="cardSubTit mt20">Expected Opportunity Size (Sales ($MM) / Volume (MT) Projection)</div>
-				<div class="fixedTable hBorderTable hScroll mt10">
-					<table>
-						<colgroup>
-							<col style="width: 25%;">
-							<col style="width: 25%;">
-							<col style="width: 25%;">
-							<col style="width: 25%;">
-						</colgroup>
-						<thead>
-							<tr>
-								<th>Timeframe</th>
-								<th>Sales ($MM)</th>
-								<th>Volume (MT)</th>
-								<th>Average SGM %</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td class="ac">5 Yrs Total</td>
-								<td class="ac">1,566,200</td>
-								<td class="ac">4,590</td>
-								<td class="ac">24.54%</td>
-							</tr>
-						</tbody>
-					</table>
 				</div>
 			</section>
 
@@ -972,22 +998,6 @@
 						<div class="row fLine vCenter">
 							<div class="col s2 ar pl0">NPC Review Document Attached</div>
 							<div class="col s4"><label><input class="filled-in" type="checkbox" checked><span class="pl0"></span></label></div>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<section class="cardBox animate__animated mt10" id="pjContCard_1-7">
-				<div class="cardTit2"><i class="material-symbols-outlined left">comment</i>Actions/Comments</div>
-				<div>
-					<div class="inputArea">
-						<div class="row">
-							<div class="col s2 ar pl0">Actions</div>
-							<div class="col s10 val">This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...This is actions from ...</div>
-						</div>
-						<div class="row">
-							<div class="col s2 ar pl0">Comments</div>
-							<div class="col s10 val">There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...There are several reason of ...</div>
 						</div>
 					</div>
 				</div>
