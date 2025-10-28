@@ -9,7 +9,7 @@
     <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
     <link type="text/css" rel="stylesheet" href="/css/animate.min.css">
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
     <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/highcharts/highcharts.js"></script>
@@ -93,129 +93,129 @@
             $(this).find(".btnArea").stop().slideUp(200);
           });
 
-Highcharts.chart('container_chart', {
-  chart: {
-    type: 'column'
-  },
-  title: {
-    text: ''
-  },
-  xAxis: {
-    categories: ['2025', '2026', '2027', '2028', '2029', '2030']
-  },
-  yAxis: {
-    min: 0,
-    title: {
-      text: null
-    },
-    stackLabels: {
-      enabled: true,
-      style: {
-        fontWeight: 'bold'
-      },
-      formatter: function() {
-        return this.total.toFixed(1);
-      }
-    }
-  },
-  legend: {
-    reversed: true
-  },
-  tooltip: {
-    shared: true,
-    pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
-    headerFormat: '<b>{point.key}</b><br/>',
-  },
-  plotOptions: {
-    column: {
-      stacking: 'normal',
-      dataLabels: {
-        enabled: false,
-        formatter: function() {
-          return this.y.toFixed(2);
-        }
-      }
-    }
-  },
-  series: [{
-    name: 'Maintenance',
-    color: '#A47864',
-    data: [2.3, 48.39, 148.65, 215.32, 275.31, 237.46]
-  }, {
-    name: 'Growth',
-    color: '#899f6a',
-    data: [214.30, 224.06, 214.71, 189.46, 111.37, 20.04]
-  }],
-  credits: {
-    enabled: false
-  }
-});
+          Highcharts.chart('container_chart', {
+            chart: {
+              type: 'column'
+            },
+            title: {
+              text: ''
+            },
+            xAxis: {
+              categories: ['2025', '2026', '2027', '2028', '2029', '2030']
+            },
+            yAxis: {
+              min: 0,
+              title: {
+                text: null
+              },
+              stackLabels: {
+                enabled: true,
+                style: {
+                  fontWeight: 'bold'
+                },
+                formatter: function() {
+                  return this.total.toFixed(1);
+                }
+              }
+            },
+            legend: {
+              reversed: true
+            },
+            tooltip: {
+              shared: true,
+              pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>',
+              headerFormat: '<b>{point.key}</b><br/>',
+            },
+            plotOptions: {
+              column: {
+                stacking: 'normal',
+                dataLabels: {
+                  enabled: false,
+                  formatter: function() {
+                    return this.y.toFixed(2);
+                  }
+                }
+              }
+            },
+            series: [{
+              name: 'Maintenance',
+              color: '#A47864',
+              data: [2.3, 48.39, 148.65, 215.32, 275.31, 237.46]
+            }, {
+              name: 'Growth',
+              color: '#899f6a',
+              data: [214.30, 224.06, 214.71, 189.46, 111.37, 20.04]
+            }],
+            credits: {
+              enabled: false
+            }
+          });
 
-Highcharts.chart('container_timeline', {
-  chart: {
-      type: 'timeline',
-      backgroundColor: 'transparent'
-  },
-  xAxis: {
-      visible: false
-  },
-  yAxis: {
-      visible: false
-  },
-  title: {
-      text: ''
-  },
-  plotOptions: {
-      series: {
-          dataLabels: {
-              backgroundColor: 'rgba(255,255,255, 0.7)'
-          },
-          cursor: 'pointer'
-      }
-  },
-  series: [{
-      data: [{
-          name: 'NPC',
-          label: "06.07.2024",
-          description: '',
-          id: 'cont1',
-          color: "#899f6a"
-      }, {
-          name: 'NPI Go',
-          label: "12.09.2024",
-          description: '',
-          id: 'cont2',
-          color: "#899f6a"
-      }, {
-          name: 'Lab Formulation',
-          label: "22.03.2025",
-          description: '',
-          id: 'cont2',
-          color: "#899f6a"
-      }, {
-          name: 'Scale-Up',
-          label: "",
-          description: '',
-          id: 'cont3',
-          color: "#7391c9"
-      }, {
-          name: 'Commercial Go',
-          label: "",
-          description: '',
-          id: 'cont4',
-          color: "#eeeeee"
-      }, {
-          name: 'Post Launch Review',
-          label: "",
-          description: '',
-          id: 'cont5',
-          color: "#eeeeee"
-      }]
-  }],
-  credits: {
-      enabled: false
-  }
-});
+          Highcharts.chart('container_timeline', {
+            chart: {
+                type: 'timeline',
+                backgroundColor: 'transparent'
+            },
+            xAxis: {
+                visible: false
+            },
+            yAxis: {
+                visible: false
+            },
+            title: {
+                text: ''
+            },
+            plotOptions: {
+                series: {
+                    dataLabels: {
+                        backgroundColor: 'rgba(255,255,255, 0.7)'
+                    },
+                    cursor: 'pointer'
+                }
+            },
+            series: [{
+                data: [{
+                    name: 'NPC',
+                    label: "06.07.2024",
+                    description: '',
+                    id: 'cont1',
+                    color: "#899f6a"
+                }, {
+                    name: 'NPI Go',
+                    label: "12.09.2024",
+                    description: '',
+                    id: 'cont2',
+                    color: "#899f6a"
+                }, {
+                    name: 'Lab Formulation',
+                    label: "22.03.2025",
+                    description: '',
+                    id: 'cont2',
+                    color: "#899f6a"
+                }, {
+                    name: 'Scale-Up',
+                    label: "",
+                    description: '',
+                    id: 'cont3',
+                    color: "#7391c9"
+                }, {
+                    name: 'Commercial Go',
+                    label: "",
+                    description: '',
+                    id: 'cont4',
+                    color: "#eeeeee"
+                }, {
+                    name: 'Post Launch Review',
+                    label: "",
+                    description: '',
+                    id: 'cont5',
+                    color: "#eeeeee"
+                }]
+            }],
+            credits: {
+                enabled: false
+            }
+          });
 
          
           $('.modal').modal();
@@ -263,13 +263,22 @@ Highcharts.chart('container_timeline', {
               <span class="mocha25-text fontM">JONGHO LEE</span>  
             </div>
             <i class="material-icons gardenia25 mocha25-text fLine vCenter hCenter mg0">person</i>
-            <div class="btnArea" style="height: 150px; padding-top: 20px; margin-top: 0px; padding-bottom: 20px; margin-bottom: 0px; display: none;">
+            <div class="btnArea" style="padding-top: 20px; margin-top: 0px; padding-bottom: 20px; margin-bottom: 0px; display: none;">
               <a id="profileBtn" class="waves-effect waves-light hBtn">
                 <span class="material-symbols-outlined left">account_circle</span>
                 <span class="label">View Profile</span>
               </a>
               <a id="adminBtn" class="waves-effect waves-light hBtn">
                 <span class="material-symbols-outlined left">admin_panel_settings</span><span class="label">Administrator</span>
+              </a>
+              <a id="" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">volunteer_activism</span><span class="label">Service Now</span>
+              </a>
+              <a id="" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">directions</span><span class="label">Guidance</span>
+              </a>
+              <a id="" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">local_library</span><span class="label">Training</span>
               </a>
               <a id="logoutBtn" class="waves-effect waves-light hBtn hViva">
                 <span class="material-symbols-outlined left">logout</span><span class="label">Sign Out</span>
@@ -278,7 +287,7 @@ Highcharts.chart('container_timeline', {
           </div>
           <div class="langInfo ml10">
             <i class="material-icons mocha25-text fLine vCenter hCenter mg0">language</i>
-            <div class="btnArea" style="height: 310px; padding-top: 20px; margin-top: 0px; padding-bottom: 20px; margin-bottom: 0px; display: none;">
+            <div class="btnArea" style="padding-top: 20px; margin-top: 0px; padding-bottom: 20px; margin-bottom: 0px; display: none;">
               <a class="waves-effect waves-light hBtn jc hViva on" data-lang="en">English</a><a class="waves-effect waves-light hBtn jc" data-lang="de">German</a><a class="waves-effect waves-light hBtn jc" data-lang="ko">Korean</a><a class="waves-effect waves-light hBtn jc" data-lang="ja">Japanese</a><a class="waves-effect waves-light hBtn jc" data-lang="zh">Chinese</a><a class="waves-effect waves-light hBtn jc" data-lang="it">Italian</a><a class="waves-effect waves-light hBtn jc" data-lang="es">Spanish</a>
             </div>
           </div>
@@ -454,12 +463,22 @@ Highcharts.chart('container_timeline', {
           <div class="col s6">Sustainability Impact</div>
           <div class="col s6 val" id="dtContVal7">Beneficial/80</div>
           <div class="col s6">Customer</div>
-          <div class="col s6 val" id="dtContVal7"><span class="roundBox mr10">NKT</span><span class="roundBox mr10">Pfisterer</span><span class="roundBox mr10">Bosch</span></div>
+          <div class="col s6 val" id="dtContVal7" style="display: flex;align-items: center;height: 25px;">
+            <span class="roundBox mr10">NKT</span><span class="roundBox mr10">Pfisterer</span><span class="roundBox mr10">Bosch</span>
+          </div>
         </div>
         <div class="subTit mt20 ml10">TimeLine</div>
-        <div id="container_timeline" style="height: 150px;"></div>
+        <div class="row">
+          <div class="col s12">
+            <div id="container_timeline" style="height: 150px;border: 1px solid #d0d0d0;border-radius: 5px;"></div>
+          </div>
+        </div>
         <div class="subTit mt20 ml10">Revenue</div>
-        <div id="container_chart" style="height: 250px;"></div>
+        <div class="row">
+          <div class="col s12">
+            <div id="container_chart" style="height: 250px;border: 1px solid #d0d0d0;border-radius: 5px;"></div>
+          </div>
+        </div>
       </div>
     </div>
   </article>
