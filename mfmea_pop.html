@@ -18,21 +18,33 @@
         $(document).ready(function(){
           $('.datepicker').datepicker();
           $('select').formSelect();
-          $('.dropdown-content').each(function() {
-            $('body').append($(this));
-          });
           // $('.modal').modal();
 
           $('#HierarchyViewModal').modal({
+            onOpenStart: function () {
+              $("header, aside, .contArea").addClass("modalBlur");
+            },
             onOpenEnd: function () {
               buildTree();
+            },
+            onCloseStart: function () {
+              $("header, aside, .contArea").removeClass("modalBlur");
             },
             onCloseEnd: function () {
               teardown();
             }
           });
 
-          // $('#HierarchyViewModal').modal('open');
+          $('#dataSheetModal').modal({
+            onOpenStart: function () {
+              $("header, aside, .contArea").addClass("modalBlur");
+            },
+            onCloseStart: function () {
+              $("header, aside, .contArea").removeClass("modalBlur");
+            }
+          });
+
+          // $('#dataSheetModal').modal('open');
 
           $(window).on('scroll', function() {
             const scrollPosition = $(window).scrollTop() + 70; // 상단 바 보정값
@@ -76,6 +88,10 @@
             $(this).find(".delBtn").hide();
           });
 
+          $(".pjTit").click(function(){
+            window.open("mfmea_pop.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
+          });
+
         });
 
         const data = {
@@ -107,6 +123,14 @@
             }
           ]
         };
+        
+        const TIER_LABELS = [
+          "Fail Mode",    // depth 1  
+          "Fail Effect",   // depth 2
+          "Fail Cause",    // depth 3
+          "Current Control"// depth 4
+        ];
+
   </script>
 </head>
 <body class="popup">
@@ -122,10 +146,12 @@
         <li class="menu-item waves-effect waves-blue active" data-target="pjContCard1"><i class="material-icons left">inventory_2</i><span>Basic Info</span></li>
         <li class="menu-item waves-effect waves-blue" data-target="pjContCard2"><i class="material-icons left">apps_outage</i><span>Fail Mode</span></li>
         <li class="menu-item waves-effect waves-blue" data-target="pjContCard3"><i class="material-icons left">file_present</i><span>Attach File</span></li>
+        <li class="menu-item waves-effect waves-blue" data-target="pjContCard4"><i class="material-icons left">history</i><span>History FMEA</span></li>
       </ul>
     </section>
     <section class="btnArea">
-      <div><a href="javascript:;" class="waves-effect waves-light hBtn hViva modal-trigger" data-target="HierarchyViewModal"><i class="material-icons left">account_tree</i><span class="label">FMEA Map</span></a></div>
+      <div><a href="javascript:;" class="waves-effect waves-light hBtn hMocha modal-trigger" data-target="dataSheetModal"><i class="material-icons left">text_snippet</i><span class="label">Data Sheet</span></a></div>
+      <div><a href="javascript:;" class="waves-effect waves-light hBtn hMocha modal-trigger mt10" data-target="HierarchyViewModal"><i class="material-icons left">account_tree</i><span class="label">FMEA Map</span></a></div>
       <div><a href="atach/MPM FMEA for Prototype Rv2.0.xlsx" download class="waves-effect waves-light hBtn hGreen mt10"><i class="material-icons left">grid_on</i><span class="label">Excel DownLoad</span></a></div>
       <div><a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn hBlue mt10"><i class="material-icons left">save</i><span class="label">Save</span></a></div>
     </section>
@@ -964,6 +990,183 @@
         <a href="javascript:;" class="waves-effect waves-light roundBox green">20250906_PFMEA.xlsx</a>
       </div>
     </section>
+
+    <section class="cardBox mt10" id="pjContCard4">
+      <div class="cardTit2"><i class="material-icons left">history</i>History FMEA</div>
+      <div class="typeList mt10">
+        <ul class="mainList subCardBox">
+          <li class="waves-effect waves-hColor animate__animated animate__flipInX">
+            <section class="statusBox type1">PFMEA</section>
+            <section class="wd100p">
+              <div class="pjTit">[NAN-#101] Comply with RM input Q'ty (range ±2%)</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Customer : ACTIA</div>
+                  <div class="roundBox contVal2">PRODUCT TYPE : TIA**(A)</div>
+                  <div class="roundBox contVal3">PRODUCT CODE : 84060</div>
+                  <div class="roundBox contVal4">PROCESS : Feeding</div>
+                </div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated animate__flipInX">
+            <section class="statusBox type2">DFMEA</section>
+            <section class="wd100p">
+              <div class="pjTit">[OHT-#205] Meet all properties required by each ECM module</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1">Customer : BOSCH</div>
+                  <div class="roundBox contVal2">PRODUCT TYPE : TIA**(B)</div>
+                  <div class="roundBox contVal3">PRODUCT CODE : 67202</div>
+                  <div class="roundBox contVal4">PROCESS : -</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        </ul>
+      </div>
+    </section>
+  </article>
+
+  <article id="dataSheetModal" class="modal" style="width: 90%; top:6% !important;">
+    <div class="modal-header mochaBg">
+      <h5>FMEA Data Sheet</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div class="inputArea">
+        <div class="row">
+          <div class="col s2 ar tit">Title</div>
+          <div class="col s10 val">Comply with RM input Q'ty (range ±2%)</div>
+          <div class="col s2 ar tit">Customer</div>
+          <div class="col s4 val">ACTIA</div>
+          <div class="col s2 ar tit">Product Type</div>
+          <div class="col s4 val">TIA350R</div>
+          <div class="col s2 ar tit">Product Code</div>
+          <div class="col s4 val">84060</div>
+          <div class="col s2 ar tit">Process</div>
+          <div class="col s4 val">MIXING, HEATING</div>
+          <div class="col s2 ar tit">Fail Mode</div>
+          <div class="col s10 val fontM">Less/More RM Input</div>
+        </div>
+      </div>
+      <div class="fixedTable">
+        <table>
+          <colgroup>
+            <col style="width: auto;">
+            <col style="width: auto;">
+            <col style="width: 80px;">
+            <col style="width: 80px;">
+            <col style="width: 80px;">
+            <col style="width: 80px;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Fail Effect</th>
+              <th>Fail Cause</th>
+              <th>Severity</th>
+              <th>Occurrence</th>
+              <th>Detection</th>
+              <th>A.P</th>
+              <th>Current Control</th>
+              <th>Recommended Action</th>
+              <th>Planed Date</th>
+              <th>Actual Date</th>
+              <th>Status</th>
+              <th>Responsible</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr class="bdT">
+              <td rowspan="4">Viscosity defect</td>
+              <td rowspan="2">Abnormal Flowmeter tuning Sensor</td>
+              <td rowspan="2" class="ac">4</td>
+              <td rowspan="2" class="ac">3</td>
+              <td rowspan="2" class="ac">6</td>
+              <td rowspan="2" class="ac">L</td>
+              <td>Annual calibration</td>
+              <td>Install Dual-Sensor with R6101's Loadcell</td>
+              <td>11/11/25'</td>
+              <td>-</td>
+              <td>in Process</td>
+              <td>Zhang,Chen</td>
+            </tr>
+            <tr class="bdT_dash">
+              <td>Periodic sensor check</td>
+              <td>Replace faulty sensor</td>
+              <td>11/11/25'</td>
+              <td>-</td>
+              <td>in Process</td>
+              <td>Zhang,Chen</td>
+            </tr>
+            <tr class="bdT">
+              <td rowspan="2">Inaccurate RM ratio control</td>
+              <td rowspan="2" class="ac">4</td>
+              <td rowspan="2" class="ac">4</td>
+              <td rowspan="2" class="ac">6</td>
+              <td rowspan="2" class="ac">L</td>
+              <td>Dosing system check</td>
+              <td>Improve ratio accuracy</td>
+              <td>11/11/25'</td>
+              <td>-</td>
+              <td>in Process</td>
+              <td>Zhang,Chen</td>
+            </tr>
+            <tr class="bdT_dash">
+              <td>Operator verification</td>
+              <td>Provide operator training</td>
+              <td>11/11/25'</td>
+              <td>-</td>
+              <td>in Process</td>
+              <td>Zhang,Chen</td>
+            </tr>
+            <tr class="bdT">
+              <td rowspan="4">Hardness defect</td>
+              <td rowspan="2">Low curing temperature</td>
+              <td rowspan="2" class="ac">4</td>
+              <td rowspan="2" class="ac">2</td>
+              <td rowspan="2" class="ac">6</td>
+              <td rowspan="2" class="ac">L</td>
+              <td>Oven temperature monitoring</td>
+              <td>Adjust temperature setting</td>
+              <td>11/11/25'</td>
+              <td>11/8/25'</td>
+              <td>Completed</td>
+              <td>Zhang,Chen</td>
+            </tr>
+            <tr class="bdT_dash">
+              <td>Sensor calibration</td>
+              <td>Upgrade temperature control</td>
+              <td>11/11/25'</td>
+              <td>11/8/25'</td>
+              <td>Completed</td>
+              <td>Zhang,Chen</td>
+            </tr>
+            <tr class="bdT">
+              <td rowspan="2">Short curing time</td>
+              <td rowspan="2" class="ac">3</td>
+              <td rowspan="2" class="ac">4</td>
+              <td rowspan="2" class="ac">5</td>
+              <td rowspan="2" class="ac">L</td>
+              <td>Timer setting verification</td>
+              <td>Reset curing timer</td>
+              <td>11/11/25'</td>
+              <td>-</td>
+              <td>Created</td>
+              <td>Zhang,Chen</td>
+            </tr>
+            <tr class="bdT_dash">
+              <td>Production log review</td>
+              <td>Revise process schedule</td>
+              <td>11/11/25'</td>
+              <td>-</td>
+              <td>in Process</td>
+              <td>Zhang,Chen</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </article>
 
   <article id="HierarchyViewModal" class="modal" style="width: 80%;">
@@ -976,6 +1179,5 @@
     </div>
   </article>
 
-  <article class="bgLayer"></article>
 </body> 
 </html>

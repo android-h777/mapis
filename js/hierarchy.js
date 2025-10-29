@@ -1,4 +1,12 @@
-const svg = d3.select(".nodeChart svg");
+const getTierText = (depth) => TIER_LABELS[depth] ?? `Depth ${depth}`;
+
+
+// (선택) 단계별 간격을 다르게 주고 싶으면 사용
+const GAP_BY_DEPTH = [10, 9, 8, 8]; // 0,1,2,3 깊이별 gap
+const getTierGap = (depth, def = 8) => GAP_BY_DEPTH[depth] ?? def;
+//Fail Modem, Fail Effect, Fail Cause, Current Control
+
+const svg = d3.select(".nodeChart svg");  // ← 여기로
 let g = null;        // 매 오픈 때 새로 만듦
 let ro = null;       // ResizeObserver
 let centeredOnce = false;
@@ -16,70 +24,145 @@ const linkGen = d3.linkHorizontal()
 function drawNode(selection) {
   selection.each(function (d) {
     const gsel = d3.select(this);
-    const text = gsel.append("text")
+
+    // 본문 라벨
+    gsel.append("text")
+      .attr("class", "label")
       .attr("dy", "0.35em")
       .attr("text-anchor", "middle")
       .text(d.data.name);
 
+    // 본문 박스
     gsel.insert("rect", "text")
+      .attr("class", "hier-line")
       .attr("rx", 6);
+
+    // ---- 단계 라벨(텍스트+박스) 묶는 그룹 ----
+    const tierG = gsel.append("g").attr("class", "tier-wrap");
+
+    tierG.append("rect")
+      .attr("class", `tier-box tier-box${d.depth + 1}`);
+
+    tierG.append("text")
+      .attr("class", "tier-text")   // ← 기존 .tier 대신 .tier-text 사용
+      .attr("text-anchor", "start")
+      .text(getTierText(d.depth));
 
     measureAndBox(gsel);
   });
 }
 
+
 // 텍스트 bbox로 rect 크기 갱신
-function measureAndBox(selection, padX = 8, padY = 6) {
+function measureAndBox(selection, padX_base = 10, padY_base = 4) {
   selection.each(function (d) {
     const gsel = d3.select(this);
-    const text = gsel.select("text");
-    if (text.empty()) return;
+    const label = gsel.select("text.label");
+    if (label.empty()) return;
 
-    const bbox = text.node().getBBox();
-    d.bbox = bbox;
+    const lb = label.node().getBBox();
+    const w = lb.width + padX_base * 2;
+    const h = lb.height + padY_base * 2;
 
-    const w = bbox.width + padX * 2;
-    const h = bbox.height + padY * 2;
+    gsel.select("rect.hier-line")
+      .attr("x", -w/2).attr("y", -h/2)
+      .attr("width", w).attr("height", h);
 
-    gsel.select("rect")
-      .attr("x", -w / 2)
-      .attr("y", -h / 2)
-      .attr("width", w)
-      .attr("height", h);
+    const tierG = gsel.select(".tier-wrap");
+    if (tierG.empty()) return;
+
+    const gap = getTierGap?.(d.depth, 8) ?? 8;
+    const H_OVERLAP = 0;
+    const V_OVERLAP = 6;
+    const tierY = -h/2 - gap + V_OVERLAP;
+    const rectLeft = -w/2 + H_OVERLAP;
+
+    const t = tierG.select("text.tier-text")
+      .attr("x", 0)
+      .attr("y", 0)
+
+      .attr("dominant-baseline", "middle")
+      .node();
+
+    // ---- 타이트 패딩 설정 ----
+    const fs = parseFloat(getComputedStyle(t).fontSize) || 9;
+
+    // 기존보다 확 줄이기 (거의 딱 맞게)
+    const padX = 2;                       // ← 좌우 패딩 거의 없음
+    const padY = Math.max(1, Math.round(fs * 0.10)); // ← 상하 패딩 매우 작게
+    const extra = 0;                      // ← 여분 제거
+    const minW = 0;                       // ← 최소너비 제한 제거
+    const rx   = Math.round(fs * 0.5);    // 둥근 모서리(선택)
+
+    // 텍스트 길이
+    const textLen = t.getComputedTextLength ? t.getComputedTextLength() : t.getBBox().width;
+
+    // 박스 크기 = 텍스트 + 아주 작은 패딩
+    const rW = Math.max(Math.ceil(textLen) + 2*padX + extra, minW);
+    const rH = Math.ceil(t.getBBox().height) + 2*padY + extra;
+
+    tierG.select("rect.tier-box")
+      .attr("x", 0)
+      .attr("y", -(rH/2))   // 텍스트를 middle로 두었으니 중앙 기준 배치
+      .attr("width", rW)
+      .attr("height", rH)
+      .attr("rx", rx);
+
+    // 텍스트는 좌측 패딩만큼 오른쪽으로
+    d3.select(t).attr("x", padX);
+
+    tierG.attr("transform", `translate(${rectLeft},${tierY})`);
   });
 }
+
+
+
 
 // 컨텐츠 경계 계산 → viewBox 중앙정렬
 function centerByViewBox(pad = 24) {
   if (!g) return;
+
+  // 최신 bbox 반영 (라벨/뱃지 크기 확정)
   measureAndBox(g.selectAll(".node"));
 
-  const padX = 8, padY = 6;
-  const dataNodes = g.selectAll(".node").data();
-  if (!dataNodes || !dataNodes.length) return;
+  const nodesSel = g.selectAll(".node");
+  if (nodesSel.size() === 0) return;
 
-  const rectOf = (d) => {
-    const x = d.x + ((d.bbox?.y ?? -padY) - padY);
-    const y = d.y + ((d.bbox?.x ?? -padX) - padX);
-    const w = (d.bbox?.width ?? 0) + padX * 2;
-    const h = (d.bbox?.height ?? 0) + padY * 2;
-    return { left: y, right: y + w, top: x, bottom: x + h };
-  };
+  let xMin = +Infinity, xMax = -Infinity, yMin = +Infinity, yMax = -Infinity;
 
-  const xs = dataNodes.map(rectOf);
-  const xMin = d3.min(xs, r => r.top);
-  const xMax = d3.max(xs, r => r.bottom);
-  const yMin = d3.min(xs, r => r.left);
-  const yMax = d3.max(xs, r => r.right);
+  // 각 노드(<g class="node">)의 그룹 bbox를 사용
+  nodesSel.each(function(d){
+    const bb = this.getBBox();  // 해당 그룹(라벨+박스+뱃지 포함) local bbox
+    // 현재 transform은 translate(d.y, d.x) 이므로 전역 좌표는 +d.y / +d.x
+    const left   = d.y + bb.x;
+    const right  = d.y + bb.x + bb.width;
+    const top    = d.x + bb.y;
+    const bottom = d.x + bb.y + bb.height;
 
-  const vbX = yMin - pad;
-  const vbY = xMin - pad;
-  const vbW = (yMax - yMin) + 2 * pad;
-  const vbH = (xMax - xMin) + 2 * pad;
+    if (left   < yMin) yMin = left;
+    if (right  > yMax) yMax = right;
+    if (top    < xMin) xMin = top;
+    if (bottom > xMax) xMax = bottom;
+  });
 
-  svg.attr("viewBox", `${vbX} ${vbY} ${vbW} ${vbH}`)
-     .attr("preserveAspectRatio", "xMidYMid meet");
+  // 사방 패딩 지원 (숫자 또는 객체)
+  const P = (typeof pad === "number")
+    ? { left: pad, right: pad, top: pad, bottom: pad }
+    : { left: pad.left ?? 24, right: pad.right ?? 24, top: pad.top ?? 24, bottom: pad.bottom ?? 24 };
+
+  // 선(stroke) 여유 +1~2px 추가
+  const strokePad = 2;
+
+  const vbX = Math.floor(yMin) - P.left - strokePad;
+  const vbY = Math.floor(xMin) - P.top - strokePad;
+  const vbW = Math.ceil(yMax - yMin) + P.left + P.right + strokePad * 2;
+  const vbH = Math.ceil(xMax - xMin) + P.top + P.bottom + strokePad * 2;
+
+  svg
+    .attr("viewBox", `${vbX} ${vbY} ${vbW} ${vbH}`)
+    .attr("preserveAspectRatio", "xMidYMid meet"); // 전체가 보이게(잘림 방지)
 }
+
 
 // 간단 드래그(개별 노드만 이동)
 const drag = d3.drag()
@@ -145,6 +228,7 @@ function buildTree() {
   // ✅ ① 그린 직후 1회 중앙 맞춤(초기 깜빡임/잘림 방지)
   centerByViewBox(24);
 
+
   const reveal = d3.transition().duration(900).ease(d3.easeCubicOut);
 
   linkEnter.transition(reveal).attrTween("d", function (d) {
@@ -170,11 +254,12 @@ function buildTree() {
       centeredOnce = true;
       // 폰트 적용/텍스트 렌더 안정화를 위해 한 프레임 뒤 실행
       requestAnimationFrame(() => centerByViewBox(24));
+
     }
   });
 
   // ✅ ③ 모달/컨테이너 리사이즈 대응
-  const container = document.querySelector('.nodeChart');
+  const container = document.querySelector('#HierarchyViewModal .nodeChart');
   if (container) {
     if (ro) ro.disconnect();
     ro = new ResizeObserver(debounce(() => centerByViewBox(24), 150));

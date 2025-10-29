@@ -14,7 +14,42 @@
     <script src="js/d3.v7.min.js"></script>
     <script src="js/hierarchy.js" defer></script>
     <script>
-
+        const data = {
+          name: "Less/More RM Input",
+          children: [
+            {
+              name: "Viscosity defect",
+              children: [
+                {
+                  name: "Abnormal Flowmeter tuning Sensor",
+                  children : [{name:"Annual calibration"}, {name:"Periodic sensor check"}]
+                },
+                { name: "Inaccurate RM ratio control",
+                  children : [{name:"Dosing system check"}, {name:"Operator verification"}]
+                }
+              ]
+            },
+            {
+              name: "Hardness defect",
+              children: [
+                {
+                  name: "Low curing temperature",
+                  children : [{name:"Oven temperature monitoring"}, {name:"Sensor calibration"}]
+                },
+                { name: "Short curing time",
+                  children : [{name:"Timer setting verification"}, {name: "Production log review"}]
+                }
+              ]
+            }
+          ]
+        }; 
+        const TIER_LABELS = [
+          "Fail Mode",    // depth 1  
+          "Fail Effect",   // depth 2
+          "Fail Cause",    // depth 3
+          "Current Control"// depth 4
+        ];
+        
         $(document).ready(function(){
 
           $(".pjTit, .rightSection .cardTit, #newPjBtn").click(function(){
@@ -88,37 +123,6 @@
 
           buildTree();
         });
-
-        const data = {
-          name: "Less/More RM Input",
-          children: [
-            {
-              name: "Viscosity defect",
-              children: [
-                {
-                  name: "Abnormal Flowmeter tuning Sensor",
-                  children : [{name:"Annual calibration"}, {name:"Periodic sensor check"}]
-                },
-                { name: "Inaccurate RM ratio control",
-                  children : [{name:"Dosing system check"}, {name:"Operator verification"}]
-                }
-              ]
-            },
-            {
-              name: "Hardness defect",
-              children: [
-                {
-                  name: "Low curing temperature",
-                  children : [{name:"Oven temperature monitoring"}, {name:"Sensor calibration"}]
-                },
-                { name: "Short curing time",
-                  children : [{name:"Timer setting verification"}, {name: "Production log review"}]
-                }
-              ]
-            }
-          ]
-        }; 
-
   </script>
 </head>
 <body>
