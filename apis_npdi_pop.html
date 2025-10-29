@@ -52,6 +52,25 @@
 				}
 			});
 
+			$(document).on("click", "#btn_addColumn", function() {
+				let colspan = parseInt($("#tbl_spec thead tr:eq(0) th:eq(2)").attr("colspan"));
+				let colHtml = '';
+				colHtml += '<col style="width: auto;">'
+				$("#tbl_spec colgroup").append(colHtml);
+
+				let headHtml = '';
+				headHtml += '<th><div class="aniInput"><input type="text" class="browser-default ac" placeholder="Results headers"><span class="focus-border"/></div></th>';
+				$("#tbl_spec thead tr:eq(1)").append(headHtml);
+				setTimeout(() => {
+					$("#tbl_spec thead tr:eq(0) th:eq(2)").attr("colspan", colspan+1);
+				},0);
+
+				$("#tbl_spec tbody tr").each(function(){
+					let bodyHtml = '';
+					bodyHtml += '<td><div class="aniInput"><input type="text" class="browser-default ac" placeholder="Results"><span class="focus-border"/></div></td>';
+					$(this).append(bodyHtml);
+				});
+			});
 			$('#npdiTab').tabs();
 			$('select').formSelect();
 
@@ -527,6 +546,12 @@
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="pjContCard_2-6-1">
 					<i class="material-symbols-outlined left">workspace_premium</i><span>Quality(QA/QC)</span>
 				</li>
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="pjContCard_2-6-3">
+					<i class="material-symbols-outlined left">workspace_premium</i><span>QC Plan</span>
+				</li>
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="pjContCard_2-6-2">
+					<i class="material-symbols-outlined left">workspace_premium</i><span>Link</span>
+				</li>
 			</ul>
 
 			<ul id="menu_stage_2-7" class="menuUl" style="display: none;">
@@ -609,6 +634,20 @@
 							<div class="col s2 ar pl0">Customer Desired Date</div>
 							<div class="col s4 val">Oct 2025</div>
 						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">IATF</div>
+							<div class="col s4">
+								<label>
+									<input type="checkbox" class="filled-in"/>
+									<span>　</span>
+								</label>
+							</div>
+							<div class="col s2 ar pl0">Confidential</div>
+							<div class="col s4">
+								<select><option>JDA/NDA</option><option>GTC</option></select>
+							</div>
+						</div>
+						
 						<div class="row">
 							<div class="col s2 ar pl0">Image (Proudct/Application)</div>
 							<div class="col s10">
@@ -3766,7 +3805,6 @@
 		<article id="cont_stage_2-5" class="contArticle" style="display: none;">
 			<section class="cardBox animate__animated mt10" id="pjContCard_2-5-1">
 				<div class="cardTit2"><i class="material-symbols-outlined left">all_inclusive</i>Sustainability Summary</div>
-				<div class="cardSubTit mt20">PSA Summary</div>
 				<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 					<table id="">
 						<colgroup>
@@ -3806,45 +3844,6 @@
 								<td>Post Launch Review</td>
 								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
 								<td><div class="aniInput"><input type="text" class="browser-default num2" value=""><span class="focus-border"/></div></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="cardSubTit mt20">Sustainability Assessment Highlights</div>
-				<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
-					<table id="">
-						<colgroup>
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-						</colgroup>
-						<thead>
-							<tr>
-								<th></th>
-								<th>PSA Assessment Question</th>
-								<th>Assessment Comments for the NPI/Product including potential actions if any</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>1</td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>3</td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>4</td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
 							</tr>
 						</tbody>
 					</table>
@@ -3940,6 +3939,122 @@
 								</td>
 								<td>Technology IP, IP Legal</td>
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-6-3">
+				<div class="cardTit2"><i class="material-symbols-outlined left">pageview</i>QC Plan</div>
+				<div style="overflow: hidden;"><a class="waves-effect waves-light hBtn right" id="">Add a row</a></div>
+				<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
+					<table id="tbl_spec">
+						<colgroup>
+							<col style="width: auto;">
+							<col style="width: auto;">
+							<col style="width: auto;">
+							<col style="width: auto;">
+							<col style="width: auto;">
+							<col style="width: auto;">
+							<col style="width: auto;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th class="al" rowspan="2">Short Text</th>
+								<th class="al" rowspan="2">Specification</th>
+								<th colspan="3">Results <a id="btn_addColumn" class="waves-effect waves-light material-icons ml10 font16" style="border: 1px solid #ddd;border-radius: 5px;">add</a></th>
+							</tr>
+							<tr>
+								<th><div class="aniInput"><input type="text" class="browser-default ac" value="AAA"><span class="focus-border"/></div></th>
+								<th><div class="aniInput"><input type="text" class="browser-default ac" value="BBB"><span class="focus-border"/></div></th>
+								<th><div class="aniInput"><input type="text" class="browser-default ac" value="CCC"><span class="focus-border"/></div></th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td><div class="aniInput"><input type="text" class="browser-default al" value="Appearance, 25℃"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default al" value="Appearance/Pass/Fail"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="0010 Pass"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="-"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="-"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td><div class="aniInput"><input type="text" class="browser-default al" value="Viscosity, 25℃"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default al" value="250.00 .. 600.00 cST"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="345.00"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="-"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="-"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td><div class="aniInput"><input type="text" class="browser-default al" value="Color, GVS"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default al" value="0.0 .. 3.0 GVS"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="0.8"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="-"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="-"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td><div class="aniInput"><input type="text" class="browser-default al" value="Foam Rise at 2.0"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default al" value="37.0 .. 100.0 cm"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="41.8"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="-"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="-"><span class="focus-border"/></div></td>
+							</tr><tr>
+								<td><div class="aniInput"><input type="text" class="browser-default al" value="Form Air Flow at 2.0"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default al" value="2.0 .. 100.0 l/s"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="4.0"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="-"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="-"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td><div class="aniInput"><input type="text" class="browser-default al" value="Foam Structure at 2.0"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default al" value="0 .. 8 NUM"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="1.7"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="-"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="-"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td><div class="aniInput"><input type="text" class="browser-default al" value="Foam Top Collapse at 2.0"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default al" value="0.0 .. 6.0 cm"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="1.7"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="-"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default ac" value="-"><span class="focus-border"/></div></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-6-2">
+				<div class="cardTit2"><i class="material-symbols-outlined left">link</i>Quality Link</div>
+				<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
+					<table id="">
+						<colgroup>
+							<col style="width: 60px;">
+							<col style="width: auto;">
+							<col style="width: 400px;">
+							<col style="width: 80px;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>URL</th>
+								<th>Description</th>
+								<th>Link</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="ac">1</td>
+								<td><div class="aniInput"><input type="text" class="browser-default" value="https://momentive.sharepoint.com/:x:/r/sites/ITProjects/IT%20Projects/Technology/RawMaterialDataHub%20-%20P-%20111001/Phase%20-%204/UAT%20-%20RMH/Issue%20Tracker%20-%20UAT%20RMH.xlsx?d=wcead1aa88e7641229e88c9b06f7b69d6&csf=1&web=1&e=6VqSl4"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default" value="Issue Tracker - UAT RMH.docx"><span class="focus-border"/></div></td>
+								<td class="ac"><a target="_blank" href="https://momentive.sharepoint.com/:x:/r/sites/ITProjects/IT%20Projects/Technology/RawMaterialDataHub%20-%20P-%20111001/Phase%20-%204/UAT%20-%20RMH/Issue%20Tracker%20-%20UAT%20RMH.xlsx?d=wcead1aa88e7641229e88c9b06f7b69d6&csf=1&web=1&e=6VqSl4" class="waves-effect waves-green hBtn dpInlineBlock lht20 ht20" id="">Link</a></td>
+							</tr>
+							<tr>
+								<td class="ac">2</td>
+								<td><div class="aniInput"><input type="text" class="browser-default" value="https://momentive.sharepoint.com/:p:/r/sites/ITProjects/IT%20Projects/Technology/RawMaterialDataHub%20-%20P-%20111001/Phase%20-%204/UAT%20-%20RMH/MAPIS-RMP%20Sep%202025%20-%20UAT.pptx?d=w79146c97a52b4c159670bc2459772e37&csf=1&web=1&e=dkqnUm"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default" value="MAPIS-RMH Sep 2025.pptx"><span class="focus-border"/></div></td>
+								<td class="ac"><a target="_blank" href="https://momentive.sharepoint.com/:p:/r/sites/ITProjects/IT%20Projects/Technology/RawMaterialDataHub%20-%20P-%20111001/Phase%20-%204/UAT%20-%20RMH/MAPIS-RMP%20Sep%202025%20-%20UAT.pptx?d=w79146c97a52b4c159670bc2459772e37&csf=1&web=1&e=dkqnUm" class="waves-effect waves-green hBtn dpInlineBlock lht20 ht20" id="">Link</a></td>
 							</tr>
 						</tbody>
 					</table>
@@ -4143,6 +4258,21 @@
 						</tbody>
 					</table>
 				</div>
+
+				<div class="cardSubTit mt20">PS Attachments</div>
+				<div class="mt10">
+					<div class="input-field file-field mt0 mb0">
+						<input type="hidden" id="ATTACH_FILE_ID" value="">
+						<div class="btn" id="ATTACH_FILE_BTN">
+							<span>File</span>
+							<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+						</div>
+						<div class="file-path-wrapper">
+							<input type="text" class="file-path validate">
+						</div>
+					</div>
+					<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+				</div>
 			</section>
 			<section class="cardBox animate__animated mt10" id="pjContCard_2-8-2">
 				<div class="cardTit2"><i class="material-symbols-outlined left">assignment_globe</i>Global Trade Compliance Assessment</div>
@@ -4231,6 +4361,40 @@
 					</table>
 				</div>
 				<div>• Based on answers to items 7 to 10 above, GTC can assess best trade model</div>
+
+				<div class="cardSubTit mt20">GTC Link</div>
+				<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
+					<table id="">
+						<colgroup>
+							<col style="width: 60px;">
+							<col style="width: auto;">
+							<col style="width: 400px;">
+							<col style="width: 80px;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th>#</th>
+								<th>URL</th>
+								<th>Description</th>
+								<th>Link</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="ac">1</td>
+								<td><div class="aniInput"><input type="text" class="browser-default" value="https://momentive.sharepoint.com/:x:/r/sites/ITProjects/IT%20Projects/Technology/RawMaterialDataHub%20-%20P-%20111001/Phase%20-%204/UAT%20-%20RMH/Issue%20Tracker%20-%20UAT%20RMH.xlsx?d=wcead1aa88e7641229e88c9b06f7b69d6&csf=1&web=1&e=6VqSl4"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default" value="Issue Tracker - UAT RMH.docx"><span class="focus-border"/></div></td>
+								<td class="ac"><a target="_blank" href="https://momentive.sharepoint.com/:x:/r/sites/ITProjects/IT%20Projects/Technology/RawMaterialDataHub%20-%20P-%20111001/Phase%20-%204/UAT%20-%20RMH/Issue%20Tracker%20-%20UAT%20RMH.xlsx?d=wcead1aa88e7641229e88c9b06f7b69d6&csf=1&web=1&e=6VqSl4" class="waves-effect waves-green hBtn dpInlineBlock lht20 ht20" id="">Link</a></td>
+							</tr>
+							<tr>
+								<td class="ac">2</td>
+								<td><div class="aniInput"><input type="text" class="browser-default" value="https://momentive.sharepoint.com/:p:/r/sites/ITProjects/IT%20Projects/Technology/RawMaterialDataHub%20-%20P-%20111001/Phase%20-%204/UAT%20-%20RMH/MAPIS-RMP%20Sep%202025%20-%20UAT.pptx?d=w79146c97a52b4c159670bc2459772e37&csf=1&web=1&e=dkqnUm"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default" value="MAPIS-RMH Sep 2025.pptx"><span class="focus-border"/></div></td>
+								<td class="ac"><a target="_blank" href="https://momentive.sharepoint.com/:p:/r/sites/ITProjects/IT%20Projects/Technology/RawMaterialDataHub%20-%20P-%20111001/Phase%20-%204/UAT%20-%20RMH/MAPIS-RMP%20Sep%202025%20-%20UAT.pptx?d=w79146c97a52b4c159670bc2459772e37&csf=1&web=1&e=dkqnUm" class="waves-effect waves-green hBtn dpInlineBlock lht20 ht20" id="">Link</a></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
 			</section>
 		</article>
 
@@ -4404,9 +4568,9 @@
 					<div class="inputArea">
 						<div class="row">
 							<div class="col s2 ar pl0">FMEA</div>
-							<div class="col s10">Include link to FMEA Tool</div>
+							<div class="col s10"><a href="mfmea_pop.html" target="_blank" class="waves-effect waves-green hBtn dpInlineBlock" id="">Link to FMEA</a></div>
 						</div>
-						<div class="row">
+						<!-- <div class="row">
 							<div class="col s2 ar pl0">Attachments</div>
 							<div class="col s10">
 								<div>
@@ -4423,7 +4587,7 @@
 									<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 								</div>
 							</div>
-						</div>
+						</div> -->
 					</div>
 				</div>
 			</section>
