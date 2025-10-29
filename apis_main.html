@@ -258,7 +258,7 @@
               });
 
               const projectData_hit = projectData.filter(item => item.name.toLowerCase().includes(input.toLowerCase()) || item.code.toString().includes(input));
-              let projectHtml = '<li class="cateTitle">NPDI Projects</li>';
+              let projectHtml = '<li class="cateTitle">NPI</li>';
               $.each(projectData_hit, (idx, item) => {
                 if(idx >= 7) return false;
 
@@ -351,7 +351,7 @@
       <div class="menuList">
         <ul>
           <li class="waves-effect waves-hColor on"><i class="material-icons left">home</i>Home</li>
-          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">analytics</i>Insights​</a></li>
+          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">analytics</i>Insight​</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
           <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
           <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">snippet_folder</i>NPT</a></li>
@@ -392,7 +392,7 @@
         <ul>
           <li class="animate__animated">
             <div><a href="apis_npdi_list.html"><div class="menuIconBox waves-effect waves-light"><i class="material-icons">lightbulb</i></div></a></div>
-            <div class="menuTit">NPDI</div>
+            <div class="menuTit">NPI</div>
             <div class="menuIcon waves-effect waves-hColort modal-trigger" data-target="mainMyMenuModal" style="display: none;"><i class="material-icons">more_vert</i></div>
           </li>
           <li class="animate__animated">
@@ -412,7 +412,7 @@
           </li>
           <li class="animate__animated">
             <div><a href="apis_dash.html"><div class="menuIconBox waves-effect waves-light"><i class="material-icons">dashboard</i></div></a></div>
-            <div class="menuTit">Dashboard​</div>
+            <div class="menuTit">Insight</div>
             <div class="menuIcon waves-effect waves-hColort modal-trigger" data-target="mainMyMenuModal" style="display: none;"><i class="material-icons">more_vert</i></div>
           </li>
           <li class="animate__animated">
@@ -554,12 +554,12 @@
           <div class="contArea">
             <ul class="mainListUl">
               <li>
-                <span class="roundBox green">NPDI</span>
+                <span class="roundBox green">NPI</span>
                 <span class="codeSpan">[P25-226]</span>
                 <span class="tit">Improvement of Appearance and Workability of Medium-Coat Paint for Water-Soluble 3C1B at HMMME (Saudi CKD) New Plant</span>
               </li>
               <li>
-                <span class="roundBox green">NPDI</span>
+                <span class="roundBox green">NPI</span>
                 <span class="codeSpan">[P25-227]</span>
                 <span class="tit">Improvement of the quality of medium- to high-quality paints by applying a shortened conversion to HMMI-type water-soluble 3C1B.</span>
               </li>
@@ -569,7 +569,7 @@
                 <span class="tit">Quality Improvement of Matte Clear SVR Upgrading Paint for Automotive Bodies</span>
               </li>
               <li>
-                <span class="roundBox green">NPDI</span>
+                <span class="roundBox green">NPI</span>
                 <span class="codeSpan">[P25-14]</span>
                 <span class="tit">Quality Improvement of Matte Clear SVR Upgrading Paint for Automotive Bodies</span>
               </li>
@@ -579,7 +579,7 @@
                 <span class="tit">Melamine resin LUWIPAL 052</span>
               </li>
               <li>
-                <span class="roundBox green">NPDI</span>
+                <span class="roundBox green">NPI</span>
                 <span class="codeSpan">[P25-41]</span>
                 <span class="tit">Quality Improvement of Matte Clear SVR Upgrading Paint for Automotive Bodies</span>
               </li>
@@ -597,10 +597,10 @@
     </a>
     <ul>
       <li><a class="waves-effect waves-hColor btn-floating mochaBg tooltipped" data-position="left" data-tooltip="Productivity​"><i class="material-icons">trending_up</i></a></li>
-      <li><a class="waves-effect waves-hColor btn-floating mochaBg tooltipped" data-position="left" data-tooltip="Custom NPI"><i class="material-icons">integration_instructions</i></a></li>
       <li><a class="waves-effect waves-hColor btn-floating mochaBg tooltipped" data-position="left" data-tooltip="Tech Suppor​t"><i class="material-icons">build</i></a></li>
       <li><a class="waves-effect waves-hColor btn-floating mochaBg tooltipped" data-position="left" data-tooltip="New Product Translations​"><i class="material-icons">snippet_folder</i></a></li>
-      <li><a class="waves-effect waves-hColor btn-floating mochaBg tooltipped" data-position="left" data-tooltip="NPDI​"><i class="material-icons">lightbulb</i></a></li>
+      <li><a class="waves-effect waves-hColor btn-floating mochaBg tooltipped" data-position="left" data-tooltip="Custom NPI"><i class="material-icons">integration_instructions</i></a></li>
+      <li><a class="waves-effect waves-hColor btn-floating mochaBg tooltipped" data-position="left" data-tooltip="Standard NPI​"><i class="material-icons">lightbulb</i></a></li>
     </ul>
   </article>
 
@@ -613,11 +613,11 @@
       <div  style="min-height: 400px;">
         <select>
           <option value="0">Select Menu</option>
-          <option value="1">Dashboard</option>
-          <option value="2">NPDI</option>
+          <option value="1">Insight</option>
+          <option value="2">Standard NPI</option>
+          <option value="5">Custom NPI</option>
           <option value="3">NPT</option>
           <option value="4">Tech Support</option>
-          <option value="5">Custom NPI</option>
           <option value="6">Productivity</option>
           <option value="7">Raw Material Hub</option>
           <option value="8">FMEA</option>
