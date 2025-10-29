@@ -230,37 +230,37 @@ src: url('../fonts/SF-Pro-Display-BoldItalic.otf') format('opentype');
 @font-face {
 	font-family: 'RacingSansOne-Regular';
 	font-style: normal;
-	src: url('/fonts/RacingSansOne-Regular.ttf') format('truetype');
+	src: url('fonts/RacingSansOne-Regular.ttf') format('truetype');
 }
 
 @font-face {
 	font-family: 'Sarpanch-ExtraBold';
 	font-style: bold;
-	src: url('/fonts/Sarpanch-ExtraBold.ttf') format('truetype');
+	src: url('fonts/Sarpanch-ExtraBold.ttf') format('truetype');
 }
 
 @font-face {
 	font-family: 'SUIT-Bold';
 	font-style: bold;
-	src: url('/fonts/SUIT-Bold.otf') format('opentype');
+	src: url('fonts/SUIT-Bold.otf') format('opentype');
 }
 
 @font-face {
 	font-family: 'SUIT-Medium';
 	font-style: normal;
-	src: url('/fonts/SUIT-Medium.otf') format('opentype');
+	src: url('fonts/SUIT-Medium.otf') format('opentype');
 }
 
 @font-face {
 	font-family: 'SUIT-Regular';
 	font-style: normal;
-	src: url('/fonts/SUIT-Regular.otf') format('opentype');
+	src: url('fonts/SUIT-Regular.otf') format('opentype');
 }
 
 @font-face {
 	font-family: 'SUIT-Light';
 	font-style: normal;
-	src: url('/fonts/SUIT-Light.otf') format('opentype');
+	src: url('fonts/SUIT-Light.otf') format('opentype');
 }
 
 
