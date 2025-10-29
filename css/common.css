@@ -199,27 +199,27 @@ legend,
 @font-face {
 	font-family: 'Roboto-Light';
 	font-style: normal;
-	src: url('fonts/Roboto-Light.ttf') format('truetype');
+	src: url('../fonts/Roboto-Light.ttf') format('truetype');
 }
 @font-face {
 	font-family: 'Roboto-Regular';
 	font-style: normal;
-	src: url('fonts/Roboto-Regular.ttf') format('truetype');
+	src: url('../fonts/Roboto-Regular.ttf') format('truetype');
 }
 @font-face {
 	font-family: 'Roboto-Medium';
 	font-style: normal;
-	src: url('fonts/Roboto-Medium.ttf') format('truetype');
+	src: url('../fonts/Roboto-Medium.ttf') format('truetype');
 }
 @font-face {
 	font-family: 'Roboto-Bold';
 	font-style: normal;
-	src: url('fonts/Roboto-Bold.ttf') format('truetype');
+	src: url('../fonts/Roboto-Bold.ttf') format('truetype');
 }
 @font-face {
 	font-family: 'Roboto-LOGO';
 	font-style: normal;
-	src: url('fonts/Roboto-BoldItalic.ttf') format('truetype');
+	src: url('../fonts/Roboto-BoldItalic.ttf') format('truetype');
 }
 
 .bdRad0 {border-radius: 0 !important;}
