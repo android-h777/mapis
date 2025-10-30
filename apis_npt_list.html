@@ -32,7 +32,7 @@
           });
 
           $(".pjTit, .rightSection .cardTit, #newPjBtn").click(function(){
-            window.open("apis_npdi_pop.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
+            window.open("apis_npt_pop.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
           });
 
           $("#test").click(function() {
@@ -132,11 +132,7 @@
               }
             },
             series: [{
-              name: 'Maintenance',
-              color: '#A47864',
-              data: [2.3, 48.39, 148.65, 215.32, 275.31, 237.46]
-            }, {
-              name: 'Growth',
+              name: 'MT/Year',
               color: '#899f6a',
               data: [214.30, 224.06, 214.71, 189.46, 111.37, 20.04]
             }],
@@ -169,41 +165,23 @@
             },
             series: [{
                 data: [{
-                    name: 'NPC',
+                    name: 'Proposal',
                     label: "06.07.2024",
                     description: '',
                     id: 'cont1',
                     color: "#899f6a"
                 }, {
-                    name: 'NPI Go',
+                    name: 'NPT Go (Initiated)',
                     label: "12.09.2024",
                     description: '',
                     id: 'cont2',
-                    color: "#899f6a"
+                    color: "#A692BA"
                 }, {
-                    name: 'Lab Formulation',
-                    label: "22.03.2025",
-                    description: '',
-                    id: 'cont2',
-                    color: "#899f6a"
-                }, {
-                    name: 'Scale-Up',
-                    label: "22.06.2025",
-                    description: '',
-                    id: 'cont3',
-                    color: "#7391c9"
-                }, {
-                    name: 'Commercial Go',
-                    label: "14.09.2025",
-                    description: '',
-                    id: 'cont4',
-                    color: "#eeeeee"
-                }, {
-                    name: 'Post Launch Review',
+                    name: 'Close Out (In Progress)',
                     label: "05.31.2026",
                     description: '',
                     id: 'cont5',
-                    color: "#eeeeee"
+                    color: "#7391c9"
                 }]
             }],
             credits: {
@@ -311,9 +289,9 @@
         <ul>
           <li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>Home</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_dash.html"><i class="material-icons left">analytics</i>Insights​</a></li>
-          <li class="waves-effect waves-hColor on"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_custom_list.html"><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
-          <li class="waves-effect waves-hColor"><a href="apis_npt_list.html"><i class="material-icons left">snippet_folder</i>NPT</a></li>
+          <li class="waves-effect waves-hColor on"><a href="apis_npt_list.html"><i class="material-icons left">snippet_folder</i>NPT</a></li>
           <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">build</i>Tech Support</a></li>
           <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">trending_up</i>Productivity</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub​</a></li>
@@ -328,7 +306,7 @@
   <article class="contArea typeList type2">
     <div class="leftSection">
       <section class="mainTitArea">
-        <div class="mainTit" id="test">Standard NPI List</div>
+        <div class="mainTit" id="test">NPT List</div>
         <div class="btnArea">
         <div class="newAppleTab mr10">
             <ul>
@@ -353,10 +331,9 @@
               <div class="subInfo">
                 <div>
                   <div class="roundBox contVal1">Industrial</div>
-                  <div class="roundBox contVal2">Transportation</div>
-                  <div class="roundBox contVal3">Commercial Go</div>
+                  <div class="roundBox contVal3">NPT Go</div>
                   <div class="roundBox blue contVal4">On Time</div>
-                  <div class="roundBox contVal4">Leverkeusen</div>
+                  <div class="roundBox contVal4">Leverkeusen → Ohta</div>
                 </div>
               </div>
             </section>
@@ -370,10 +347,9 @@
               <div class="subInfo">
                 <div>
                   <div class="roundBox contVal1">Industrial</div>
-                  <div class="roundBox contVal2">Transportation</div>
-                  <div class="roundBox contVal3">Commercial Go</div>
+                  <div class="roundBox contVal3">NPT Go</div>
                   <div class="roundBox blue contVal4">On Time</div>
-                  <div class="roundBox contVal4">Leverkeusen</div>
+                  <div class="roundBox contVal4">Leverkeusen → Ohta</div>
                 </div>
               </div>
             </section>
@@ -388,10 +364,9 @@
               <div class="subInfo">
                 <div>
                   <div class="roundBox contVal1">Industrial</div>
-                  <div class="roundBox contVal2">Transportation</div>
-                  <div class="roundBox contVal3">Commercial Go</div>
+                  <div class="roundBox contVal3">NPT Go</div>
                   <div class="roundBox blue contVal4">On Time</div>
-                  <div class="roundBox contVal4">Leverkeusen</div>
+                  <div class="roundBox contVal4">Leverkeusen → Ohta</div>
                 </div>
               </div>
             </section>
@@ -406,10 +381,9 @@
               <div class="subInfo">
                 <div>
                  <div class="roundBox contVal1">Industrial</div>
-                  <div class="roundBox contVal2">Transportation</div>
-                  <div class="roundBox contVal3">Commercial Go</div>
+                  <div class="roundBox contVal3">NPT Go</div>
                   <div class="roundBox blue contVal4">On Time</div>
-                  <div class="roundBox contVal4">Leverkeusen</div>
+                  <div class="roundBox contVal4">Leverkeusen → Ohta</div>
                 </div>
               </div>
             </section>
@@ -424,10 +398,9 @@
               <div class="subInfo">
                 <div>
                   <div class="roundBox contVal1">Industrial</div>
-                  <div class="roundBox contVal2">Transportation</div>
-                  <div class="roundBox contVal3">Commercial Go</div>
+                  <div class="roundBox contVal3">NPT Go</div>
                   <div class="roundBox blue contVal4">On Time</div>
-                  <div class="roundBox contVal4">Leverkeusen</div>
+                  <div class="roundBox contVal4">Leverkeusen → Ohta</div>
                 </div>
               </div>
             </section>
@@ -441,24 +414,20 @@
         <div class="row subPjInfo">
           <div class="col s6">Segment</div>
           <div class="col s6 val">Industrial</div>
-          <div class="col s6">MGPP</div>
-          <div class="col s6 val">Transportation</div>
-          <div class="col s6">Market Segment</div>
-          <div class="col s6 val" id="dtContVal1">MASS</div>
+          <div class="col s6">Site From</div>
+          <div class="col s6 val">Leverkeusen</div>
+          <div class="col s6">Site To</div>
+          <div class="col s6 val">Ohta</div>
+          <div class="col s6">Primary Benefit</div>
+          <div class="col s6 val" id="dtContVal1">Productivity</div>
           <div class="col s6">Status</div>
           <div class="col s6 val" id="dtContVal2">Completed</div>
           <div class="col s6">Project Leader</div>
           <div class="col s6 val" id="dtContVal3">Andreas Roos</div>
-          <div class="col s6">Commercial Go Date</div>
+          <div class="col s6">Completion Date</div>
           <div class="col s6 val" id="dtContVal3">Oct 2025</div>
-          <div class="col s6">Innovation Category</div>
-          <div class="col s6 val" id="dtContVal6">Adjacent</div>
           <div class="col s6">Sustainability Impact/Score</div>
           <div class="col s6 val" id="dtContVal7">Beneficial/80</div>
-          <div class="col s6">Target Market/Customers</div>
-          <div class="col s6 val" id="dtContVal8" style="display: flex;align-items: center;height: 25px;">
-            <span class="roundBox mr10">NKT</span><span class="roundBox mr10">Pfisterer</span><span class="roundBox mr10">Bosch</span>
-          </div>
         </div>
         <div class="subTit mt20 ml10">TimeLine</div>
         <div class="row">
@@ -466,7 +435,7 @@
             <div id="container_timeline" style="height: 150px;border: 1px solid #d0d0d0;border-radius: 5px;"></div>
           </div>
         </div>
-        <div class="subTit mt20 ml10">Revenue</div>
+        <div class="subTit mt20 ml10">Production Forecast</div>
         <div class="row">
           <div class="col s12">
             <div id="container_chart" style="height: 250px;border: 1px solid #d0d0d0;border-radius: 5px;"></div>

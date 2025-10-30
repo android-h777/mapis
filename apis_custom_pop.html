@@ -90,62 +90,11 @@
 				}
 			});
 
-			fnSetStageCont(this,'2','4','1',null);
+			fnSetStageCont(null,'2','3','1',null);
 
 			au.fnSetDatepicker(null, "dd.mm.yyyy");
 
 			$(window).on("resize", au.hFixedTableResize);
-			
-			let segmentChart = Highcharts.chart('segment_pie', {
-				chart: {
-					type: 'pie'
-				},
-				title: {
-					text: 'Revenue by Segment',
-					style: {
-						fontSize: '13px'
-					}
-				},
-				plotOptions: {
-					pie: {
-						cursor: "pointer",
-						borderRadius: '5px',
-						dataLabels: {
-							enabled: true,
-							useHTML: true, // HTML 사용 가능하게 설정
-							formatter: function() {
-								return '<div style="text-align:center; white-space: nowrap;">' + 
-										'<span >'+this.point.name+'</span><br><span class="mocha25-text">' + this.point.y + '</span> <span class="mocha25-text">(' + this.percentage.toFixed(1) + '%)</span></div>'; 
-							},
-							distance: 0,
-							align: 'center',
-							crop: false,
-							overflow: 'justify'
-						}
-					}
-				},
-				series: [{
-					name: 'Revenue',
-					colors: au.aesopColor,
-					colorByPoint: true,
-					data: [
-						{name: "Seg A", y: 450},
-						{name: "Seg B", y: 300},
-						{name: "Seg C", y: 120},
-						{name: "Seg D", y: 80},
-						{name: "Seg E", y: 50}
-					]
-				}],
-				credits: {
-					enabled: false
-				},
-				legend: {
-					enabled: true,
-					align: 'center',
-					verticalAlign: 'bottom',
-				}
-			});
-			highchartsArray.push(segmentChart);
 
 			$("#btn_addAction").click(function(){
 				let html = '';
@@ -175,37 +124,7 @@
 			
 			$("#tbl_tev input").on("input", fnSetTEVChart);
 			fnSetTEVChart();
-
-			$(document).on("change", "select[name='sel_dfvrating']", function() {
-				let subTotalScore = 0;
-				let totalScore = 0;
-				const $tr = $(this).closest("tbody").find("tr");
-				$tr.each(function(idx, o) {
-					const $td = $(o).find("td");
-					if($td.length > 2) {
-						const weightText = parseFloat($td.eq($td.length - 3).text());
-						const ratingValue = $(o).find("select[name='sel_dfvrating']").val();
-						if(weightText !== "" && ratingValue) {
-							const weight = parseFloat(weightText) / 100;
-							const rating = parseFloat(ratingValue);
-							const score = weight * rating;
-							$td.eq($td.length - 1).text(score.toFixed(2));
-							subTotalScore += score;		
-						}
-					} 
-					// subtotal
-					else if($td.length == 2) {
-						$td.eq(1).text(subTotalScore.toFixed(2));
-						totalScore += subTotalScore;
-						subTotalScore = 0;
-					}
-					// total
-					if(idx == $tr.length - 1) {
-						$td.eq(1).text(totalScore.toFixed(2));
-					}
-				});
-			});
-
+			
 			$(".num0").inputmask("numeric", {
 				nullable: false,
 				placeholder: "",
@@ -246,7 +165,7 @@
         });
 
 		function fnSetStageCont(obj, dataType, stageNum, tabNum, menuNum){
-			if($(obj).closest(".col").hasClass("disabled")) {
+			if(obj && $(obj).closest(".col").hasClass("disabled")) {
 				return;
 			}
 			currPos = {type: dataType, gate: stageNum};
@@ -393,24 +312,12 @@
 					<i class="material-symbols-outlined left">check_circle</i><span>NPC</span>
 				</div>
 				<div class="arw"><i class="material-symbols-outlined">navigate_next</i></div>
-				<div id="btn_stage_2" data-type="2" data-gate="2" class="bdBox waves-effect waves-green stageBtn fin">
-					<i class="material-symbols-outlined left">check_circle</i><span>NPI Go</span>
-				</div>
-				<div class="arw"><i class="material-symbols-outlined">navigate_next</i></div>
 				<div id="btn_stage_3" data-type="2" data-gate="3" class="bdBox waves-effect waves-green stageBtn fin">
-					<i class="material-symbols-outlined left">check_circle</i><span>Lab Formulation</span>
+					<i class="material-symbols-outlined left">check_circle</i><span>Monitoring</span>
 				</div>
 				<div class="arw"><i class="material-symbols-outlined">navigate_next</i></div>
-				<div id="btn_stage_4" data-type="2" data-gate="4" class="bdBox waves-effect waves-green stageBtn fin">
-					<i class="material-symbols-outlined left">check_circle</i><span>Scale-up</span>
-				</div>
-				<div class="arw"><i class="material-symbols-outlined">navigate_next</i></div>
-				<div id="btn_stage_5" data-type="2" data-gate="5" class="bdBox waves-effect waves-green stageBtn fin">
-					<i class="material-symbols-outlined left">check_circle</i><span>Commercial Go</span>
-				</div>
-				<div class="arw"><i class="material-symbols-outlined">navigate_next</i></div>
-				<div id="btn_stage_6" data-type="3" data-gate="6" class="bdBox waves-effect waves-blue stageBtn ing">
-					<i class="material-symbols-outlined left">play_circle</i><span>Post Launch Review</span>
+				<div id="btn_stage_5" data-type="2" data-gate="5" class="bdBox waves-effect waves-green stageBtn ing">
+					<i class="material-symbols-outlined left">play_circle</i><span>Commercial Go</span>
 				</div>
 				<div class="onArwArea">
 					<svg width="15" height="10" viewBox="0 0 15 10">
@@ -424,7 +331,6 @@
 		<section class="npdiTabMenu" style="display: none;">
 			<ul class="tabs" id="npdiTab">
 				<li class="tab" data-val="2-1"><a href="#cont_stage_2-1" class="active">Overview</a>
-				</li><li class="tab" data-val="2-2"><a href="#cont_stage_2-2">Marketing</a>
 				</li><li class="tab" data-val="2-3"><a href="#cont_stage_2-3">Technology</a>
 				</li><li class="tab" data-val="2-4"><a href="#cont_stage_2-4">Mfg/SIOP</a>
 				</li><li class="tab" data-val="2-5"><a href="#cont_stage_2-5">Sustainability</a>
@@ -446,9 +352,6 @@
 				</li>
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_1-2">
 					<i class="material-symbols-outlined left">preview</i><span>Concept Overview</span>
-				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_1-5">
-					<i class="material-symbols-outlined left">verified</i><span>DFV Rating</span>
 				</li>
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_1-6">
 					<i class="material-symbols-outlined left">local_library</i><span>Approval</span>
@@ -476,30 +379,6 @@
 				</li>
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_2-1-11">
 					<i class="material-symbols-outlined left">comment</i><span>Actions Register</span>
-				</li>
-			</ul>
-
-			<ul id="menu_stage_2-2" class="menuUl" style="display: none;">
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="pjContCard_2-2-1">
-					<i class="material-symbols-outlined left">auto_awesome_mosaic</i><span>Seg. Analysis</span>
-				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_2-2-2">
-					<i class="material-symbols-outlined left">target</i><span>Prod. Positioning</span>
-				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_2-2-3">
-					<i class="material-symbols-outlined left">conditions</i><span>Competitive</span>
-				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_2-2-4">
-					<i class="material-symbols-outlined left">diamond_shine</i><span>Value Proposition</span>
-				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_2-2-5">
-					<i class="material-symbols-outlined left">waterfall_chart</i><span>TEV</span>
-				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_2-2-6">
-					<i class="material-symbols-outlined left">cycle</i><span>Go To Market</span>
-				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_2-2-7">
-					<i class="material-symbols-outlined left">store</i><span>Comm. Plan</span>
 				</li>
 			</ul>
 
@@ -577,19 +456,6 @@
 					<i class="material-symbols-outlined left">troubleshoot</i><span>FMEA</span>
 				</li>
 			</ul>
-
-			<ul id="menu_stage_3" class="menuUl" style="display: none;">
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="pjContCard_3-1">
-					<i class="material-symbols-outlined left">frame_inspect</i><span>Design Perform.</span>
-				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_3-3">
-					<i class="material-symbols-outlined left">cognition_2</i><span>Learnings</span>
-				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_3-4">
-					<i class="material-symbols-outlined left">docs</i><span>Documentation</span>
-				</li>
-			</ul>
-
 		</section>
 		<section class="btnArea">
 			<div><a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn hBlue"><i class="material-symbols-outlined left">save</i><span class="label">Save</span></a></div>
@@ -604,13 +470,7 @@
 					<div class="inputArea">
 						<div class="row">
 							<div class="col s2 ar pl0">ID</div>
-							<div class="col s4 val"dataconn data-col="project_id">05760</div>
-							<div class="col s2 ar pl0">Type</div>
-							<div class="col s4 val">Standard NPI</div>
-						</div>
-						<div class="row">
-							<div class="col s2 ar pl0">Business Unit</div>
-							<div class="col s10 val">Formulated Specialties > Electronic Materials > Display - Electronics > Display & Micro > UV</div>
+							<div class="col s10 val"dataconn data-col="project_id">05760</div>
 						</div>
 						<div class="row">
 							<div class="col s2 ar pl0"><span class="essential">*</span>Name</div>
@@ -622,6 +482,10 @@
 							</div>
 						</div>
 						<div class="row">
+							<div class="col s2 ar pl0">Business Unit</div>
+							<div class="col s10 val">Formulated Specialties > Electronic Materials > Display - Electronics > Display & Micro > UV</div>
+						</div>
+						<div class="row">
 							<div class="col s2 ar pl0">NPC Submitted by</div>
 							<div class="col s4 val"dataconn data-col="submitted_by">Spike MA</div>
 							<div class="col s2 ar pl0">NPC Submitted at</div>
@@ -630,6 +494,10 @@
 						<div class="row">
 							<div class="col s2 ar pl0">Customer Desired Date</div>
 							<div class="col s4 val">Oct 2025</div>
+							<div class="col s2 ar pl0">Development Location</div>
+							<div class="col s4 val">
+								<select><option>Sistersville</option><option>Waterford</option></select>
+							</div>
 						</div>
 						<div class="row">
 							<div class="col s2 ar pl0">IATF</div>
@@ -644,7 +512,24 @@
 								<select><option>JDA/NDA</option><option>GTC</option></select>
 							</div>
 						</div>
-						
+						<div class="row">
+							<div class="col s2 ar pl0">Existing Customer</div>
+							<div class="col s4 fLine vCenter">
+								<label>
+									<input type="checkbox" class="filled-in"/>
+									<span>　</span>
+								</label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Initial Customer</div>
+							<div class="col s10">
+								<div class="aniInput">
+									<input type="text" value="" placeholder="Who is the intended customer?" class="browser-default">
+									<span class="focus-border"/>
+								</div>
+							</div>
+						</div>
 						<div class="row">
 							<div class="col s2 ar pl0">Image (Proudct/Application)</div>
 							<div class="col s10">
@@ -665,6 +550,94 @@
 								</div>
 							</div>
 						</div>
+
+						<div class="cardSubTit mt20">Innovation Categorization</div>
+							<div class="row">
+								<div class="col s2 ar pl0"><span class="essential">*</span>Knowledge of Technology</div>
+								<div class="col s4 val"><select><option value="">Extending Existing Products / Technology</option></select></div>
+								<div class="col s2 ar pl0"><span class="essential">*</span>Knowledge of Market</div>
+								<div class="col s4 val"><select><option value="">Enter Adjacent Markets (Now Unserved)</option></select></div>
+							</div>
+							<div class="row">
+								<div class="col s2 ar pl0">Innovation Category</div>
+								<div class="col s10 val">ADJACENT</div>
+							</div>
+
+							<div class="cardSubTit mt20">Sustainability Assessment Category</div>
+							<div class="row">
+								<div class="col s2 ar pl0">Sustainability Assessment Category</div>
+								<div class="col s4 val">BENEFICIAL IMPACT</div>
+								<div class="col s2 ar pl0">Sustainability Numerical Score</div>
+								<div class="col s4 val"></div>
+							</div>
+							
+							<div class="cardSubTit mt20">Patent Info</div>
+							<div class="fixedTable hBorderTable hScroll mt0 vMiddle">
+								<table id="tbl_patent" style="table-layout: fixed;">
+									<colgroup>
+										<col style="width: 20%;">
+										<col style="width: 80%;">
+									</colgroup>
+									<thead>
+										<tr>
+											<th>Docket #</th>
+											<th class="al">Patent</th>
+										</tr>
+									</thead>
+									<tbody>
+										<tr>
+											<td class="ac">302134</td>
+											<td>
+												<a class="link">[WO2018070792A1] Silicone rubber composition and cured product thereof</a>
+											</td>
+										</tr>
+										<tr>
+											<td class="ac">302134</td>
+											<td>
+												<a class="link">[WO2018070792A1] Silicone rubber composition and cured product thereof2</a>
+											</td>
+										</tr>
+										<tr>
+											<td class="ac">22534</td>
+											<td>
+												<a class="link">[WO2018070792A1] Silicone rubber composition and cured product thereof</a>
+											</td>
+										</tr>
+										<tr>
+											<td class="ac">22534</td>
+											<td>
+												<a class="link">[WO2018070792A1] Silicone rubber composition and cured product thereof</a>
+											</td>
+										</tr>
+										<tr>
+											<td class="ac">22534</td>
+											<td>
+												<a class="link">[WO2018070792A1] Silicone rubber composition and cured product thereof</a>
+											</td>
+										</tr>
+									</tbody>
+								</table>
+							</div>
+
+							<div class="cardSubTit mt20">Attachments</div>
+							<div class="row">
+								<div class="col s2 ar pl0">Attachments</div>
+								<div class="col s10">
+									<div>
+										<div class="input-field file-field mt0 mb0">
+											<input type="hidden" id="ATTACH_FILE_ID" value="">
+											<div class="btn" id="ATTACH_FILE_BTN">
+												<span>File</span>
+												<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+											</div>
+											<div class="file-path-wrapper">
+												<input type="text" class="file-path validate">
+											</div>
+										</div>
+										<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+									</div>
+								</div>
+							</div>
 					</div>
 				</div>
 			</section>
@@ -692,15 +665,6 @@
 							</div>
 						</div>
 						<div class="row">
-							<div class="col s2 ar pl0">Source of Opportunity</div>
-							<div class="col s10">
-								<div class="aniInput">
-									<textarea class="materialize-textarea" placeholder="Where did this idea/concept come from?"></textarea>
-									<span class="focus-border"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
 							<div class="col s2 ar pl0">Competition</div>
 							<div class="col s10">
 								<div class="aniInput">
@@ -721,7 +685,7 @@
 						<div class="row">
 							<div class="col s2 ar pl0">Expected Opportunity Size<br>(Sales ($MM) / Volume (MT))</div>
 							<div class="col s10">
-								<div class="fixedTable hBorderTable hScroll mt10">
+								<div class="fixedTable hBorderTable hScroll mt0">
 								<table>
 									<colgroup>
 										<col style="width: 20%;">
@@ -741,17 +705,12 @@
 									</thead>
 									<tbody>
 										<tr>
-											<td class="ac">
-												<select>
-													<option value="">5 Yrs Total</option>
-													<option value="">Peak Sales</option>
-												</select>
-											</td>
+											<td class="ac">1 Year</td>
 											<td class="ac">
 												<div class="aniInput">
 													<input type="text" value="1,566,200" class="browser-default ar">
 													<span class="focus-border"/>
-												</div>                                  
+												</div>
 											</td>
 											<td class="ac">
 												<div class="aniInput">
@@ -797,172 +756,7 @@
 					</div>
 				</div>
 			</section>
-
-			<section class="cardBox animate__animated mt10" id="pjContCard_1-5">
-				<div class="cardTit2"><i class="material-symbols-outlined left">verified</i>DFV Rating</div>
-				<div class="cardSubTit mt20">NPC Screening Tool</div>
-				<div class="fixedTable hBorderTable hScroll mt10">
-					<table>
-						<colgroup>
-							<col style="width: 30px;">
-							<col style="width: 100px;">
-							<col style="width: 140px;">
-							<col style="width: 100px;">
-							<col style="width: 100px;">
-							<col style="width: 30px;">
-							<col style="width: 40px;">
-							<col style="width: 40px;">
-						</colgroup>
-						<thead>
-							<tr>
-								<th colspan="2">Metric Definition</th>
-								<th colspan="3">Rating Scale & Definition</th>
-								<th rowspan="2">Weight</th>
-								<th colspan="2">NPC</th>
-							</tr>
-							<tr>
-								<th>Category</th>
-								<th>Metric</th>
-								<th>10 [LOW]</th>
-								<th>30 [MED]</th>
-								<th>90 [HIGH]</th>
-								<th>Rating</th>
-								<th>Score</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td rowspan="5" class="cnlcream25 pl20 pt20"><div class="font20 fontBold">D</div><div class="mt10">Desirability</div></td>
-								<td>Segment Strategy Fit</td>
-								<td>No clear fit or indirect fit with current segment strategy</td>
-								<td>Product generally in line with segment strategy but not with the top priority elements</td>
-								<td>Product strongly aligned to the most important segment strategy elements</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr>
-								<td>Customer Benefits (Outcomes)</td>
-								<td>Product offers no unique benefits or features to the customers<br>Product essentially same as competition</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">40%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">36</td>
-							</tr>
-							<tr>
-								<td>Adaptive</td>
-								<td>Customer may need significant investment and/or process adjustments for adaption</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr>
-								<td>Sustainable Competative Advantage</td>
-								<td>Significant composition, Product can be copied reasonably easily with some limited skills and analysis</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">10%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">3</td>
-							</tr>
-							<tr class="btDLine">
-								<td colspan="6"></td>
-								<td class="cream25 ar">54</td>
-							</tr>
-							<tr class="btSLine">
-								<td rowspan="5" class="cnlcream25 pl20 pt20"><div class="font20 fontBold">F</div><div class="mt10">Feasibility</div></td>
-								<td>Marketing Synergies</td>
-								<td>Currently no or very limited marketing expertise, experience or resources in this area</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">2.5</td>
-							</tr>
-							<tr>
-								<td>Technical Synergies</td>
-								<td>Not good</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr>
-								<td>Manufacturing Synergies</td>
-								<td>Not good</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr>
-								<td>Time to Commercialization</td>
-								<td>Not good</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr class="btDLine">
-								<td colspan="6"></td>
-								<td class="cream25 ar">54</td>
-							</tr>
-							<tr class="btSLine">
-								<td rowspan="5" class="cnlcream25 pl20 pt20"><div class="font20 fontBold">V</div><div class="mt10">Viability</div></td>
-								<td>Financial Impact</td>
-								<td>Not good</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr>
-								<td>Target Market Size</td>
-								<td>Not good</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr>
-								<td>Market Growth</td>
-								<td>Not good</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr>
-								<td>Gross Margins</td>
-								<td>Not good</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr class="btDLine">
-								<td colspan="6"></td>
-								<td class="cream25 ar">54</td>
-							</tr>
-							<tr class="btSLine">
-								<td colspan="7"></td>
-								<td class="mocha25 white-text ar">200</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</section>
-
+			
 			<section class="cardBox animate__animated mt10" id="pjContCard_1-6">
 				<div class="cardTit2"><i class="material-symbols-outlined left">local_library</i>Approval</div>
 				<div>
@@ -993,13 +787,19 @@
 								</thead>
 								<tbody>
 									<tr style="" class="">
-										<td class="ac">Marketing Leader</td>
+										<td class="ac">Regional Commercial Leader</td>
 										<td class="ac">Jim Quan</td>
 										<td class="ac">26.09.2025</td>
 										<td class="ac"><span class="roundBox tendril25">Approved</span></td>
 									</tr>
 									<tr style="" class="">
-										<td class="ac">Technology Leader</td>
+										<td class="ac">Global Marketing Leader</td>
+										<td class="ac">Charles Kim</td>
+										<td class="ac">-</td>
+										<td class="ac"></td>
+									</tr>
+									<tr style="" class="">
+										<td class="ac">Regional ADE Leader</td>
 										<td class="ac">Charles Kim</td>
 										<td class="ac">-</td>
 										<td class="ac"></td>
@@ -1018,7 +818,13 @@
 				<div class="inputArea">
 					<div class="row">
 						<div class="col s2 ar pl0">ID</div>
-						<div class="col s10 val"dataconn data-col="project_id">05760</div>
+						<div class="col s4 val"dataconn data-col="project_id">05760</div>
+						<div class="col s2 ar pl0">Type</div>
+						<div class="col s4 val">NPI</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Business Unit</div>
+						<div class="col s10 val">Formulated Specialties > Electronic Materials > Display - Electronics > Display & Micro > UV</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0"><span class="essential">*</span>Name</div>
@@ -1028,10 +834,6 @@
 								<span class="focus-border"/>
 							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col s2 ar pl0">Business Unit</div>
-						<div class="col s10 val">Formulated Specialties > Electronic Materials > Display - Electronics > Display & Micro > UV</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">NPI Project Leader</div>
@@ -1083,83 +885,7 @@
 							</div>
 						</div>
 					</div>
-					
-					<div class="cardSubTit mt20">Project Summary (DFV)</div>
-					<div class="row">
-						<div class="col s2 ar pl0">Desirability</div>
-						<div class="col s10">
-							<div class="aniInput">
-								<textarea class="materialize-textarea" dataconn data-col="text_descr" placeholder="Describe the new product concept/application?"></textarea>
-								<span class="focus-border"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col s2 ar pl0">Feasibility</div>
-						<div class="col s10">
-							<div class="aniInput">
-								<textarea class="materialize-textarea" dataconn data-col="text_target" placeholder="Who are the intended customers/application/market?"></textarea>
-								<span class="focus-border"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col s2 ar pl0">Viability</div>
-						<div class="col s10">
-							<div class="fixedTable hBorderTable hScroll mt0">
-								<table style="table-layout: fixed;">
-									<colgroup>
-										<col style="width: 22%;">
-										<col style="width: 18%;">
-										<col style="width: 18%;">
-										<col style="width: 2%;">
-										<col style="width: 22%;">
-										<col style="width: 18%;">
-									</colgroup>
-									<thead>
-										<tr>
-											<th class="mpm-bg lighten-4 al ht35 fontM" colspan="6">Target Economics (Sales ($MM) / Volume (MT) Projection)</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td class="headerTd bdR1"></td>
-											<td class="headerTd">Sales ($MM)</td>
-											<td class="headerTd">Volume (MT)</td>
-											<td class="headerTd"></td>
-											<td class="headerTd bdR1">Average SGM %</td>
-											<td class="headerTd"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
-										</tr>
-										<tr>
-											<td class="headerTd bdT1 bdR1">PIM 1 (1st Year)</td>
-											<td class="bdT1"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
-											<td class="bdT1"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
-											<td class=""></td>
-											<td class="headerTd bdT1d_lgrey bdR1">% Maintenance (Avg)</td>
-											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
-										</tr>
-										<tr>
-											<td class="headerTd bdT1d_lgrey bdR1">PIM 1-5 (5 Yrs Total)</td>
-											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
-											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
-											<td class=""></td>
-											<td class="headerTd bdT1d_lgrey bdR1">NPV ($MM)/IRR %</td>
-											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
-										</tr>
-										<tr>
-											<td></td>
-											<td></td>
-											<td></td>
-											<td></td>
-											<td class="headerTd bdT1d_lgrey bdR1">ASP ($/kg)</td>
-											<td class="bdT1d_lgrey"><div class="aniInput"><input type="text" class="browser-default num2"><span class="focus-border"/></div></td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-					</div>
-
+				
 					<div class="cardSubTit mt20">Innovation Categorization</div>
 					<div class="row">
 						<div class="col s2 ar pl0"><span class="essential">*</span>Knowledge of Technology</div>
@@ -1252,17 +978,14 @@
 
 			<section class="cardBox animate__animated mt10" id="pjContCard_2-1-5">
 				<div class="cardTit2"><i class="material-symbols-outlined left">calendar_month</i>Project Schedule & Status</div>
-				<div class="fixedTable hBorderTable hScroll mt20 vMiddle">
+				<div class="fixedTable hBorderTable hScroll vMiddle">
 					<table style="table-layout: fixed;">
 						<colgroup>
-							<col style="width: 11%;">
-							<col style="width: 13%;">
-							<col style="width: 13%;">
-							<col style="width: 13%;">
-							<col style="width: 13%;">
-							<col style="width: 13%;">
-							<col style="width: 13%;">
-							<col style="width: 11%;">
+							<col style="width: 20%;">
+							<col style="width: 20%;">
+							<col style="width: 20%;">
+							<col style="width: 20%;">
+							<col style="width: 20%;">
 						</colgroup>
 						<tbody>
 							<tr>
@@ -1270,19 +993,13 @@
 								<td>DD/MM/YYYY</td>
 								<td>DD/MM/YYYY</td>
 								<td>DD/MM/YYYY</td>
-								<td>DD/MM/YYYY</td>
-								<td>DD/MM/YYYY</td>
-								<td>DD/MM/YYYY</td>
 								<td>Overall Project Status</td>
 							</tr>
 							<tr>
 								<td class="headerTd ar">Decision Point</td>
-								<td><div class="arrow-step mpm-bg white-text">NPC Screening</div></td>
-								<td><div class="arrow-step mpm-bg white-text">NPI Go Review</div></td>
-								<td><div class="arrow-step mpm-bg white-text">Lab Formulation</div></td>
-								<td><div class="arrow-step mpm-bg white-text">Scale-Up Review</div></td>
+								<td><div class="arrow-step mpm-bg white-text">NPC</div></td>
+								<td><div class="arrow-step mpm-bg white-text">Monitoring</div></td>
 								<td><div class="arrow-step mpm-bg white-text">Commercial Go</div></td>
-								<td><div class="arrow-step mpm-bg white-text">Post Launch Review</div></td>
 								<td class="ac" rowspan="2"><i class="material-symbols-outlined green-text font40">circle</i></td>
 							</tr>
 							<tr>
@@ -1290,597 +1007,9 @@
 								<td>DD/MM/YYYY</td>
 								<td>DD/MM/YYYY</td>
 								<td>DD/MM/YYYY</td>
-								<td>DD/MM/YYYY</td>
-								<td>DD/MM/YYYY</td>
-								<td>DD/MM/YYYY</td>
 							</tr>
 						</tbody>
 					</table>
-				</div>
-				<div class="cardSubTit mt20">Detailed Schedule</div>
-				<div id="gantChartWrapper" class="newTaskGantt mt5">
-					<div id="ganttChart" class="reg ganttbox">
-						<div class="ganttview">
-							<div class="ganttview-vtheader">
-								<div class="ganttview-vtheader-tit fLine vCenter hCenter">Task Name</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name STAGE fLine vCenter" style="height: 31px;">Project Start</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name STEP" style="height: 31px;">Product in Concept</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Prepare NPC documentation and submit in NPDI</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">NPC Review(Mktg & Tech)</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">NPC Approval</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Review NPI GO and Schedule Review</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">NPI GO Review</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name STEP" style="height: 31px;">Product in Development</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Product Formulation Development</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Process Development & Scale-up</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Customer Validation</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name STEP" style="height: 31px;">Product in Market</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Process Transfer Report completed and issued</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Document project learnings</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Post Launch Review</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name STAGE fLine vCenter" style="height: 31px;">Project End</div>
-								</div>
-							</div>
-							<div class="ganttview-vtheader-date">
-								<div class="ganttview-vtheader-tit-2">Duration</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 STAGE" stage="30" step="" type="STAGE" activity="" data-seq="" style="height: 31px;">
-										<div class="ganttview-vtheader-daysel-span-stage"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 STEP" stage="30" step="3010" type="STEP" activity="" data-seq="" style="height: 31px;">
-										<div class="ganttview-vtheader-daysel"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3010" type="ACTIVITY" activity="3010004" data-seq="32967" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32967"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3010" type="ACTIVITY" activity="3010005" data-seq="32966" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32966"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3010" type="ACTIVITY" activity="3010002" data-seq="32965" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32965"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3010" type="ACTIVITY" activity="3010003" data-seq="32968" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32968"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3010" type="ACTIVITY" activity="3010001" data-seq="32964" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32964"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 STEP" stage="30" step="3020" type="STEP" activity="" data-seq="" style="height: 31px;">
-										<div class="ganttview-vtheader-daysel"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3020" type="ACTIVITY" activity="3020002" data-seq="32970" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32970"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3020" type="ACTIVITY" activity="3020001" data-seq="32969" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32969"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3020" type="ACTIVITY" activity="3020003" data-seq="32971" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32971"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 STEP" stage="30" step="3030" type="STEP" activity="" data-seq="" style="height: 31px;">
-										<div class="ganttview-vtheader-daysel"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3030" type="ACTIVITY" activity="3030002" data-seq="32972" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32972"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3030" type="ACTIVITY" activity="3030001" data-seq="32973" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32973"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3030" type="ACTIVITY" activity="3030003" data-seq="32974" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32974"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 STAGE" stage="30" step="" type="STAGE" activity="" data-seq="" style="height: 31px;">
-										<div class="ganttview-vtheader-daysel-span-stage"></div>
-									</div>
-								</div>
-							</div>
-							<div class="ganttview-slide-container">
-								<div class="ganttview-hzheader">
-									<div class="ganttview-hzheader-years" style="width: 380px;">
-										<div class="ganttview-hzheader-year" style="width: 140px;">2025</div>
-										<div class="ganttview-hzheader-year" style="width: 240px;">2026</div>
-									</div>
-									<div class="ganttview-hzheader-months" style="width: 380px;">
-										<div class="ganttview-hzheader-month" islast="N">6</div>
-										<div class="ganttview-hzheader-month" islast="N">7</div>
-										<div class="ganttview-hzheader-month" islast="N">8</div>
-										<div class="ganttview-hzheader-month" islast="N">9</div>
-										<div class="ganttview-hzheader-month" islast="N">10</div>
-										<div class="ganttview-hzheader-month" islast="N">11</div>
-										<div class="ganttview-hzheader-month" islast="Y">12</div>
-										<div class="ganttview-hzheader-month" islast="N">1</div>
-										<div class="ganttview-hzheader-month" islast="N">2</div>
-										<div class="ganttview-hzheader-month" islast="N">3</div>
-										<div class="ganttview-hzheader-month" islast="N">4</div>
-										<div class="ganttview-hzheader-month" islast="N">5</div>
-										<div class="ganttview-hzheader-month" islast="N">6</div>
-										<div class="ganttview-hzheader-month" islast="N">7</div>
-										<div class="ganttview-hzheader-month" islast="N">8</div>
-										<div class="ganttview-hzheader-month" islast="N">9</div>
-										<div class="ganttview-hzheader-month" islast="N">10</div>
-										<div class="ganttview-hzheader-month" islast="N">11</div>
-										<div class="ganttview-hzheader-month" islast="Y">12</div>
-									</div>
-								</div>
-								<div class="ganttview-grid" style="min-width: 100%; width: 380px;">
-									<div class="ganttview-grid-row" stage="30" step="" type="STAGE" style="width: 380px;">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3010" type="STEP" style="width: 380px;">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3010" type="ACTIVITY" style="width: 380px;" data-seq="32967">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3010" type="ACTIVITY" style="width: 380px;" data-seq="32966">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3010" type="ACTIVITY" style="width: 380px;" data-seq="32965">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3010" type="ACTIVITY" style="width: 380px;" data-seq="32968">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3010" type="ACTIVITY" style="width: 380px;" data-seq="32964">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3020" type="STEP" style="width: 380px;">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3020" type="ACTIVITY" style="width: 380px;" data-seq="32970">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3020" type="ACTIVITY" style="width: 380px;" data-seq="32969">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3020" type="ACTIVITY" style="width: 380px;" data-seq="32971">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3030" type="STEP" style="width: 380px;">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3030" type="ACTIVITY" style="width: 380px;" data-seq="32972">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3030" type="ACTIVITY" style="width: 380px;" data-seq="32973">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3030" type="ACTIVITY" style="width: 380px;" data-seq="32974">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>	
-									<div class="ganttview-grid-row" stage="30" step="" type="STAGE" style="width: 380px;">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-								</div>
-								<div class="ganttview-blocks">
-									<div class="ganttview-block-container" type="STAGE">
-										<div class="ganttview-block" title="계획" modifiable="N" stage="30" step="" data-seq="" datatype="STAGE" idx="0" style="width: 120px; margin-left: 0px; visibility: visible; background-color: rgb(161, 170, 198);">
-											<div class="ganttview-block-text">6</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="STEP">
-										<div class="ganttview-block" title="계획" modifiable="N" stage="30" step="3010" data-seq="" datatype="STEP" idx="1" style="width: 100px; margin-left: 0px; visibility: visible; background-color: rgb(161, 170, 198);">
-											<div class="ganttview-block-text">5</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3010" data-seq="32967" datatype="ACTIVITY" idx="2" style="width: 60px; margin-left: 0px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">3</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3010" data-seq="32966" datatype="ACTIVITY" idx="3" style="width: 20px; margin-left: 80px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">1</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3010" data-seq="32965" datatype="ACTIVITY" idx="4" style="width: 20px; margin-left: 80px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">1</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3010" data-seq="32968" datatype="ACTIVITY" idx="5" style="width: 20px; margin-left: 80px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">1</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3010" data-seq="32964" datatype="ACTIVITY" idx="6" style="width: 40px; margin-left: 60px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">2</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="STEP">
-										<div class="ganttview-block" title="계획" modifiable="N" stage="30" step="3020" data-seq="" datatype="STEP" idx="7" style="width: 120px; margin-left: 80px; visibility: visible; background-color: rgb(161, 170, 198);">
-											<div class="ganttview-block-text">6</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3020" data-seq="32970" datatype="ACTIVITY" idx="8" style="width: 20px; margin-left: 100px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">1</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3020" data-seq="32969" datatype="ACTIVITY" idx="9" style="width: 20px; margin-left: 80px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">1</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3020" data-seq="32971" datatype="ACTIVITY" idx="10" style="width: 80px; margin-left: 120px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">4</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="STEP">
-										<div class="ganttview-block" title="계획" modifiable="N" stage="30" step="3030" data-seq="" datatype="STEP" idx="11" style="width: 160px; margin-left: 200px; visibility: visible; background-color: rgb(161, 170, 198);">
-											<div class="ganttview-block-text">8</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3030" data-seq="32972" datatype="ACTIVITY" idx="12" style="width: 40px; margin-left: 200px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">2</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3030" data-seq="32973" datatype="ACTIVITY" idx="13" style="width: 60px; margin-left: 240px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">3</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3030" data-seq="32974" datatype="ACTIVITY" idx="14" style="width: 60px; margin-left: 300px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">3</div>
-										</div>
-									</div>
-								</div>
-							</div>			
-						</div>
-					</div>
 				</div>
 			</section>
 
@@ -1907,20 +1036,16 @@
 									</thead>
 									<tbody>
 										<tr>
-											<td>NPI Project Leader</td>
+											<td>Regional Commercial Leader</td>
 											<td><div class="aniInput"><input type="text" class="browser-default" value="Lee Jongho"><span class="focus-border"></span></div></td>
 										</tr>
 										<tr>
-											<td>Segment (Mktg/Comm) Leader</td>
+											<td>Global Marketing Leader</td>
 											<td><div class="aniInput"><input type="text" class="browser-default" value="Olivia Hayes"><span class="focus-border"></span></div></td>
 										</tr>
 										<tr>
-											<td>Segment Tech Leader</td>
+											<td>Regional ADE Leader</td>
 											<td><div class="aniInput"><input type="text" class="browser-default" value="Michael Chang"><span class="focus-border"></span></div></td>
-										</tr>
-										<tr>
-											<td>Manufacturing Leader</td>
-											<td><div class="aniInput"><input type="text" class="browser-default" value="Rebecca Jones"><span class="focus-border"></span></div></td>
 										</tr>
 									</tbody>
 								</table>
@@ -1999,6 +1124,32 @@
 				<div class="cardSubTit mt20">Cost</div>
 				<div>
 					<div class="inputArea">
+						<div class="row">
+							<div class="col s2">
+								Testing Cost
+							</div>
+							<div class="col s10 val fLine vCenter">
+								<select><option>2025</option></select>
+								<div class="aniInput ml20 wd100px"><input type="text" class="browser-default num2" value="172.62"><span class="focus-border"></span></div>
+								<label class="ml20">
+									<input type="checkbox" class="filled-in"/>
+									<span>Recurring</span>
+								</label>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col s2">
+								Other Cost
+							</div>
+							<div class="col s10 val fLine vCenter">
+								<select><option>2025</option></select>
+								<div class="aniInput ml20 wd100px"><input type="text" class="browser-default num2" value="172.62"><span class="focus-border"></span></div>
+								<label class="ml20">
+									<input type="checkbox" class="filled-in"/>
+									<span>Recurring</span>
+								</label>
+							</div>
+						</div>
 						<div class="hFixedTable hBorderTable hScroll vMiddle mt10">
 							<table id="" style="table-layout: fixed;">
 								<colgroup>
@@ -2018,7 +1169,7 @@
 									<tr>
 										<th class="fix-col al">Category</th>
 										<th class="fix-col">Unit</th>
-										<th><span class="roundBox green">NPI GO</span><br>2025</th>
+										<th><br>2025</th>
 										<th><br>2026</th>
 										<th><br>2027</th>
 										<th><span class="roundBox green">COMM GO</span><br>2028</th>
@@ -2031,46 +1182,7 @@
 								</thead>
 								<tbody>
 									<tr>
-										<td class="fix-col">Resources</td>
-										<td class="fix-col ac">#</td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-									</tr>
-									<tr>
-										<td class="fix-col">IP Cost</td>
-										<td class="fix-col ac">$M</td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-									</tr>
-									<tr>
 										<td class="fix-col">Testing Cost</td>
-										<td class="fix-col ac">$M</td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-									</tr>
-									<tr>
-										<td class="fix-col">Registration Cost</td>
 										<td class="fix-col ac">$M</td>
 										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
 										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
@@ -2331,861 +1443,6 @@
 			</section>			
 		</article>
 
-		<article id="cont_stage_2-2" class="contArticle" style="display: none;">
-			<section class="cardBox animate__animated mt10" id="pjContCard_2-2-1">
-				<div class="cardTit2"><i class="material-symbols-outlined left">auto_awesome_mosaic</i>Segmentation Analysis</div>
-				<div class="inputArea">
-					<div class="row">
-						<div class="col s2 ar pl0">Target Segment Description</div>
-						<div class="col s10">
-							<div class="aniInput">
-								<textarea class="materialize-textarea" dataconn data-col="text_descr" placeholder="Describe the new product concept/application?"></textarea>
-								<span class="focus-border"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col s2 ar pl0">Growth Trends/Drivers</div>
-						<div class="col s10">
-							<div class="aniInput">
-								<textarea class="materialize-textarea" dataconn data-col="text_target" placeholder="Who are the intended customers/application/market?"></textarea>
-								<span class="focus-border"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col s2 ar pl0">Target MPM Market Opportunity</div>
-						<div class="col s10">
-							<div class="aniInput">
-								<textarea class="materialize-textarea" dataconn data-col="text_from" placeholder="Where did this idea/concept come from?"></textarea>
-								<span class="focus-border"/>
-							</div>
-						</div>
-					</div>
-					<div class="cardSubTit mt20">Segmentation Data Chart</div>
-					<div class="row">
-						<div class="col s8">
-							<div class="fixedTable hBorderTable hScroll vMiddle mg0" style="max-height: 250px;">
-								<table id="">
-									<colgroup>
-										<col style="width: 200px;">
-										<col style="width: 100px;">
-										<col style="width: 100px;">
-										<col style="width: 90px;">
-									</colgroup>
-									<thead>
-										<tr>
-											<th>Segment</th>
-											<th>Volume (MT)</th>
-											<th>Revenue ($M)</th>
-											<th>% of Total</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td><div class="aniInput"><input type="text" value="Seg A" class="browser-default"><span class="focus-border"></span></div></td>
-											<td><div class="aniInput"><input type="text" value="150" class="browser-default num0"><span class="focus-border"></span></div></td>
-											<td><div class="aniInput"><input type="text" value="450" class="browser-default num0"><span class="focus-border"></span></div></td>
-											<td><div class="aniInput"><input type="text" value="45.0" class="browser-default num1"><span class="focus-border"></span></div></td>
-										</tr>
-										<tr>
-											<td><div class="aniInput"><input type="text" value="Seg B" class="browser-default"><span class="focus-border"></span></div></td>
-											<td><div class="aniInput"><input type="text" value="120" class="browser-default num0"><span class="focus-border"></span></div></td>
-											<td><div class="aniInput"><input type="text" value="300" class="browser-default num0"><span class="focus-border"></span></div></td>
-											<td><div class="aniInput"><input type="text" value="30.0" class="browser-default num1"><span class="focus-border"></span></div></td>
-										</tr>
-										<tr>
-											<td><div class="aniInput"><input type="text" value="Seg C" class="browser-default"><span class="focus-border"></span></div></td>
-											<td><div class="aniInput"><input type="text" value="50" class="browser-default num0"><span class="focus-border"></span></div></td>
-											<td><div class="aniInput"><input type="text" value="120" class="browser-default num0"><span class="focus-border"></span></div></td>
-											<td><div class="aniInput"><input type="text" value="12.0" class="browser-default num1"><span class="focus-border"></span></div></td>
-										</tr>
-										<tr>
-											<td><div class="aniInput"><input type="text" value="Seg D" class="browser-default"><span class="focus-border"></span></div></td>
-											<td><div class="aniInput"><input type="text" value="25" class="browser-default num0"><span class="focus-border"></span></div></td>
-											<td><div class="aniInput"><input type="text" value="80" class="browser-default num0"><span class="focus-border"></span></div></td>
-											<td><div class="aniInput"><input type="text" value="8.0" class="browser-default num1"><span class="focus-border"></span></div></td>
-										</tr>
-										<tr>
-											<td><div class="aniInput"><input type="text" value="Seg E" class="browser-default"><span class="focus-border"></span></div></td>
-											<td><div class="aniInput"><input type="text" value="5" class="browser-default num0"><span class="focus-border"></span></div></td>
-											<td><div class="aniInput"><input type="text" value="50" class="browser-default num0"><span class="focus-border"></span></div></td>
-											<td><div class="aniInput"><input type="text" value="5.0" class="browser-default num0"><span class="focus-border"></span></div></td>
-										</tr>
-									</tbody>
-								</table>
-							</div>
-						</div>
-						<div class="col s4">
-							<div id="segment_pie" style="height: 250px;"></div>
-						</div>
-					</div>
-				</div>
-			</section>
-			<section class="cardBox animate__animated mt10" id="pjContCard_2-2-2">
-				<div class="cardTit2"><i class="material-symbols-outlined left">target</i>Product Positioning</div>
-				<div>
-					<div style="overflow: hidden;"><a class="waves-effect waves-light hBtn right" id="btn_addProdPos">Add a row</a></div>
-					<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
-						<table id="tbl_prodPos">
-							<colgroup>
-								<col style="width: 20%;">
-								<col style="width: 20%;">
-								<col style="width: 20%">
-								<col style="width: 20%;">
-								<col style="width: 20%;">
-							</colgroup>
-							<thead>
-								<tr>
-									<th>Target customer segments</th>
-									<th>Key features of the new product</th>
-									<th>Primary benefits the product</th>
-									<th>How do we plan to position</th>
-									<th>Other comments</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="End User"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Chemically stable, easy-to-use dispensing system, quick room-temperature cure time.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Extended product lifespan due to superior weather resistance, non-toxic and low-odor application.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Position as the 'Professional-Grade, Consumer-Friendly' sealant/adhesive solution.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Focus marketing on DIY repair and small home improvement projects.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="OEM"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Ultra-low volatility (low D4/D5/D6 content), high thermal conductivity, precision bonding capability.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Meets stringent automotive and electronics industry standards (e.g., thermal management in EVs), reduced inspection failures.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Position as the 'Reliability Standard' component for high-performance electronic assemblies.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Requires dedicated technical support for production line integration and testing.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="Distributor"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Long shelf life (18+ months), standardized packaging for easy stacking, competitive volume pricing.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Reduced inventory waste, maximized warehouse efficiency, guaranteed profit margin.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Position as the 'Inventory Anchor' product with high demand and low handling risk.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Offer tiered rebate program based on quarterly volume commitment.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="Channel Partner"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Exclusive regional pricing, dedicated technical sales training modules, co-branded marketing materials.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Increased profitability per sale, enhanced customer loyalty through specialized service offering.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Position as a 'Strategic Partnership' where mutual growth is the primary goal.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Mandate annual product knowledge certification for all sales representatives.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</section>
-			<section class="cardBox animate__animated mt10" id="pjContCard_2-2-3">
-				<div class="cardTit2"><i class="material-symbols-outlined left">conditions</i>Competitive Assessment</div>
-				<div class="inputArea">
-					<div class="row">
-						<div class="col s2 ar pl0">Current Competitors to new product</div>
-						<div class="col s10">
-							<div class="aniInput">
-								<textarea class="materialize-textarea"></textarea>
-								<span class="focus-border"/>
-							</div>
-						</div>
-					</div>
-					<div class="row">
-						<div class="col s2 ar pl0">Key Opportunities & Threats for MPM</div>
-						<div class="col s10">
-							<div class="aniInput">
-								<textarea class="materialize-textarea"></textarea>
-								<span class="focus-border"/>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div>
-					<div class="cardSubTit mt20">Differentiation vs Competitive Products</div>
-					<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
-						<table id="">
-							<colgroup>
-								<col style="width: 15%;">
-								<col style="width: 17%;">
-								<col style="width: 17%;">
-								<col style="width: 17%;">
-								<col style="width: 17%;">
-								<col style="width: 17%;">
-							</colgroup>
-							<thead>
-								<tr>
-									<th>Key Customer Outcome / Benefit</th>
-									<th>Target value</th>
-									<th>New Product (MPM)</th>
-									<th>Competitor-1 Product</th>
-									<th>Competitor-2 Product</th>
-									<th>Competitor-3 Product</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="Long-Term Thermal Stability (°C)"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="250°C for 500 hrs"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="280°C (Exceeds Target)"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="230°C"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="250°C (Meets Target)"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="Not Specified"><span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="VOC Content (ppm)"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="< 100 ppm"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="< 50 ppm (Best in Class)"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="150 ppm (Non-compliant for new standards)"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="100 ppm (Meets Target)"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="80 ppm"><span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="Process Curing Time"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="< 5 minutes"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="3 minutes (Fastest Curing)"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="6 minutes"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="5 minutes"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="7 minutes"><span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="Adhesion Strength (MPa on Aluminum)"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="> 5 MPa"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="5.5 MPa"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="4.0 MPa"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="4.8 MPa"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="5.1 MPa"><span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="Price Per Kilogram ($)"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="$80 - $90"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="$85"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="$75"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="$95"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="$88"><span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="Certifications/Compliance"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="AEC-Q100, REACH"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="AEC-Q100, REACH, UL Certified"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="REACH Only"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="AEC-Q100, REACH"><span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<input type="text" class="browser-default" value="None"><span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</section>
-			<section class="cardBox animate__animated mt10" id="pjContCard_2-2-4">
-				<div class="cardTit2"><i class="material-symbols-outlined left">diamond_shine</i>Value Proposition Assumptions</div>
-				<div>
-					<div class="cardSubTit mt20">Commercial</div>
-					<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
-						<table id="tbl_valAssume">
-							<colgroup>
-								<col style="width: 20%;">
-								<col style="width: 40%;">
-								<col style="width: 40%;">
-							</colgroup>
-							<thead>
-								<tr>
-									<th>Assumption Category</th>
-									<th>Critical assumption(s) made <br>(that must be true for the project to succeed)</th>
-									<th>Current Status & Comments <br>(What proves this case? What would indicate failure? Experiment to test)</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>Customer benefit / Problem you solve and Value you create</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Customers will pay a 20% premium for the integrated product due to the 50% reduction in installation time and labor cost.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">STATUS: Initial customer interviews (n=10) confirm installation time is the main pain point. FAILURE INDICATION: If pilot customers balk at a >15% premium. EXPERIMENT: Run a price sensitivity test with the first 5 beta clients.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>Competitive environment and reaction</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Competitors (specifically Competitor-1) will require 9-12 months to replicate the core thermal stability feature.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">STATUS: Competitor-1's existing R&D cycle averages 14 months for major feature releases. FAILURE INDICATION: If a competitor announces a similar feature within 6 months. EXPERIMENT: Monitor patent filings and technical job postings from Competitor-1 closely.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>Technical know-how and processes</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Our internal production process (Process X) can maintain the required 99.999% material purity at full scale without sacrificing yield (Target Yield: 95%).</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">STATUS: Pilot batch runs achieved 94% yield, slightly below target. FAILURE INDICATION: Yield drops below 90% during Q3 ramp-up. EXPERIMENT: Dedicated engineering team to optimize post-processing filtration stage.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>Pricing</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">Raw material costs (specifically Silicon Polymer Z) will remain stable or decrease slightly over the next 24 months, allowing us to maintain a 45% gross margin.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">STATUS: Polymer Z pricing is currently stable, long-term contract signed with Vendor A. FAILURE INDICATION: If the commodity price index for key inputs increases by >10% in the next quarter. EXPERIMENT: Secure secondary supply contracts with Vendor B.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>Any Other (eg, time to revenue and profit goals, alliances, etc)</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">We will secure a strategic distribution alliance with 'Global Distributor Y' within 6 months of product launch, essential for penetrating the APAC market.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea">STATUS: Initial introductory meetings scheduled with Global Distributor Y next month. FAILURE INDICATION: If alliance is not finalized by the end of Q1 next year. EXPERIMENT: Prepare an alternative partnership plan with Regional Distributor Z.</textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-					<div class="cardSubTit mt20">Technical</div>
-					<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
-						<table id="tbl_valAssume">
-							<colgroup>
-								<col style="width: 20%;">
-								<col style="width: 40%;">
-								<col style="width: 40%;">
-							</colgroup>
-							<thead>
-								<tr>
-									<th>Assumption Category</th>
-									<th>Critical assumption(s) made <br>(that must be true for the project to succeed)</th>
-									<th>Current Status & Comments <br>(What proves this case? What would indicate failure? Experiment to test)</th>
-								</tr>
-							</thead>
-							<tbody>
-								<tr>
-									<td>Knowledge and skills</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea"></textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea"></textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>Processes (R&D, Scale-up, Mfg. and Other)</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea"></textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea"></textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>Resources (Time, Cost and availability etc.)</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea"></textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea"></textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-								<tr>
-									<td>Any Other</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea"></textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-									<td>
-										<div class="aniInput">
-											<textarea class="materialize-textarea"></textarea>
-											<span class="focus-border"/>
-										</div>
-									</td>
-								</tr>
-							</tbody>
-						</table>
-					</div>
-				</div>
-			</section>
-			<section class="cardBox animate__animated mt10" id="pjContCard_2-2-5">
-				<div class="cardTit2"><i class="material-symbols-outlined left">waterfall_chart</i>Total Economic Value Assessment</div>
-				<div class="row">
-					<div class="col s5">
-						<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 250px;">
-							<table id="tbl_tev">
-								<colgroup>
-									<col style="width: 70%;">
-									<col style="width: 30%;">
-								</colgroup>
-								<thead>
-									<tr>
-										<th>Component</th>
-										<th>Value ($)</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td><span class="cfblue25-text text-lighten-2 mr5">■</span>① The Competitor</td>
-										<td>
-											<div class="aniInput">
-												<input type="text" class="browser-default num2" value="10" id="inp_tev_compval">
-												<span class="focus-border"/>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<td><span class="tendril25-text text-lighten-2 mr5">■</span>② Unique Additional Value</td>
-										<td>
-											<div class="aniInput">
-												<input type="text" class="browser-default num2" value="30" id="inp_tev_addval">
-												<span class="focus-border"/>
-											</div>
-										</td>
-									</tr>
-									<tr>
-										<td><span class="rose25-text text-lighten-2 mr5">■</span>③ Unique Costs</td>
-										<td>
-											<div class="aniInput">
-												<input type="text" class="browser-default num2" value="5" id="inp_tev_cost">
-												<span class="focus-border"/>
-											</div>
-										</td>
-									</tr>
-									<tr class="btSLine">
-										<td class="fontBold ht35"><span class="viola25-text text-lighten-2 mr5">■</span>④ Total Economic Value (① + ② - ③)</td>
-										<td id="td_tev_tev" class="fontBold ar"></td>
-									</tr>
-									<tr>
-										<td class="fontBold ht35"><span class="white-text mr5">■</span>⑤ Differentitaion Value (② - ③)</td>
-										<td id="td_tev_diff" class="fontBold ar"></td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
-					<div class="col s7">
-						<div id="div_tev" class="mt10 pd20">
-							<div style="position: relative;height: 100%;">
-								<div id="div_tev_bar" style="display: none;">
-									<div id="div_tev_bar_comp" class="tev-bar fLine vCenter hCenter cfblue25 lighten-2 ac" style="left: 10%;"></div>
-									<div id="div_tev_bar_addval" class="tev-bar fLine vCenter hCenter tendril25 lighten-2 ac" style="left: 30%;"></div>
-									<div id="div_tev_bar_cost" class="tev-bar fLine vCenter hCenter rose25 lighten-2 ac" style="left: 50%;"></div>
-									<div id="div_tev_bar_tev" class="tev-bar fLine vCenter hCenter viola25 lighten-2 ac" style="left: 70%;"></div>
-								</div>
-								<div id="div_tev_default" class="ac font16 wd100p">
-									To draw the chart, fill in all values in the table on the left.
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-				<div class="mt20">
-					<div class="inputArea">
-						<div class="row">
-							<div class="col s2 ar pl0">Attachments</div>
-							<div class="col s10">
-								<div>
-									<div class="input-field file-field mt0 mb0">
-										<input type="hidden" id="ATTACH_FILE_ID" value="">
-										<div class="btn" id="ATTACH_FILE_BTN">
-											<span>File</span>
-											<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
-										</div>
-										<div class="file-path-wrapper">
-											<input type="text" class="file-path validate">
-										</div>
-									</div>
-									<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-			<section class="cardBox animate__animated mt10" id="pjContCard_2-2-6">
-				<div class="cardTit2"><i class="material-symbols-outlined left">cycle</i>Go To Market Strategy</div>
-				<div>
-					<div class="inputArea">
-						<div class="row">
-							<div class="col s2 ar pl0">Branding Approach</div>
-							<div class="col s10">
-								<div class="aniInput">
-									<textarea class="materialize-textarea"></textarea>
-									<span class="focus-border"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col s2 ar pl0">Service Strategy</div>
-							<div class="col s10">
-								<div class="aniInput">
-									<textarea class="materialize-textarea"></textarea>
-									<span class="focus-border"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col s2 ar pl0">Promotion Communication Strategy</div>
-							<div class="col s10">
-								<div class="aniInput">
-									<textarea class="materialize-textarea"></textarea>
-									<span class="focus-border"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col s2 ar pl0">Pricing & Incentives Strategy</div>
-							<div class="col s10">
-								<div class="aniInput">
-									<textarea class="materialize-textarea"></textarea>
-									<span class="focus-border"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col s2 ar pl0">Distribution Strategy</div>
-							<div class="col s10">
-								<div class="aniInput">
-									<textarea class="materialize-textarea"></textarea>
-									<span class="focus-border"/>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-			<section class="cardBox animate__animated mt10" id="pjContCard_2-2-7">
-				<div class="cardTit2"><i class="material-symbols-outlined left">store</i>Commercialization Plan</div>
-				<div>
-					<div class="inputArea">
-						<div class="row">
-							<div class="col s2 ar pl0">Commercialization Plan</div>
-							<div class="col s10">
-								<div class="aniInput">
-									<textarea class="materialize-textarea">The commercialisation plan must be initiated prior to Customer Acceptance review.  This commercialisation plan must be aligned with regulatory registrations, as commercialisation may be delayed in some regions because of pending registrations.
-
-	Key elements to be considered in Commercialization plan :
-	- Regions/countries with launch dates (if not a global launch). Agreement with product stewardship.
-	- Approved Technical Data Sheet. Approved by legal and Marcom.
-	- Sales force / distributor /customer training information and roll-out plan. Agreement with commercial organisation and Marcom/Legal.
-	- Press release and external communication plan in place. Exhibitions/trade show. Agreement with Marcom.
-	- SAP material master set-up at all appropriate locations. Work with Product management.
-	- Commercial inventory in place in preparation with launch. Agreement with Supply Chain.
-	- Sample stock in place through normal sampling process or plans to sample from technology/ADE organisation. Work with Product management/Technology.</textarea>
-									<span class="focus-border"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col s2 ar pl0">Attachments</div>
-							<div class="col s10">
-								<div>
-									<div class="input-field file-field mt0 mb0">
-										<input type="hidden" id="ATTACH_FILE_ID" value="">
-										<div class="btn" id="ATTACH_FILE_BTN">
-											<span>File</span>
-											<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
-										</div>
-										<div class="file-path-wrapper">
-											<input type="text" class="file-path validate">
-										</div>
-									</div>
-									<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-		</article>
-
 		<article id="cont_stage_2-3" class="contArticle" style="display: none;">
 			<section class="cardBox animate__animated mt10" id="pjContCard_2-3-1">
 				<div class="cardTit2"><i class="material-symbols-outlined left">voice_selection</i>VOC/CTQ</div>
@@ -3441,7 +1698,7 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="3">NPI GO</td>
+								<td rowspan="4">Monitoring</td>
 								<td>Preliminary assessment :<br>Prior history, capacity, and cost</td>
 								<td>
 									<ul>
@@ -3483,7 +1740,6 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="1">Lab Formulation &amp; Scale-Up</td>
 								<td>Sourcing</td>
 								<td>
 									<ul>
@@ -3836,27 +2092,12 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td>NPI GO</td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><input type="text" class="browser-default num2" value=""><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>Lab Formulation</td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><input type="text" class="browser-default num2" value=""><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>Scale-Up</td>
+								<td>Monitoring</td>
 								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
 								<td><div class="aniInput"><input type="text" class="browser-default num2" value=""><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
 								<td>Commercial GO</td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><input type="text" class="browser-default num2" value=""><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>Post Launch Review</td>
 								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
 								<td><div class="aniInput"><input type="text" class="browser-default num2" value=""><span class="focus-border"/></div></td>
 							</tr>
@@ -3889,7 +2130,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td rowspan="2">NPI GO</td>
+								<td rowspan="5">Monitoring</td>
 								<td>Identification of high level Risks (where applicable)</td>
 								<td>- Highlight any major risks/road blocks/needs with respect to QC/QA in Project Summary</td>
 								<td>BU Technology + QC/QA</td>
@@ -3912,7 +2153,6 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="3">Lab Formulation &amp; Scale-Up</td>
 								<td>Test Method Development</td>
 								<td>
 									<ul>
@@ -4100,7 +2340,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td rowspan="2">NPI GO</td>
+								<td rowspan="7">Monitoring</td>
 								<td>Identification of high level Risk/Opportunity for IP</td>
 								<td>- Preliminary risk/opportunity assessment</td>
 								<td>NPC Requester</td>
@@ -4113,7 +2353,6 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="5">Lab Formulation & Scale-Up</td>
 								<td>State of the Art / Patent Landscape Search</td>
 								<td>- Assessment of state of the Art for the product concept and provide insights on white spaces</td>
 								<td>Technology IP</td>
@@ -4144,7 +2383,7 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="2">Comm. GO</td>
+								<td rowspan="3">Comm. GO</td>
 								<td>FTP Analysis and Opinion</td>
 								<td>- Advise if the developed product has freedom to practise in the countries of MPM interest</td>
 								<td>Technology IP, IP Legal</td>
@@ -4157,7 +2396,6 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td>Comm. GO</td>
 								<td>IP Strategy Verification</td>
 								<td>- Confirm all required filings, publications, NDA/CDAs and FTP assessments are complete</td>
 								<td>Technology IP, IP Legal</td>
@@ -4192,7 +2430,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td rowspan="2">NPI GO</td>
+								<td rowspan="6">Monitoring</td>
 								<td>Identification of high level Risks (if any) related to Regulatory Aspects</td>
 								<td>- Preliminary risk identification</td>
 								<td>NPC Requester</td>
@@ -4215,7 +2453,6 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="4">Lab Formulation & Scale-Up</td>
 								<td>Regulatory Risks / Concerns</td>
 								<td>- Updated risk assessment related to regulatory aspects (including status on resolution/mitigation of previously identified risks/concerns)</td>
 								<td>Project Leader + BU Tech. & PS team members</td>
@@ -4245,7 +2482,7 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="3">Comm. GO</td>
+								<td rowspan="4">Comm. GO</td>
 								<td>Regulatory Risks / Concerns</td>
 								<td>- Confirm all major regulatory risks / concerns are suitably resolved</td>
 								<td>BU Tech + PS team member</td>
@@ -4264,7 +2501,6 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td>Comm. GO</td>
 								<td>Chemical & Government Registrations</td>
 								<td>- Confirm all government and chemical required registrations (for all regions where the product will be launched) are complete</td>
 								<td>Mktg + PS team member</td>
@@ -4599,254 +2835,9 @@
 				</div>
 			</section>
 		</article>
-
-		<article id="cont_stage_3" class="contArticle" style="display: none;">
-			<section class="cardBox animate__animated mt10" id="pjContCard_3-1">
-				<div class="cardTit2"><i class="material-symbols-outlined left">frame_inspect</i>Design Performance Validation</div>
-				<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 300px;">
-					<table id="">
-						<colgroup>
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-						</colgroup>
-						<thead>
-							<tr>
-								<th rowspan="2"></th>
-								<th rowspan="2">Customer Requirements</th>
-								<th rowspan="2">Product/Process Development CTQs</th>
-								<th rowspan="2">UoM</th>
-								<th colspan="3">Target</th>
-								<th colspan="3">CTQ Change Log</th>
-								<th rowspan="2">MSA Status</th>
-								<th colspan="3">Current Performance</th>
-								<th colspan="2">Verification/Validation Status</th>
-							</tr>
-							<tr>
-								<th>Min</th>
-								<th>Avg</th>
-								<th>Max</th>
-								<th>Changed since NPI Go?</th>
-								<th>Date of Change</th>
-								<th>Explanation for Changes</th>
-								<th>Min</th>
-								<th>Avg</th>
-								<th>Max</th>
-								<th>Result</th>
-								<th>Verification/Validation By</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>1</td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-							</tr>
-							<tr>
-								<td>3</td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="cardSubTit mt20">Attachments</div>
-				<div class="inputArea mt10">
-					<div class="input-field file-field mt0 mb0">
-						<input type="hidden" id="ATTACH_FILE_ID" value="">
-						<div class="btn" id="ATTACH_FILE_BTN">
-							<span>File</span>
-							<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
-						</div>
-						<div class="file-path-wrapper">
-							<input type="text" class="file-path validate">
-						</div>
-					</div>
-					<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
-				</div>
-			</section>
-			<section class="cardBox animate__animated mt10" id="pjContCard_3-3">
-				<div class="cardTit2"><i class="material-symbols-outlined left">cognition_2</i>Learnings Summary</div>
-				<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
-					<table id="">
-						<colgroup>
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-						</colgroup>
-						<thead>
-							<tr>
-								<th></th>
-								<th>Focus Area</th>
-								<th>Best Practices / Successes Observed</th>
-								<th>Opportunities for Improvement Identified</th>
-								<th>Action Plans / Recommendations</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>1.00</td>
-								<td>Project Selection, Alignment to BU Strategy and Portfolio fit</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>2.00</td>
-								<td>Business Case Development and Front-end Value Proposition</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>3.00</td>
-								<td>Project Planning & Project Resources</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>4.00</td>
-								<td>Customer Requirements, VOC and CTQs</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>5.00</td>
-								<td>Product Development</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>6.00</td>
-								<td>Process Development & Scale-up</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>7.00</td>
-								<td>Overall Project Execution (Schedule, Budget, Cross-functional collaboration etc)</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>8.00</td>
-								<td>Results : Actual vs Plan (sales, margin, volume, costs etc)</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>9.00</td>
-								<td>NPI Process Effectiveness (Framework, tools & templates, Training etc)</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>10.00</td>
-								<td>Other Areas/Aspects related to the Project</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</section>
-			<section class="cardBox animate__animated mt10" id="pjContCard_3-4">
-				<div class="cardTit2"><i class="material-symbols-outlined left">docs</i>Project Documentation</div>
-				<div>
-					<div class="inputArea">
-						<div class="row">
-							<div class="col s2 ar pl0">Attachments</div>
-							<div class="col s10">
-								<div>
-									<div class="input-field file-field mt0 mb0">
-										<input type="hidden" id="ATTACH_FILE_ID" value="">
-										<div class="btn" id="ATTACH_FILE_BTN">
-											<span>File</span>
-											<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
-										</div>
-										<div class="file-path-wrapper">
-											<input type="text" class="file-path validate">
-										</div>
-									</div>
-									<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-		</article>
 	</div>
 
-
-	<article id="processMapModal" class="modal" style="width: 90%;">
+	<article id="processMapModal" class="modal" style="width: 80%;">
 		<div class="modal-header mochaBg">
 			<h5>Project Process Map</h5>
 			<div class="closeBtns modal-close"><i class="material-symbols-outlined">close</i></div>
@@ -4854,59 +2845,45 @@
 		<div class="modal-content pjtMapArea">
 			<div class="row">
 				<div class="col s2"></div>
-				<div class="col s8 fin">
+				<div class="col s10 fin">
 					<div class="pjtMapBox">
-						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','1','1');">
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','3','1','1');">
 							<a>Projcet<br>Overview</a>
 						</div>
-						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','1','6');">
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','3','1','6');">
 							<a>Project Team<br>Resource Plan</a>
 						</div>
-						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','1','5');">
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','3','1','5');">
 							<a>Project<br>Schedule</a>
 						</div>
-						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','1','8');">
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','3','1','8');">
 							<a>Project<br>Financials</a>
 						</div>
-						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','1','11');">
+						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','3','1','11');">
 							<a>Action<br>Register</a>
 						</div>
 					</div>
 					<div class="statusIcon sizeL"><i class="material-symbols-outlined">check_circle</i></div>
 				</div>
-				<div class="col s2"></div>
 			</div>
 			<div class="row mt30">
 				<div class="col s2 fin">
 					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'1','1',null,null);"><a>NPC</a></div>
 					<div class="statusIcon sizeL"><i class="material-symbols-outlined">check_circle</i></div>
 				</div>
-				<div class="col s2 fin">
-					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'2','2','1',null);"><a>NPI Go</a></div>
+				<div class="col s8 ing">
+					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'2','3','1',null);"><a>Monitoring</a></div>
 					<div class="statusIcon sizeL"><i class="material-symbols-outlined">check_circle</i></div>
 				</div>
-				<div class="col s2 fin">
-					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'2','3','1',null);"><a>Lab Formulation</a></div>
-					<div class="statusIcon sizeL"><i class="material-symbols-outlined">check_circle</i></div>
-				</div>
-				<div class="col s2 ing">
-					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'2','4','1',null);"><a>Scale-Up</a></div>
+				<div class="col s2 disabled cDefault">
+					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'2','5','1',null);"><a>Commercial Go</a></div>
 					<div class="statusIcon sizeL"><i class="material-symbols-outlined">play_circle</i></div>
-				</div>
-				<div class="col s2 disabled cDefault">
-					<div class="pjtMapBox">Commercial Go</div>
-				</div>
-				<div class="col s2 disabled cDefault">
-					<div class="pjtMapBox" onclick="fnSetStageCont(this,'3','6',null,'3');"><a>Post Launch Review</a></div>
 				</div>
 			</div>
 			<div class="row mt30">
 				<div class="col s2"></div>
-				<div class="col s8 ing">
+				<div class="col s10 ing">
 					<div class="pjtMapBox">
-						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','2',null);">
-							<a>MKTG<br>Overview</a>
-						</div>
 						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','4',null);">
 							<a>Mfg/SIOP<br>Assessment​</a>
 						</div>
@@ -4934,7 +2911,6 @@
 					</div>
 					<div class="statusIcon sizeL"><i class="material-symbols-outlined">play_circle</i></div>
 				</div>
-				<div class="col s2"></div>
 			</div>
 		</div>
 	</article>

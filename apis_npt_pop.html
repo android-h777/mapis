@@ -90,7 +90,8 @@
 				}
 			});
 
-			fnSetStageCont(this,'2','4','1',null);
+			fnSetStageCont(this,'1','1','1',null);
+			//fnSetStageCont(this,'2','2','1',null);
 
 			au.fnSetDatepicker(null, "dd.mm.yyyy");
 
@@ -390,27 +391,15 @@
 		<section class="statusBox">
 			<div class="statusArea">
 				<div id="btn_stage_1" data-type="1" data-gate="1" class="bdBox waves-effect waves-green stageBtn fin">
-					<i class="material-symbols-outlined left">check_circle</i><span>NPC</span>
+					<i class="material-symbols-outlined left">check_circle</i><span>Proposal</span>
 				</div>
 				<div class="arw"><i class="material-symbols-outlined">navigate_next</i></div>
 				<div id="btn_stage_2" data-type="2" data-gate="2" class="bdBox waves-effect waves-green stageBtn fin">
-					<i class="material-symbols-outlined left">check_circle</i><span>NPI Go</span>
-				</div>
-				<div class="arw"><i class="material-symbols-outlined">navigate_next</i></div>
-				<div id="btn_stage_3" data-type="2" data-gate="3" class="bdBox waves-effect waves-green stageBtn fin">
-					<i class="material-symbols-outlined left">check_circle</i><span>Lab Formulation</span>
-				</div>
-				<div class="arw"><i class="material-symbols-outlined">navigate_next</i></div>
-				<div id="btn_stage_4" data-type="2" data-gate="4" class="bdBox waves-effect waves-green stageBtn fin">
-					<i class="material-symbols-outlined left">check_circle</i><span>Scale-up</span>
+					<i class="material-symbols-outlined left">check_circle</i><span>NPT Go</span>
 				</div>
 				<div class="arw"><i class="material-symbols-outlined">navigate_next</i></div>
 				<div id="btn_stage_5" data-type="2" data-gate="5" class="bdBox waves-effect waves-green stageBtn fin">
-					<i class="material-symbols-outlined left">check_circle</i><span>Commercial Go</span>
-				</div>
-				<div class="arw"><i class="material-symbols-outlined">navigate_next</i></div>
-				<div id="btn_stage_6" data-type="3" data-gate="6" class="bdBox waves-effect waves-blue stageBtn ing">
-					<i class="material-symbols-outlined left">play_circle</i><span>Post Launch Review</span>
+					<i class="material-symbols-outlined left">check_circle</i><span>Close Out</span>
 				</div>
 				<div class="onArwArea">
 					<svg width="15" height="10" viewBox="0 0 15 10">
@@ -437,18 +426,12 @@
 	</header>
 
 	<aside class="leftAside z-depth-1 blurArea">
-		<div class="menuTit">NPC</div>
+		<div class="menuTit">Proposal</div>
 
 		<section>
 			<ul id="menu_stage_1" class="menuUl" style="display: none;">
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="pjContCard_1-1">
 					<i class="material-symbols-outlined left">inventory_2</i><span>Basic Data</span>
-				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_1-2">
-					<i class="material-symbols-outlined left">preview</i><span>Concept Overview</span>
-				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_1-5">
-					<i class="material-symbols-outlined left">verified</i><span>DFV Rating</span>
 				</li>
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_1-6">
 					<i class="material-symbols-outlined left">local_library</i><span>Approval</span>
@@ -578,18 +561,6 @@
 				</li>
 			</ul>
 
-			<ul id="menu_stage_3" class="menuUl" style="display: none;">
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="pjContCard_3-1">
-					<i class="material-symbols-outlined left">frame_inspect</i><span>Design Perform.</span>
-				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_3-3">
-					<i class="material-symbols-outlined left">cognition_2</i><span>Learnings</span>
-				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_3-4">
-					<i class="material-symbols-outlined left">docs</i><span>Documentation</span>
-				</li>
-			</ul>
-
 		</section>
 		<section class="btnArea">
 			<div><a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn hBlue"><i class="material-symbols-outlined left">save</i><span class="label">Save</span></a></div>
@@ -604,13 +575,7 @@
 					<div class="inputArea">
 						<div class="row">
 							<div class="col s2 ar pl0">ID</div>
-							<div class="col s4 val"dataconn data-col="project_id">05760</div>
-							<div class="col s2 ar pl0">Type</div>
-							<div class="col s4 val">Standard NPI</div>
-						</div>
-						<div class="row">
-							<div class="col s2 ar pl0">Business Unit</div>
-							<div class="col s10 val">Formulated Specialties > Electronic Materials > Display - Electronics > Display & Micro > UV</div>
+							<div class="col s10 val"dataconn data-col="project_id">05760</div>
 						</div>
 						<div class="row">
 							<div class="col s2 ar pl0"><span class="essential">*</span>Name</div>
@@ -622,29 +587,45 @@
 							</div>
 						</div>
 						<div class="row">
-							<div class="col s2 ar pl0">NPC Submitted by</div>
+							<div class="col s2 ar pl0">Segment</div>
+							<div class="col s10 val">Industrial</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Site From</div>
+							<div class="col s4 val">Leverkeusen</div>
+							<div class="col s2 ar pl0">Site To</div>
+							<div class="col s4 val">Ohta</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Proposal Submitted by</div>
 							<div class="col s4 val"dataconn data-col="submitted_by">Spike MA</div>
-							<div class="col s2 ar pl0">NPC Submitted at</div>
+							<div class="col s2 ar pl0">Proposal Submitted at</div>
 							<div class="col s4 val"dataconn data-col="submitted_at">23.09.2025</div>
 						</div>
 						<div class="row">
-							<div class="col s2 ar pl0">Customer Desired Date</div>
+							<div class="col s2 ar pl0">Planned Close Out Date</div>
 							<div class="col s4 val">Oct 2025</div>
 						</div>
 						<div class="row">
-							<div class="col s2 ar pl0">IATF</div>
-							<div class="col s4 fLine vCenter">
-								<label>
-									<input type="checkbox" class="filled-in"/>
-									<span>　</span>
-								</label>
-							</div>
-							<div class="col s2 ar pl0">Confidential</div>
+							<div class="col s2 ar pl0">Primary Benefit</div>
 							<div class="col s4 val">
-								<select><option>JDA/NDA</option><option>GTC</option></select>
+								<select>
+									<option>Productivity</option>
+									<option>Customer Service</option>
+									<option>Sales Growth</option>
+									<option>Transformation</option>
+								</select>
 							</div>
 						</div>
-						
+						<div class="row">
+							<div class="col s2 ar pl0">Description of Benefit</div>
+							<div class="col s10">
+								<div class="aniInput">
+									<textarea class="materialize-textarea" placeholder="Describe the new product concept/application?"></textarea>
+									<span class="focus-border"/>
+								</div>
+							</div>
+						</div>
 						<div class="row">
 							<div class="col s2 ar pl0">Image (Proudct/Application)</div>
 							<div class="col s10">
@@ -663,117 +644,6 @@
 								<div class="mt10">
 									<img src="img/flasks.png" style="height: 200px;">
 								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<section class="cardBox animate__animated mt10" id="pjContCard_1-2">
-				<div class="cardTit2"><i class="material-symbols-outlined left">preview</i>Concept Overview</div>
-				<div>
-					<div class="inputArea">
-						<div class="row">
-							<div class="col s2 ar pl0">Brief Description of Product/Application</div>
-							<div class="col s10">
-								<div class="aniInput">
-									<textarea class="materialize-textarea" placeholder="Describe the new product concept/application?"></textarea>
-									<span class="focus-border"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col s2 ar pl0">Target Market/Customers</div>
-							<div class="col s10">
-								<div class="aniInput">
-									<textarea class="materialize-textarea" placeholder="Who are the intended customers/application/market?"></textarea>
-									<span class="focus-border"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col s2 ar pl0">Source of Opportunity</div>
-							<div class="col s10">
-								<div class="aniInput">
-									<textarea class="materialize-textarea" placeholder="Where did this idea/concept come from?"></textarea>
-									<span class="focus-border"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col s2 ar pl0">Competition</div>
-							<div class="col s10">
-								<div class="aniInput">
-									<textarea class="materialize-textarea" placeholder="Describe the new product concept/application?"></textarea>
-									<span class="focus-border"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col s2 ar pl0">Comments</div>
-							<div class="col s10">
-								<div class="aniInput">
-									<textarea class="materialize-textarea" placeholder="Comments"></textarea>
-									<span class="focus-border"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col s2 ar pl0">Expected Opportunity Size<br>(Sales ($MM) / Volume (MT))</div>
-							<div class="col s10">
-								<div class="fixedTable hBorderTable hScroll mt10">
-								<table>
-									<colgroup>
-										<col style="width: 20%;">
-										<col style="width: 20%;">
-										<col style="width: 20%;">
-										<col style="width: 20%;">
-										<col style="width: 20%;">
-									</colgroup>
-									<thead>
-										<tr>
-											<th>Timeframe</th>
-											<th>Sales ($MM)</th>
-											<th>Volume (MT)</th>
-											<th>Average SGM %</th>
-											<th>Maintenance %</th>
-										</tr>
-									</thead>
-									<tbody>
-										<tr>
-											<td class="ac">
-												<select>
-													<option value="">5 Yrs Total</option>
-													<option value="">Peak Sales</option>
-												</select>
-											</td>
-											<td class="ac">
-												<div class="aniInput">
-													<input type="text" value="1,566,200" class="browser-default ar">
-													<span class="focus-border"/>
-												</div>                                  
-											</td>
-											<td class="ac">
-												<div class="aniInput">
-													<input type="text" value="4,590" class="browser-default ar">
-													<span class="focus-border"/>
-												</div>                                  
-											</td>
-											<td class="ar">
-												<div class="aniInput wd100px dpInlineBlock">
-													<input type="text" value="24.54" class="browser-default ar">
-													<span class="focus-border"/>
-												</div> %
-											</td>
-											<td class="ar">
-												<div class="aniInput wd100px dpInlineBlock">
-													<input type="text" value="24.54" class="browser-default ar">
-													<span class="focus-border"/>
-												</div> %
-											</td>
-										</tr>
-									</tbody>
-								</table>
 							</div>
 						</div>
 						<div class="row">
@@ -797,172 +667,7 @@
 					</div>
 				</div>
 			</section>
-
-			<section class="cardBox animate__animated mt10" id="pjContCard_1-5">
-				<div class="cardTit2"><i class="material-symbols-outlined left">verified</i>DFV Rating</div>
-				<div class="cardSubTit mt20">NPC Screening Tool</div>
-				<div class="fixedTable hBorderTable hScroll mt10">
-					<table>
-						<colgroup>
-							<col style="width: 30px;">
-							<col style="width: 100px;">
-							<col style="width: 140px;">
-							<col style="width: 100px;">
-							<col style="width: 100px;">
-							<col style="width: 30px;">
-							<col style="width: 40px;">
-							<col style="width: 40px;">
-						</colgroup>
-						<thead>
-							<tr>
-								<th colspan="2">Metric Definition</th>
-								<th colspan="3">Rating Scale & Definition</th>
-								<th rowspan="2">Weight</th>
-								<th colspan="2">NPC</th>
-							</tr>
-							<tr>
-								<th>Category</th>
-								<th>Metric</th>
-								<th>10 [LOW]</th>
-								<th>30 [MED]</th>
-								<th>90 [HIGH]</th>
-								<th>Rating</th>
-								<th>Score</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td rowspan="5" class="cnlcream25 pl20 pt20"><div class="font20 fontBold">D</div><div class="mt10">Desirability</div></td>
-								<td>Segment Strategy Fit</td>
-								<td>No clear fit or indirect fit with current segment strategy</td>
-								<td>Product generally in line with segment strategy but not with the top priority elements</td>
-								<td>Product strongly aligned to the most important segment strategy elements</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr>
-								<td>Customer Benefits (Outcomes)</td>
-								<td>Product offers no unique benefits or features to the customers<br>Product essentially same as competition</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">40%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">36</td>
-							</tr>
-							<tr>
-								<td>Adaptive</td>
-								<td>Customer may need significant investment and/or process adjustments for adaption</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr>
-								<td>Sustainable Competative Advantage</td>
-								<td>Significant composition, Product can be copied reasonably easily with some limited skills and analysis</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">10%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">3</td>
-							</tr>
-							<tr class="btDLine">
-								<td colspan="6"></td>
-								<td class="cream25 ar">54</td>
-							</tr>
-							<tr class="btSLine">
-								<td rowspan="5" class="cnlcream25 pl20 pt20"><div class="font20 fontBold">F</div><div class="mt10">Feasibility</div></td>
-								<td>Marketing Synergies</td>
-								<td>Currently no or very limited marketing expertise, experience or resources in this area</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">2.5</td>
-							</tr>
-							<tr>
-								<td>Technical Synergies</td>
-								<td>Not good</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr>
-								<td>Manufacturing Synergies</td>
-								<td>Not good</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr>
-								<td>Time to Commercialization</td>
-								<td>Not good</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr class="btDLine">
-								<td colspan="6"></td>
-								<td class="cream25 ar">54</td>
-							</tr>
-							<tr class="btSLine">
-								<td rowspan="5" class="cnlcream25 pl20 pt20"><div class="font20 fontBold">V</div><div class="mt10">Viability</div></td>
-								<td>Financial Impact</td>
-								<td>Not good</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr>
-								<td>Target Market Size</td>
-								<td>Not good</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr>
-								<td>Market Growth</td>
-								<td>Not good</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr>
-								<td>Gross Margins</td>
-								<td>Not good</td>
-								<td>Good</td>
-								<td>Very Good</td>
-								<td class="ac">25%</td>
-								<td><select class="browser-default ht25"><option>10 [LOW]</option><option>30 [MED]</option><option>90 [HIGH]</option></select></td>
-								<td class="ar">7.5</td>
-							</tr>
-							<tr class="btDLine">
-								<td colspan="6"></td>
-								<td class="cream25 ar">54</td>
-							</tr>
-							<tr class="btSLine">
-								<td colspan="7"></td>
-								<td class="mocha25 white-text ar">200</td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</section>
-
+			
 			<section class="cardBox animate__animated mt10" id="pjContCard_1-6">
 				<div class="cardTit2"><i class="material-symbols-outlined left">local_library</i>Approval</div>
 				<div>
@@ -1018,7 +723,13 @@
 				<div class="inputArea">
 					<div class="row">
 						<div class="col s2 ar pl0">ID</div>
-						<div class="col s10 val"dataconn data-col="project_id">05760</div>
+						<div class="col s4 val"dataconn data-col="project_id">05760</div>
+						<div class="col s2 ar pl0">Type</div>
+						<div class="col s4 val">NPI</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Business Unit</div>
+						<div class="col s10 val">Formulated Specialties > Electronic Materials > Display - Electronics > Display & Micro > UV</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0"><span class="essential">*</span>Name</div>
@@ -1028,10 +739,6 @@
 								<span class="focus-border"/>
 							</div>
 						</div>
-					</div>
-					<div class="row">
-						<div class="col s2 ar pl0">Business Unit</div>
-						<div class="col s10 val">Formulated Specialties > Electronic Materials > Display - Electronics > Display & Micro > UV</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">NPI Project Leader</div>
@@ -1163,9 +870,9 @@
 					<div class="cardSubTit mt20">Innovation Categorization</div>
 					<div class="row">
 						<div class="col s2 ar pl0"><span class="essential">*</span>Knowledge of Technology</div>
-						<div class="col s4 val"><select><option value="">Extending Existing Products / Technology</option></select></div>
+						<div class="col s4"><select><option value="">Extending Existing Products / Technology</option></select></div>
 						<div class="col s2 ar pl0"><span class="essential">*</span>Knowledge of Market</div>
-						<div class="col s4 val"><select><option value="">Enter Adjacent Markets (Now Unserved)</option></select></div>
+						<div class="col s4"><select><option value="">Enter Adjacent Markets (Now Unserved)</option></select></div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Innovation Category</div>
@@ -1259,9 +966,6 @@
 							<col style="width: 13%;">
 							<col style="width: 13%;">
 							<col style="width: 13%;">
-							<col style="width: 13%;">
-							<col style="width: 13%;">
-							<col style="width: 13%;">
 							<col style="width: 11%;">
 						</colgroup>
 						<tbody>
@@ -1270,26 +974,17 @@
 								<td>DD/MM/YYYY</td>
 								<td>DD/MM/YYYY</td>
 								<td>DD/MM/YYYY</td>
-								<td>DD/MM/YYYY</td>
-								<td>DD/MM/YYYY</td>
-								<td>DD/MM/YYYY</td>
 								<td>Overall Project Status</td>
 							</tr>
 							<tr>
 								<td class="headerTd ar">Decision Point</td>
-								<td><div class="arrow-step mpm-bg white-text">NPC Screening</div></td>
-								<td><div class="arrow-step mpm-bg white-text">NPI Go Review</div></td>
-								<td><div class="arrow-step mpm-bg white-text">Lab Formulation</div></td>
-								<td><div class="arrow-step mpm-bg white-text">Scale-Up Review</div></td>
-								<td><div class="arrow-step mpm-bg white-text">Commercial Go</div></td>
-								<td><div class="arrow-step mpm-bg white-text">Post Launch Review</div></td>
+								<td><div class="arrow-step mpm-bg white-text">Proposal</div></td>
+								<td><div class="arrow-step mpm-bg white-text">NPT Go</div></td>
+								<td><div class="arrow-step mpm-bg white-text">Close Out</div></td>
 								<td class="ac" rowspan="2"><i class="material-symbols-outlined green-text font40">circle</i></td>
 							</tr>
 							<tr>
 								<td class="headerTd ar">Actual Completion</td>
-								<td>DD/MM/YYYY</td>
-								<td>DD/MM/YYYY</td>
-								<td>DD/MM/YYYY</td>
 								<td>DD/MM/YYYY</td>
 								<td>DD/MM/YYYY</td>
 								<td>DD/MM/YYYY</td>
@@ -1310,13 +1005,13 @@
 									<div class="ganttview-vtheader-item-name STEP" style="height: 31px;">Product in Concept</div>
 								</div>
 								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Prepare NPC documentation and submit in NPDI</div>
+									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Prepare Proposal documentation and submit in NPDI</div>
 								</div>
 								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">NPC Review(Mktg & Tech)</div>
+									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Proposal Review(Mktg & Tech)</div>
 								</div>
 								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">NPC Approval</div>
+									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Proposal Approval</div>
 								</div>
 								<div class="ganttview-vtheader-item">
 									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Review NPI GO and Schedule Review</div>
@@ -2018,10 +1713,10 @@
 									<tr>
 										<th class="fix-col al">Category</th>
 										<th class="fix-col">Unit</th>
-										<th><span class="roundBox green">NPI GO</span><br>2025</th>
+										<th><span class="roundBox green">NPT GO</span><br>2025</th>
 										<th><br>2026</th>
 										<th><br>2027</th>
-										<th><span class="roundBox green">COMM GO</span><br>2028</th>
+										<th><span class="roundBox green">Close Out</span><br>2028</th>
 										<th><br>2029</th>
 										<th><br>2030</th>
 										<th><br>2031</th>
@@ -3434,14 +3129,14 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td rowspan="1">NPC</td>
+								<td rowspan="1">Proposal</td>
 								<td>Identification of high-level Risks (where applicable)</td>
 								<td>- Highlight any known major risks in Project Summary</td>
-								<td>NPC Requester</td>
+								<td>Proposal Requester</td>
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="3">NPI GO</td>
+								<td rowspan="4">NPT GO</td>
 								<td>Preliminary assessment :<br>Prior history, capacity, and cost</td>
 								<td>
 									<ul>
@@ -3483,7 +3178,6 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="1">Lab Formulation &amp; Scale-Up</td>
 								<td>Sourcing</td>
 								<td>
 									<ul>
@@ -3495,7 +3189,7 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="2">Comm. GO</td>
+								<td rowspan="2">Close Out</td>
 								<td>Product Management &amp; Inventory</td>
 								<td>
 									<ul>
@@ -3836,27 +3530,12 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td>NPI GO</td>
+								<td>NPT GO</td>
 								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
 								<td><div class="aniInput"><input type="text" class="browser-default num2" value=""><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td>Lab Formulation</td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><input type="text" class="browser-default num2" value=""><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>Scale-Up</td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><input type="text" class="browser-default num2" value=""><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>Commercial GO</td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><input type="text" class="browser-default num2" value=""><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>Post Launch Review</td>
+								<td>Close Out</td>
 								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
 								<td><div class="aniInput"><input type="text" class="browser-default num2" value=""><span class="focus-border"/></div></td>
 							</tr>
@@ -3889,7 +3568,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td rowspan="2">NPI GO</td>
+								<td rowspan="5">NPT GO</td>
 								<td>Identification of high level Risks (where applicable)</td>
 								<td>- Highlight any major risks/road blocks/needs with respect to QC/QA in Project Summary</td>
 								<td>BU Technology + QC/QA</td>
@@ -3912,7 +3591,6 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="3">Lab Formulation &amp; Scale-Up</td>
 								<td>Test Method Development</td>
 								<td>
 									<ul>
@@ -3942,7 +3620,7 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="1">Comm. GO</td>
+								<td rowspan="1">Close Out</td>
 								<td>QC Plan implementation and Product/Process Capability Verification</td>
 								<td>
 									<ul>
@@ -4100,10 +3778,10 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td rowspan="2">NPI GO</td>
+								<td rowspan="7">NPT GO</td>
 								<td>Identification of high level Risk/Opportunity for IP</td>
 								<td>- Preliminary risk/opportunity assessment</td>
-								<td>NPC Requester</td>
+								<td>Proposal Requester</td>
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
@@ -4113,7 +3791,6 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="5">Lab Formulation & Scale-Up</td>
 								<td>State of the Art / Patent Landscape Search</td>
 								<td>- Assessment of state of the Art for the product concept and provide insights on white spaces</td>
 								<td>Technology IP</td>
@@ -4144,7 +3821,7 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="2">Comm. GO</td>
+								<td rowspan="3">Close Out</td>
 								<td>FTP Analysis and Opinion</td>
 								<td>- Advise if the developed product has freedom to practise in the countries of MPM interest</td>
 								<td>Technology IP, IP Legal</td>
@@ -4157,7 +3834,6 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td>Comm. GO</td>
 								<td>IP Strategy Verification</td>
 								<td>- Confirm all required filings, publications, NDA/CDAs and FTP assessments are complete</td>
 								<td>Technology IP, IP Legal</td>
@@ -4192,10 +3868,10 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td rowspan="2">NPI GO</td>
+								<td rowspan="6">NPT GO</td>
 								<td>Identification of high level Risks (if any) related to Regulatory Aspects</td>
 								<td>- Preliminary risk identification</td>
-								<td>NPC Requester</td>
+								<td>Proposal Requester</td>
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
@@ -4215,7 +3891,6 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="4">Lab Formulation & Scale-Up</td>
 								<td>Regulatory Risks / Concerns</td>
 								<td>- Updated risk assessment related to regulatory aspects (including status on resolution/mitigation of previously identified risks/concerns)</td>
 								<td>Project Leader + BU Tech. & PS team members</td>
@@ -4245,7 +3920,7 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="3">Comm. GO</td>
+								<td rowspan="4">Close Out</td>
 								<td>Regulatory Risks / Concerns</td>
 								<td>- Confirm all major regulatory risks / concerns are suitably resolved</td>
 								<td>BU Tech + PS team member</td>
@@ -4264,7 +3939,6 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td>Comm. GO</td>
 								<td>Chemical & Government Registrations</td>
 								<td>- Confirm all government and chemical required registrations (for all regions where the product will be launched) are complete</td>
 								<td>Mktg + PS team member</td>
@@ -4599,250 +4273,6 @@
 				</div>
 			</section>
 		</article>
-
-		<article id="cont_stage_3" class="contArticle" style="display: none;">
-			<section class="cardBox animate__animated mt10" id="pjContCard_3-1">
-				<div class="cardTit2"><i class="material-symbols-outlined left">frame_inspect</i>Design Performance Validation</div>
-				<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 300px;">
-					<table id="">
-						<colgroup>
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-						</colgroup>
-						<thead>
-							<tr>
-								<th rowspan="2"></th>
-								<th rowspan="2">Customer Requirements</th>
-								<th rowspan="2">Product/Process Development CTQs</th>
-								<th rowspan="2">UoM</th>
-								<th colspan="3">Target</th>
-								<th colspan="3">CTQ Change Log</th>
-								<th rowspan="2">MSA Status</th>
-								<th colspan="3">Current Performance</th>
-								<th colspan="2">Verification/Validation Status</th>
-							</tr>
-							<tr>
-								<th>Min</th>
-								<th>Avg</th>
-								<th>Max</th>
-								<th>Changed since NPI Go?</th>
-								<th>Date of Change</th>
-								<th>Explanation for Changes</th>
-								<th>Min</th>
-								<th>Avg</th>
-								<th>Max</th>
-								<th>Result</th>
-								<th>Verification/Validation By</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>1</td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-							</tr>
-							<tr>
-								<td>2</td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-							</tr>
-							<tr>
-								<td>3</td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-								<td></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-				<div class="cardSubTit mt20">Attachments</div>
-				<div class="inputArea mt10">
-					<div class="input-field file-field mt0 mb0">
-						<input type="hidden" id="ATTACH_FILE_ID" value="">
-						<div class="btn" id="ATTACH_FILE_BTN">
-							<span>File</span>
-							<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
-						</div>
-						<div class="file-path-wrapper">
-							<input type="text" class="file-path validate">
-						</div>
-					</div>
-					<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
-				</div>
-			</section>
-			<section class="cardBox animate__animated mt10" id="pjContCard_3-3">
-				<div class="cardTit2"><i class="material-symbols-outlined left">cognition_2</i>Learnings Summary</div>
-				<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
-					<table id="">
-						<colgroup>
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
-						</colgroup>
-						<thead>
-							<tr>
-								<th></th>
-								<th>Focus Area</th>
-								<th>Best Practices / Successes Observed</th>
-								<th>Opportunities for Improvement Identified</th>
-								<th>Action Plans / Recommendations</th>
-							</tr>
-						</thead>
-						<tbody>
-							<tr>
-								<td>1.00</td>
-								<td>Project Selection, Alignment to BU Strategy and Portfolio fit</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>2.00</td>
-								<td>Business Case Development and Front-end Value Proposition</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>3.00</td>
-								<td>Project Planning & Project Resources</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>4.00</td>
-								<td>Customer Requirements, VOC and CTQs</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>5.00</td>
-								<td>Product Development</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>6.00</td>
-								<td>Process Development & Scale-up</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>7.00</td>
-								<td>Overall Project Execution (Schedule, Budget, Cross-functional collaboration etc)</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>8.00</td>
-								<td>Results : Actual vs Plan (sales, margin, volume, costs etc)</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>9.00</td>
-								<td>NPI Process Effectiveness (Framework, tools & templates, Training etc)</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-							<tr>
-								<td>10.00</td>
-								<td>Other Areas/Aspects related to the Project</td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
-							</tr>
-						</tbody>
-					</table>
-				</div>
-			</section>
-			<section class="cardBox animate__animated mt10" id="pjContCard_3-4">
-				<div class="cardTit2"><i class="material-symbols-outlined left">docs</i>Project Documentation</div>
-				<div>
-					<div class="inputArea">
-						<div class="row">
-							<div class="col s2 ar pl0">Attachments</div>
-							<div class="col s10">
-								<div>
-									<div class="input-field file-field mt0 mb0">
-										<input type="hidden" id="ATTACH_FILE_ID" value="">
-										<div class="btn" id="ATTACH_FILE_BTN">
-											<span>File</span>
-											<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
-										</div>
-										<div class="file-path-wrapper">
-											<input type="text" class="file-path validate">
-										</div>
-									</div>
-									<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
-								</div>
-							</div>
-						</div>
-					</div>
-				</div>
-			</section>
-		</article>
 	</div>
 
 
@@ -4854,7 +4284,7 @@
 		<div class="modal-content pjtMapArea">
 			<div class="row">
 				<div class="col s2"></div>
-				<div class="col s8 fin">
+				<div class="col s10 fin">
 					<div class="pjtMapBox">
 						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','1','1');">
 							<a>Projcet<br>Overview</a>
@@ -4874,35 +4304,23 @@
 					</div>
 					<div class="statusIcon sizeL"><i class="material-symbols-outlined">check_circle</i></div>
 				</div>
-				<div class="col s2"></div>
 			</div>
 			<div class="row mt30">
 				<div class="col s2 fin">
-					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'1','1',null,null);"><a>NPC</a></div>
+					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'1','1',null,null);"><a>Proposal</a></div>
 					<div class="statusIcon sizeL"><i class="material-symbols-outlined">check_circle</i></div>
 				</div>
-				<div class="col s2 fin">
-					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'2','2','1',null);"><a>NPI Go</a></div>
+				<div class="col s5 ing">
+					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'2','2','1',null);"><a>NPT Go</a></div>
 					<div class="statusIcon sizeL"><i class="material-symbols-outlined">check_circle</i></div>
 				</div>
-				<div class="col s2 fin">
-					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'2','3','1',null);"><a>Lab Formulation</a></div>
-					<div class="statusIcon sizeL"><i class="material-symbols-outlined">check_circle</i></div>
-				</div>
-				<div class="col s2 ing">
-					<div class="waves-effect waves-hBlue pjtMapBox" onclick="fnSetStageCont(this,'2','4','1',null);"><a>Scale-Up</a></div>
-					<div class="statusIcon sizeL"><i class="material-symbols-outlined">play_circle</i></div>
-				</div>
-				<div class="col s2 disabled cDefault">
-					<div class="pjtMapBox">Commercial Go</div>
-				</div>
-				<div class="col s2 disabled cDefault">
-					<div class="pjtMapBox" onclick="fnSetStageCont(this,'3','6',null,'3');"><a>Post Launch Review</a></div>
+				<div class="col s5 disabled cDefault">
+					<div class="pjtMapBox">Close Out</div>
 				</div>
 			</div>
 			<div class="row mt30">
 				<div class="col s2"></div>
-				<div class="col s8 ing">
+				<div class="col s10 ing">
 					<div class="pjtMapBox">
 						<div class="waves-effect waves-hBlue pjtMapSubBox fin" onclick="fnSetStageCont(this,'2','4','2',null);">
 							<a>MKTG<br>Overview</a>
@@ -4934,7 +4352,6 @@
 					</div>
 					<div class="statusIcon sizeL"><i class="material-symbols-outlined">play_circle</i></div>
 				</div>
-				<div class="col s2"></div>
 			</div>
 		</div>
 	</article>
