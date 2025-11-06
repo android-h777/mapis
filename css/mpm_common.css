@@ -2990,12 +2990,11 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 .aniInput .browser-default {
 	border: 0px;
 	outline: none;
-	border-bottom: 1px solid #a47764;
 	line-height: 25px;
 	width: 100%;
 }
 
-.aniInput .browser-default:focus, .aniInput .materialize-textarea {
+.aniInput .browser-default, .aniInput .materialize-textarea {
 	background: rgba(164, 119, 100, 0.05);
 	border-top-left-radius: 5px;
 	border-top-right-radius: 5px;
