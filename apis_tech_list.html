@@ -32,12 +32,8 @@
           });
 
           $(".pjTit, .rightSection .cardTit, #newPjBtn").click(function(){
-            window.open("apis_custom_pop.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
+            window.open("apis_tech_pop.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
           });
-
-          $("#test").click(function() {
-            window.open("projectPopup.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
-          })
 
           $(".mainList li").click(function(){
             $(".mainList li").removeClass("on");
@@ -169,20 +165,20 @@
             },
             series: [{
                 data: [{
-                    name: 'NPC',
+                    name: 'Registration',
                     label: "06.07.2024",
                     description: '',
                     id: 'cont1',
                     color: "#899f6a"
                 }, {
-                    name: 'Monitoring',
-                    label: "22.03.2025",
+                    name: 'In Progress',
+                    label: "22.06.2025",
                     description: '',
-                    id: 'cont2',
+                    id: 'cont3',
                     color: "#7391c9"
                 }, {
-                    name: 'Commercial Go',
-                    label: "14.09.2025",
+                    name: 'Completion',
+                    label: "-",
                     description: '',
                     id: 'cont4',
                     color: "#eeeeee"
@@ -292,12 +288,11 @@
       <div class="menuList">
         <ul>
           <li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>Home</a></li>
-          <li class="waves-effect waves-hColor"><a href="apis_dash.html"><i class="material-icons left">analytics</i>Insight​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_dash.html"><i class="material-icons left">analytics</i>Insight</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
-          <li class="waves-effect waves-hColor on"><a href="apis_custom_list.html"><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_custom_list.html"><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_npt_list.html"><i class="material-icons left">snippet_folder</i>NPT</a></li>
-          <li class="waves-effect waves-hColor"><a href="apis_tech_list.html"><i class="material-icons left">build</i>Tech Support</a></li>
-          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">trending_up</i>Productivity</a></li>
+          <li class="waves-effect waves-hColor on"><a href="apis_tech_list.html"><i class="material-icons left">build</i>Tech Support</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub​</a></li>
           <li class="waves-effect waves-hColor"><a href="mfmea_list.html" target="_blank"><i class="material-icons left">playlist_add_check_circle</i>FMEA​</a></li>
           <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">addchart</i>PSA​</a></li>
@@ -310,7 +305,7 @@
   <article class="contArea typeList type2">
     <div class="leftSection">
       <section class="mainTitArea">
-        <div class="mainTit" id="test">Custom NPI List</div>
+        <div class="mainTit" id="test">Tech Support List</div>
         <div class="btnArea">
         <div class="newAppleTab mr10">
             <ul>

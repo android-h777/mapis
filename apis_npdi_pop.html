@@ -90,7 +90,7 @@
 				}
 			});
 
-			fnSetStageCont(this,'2','4','1',null);
+			fnSetStageCont(null,'2','4','2',null);
 
 			au.fnSetDatepicker(null, "dd.mm.yyyy");
 
@@ -468,6 +468,9 @@
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_2-1-7">
 					<i class="material-symbols-outlined left">warehouse</i><span>Project Financials</span>
 				</li>
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_2-1-9">
+					<i class="material-symbols-outlined left">calculate</i><span>NPV Calculator</span>
+				</li>
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_2-1-10">
 					<i class="material-symbols-outlined left">package_2</i><span>SKU Relationship</span>
 				</li>
@@ -583,7 +586,7 @@
 					<i class="material-symbols-outlined left">frame_inspect</i><span>Design Perform.</span>
 				</li>
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_3-3">
-					<i class="material-symbols-outlined left">cognition_2</i><span>Learnings</span>
+					<i class="material-symbols-outlined left">cognition_2</i><span>Learnings Summary</span>
 				</li>
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_3-4">
 					<i class="material-symbols-outlined left">docs</i><span>Documentation</span>
@@ -604,7 +607,7 @@
 					<div class="inputArea">
 						<div class="row">
 							<div class="col s2 ar pl0">ID</div>
-							<div class="col s4 val"dataconn data-col="project_id">05760</div>
+							<div class="col s4 val" dataconn data-col="project_id">05760</div>
 							<div class="col s2 ar pl0">Type</div>
 							<div class="col s4 val">Standard NPI</div>
 						</div>
@@ -623,9 +626,9 @@
 						</div>
 						<div class="row">
 							<div class="col s2 ar pl0">NPC Submitted by</div>
-							<div class="col s4 val"dataconn data-col="submitted_by">Spike MA</div>
+							<div class="col s4 val" dataconn data-col="submitted_by">Spike MA</div>
 							<div class="col s2 ar pl0">NPC Submitted at</div>
-							<div class="col s4 val"dataconn data-col="submitted_at">23.09.2025</div>
+							<div class="col s4 val" dataconn data-col="submitted_at">23.09.2025</div>
 						</div>
 						<div class="row">
 							<div class="col s2 ar pl0">Customer Desired Date</div>
@@ -800,8 +803,8 @@
 
 			<section class="cardBox animate__animated mt10" id="pjContCard_1-5">
 				<div class="cardTit2"><i class="material-symbols-outlined left">verified</i>DFV Rating</div>
-				<div class="cardSubTit mt20">NPC Screening Tool</div>
-				<div class="fixedTable hBorderTable hScroll mt10">
+				<div class="cardSubTit mt30">NPC Screening Tool</div>
+				<div class="fixedTable hBorderTable hScroll mg10">
 					<table>
 						<colgroup>
 							<col style="width: 30px;">
@@ -967,15 +970,15 @@
 				<div class="cardTit2"><i class="material-symbols-outlined left">local_library</i>Approval</div>
 				<div>
 					<div class="inputArea">
-						<div class="cardSubTit mt20">Dates</div>
+						<div class="cardSubTit mt30">Dates</div>
 						<div class="row">
 							<div class="col s2 ar pl0">Forecasted Decision Date</div>
 							<div class="col s4 val"><div class="aniInput"><input type="text" class="browser-default" value="23.09.2025"><span class="focus-border"/></div></div>
 							<div class="col s2 ar pl0">Actual Decision Date</div>
 							<div class="col s4 val"><div class="aniInput"><input type="text" class="browser-default" value="25.09.2025"><span class="focus-border"/></div></div>
 						</div>
-						<div class="cardSubTit mt20">Decision Point Approval Status</div>
-						<div class="fixedTable hBorderTable">
+						<div class="cardSubTit mt30">Decision Point Approval Status</div>
+						<div class="fixedTable hBorderTable hScroll mg10">
 							<table>
 								<colgroup>
 									<col style="width:auto;">
@@ -1018,7 +1021,7 @@
 				<div class="inputArea">
 					<div class="row">
 						<div class="col s2 ar pl0">ID</div>
-						<div class="col s10 val"dataconn data-col="project_id">05760</div>
+						<div class="col s10 val" dataconn data-col="project_id">05760</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0"><span class="essential">*</span>Name</div>
@@ -1035,7 +1038,7 @@
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Project Leader</div>
-						<div class="col s10 val"dataconn data-col="project_leader">Spike MA</div>
+						<div class="col s10 val" dataconn data-col="project_leader">Spike MA</div>
 					</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Development Location</div>
@@ -1084,7 +1087,7 @@
 						</div>
 					</div>
 					
-					<div class="cardSubTit mt20">Project Summary (DFV)</div>
+					<div class="cardSubTit mt30">Project Summary (DFV)</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Desirability</div>
 						<div class="col s10">
@@ -1160,7 +1163,7 @@
 						</div>
 					</div>
 
-					<div class="cardSubTit mt20">Innovation Categorization</div>
+					<div class="cardSubTit mt30">Innovation Categorization</div>
 					<div class="row">
 						<div class="col s2 ar pl0"><span class="essential">*</span>Knowledge of Technology</div>
 						<div class="col s4 val"><select><option value="">Extending Existing Products / Technology</option></select></div>
@@ -1172,7 +1175,7 @@
 						<div class="col s10 val">ADJACENT</div>
 					</div>
 
-					<div class="cardSubTit mt20">Sustainability Assessment Category</div>
+					<div class="cardSubTit mt30">Sustainability Assessment Category</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Sustainability Assessment Category</div>
 						<div class="col s4 val">BENEFICIAL IMPACT</div>
@@ -1180,8 +1183,8 @@
 						<div class="col s4 val"></div>
 					</div>
 					
-					<div class="cardSubTit mt20">Patent Info</div>
-					<div class="fixedTable hBorderTable hScroll mt0 vMiddle">
+					<div class="cardSubTit mt30">Patent Info</div>
+					<div class="fixedTable hBorderTable hScroll mg10 vMiddle">
 						<table id="tbl_patent" style="table-layout: fixed;">
 							<colgroup>
 								<col style="width: 20%;">
@@ -1228,7 +1231,7 @@
 						</table>
 					</div>
 
-					<div class="cardSubTit mt20">Attachments</div>
+					<div class="cardSubTit mt30">Attachments</div>
 					<div class="row">
 						<div class="col s2 ar pl0">Attachments</div>
 						<div class="col s10">
@@ -1252,7 +1255,7 @@
 
 			<section class="cardBox animate__animated mt10" id="pjContCard_2-1-5">
 				<div class="cardTit2"><i class="material-symbols-outlined left">calendar_month</i>Project Schedule & Status</div>
-				<div class="fixedTable hBorderTable hScroll mt20 vMiddle">
+				<div class="fixedTable hBorderTable hScroll mg10 vMiddle">
 					<table style="table-layout: fixed;">
 						<colgroup>
 							<col style="width: 11%;">
@@ -1297,8 +1300,8 @@
 						</tbody>
 					</table>
 				</div>
-				<div class="cardSubTit mt20">Detailed Schedule</div>
-				<div id="gantChartWrapper" class="newTaskGantt mt5">
+				<div class="cardSubTit mt30">Detailed Schedule</div>
+				<div id="gantChartWrapper" class="newTaskGantt mg10">
 					<div id="ganttChart" class="reg ganttbox">
 						<div class="ganttview">
 							<div class="ganttview-vtheader">
@@ -1892,7 +1895,7 @@
 						<div class="col s8 al pl0"><div class="cardSubTit">Functional Owners</div></div>
 					</div>
 					<div class="row">
-						<div class="col s4 pl0">
+						<div class="col s4">
 							<div class="fixedTable hBorderTable hScroll mt0 vMiddle">
 								<table id="tbl_members" style="table-layout: fixed;">
 									<colgroup>
@@ -1926,7 +1929,7 @@
 								</table>
 							</div>
 						</div>
-						<div class="col s8 pl0">
+						<div class="col s8">
 							<div class="fixedTable hBorderTable hScroll mt0 vMiddle">
 								<table id="tbl_members" style="table-layout: fixed;">
 									<colgroup>
@@ -1996,115 +1999,111 @@
 
 			<section class="cardBox animate__animated mt10" id="pjContCard_2-1-7">
 				<div class="cardTit2"><i class="material-symbols-outlined left">warehouse</i>Project Financials</div>
-				<div class="cardSubTit mt20">Cost</div>
-				<div>
-					<div class="inputArea">
-						<div class="hFixedTable hBorderTable hScroll vMiddle mt10">
-							<table id="" style="table-layout: fixed;">
-								<colgroup>
-									<col style="width: 200px;">
-									<col style="width: 60px;">
-									<col style="width: 120px;">
-									<col style="width: 120px;">
-									<col style="width: 120px;">
-									<col style="width: 120px;">
-									<col style="width: 120px;">
-									<col style="width: 120px;">
-									<col style="width: 120px;">
-									<col style="width: 120px;">
-									<col style="width: 120px;">
-								</colgroup>
-								<thead>
-									<tr>
-										<th class="fix-col al">Category</th>
-										<th class="fix-col">Unit</th>
-										<th><span class="roundBox green">NPI GO</span><br>2025</th>
-										<th><br>2026</th>
-										<th><br>2027</th>
-										<th><span class="roundBox green">COMM GO</span><br>2028</th>
-										<th><br>2029</th>
-										<th><br>2030</th>
-										<th><br>2031</th>
-										<th><br>2032</th>
-										<th><br>2033</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr>
-										<td class="fix-col">Resources</td>
-										<td class="fix-col ac">#</td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-									</tr>
-									<tr>
-										<td class="fix-col">IP Cost</td>
-										<td class="fix-col ac">$M</td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-									</tr>
-									<tr>
-										<td class="fix-col">Testing Cost</td>
-										<td class="fix-col ac">$M</td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-									</tr>
-									<tr>
-										<td class="fix-col">Registration Cost</td>
-										<td class="fix-col ac">$M</td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-									</tr>
-									<tr>
-										<td class="fix-col">Other Cost</td>
-										<td class="fix-col ac">$M</td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-										<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
+				<div class="cardSubTit mt30">Cost</div>
+				<div class="hFixedTable hBorderTable hScroll vMiddle mg10">
+					<table id="">
+						<colgroup>
+							<col style="width: 200px;">
+							<col style="width: 60px;">
+							<col style="width: 120px;">
+							<col style="width: 120px;">
+							<col style="width: 120px;">
+							<col style="width: 120px;">
+							<col style="width: 120px;">
+							<col style="width: 120px;">
+							<col style="width: 120px;">
+							<col style="width: 120px;">
+							<col style="width: 120px;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th class="fix-col al">Category</th>
+								<th class="fix-col">Unit</th>
+								<th><span class="roundBox green">NPI GO</span><br>2025</th>
+								<th><br>2026</th>
+								<th><br>2027</th>
+								<th><span class="roundBox green">COMM GO</span><br>2028</th>
+								<th><br>2029</th>
+								<th><br>2030</th>
+								<th><br>2031</th>
+								<th><br>2032</th>
+								<th><br>2033</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="fix-col">Resources</td>
+								<td class="fix-col ac">#</td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col">IP Cost</td>
+								<td class="fix-col ac">$M</td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col">Testing Cost</td>
+								<td class="fix-col ac">$M</td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col">Registration Cost</td>
+								<td class="fix-col ac">$M</td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col">Other Cost</td>
+								<td class="fix-col ac">$M</td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"></span></div></td>
+							</tr>
+						</tbody>
+					</table>
 				</div>
-				<div class="cardSubTit mt20">Financials</div>
+				<div class="cardSubTit mt30">Financials</div>
 				<div>
 					<div class="inputArea">
-						<div class="hFixedTable hBorderTable hScroll vMiddle mt10">
-							<table id="" style="table-layout: fixed;">
+						<div class="hFixedTable hBorderTable hScroll vMiddle mg10">
+							<table id="">
 								<colgroup>
 									<col style="width: 200px;">
 									<col style="width: 60px;">
@@ -2118,11 +2117,11 @@
 									<tr>
 										<th class="fix-col al">Category</th>
 										<th class="fix-col">Unit</th>
-										<th>PIM 1</th>
-										<th>PIM 2</th>
-										<th>PIM 3</th>
-										<th>PIM 4</th>
-										<th>PIM 5</th>
+										<th>PIM 1<br>2029</th>
+										<th>PIM 2<br>2030</th>
+										<th>PIM 3<br>2031</th>
+										<th>PIM 4<br>2032</th>
+										<th>PIM 5<br>2033</th>
 									</tr>
 								</thead>
 								<tbody>
@@ -2169,20 +2168,267 @@
 				</div>
 			</section>
 
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-1-9">
+				<div class="cardTit2"><i class="material-icons left">calculate</i>NPV Calculator</div>
+				<div class="cardSubTit mt20">Header Information</div>
+				<div class="inputArea">
+					<div class="row mt10">
+						<div class="col s2 ar pl0">NPI Go Year</div>
+						<div class="col s1">
+							<div class="aniInput">
+								<input type="text" value="0000" class="browser-default">
+								<span class="focus-border"/>
+							</div>
+						</div>
+						<div class="col s2 ar pl0">Discount Rate(%)</div>
+						<div class="col s1">
+							<div class="aniInput">
+								<input type="text" value="0.00" class="browser-default num2">
+								<span class="focus-border"/>
+							</div>
+						</div>
+						<div class="col s2 ar pl0">Est. Comm. Go Date</div>
+						<div class="col s1">
+							<div class="aniInput">
+								<input type="text" value="" class="browser-default">
+								<span class="focus-border"/>
+							</div>
+						</div>
+						<div class="col s2 ar pl0">Currency</div>
+						<div class="col s1">
+							<div class="aniInput">
+								<input type="text" value="USD" class="browser-default">
+								<span class="focus-border"/>
+							</div>
+						</div>
+					</div>
+				</div>
+				<div class="cardSubTit mt20">NPV Calculation Information</div>
+				<div class="hFixedTable hBorderTable hScroll vMiddle inputArea">
+					<table id="" style="table-layout: fixed;">
+						<colgroup>
+							<col style="width: 180px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+							<col style="width: 110px;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th class="fix-col"></th>
+								<th>0000</th>
+								<th>1</th>
+								<th>2</th>
+								<th>3</th>
+								<th>4</th>
+								<th>5</th>
+								<th>6</th>
+								<th>7</th>
+								<th>8</th>
+								<th>9</th>
+							</tr>
+							<tr>
+								<th class="fix-col"></th>
+								<th>Launch</th>
+								<th>Launch + 1</th>
+								<th>Launch + 2</th>
+								<th>Launch + 3</th>
+								<th>Launch + 4</th>
+								<th>Launch + 5</th>
+								<th>Launch + 6</th>
+								<th>Launch + 7</th>
+								<th>Launch + 8</th>
+								<th>Launch + 9</th>
+							</tr>
+						</thead>
+						<tbody>
+							<tr>
+								<td class="fix-col ar">Technical Heads</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar">Marketing Heads</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar">Capital Costs ($M)</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar">Other NPI Costs ($M)</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar">Regulatory Costs ($M)</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar">IP Costs ($M)</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar fontBold">Total Costs ($M)</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar">Sales ($M)</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar">Margin (%)</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+							<tr>
+								<td class="fix-col ar">Net Cash ($M)</td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+								<td><div class="aniInput"><input type="text" value="0.00" class="browser-default num2"><span class="focus-border"/></div></td>
+							</tr>
+						</tbody>
+					</table>
+				</div>
+				<div class="inputArea">
+					<div class="row mt10">
+						<div class="col s2 ar pl0">NPV in NPI Go Year ($M)</div>
+						<div class="col s1">
+							<div class="aniInput">
+								<input type="text" value="0.00" class="browser-default num2">
+								<span class="focus-border"/>
+							</div>
+						</div>
+						<div class="col s2 ar pl0">Sum Of Costs ($M)</div>
+						<div class="col s1">
+							<div class="aniInput">
+								<input type="text" value="0.00" class="browser-default num2">
+								<span class="focus-border"/>
+							</div>
+						</div>
+						<div class="col s2 ar pl0">NPV/(Sum Of Costs)</div>
+						<div class="col s1">
+							<div class="aniInput">
+								<input type="text" value="0.00" class="browser-default num2">
+								<span class="focus-border"/>
+							</div>
+						</div>
+						<div class="col s2 ar pl0">IRR (%)</div>
+						<div class="col s1">
+							<div class="aniInput">
+								<input type="text" value="0.00" class="browser-default num2">
+								<span class="focus-border"/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
 			<section class="cardBox animate__animated mt10" id="pjContCard_2-1-10">
 				<div class="cardTit2"><i class="material-symbols-outlined left">package_2</i>SKU Relationship</div>
 				<div class="inputArea">
 					<div class="row">
 						<div class="col s2 ar pl0">Material</div>
 						<div class="col s10">
-							<div class="aniInput dpInlineBlock wd200px">
+							<div class="aniInput wd200px" style="display: inline-flex;">
 								<input type="text" class="browser-default" placeholder="Material Search"><span class="focus-border"></span>
 							</div>
-							<a class="waves-effect waves-light hBtn ml10 dpInlineBlock" id="">Add</a>
+							<a class="waves-effect waves-light hBtn ml10" style="display: inline-flex;" id="">Add</a>
 						</div>
 					</div>
 				</div>
-				<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 250px;">
+				<div class="fixedTable hBorderTable hScroll vMiddle mg10 mt0" style="max-height: 250px;">
 					<table id="">
 						<colgroup>
 							<col style="width: 120px;">
@@ -2226,7 +2472,7 @@
 				<div class="cardTit2"><i class="material-symbols-outlined left">local_library</i>Approval</div>
 				<div>
 					<div class="inputArea">
-						<div class="cardSubTit mt20">Decision Point Approval Status</div>
+						<div class="cardSubTit mt30">Decision Point Approval Status</div>
 						<div class="fixedTable hBorderTable">
 							<table>
 								<colgroup>
@@ -2362,7 +2608,7 @@
 							</div>
 						</div>
 					</div>
-					<div class="cardSubTit mt20">Segmentation Data Chart</div>
+					<div class="cardSubTit mt30">Segmentation Data Chart</div>
 					<div class="row">
 						<div class="col s8">
 							<div class="fixedTable hBorderTable hScroll vMiddle mg0" style="max-height: 250px;">
@@ -2439,7 +2685,7 @@
 								<tr>
 									<th>Target customer segments</th>
 									<th>Key features of the new product</th>
-									<th>Primary benefits the product</th>
+									<th>Primary benefits of the product</th>
 									<th>How do we plan to position</th>
 									<th>Other comments</th>
 								</tr>
@@ -2597,7 +2843,7 @@
 					</div>
 				</div>
 				<div>
-					<div class="cardSubTit mt20">Differentiation vs Competitive Products</div>
+					<div class="cardSubTit mt30">Differentiation vs Competitive Products</div>
 					<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
 						<table id="">
 							<colgroup>
@@ -2819,7 +3065,7 @@
 			<section class="cardBox animate__animated mt10" id="pjContCard_2-2-4">
 				<div class="cardTit2"><i class="material-symbols-outlined left">diamond_shine</i>Value Proposition Assumptions</div>
 				<div>
-					<div class="cardSubTit mt20">Commercial</div>
+					<div class="cardSubTit mt30">Commercial</div>
 					<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
 						<table id="tbl_valAssume">
 							<colgroup>
@@ -2913,7 +3159,7 @@
 							</tbody>
 						</table>
 					</div>
-					<div class="cardSubTit mt20">Technical</div>
+					<div class="cardSubTit mt30">Technical</div>
 					<div class="fixedTable hBorderTable hScroll vMiddle inputArea" style="max-height: 500px;">
 						<table id="tbl_valAssume">
 							<colgroup>
@@ -3066,7 +3312,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="mt20">
+				<div class="mt30">
 					<div class="inputArea">
 						<div class="row">
 							<div class="col s2 ar pl0">Attachments</div>
@@ -3191,7 +3437,7 @@
 				<div class="cardTit2"><i class="material-symbols-outlined left">voice_selection</i>VOC/CTQ</div>
 				<div>
 					<div class="inputArea">
-						<div class="cardSubTit mt20">VOC</div>
+						<div class="cardSubTit mt30">VOC</div>
 						<div class="row">
 							<div class="col s2 ar pl0">Template</div>
 							<div class="col s10"><a class="waves-effect waves-light hBtn hBlue dpInlineBlock" id="">Download Template</a></div>
@@ -3223,7 +3469,7 @@
 								</div>
 							</div>
 						</div>
-						<div class="cardSubTit mt20">CTQ</div>
+						<div class="cardSubTit mt30">CTQ</div>
 						<div class="row">
 							<div class="col s2 ar pl0">CTQ</div>
 							<div class="col s10">
@@ -3525,7 +3771,7 @@
 			</section>
 			<section class="cardBox animate__animated mt10" id="pjContCard_2-4-2">
 				<div class="cardTit2"><i class="material-symbols-outlined left">warehouse</i>Volume / Capacity Analysis</div>
-				<div class="cardSubTit mt20">Expected product(s)/intermediates volume for first 5 years after launch(with split by pole)</div>
+				<div class="cardSubTit mt30">Expected product(s)/intermediates volume for first 5 years after launch(with split by pole)</div>
 				<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 					<table id="tbl_tev">
 						<colgroup>
@@ -3545,11 +3791,11 @@
 								<th>Parameter</th>
 								<th>Regional Mfg. Owner</th>
 								<th>Regional Quality Owner</th>
-								<th>PIM 1(YYYY)</th>
-								<th>PIM 2(YYYY)</th>
-								<th>PIM 3(YYYY)</th>
-								<th>PIM 4(YYYY)</th>
-								<th>PIM 1(YYYY)</th>
+								<th>PIM 1<br>2029</th>
+								<th>PIM 2<br>2030</th>
+								<th>PIM 3<br>2031</th>
+								<th>PIM 4<br>2032</th>
+								<th>PIM 5<br>2033</th>
 							</tr>
 						</thead>
 						<tbody>
@@ -3678,7 +3924,7 @@
 								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td rowspan="2">1. AMR</td>
+								<td rowspan="2">GLOBAL (Total)</td>
 								<td>Volume</td>
 								<td></td>
 								<td></td>
@@ -3754,7 +4000,7 @@
 			</section>
 			<section class="cardBox animate__animated mt10" id="pjContCard_2-4-5">
 				<div class="cardTit2"><i class="material-symbols-outlined left">hand_package</i>SIOP Assessment</div>
-				<div class="cardSubTit mt20">New Raw Materials</div>
+				<div class="cardSubTit mt30">New Raw Materials</div>
 				<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 					<table id="">
 						<colgroup>
@@ -3784,7 +4030,7 @@
 						</tbody>
 					</table>
 				</div>
-				<div class="cardSubTit mt20">Existing Raw Materials & Intermediates</div>
+				<div class="cardSubTit mt30">Existing Raw Materials & Intermediates</div>
 				<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 					<table id="">
 						<colgroup>
@@ -4274,7 +4520,7 @@
 					</table>
 				</div>
 
-				<div class="cardSubTit mt20">PS Attachments</div>
+				<div class="cardSubTit mt30">PS Attachments</div>
 				<div class="mt10">
 					<div class="input-field file-field mt0 mb0">
 						<input type="hidden" id="ATTACH_FILE_ID" value="">
@@ -4291,6 +4537,7 @@
 			</section>
 			<section class="cardBox animate__animated mt10" id="pjContCard_2-8-2">
 				<div class="cardTit2"><i class="material-symbols-outlined left">assignment_globe</i>Global Trade Compliance Assessment</div>
+				<div class="cardSubTit mt30">Global Trade Compliance Assessment</div>
 				<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 					<table id="">
 						<colgroup>
@@ -4377,7 +4624,7 @@
 				</div>
 				<div>• Based on answers to items 7 to 10 above, GTC can assess best trade model</div>
 
-				<div class="cardSubTit mt20">GTC Link</div>
+				<div class="cardSubTit mt30">Global Trade Compliance Link</div>
 				<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
 					<table id="">
 						<colgroup>
@@ -4707,7 +4954,7 @@
 						</tbody>
 					</table>
 				</div>
-				<div class="cardSubTit mt20">Attachments</div>
+				<div class="cardSubTit mt30">Attachments</div>
 				<div class="inputArea mt10">
 					<div class="input-field file-field mt0 mb0">
 						<input type="hidden" id="ATTACH_FILE_ID" value="">

@@ -2300,7 +2300,6 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 }
 
 .hFixedTable {
-	width: 100%;
 	overflow-x: auto;
 	border-top: 2px solid #9a8b4e;
 	border-bottom: 1px solid #9a8b4e;
@@ -2309,12 +2308,16 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 .hFixedTable table {
 	border-collapse: collapse;
 	width: 100%;
+	table-layout: fixed;
 }
 .hFixedTable th, .hFixedTable td {
 	vertical-align: top;
 	padding: 5px;
 	color: #000000;
 	line-height: 15px;
+}
+.hFixedTable thead .fix-col {
+	z-index: 4;
 }
 .hFixedTable .fix-col {
 	position: sticky;
