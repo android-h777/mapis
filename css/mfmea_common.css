@@ -1612,7 +1612,7 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 
 .fixedTable {
 	overflow: auto;
-	border-top: 1px solid #9a8b4e;
+	border-top: 2px solid #9a8b4e;
 	border-bottom: 1px solid #9a8b4e;
 	margin: 10px 0px;
 }
@@ -1629,20 +1629,26 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 	border-collapse: separate;
 }
 
-.fixedTable table>thead tr th, .fixedTable table>tbody tr td,
-	.fixedTable table>tbody tr th, .fixedTable table>tfoot tr td {
+.fixedTable table>thead tr th, .fixedTable table>thead tr td,
+.fixedTable table>tbody tr th, .fixedTable table>tbody tr td,
+.fixedTable table>tfoot tr th, .fixedTable table>tbody tr td,
+.hFixedTable table>thead tr th, .hFixedTable table>thead tr td,
+.hFixedTable table>tbody tr th, .hFixedTable table>tbody tr td,
+.hFixedTable table>tfoot tr th, .hFixedTable table>tbody tr td
+ {
 	vertical-align: top;
 	padding: 5px;
 	font-size: 14px;
 	line-height: 20px;
 }
 
-.fixedTable.vMiddle table>thead>tr>th, .fixedTable.vMiddle table>tbody>tr>td, .fixedTable.vMiddle table>tbody>tr>th, .fixedTable.vMiddle table>tfoot>tr>th
-	{
+.fixedTable.vMiddle table>thead>tr>th, .fixedTable.vMiddle table>tbody>tr>td, .fixedTable.vMiddle table>tbody>tr>th, .fixedTable.vMiddle table>tfoot>tr>th,
+.hFixedTable.vMiddle table>thead>tr>th, .hFixedTable.vMiddle table>tbody>tr>td, .hFixedTable.vMiddle table>tbody>tr>th, .hFixedTable.vMiddle table>tfoot>tr>th {
 	vertical-align: middle;
 }
 
-.fixedTable table thead tr th {
+.fixedTable table thead tr th, .fixedTable table thead tr td.headerTd,
+.hFixedTable table thead tr th, .hFixedTable table thead tr td.headerTd {
 	color: #9a8b4e;
 	font-family: 'Roboto-Regular';
 	border-bottom: 1px solid #9a8b4e;
@@ -1658,17 +1664,9 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 .fixedTable .bdR {
 	border-right: 1px dashed #b1bda2;
 }
-.fixedTable tr.bdT td {
-	border-top: 1px solid #b1bda2;
-	background-color: #fff;
-}
-.fixedTable tr.bdT_dash td {
-	border-top: 1px dashed #b1bda2;
-	background-color: #fff;
-}
 
 .fixedTable table tr td:not(:last-child) {
-	border-right: 1px dashed #e6e6e6;
+	border-right: 1px dashed #e0e0e0;
 }
 .fixedTable table tfoot tr td {
 	color: #9a8b4e;
@@ -1679,7 +1677,63 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 .fixedTable table tr.valOn {
 	display: none;
 }
+.fixedTable table tbody td.headerTd {
+	color: #9a8b4e;
+	font-family: 'Roboto-Medium';
+	vertical-align: middle;
+	text-align: center;
+}
 
+.fixedTable table>tbody>tr.btSLine>td {
+	border-top: 1px solid #9a8b4e !important;
+}
+
+.fixedTable table>tbody>tr.bbSLine>td {
+	border-bottom: 1px solid #9a8b4e !important;
+}
+
+.fixedTable table>tbody>tr.btDLine>td {
+	border-top: 1px dashed #9a8b4e !important;
+}
+
+.fixedTable table>tbody>tr.btDLine_lgrey>td {
+	border-top: 1px dashed #e0e0e0 !important;
+}
+
+.fixedTable.hBorderTable table>tbody tr:not(:first-child) th, .fixedTable.hBorderTable table>tbody tr:not(:first-child) td,
+.hFixedTable.hBorderTable table>tbody tr:not(:first-child) th, .hFixedTable.hBorderTable table>tbody tr:not(:first-child) td {
+	border-top: 1px dashed #e0e0e0;
+}
+
+.hFixedTable {
+	width: 100%;
+	overflow-x: auto;
+	border-top: 2px solid #9a8b4e;
+	border-bottom: 1px solid #9a8b4e;
+	margin: 10px 0px;
+}
+.hFixedTable table {
+	border-collapse: collapse;
+	width: 100%;
+	table-layout: fixed;
+}
+.hFixedTable th, .hFixedTable td {
+	vertical-align: top;
+	padding: 5px;
+	color: #000000;
+	line-height: 15px;
+}
+.hFixedTable .fix-col {
+	position: sticky;
+    left: 0;
+    z-index: 3;
+    word-break: keep-all;
+	vertical-align: middle;
+	background-color: #fff;
+}
+.hFixedTable table tr td:not(:last-child) {
+	border-right: 1px dashed #e0e0e0;
+}
 body::-webkit-scrollbar, .mainCardBox .collapsible-body::-webkit-scrollbar,
 	.mainListDetailArea::-webkit-scrollbar, .hScroll::-webkit-scrollbar,
 	.tabs::-webkit-scrollbar {
