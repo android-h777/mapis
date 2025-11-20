@@ -2306,7 +2306,7 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 	margin: 10px 0px;
 }
 .hFixedTable table {
-	border-collapse: collapse;
+	border-collapse: separate;
 	width: 100%;
 	table-layout: fixed;
 }
@@ -2325,7 +2325,7 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
     z-index: 3;
     word-break: keep-all;
 	vertical-align: middle;
-	background-color: #fff;
+	background-color: #FBF8F6;
 }
 .hFixedTable table tr td:not(:last-child) {
 	border-right: 1px dashed #e0e0e0;
@@ -4011,6 +4011,7 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 .newAppleTab li.on {
 	font-family: 'Roboto-Medium';
     color: #bb2649;
+	text-shadow: 0 1px 1px rgba(0,0,0,0.4), 0 -1px 1px rgba(255,255,255,0.9);
 }
 .newAppleTab .tabBg {
     position: absolute;
@@ -4021,7 +4022,7 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
     background-color: #fff;
     border: 2px solid #bb2649;
     z-index: -1;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2), inset 0 0px 3px rgba(0, 0, 0, 0.5);
     border-radius: 30px;
 }
 
