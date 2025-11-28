@@ -4103,8 +4103,22 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
     background-color: #fff;
     border: 2px solid #bb2649;
     z-index: -1;
-    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2), inset 0 0px 3px rgba(0, 0, 0, 0.5);
+    box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
     border-radius: 30px;
+}
+
+.newAppleTab.greenTab li.on {
+    color: #899f6a;
+}
+.newAppleTab.greenTab .tabBg {
+	border-color: #899f6a;
+}
+
+.newAppleTab.wd130pxType li {
+    width: 130px;
+}
+.newAppleTab.wd130pxType .tabBg {
+    width: 134px;
 }
 
 .file-field .btn {
@@ -4987,4 +5001,10 @@ textarea.materialize-textarea:focus:not([readonly]) {
 }
 .subCardBox .row {
 	position: relative;
+}
+
+.prjtStatusModalBox {
+	display: flex; 
+	justify-content: center;
+	padding: 20px 0px;
 }
