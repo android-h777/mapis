@@ -4,8 +4,8 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": -107.3333,
-    "scrollLeft": -86,
+    "scrollTop": -6,
+    "scrollLeft": -76,
     "zoomLevel": 1,
     "show": 431,
     "database": 2,
@@ -920,20 +920,20 @@
       "KB74iYtwoWdNCX9_hxDEt": {
         "id": "KB74iYtwoWdNCX9_hxDEt",
         "tableId": "13lIXJ3WXnK79djcgtK0W",
-        "name": "date_format",
-        "comment": "Date Format (NONE, YY, YYMM, YYMMDD, YYYYMMDD)",
+        "name": "format",
+        "comment": "Date Format (NULL, yy, yyMM, yyMMdd, yyyyMMdd)",
         "dataType": "varchar(8)",
         "default": "",
         "options": 0,
         "ui": {
           "keys": 0,
-          "widthName": 66,
-          "widthComment": 300,
+          "widthName": 60,
+          "widthComment": 281,
           "widthDataType": 60,
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1763356640301,
+          "updateAt": 1763441787228,
           "createAt": 1763356286854
         }
       },
@@ -1017,7 +1017,7 @@
           "columnIds": [
             "N-iHMzaYhKnac9ImFNSnA"
           ],
-          "x": 580,
+          "x": 570,
           "y": 565,
           "direction": 8
         },
