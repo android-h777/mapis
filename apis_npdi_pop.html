@@ -11,10 +11,12 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
 	<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
     <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/apis_util.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/highcharts/highcharts.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/jquery.inputmask.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/Hoo-gantt.js"></script>
 
 	<script>
 		let highchartsArray = [];
@@ -91,9 +93,9 @@
 				}
 			});
 
-			fnSetStageCont(null,'2','4','2',null);
+			fnSetStageCont(null,'2','4','1',null);
 
-			au.fnSetDatepicker(null, "dd.mm.yyyy");
+			au.fnSetDatepicker(null, "yyyy-mm-dd");
 
 			$(window).on("resize", au.hFixedTableResize);
 			
@@ -1326,588 +1328,63 @@
 						</tbody>
 					</table>
 				</div>
-				<div class="cardSubTit mt30">Detailed Schedule</div>
-				<div id="gantChartWrapper" class="newTaskGantt mg10">
-					<div id="ganttChart" class="reg ganttbox">
-						<div class="ganttview">
-							<div class="ganttview-vtheader">
-								<div class="ganttview-vtheader-tit fLine vCenter hCenter">Task Name</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name STAGE fLine vCenter" style="height: 31px;">Project Start</div>
+				<div class="cardSubTitArea mt30">
+					<div class="cardSubTit">Detailed Schedule</div>
+					<div>
+						<a class="waves-effect waves-light hBtn" id="npdi-gantt-add"><i class="material-symbols-outlined left">add</i>Add Task</a>
+					</div>
+				</div>
+
+				<div class="npdi-gantt-shell" id="npdi-gantt-shell">
+					<div class="npdi-gantt-top">
+						<div class="npdi-gantt-left-head">
+							<div class="npdi-gantt-lh move"></div>
+							<div class="npdi-gantt-lh lvl">Lvl</div>
+							<div class="npdi-gantt-lh task">Task Name</div>
+							<div class="npdi-gantt-lh start">Start</div>
+							<div class="npdi-gantt-lh end">End</div>
+
+							<div class="npdi-gantt-lh rsp">
+								Resource Names<span class="npdi-rsp-toggle" id="npdi-rsp-toggle" title="Toggle resource column"><i class="material-symbols-outlined">zoom_in_map</i></span>
+							</div>
+
+							<div class="npdi-gantt-lh act"></div>
+						</div>
+
+						<div class="npdi-gantt-right-head">
+							<div id="npdi-gantt-year" class="npdi-gantt-year-row"></div>
+							<div id="npdi-gantt-month" class="npdi-gantt-month-row"></div>
+						</div>
+					</div>
+
+					<div class="npdi-gantt-body">
+						<div class="npdi-gantt-left-pane">
+							<div id="npdi-gantt-rows"></div>
+						</div>
+
+						<div class="npdi-gantt-right-pane" id="npdi-gantt-right">
+							<div id="npdi-gantt-bars"></div>
+						</div>
+					</div>
+				</div>
+
+
+				<div class="cardSubTit mt30">Attachments</div>
+				<div class="row">
+					<div class="col s2 ar pl0">Attachments</div>
+					<div class="col s10">
+						<div>
+							<div class="input-field file-field mt0 mb0">
+								<input type="hidden" id="ATTACH_FILE_ID" value="">
+								<div class="btn" id="ATTACH_FILE_BTN">
+									<span>File</span>
+									<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
 								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name STEP" style="height: 31px;">Product in Concept</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Prepare NPC documentation and submit in NPDI</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">NPC Review(Mktg & Tech)</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">NPC Approval</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Review NPI GO and Schedule Review</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">NPI GO Review</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name STEP" style="height: 31px;">Product in Development</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Product Formulation Development</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Process Development & Scale-up</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Customer Validation</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name STEP" style="height: 31px;">Product in Market</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Process Transfer Report completed and issued</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Document project learnings</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name ACTIVITY fLine vCenter" style="height: 31px;">Post Launch Review</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name STAGE fLine vCenter" style="height: 31px;">Project End</div>
+								<div class="file-path-wrapper">
+									<input type="text" class="file-path validate">
 								</div>
 							</div>
-							<div class="ganttview-vtheader-date">
-								<div class="ganttview-vtheader-tit-2">Duration</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 STAGE" stage="30" step="" type="STAGE" activity="" data-seq="" style="height: 31px;">
-										<div class="ganttview-vtheader-daysel-span-stage"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 STEP" stage="30" step="3010" type="STEP" activity="" data-seq="" style="height: 31px;">
-										<div class="ganttview-vtheader-daysel"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3010" type="ACTIVITY" activity="3010004" data-seq="32967" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32967"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3010" type="ACTIVITY" activity="3010005" data-seq="32966" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32966"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3010" type="ACTIVITY" activity="3010002" data-seq="32965" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32965"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3010" type="ACTIVITY" activity="3010003" data-seq="32968" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32968"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3010" type="ACTIVITY" activity="3010001" data-seq="32964" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32964"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 STEP" stage="30" step="3020" type="STEP" activity="" data-seq="" style="height: 31px;">
-										<div class="ganttview-vtheader-daysel"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3020" type="ACTIVITY" activity="3020002" data-seq="32970" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32970"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3020" type="ACTIVITY" activity="3020001" data-seq="32969" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32969"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3020" type="ACTIVITY" activity="3020003" data-seq="32971" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32971"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 STEP" stage="30" step="3030" type="STEP" activity="" data-seq="" style="height: 31px;">
-										<div class="ganttview-vtheader-daysel"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3030" type="ACTIVITY" activity="3030002" data-seq="32972" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32972"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3030" type="ACTIVITY" activity="3030001" data-seq="32973" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32973"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 ACTIVITY" stage="30" step="3030" type="ACTIVITY" activity="3030003" data-seq="32974" style="height: 31px;">
-										<div class="ganttview-vtheader-weight" data-seq="32974"></div>
-									</div>
-								</div>
-								<div class="ganttview-vtheader-item">
-									<div class="ganttview-vtheader-item-name-2 STAGE" stage="30" step="" type="STAGE" activity="" data-seq="" style="height: 31px;">
-										<div class="ganttview-vtheader-daysel-span-stage"></div>
-									</div>
-								</div>
-							</div>
-							<div class="ganttview-slide-container">
-								<div class="ganttview-hzheader">
-									<div class="ganttview-hzheader-years" style="width: 380px;">
-										<div class="ganttview-hzheader-year" style="width: 140px;">2025</div>
-										<div class="ganttview-hzheader-year" style="width: 240px;">2026</div>
-									</div>
-									<div class="ganttview-hzheader-months" style="width: 380px;">
-										<div class="ganttview-hzheader-month" islast="N">6</div>
-										<div class="ganttview-hzheader-month" islast="N">7</div>
-										<div class="ganttview-hzheader-month" islast="N">8</div>
-										<div class="ganttview-hzheader-month" islast="N">9</div>
-										<div class="ganttview-hzheader-month" islast="N">10</div>
-										<div class="ganttview-hzheader-month" islast="N">11</div>
-										<div class="ganttview-hzheader-month" islast="Y">12</div>
-										<div class="ganttview-hzheader-month" islast="N">1</div>
-										<div class="ganttview-hzheader-month" islast="N">2</div>
-										<div class="ganttview-hzheader-month" islast="N">3</div>
-										<div class="ganttview-hzheader-month" islast="N">4</div>
-										<div class="ganttview-hzheader-month" islast="N">5</div>
-										<div class="ganttview-hzheader-month" islast="N">6</div>
-										<div class="ganttview-hzheader-month" islast="N">7</div>
-										<div class="ganttview-hzheader-month" islast="N">8</div>
-										<div class="ganttview-hzheader-month" islast="N">9</div>
-										<div class="ganttview-hzheader-month" islast="N">10</div>
-										<div class="ganttview-hzheader-month" islast="N">11</div>
-										<div class="ganttview-hzheader-month" islast="Y">12</div>
-									</div>
-								</div>
-								<div class="ganttview-grid" style="min-width: 100%; width: 380px;">
-									<div class="ganttview-grid-row" stage="30" step="" type="STAGE" style="width: 380px;">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3010" type="STEP" style="width: 380px;">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3010" type="ACTIVITY" style="width: 380px;" data-seq="32967">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3010" type="ACTIVITY" style="width: 380px;" data-seq="32966">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3010" type="ACTIVITY" style="width: 380px;" data-seq="32965">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3010" type="ACTIVITY" style="width: 380px;" data-seq="32968">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3010" type="ACTIVITY" style="width: 380px;" data-seq="32964">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3020" type="STEP" style="width: 380px;">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3020" type="ACTIVITY" style="width: 380px;" data-seq="32970">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3020" type="ACTIVITY" style="width: 380px;" data-seq="32969">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3020" type="ACTIVITY" style="width: 380px;" data-seq="32971">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3030" type="STEP" style="width: 380px;">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3030" type="ACTIVITY" style="width: 380px;" data-seq="32972">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3030" type="ACTIVITY" style="width: 380px;" data-seq="32973">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-									<div class="ganttview-grid-row" stage="30" step="3030" type="ACTIVITY" style="width: 380px;" data-seq="32974">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>	
-									<div class="ganttview-grid-row" stage="30" step="" type="STAGE" style="width: 380px;">
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="Y"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-										<div class="ganttview-grid-row-cell" islast="N"></div>
-									</div>
-								</div>
-								<div class="ganttview-blocks">
-									<div class="ganttview-block-container" type="STAGE">
-										<div class="ganttview-block" title="계획" modifiable="N" stage="30" step="" data-seq="" datatype="STAGE" idx="0" style="width: 120px; margin-left: 0px; visibility: visible; background-color: rgb(161, 170, 198);">
-											<div class="ganttview-block-text">6</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="STEP">
-										<div class="ganttview-block" title="계획" modifiable="N" stage="30" step="3010" data-seq="" datatype="STEP" idx="1" style="width: 100px; margin-left: 0px; visibility: visible; background-color: rgb(161, 170, 198);">
-											<div class="ganttview-block-text">5</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3010" data-seq="32967" datatype="ACTIVITY" idx="2" style="width: 60px; margin-left: 0px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">3</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3010" data-seq="32966" datatype="ACTIVITY" idx="3" style="width: 20px; margin-left: 80px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">1</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3010" data-seq="32965" datatype="ACTIVITY" idx="4" style="width: 20px; margin-left: 80px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">1</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3010" data-seq="32968" datatype="ACTIVITY" idx="5" style="width: 20px; margin-left: 80px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">1</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3010" data-seq="32964" datatype="ACTIVITY" idx="6" style="width: 40px; margin-left: 60px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">2</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="STEP">
-										<div class="ganttview-block" title="계획" modifiable="N" stage="30" step="3020" data-seq="" datatype="STEP" idx="7" style="width: 120px; margin-left: 80px; visibility: visible; background-color: rgb(161, 170, 198);">
-											<div class="ganttview-block-text">6</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3020" data-seq="32970" datatype="ACTIVITY" idx="8" style="width: 20px; margin-left: 100px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">1</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3020" data-seq="32969" datatype="ACTIVITY" idx="9" style="width: 20px; margin-left: 80px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">1</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3020" data-seq="32971" datatype="ACTIVITY" idx="10" style="width: 80px; margin-left: 120px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">4</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="STEP">
-										<div class="ganttview-block" title="계획" modifiable="N" stage="30" step="3030" data-seq="" datatype="STEP" idx="11" style="width: 160px; margin-left: 200px; visibility: visible; background-color: rgb(161, 170, 198);">
-											<div class="ganttview-block-text">8</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3030" data-seq="32972" datatype="ACTIVITY" idx="12" style="width: 40px; margin-left: 200px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">2</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3030" data-seq="32973" datatype="ACTIVITY" idx="13" style="width: 60px; margin-left: 240px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">3</div>
-										</div>
-									</div>
-									<div class="ganttview-block-container" type="ACTIVITY">
-										<div class="ganttview-block" title="실적" modifiable="N" stage="30" step="3030" data-seq="32974" datatype="ACTIVITY" idx="14" style="width: 60px; margin-left: 300px; visibility: visible; background-color: #9a8b4e;">
-											<div class="ganttview-block-text">3</div>
-										</div>
-									</div>
-								</div>
-							</div>			
+							<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
 						</div>
 					</div>
 				</div>
@@ -5236,6 +4713,5 @@
 			</div>
 		</div>
 	</article>
-
 </body> 
 </html>
