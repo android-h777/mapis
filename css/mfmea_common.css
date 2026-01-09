@@ -1836,10 +1836,13 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 }
 .hBtn .label {
 	display: inline-block;
-    width: 100%;
+    width: calc(100% - 10px - 18px);
     text-align: center;
     margin-right: 10px;
 	font-family: 'Roboto-Regular';
+	overflow: hidden;
+	white-space: nowrap;
+	text-overflow: ellipsis;
 }
 .hBtn.hBlue {
 	color: #7391c9;
