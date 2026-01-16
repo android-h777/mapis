@@ -4,8 +4,8 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": -348,
-    "scrollLeft": -387,
+    "scrollTop": -561,
+    "scrollLeft": -333,
     "zoomLevel": 0.73,
     "show": 431,
     "database": 2,
@@ -320,15 +320,15 @@
           "PKY_hf4af9aGGX8Jg2sIC"
         ],
         "ui": {
-          "x": 890.411,
-          "y": 531.0502,
+          "x": 887.6712,
+          "y": 532.4201,
           "zIndex": 578,
           "widthName": 153,
           "widthComment": 143,
           "color": "#9C27B0"
         },
         "meta": {
-          "updateAt": 1764207907785,
+          "updateAt": 1768544033098,
           "createAt": 1764207772417
         }
       }
@@ -1917,20 +1917,20 @@
       "PKY_hf4af9aGGX8Jg2sIC": {
         "id": "PKY_hf4af9aGGX8Jg2sIC",
         "tableId": "SYt5nbWT_PSvcyYRymj1A",
-        "name": "plant_type",
-        "comment": "Plant Name (Added)",
+        "name": "country_code",
+        "comment": "Country Code (Added)",
         "dataType": "varchar(20)",
         "default": "",
         "options": 0,
         "ui": {
           "keys": 0,
-          "widthName": 60,
-          "widthComment": 109,
+          "widthName": 73,
+          "widthComment": 121,
           "widthDataType": 61,
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1764207843979,
+          "updateAt": 1768544041095,
           "createAt": 1764207794938
         }
       }
