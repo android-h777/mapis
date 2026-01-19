@@ -4,13 +4,13 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": -564.3972,
-    "scrollLeft": -682.3371,
-    "zoomLevel": 0.55,
+    "scrollTop": -403.0735,
+    "scrollLeft": -333.7864,
+    "zoomLevel": 0.79,
     "show": 447,
     "database": 2,
     "databaseName": "",
-    "canvasType": "ERD",
+    "canvasType": "@dineug/erd-editor/builtin-schema-sql",
     "language": 1,
     "tableNameCase": 4,
     "columnNameCase": 2,
@@ -110,6 +110,7 @@
           "PItq0OiG-653lkjGL2_lZ",
           "pu6dr2xuWFwbHGwZi1vzB",
           "ek4pG_ONlGGdsWdqRi5C5",
+          "G-kf64PNz8MwOfO2nNoB3",
           "XrkN4Fiz1S1wxLAbjGfvP",
           "3O9m-Ri-em0ITmiPJGOYU",
           "tRdOLse9j1I9uk23NHHYB",
@@ -125,6 +126,7 @@
           "PItq0OiG-653lkjGL2_lZ",
           "pu6dr2xuWFwbHGwZi1vzB",
           "ek4pG_ONlGGdsWdqRi5C5",
+          "G-kf64PNz8MwOfO2nNoB3",
           "XrkN4Fiz1S1wxLAbjGfvP",
           "3O9m-Ri-em0ITmiPJGOYU",
           "tRdOLse9j1I9uk23NHHYB",
@@ -146,7 +148,7 @@
           "color": ""
         },
         "meta": {
-          "updateAt": 1768824243624,
+          "updateAt": 1768865318110,
           "createAt": 1768823931618
         }
       },
@@ -2201,6 +2203,26 @@
           "updateAt": 1768825179321,
           "createAt": 1768825179321
         }
+      },
+      "G-kf64PNz8MwOfO2nNoB3": {
+        "id": "G-kf64PNz8MwOfO2nNoB3",
+        "tableId": "Dgnut7BKVqJBtAxHGZfO2",
+        "name": "pl_user",
+        "comment": "Project Leader",
+        "dataType": "varchar(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 78,
+          "widthDataType": 61,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1768865351666,
+          "createAt": 1768865316179
+        }
       }
     },
     "relationshipEntities": {
@@ -2530,7 +2552,7 @@
           "color": "#F44336"
         },
         "meta": {
-          "updateAt": 1768825095508,
+          "updateAt": 1768865327615,
           "createAt": 1768824894815
         }
       }

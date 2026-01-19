@@ -4,8 +4,8 @@
   "settings": {
     "width": 5000,
     "height": 5000,
-    "scrollTop": -1489.7416,
-    "scrollLeft": -2335.3725,
+    "scrollTop": -824.7416,
+    "scrollLeft": -311.3725,
     "zoomLevel": 0.79,
     "show": 431,
     "database": 2,
@@ -2964,19 +2964,19 @@
         "id": "B2rhjEmdTwsuOrLjT_Fec",
         "tableId": "SarqD74OC2owo9Hlc-VY2",
         "name": "pl_user",
-        "comment": "Project Leader User ID",
+        "comment": "Project Leader",
         "dataType": "varchar(50)",
         "default": "",
         "options": 0,
         "ui": {
           "keys": 0,
           "widthName": 60,
-          "widthComment": 120,
+          "widthComment": 78,
           "widthDataType": 61,
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1762415622763,
+          "updateAt": 1768865361896,
           "createAt": 1762396559847
         }
       },
