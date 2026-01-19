@@ -4,9 +4,9 @@
   "settings": {
     "width": 5000,
     "height": 5000,
-    "scrollTop": -878,
-    "scrollLeft": -2286,
-    "zoomLevel": 0.91,
+    "scrollTop": -1489.7416,
+    "scrollLeft": -2335.3725,
+    "zoomLevel": 0.79,
     "show": 431,
     "database": 2,
     "databaseName": "P",
@@ -201,15 +201,15 @@
           "V_3TN3pah7tZORsskfmV1"
         ],
         "ui": {
-          "x": 25.8335,
-          "y": 518.3756,
+          "x": 19.2401,
+          "y": 506.2877,
           "zIndex": 2,
           "widthName": 94,
           "widthComment": 164,
           "color": "#F44336"
         },
         "meta": {
-          "updateAt": 1766389461321,
+          "updateAt": 1768824514686,
           "createAt": 1762310020926
         }
       },
@@ -1228,15 +1228,15 @@
           "Kjhlo87Ur9qWMagWFqI89"
         ],
         "ui": {
-          "x": 3170.8101,
-          "y": 155.9778,
+          "x": 3216.3797,
+          "y": 83.8259,
           "zIndex": 6003,
           "widthName": 133,
           "widthComment": 151,
           "color": "#9E9E9E"
         },
         "meta": {
-          "updateAt": 1766455917859,
+          "updateAt": 1768825028897,
           "createAt": 1762915910247
         }
       },
@@ -1684,15 +1684,15 @@
           "4R4fkXHiRIjiBGYWU63vN"
         ],
         "ui": {
-          "x": 2083.3077,
-          "y": 154.267,
+          "x": 2127.6115,
+          "y": 196.0391,
           "zIndex": 7622,
           "widthName": 129,
           "widthComment": 173,
           "color": "#9E9E9E"
         },
         "meta": {
-          "updateAt": 1767749133181,
+          "updateAt": 1768824712553,
           "createAt": 1763527927173
         }
       },
@@ -3605,7 +3605,7 @@
         "tableId": "0_NDjeh0B0UpeVXV_rtI-",
         "name": "resources",
         "comment": "Resources",
-        "dataType": "varchar(4000)",
+        "dataType": "varchar(1000)",
         "default": "",
         "options": 0,
         "ui": {
@@ -3616,7 +3616,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1767328099374,
+          "updateAt": 1768823471360,
           "createAt": 1762405525405
         }
       },
@@ -4124,7 +4124,7 @@
         "id": "g4Mm1D5-l0kK3-PWbNpHP",
         "tableId": "3yMSS7lP8elj--IDsbETw",
         "name": "type",
-        "comment": "FI/NPV",
+        "comment": "CO/FI/NPV",
         "dataType": "varchar(10)",
         "default": "",
         "options": 10,
@@ -4136,7 +4136,7 @@
           "widthDefault": 60
         },
         "meta": {
-          "updateAt": 1765429477148,
+          "updateAt": 1768824593907,
           "createAt": 1762414603166
         }
       },
@@ -11001,8 +11001,8 @@
           "columnIds": [
             "a978Gov_8LTcKCke3Vbz0"
           ],
-          "x": 296.3335,
-          "y": 518.3756,
+          "x": 289.7401,
+          "y": 506.2877,
           "direction": 4
         },
         "meta": {
@@ -11891,8 +11891,8 @@
             "1eNFxPkKc-K2jJNBIbZ3_",
             "7MU0y_MrmnlpNugSipYJZ"
           ],
-          "x": 3170.8101,
-          "y": 291.9778,
+          "x": 3216.3797,
+          "y": 219.8259,
           "direction": 1
         },
         "end": {
@@ -12129,8 +12129,8 @@
           "columnIds": [
             "xZ8Omm4BvTEYA-_9HsMDq"
           ],
-          "x": 2083.3077,
-          "y": 230.267,
+          "x": 2127.6115,
+          "y": 272.03909999999996,
           "direction": 1
         },
         "meta": {
