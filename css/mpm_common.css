@@ -5143,3 +5143,55 @@ textarea.materialize-textarea:focus:not([readonly]) {
 	color: #000;
 	font-family: 'Roboto-Medium';
 }
+
+.nodeChart .node { cursor: move; }
+.nodeChart .node .hier-line { fill:#fff; stroke:#333; stroke-width:1.2px; rx:8px; }
+.nodeChart .link { fill:none; stroke:#555; stroke-width:1px; }
+.nodeChart .node .hier-line {
+	fill: #f9fafc;
+	stroke: #a47764;
+	stroke-width: 1.5px;
+	rx: 10;
+	filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.2));
+	transition: all 0.3s ease;
+}
+.nodeChart .node:hover .hier-line,
+.nodeChart .node:active .hier-line  {
+	fill: #eddcd5;
+	stroke: #f5b59d;
+	transform: scale(1.05);
+}
+.nodeChart text {
+	font-family: "Roboto-Regular";
+	font-size: 14px;
+	fill: #333;
+	pointer-events: none;
+  }
+  
+  .nodeChart .link {
+	stroke: #a47764;
+	stroke-width: 1.2px;
+	fill: none;
+	opacity: 0.8;
+  }
+  
+  /* 단계 라벨 텍스트 */
+  .node .tier-text {
+	font-size: 8px;
+	font-weight: 500;
+	fill: #fff;
+	dominant-baseline: middle;  /* 수직 중앙 */
+	/* text-anchor는 JS에서 start로 지정 */
+  }
+  
+  /* 라벨 배경 박스 */
+  .nodeChart .node .tier-box {
+	stroke-width: 1.5px;
+	filter: drop-shadow(1px 1px 3px rgba(0,0,0,0.2));
+	transition: all 0.3s ease;
+  }
+  
+  .nodeChart .node .tier-box1 { fill:#981e1e; stroke:#981e1e; }
+  .nodeChart .node .tier-box2 { fill:#006766; stroke:#006766; }
+  .nodeChart .node .tier-box3 { fill:#004098; stroke:#004098; }
+  .nodeChart .node .tier-box4 { fill:#9a8b4e; stroke:#9a8b4e; }
