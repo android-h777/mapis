@@ -18,6 +18,7 @@
         $(document).ready(function(){
           $('.datepicker').datepicker();
           $('select').formSelect();
+          $('.tooltipped').tooltip();
           // $('.modal').modal();
 
           $('#HierarchyViewModal').modal({
@@ -131,13 +132,147 @@
           "Current Control"// depth 4
         ];
 
+        $(document).ready(function () {
+
+          function stripMaterializedSelect($root) {
+            // Materialize가 만든 select-wrapper 구조를 원래 <select>만 남기도록 되돌림
+            $root.find('.select-wrapper').each(function () {
+              const $wrapper = $(this);
+              const $select = $wrapper.find('select').first();
+
+              if ($select.length) {
+                // wrapper 밖으로 select를 빼고 wrapper 삭제
+                $wrapper.before($select);
+              }
+              $wrapper.remove();
+            });
+
+            // 혹시 남아있는 dropdown-content(ul) 같은게 step 안에 들어있으면 제거
+            $root.find('ul.dropdown-content').remove();
+            $root.find('input.select-dropdown').remove();
+            $root.find('svg.caret').remove();
+          }
+
+          function clearInputs($root) {
+            $root.find('input[type="text"], input[type="number"], textarea').val('');
+            $root.find('input[type="checkbox"], input[type="radio"]').prop('checked', false);
+            $root.find('select').each(function () {
+              this.selectedIndex = 0;
+            });
+          }
+
+          function reInitMaterialize($root) {
+            // select
+            $root.find('select').each(function () {
+              const inst = M.FormSelect.getInstance(this);
+              if (inst) inst.destroy();
+              M.FormSelect.init(this);
+            });
+
+            // tooltip
+            $root.find('.tooltipped').each(function () {
+              const inst = M.Tooltip.getInstance(this);
+              if (inst) inst.destroy();
+              M.Tooltip.init(this);
+            });
+
+            // datepicker
+            $root.find('.datepicker').each(function () {
+              const inst = M.Datepicker.getInstance(this);
+              if (inst) inst.destroy();
+              M.Datepicker.init(this, {});
+            });
+          }
+
+          function getStepWrap() {
+            const $wrap = $('#pjContCard2 .subCardWrap');
+            return $wrap.length ? $wrap : $('#pjContCard2');
+          }
+          function getTemplateStep() {
+            return $('#pjContCard2 .subCardBox').first();
+          }
+
+          function createStep($sourceStep, mode) {
+            const $newStep = $sourceStep.clone(false, false);
+
+            // clone된 DOM에서 id 제거(중복 방지)
+            $newStep.find('[id]').removeAttr('id');
+
+            // ★ 핵심: materialize가 만든 select DOM을 제거하고 "원래 select만" 남긴다
+            stripMaterializedSelect($newStep);
+
+            if (mode === "blank") clearInputs($newStep);
+            return $newStep;
+          }
+
+          // -----------------------------
+          // Add Step2~6 (빈 값 Step 추가)
+          // -----------------------------
+          $(document).on('click', '.js-step-add', function () {
+            const $tpl = getTemplateStep();
+            if (!$tpl.length) return;
+
+            const $wrap = getStepWrap();
+            const $newStep = createStep($tpl, "blank");
+
+            // ★ DOM에 붙인 다음 init 해야 안전
+            $wrap.append($newStep);
+            reInitMaterialize($newStep);
+          });
+
+          // -----------------------------
+          // Delete Step
+          // -----------------------------
+          $(document).on('click', '.js-step-del', function () {
+            $(this).closest('.subCardBox').remove();
+          });
+
+          // -----------------------------
+          // Copy Add (값 복사 Step 추가)
+          // -----------------------------
+          $(document).on('click', '.js-step-copy', function () {
+            const $step = $(this).closest('.subCardBox');
+            if (!$step.length) return;
+
+            const $wrap = getStepWrap();
+            const $newStep = createStep($step, "copy");
+
+            $wrap.append($newStep);
+            reInitMaterialize($newStep);
+          });
+
+          // -----------------------------
+          // Add Row (해당 Step의 테이블에 빈 row 추가)
+          // -----------------------------
+          $(document).on('click', '.js-row-add', function () {
+            const $step = $(this).closest('.subCardBox');
+            const $tbody = $step.find('table tbody').first();
+            const $tplRow = $tbody.find('tr').first();
+            if (!$tbody.length || !$tplRow.length) return;
+
+            const $newRow = $tplRow.clone(false, false);
+            $newRow.find('[id]').removeAttr('id');
+
+            // row 안의 select도 동일하게 되돌려야 함
+            stripMaterializedSelect($newRow);
+            clearInputs($newRow);
+
+            $tbody.append($newRow);
+            reInitMaterialize($newRow);
+          });
+
+        });
+
+
+
+
   </script>
 </head>
 <body class="popup type2">
   <header class="z-depth-1">
     <section class="titArea">
 			<div><img src="img/MAPISLogo-25.png"></div>
-      <div class="tit">[PFMEA-NAN-#101] Comply with RM input Q'ty (range ±2%)</div>
+      <div class="tit">Ohta-DFMEA-2026-001</div>
     </section>
   </header>
   <aside class="leftAside z-depth-1 blurArea">
@@ -147,6 +282,7 @@
         <li class="menu-item waves-effect waves-blue" data-target="pjContCard2"><i class="material-icons left">apps_outage</i><span>Fail Mode</span></li>
         <li class="menu-item waves-effect waves-blue" data-target="pjContCard3"><i class="material-icons left">file_present</i><span>Attach File</span></li>
         <li class="menu-item waves-effect waves-blue" data-target="pjContCard4"><i class="material-icons left">history</i><span>History FMEA</span></li>
+        <li class="menu-item waves-effect waves-blue" data-target="pjContCard5"><i class="material-icons left">local_library</i><span>Approval</span></li>
       </ul>
     </section>
     <section class="btnArea">
@@ -161,6 +297,38 @@
       <div class="cardTit2"><i class="material-icons left">inventory_2</i>Basic Info</div>
       <div class="inputArea">
         <div class="row">
+          <div class="col s2 ar tit">DFMEA ID</div>
+          <div class="col s10 val">Ohta-DFMEA-2026-001</div>
+        </div>
+        <div class="row">
+          <div class="col s2 ar tit">Title</div>
+          <div class="col s10 val">
+            <div class="aniInput">
+                <input type="text" value="Comply with RM input Q'ty (range ±2%)" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s2 ar tit">Design Responsibility</div>
+          <div class="col s4 val">
+            <div class="aniInput">
+                <input type="text" value="Hideo Takahashi​" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+          <div class="col s2 ar tit">Confidentiality Level</div>
+          <div class="col s4 val">
+            <select>
+              <option value="">Select</option>
+              <option>Business use​</option>
+              <option selected>Proprietary​</option>
+              <option>Confidential​​</option>
+            </select>
+          </div>
+        </div>
+
+        <div class="row mt30">
           <div class="col s2 ar tit">Company</div>
           <div class="col s4 val">
             <div class="aniInput">
@@ -189,60 +357,47 @@
             </select>   
           </div>
         </div>
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
         <div class="row">
-          <div class="col s2 ar tit">Title</div>
-          <div class="col s10 val">
-            <div class="aniInput">
-                <input type="text" value="Comply with RM input Q'ty (range ±2%)" class="browser-default">
-                <span class="focus-border"></span>
-            </div>
+          <div class="col s2 ar tit">Development site</div>
+          <div class="col s4 val">
+            <select>
+              <option value="">Select</option>
+              <option selected>Ohta​</option>
+            </select>   
+          </div>
+          <div class="col s2 ar tit">DFMEA Start Date</div>
+          <div class="col s4 val">
+            16-Jan-26 
           </div>
         </div>
-
         <div class="row">
           <div class="col s2 ar tit">Customer</div>
           <div class="col s4 val">
             <div class="aniInput">
-                <input type="text" value="ACTIA" class="browser-default">
+                <input type="text" value="ACTIA, BMW" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+          <div class="col s2 ar tit">DFMEA Revision Date</div>
+          <div class="col s4 val">
+            <div class="aniInput">
+                <input type="text" class="datepicker browser-default wd150px" placeholder="DFMEA Revision Date">
                 <span class="focus-border"></span>
             </div>
           </div>
         </div>
         <div class="row">
-          <div class="col s2 ar tit">Product Type</div>
-          <div class="col s4 val">
-            <select>
-              <option value="">Select</option>
-              <option value="1">TIA0260</option>
-              <option value="2" selected>TIA350R</option>
-              <option value="3">TIA208R</option>
-              <option value="4">TIA225GF</option>
-              <option value="5">TIA211G</option>
-              <option value="6">TSE3123</option>
-              <option value="7">TSE4123</option>
-              <option value="8">TSE5321</option>
-            </select>   
-          </div>
-          <div class="col s2 ar tit">Base Material</div>
+          <div class="col s2 ar tit">Model year(s)/programme(s)​</div>
           <div class="col s4 val">
             <div class="aniInput">
-                <input type="text" value="84060, 84065" class="browser-default">
+                <input type="text" value="Not applicable​" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+          <div class="col s2 ar tit">Interdisciplinary Team:​</div>
+          <div class="col s4 val">
+            <div class="aniInput">
+                <input type="text" class="datepicker browser-default" value="Chisato Hoshino, Hideo Takahashi, Isao Iida​" placeholder="">
                 <span class="focus-border"></span>
             </div>
           </div>
@@ -255,1064 +410,606 @@
                 <span class="focus-border"></span>
             </div>
           </div>
-          <div class="col s2 ar tit">Process</div>
+          <div class="col s2 ar tit">Material number</div>
           <div class="col s4 val">
-            <select multiple>
-              <option value="1">FEEDING</option>
-              <option value="2" selected>MIXING</option>
-              <option value="3" selected>HEATING</option>
-              <option value="4">COOLING</option>
-              <option value="5">DISCHARGING</option>
-              <option value="6">VACUUM</option>
-            </select>   
-          </div>
-        </div>
-        <div class="row">
-          <div class="col s2 ar tit">Function & Requirement</div>
-          <div class="col s10 val">
             <div class="aniInput">
-                <input type="text" value="Comply with RM input Q'ty (range ±2%)" class="browser-default">
+                <input type="text" value="" class="browser-default" placeholder="Material number">
                 <span class="focus-border"></span>
             </div>
           </div>
         </div>
-        <div class="row">
-          <div class="col s2 ar tit">Application Scenario</div>
-          <div class="col s10 val">
-            <div class="aniInput">
-                <input type="text" value="" placeholder="Insert Application Scenario" class="browser-default">
-                <span class="focus-border"></span>
-            </div>
-          </div>
-        </div>
-
 
       </div>
     </section>
 
+
     <section class="cardBox mt10" id="pjContCard2">
-      <div class="cardTit2 type2">
+      <div class="cardTit2 type2 mb10">
         <div><i class="material-icons left">apps_outage</i>Fail Mode</div>
         <div>
-          <a href="javascript:;" class="waves-effect waves-light hBtn hViva" id="addFailEffBtn"><i class="material-icons left">add</i><span class="label">Add Fail Effect</span></a>
+          <a href="javascript:;" class="waves-effect waves-light hBtn hGreen js-step-add" id="addFailEffBtn"><i class="material-icons left">add</i><span class="label">Add Steps</span></a>
         </div>      
       </div>
-
-
-      <div class="failEffBox inputArea">
-
-        <div class="row mt10">
-          <div class="col s1 ar tit font15 blackTxt">Fail Mode</div>
-          <div class="col s11 val">
-            <div class="aniInput">
-                <input type="text" value="Less/More RM Input" class="browser-default font15 blackTxt">
-                <span class="focus-border"></span>
+      <div class="subCardWrap">
+        <div class="subCardBox">
+          <div class="cardSubTit fontB blackTxt">STRUCTURAL ANALYSIS (STEP 2)​</div>
+          <div class="inputArea mt10">
+            <div class="row">
+              <div class="col s2 ar tit">
+                Next Higher Level​
+                <i class="material-icons tooltipped helpTooltip" data-position="right" data-html="true" data-tooltip="Subsystem, system, system group, vehicle​">help</i>
+              </div>
+              <div class="col s10 val">
+                <div class="aniInput">
+                    <input type="text" value="ECU,ADAS &Battery​" class="browser-default">
+                    <span class="focus-border"></span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s2 ar tit">
+                Focus Element
+                <i class="material-icons tooltipped helpTooltip" data-position="right" data-html="true" data-tooltip="Designation of the subsystem, component or interface​​">help</i>
+              ​​</div>
+              <div class="col s10 val">
+                <div class="aniInput">
+                    <input type="text" value="Thermally Conductive Bonding, Gap Filler​" class="browser-default">
+                    <span class="focus-border"></span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s2 ar tit">
+                Next Lower Level Function and Requirement or Characteristic​
+                <i class="material-icons tooltipped helpTooltip" data-position="right" data-html="true" data-tooltip="Component or interface designation or feature​ <br>Type of feature: geometry, material, surface, treatment, coatings, etc.​​">help</i>
+              ​</div>
+              <div class="col s10 val">
+                <div class="aniInput">
+                    <input type="text" value="Cooling​" class="browser-default">
+                    <span class="focus-border"></span>
+                </div>
+              </div>
             </div>
           </div>
+
+          <div class="cardSubTit fontB blackTxt mt20">FUNCTION ANALYSIS (STEP 3)​​</div>
+          <div class="inputArea mt10">
+            <div class="row">
+              <div class="col s2 ar tit">
+                Next Higher Level​<br>Function and Requirement
+                <i class="material-icons tooltipped helpTooltip" data-position="right" data-html="true" data-tooltip="Function of the vehicle, system or subsystem and description of the requirement to be fulfilled or the result to be achieved.​​​">help</i>
+              ​</div>
+              <div class="col s10 val">
+                <div class="aniInput">
+                    <input type="text" value="Keep system at proper temperature​​" class="browser-default">
+                    <span class="focus-border"></span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s2 ar tit">
+                Focus Element<br>Function and Requirement​
+                <i class="material-icons tooltipped helpTooltip" data-position="right" data-html="true" data-tooltip="Function of the subsystem, component or interface and description of the requirement to be fulfilled or the result to be achieved.​​​">help</i>
+              ​​</div>
+              <div class="col s10 val">
+                <div class="aniInput">
+                    <input type="text" value="Cooling​" class="browser-default">
+                    <span class="focus-border"></span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s2 ar tit">
+                Next Lower Level Function and Requirement or Characteristic​
+                <i class="material-icons tooltipped helpTooltip" data-position="right" data-html="true" data-tooltip="Function of the component or interface and feature description​​​​">help</i>
+              ​</div>
+              <div class="col s10 val">
+                <div class="aniInput">
+                    <input type="text" value="Thermal Conductivity​" class="browser-default">
+                    <span class="focus-border"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="cardSubTitArea mt20">
+            <div class="cardSubTit">FAILURE ANALYSIS, RISK ANALYSIS AND OPTIMIZATION (STEP 4, 5, 6)​​</div>
+            <div>
+              <a href="javascript:;" class="waves-effect waves-light hBtn hSmall js-row-add" id="addFailEffBtn"><i class="material-icons left">add</i><span class="label">Add Row</span></a>
+            </div>
+          </div>    
+          <!-- <div class="inputArea mt10">
+            <div class="row">
+              <div class="col s3 ar tit">Failure effects (FE) to the Next Higher Element and/or end user</div>
+              <div class="col s9 val">
+                <div class="aniInput">
+                    <input type="text" value="Electronic components do not work or do not perform as well​" class="browser-default">
+                    <span class="focus-border"></span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s3 ar tit">Severity (S) of the FE​</div>
+              <div class="col s9 val wd100px">
+                <select>
+                  <option value="-1">-1</option>
+                  <option value="0" selected>0</option>
+                  <option value="1">1</option>
+                  <option value="2">2</option>
+                  <option value="3">3</option>
+                  <option value="4">4</option>
+                  <option value="5">5</option>
+                  <option value="6">6</option>
+                  <option value="7">7</option>
+                  <option value="8">8</option>
+                  <option value="9">9</option>
+                  <option value="10">10</option>
+                </select>     
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s3 ar tit">Failure mode (FM) of the Focus Element​</div>
+              <div class="col s9 val">
+                <div class="aniInput">
+                    <input type="text" value="Not enough thermal conductivity design​" class="browser-default">
+                    <span class="focus-border"></span>
+                </div>
+              </div>
+            </div>
+            <div class="row">
+              <div class="col s3 ar tit">Failure cause (FC) of the Next Lower  Element or Characteristic​</div>
+              <div class="col s9 val">
+                <div class="aniInput">
+                    <input type="text" value="Unsuitable choice of filler type​" class="browser-default">
+                    <span class="focus-border"></span>
+                </div>
+              </div>
+            </div>
+
+          </div> -->
+
+          <div class="hFixedTable hBorderTable hScroll vMiddle mt10">
+            <table>
+              <colgroup>
+                <col style="width: 400px;">
+                <col style="width: 50px;">
+                <col style="width: 280px;">
+                <col style="width: 250px;">
+                <col style="width: 250px;">
+                <col style="width: 50px;">
+                <col style="width: 250px;">
+                <col style="width: 50px;">
+                <col style="width: 50px;">
+                <col style="width: 50px;">
+                <col style="width: 70px;">
+                <col style="width: 250px;">
+                <col style="width: 250px;">
+                <col style="width: 250px;">
+                <col style="width: 80px;">
+                <col style="width: 80px;">
+                <col style="width: 250px;">
+                <col style="width: 80px;">
+                <col style="width: 50px;">
+                <col style="width: 50px;">
+                <col style="width: 50px;">
+                <col style="width: 50px;">
+                <col style="width: 50px;">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th colspan="4" class="bdR1 risk">FAILURE ANALYSIS</th>
+                  <th colspan="7" class="bdR1 risk">RISK ANALYSIS</th>
+                  <th colspan="12" class="opt">OPTIMIZATION</th>
+                </tr>
+
+                <tr>
+                  <!-- FAILURE ANALYSIS (4) -->
+                  <th>Failure effects (FE) to the Next Higher Element and/or end user</th>
+                  <th>Severity (S) of the FE​</th>
+                  <th>Failure mode (FM) of the Focus Element</th>
+                  <th class="bdR1">Failure cause (FC) of the Next Lower Element or Characteristic</th>
+
+                  <!-- RISK ANALYSIS (7) -->
+                  <th>Existing prevention control (PC) for FC</th>
+                  <th>Occurrence (O) of the FC</th>
+                  <th>Existing detection control (DC) for FC or FM</th>
+                  <th>Detection (D) of the FC/FM</th>
+                  <th>RPN</th>
+                  <th>DFMEA AP</th>
+                  <th class="bdR1">Special Characteristics</th>
+
+                  <!-- OPTIMIZATION (11) -->
+                  <th>DFMEA Prevention action</th>
+                  <th>DFMEA Detection action</th>
+                  <th>Name of person responsible</th>
+                  <th>Target completion date</th>
+                  <th>Status</th>
+                  <th>Action taken with evidence</th>
+                  <th>Completion date</th>
+                  <th>Severity (S)</th>
+                  <th>Occurrence (O)</th>
+                  <th>Detection (D)</th>
+                  <th>RPN</th>
+                  <th>DFMEA AP</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="Electronic components do not work or do not perform as well​​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <select>
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="Not enough thermal conductivity design​​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td class="bdR1">
+                    <div class="aniInput">
+                        <input type="text" value="Unsuitable choice of filler type​​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="Study the effect of filler type​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <select>
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value=" Measure thermal conductivity​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <select>
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td class="ac">4</td>
+                  <td class="ac">5</td>
+                  <td class="bdR1">
+                    <select>
+                      <option value="0" selected>SC S​</option>
+                      <option value="1">SC L​</option>
+                      <option value="2">SC F​</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="text​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="text​​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="text​​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                      <input type="text" class="datepicker browser-default wd100p ac" placeholder="Date">
+                      <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <select>
+                      <option value="0" selected>Open​</option>
+                      <option value="1">In decision​</option>
+                      <option value="2">In implementation​</option>
+                      <option value="3">Completed discarded​​</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                      <input type="text" value="text​​" class="browser-default" placeholder="">
+                      <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                      <input type="text" class="datepicker browser-default wd100p ac" placeholder="Date">
+                      <span class="focus-border"></span>
+                    </div>                     
+                  </td>
+                  <td>
+                    <select>
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <select>
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <select>
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td class="ac">4</td>
+                  <td class="ac">5</td>
+                </tr>
+
+                <tr>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="Electronic components do not work or do not perform as well​​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <select>
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="Not enough thermal conductivity design​​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td class="bdR1">
+                    <div class="aniInput">
+                        <input type="text" value="Unsuitable choice of filler type​​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="Study the effect of filler type​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <select>
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value=" Measure thermal conductivity​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <select>
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td class="ac">4</td>
+                  <td class="ac">5</td>
+                  <td class="bdR1">
+                    <select>
+                      <option value="0" selected>SC S​</option>
+                      <option value="1">SC L​</option>
+                      <option value="2">SC F​</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="text​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="text​​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="text​​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                      <input type="text" class="datepicker browser-default wd100p ac" placeholder="Date">
+                      <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <select>
+                      <option value="0" selected>Open​</option>
+                      <option value="1">In decision​</option>
+                      <option value="2">In implementation​</option>
+                      <option value="3">Completed discarded​​</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="text​​" class="browser-default" placeholder="">
+                      <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                      <input type="text" class="datepicker browser-default wd100p ac" placeholder="Date">
+                      <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <select>
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <select>
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <select>
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td class="ac">4</td>
+                  <td class="ac">5</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+          <div class="btnArea">
+            <div><a href="javascript:;" class="waves-effect waves-light hBtn hBlue mr10 js-step-copy"><i class="material-icons left">file_copy</i><span class="label">Copy Steps</span></a></div>
+            <div><a href="javascript:;" class="waves-effect waves-light hBtn hGrey js-step-del"><i class="material-icons left">delete</i><span class="label">Delete Steps</span></a></div>
+          </div>
+
         </div>
-        <div class="row mb20">
-          <div class="col s1 ar tit">4M-2E</div>
-          <div class="col s2">
-            <select>
-              <option value="0" selected>Select</option>
-              <option value="1">MAN</option>
-              <option value="2" selected>MACHINE</option>
-              <option value="3">MATERIAL</option>
-              <option value="4">METHOD</option>
-              <option value="5">ENVIORMENT</option>
-              <option value="6">MEASUREMENT</option>
-            </select>            
-          </div>
-          <div class="col s9 val">
-            <div class="aniInput">
-                <input type="text" value="R-1001(Reactor)" placeholder="" class="browser-default">
-                <span class="focus-border"></span>
-            </div>
-          </div>
-        </div>
-
-        <section class="causeBox animate__animated animate__slideInLeft" id="newCauseBox" style="display: none;">
-          <div class="row">
-            <div class="col s1 ar cardSubTit fontB blackTxt">Fail Effect</div>
-            <div class="col s9 val">
-              <div class="aniInput">
-                  <input type="text" value="" class="browser-default" placeholder="Fail Effect Title">
-                  <span class="focus-border"></span>
-              </div>
-            </div>
-            <div class="col s2 btnArea">
-              <a href="javascript:;" class="waves-effect waves-light hBtn hBlue"><i class="material-icons left">add</i><span class="label">Add Fail Cause</span></a>
-            </div>
-          </div>
-          <div class="subCardBox">
-            <div class="row">
-              <div class="col s1 ar tit kccBlue">Fail Cause</div>
-              <div class="col s11 val">
-                <div class="aniInput">
-                    <input type="text" value="" class="browser-default" placeholder="Fail Cause Title">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-            </div>
-            <div class="row">
-              <div class="col s1 ar tit">Severity</div>
-              <div class="col s1 val">
-                <div class="aniInput">
-                    <input type="text" value="" class="browser-default ac" placeholder="Severity Value">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="col s1 ar tit">Occurrence</div>
-              <div class="col s1 val">
-                <div class="aniInput">
-                    <input type="text" value="" class="browser-default ac" placeholder="Occurrence Value">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="col s1 ar tit">Detection</div>
-              <div class="col s1 val">
-                <div class="aniInput">
-                    <input type="text" value="" class="browser-default ac" placeholder="Detection Value">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="col s1 ar tit">A.P</div>
-              <div class="col s1"></div>
-              <div class="col s2 ar tit">RPN</div>
-              <div class="col s2">8</div>
-            </div>
-
-            <div class="btnArea">
-              <a href="javascript:;" class="waves-effect waves-light hBtn hGreen mr10"><i class="material-icons left">add</i><span class="label">Add Item</span></a>
-              <a href="javascript:;" class="waves-effect waves-light hBtn hBlue"><i class="material-icons left">add</i><span class="label">Add Current Control</span></a>
-            </div>
-            <div class="fixedTable">
-              <table>
-                <colgroup>
-                  <col style="width: auto;">
-                  <col style="width: auto;">
-                  <col style="width: 100px;">
-                  <col style="width: 100px;">
-                  <col style="width: 100px;">
-                  <col style="width: 180px;">
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th>Current Control</th>
-                    <th>Recommended Action</th>
-                    <th>Planed Date</th>
-                    <th>Actual Date</th>
-                    <th>Status</th>
-                    <th>Responsible</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default" placeholder="Current Control Title">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default" placeholder="Recommended Action">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Planed Date"></td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Actual Date"></td>
-                    <td>
-                      <select>
-                        <option value="0" selected>Select</option>
-                        <option value="1">Created</option>
-                        <option value="2">in Process</option>
-                        <option value="3">Completed</option>
-                      </select>                         
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default" placeholder="Responsible">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-        </section>
-
-        <section class="causeBox">
-          <div class="row">
-            <div class="col s1 ar cardSubTit fontB blackTxt">Fail Effect</div>
-            <div class="col s9 val">
-              <div class="aniInput">
-                  <input type="text" value="Viscosity defect" class="browser-default">
-                  <span class="focus-border"></span>
-              </div>
-            </div>
-            <div class="col s2 btnArea">
-              <a href="javascript:;" class="waves-effect waves-light hBtn hBlue"><i class="material-icons left">add</i><span class="label">Add Fail Cause</span></a>
-            </div>
-          </div>
-          <div class="subCardBox">
-            <div class="row cuaseTit">
-              <div class="col s1 ar tit kccBlue">Fail Cause</div>
-              <div class="col s11 val">
-                <div class="aniInput">
-                    <input type="text" value="Abnormal Flowmeter tuning Sensor" class="browser-default">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="delBtn"><i class="material-icons">close</i></div>
-            </div>
-            <div class="row">
-              <div class="col s1 ar tit">Severity</div>
-              <div class="col s1 val">
-                <div class="aniInput">
-                    <input type="text" value="2" class="browser-default ac">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="col s1 ar tit">Occurrence</div>
-              <div class="col s1 val">
-                <div class="aniInput">
-                    <input type="text" value="2" class="browser-default ac">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="col s1 ar tit">Detection</div>
-              <div class="col s1 val">
-                <div class="aniInput">
-                    <input type="text" value="2" class="browser-default ac">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="col s1 ar tit">A.P</div>
-              <div class="col s2"><span class="roundBox red mt5 fontM">H</span></div>
-              <div class="col s1 ar tit">RPN</div>
-              <div class="col s2 fontM mpmOrange">8</div>
-            </div>
-
-            <div class="btnArea">
-              <a href="javascript:;" class="waves-effect waves-light hBtn hGreen mr10" id="newItemBtn"><i class="material-icons left">add</i><span class="label">Add Item</span></a>
-              <a href="javascript:;" class="waves-effect waves-light hBtn hBlue" id="newCtrlTrBtn"><i class="material-icons left">add</i><span class="label">Add Current Control</span></a>
-            </div>
-						<div class="hFixedTable hBorderTable hScroll vMiddle mt10">
-							<table>
-                <colgroup>
-                  <col style="width: 400px;">
-                  <col style="width: 400px;">
-                  <col style="width: 100px;">
-                  <col style="width: 100px;">
-                  <col style="width: 100px;">
-                  <col style="width: 200px;">
-                  <col style="width: 200px;">
-                  <col style="width: 120px;">
-                  <col style="width: 120px;">
-                  <col style="width: 120px;">
-                  <col style="width: 120px;">
-                  <col class="newItem" style="width: 120px; display: none;">
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th class="fix-col">Current Control</th>
-                    <th>Recommended Action</th>
-                    <th>Planed Date</th>
-                    <th>Actual Date</th>
-                    <th>Status</th>
-                    <th>Action taken with evidence</th>
-                    <th>Department(Function)</th>
-                    <th>Responsible By</th>
-                    <th>Reviewed By</th>
-                    <th>Approved By</th>
-                    <th class="addItem">
-                      <div class="aniInput">
-                          <input type="text" value="4M" class="browser-default ac">
-                          <span class="focus-border"></span>
-                      </div>
-                      <div class="delBtn"><i class="material-icons">close</i></div>
-                    </th>
-                    <th class="addItem newItem animate__animated animate__slideInLeft" style="display: none;">
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default ac" placeholder="Item Title">
-                          <span class="focus-border"></span>
-                      </div>
-                      <div class="delBtn"><i class="material-icons">close</i></div>
-                    </th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="fix-col">
-                      <div class="aniInput">
-                          <input type="text" value="Annual calibration" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Install Dual-Sensor with R6101's Loadcell" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" value="Oct 15, 2025"></td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Actual Date"></td>
-                    <td>
-                      <select>
-                        <option value="1">Created</option>
-                        <option value="2" selected>in Process</option>
-                        <option value="3">Completed</option>
-                      </select>                         
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" placeholder="Action taken with evidence" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" placeholder="Department(Function)" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default" placeholder="Value">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td class="newItem animate__animated animate__slideInLeft" style="display: none;">
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default" placeholder="Value">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="fix-col">
-                      <div class="aniInput">
-                          <input type="text" value="Periodic sensor check" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Replace faulty sensor" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" value="Oct 15, 2025"></td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Actual Date"></td>
-                    <td>
-                      <select>
-                        <option value="1">Created</option>
-                        <option value="2" selected>in Process</option>
-                        <option value="3">Completed</option>
-                      </select>                         
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" placeholder="Action taken with evidence" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" placeholder="Department(Function)" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default" placeholder="Value">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td class="newItem animate__animated animate__slideInLeft" style="display: none;">
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default" placeholder="Value">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                  </tr>
-                  <tr id="newCtrlTr" class="animate__animated animate__slideInLeft" style="display: none;">
-                    <td class="fix-col">
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default" placeholder="Current Control Title">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default" placeholder="Recommended Action">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Planed Date"></td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Actual Date"></td>
-                    <td>
-                      <select>
-                        <option value="0" selected>Select</option>
-                        <option value="1">Created</option>
-                        <option value="2">in Process</option>
-                        <option value="3">Completed</option>
-                      </select>                         
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default" placeholder="Action taken with evidence">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default" placeholder="Department(Function)">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default" placeholder="Responsible By">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default" placeholder="Reviewed By">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default" placeholder="Approved By">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default" placeholder="Value">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td class="newItem animate__animated animate__slideInLeft" style="display: none;">
-                      <div class="aniInput">
-                          <input type="text" value="" class="browser-default" placeholder="Value">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="subCardBox">
-            <div class="row cuaseTit">
-              <div class="col s1 ar tit kccBlue">Fail Cause</div>
-              <div class="col s11 val">
-                <div class="aniInput">
-                    <input type="text" value="Inaccurate RM ratio control" class="browser-default">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="delBtn"><i class="material-icons">close</i></div>
-            </div>
-            <div class="row">
-              <div class="col s1 ar tit">Severity</div>
-              <div class="col s1 val">
-                <div class="aniInput">
-                    <input type="text" value="4" class="browser-default ac">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="col s1 ar tit">Occurrence</div>
-              <div class="col s1 val">
-                <div class="aniInput">
-                    <input type="text" value="4" class="browser-default ac">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="col s1 ar tit">Detection</div>
-              <div class="col s1 val">
-                <div class="aniInput">
-                    <input type="text" value="6" class="browser-default ac">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="col s1 ar tit">A.P</div>
-              <div class="col s2"><span class="roundBox green mt5 fontM">L</span></div>
-              <div class="col s1 ar tit">RPN</div>
-              <div class="col s2 fontM mpmOrange">96</div>
-            </div>
-
-            <div class="btnArea">
-              <a href="javascript:;" class="waves-effect waves-light hBtn hGreen mr10"><i class="material-icons left">add</i><span class="label">Add Item</span></a>
-              <a href="javascript:;" class="waves-effect waves-light hBtn hBlue"><i class="material-icons left">add</i><span class="label">Add Current Control</span></a>
-            </div>
-						<div class="hFixedTable hBorderTable hScroll vMiddle mt10">
-              <table>
-                <colgroup>
-                  <col style="width: 400px;">
-                  <col style="width: 400px;">
-                  <col style="width: 100px;">
-                  <col style="width: 100px;">
-                  <col style="width: 100px;">
-                  <col style="width: 200px;">
-                  <col style="width: 200px;">
-                  <col style="width: 120px;">
-                  <col style="width: 120px;">
-                  <col style="width: 120px;">
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th class="fix-col">Current Control</th>
-                    <th>Recommended Action</th>
-                    <th>Planed Date</th>
-                    <th>Actual Date</th>
-                    <th>Status</th>
-                    <th>Action taken with evidence</th>
-                    <th>Department(Function)</th>
-                    <th>Responsible By</th>
-                    <th>Reviewed By</th>
-                    <th>Approved By</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="fix-col">
-                      <div class="aniInput">
-                          <input type="text" value="Dosing system check" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Improve ratio accuracy" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Planed Date"></td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Actual Date"></td>
-                    <td>
-                      <select>
-                        <option value="1">Created</option>
-                        <option value="2" selected>in Process</option>
-                        <option value="3">Completed</option>
-                      </select>                         
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" placeholder="Action taken with evidence" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" placeholder="Department(Function)" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="fix-col">
-                      <div class="aniInput">
-                          <input type="text" value="Operator verification" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Provide operator training" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Planed Date"></td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Actual Date"></td>
-                    <td>
-                      <select>
-                        <option value="1">Created</option>
-                        <option value="2" selected>in Process</option>
-                        <option value="3">Completed</option>
-                      </select>                         
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" placeholder="Action taken with evidence" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" placeholder="Department(Function)" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-        </section>
-
-        <section class="causeBox">
-          <div class="row">
-            <div class="col s1 ar cardSubTit fontB blackTxt">Fail Effect</div>
-            <div class="col s9 val">
-              <div class="aniInput">
-                  <input type="text" value="Hardness defect" class="browser-default">
-                  <span class="focus-border"></span>
-              </div>
-            </div>
-            <div class="col s2 btnArea">
-              <a href="javascript:;" class="waves-effect waves-light hBtn hBlue"><i class="material-icons left">add</i><span class="label">Add Fail Cause</span></a>
-            </div>
-          </div>
-
-          <div class="subCardBox">
-            <div class="row cuaseTit">
-              <div class="col s1 ar tit kccBlue">Fail Cause</div>
-              <div class="col s11 val">
-                <div class="aniInput">
-                    <input type="text" value="Low curing temperature" class="browser-default">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="delBtn"><i class="material-icons">close</i></div>
-            </div>
-            <div class="row">
-              <div class="col s1 ar tit">Severity</div>
-              <div class="col s1 val">
-                <div class="aniInput">
-                    <input type="text" value="2" class="browser-default ac">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="col s1 ar tit">Occurrence</div>
-              <div class="col s1 val">
-                <div class="aniInput">
-                    <input type="text" value="2" class="browser-default ac">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="col s1 ar tit">Detection</div>
-              <div class="col s1 val">
-                <div class="aniInput">
-                    <input type="text" value="2" class="browser-default ac">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="col s1 ar tit">A.P</div>
-              <div class="col s2"><span class="roundBox green mt5 fontM">L</span></div>
-              <div class="col s1 ar tit">RPN</div>
-              <div class="col s2 fontM mpmOrange">8</div>
-            </div>
-
-            <div class="btnArea">
-              <a href="javascript:;" class="waves-effect waves-light hBtn hGreen mr10"><i class="material-icons left">add</i><span class="label">Add Item</span></a>
-              <a href="javascript:;" class="waves-effect waves-light hBtn hBlue"><i class="material-icons left">add</i><span class="label">Add Current Control</span></a>
-            </div>
-						<div class="hFixedTable hBorderTable hScroll vMiddle mt10">
-              <table>
-                <colgroup>
-                  <col style="width: 400px;">
-                  <col style="width: 400px;">
-                  <col style="width: 100px;">
-                  <col style="width: 100px;">
-                  <col style="width: 100px;">
-                  <col style="width: 200px;">
-                  <col style="width: 200px;">
-                  <col style="width: 120px;">
-                  <col style="width: 120px;">
-                  <col style="width: 120px;">
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th class="fix-col">Current Control</th>
-                    <th>Recommended Action</th>
-                    <th>Planed Date</th>
-                    <th>Actual Date</th>
-                    <th>Status</th>
-                    <th>Action taken with evidence</th>
-                    <th>Department(Function)</th>
-                    <th>Responsible By</th>
-                    <th>Reviewed By</th>
-                    <th>Approved By</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="fix-col">
-                      <div class="aniInput">
-                          <input type="text" value="Annual calibration" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Install Dual-Sensor with R6101's Loadcell" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Planed Date"></td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Actual Date"></td>
-                    <td>
-                      <select>
-                        <option value="1">Created</option>
-                        <option value="2" selected>in Process</option>
-                        <option value="3">Completed</option>
-                      </select>                         
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" placeholder="Action taken with evidence" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" placeholder="Department(Function)" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="fix-col">
-                      <div class="aniInput">
-                          <input type="text" value="Periodic sensor check" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Replace faulty sensor" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Planed Date"></td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Actual Date"></td>
-                    <td>
-                      <select>
-                        <option value="1">Created</option>
-                        <option value="2" selected>in Process</option>
-                        <option value="3">Completed</option>
-                      </select>                         
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" placeholder="Action taken with evidence" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" placeholder="Department(Function)" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-          <div class="subCardBox">
-            <div class="row cuaseTit">
-              <div class="col s1 ar tit kccBlue">Fail Cause</div>
-              <div class="col s11 val">
-                <div class="aniInput">
-                    <input type="text" value="Short curing time" class="browser-default">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="delBtn"><i class="material-icons">close</i></div>
-            </div>
-            <div class="row">
-              <div class="col s1 ar tit">Severity</div>
-              <div class="col s1 val">
-                <div class="aniInput">
-                    <input type="text" value="4" class="browser-default ac">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="col s1 ar tit">Occurrence</div>
-              <div class="col s1 val">
-                <div class="aniInput">
-                    <input type="text" value="4" class="browser-default ac">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="col s1 ar tit">Detection</div>
-              <div class="col s1 val">
-                <div class="aniInput">
-                    <input type="text" value="6" class="browser-default ac">
-                    <span class="focus-border"></span>
-                </div>
-              </div>
-              <div class="col s1 ar tit">A.P</div>
-              <div class="col s2"><span class="roundBox green mt5 fontM">L</span></div>
-              <div class="col s1 ar tit">RPN</div>
-              <div class="col s2 fontM mpmOrange">96</div>
-            </div>
-
-            <div class="btnArea">
-              <a href="javascript:;" class="waves-effect waves-light hBtn hGreen mr10"><i class="material-icons left">add</i><span class="label">Add Item</span></a>
-              <a href="javascript:;" class="waves-effect waves-light hBtn hBlue"><i class="material-icons left">add</i><span class="label">Add Current Control</span></a>
-            </div>
-						<div class="hFixedTable hBorderTable hScroll vMiddle mt10">
-              <table>
-                <colgroup>
-                  <col style="width: 400px;">
-                  <col style="width: 400px;">
-                  <col style="width: 100px;">
-                  <col style="width: 100px;">
-                  <col style="width: 100px;">
-                  <col style="width: 200px;">
-                  <col style="width: 200px;">
-                  <col style="width: 120px;">
-                  <col style="width: 120px;">
-                  <col style="width: 120px;">
-                </colgroup>
-                <thead>
-                  <tr>
-                    <th class="fix-col">Current Control</th>
-                    <th>Recommended Action</th>
-                    <th>Planed Date</th>
-                    <th>Actual Date</th>
-                    <th>Status</th>
-                    <th>Action taken with evidence</th>
-                    <th>Department(Function)</th>
-                    <th>Responsible By</th>
-                    <th>Reviewed By</th>
-                    <th>Approved By</th>
-                  </tr>
-                </thead>
-                <tbody>
-                  <tr>
-                    <td class="fix-col">
-                      <div class="aniInput">
-                          <input type="text" value="Dosing system check" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Improve ratio accuracy" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Planed Date"></td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Actual Date"></td>
-                    <td>
-                      <select>
-                        <option value="1">Created</option>
-                        <option value="2" selected>in Process</option>
-                        <option value="3">Completed</option>
-                      </select>                         
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" placeholder="Action taken with evidence" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" placeholder="Department(Function)" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                  </tr>
-                  <tr>
-                    <td class="fix-col">
-                      <div class="aniInput">
-                          <input type="text" value="Operator verification" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Provide operator training" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>
-                    </td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Planed Date"></td>
-                    <td><input type="text" class="datepicker browser-default wd100p ac" placeholder="Actual Date"></td>
-                    <td>
-                      <select>
-                        <option value="1">Created</option>
-                        <option value="2" selected>in Process</option>
-                        <option value="3">Completed</option>
-                      </select>                         
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" placeholder="Action taken with evidence" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="" placeholder="Department(Function)" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                    <td>
-                      <div class="aniInput">
-                          <input type="text" value="Zhang,Chen" class="browser-default">
-                          <span class="focus-border"></span>
-                      </div>                      
-                    </td>
-                  </tr>
-                </tbody>
-              </table>
-            </div>
-          </div>
-
-        </section>
-
-
       </div>
     </section>
 
@@ -1366,6 +1063,46 @@
             </section>
           </li>
         </ul>
+      </div>
+    </section>
+    
+    <section class="cardBox mt10" id="pjContCard5">
+      <div class="cardTit2"><i class="material-icons left">local_library</i>Approval</div>
+      <div>
+        <div class="inputArea">
+          <div class="fixedTable hBorderTable hScroll mg10">
+            <table>
+              <colgroup>
+                <col style="width:auto;">
+                <col style="width:35%;">
+                <col style="width:160px;">
+                <col style="width:120px;">
+              </colgroup>
+              <thead>
+                <tr>
+                  <th>Approval Type</th>
+                  <th>Name</th>
+                  <th>Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr style="" class="">
+                  <td class="ac">Marketing Leader</td>
+                  <td class="ac">Jim Quan</td>
+                  <td class="ac">26.09.2025</td>
+                  <td class="ac"><span class="roundBox tendril25">Approved</span></td>
+                </tr>
+                <tr style="" class="">
+                  <td class="ac">Technology Leader</td>
+                  <td class="ac">Charles Kim</td>
+                  <td class="ac">-</td>
+                  <td class="ac"></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </section>
   </article>
