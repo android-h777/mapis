@@ -56,6 +56,24 @@
             window.open("apis_fmea_pop.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
           });
 
+          $(document).on("click", ".newAppleTab li", function(){
+              var offset = $(this).offset().left.toFixed(0) - $(this).parent().offset().left.toFixed(0);
+              
+              $(this).parents(".newAppleTab").find("li").removeClass("on");
+              $(this).parents(".newAppleTab").find(".tabBg").animate({left: offset-3});
+              $(this).addClass("on");
+              $('.mainList ul li').removeClass("animate__flipInX");
+
+            const listItems = document.querySelectorAll('.mainList ul li');
+            const classNameToAdd = 'animate__flipInX'; // 추가할 클래스 이름
+
+            listItems.forEach((li, index) => {
+              setTimeout(() => {
+                li.classList.add(classNameToAdd);
+              }, index * 100); // 1초 간격
+            });
+          });
+
           $(".mainList li").click(function(){
             teardown();
             $(".mainList li").removeClass("on");
@@ -107,7 +125,12 @@
               $("#" + $this.attr("data-id")).hide();
             }
           });
-         
+
+          $('.sidenav').sidenav();
+          $(document).on('click', '.sidenav-overlay, .closeBtns', function() {
+              $('.sidenav').sidenav('close');
+          });
+
           $('.modal').modal();
           // $('#bucketModal').modal("open");
           $('select').formSelect();
@@ -219,8 +242,16 @@
       <section class="mainTitArea">
         <div class="mainTit">FEMA List</div>
         <div class="btnArea">
+          <div class="newAppleTab mr10 wd130pxType">
+            <ul>
+              <li class="waves-effect waves-hColor on" cd="ALLW">In Progress</li>
+              <li class="waves-effect waves-hColor" cd="PART">Overdue Tasks</li>
+              <li class="waves-effect waves-hColor" cd="PART">Open Actions</li>
+              <div class="tabBg" style="left: 0px;"></div>
+            </ul>
+				  </div>
           <div style="display: flex;">
-            <a href="javascript:;" class="waves-effect waves-light hBtn hViva wd140px mr10"><i class="material-icons left">add</i><span class="label">Add FMEA</span></a>
+            <a href="javascript:;" class="waves-effect waves-light hBtn hBlue wd140px mr10"><i class="material-icons left">add</i><span class="label">Add FMEA</span></a>
             <!-- <a href="javascript:;" class="waves-effect waves-light hBtn hGreen wd120px mr10"><i class="material-icons left">grid_on</i><span class="label">Excel</span></a> -->
             <a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn viva wd120px modal-trigger" data-target="bucketModal"><i class="material-icons left">search</i><span class="label">Search</span></a>
           </div>
