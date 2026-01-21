@@ -5241,3 +5241,37 @@ textarea.materialize-textarea:focus:not([readonly]) {
 	border-radius: 20px;
 	padding: 20px;
 }
+
+.decisionArea ul {
+    display: flex;
+    justify-content: center;
+	margin-top: 10px;
+}
+
+.decisionArea ul li {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    width: 180px;
+    border: 2px solid #A47864;
+    border-radius: 20px;
+	padding: 20px;
+	color: #A47864;
+	margin: 0px 10px;
+}
+.decisionArea ul li .icon {
+	margin-bottom: 5px;
+}
+.decisionArea ul li .icon i {
+	font-size: 40px;
+}
+
+.decisionArea ul li:hover, .decisionArea ul li.on {
+	color: #e87e05;
+	border-color: #e87e05;
+	cursor: pointer;
+}
+.decisionArea ul li:hover .tit, .decisionArea ul li.on .tit {
+	font-family: 'Roboto-Medium';
+}

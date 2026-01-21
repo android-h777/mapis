@@ -57,22 +57,6 @@
 			au.fnSetDatepicker(null, "dd.mm.yyyy");
 
 			$(window).on("resize", au.hFixedTableResize);
-
-			$("#submitBtn").click(function(){
-				$("#rstMenu1, #pjContCard_3, #verifiedBtn").show().addClass("animate__fadeInLeft");
-				$("#submitBtn").hide();
-				$('#rstMenu1').trigger('click');
-			});
-
-			$("#verifiedBtn").click(function(){
-				$("#rstMenu2, #pjContCard_4").show().addClass("animate__fadeInLeft");
-				$("#saveBtn, #verifiedBtn").hide();
-				$('#rstMenu2').trigger('click');
-			});
-
-			$("#addTextBox").click(function(){
-				$("#addBoxArea").show().addClass("animate__fadeInLeft");
-			});
 		});
 	</script>
 </head>
@@ -88,30 +72,23 @@
 		<section>
 			<ul id="menu_stage_2-1" class="menuUl">
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="pjContCard_1">
-					<i class="material-symbols-outlined left">inventory_2</i><span>Proposal</span>
+					<i class="material-symbols-outlined left">inventory_2</i><span>Proposal Info</span>
 				</li>
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_2">
-					<i class="material-symbols-outlined left">local_library</i><span>Approval</span>
-				</li>
-				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_3" id="rstMenu1" style="opacity: 0;">
-					<i class="material-symbols-outlined left">batch_prediction</i><span>Tech Results</span>
-				</li>
-				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_4" id="rstMenu2" style="opacity: 0;">
-					<i class="material-symbols-outlined left">verified</i><span>Confirmation</span>
+					<i class="material-symbols-outlined left">category</i><span>Proposal Classification</span>
 				</li>
 			</ul>
 		</section>
 		<section class="btnArea">
 			<div id="saveBtn"><a href="javascript:;" class="waves-effect waves-light hBtn hBlue mb10"><i class="material-symbols-outlined left">save</i><span class="label">Save</span></a></div>
-			<div id="submitBtn"><a href="javascript:;" class="waves-effect waves-light hBtn hGreen"><i class="material-symbols-outlined left">assignment_turned_in</i><span class="label">Submit</span></a></div>
-			<div id="verifiedBtn" style="display: none;"><a href="javascript:;" class="waves-effect waves-light hBtn hGreen"><i class="material-symbols-outlined left">verified</i><span class="label">Complete</span></a></div>
+			<div id="verifiedBtn"><a href="javascript:;" class="waves-effect waves-light hBtn hGreen"><i class="material-symbols-outlined left">verified</i><span class="label">Complete</span></a></div>
 		</section>
 	</aside>
 
 	<div class="contArea">
 		<article id="cont_stage_2-1" class="contArticle" >
 			<section class="cardBox animate__animated animate__fadeInLeft mt10" id="pjContCard_1">
-				<div class="cardTit2"><i class="material-symbols-outlined left">inventory_2</i>Proposal</div>
+				<div class="cardTit2"><i class="material-symbols-outlined left">inventory_2</i>Proposal Info</div>
 				<div>
 					<div class="inputArea">
 						<div class="row">
@@ -170,139 +147,78 @@
 			</section>
 
 			<section class="cardBox animate__animated animate__fadeInLeft mt10" id="pjContCard_2">
-				<div class="cardTit2"><i class="material-symbols-outlined left">local_library</i>Approval</div>
-				<div>
-					<div class="inputArea">
-						<div class="cardSubTit mt20">Decision Point Approval Status</div>
-						<div class="fixedTable hBorderTable">
-							<table id="tbl_approval">
-								<colgroup>
-									<col style="width:auto;">
-									<col style="width:35%;">
-									<col style="width:160px;">
-									<col style="width:120px;">
-								</colgroup>
-								<thead>
-									<tr>
-										<th>Approval Type</th>
-										<th>Name</th>
-										<th>Date</th>
-										<th>Status</th>
-									</tr>
-								</thead>
-								<tbody>
-									<tr style="" class="">
-										<td class="ac">Global Strategic Operations Leader</td>
-										<td class="ac">Jim Quan</td>
-										<td class="ac">26.09.2025</td>
-										<td class="ac"><span class="roundBox tendril25">Approved</span></td>
-									</tr>
-									<tr style="" class="">
-										<td class="ac">Global Product Manager</td>
-										<td class="ac">Charles Kim</td>
-										<td class="ac">-</td>
-										<td class="ac"></td>
-									</tr>
-									<tr style="" class="">
-										<td class="ac">Global Process Technology OR Manufacturing OperationsLeader</td>
-										<td class="ac">Jason Ji</td>
-										<td class="ac">-</td>
-										<td class="ac"></td>
-									</tr>
-									<tr style="" class="">
-										<td class="ac">Global Tolling Leader (if Site From or Site To is Toller)</td>
-										<td class="ac">-</td>
-										<td class="ac">-</td>
-										<td class="ac"></td>
-									</tr>
-								</tbody>
-							</table>
-						</div>
-					</div>
-				</div>
-			</section>
-
-			<section class="cardBox animate__animated mt10" id="pjContCard_3" style="display: none;">
-				<div class="cardTit2"><i class="material-symbols-outlined left">batch_prediction</i>Tech Results</div>
-				<div class="dpFlex jfe">
-					<a class="waves-effect waves-light hBtn" id="addTextBox"><i class="material-symbols-outlined left">add</i>Add Results</a>
-				</div>
+				<div class="cardTit2"><i class="material-symbols-outlined left">category</i>Proposal Classification</div>
+				<div class="cardSubTit mt20">Opinions</div>
 				<div class="inputArea">
-					<div class="subCardBox mt10">
-						<div class="row">
-							<div class="col s2 ar pl0">Results Summary</div>
-							<div class="col s10">
-								<div class="aniInput">
-									<textarea class="materialize-textarea" placeholder="Describe the Results Summary" style="height: 100px;">test</textarea>
-									<span class="focus-border"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col s2 ar pl0">Reg Date</div>
-							<div class="col s10">23.09.2025</div>
-						</div>
-					</div>
-					<div class="subCardBox mt10">
-						<div class="row">
-							<div class="col s2 ar pl0">Results Summary</div>
-							<div class="col s10">
-								<div class="aniInput">
-									<textarea class="materialize-textarea" placeholder="Describe the Results Summary" style="height: 100px;">test2</textarea>
-									<span class="focus-border"/>
-								</div>
-							</div>
-						</div>
-						<div class="row">
-							<div class="col s2 ar pl0">Reg Date</div>
-							<div class="col s10">23.09.2025</div>
-						</div>
-					</div>
-					<div class="subCardBox mt10 animate__animated" style="display: none;" id="addBoxArea">
-						<div class="row">
-							<div class="col s2 ar pl0">Results Summary</div>
-							<div class="col s10">
-								<div class="aniInput">
-									<textarea class="materialize-textarea" placeholder="Describe the Results Summary" style="height: 100px;"></textarea>
-									<span class="focus-border"/>
-								</div>
-							</div>
-						</div>
-					</div>
-
-					<div class="row mt10">
-						<div class="col s2 ar pl0">Results Document</div>
+					<div class="row">
+						<div class="col s2 ar">Marketing</div>
 						<div class="col s10">
-							<div>
-								<div class="input-field file-field mt0 mb0">
-									<input type="hidden" id="ATTACH_FILE_ID" value="">
-									<div class="btn" id="ATTACH_FILE_BTN">
-										<span>File</span>
-										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
-									</div>
-									<div class="file-path-wrapper">
-										<input type="text" class="file-path validate">
-									</div>
-								</div>
-								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							<div class="aniInput">
+								<textarea class="materialize-textarea" placeholder="Describe the Opinion" style="height: 100px;"></textarea>
+								<span class="focus-border"/>
 							</div>
 						</div>
 					</div>
 					<div class="row">
-						<div class="col s2 ar pl0">Associated ZyImage report #​</div>
+						<div class="col s2 ar">Marketing</div>
 						<div class="col s10">
 							<div class="aniInput">
-								<input type="text" value="" class="browser-default fontR font14">
+								<textarea class="materialize-textarea" placeholder="Describe the Opinion" style="height: 100px;"></textarea>
+								<span class="focus-border"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar">Marketing</div>
+						<div class="col s10">
+							<div class="aniInput">
+								<textarea class="materialize-textarea" placeholder="Describe the Opinion" style="height: 100px;"></textarea>
 								<span class="focus-border"/>
 							</div>
 						</div>
 					</div>
 				</div>
-			</section>
 
+				<div class="cardSubTit mt20">Decision</div>
+				<div class="decisionArea">
+					<ul>
+						<li class="waves-effect waves-orange">
+							<div class="icon"><i class="material-icons">lightbulb</i></div>
+							<div class="tit">Standard NPI</div>
+						</li>
+						<li class="waves-effect waves-orange">
+							<div class="icon"><i class="material-icons">integration_instructions</i></div>
+							<div class="tit">Custom NPI</div>
+						</li>
+						<li class="waves-effect waves-orange">
+							<div class="icon"><i class="material-icons">snippet_folder</i></div>
+							<div class="tit">NPT</div>
+						</li>
+						<li class="waves-effect waves-orange on">
+							<div class="icon"><i class="material-icons">build</i></div>
+							<div class="tit">Tech Support</div>
+						</li>
+						<li class="waves-effect waves-orange">
+							<div class="icon"><i class="material-icons">block</i></div>
+							<div class="tit">Drop</div>
+						</li>
+					</ul>
+				</div>
 
-			<section class="cardBox animate__animated mt10" id="pjContCard_4" style="display: none;">
-				<div class="cardTit2"><i class="material-symbols-outlined left">verified</i>Confirmation</div>
+				<div class="cardSubTit mt30">Assign PL</div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">PL</div>
+						<div class="col s10 val">
+							<div class="aniInput">
+								<input type="text" value="Jongho Lee​" class="browser-default">
+								<span class="focus-border"></span>
+							</div>
+						</div>
+					</div>
+				</div>
+
+				<div class="cardSubTit mt30">Confirmation</div>
 				<div class="inputArea">
 					<div class="row">
 						<div class="col s2 ar pl0">Complete By</div>
@@ -312,7 +228,6 @@
 					</div>
 				</div>
 			</section>
-
 		</article>
 	</div>
 </body> 
