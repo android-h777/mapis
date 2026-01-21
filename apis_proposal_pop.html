@@ -1,0 +1,319 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/apis_util.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/highcharts/highcharts.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/jquery.inputmask.js"></script>
+
+	<script>
+		let highchartsArray = [];
+		let currPos = {};
+        $(document).ready(function(){
+			$(window).on('scroll', function() {
+				let scrollPosition = $(window).scrollTop() + parseFloat($(".contArea").css("margin-top")); // 상단 바 보정값
+				$('.cardBox[id]:visible').each(function(idx, o) {
+					const sectionTop = $(o).offset().top;
+					const sectionBottom = sectionTop + $(this).outerHeight() + parseFloat($(this).css("margin-top"));
+					const sectionId = $(o).attr('id');
+					if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+						$('.menu-item').removeClass('active');
+						$('.menu-item[data-target="' + sectionId + '"]').addClass('active');
+						return false;
+					}
+				});
+			});
+			$('.menu-item').on('click', function() {
+				const targetId = $(this).data('target');
+				const targetElement = $('#' + targetId);
+
+				if (targetElement.length) {
+					let scrollTop = targetElement.offset().top - parseFloat($(".contArea").css("margin-top"));
+					$('html, body').animate({
+						scrollTop: scrollTop
+					}, {
+						queue: false,
+						duration: 500,
+						complete: function() {
+							$('.menu-item').removeClass('active');
+							$('.menu-item[data-target="' + targetId + '"]').addClass('active');
+						}
+					});
+				}
+			});
+
+			$('select').formSelect();
+
+			au.fnSetDatepicker(null, "dd.mm.yyyy");
+
+			$(window).on("resize", au.hFixedTableResize);
+
+			$("#submitBtn").click(function(){
+				$("#rstMenu1, #pjContCard_3, #verifiedBtn").show().addClass("animate__fadeInLeft");
+				$("#submitBtn").hide();
+				$('#rstMenu1').trigger('click');
+			});
+
+			$("#verifiedBtn").click(function(){
+				$("#rstMenu2, #pjContCard_4").show().addClass("animate__fadeInLeft");
+				$("#saveBtn, #verifiedBtn").hide();
+				$('#rstMenu2').trigger('click');
+			});
+
+			$("#addTextBox").click(function(){
+				$("#addBoxArea").show().addClass("animate__fadeInLeft");
+			});
+		});
+	</script>
+</head>
+<body class="popup type2">
+	<header class="z-depth-1">
+		<section class="titArea">
+			<div><img src="img/MAPISLogo-25.png"></div>
+			<div class="tit">[PP-100078] [Buyoung Apartment] General AS complaint unit inspection (broken lower window frame)</div>
+		</section>
+	</header>
+
+	<aside class="leftAside z-depth-1 blurArea">
+		<section>
+			<ul id="menu_stage_2-1" class="menuUl">
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="pjContCard_1">
+					<i class="material-symbols-outlined left">inventory_2</i><span>Proposal</span>
+				</li>
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_2">
+					<i class="material-symbols-outlined left">local_library</i><span>Approval</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_3" id="rstMenu1" style="opacity: 0;">
+					<i class="material-symbols-outlined left">batch_prediction</i><span>Tech Results</span>
+				</li>
+				<li class="menu-item animate__animated waves-effect waves-hColor" data-target="pjContCard_4" id="rstMenu2" style="opacity: 0;">
+					<i class="material-symbols-outlined left">verified</i><span>Confirmation</span>
+				</li>
+			</ul>
+		</section>
+		<section class="btnArea">
+			<div id="saveBtn"><a href="javascript:;" class="waves-effect waves-light hBtn hBlue mb10"><i class="material-symbols-outlined left">save</i><span class="label">Save</span></a></div>
+			<div id="submitBtn"><a href="javascript:;" class="waves-effect waves-light hBtn hGreen"><i class="material-symbols-outlined left">assignment_turned_in</i><span class="label">Submit</span></a></div>
+			<div id="verifiedBtn" style="display: none;"><a href="javascript:;" class="waves-effect waves-light hBtn hGreen"><i class="material-symbols-outlined left">verified</i><span class="label">Complete</span></a></div>
+		</section>
+	</aside>
+
+	<div class="contArea">
+		<article id="cont_stage_2-1" class="contArticle" >
+			<section class="cardBox animate__animated animate__fadeInLeft mt10" id="pjContCard_1">
+				<div class="cardTit2"><i class="material-symbols-outlined left">inventory_2</i>Proposal</div>
+				<div>
+					<div class="inputArea">
+						<div class="row">
+							<div class="col s2 ar pl0">Proposal name</div>
+							<div class="col s10 val">[Buyoung Apartment] General AS complaint unit inspection (broken lower window frame)</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Source of suggestion​</div>
+							<div class="col s10 val link">SFA (2811814)</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Proposal contents</div>
+							<div class="col s10">
+								<div class="borderBox" style="line-height: 1.5;" id="div_contents">
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">1. Site overview</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">1) Site name: Hanam/Buyoung Apartment</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">2) Number of households: 2,055 households</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">3) Applicable products: VBF140, etc.</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">4) Thorn dealer: Platform E&amp;S</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><br></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">2. Issue: Complaint due to damage to the lower part of the living room veranda window frame.</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><br></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">3. Inspection results</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">&nbsp;① Check for damage to the lower part of the window frame due to external impact</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">&nbsp;② Window installation: Installed in mid-December (less than a month)</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">&nbsp;③ The dealer claims that the customer is at fault for using the product.</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">&nbsp;④ The protective film is stuck to the damaged area (spot) and is broken.</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">&nbsp; &nbsp; &nbsp; - In case of protective film, remove the protective film after completing the tile work at the bottom of the frame.</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">&nbsp;⑤ It is difficult to view this matter as consumer negligence.</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">&nbsp;⑥ It is assumed that the surrounding construction (tile) is at fault.</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">&nbsp;⑦ After consultation with the final consumer of the agency, replacement or compensation will be carried out.</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><br></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><img src="http://newsfa.kccworld.co.kr/file/download.do?fileAction=view&amp;pmFileType=DA&amp;fileSeq=2026012112100214934&amp;fileExt=png" title="external_image" alt="external_image" style="vertical-align: baseline; border: 0px solid rgb(0, 0, 0); width: 493px; height: 143px;" class=""></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><br></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">4. Future Plans</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">&nbsp;1) Repair or replacement will be carried out through consultation with the dealer/consumer.</font></font></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><br></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><br></p>
+									<p style="font-size: 10pt; line-height: 1.2;"><br></p>
+									<p style="font-size: 10pt; line-height: 1.2;">&nbsp;</p>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Required properties and review request comments</div>
+							<div class="col s10">
+								<div class="borderBox" style="line-height: 1.5;" id="div_comment"><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Customer Need Quality Testing </font></font><br><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Action Item: Create tech. data and sample </font></font><br><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Target Item: Target Value: </font></font><br><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Field Value: Action Value: </font></font><br><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Request Schedule: 20260121 - 20260123 </font></font><br><font dir="auto" style="vertical-align: inherit;"><font dir="auto" style="vertical-align: inherit;">Request Content: 1111</font></font></div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Customer request date</div>
+							<div class="col s10">January 23, 2026 (Friday)</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="cardBox animate__animated animate__fadeInLeft mt10" id="pjContCard_2">
+				<div class="cardTit2"><i class="material-symbols-outlined left">local_library</i>Approval</div>
+				<div>
+					<div class="inputArea">
+						<div class="cardSubTit mt20">Decision Point Approval Status</div>
+						<div class="fixedTable hBorderTable">
+							<table id="tbl_approval">
+								<colgroup>
+									<col style="width:auto;">
+									<col style="width:35%;">
+									<col style="width:160px;">
+									<col style="width:120px;">
+								</colgroup>
+								<thead>
+									<tr>
+										<th>Approval Type</th>
+										<th>Name</th>
+										<th>Date</th>
+										<th>Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr style="" class="">
+										<td class="ac">Global Strategic Operations Leader</td>
+										<td class="ac">Jim Quan</td>
+										<td class="ac">26.09.2025</td>
+										<td class="ac"><span class="roundBox tendril25">Approved</span></td>
+									</tr>
+									<tr style="" class="">
+										<td class="ac">Global Product Manager</td>
+										<td class="ac">Charles Kim</td>
+										<td class="ac">-</td>
+										<td class="ac"></td>
+									</tr>
+									<tr style="" class="">
+										<td class="ac">Global Process Technology OR Manufacturing OperationsLeader</td>
+										<td class="ac">Jason Ji</td>
+										<td class="ac">-</td>
+										<td class="ac"></td>
+									</tr>
+									<tr style="" class="">
+										<td class="ac">Global Tolling Leader (if Site From or Site To is Toller)</td>
+										<td class="ac">-</td>
+										<td class="ac">-</td>
+										<td class="ac"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_3" style="display: none;">
+				<div class="cardTit2"><i class="material-symbols-outlined left">batch_prediction</i>Tech Results</div>
+				<div class="dpFlex jfe">
+					<a class="waves-effect waves-light hBtn" id="addTextBox"><i class="material-symbols-outlined left">add</i>Add Results</a>
+				</div>
+				<div class="inputArea">
+					<div class="subCardBox mt10">
+						<div class="row">
+							<div class="col s2 ar pl0">Results Summary</div>
+							<div class="col s10">
+								<div class="aniInput">
+									<textarea class="materialize-textarea" placeholder="Describe the Results Summary" style="height: 100px;">test</textarea>
+									<span class="focus-border"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Reg Date</div>
+							<div class="col s10">23.09.2025</div>
+						</div>
+					</div>
+					<div class="subCardBox mt10">
+						<div class="row">
+							<div class="col s2 ar pl0">Results Summary</div>
+							<div class="col s10">
+								<div class="aniInput">
+									<textarea class="materialize-textarea" placeholder="Describe the Results Summary" style="height: 100px;">test2</textarea>
+									<span class="focus-border"/>
+								</div>
+							</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Reg Date</div>
+							<div class="col s10">23.09.2025</div>
+						</div>
+					</div>
+					<div class="subCardBox mt10 animate__animated" style="display: none;" id="addBoxArea">
+						<div class="row">
+							<div class="col s2 ar pl0">Results Summary</div>
+							<div class="col s10">
+								<div class="aniInput">
+									<textarea class="materialize-textarea" placeholder="Describe the Results Summary" style="height: 100px;"></textarea>
+									<span class="focus-border"/>
+								</div>
+							</div>
+						</div>
+					</div>
+
+					<div class="row mt10">
+						<div class="col s2 ar pl0">Results Document</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="ATTACH_FILE_ID" value="">
+									<div class="btn" id="ATTACH_FILE_BTN">
+										<span>File</span>
+										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Associated ZyImage report #​</div>
+						<div class="col s10">
+							<div class="aniInput">
+								<input type="text" value="" class="browser-default fontR font14">
+								<span class="focus-border"/>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_4" style="display: none;">
+				<div class="cardTit2"><i class="material-symbols-outlined left">verified</i>Confirmation</div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0">Complete By</div>
+						<div class="col s4 val">Aishwarya Venkatakrishnan</div>
+						<div class="col s2 ar pl0">Complete Date</div>
+						<div class="col s4 val">Dec 18 2025​</div>
+					</div>
+				</div>
+			</section>
+
+		</article>
+	</div>
+</body> 
+</html>

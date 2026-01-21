@@ -14,7 +14,8 @@
 	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/apis_util.js"></script>
-	<script type="text/javascript" charset="utf-8" src="js/highcharts/highcharts.js"></script>
+	<script src="https://code.highcharts.com/highcharts.js"></script>
+	<script src="https://code.highcharts.com/highcharts-more.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/jquery.inputmask.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/Hoo-gantt.js"></script>
 
@@ -93,7 +94,7 @@
 				}
 			});
 
-			fnSetStageCont(null,'2','4','1',null);
+			fnSetStageCont(null,'2','4','6',null);
 
 			au.fnSetDatepicker(null, "yyyy-mm-dd");
 
@@ -149,6 +150,128 @@
 				}
 			});
 			highchartsArray.push(segmentChart);
+
+			Highcharts.chart('scoreChart', {
+				chart: {
+					polar: true,
+					type: 'line'
+				},
+				title: {
+					text: 'Score against Leading Indicator'
+				},
+				pane: {
+					size: '80%'
+				},
+				xAxis: {
+					categories: [
+					'Design for Safety - A',
+					'Societal Benefits - B',
+					'Responsible sourcing - A',
+					'Promoting circularity - A',
+					'Renewable Alternatives - A',
+					'Optimization of resource efficiencies - A'
+					],
+					tickmarkPlacement: 'on',
+					lineWidth: 0
+				},
+				yAxis: {
+					gridLineInterpolation: 'polygon',
+					min: 0,
+					max: 30,
+					tickInterval: 5
+				},
+				tooltip: {
+					shared: true,
+					pointFormat: '<span style="color:{series.color}">{series.name}</span>: <b>{point.y}</b><br/>'
+				},
+				legend: {
+					enabled: true
+				},
+				series: [
+					{
+					name: 'Impact',
+					data: [9, 2, 10, 3, 3, 25],  // 이미지 기준 추정값
+					pointPlacement: 'on',
+					color: '#A47864',
+					lineWidth: 3,
+					marker: {
+						enabled: true,
+						radius: 3
+					}
+					}
+				],
+				credits: {
+					enabled: false
+				}
+			});
+
+			Highcharts.chart('pcfChart', {
+				chart: {
+					type: 'column'
+				},
+				title: {
+					text: 'GHG EMISSION IMPACT'
+				},
+				xAxis: {
+					categories: ['MANUFACTURING IMPACT(PCF)', 'USEPHASE IMPACT (SCOPE 2)'],
+					title: { text: 'Scope' },
+					labels: {
+					style: { fontWeight: '700', color: '#A47864' }
+					}
+				},
+				yAxis: {
+					title: { text: 'Impact' },
+					min: -20,
+					max: 60,
+					tickInterval: 20,
+					plotLines: [{
+					value: 0,
+					color: '#333',
+					width: 2,
+					zIndex: 5
+					}]
+				},
+
+				legend: {
+					align: 'right',
+					verticalAlign: 'top'
+				},
+
+				tooltip: {
+					pointFormat: '<b>{point.y}</b>'
+				},
+
+				plotOptions: {
+					column: {
+					borderWidth: 0,
+					pointWidth: 90,  // 막대 두께
+					dataLabels: {
+						enabled: true,
+						formatter: function () {
+						return this.y;
+						},
+						style: {
+						fontWeight: '700'
+						}
+					}
+					}
+				},
+
+				series: [
+					{
+					name: 'Impact < 0',
+					color: '#bb2649',
+					data: [null, null]  // 음수 값 들어가면 여기 넣기
+					},
+					{
+					name: 'Impact > 0',
+					color: '#899f6a',
+					data: [15, 18]
+					}
+				],
+
+				credits: { enabled: false }
+			});
 
 			$("#btn_addAction").click(function(){
 				let html = '';
@@ -234,7 +357,7 @@
 				digits: 2
 			});
 
-			$('#processMapModal, #chngStatusModal').modal({
+			$('#processMapModal, #chngStatusModal, #PSA_Tool_Info_Modal, #PSA_ScoreCard_Info_Modal').modal({
 				onOpenStart: function () {
 					$("header, aside, .contArea").addClass("modalBlur");
 				},
@@ -242,7 +365,6 @@
 					$("header, aside, .contArea").removeClass("modalBlur");
 				}
 			});
-
 			$('.dropdown-content').each(function() {
 				$('body').append($(this));
 			});
@@ -567,7 +689,16 @@
 
 			<ul id="menu_stage_2-6" class="menuUl" style="display: none;">
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="pjContCard_2-6-1">
-					<i class="material-symbols-outlined left">all_inclusive</i><span>Sustainability</span>
+					<i class="material-symbols-outlined left">inventory_2</i><span>Basic Info</span>
+				</li>
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="pjContCard_2-6-2">
+					<i class="material-symbols-outlined left">create</i><span>PSA Tool</span>
+				</li>
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="pjContCard_2-6-3">
+					<i class="material-symbols-outlined left">scoreboard</i><span>SCORE CARD</span>
+				</li>
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="pjContCard_2-6-4">
+					<i class="material-symbols-outlined left">bar_chart</i><span>PCF</span>
 				</li>
 			</ul>
 
@@ -3571,51 +3702,821 @@
 
 		<article id="cont_stage_2-6" class="contArticle" style="display: none;">
 			<section class="cardBox animate__animated mt10" id="pjContCard_2-6-1">
-				<div class="cardTit2"><i class="material-symbols-outlined left">all_inclusive</i>Sustainability Summary</div>
+				<div class="cardTit2"><i class="material-symbols-outlined left">inventory_2</i>Basic Info</div>
+				<div class="inputArea">
+					<div class="row">
+						<div class="col s2 ar pl0"><span class="essential">*</span>Brief description of Technology</div>
+						<div class="col s10">
+							<div class="aniInput">
+								<textarea class="materialize-textarea"></textarea>
+								<span class="focus-border"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0"><span class="essential">*</span>Technologies Process/Synthetic Scheme</div>
+						<div class="col s10">
+							<div class="aniInput">
+								<textarea class="materialize-textarea"></textarea>
+								<span class="focus-border"/>
+							</div>
+						</div>
+					</div>
+					<div class="row">
+						<div class="col s2 ar pl0">Attachments</div>
+						<div class="col s10">
+							<div>
+								<div class="input-field file-field mt0 mb0">
+									<input type="hidden" id="ATTACH_FILE_ID" value="">
+									<div class="btn" id="ATTACH_FILE_BTN">
+										<span>File</span>
+										<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+									</div>
+									<div class="file-path-wrapper">
+										<input type="text" class="file-path validate">
+									</div>
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-6-2">
+				<div class="cardSubTitArea">
+					<div class="cardTit2"><i class="material-symbols-outlined left">create</i>PSA Tool</div>
+					<div><a href="#PSA_Tool_Info_Modal" class="waves-effect waves-light hBtn modal-trigger" id=""><i class="material-symbols-outlined left">info</i>Info</a></div>
+				</div>
 				<div class="fixedTable hBorderTable hScroll vMiddle inputArea">
-					<table id="">
+					<table>
 						<colgroup>
+							<col style="width: 60px;">
 							<col style="width: auto;">
-							<col style="width: auto;">
-							<col style="width: auto;">
+							<col style="width: 100px;">
+							<col style="width: 80px;">
+							<col style="width: 140px;">
+							<col style="width: 200px;">
+							<col style="width: 140px;">
 						</colgroup>
 						<thead>
 							<tr>
-								<th>Project Stage</th>
-								<th>Sustainability Category for the Product</th>
-								<th>Sustainability Score for the Product</th>
+								<th>Section</th>
+								<th>Sustainability Questionnaire (Through products life cycle)</th>
+								<th>Absolute Or Relative</th>
+								<th>Applicable?</th>
+								<th>If Yes, Provide impact on L/M/S</th>
+								<th>Comment or Reasons</th>
+								<th>Leading Indicator</th>
 							</tr>
 						</thead>
 						<tbody>
-							<tr>
-								<td>NPI GO</td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><input type="text" class="browser-default num2" value=""><span class="focus-border"/></div></td>
+							<tr class="lv1">
+								<td class="ar">1</td>
+								<td colspan="7">Safety and Environmental stewardship</td>
 							</tr>
 							<tr>
-								<td>Lab Formulation</td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><input type="text" class="browser-default num2" value=""><span class="focus-border"/></div></td>
+								<td class="ar">1.1</td>
+								<td>Does the product reduce or eliminate use of any health Hazardous substances (GHS category 1 A and 1B CMRs?) to below 0.1 wt %</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Design For Safety</td>
 							</tr>
 							<tr>
-								<td>Scale-Up</td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><input type="text" class="browser-default num2" value=""><span class="focus-border"/></div></td>
+								<td class="ar">1.2</td>
+								<td>Does the product reduce or eliminate “chemicals of concern” chemicals [Check the list in the tab “Chemicals of concern list”]?</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Design For Safety</td>
 							</tr>
 							<tr>
-								<td>Commercial GO</td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><input type="text" class="browser-default num2" value=""><span class="focus-border"/></div></td>
+								<td class="ar">1.3</td>
+								<td>Has the process been engineered or re-engineered to include green chemistry principles (1,2,6,9) aligned to increase resource efficiencies for Momentive?</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Optimization of resource efficiencies</td>
 							</tr>
 							<tr>
-								<td>Post Launch Review</td>
-								<td><div class="aniInput"><input type="text" class="browser-default" value=""><span class="focus-border"/></div></td>
-								<td><div class="aniInput"><input type="text" class="browser-default num2" value=""><span class="focus-border"/></div></td>
+								<td class="ar">1.4</td>
+								<td>Has the process been engineered or re-engineered to include green chemistry principles (3,5,11,12) aligned to increase safety of the process at Momentive?</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Design For Safety</td>
+							</tr>
+							<tr>
+								<td class="ar">1.5</td>
+								<td>Does the product contain renewable or bio-based raw materials ?</td>
+								<td class="ac">A</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Renewable Alternatives</td>
+							</tr>
+							<tr>
+								<td class="ar">1.6</td>
+								<td>Does the product contain recycled raw materials ?</td>
+								<td class="ac">A</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Promoting circularity</td>
+							</tr>
+							<tr>
+								<td class="ar">1.7</td>
+								<td>Does the product contain ozone depleting chemicals ?</td>
+								<td class="ac">A</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Design For Safety</td>
+							</tr>
+							<tr>
+								<td class="ar">1.8</td>
+								<td>Has the product reduced use of scarce resources like noble metals during production?</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Optimization of resource efficiencies</td>
+							</tr>
+							<tr class="lv1">
+								<td class="ar">2</td>
+								<td colspan="7">Sustainability benefits for the value chain - In use phase</td>
+							</tr>
+							<tr>
+								<td class="ar">2.1</td>
+								<td>Do we meet the sustainability attributes desired by the customers ?</td>
+								<td class="ac"></td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td class="ar">2.2</td>
+								<td>Enable Extension of lifetime of materials where Silicones/silanes are employed ?</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Optimization of resource efficiencies</td>
+							</tr>
+							<tr>
+								<td class="ar">2.3</td>
+								<td>Enable Fuel and energy savings using Momentive's product ?</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Optimization of resource efficiencies</td>
+							</tr>
+							<tr>
+								<td class="ar">2.4</td>
+								<td>Does the product help customer's end product to reduce emissions or other pollutants (air/water/soil)?</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Design for Safety</td>
+							</tr>
+							<tr>
+								<td class="ar">2.5</td>
+								<td>Does the product help reduce waste for customers?</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Optimization of resource efficiencies</td>
+							</tr>
+							<tr>
+								<td class="ar">2.6</td>
+								<td>Does the product help conserve water for customers?</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Optimization of resource efficiencies</td>
+							</tr>
+							<tr>
+								<td class="ar">2.7</td>
+								<td>Does the product help to improve safety concerns/recovery of human health?</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Design for Safety</td>
+							</tr>
+							<tr class="lv1">
+								<td class="ar">3</td>
+								<td colspan="7">Suppliers/Raw materials</td>
+							</tr>
+							<tr>
+								<td class="ar">3.1</td>
+								<td>Is there any new material or new supplier involved in this NPI ?</td>
+								<td class="ac"></td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Design for Safety</td>
+							</tr>
+							<tr>
+								<td class="ar">3.2</td>
+								<td>Have all new suppliers received Momentive's supplier code of conduct?</td>
+								<td class="ac">A</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Responsible sourcing</td>
+							</tr>
+							<tr>
+								<td class="ar">3.3</td>
+								<td>Would the new suppliers need to have Corp. Social Responsibility assessment ? (ex: est. spend >1MM $)</td>
+								<td class="ac">A</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Responsible sourcing</td>
+							</tr>
+							<tr>
+								<td class="ar">3.4</td>
+								<td>Does the product contain conflict minerals listed as per Momentive policies ? If yes, is it procured from conflict free regions ?</td>
+								<td class="ac">A</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Responsible sourcing</td>
+							</tr>
+							<tr>
+								<td class="ar">3.5</td>
+								<td>Does the product packaging material used are of lower carbon footprint than current usage ? If yes, provide reasons.</td>
+								<td class="ac">A</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Optimization of resource efficiencies</td>
+							</tr>
+							<tr class="lv1">
+								<td class="ar">4</td>
+								<td colspan="7">Certifications</td>
+							</tr>
+							<tr>
+								<td class="ar">4.1</td>
+								<td>Does the 'product' have ecolabels or any sustainability related certifications?</td>
+								<td class="ac">A</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td class="ar">4.2</td>
+								<td>Does the product contain certified renewable or bio-based raw materials</td>
+								<td class="ac">A</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Responsible sourcing</td>
+							</tr>
+							<tr class="lv1">
+								<td class="ar">5</td>
+								<td colspan="7">Societal benefits</td>
+							</tr>
+							<tr>
+								<td class="ar">5.1</td>
+								<td>Does the NPI align to the key UNSDG's relevant to Momentive ? Does the product help alleviate societal problems ?</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td></td>
+							</tr>
+							<tr>
+								<td class="ar">5.2</td>
+								<td>UNSDG #9 & #11 - Improve urban infrastructure & connectivity</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Societal Benefits</td>
+							</tr>
+							<tr>
+								<td class="ar">5.3</td>
+								<td>UNSDG #7 - Improve green energy production like wind/solar, etc</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Societal Benefits</td>
+							</tr>
+							<tr>
+								<td class="ar">5.4</td>
+								<td>UNSDG #3- Improve health and wellness</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Societal Benefits</td>
+							</tr>
+							<tr>
+								<td class="ar">5.5</td>
+								<td>UNSDG #2-Help food production</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Societal Benefits</td>
+							</tr>
+							<tr>
+								<td class="ar">5.6</td>
+								<td>Any other UN SDG’s (e.g. UNSDG 15)</td>
+								<td class="ac">R</td>
+								<td class="ac">
+									<select>
+										<option value="">N/A</option>
+										<option value="">NO</option>
+										<option value="">YES</option>
+									</select>
+								</td>
+								<td class="ac">
+									<select>
+										<option value="Not Applicable">Not Applicable</option>
+										<option value="Significant Benefit">Significant Benefit</option>
+										<option value="Moderate Benefit">Moderate Benefit</option>
+										<option value="Low Benefit">Low Benefit</option>
+										<option value="Negative Impact">Negative Impact</option>
+									</select>
+								</td>
+								<td>
+									<div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div>
+								</td>
+								<td>Societal Benefits</td>
 							</tr>
 						</tbody>
 					</table>
 				</div>
 			</section>
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-6-3">
+				<div class="cardSubTitArea">
+					<div class="cardTit2"><i class="material-symbols-outlined left">scoreboard</i>Score Card</div>
+					<div><a href="#PSA_ScoreCard_Info_Modal" class="waves-effect waves-light hBtn modal-trigger" id=""><i class="material-symbols-outlined left">info</i>Info</a></div>
+				</div>
+				<div class="inputArea mb20">
+					<div class="row">
+						<div class="col s2 ar">Category in NPI</div>
+						<div class="col s4"><span class="wd100px roundBox green ac pd5 font18">A</span></div>
+						<div class="col s2 ar">Numerical Score</div>
+						<div class="col s4"><span class="fontM font24">54</span></div>
+					</div>
+				</div>
+				<div id="scoreChart" style="height: 400px;"></div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="pjContCard_2-6-4">
+				<div class="cardTit2"><i class="material-symbols-outlined left">bar_chart</i>PCF</div>
+				<div id="pcfChart" style="height: 400px;"></div>				
+			</section>
+
 		</article>
 
 		<article id="cont_stage_2-7" class="contArticle" style="display: none;">
@@ -4713,5 +5614,84 @@
 			</div>
 		</div>
 	</article>
+
+	<article id="PSA_Tool_Info_Modal" class="modal" style="width: 80%;">
+		<div class="modal-header mochaBg">
+			<h5>Definitions for determining the Magnitude of the Impact</h5>
+			<div class="closeBtns modal-close"><i class="material-symbols-outlined">close</i></div>
+		</div>
+		<div class="modal-content">
+			<div class="fixedTable bdT1 inputArea">
+				<table>
+					<colgroup>
+						<col style="width: 25%;">
+						<col style="width: 25%;">
+						<col style="width: 25%;">
+						<col style="width: 25%;">
+					</colgroup>
+					<thead>
+						<tr>
+							<th class="bgYellow">LowBenefit (score +1)</th>
+							<th class="bgBlue">ModerateBenefit (score +3)</th>
+							<th class="bgGreen">SignificantBenefit (Score +9)</th>
+							<th class="bgRed">NegativeImpact (score -3)</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="pd20">The PAC has reduced use of hazardous chemicals in the production or has reduced tox profile than earlier <span class="fontM">internal</span> reference</td>
+							<td class="pd20">The PAC has reduced use of hazardous chemicals in the production or has reduced tox profile than earlier <span class="fontM">external</span> reference</td>
+							<td class="pd20">Does not contain prohibited/regulated chemicals (Cat 1) and help in reducing the tox profile of the customer's product</td>
+							<td class="pd20">The PAC has increased use of hazardous chemicals in the production or has increased tox profile than earlier internal reference</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>			
+		</div>
+	</article>
+	<article id="PSA_ScoreCard_Info_Modal" class="modal" style="width: 80%;">
+		<div class="modal-header mochaBg">
+			<h5>Interpretation of the categorical and Numerical scores</h5>
+			<div class="closeBtns modal-close"><i class="material-symbols-outlined">close</i></div>
+		</div>
+		<div class="modal-content">
+			<div class="fontM">
+				If the product is showing moderate to significant impacts in even one signal in any of the sub categories, then the categorial outcome is A. i.e Product with sustainability improvements or Beneficial . However, if there is any response which is NEGATIVE, then, the category of the NPI moves to C. If there are only low impact on the benefits, then the NPI is marked as Category B or sustainability Neutral NPI.<br>
+				The value of the numerical score indicates the strength of the product's sustainability benefits collectively. It is an internal indicator to distinguish products which are highly aligned to sustainability criteria positively
+			</div>
+			<div class="fixedTable bdT1 inputArea">
+				<table>
+					<colgroup>
+						<col style="width: 20%;">
+						<col style="width: 15%;">
+						<col style="width: 65%;">
+					</colgroup>
+					<thead>
+						<tr>
+							<th colspan="3">SUSTAINABILITY CATEGORY IN NPDI</th>
+						</tr>
+					</thead>
+					<tbody>
+						<tr>
+							<td class="fontM">Beneficial Impact</td>
+							<td class="bgGreen ac">A</td>
+							<td>No negative impacts and some moderate or significant benefits</td>
+						</tr>
+						<tr>
+							<td class="fontM">Neutral</td>
+							<td class="bgYellow ac">B</td>
+							<td>No negative impacts but only low benefits</td>
+						</tr>
+						<tr>
+							<td class="fontM">Negative Impact</td>
+							<td class="bgRed ac">C</td>
+							<td>if any negative impacts</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>			
+		</div>
+	</article>
+
 </body> 
 </html>

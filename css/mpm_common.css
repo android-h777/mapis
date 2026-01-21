@@ -2305,6 +2305,29 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 	border-top: 1px dashed #e0e0e0;
 }
 
+.fixedTable .lv1 td {
+    background-color: #E1DCCA;
+    color: #000;
+	font-family: 'Roboto-Regular';
+}
+
+.fixedTable .bgRed {
+	background-color: #bb2649;
+	color: #fff;
+}
+.fixedTable .bgYellow {
+	background-color: #F2C94C;
+	color: #fff;
+}
+.fixedTable .bgBlue {
+	background-color: #7391c9;
+	color: #fff;
+}
+.fixedTable .bgGreen {
+	background-color: #899f6a;
+	color: #fff;
+}
+
 .hFixedTable {
 	overflow-x: auto;
 	border-top: 2px solid #9a8b4e;
@@ -3486,8 +3509,11 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
     border-color: #e87e05;
     color: #e87e05;
 }
-.round
-
+.roundBox.bdGreen {
+	background-color: #fff;
+    border-color: #899f6a;
+    color: #899f6a;
+}
 .srchOptBox {
 	line-height: 26px;
 }
@@ -5208,4 +5234,10 @@ textarea.materialize-textarea:focus:not([readonly]) {
     font-size: 16px;
     margin-left: 2px;
     color: #e87e05;
+}
+
+.borderBox {
+	border: 1px solid #A47864;
+	border-radius: 20px;
+	padding: 20px;
 }

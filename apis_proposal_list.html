@@ -1,0 +1,437 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/highcharts/highcharts.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/highcharts/modules/timeline.js"></script>
+    <script>
+        $(document).ready(function(){
+          $('.sidenav').sidenav();
+          $(document).on('click', '.sidenav-overlay, .closeBtns', function() {
+              $('.sidenav').sidenav('close');
+          });
+
+          $(document).on("click", ".newAppleTab li", function(){
+              var offset = $(this).offset().left.toFixed(0) - $(this).parent().offset().left.toFixed(0);
+              
+              $(this).parents(".newAppleTab").find("li").removeClass("on");
+              $(this).parents(".newAppleTab").find(".tabBg").animate({left: offset-3});
+              $(this).addClass("on");
+              $('.mainList ul li').removeClass("animate__flipInX");
+              fnSetPrjList();
+          });
+
+          $(".pjTit, .rightSection .cardTit, #newPjBtn").click(function(){
+            window.open("apis_proposal_pop.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
+          });
+
+          $(".mainList li").click(function(){
+            $(".mainList li").removeClass("on");
+            $(".timeline .bdBox").removeClass("animate__flipInX");
+
+            $("#dtTit").text($(this).find(".pjTit").text());
+
+            $(this).addClass("on");
+            fnSetTimeLine();
+          });
+
+          $("#mainSrchInput").focus(function(){
+            $(".bgLayer").show();  
+            $(".contArea").addClass("blur");
+            $(".srchDtArea, .srchRstArea").slideDown();
+          });
+
+          $(".bgLayer").click(function(){
+            $(".bgLayer").hide();
+            $(".contArea").removeClass("blur");
+            $(".srchRstArea, .srchDtArea").slideUp();
+          });
+
+          $(document).on("mouseenter", ".srchRstArea li", function() {
+            var $this = $(this);
+
+            $(".srchRstArea .rstDt").hide();
+            $(".srchDtArea").addClass("on");
+            $('.srchDtArea').one('transitionend', function() {
+              $("#"+$this.attr("data-id")).show();
+              $(".srchAIArea").show();
+            });
+          }).on("mouseleave", ".srchRstArea li", function() {
+            var $this = $(this);
+            var $related = $(event.relatedTarget);
+            if (!$related.closest(".srchAIArea").length) {
+              $(".srchDtArea").removeClass("on");
+              $(".srchAIArea").hide();
+              $("#" + $this.attr("data-id")).hide();
+            }
+          });
+
+          $(".rightSection > div").on("mouseenter", function() {
+            $(this).find(".btnArea").stop().slideDown(200);
+          });
+          $(".rightSection > div").on("mouseleave", function() {
+            $(this).find(".btnArea").stop().slideUp(200);
+          });
+
+          Highcharts.chart('container_timeline', {
+            chart: {
+                type: 'timeline',
+                backgroundColor: 'transparent'
+            },
+            xAxis: {
+                visible: false
+            },
+            yAxis: {
+                visible: false
+            },
+            title: {
+                text: ''
+            },
+            plotOptions: {
+                series: {
+                    dataLabels: {
+                        backgroundColor: 'rgba(255,255,255, 0.7)'
+                    },
+                    cursor: 'pointer'
+                }
+            },
+            series: [{
+                data: [{
+                    name: 'Registration',
+                    label: "06.07.2024",
+                    description: '',
+                    id: 'cont1',
+                    color: "#899f6a"
+                }, {
+                    name: 'In Progress',
+                    label: "22.06.2025",
+                    description: '',
+                    id: 'cont3',
+                    color: "#7391c9"
+                }, {
+                    name: 'Completion',
+                    label: "-",
+                    description: '',
+                    id: 'cont4',
+                    color: "#eeeeee"
+                }]
+            }],
+            credits: {
+                enabled: false
+            }
+          });
+
+         
+          $('.modal').modal();
+          fnSetPrjList();
+          fnSetTimeLine();
+        });
+
+        function fnSetPrjList(){
+          document.querySelectorAll('.mainList ul li').forEach((li, index) => {
+            setTimeout(() => {
+              li.classList.add('animate__flipInX');
+            }, index * 100); // 1초 간격
+          });
+        }
+
+        function fnSetTimeLine(){
+          for (let i = 1; i <= 6; i++) {
+              $(`#timeLineItem${i}`).delay(200 * (i - 1)).queue(function(next) {
+                  $(this).addClass("animate__flipInX");
+                  next();
+              });
+          }
+        }
+  </script>
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <article class="navTop">
+        <section class="leftSection">
+          <div class="menuIcon">
+            <div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
+          </div>
+          <div><a href="apis_main.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
+        </section>
+        <section class="centerSection">
+          <div class="srchArea">
+            <i class="material-icons prefix">search</i>
+            <input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput" autocomplete="off">
+          </div>
+        </section>
+        <section class="rightSection">
+          <div class="userInfo">
+            <div class="mr10">
+              <span class="mocha25-text fontM">JONGHO LEE</span>  
+            </div>
+            <i class="material-icons gardenia25 mocha25-text fLine vCenter hCenter mg0">person</i>
+            <div class="btnArea" style="padding-top: 20px; margin-top: 0px; padding-bottom: 20px; margin-bottom: 0px; display: none;">
+              <a id="profileBtn" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">account_circle</span>
+                <span class="label">View Profile</span>
+              </a>
+              <a id="adminBtn" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">admin_panel_settings</span><span class="label">Administrator</span>
+              </a>
+              <a id="" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">volunteer_activism</span><span class="label">Service Now</span>
+              </a>
+              <a id="" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">directions</span><span class="label">Guidance</span>
+              </a>
+              <a id="" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">local_library</span><span class="label">Training</span>
+              </a>
+              <a id="logoutBtn" class="waves-effect waves-light hBtn hViva">
+                <span class="material-symbols-outlined left">logout</span><span class="label">Sign Out</span>
+              </a>
+            </div>
+          </div>
+          <div class="langInfo ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">language</i>
+            <div class="btnArea" style="padding-top: 20px; margin-top: 0px; padding-bottom: 20px; margin-bottom: 0px; display: none;">
+              <a class="waves-effect waves-light hBtn jc hViva on" data-lang="en">English</a><a class="waves-effect waves-light hBtn jc" data-lang="de">German</a><a class="waves-effect waves-light hBtn jc" data-lang="ko">Korean</a><a class="waves-effect waves-light hBtn jc" data-lang="ja">Japanese</a><a class="waves-effect waves-light hBtn jc" data-lang="zh">Chinese</a><a class="waves-effect waves-light hBtn jc" data-lang="it">Italian</a><a class="waves-effect waves-light hBtn jc" data-lang="es">Spanish</a>
+            </div>
+          </div>
+          <div class="notiArea ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">assignment_turned_in</i>
+            <div class="notiCnt pulse"><span class="font11">3</span></div>
+          </div>
+          <div class="notiArea ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">format_list_bulleted</i>
+            <div class="notiCnt pulse"><span class="font11">6</span></div>
+          </div>
+        </section>
+      </article>
+    </nav>
+  </header>
+
+  <aside class="menuAside">
+    <div id="slide-out" class="sidenav glassBox">
+      <div class="userInfoArea">
+        <div class="photo"><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+        <div class="userInfo">
+          <div class="fontB">JONGHO LEE</div>
+          <div>IT Procurement/HR/R&D Team</div>
+        </div>
+      </div>
+      <div class="menuList">
+        <ul>
+          <li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>Home</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_dash.html"><i class="material-icons left">analytics</i>Insight</a></li>
+          <li class="waves-effect waves-hColor on"><a href="apis_proposal_list.html"><i class="material-icons left">assistant</i>Proposal</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_custom_list.html"><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npt_list.html"><i class="material-icons left">snippet_folder</i>NPT</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_tech_list.html"><i class="material-icons left">build</i>Tech Support</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub​</a></li>
+          <li class="waves-effect waves-hColor"><a href="mfmea_list.html" target="_blank"><i class="material-icons left">playlist_add_check_circle</i>FMEA(KCC)​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_fmea_list.html"><i class="material-icons left">playlist_add_check_circle</i>FMEA​</a></li>
+          <li class="waves-effect waves-hColor"><a href=""><i class="material-icons left">addchart</i>PSA​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_coc.html"><i class="material-icons left">assignment_late</i>CoC​</a></li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <article class="contArea typeList type2">
+    <div class="leftSection">
+      <section class="mainTitArea">
+        <div class="mainTit" id="test">Proposal List</div>
+        <div class="btnArea">
+        <div class="newAppleTab mr10 wd130pxType">
+            <ul>
+              <li class="waves-effect waves-hColor on" cd="ALLW">ALL</li>
+              <li class="waves-effect waves-hColor" cd="PART">Sales Activity</li>
+              <li class="waves-effect waves-hColor" cd="PART">Opportunity</li>
+              <div class="tabBg" style="left: 0px;"></div>
+            </ul>
+				  </div>
+          <div><a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn viva wd160px"><i class="material-icons left">search</i><span class="label">Custom Filter</span></a></div>
+        </div>
+      </section>
+
+      <section class="mainList cardBox">
+        <ul class="hScroll">
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Completed
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[00000] TEST</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1 bdOrange">Source : Sales Activity</div>
+                  <div class="roundBox grey contVal3">Drop</div>
+                </div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Completed
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[01054] Electro 242-2 Grey FC</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1 bdGreen">Source : Opportunity</div>
+                  <div class="roundBox green contVal3">NPI</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type1">
+              On Going
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[03657] Low viscosity high vinyl polybutadiene</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1 bdGreen">Source : Opportunity</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated on">
+            <section class="statusBox type2">
+              Completed
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[03704] New preservative for Silsoft</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1 bdOrange">Source : Sales Activity</div>
+                  <div class="roundBox blue contVal3">Tech Surpport</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox type2">
+              Completed
+            </section>
+            <section class="wd100p">
+              <div class="pjTit">[03701] Low Viscosity Binder Gel T</div>
+              <div class="subInfo">
+                <div>
+                  <div class="roundBox contVal1 bdOrange">Source : Sales Activity</div>
+                  <div class="roundBox blue contVal3">Tech Surpport</div>
+                </div>
+              </div>
+            </section>
+          </li>
+        </ul>
+      </section>
+    </div>
+    <div class="rightSection">
+      <div class="cardBox">
+        <div class="cardTit"><span class="link" id="dtTit">[03704] New preservative for Silsoft</span></div>
+        <div class="row subPjInfo">
+          <div class="col s6">Segment</div>
+          <div class="col s6 val">Industrial</div>
+          <div class="col s6">MGPP</div>
+          <div class="col s6 val">Transportation</div>
+          <div class="col s6">Market Segment</div>
+          <div class="col s6 val" id="dtContVal1">MASS</div>
+          <div class="col s6">Status</div>
+          <div class="col s6 val" id="dtContVal2">Completed</div>
+          <div class="col s6">Project Leader</div>
+          <div class="col s6 val" id="dtContVal3">Andreas Roos</div>
+          <div class="col s6">Commercial Go Date</div>
+          <div class="col s6 val" id="dtContVal3">Oct 2025</div>
+          <div class="col s6">Innovation Category</div>
+          <div class="col s6 val" id="dtContVal6">Adjacent</div>
+          <div class="col s6">Sustainability Impact/Score</div>
+          <div class="col s6 val" id="dtContVal7">Beneficial/80</div>
+          <div class="col s6">Target Market/Customers</div>
+          <div class="col s6 val" id="dtContVal8" style="display: flex;align-items: center;height: 25px;">
+            <span class="roundBox mr10">NKT</span><span class="roundBox mr10">Pfisterer</span><span class="roundBox mr10">Bosch</span>
+          </div>
+        </div>
+        <div class="subTit mt20 ml10">TimeLine</div>
+        <div class="row">
+          <div class="col s12">
+            <div id="container_timeline" style="height: 150px;border: 1px solid #d0d0d0;border-radius: 5px;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article id="bucketModal" class="modal" style="width: 800px;">
+    <div class="modal-header mochaBg">
+      <h5>Select Bucket</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div class="searchBox">
+        <div class="wd100p"><input type="text" class="browser-default" placeholder="검색" value="custom"></div>
+      </div>
+      <div class="treeMap hScroll" style="max-height: calc(100vh - 430px);">
+        <ul>
+          <li class="waves-effect waves-orange lv1">ADDITIVES</li>
+          <li class="waves-effect waves-orange lv1">BASICS</li>
+          <li class="waves-effect waves-orange lv1">CORE SILICONES & INTERMEDIATES</li>
+          <li class="waves-effect waves-orange lv1 on">FORMULATED PRODUCTS
+          <div>
+            <ul>
+              <li class="waves-effect waves-orange lv2">COATINGS</li>
+              <li class="waves-effect waves-orange lv2 on">ELASTOMERS</li>
+              <div>
+                <ul>
+                  <li class="waves-effect waves-orange lv3 on"><span class="srchVal">CUSTOM</span> COMPOUND</li>
+                  <div>
+                    <ul>
+                      <li class="waves-effect waves-orange lv4 cont">CONSUMER (<span class="srchVal">CUSTOM</span> COMPOUND)</li>
+                      <li class="waves-effect waves-orange lv4 cont">ENERGY (<span class="srchVal">CUSTOM</span> COMPOUND)</li>
+                      <li class="waves-effect waves-orange lv4 cont">HEALTHCARE (<span class="srchVal">CUSTOM</span> COMPOUND)</li>
+                      <li class="waves-effect waves-orange lv4 cont">TRANSPORTATION (<span class="srchVal">CUSTOM</span> COMPOUND)</li>
+                    </ul>
+                  </div>
+                  <li class="waves-effect waves-orange lv3">HCE</li>
+                  <li class="waves-effect waves-orange lv3">LSR</li>
+                </ul>
+              </div>
+              <li class="waves-effect waves-orange lv2">ELECTRONIC MATERIALS</li>
+              <li class="waves-effect waves-orange lv2">SEALANTS</li>
+            </ul>
+          </div>
+          <li class="waves-effect waves-orange lv1 on">FORMULATED SPECIALTIES</li>
+          <div>
+            <ul>
+              <li class="waves-effect waves-orange lv2">ELECTRONIC MATERIALS</li>
+              <li class="waves-effect waves-orange lv2">HDC / WSC</li>
+              <li class="waves-effect waves-orange lv2">RLC / PSA</li>
+              <li class="waves-effect waves-orange lv2">SPECIALTY ELASTOMERS</li>
+            </ul>
+          </div>
+          <li class="waves-effect waves-orange lv1">PERFORMANCE ADDITIVES</li>
+          <li class="waves-effect waves-orange lv1">TRANSFORMATIONAL GROWTH</li>
+        </ul>
+      </div>
+      <div class="btnArea">
+        <a href="javascript:;" class="waves-effect waves-light hBtn hBlue wd100px mr10" id="newPjBtn"><i class="material-icons left">save</i><span class="label">OK</span></a>
+        <a href="javascript:;" class="waves-effect waves-light hBtn hGrey wd100px"><i class="material-icons left">cancel</i><span class="label">Cancel</span></a>
+      </div>
+    </div>
+  </article>
+  <article class="bgLayer"></article>
+</body>
+</html>
