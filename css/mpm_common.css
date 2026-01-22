@@ -1724,6 +1724,7 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 .contArea .cardTitArea {
     display: flex;
     justify-content: space-between;
+    align-items: center;
 }
 .contArea input.select-dropdown {
 	height: 25px;
@@ -2580,6 +2581,17 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
     width: 670px;
 }
 
+.typeList.type3 .leftSection {
+    width: 640px;
+}
+
+.typeList.type3 .rightSection {
+	position: absolute;
+	right: 20px;
+    top: 20px;
+	width: calc(100% - 710px);
+}
+
 .typeList .mainList {
 	padding: 10px;
 }
@@ -2623,6 +2635,35 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	border-color: #899f6a;
 	color: #899f6a;
 }
+.typeList .mainList li .statusBox.coc {
+	width: 320px;
+	border: 1px solid #899f6a;
+	color: #899f6a;
+	box-sizing: border-box;
+	min-width: 0;
+}
+.typeList .mainList li .statusBox.coc .statusText{
+  display: block;
+  max-width: 90%;
+
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+
+  /* flex item 줄어들게 */
+  min-width: 0;
+}
+.typeList .mainList li .cocCont {
+    display: flex;
+    flex-direction: column;
+	width: 300px;
+    justify-content: center;
+}
+.typeList .mainList li .cocCont .row {
+	width: 100%;
+	line-height: 20px;
+}
+
 .typeList .mainList li .pjTit {
 	font-size: 16px;
 	line-height: 20px;
@@ -5274,4 +5315,36 @@ textarea.materialize-textarea:focus:not([readonly]) {
 }
 .decisionArea ul li:hover .tit, .decisionArea ul li.on .tit {
 	font-family: 'Roboto-Medium';
+}
+
+.cocDtList {
+
+}
+.cocDtList ul {
+    overflow-y: auto;
+    overflow-x: hidden;
+    height: calc(100vh - 170px);
+}
+.cocDtList ul li {
+    background-color: #fff;
+    padding: 10px;
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 5px;
+    border: 1px dashed #fff;
+    border-bottom: 1px dashed #ccc;	
+}
+.cocDtList ul li .inputArea .row .col {
+	margin: 0px;
+	font-size: 12px;
+}
+.cocDtList ul li .inputArea .row .col input.select-dropdown {
+	font-size: 12px !important;
+}
+.cocDtList ul li .tit {
+    font-size: 15px;
+    line-height: 20px;
+    display: inline-block;
+	margin-bottom: 5px;
+	color: #000;
 }

@@ -20,76 +20,22 @@
           $(document).on('click', '.sidenav-overlay, .closeBtns', function() {
               $('.sidenav').sidenav('close');
           });
-
-          $(document).on("click", ".newAppleTab li", function(){
-              var offset = $(this).offset().left.toFixed(0) - $(this).parent().offset().left.toFixed(0);
-              
-              $(this).parents(".newAppleTab").find("li").removeClass("on");
-              $(this).parents(".newAppleTab").find(".tabBg").animate({left: offset-3});
-              $(this).addClass("on");
-              $('.mainList ul li').removeClass("animate__flipInX");
-              fnSetPrjList();
-          });
-
-          $(".pjTit, .rightSection .cardTit, #newPjBtn").click(function(){
-            window.open("apis_npdi_pop.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
-          });
-
-          $("#test").click(function() {
-            window.open("projectPopup.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
-          })
-
-          $(".mainList li").click(function(){
-            $(".mainList li").removeClass("on");
-            $(".timeline .bdBox").removeClass("animate__flipInX");
-
-            $("#dtTit").text($(this).find(".pjTit").text());
-
-            $(this).addClass("on");
-            fnSetTimeLine();
-          });
-
-          $("#mainSrchInput").focus(function(){
-            $(".bgLayer").show();  
-            $(".contArea").addClass("blur");
-            $(".srchDtArea, .srchRstArea").slideDown();
-          });
-
           $(".bgLayer").click(function(){
             $(".bgLayer").hide();
             $(".contArea").removeClass("blur");
             $(".srchRstArea, .srchDtArea").slideUp();
           });
 
-          $(document).on("mouseenter", ".srchRstArea li", function() {
-            var $this = $(this);
+          $(".mainList li").click(function(){
+            $(".mainList li").removeClass("on");
+            $("#dtTit").text($(this).find(".statusText").text());
 
-            $(".srchRstArea .rstDt").hide();
-            $(".srchDtArea").addClass("on");
-            $('.srchDtArea').one('transitionend', function() {
-              $("#"+$this.attr("data-id")).show();
-              $(".srchAIArea").show();
-            });
-          }).on("mouseleave", ".srchRstArea li", function() {
-            var $this = $(this);
-            var $related = $(event.relatedTarget);
-            if (!$related.closest(".srchAIArea").length) {
-              $(".srchDtArea").removeClass("on");
-              $(".srchAIArea").hide();
-              $("#" + $this.attr("data-id")).hide();
-            }
+            $(this).addClass("on");
           });
 
-          $(".rightSection > div").on("mouseenter", function() {
-            $(this).find(".btnArea").stop().slideDown(200);
-          });
-          $(".rightSection > div").on("mouseleave", function() {
-            $(this).find(".btnArea").stop().slideUp(200);
-          });
-         
+          $('select').formSelect();
           $('.modal').modal();
           fnSetPrjList();
-          fnSetTimeLine();
         });
 
         function fnSetPrjList(){
@@ -98,15 +44,6 @@
               li.classList.add('animate__flipInX');
             }, index * 100); // 1초 간격
           });
-        }
-
-        function fnSetTimeLine(){
-          for (let i = 1; i <= 6; i++) {
-              $(`#timeLineItem${i}`).delay(200 * (i - 1)).queue(function(next) {
-                  $(this).addClass("animate__flipInX");
-                  next();
-              });
-          }
         }
   </script>
 </head>
@@ -200,172 +137,727 @@
     </div>
   </aside>
 
-  <article class="contArea typeList type2">
+  <article class="contArea typeList type3">
     <div class="leftSection">
       <section class="mainTitArea">
-        <div class="mainTit">CoC</div>
+        <div class="mainTit">CoC (Chemical of Concern)</div>
         <div class="btnArea">
-        <div class="newAppleTab mr10">
-            <ul>
-              <li class="waves-effect waves-hColor on" cd="ALLW">ALL</li>
-              <li class="waves-effect waves-hColor" cd="PART">My List</li>
-              <div class="tabBg" style="left: 0px;"></div>
-            </ul>
-				  </div>
-          <div><a id="viewOptBtn" class="waves-effect waves-light hBtn hBlue wd160px mr10 modal-trigger" href="#bucketModal"><i class="material-icons left">add</i><span class="label">Create</span></a></div>
-          <div><a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn viva wd160px"><i class="material-icons left">search</i><span class="label">Custom Filter</span></a></div>
+            <a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn viva wd120px modal-trigger" data-target="searchModal"><i class="material-icons left">search</i><span class="label">Search</span></a>
         </div>
       </section>
 
       <section class="mainList cardBox">
         <ul class="hScroll">
           <li class="waves-effect waves-hColor animate__animated">
-            <section class="statusBox type2">
-              Completed
+            <section class="statusBox coc">
+              <span class="statusText">formaldehyde</span>
             </section>
-            <section class="wd100p">
-              <div class="pjTit">[00000] TEST</div>
-              <div class="subInfo">
-                <div>
-                  <div class="roundBox contVal1">Industrial</div>
-                  <div class="roundBox contVal2">Transportation</div>
-                  <div class="roundBox contVal3">Commercial Go</div>
-                  <div class="roundBox blue contVal4">On Time</div>
-                  <div class="roundBox contVal4">Leverkeusen</div>
-                </div>
+            <section class="cocCont">
+              <div class="row">
+                <div class="col s6 ar">CAS Number</div>
+                <div class="col s6 fontM">50-00-0</div>
+              </div>
+              <div class="row">
+                <div class="col s6 ar">Identifier</div>
+                <div class="col s6 fontM">200-001-8</div>
               </div>
             </section>
           </li>
-          <li class="waves-effect waves-hColor animate__animated">
-            <section class="statusBox type2">
-              Completed
-            </section>
-            <section class="wd100p">
-              <div class="pjTit">[01054] Electro 242-2 Grey FC</div>
-              <div class="subInfo">
-                <div>
-                  <div class="roundBox contVal1">Industrial</div>
-                  <div class="roundBox contVal2">Transportation</div>
-                  <div class="roundBox contVal3">Commercial Go</div>
-                  <div class="roundBox blue contVal4">On Time</div>
-                  <div class="roundBox contVal4">Leverkeusen</div>
-                </div>
-              </div>
-            </section>
-          </li>
-        
-          <li class="waves-effect waves-hColor animate__animated">
-            <section class="statusBox type1">
-              On Going
-            </section>
-            <section class="wd100p">
-              <div class="pjTit">[03657] Low viscosity high vinyl polybutadiene</div>
-              <div class="subInfo">
-                <div>
-                  <div class="roundBox contVal1">Industrial</div>
-                  <div class="roundBox contVal2">Transportation</div>
-                  <div class="roundBox contVal3">Commercial Go</div>
-                  <div class="roundBox blue contVal4">On Time</div>
-                  <div class="roundBox contVal4">Leverkeusen</div>
-                </div>
-              </div>
-            </section>
-          </li>
-        
           <li class="waves-effect waves-hColor animate__animated on">
-            <section class="statusBox type2">
-              Completed
+            <section class="statusBox coc">
+              <span class="statusText">1,3-Bis(isocyanato-1-methylethyl)benzene polymer with 1,4-butanediol, dimethyl carbonate, 1,6-hexanediol, 2,2'-iminobisethanol, 2-ethyl-2-(hydroxymethyl)-1,3-propanediol, 3-hydroxy-2-(hydroxymethyl)-2-methylpropanoic acid, butyl 2-propenoate, 3-hydroxy</span>
             </section>
-            <section class="wd100p">
-              <div class="pjTit">[03704] New preservative for Silsoft</div>
-              <div class="subInfo">
-                <div>
-                 <div class="roundBox contVal1">Industrial</div>
-                  <div class="roundBox contVal2">Transportation</div>
-                  <div class="roundBox contVal3">Commercial Go</div>
-                  <div class="roundBox blue contVal4">On Time</div>
-                  <div class="roundBox contVal4">Leverkeusen</div>
-                </div>
+            <section class="cocCont">
+              <div class="row">
+                <div class="col s6 ar">CAS Number</div>
+                <div class="col s6 fontM">766-93-9</div>
+              </div>
+              <div class="row">
+                <div class="col s6 ar">Identifier</div>
+                <div class="col s6 fontM">200-672-5</div>
               </div>
             </section>
           </li>
-        
           <li class="waves-effect waves-hColor animate__animated">
-            <section class="statusBox type2">
-              Completed
+            <section class="statusBox coc">
+              <span class="statusText">(+/-)-2,3-dibromosuccinic acid</span>
             </section>
-            <section class="wd100p">
-              <div class="pjTit">[03701] Low Viscosity Binder Gel T</div>
-              <div class="subInfo">
-                <div>
-                  <div class="roundBox contVal1">Industrial</div>
-                  <div class="roundBox contVal2">Transportation</div>
-                  <div class="roundBox contVal3">Commercial Go</div>
-                  <div class="roundBox blue contVal4">On Time</div>
-                  <div class="roundBox contVal4">Leverkeusen</div>
-                </div>
+            <section class="cocCont">
+              <div class="row">
+                <div class="col s6 ar">CAS Number</div>
+                <div class="col s6 fontM">50-00-0</div>
+              </div>
+              <div class="row">
+                <div class="col s6 ar">Identifier</div>
+                <div class="col s6 fontM">200-508-3</div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox coc">
+              <span class="statusText">1,2-dimethyl-3-phenylaziridine</span>
+            </section>
+            <section class="cocCont">
+              <div class="row">
+                <div class="col s6 ar">CAS Number</div>
+                <div class="col s6 fontM">142-82-5</div>
+              </div>
+              <div class="row">
+                <div class="col s6 ar">Identifier</div>
+                <div class="col s6 fontM">200-269-8</div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox coc">
+              <span class="statusText">1,4-dioxaspiro[4.11]hexadecane</span>
+            </section>
+            <section class="cocCont">
+              <div class="row">
+                <div class="col s6 ar">CAS Number</div>
+                <div class="col s6 fontM">333-74-0</div>
+              </div>
+              <div class="row">
+                <div class="col s6 ar">Identifier</div>
+                <div class="col s6 fontM">200-044-5</div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox coc">
+              <span class="statusText">(5Z)-12-Chlorododeca-2,5-diene</span>
+            </section>
+            <section class="cocCont">
+              <div class="row">
+                <div class="col s6 ar">CAS Number</div>
+                <div class="col s6 fontM">123-86-4</div>
+              </div>
+              <div class="row">
+                <div class="col s6 ar">Identifier</div>
+                <div class="col s6 fontM">200-682-0</div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox coc">
+              <span class="statusText">1,3-bis(2-phenylphenyl)benzene</span>
+            </section>
+            <section class="cocCont">
+              <div class="row">
+                <div class="col s6 ar">CAS Number</div>
+                <div class="col s6 fontM">110-54-3</div>
+              </div>
+              <div class="row">
+                <div class="col s6 ar">Identifier</div>
+                <div class="col s6 fontM">200-157-9</div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox coc">
+              <span class="statusText">1,1',1''-Ethylidenetrisbenzene</span>
+            </section>
+            <section class="cocCont">
+              <div class="row">
+                <div class="col s6 ar">CAS Number</div>
+                <div class="col s6 fontM">108-88-3</div>
+              </div>
+              <div class="row">
+                <div class="col s6 ar">Identifier</div>
+                <div class="col s6 fontM">200-421-6</div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox coc">
+              <span class="statusText">1-aminocyclohexanecarbonitrile</span>
+            </section>
+            <section class="cocCont">
+              <div class="row">
+                <div class="col s6 ar">CAS Number</div>
+                <div class="col s6 fontM">107-13-1</div>
+              </div>
+              <div class="row">
+                <div class="col s6 ar">Identifier</div>
+                <div class="col s6 fontM">200-790-4</div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox coc">
+              <span class="statusText">(+/-)-2,3-dimethylbutyric acid</span>
+            </section>
+            <section class="cocCont">
+              <div class="row">
+                <div class="col s6 ar">CAS Number</div>
+                <div class="col s6 fontM">100-41-4</div>
+              </div>
+              <div class="row">
+                <div class="col s6 ar">Identifier</div>
+                <div class="col s6 fontM">200-318-7</div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox coc">
+              <span class="statusText">1,2-Ethanediamine, homopolymer</span>
+            </section>
+            <section class="cocCont">
+              <div class="row">
+                <div class="col s6 ar">CAS Number</div>
+                <div class="col s6 fontM">77-92-9</div>
+              </div>
+              <div class="row">
+                <div class="col s6 ar">Identifier</div>
+                <div class="col s6 fontM">200-903-2</div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox coc">
+              <span class="statusText">(+)-2R,3S,4R,5R,8R,10R,11R,12S,13R,13aR-13-(2,6-dideoxy-3-methyl-3-O-methyl-alpha-L-ribo-hexopyranosyl)-2-ethyl-3,4,10-trihydroxy-3,5,6,8,10,12,14-heptamethyl-11-(3,4,6-trideoxy-3-dimethylamino-beta-D-xylo-hexopyranosyl)-1-oxa-6-azacyclopentadecane</span>
+            </section>
+            <section class="cocCont">
+              <div class="row">
+                <div class="col s6 ar">CAS Number</div>
+                <div class="col s6 fontM">75-09-2</div>
+              </div>
+              <div class="row">
+                <div class="col s6 ar">Identifier</div>
+                <div class="col s6 fontM">200-064-0</div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox coc">
+              <span class="statusText">2',2'-Perfluoro-C8-14-alkyl 2-propenoate polymer with 2-[2-(ethoxyethoxy)ethoxy] 2-methyl-2-propenoate, a (2-methyl-1-oxo-2-propenyl)-2-(phospho</span>
+            </section>
+            <section class="cocCont">
+              <div class="row">
+                <div class="col s6 ar">CAS Number</div>
+                <div class="col s6 fontM">75-07-0</div>
+              </div>
+              <div class="row">
+                <div class="col s6 ar">Identifier</div>
+                <div class="col s6 fontM">200-547-8</div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox coc">
+              <span class="statusText">(5S,8S,11S,15S,18S,23aS,29S,35S,37aS)-8-[(2S)-Butan-2-yl]-18-cyclopentyl-29-[2-[3,5-difluoro-4-(trifluoromethyl)phenyl]ethyl]-36-ethyl-N,N,5,6,12,16,19,33-octamethyl-35-(4-methylphenyl)methyl-11-(2-methylpropyl)-4,7,10,13,17,20,23,28,31,34,37-undecaoxot</span>
+            </section>
+            <section class="cocCont">
+              <div class="row">
+                <div class="col s6 ar">CAS Number</div>
+                <div class="col s6 fontM">71-43-2</div>
+              </div>
+              <div class="row">
+                <div class="col s6 ar">Identifier</div>
+                <div class="col s6 fontM">200-889-3</div>
+              </div>
+            </section>
+          </li>
+          <li class="waves-effect waves-hColor animate__animated">
+            <section class="statusBox coc">
+              <span class="statusText">1,5-Naphthalenedisulfonic acid, 2(or 3)-[[8-[4-[2-[4-[3-[1-(aminoethyl)aminomethyl]-7-oxo-, (5R,6S)-, mixt. with (2Z)-(1R,2)-amino-2-carboxyethyl)-2-[[1S)-2,2-dimethylcyclopropyl]carbonylamino]-2-heptenoic acid sodium</span>
+            </section>
+            <section class="cocCont">
+              <div class="row">
+                <div class="col s6 ar">CAS Number</div>
+                <div class="col s6 fontM">67-56-1</div>
+              </div>
+              <div class="row">
+                <div class="col s6 ar">Identifier</div>
+                <div class="col s6 fontM">200-256-1</div>
               </div>
             </section>
           </li>
         </ul>
       </section>
     </div>
+
+    <div class="rightSection">
+      <div class="cardBox wd100p">
+        <div class="cardTitArea mb10">
+          <div class="cardTit" id="dtTit">formaldehyde [50-00-0] [200-001-8]</div>
+          <div class="btnArea mt0">
+            <a href="javascript:;" id="saveBtn" class="waves-effect waves-light hBtn hGreen wd120px mr10"><i class="material-icons left">grid_on</i><span class="label">Excel</span></a>
+            <a href="javascript:;" id="saveBtn" class="waves-effect waves-light hBtn hBlue wd120px"><i class="material-icons left">save</i><span class="label">Save</span></a>
+          </div>
+        </div>
+        <div class="cocDtList">
+          <ul class="hScroll">
+            <li>
+              <div class="tit">CERCLA Hazardous Substances</div>
+					    <div class="inputArea">
+                <div class="row">
+                  <div class="col s1 ar">Region</div>
+                  <div class="col s2 val">North America</div>
+                  <div class="col s1 ar">Country</div>
+                  <div class="col s2 val">United States of America</div>
+                  <div class="col s2 ar">Last Updated</div>
+                  <div class="col s4 val">2022-04-11</div>
+                </div>
+                <div class="row">
+                  <div class="col s1 ar"> Category</div>
+                  <div class="col s2">
+                    <select>
+                      <option value="">Select</option>
+                      <option value="Prohibited" selected="selected">Prohibited</option>
+                      <option value="Restricted">Restricted</option>
+                      <option value="Emerging">Emerging</option>
+                      <option value="Conditional">Conditional</option>
+                    </select>
+                  </div>
+                  <div class="col s1 ar">Comments</div>
+                  <div class="col s8">
+                    <div class="aniInput">
+											<input type="text" value="" class="browser-default" placeholder="Enter Comments">
+                      <span class="focus-border"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="tit">Dangerous Materials Control Act (Fire Service Act)</div>
+					    <div class="inputArea">
+                <div class="row">
+                  <div class="col s1 ar">Region</div>
+                  <div class="col s2 val">Asia/Pacific</div>
+                  <div class="col s1 ar">Country</div>
+                  <div class="col s2 val">Republic of Korea</div>
+                  <div class="col s2 ar">Last Updated</div>
+                  <div class="col s4 val">2024-08-07</div>
+                </div>
+                <div class="row">
+                  <div class="col s1 ar"> Category</div>
+                  <div class="col s2">
+                    <select>
+                      <option value="">Select</option>
+                      <option value="Prohibited">Prohibited</option>
+                      <option value="Restricted">Restricted</option>
+                      <option value="Emerging" selected="selected">Emerging</option>
+                      <option value="Conditional">Conditional</option>
+                    </select>
+                  </div>
+                  <div class="col s1 ar">Comments</div>
+                  <div class="col s8">
+                    <div class="aniInput">
+											<input type="text" value="" class="browser-default" placeholder="Enter Comments">
+                      <span class="focus-border"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="tit">Enforcement Order of the Industrial Safety and Health Law - Article 18 (Harmful substances whose names, etc., are to be indicated)</div>
+					    <div class="inputArea">
+                <div class="row">
+                  <div class="col s1 ar">Region</div>
+                  <div class="col s2 val">Asia/Pacific</div>
+                  <div class="col s1 ar">Country</div>
+                  <div class="col s2 val">Japan</div>
+                  <div class="col s2 ar">Last Updated</div>
+                  <div class="col s4 val">2025-01-18</div>
+                </div>
+                <div class="row">
+                  <div class="col s1 ar"> Category</div>
+                  <div class="col s2">
+                    <select>
+                      <option value="">Select</option>
+                      <option value="Prohibited">Prohibited</option>
+                      <option value="Restricted">Restricted</option>
+                      <option value="Emerging" selected="selected">Emerging</option>
+                      <option value="Conditional">Conditional</option>
+                    </select>
+                  </div>
+                  <div class="col s1 ar">Comments</div>
+                  <div class="col s8">
+                    <div class="aniInput">
+											<input type="text" value="" class="browser-default" placeholder="Enter Comments">
+                      <span class="focus-border"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="tit">Enforcement Order of the Industrial Safety and Health Law - Article 18-2 (Harmful Substances Requiring Notification)</div>
+					    <div class="inputArea">
+                <div class="row">
+                  <div class="col s1 ar">Region</div>
+                  <div class="col s2 val">Asia/Pacific</div>
+                  <div class="col s1 ar">Country</div>
+                  <div class="col s2 val">Japan</div>
+                  <div class="col s2 ar">Last Updated</div>
+                  <div class="col s4 val">2025-01-18</div>
+                </div>
+                <div class="row">
+                  <div class="col s1 ar"> Category</div>
+                  <div class="col s2">
+                    <select>
+                      <option value="">Select</option>
+                      <option value="Prohibited">Prohibited</option>
+                      <option value="Restricted">Restricted</option>
+                      <option value="Emerging" selected="selected">Emerging</option>
+                      <option value="Conditional">Conditional</option>
+                    </select>
+                  </div>
+                  <div class="col s1 ar">Comments</div>
+                  <div class="col s8">
+                    <div class="aniInput">
+											<input type="text" value="" class="browser-default" placeholder="Enter Comments">
+                      <span class="focus-border"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="tit">Enforcement Order of the Industrial Safety and Health Law - Attached table 1 (Dangerous Substances)</div>
+					    <div class="inputArea">
+                <div class="row">
+                  <div class="col s1 ar">Region</div>
+                  <div class="col s2 val">Asia/Pacific</div>
+                  <div class="col s1 ar">Country</div>
+                  <div class="col s2 val">Japan</div>
+                  <div class="col s2 ar">Last Updated</div>
+                  <div class="col s4 val">2019-07-24</div>
+                </div>
+                <div class="row">
+                  <div class="col s1 ar"> Category</div>
+                  <div class="col s2">
+                    <select>
+                      <option value="">Select</option>
+                      <option value="Prohibited">Prohibited</option>
+                      <option value="Restricted">Restricted</option>
+                      <option value="Emerging" selected="selected">Emerging</option>
+                      <option value="Conditional">Conditional</option>
+                    </select>
+                  </div>
+                  <div class="col s1 ar">Comments</div>
+                  <div class="col s8">
+                    <div class="aniInput">
+											<input type="text" value="" class="browser-default" placeholder="Enter Comments">
+                      <span class="focus-border"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="tit">Fire Service Law - Hazardous Materials</div>
+					    <div class="inputArea">
+                <div class="row">
+                  <div class="col s1 ar">Region</div>
+                  <div class="col s2 val">Asia/Pacific</div>
+                  <div class="col s1 ar">Country</div>
+                  <div class="col s2 val">Japan</div>
+                  <div class="col s2 ar">Last Updated</div>
+                  <div class="col s4 val">2025-08-18</div>
+                </div>
+                <div class="row">
+                  <div class="col s1 ar"> Category</div>
+                  <div class="col s2">
+                    <select>
+                      <option value="">Select</option>
+                      <option value="Prohibited">Prohibited</option>
+                      <option value="Restricted">Restricted</option>
+                      <option value="Emerging" selected="selected">Emerging</option>
+                      <option value="Conditional">Conditional</option>
+                    </select>
+                  </div>
+                  <div class="col s1 ar">Comments</div>
+                  <div class="col s8">
+                    <div class="aniInput">
+											<input type="text" value="" class="browser-default" placeholder="Enter Comments">
+                      <span class="focus-border"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="tit">Hazardous Substance List.</div>
+					    <div class="inputArea">
+                <div class="row">
+                  <div class="col s1 ar">Region</div>
+                  <div class="col s2 val">Asia/Pacific</div>
+                  <div class="col s1 ar">Country</div>
+                  <div class="col s2 val">Thailand</div>
+                  <div class="col s2 ar">Last Updated</div>
+                  <div class="col s4 val">2023-11-21</div>
+                </div>
+                <div class="row">
+                  <div class="col s1 ar"> Category</div>
+                  <div class="col s2">
+                    <select>
+                      <option value="">Select</option>
+                      <option value="Prohibited">Prohibited</option>
+                      <option value="Restricted">Restricted</option>
+                      <option value="Emerging" selected="selected">Emerging</option>
+                      <option value="Conditional">Conditional</option>
+                    </select>
+                  </div>
+                  <div class="col s1 ar">Comments</div>
+                  <div class="col s8">
+                    <div class="aniInput">
+											<input type="text" value="" class="browser-default" placeholder="Enter Comments">
+                      <span class="focus-border"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="tit">Integrated pollution prevention and control (IPPC) - Annex III: Indicative list of polluting substances</div>
+					    <div class="inputArea">
+                <div class="row">
+                  <div class="col s1 ar">Region</div>
+                  <div class="col s2 val">Europe</div>
+                  <div class="col s1 ar">Country</div>
+                  <div class="col s2 val">European Union</div>
+                  <div class="col s2 ar">Last Updated</div>
+                  <div class="col s4 val">2018-11-29</div>
+                </div>
+                <div class="row">
+                  <div class="col s1 ar"> Category</div>
+                  <div class="col s2">
+                    <select>
+                      <option value="">Select</option>
+                      <option value="Prohibited">Prohibited</option>
+                      <option value="Restricted">Restricted</option>
+                      <option value="Emerging" selected="selected">Emerging</option>
+                      <option value="Conditional">Conditional</option>
+                    </select>
+                  </div>
+                  <div class="col s1 ar">Comments</div>
+                  <div class="col s8">
+                    <div class="aniInput">
+											<input type="text" value="" class="browser-default" placeholder="Enter Comments">
+                      <span class="focus-border"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="tit">Korea. Designated Wastes, Appendix 4, Code Numbers</div>
+					    <div class="inputArea">
+                <div class="row">
+                  <div class="col s1 ar">Region</div>
+                  <div class="col s2 val">Asia/Pacific</div>
+                  <div class="col s1 ar">Country</div>
+                  <div class="col s2 val">Republic of Korea</div>
+                  <div class="col s2 ar">Last Updated</div>
+                  <div class="col s4 val">2025-04-22</div>
+                </div>
+                <div class="row">
+                  <div class="col s1 ar"> Category</div>
+                  <div class="col s2">
+                    <select>
+                      <option value="">Select</option>
+                      <option value="Prohibited">Prohibited</option>
+                      <option value="Restricted">Restricted</option>
+                      <option value="Emerging" selected="selected">Emerging</option>
+                      <option value="Conditional">Conditional</option>
+                    </select>
+                  </div>
+                  <div class="col s1 ar">Comments</div>
+                  <div class="col s8">
+                    <div class="aniInput">
+											<input type="text" value="" class="browser-default" placeholder="Enter Comments">
+                      <span class="focus-border"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="tit">List of Health Hazardous Substances</div>
+					    <div class="inputArea">
+                <div class="row">
+                  <div class="col s1 ar">Region</div>
+                  <div class="col s2 val">South America</div>
+                  <div class="col s1 ar">Country</div>
+                  <div class="col s2 val">Chile</div>
+                  <div class="col s2 ar">Last Updated</div>
+                  <div class="col s4 val">2017-03-08</div>
+                </div>
+                <div class="row">
+                  <div class="col s1 ar"> Category</div>
+                  <div class="col s2">
+                    <select>
+                      <option value="">Select</option>
+                      <option value="Prohibited">Prohibited</option>
+                      <option value="Restricted">Restricted</option>
+                      <option value="Emerging" selected="selected">Emerging</option>
+                      <option value="Conditional">Conditional</option>
+                    </select>
+                  </div>
+                  <div class="col s1 ar">Comments</div>
+                  <div class="col s8">
+                    <div class="aniInput">
+											<input type="text" value="" class="browser-default" placeholder="Enter Comments">
+                      <span class="focus-border"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="tit">National Pollutant Release Inventory (NPRI)</div>
+					    <div class="inputArea">
+                <div class="row">
+                  <div class="col s1 ar">Region</div>
+                  <div class="col s2 val">North America</div>
+                  <div class="col s1 ar">Country</div>
+                  <div class="col s2 val">Canada</div>
+                  <div class="col s2 ar">Last Updated</div>
+                  <div class="col s4 val">2020-04-13</div>
+                </div>
+                <div class="row">
+                  <div class="col s1 ar"> Category</div>
+                  <div class="col s2">
+                    <select>
+                      <option value="">Select</option>
+                      <option value="Prohibited">Prohibited</option>
+                      <option value="Restricted">Restricted</option>
+                      <option value="Emerging" selected="selected">Emerging</option>
+                      <option value="Conditional">Conditional</option>
+                    </select>
+                  </div>
+                  <div class="col s1 ar">Comments</div>
+                  <div class="col s8">
+                    <div class="aniInput">
+											<input type="text" value="" class="browser-default" placeholder="Enter Comments">
+                      <span class="focus-border"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+            <li>
+              <div class="tit">REACH - Annex XVII: Restrictions on the manufacture, placing on the market and use of certain dangerous substances, preparations and articles</div>
+					    <div class="inputArea">
+                <div class="row">
+                  <div class="col s1 ar">Region</div>
+                  <div class="col s2 val">Europe</div>
+                  <div class="col s1 ar">Country</div>
+                  <div class="col s2 val">European Union</div>
+                  <div class="col s2 ar">Last Updated</div>
+                  <div class="col s4 val">2022-01-25</div>
+                </div>
+                <div class="row">
+                  <div class="col s1 ar"> Category</div>
+                  <div class="col s2">
+                    <select>
+                      <option value="">Select</option>
+                      <option value="Prohibited">Prohibited</option>
+                      <option value="Restricted">Restricted</option>
+                      <option value="Emerging" selected="selected">Emerging</option>
+                      <option value="Conditional">Conditional</option>
+                    </select>
+                  </div>
+                  <div class="col s1 ar">Comments</div>
+                  <div class="col s8">
+                    <div class="aniInput">
+											<input type="text" value="" class="browser-default" placeholder="Enter Comments">
+                      <span class="focus-border"/>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </li>
+
+
+          </ul>
+        </div>
+      </div>
+    </div>
+
   </article>
 
-  <article id="bucketModal" class="modal" style="width: 800px;">
+  <article id="searchModal" class="modal" style="width: 800px;">
     <div class="modal-header mochaBg">
-      <h5>Select Bucket</h5>
+      <h5>Seach</h5>
       <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
     </div>
     <div class="modal-content">
-      <div class="searchBox">
-        <div class="wd100p"><input type="text" class="browser-default" placeholder="검색" value="custom"></div>
-      </div>
-      <div class="treeMap hScroll" style="max-height: calc(100vh - 430px);">
-        <ul>
-          <li class="waves-effect waves-orange lv1">ADDITIVES</li>
-          <li class="waves-effect waves-orange lv1">BASICS</li>
-          <li class="waves-effect waves-orange lv1">CORE SILICONES & INTERMEDIATES</li>
-          <li class="waves-effect waves-orange lv1 on">FORMULATED PRODUCTS
-          <div>
-            <ul>
-              <li class="waves-effect waves-orange lv2">COATINGS</li>
-              <li class="waves-effect waves-orange lv2 on">ELASTOMERS</li>
-              <div>
-                <ul>
-                  <li class="waves-effect waves-orange lv3 on"><span class="srchVal">CUSTOM</span> COMPOUND</li>
-                  <div>
-                    <ul>
-                      <li class="waves-effect waves-orange lv4 cont">CONSUMER (<span class="srchVal">CUSTOM</span> COMPOUND)</li>
-                      <li class="waves-effect waves-orange lv4 cont">ENERGY (<span class="srchVal">CUSTOM</span> COMPOUND)</li>
-                      <li class="waves-effect waves-orange lv4 cont">HEALTHCARE (<span class="srchVal">CUSTOM</span> COMPOUND)</li>
-                      <li class="waves-effect waves-orange lv4 cont">TRANSPORTATION (<span class="srchVal">CUSTOM</span> COMPOUND)</li>
-                    </ul>
-                  </div>
-                  <li class="waves-effect waves-orange lv3">HCE</li>
-                  <li class="waves-effect waves-orange lv3">LSR</li>
-                </ul>
-              </div>
-              <li class="waves-effect waves-orange lv2">ELECTRONIC MATERIALS</li>
-              <li class="waves-effect waves-orange lv2">SEALANTS</li>
-            </ul>
+      <div class="srchOptBox">
+        <div class="row">
+          <div class="col s2 tit">CAS Number</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
           </div>
-          <li class="waves-effect waves-orange lv1 on">FORMULATED SPECIALTIES</li>
-          <div>
-            <ul>
-              <li class="waves-effect waves-orange lv2">ELECTRONIC MATERIALS</li>
-              <li class="waves-effect waves-orange lv2">HDC / WSC</li>
-              <li class="waves-effect waves-orange lv2">RLC / PSA</li>
-              <li class="waves-effect waves-orange lv2">SPECIALTY ELASTOMERS</li>
-            </ul>
+          <div class="col s2 tit">Synonyms</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
           </div>
-          <li class="waves-effect waves-orange lv1">PERFORMANCE ADDITIVES</li>
-          <li class="waves-effect waves-orange lv1">TRANSFORMATIONAL GROWTH</li>
-        </ul>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Material Number</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+          <div class="col s2 tit">Chemical Group</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Material Desc.</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+          <div class="col s2 tit">Site</div>
+          <div class="col s4">
+            <select>
+              <option value="0">ALL</option>
+              <option value="1">Waterford [WTFD]</option>
+              <option value="2">Sistersville [SVLL]</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Sort</div>
+          <div class="col s4">
+            <select>
+              <option value="0">Register Date</option>
+              <option value="1">Alphabet</option>
+              <option value="2">Site</option>
+            </select>
+          </div>
+          <div class="col s2 tit">Period</div>
+          <div class="col s4">
+            <select>
+              <option value="0">All</option>
+              <option value="1">1 Month</option>
+              <option value="2">3 Month</option>
+            </select>
+          </div>
+        </div>
       </div>
       <div class="btnArea">
-        <a href="javascript:;" class="waves-effect waves-light hBtn hBlue wd100px mr10" id="newPjBtn"><i class="material-icons left">save</i><span class="label">OK</span></a>
-        <a href="javascript:;" class="waves-effect waves-light hBtn hGrey wd100px"><i class="material-icons left">cancel</i><span class="label">Cancel</span></a>
+        <a href="javascript:;" class="waves-effect waves-light hBtn hViva wd100px" id="srchOptBtn"><i class="material-icons left">search</i><span class="label">Search</span></a>
       </div>
     </div>
   </article>
