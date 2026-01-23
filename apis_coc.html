@@ -34,7 +34,7 @@
             $(this).addClass("on");
           });
 
-          $('select').formSelect();
+          //$('select').formSelect();
           $('.modal').modal();
           fnSetPrjList('mainList');
           fnSetPrjList('cocDtList');
@@ -45,7 +45,7 @@
             setTimeout(() => {
               li.style.display = li.dataset.origDisplay || '';
               li.classList.add('animate__flipInX');
-            }, index * 50); // 1초 간격
+            }, index * 100); // 1초 간격
           });
         }
   </script>
@@ -405,7 +405,7 @@
                 <div class="row">
                   <div class="col s1 ar"> Category</div>
                   <div class="col s2">
-                    <select>
+                    <select class="browser-default">
                       <option value="">Select</option>
                       <option value="Prohibited" selected="selected">Prohibited</option>
                       <option value="Restricted">Restricted</option>
@@ -437,7 +437,7 @@
                 <div class="row">
                   <div class="col s1 ar"> Category</div>
                   <div class="col s2">
-                    <select>
+                    <select class="browser-default">
                       <option value="">Select</option>
                       <option value="Prohibited">Prohibited</option>
                       <option value="Restricted">Restricted</option>
@@ -469,7 +469,7 @@
                 <div class="row">
                   <div class="col s1 ar"> Category</div>
                   <div class="col s2">
-                    <select>
+                    <select class="browser-default">
                       <option value="">Select</option>
                       <option value="Prohibited">Prohibited</option>
                       <option value="Restricted">Restricted</option>
@@ -501,7 +501,7 @@
                 <div class="row">
                   <div class="col s1 ar"> Category</div>
                   <div class="col s2">
-                    <select>
+                    <select class="browser-default">
                       <option value="">Select</option>
                       <option value="Prohibited">Prohibited</option>
                       <option value="Restricted">Restricted</option>
@@ -533,7 +533,7 @@
                 <div class="row">
                   <div class="col s1 ar"> Category</div>
                   <div class="col s2">
-                    <select>
+                    <select class="browser-default">
                       <option value="">Select</option>
                       <option value="Prohibited">Prohibited</option>
                       <option value="Restricted">Restricted</option>
@@ -565,7 +565,7 @@
                 <div class="row">
                   <div class="col s1 ar"> Category</div>
                   <div class="col s2">
-                    <select>
+                    <select class="browser-default">
                       <option value="">Select</option>
                       <option value="Prohibited">Prohibited</option>
                       <option value="Restricted">Restricted</option>
@@ -597,7 +597,7 @@
                 <div class="row">
                   <div class="col s1 ar"> Category</div>
                   <div class="col s2">
-                    <select>
+                    <select class="browser-default">
                       <option value="">Select</option>
                       <option value="Prohibited">Prohibited</option>
                       <option value="Restricted">Restricted</option>
@@ -629,7 +629,7 @@
                 <div class="row">
                   <div class="col s1 ar"> Category</div>
                   <div class="col s2">
-                    <select>
+                    <select class="browser-default">
                       <option value="">Select</option>
                       <option value="Prohibited">Prohibited</option>
                       <option value="Restricted">Restricted</option>
@@ -661,7 +661,7 @@
                 <div class="row">
                   <div class="col s1 ar"> Category</div>
                   <div class="col s2">
-                    <select>
+                    <select class="browser-default">
                       <option value="">Select</option>
                       <option value="Prohibited">Prohibited</option>
                       <option value="Restricted">Restricted</option>
@@ -693,7 +693,7 @@
                 <div class="row">
                   <div class="col s1 ar"> Category</div>
                   <div class="col s2">
-                    <select>
+                    <select class="browser-default">
                       <option value="">Select</option>
                       <option value="Prohibited">Prohibited</option>
                       <option value="Restricted">Restricted</option>
@@ -725,7 +725,7 @@
                 <div class="row">
                   <div class="col s1 ar"> Category</div>
                   <div class="col s2">
-                    <select>
+                    <select class="browser-default">
                       <option value="">Select</option>
                       <option value="Prohibited">Prohibited</option>
                       <option value="Restricted">Restricted</option>
@@ -757,7 +757,7 @@
                 <div class="row">
                   <div class="col s1 ar"> Category</div>
                   <div class="col s2">
-                    <select>
+                    <select class="browser-default">
                       <option value="">Select</option>
                       <option value="Prohibited">Prohibited</option>
                       <option value="Restricted">Restricted</option>
@@ -831,7 +831,7 @@
           </div>
           <div class="col s2 tit">Site</div>
           <div class="col s4">
-            <select>
+            <select class="browser-default">
               <option value="0">ALL</option>
               <option value="1">Waterford [WTFD]</option>
               <option value="2">Sistersville [SVLL]</option>
@@ -841,7 +841,7 @@
         <div class="row">
           <div class="col s2 tit">Sort</div>
           <div class="col s4">
-            <select>
+            <select class="browser-default">
               <option value="0">Register Date</option>
               <option value="1">Alphabet</option>
               <option value="2">Site</option>
@@ -849,7 +849,7 @@
           </div>
           <div class="col s2 tit">Period</div>
           <div class="col s4">
-            <select>
+            <select class="browser-default">
               <option value="0">All</option>
               <option value="1">1 Month</option>
               <option value="2">3 Month</option>

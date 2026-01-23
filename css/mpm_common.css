@@ -5388,3 +5388,12 @@ textarea.materialize-textarea:focus:not([readonly]) {
 	border-color: #A47864;
 	border-radius: 10px;
 }
+
+select.browser-default {
+	height: 25px;
+	border-left: none;
+	border-top: none;
+	border-right: none;
+	border-color: #A47864;
+	border-radius: 0px;
+}
