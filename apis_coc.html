@@ -28,21 +28,24 @@
 
           $(".mainList li").click(function(){
             $(".mainList li").removeClass("on");
+            $(".cocDtList li").removeClass("animate__flipInX").hide();
             $("#dtTit").text($(this).find(".statusText").text());
-
+            fnSetPrjList('cocDtList');
             $(this).addClass("on");
           });
 
           $('select').formSelect();
           $('.modal').modal();
-          fnSetPrjList();
+          fnSetPrjList('mainList');
+          fnSetPrjList('cocDtList');
         });
 
-        function fnSetPrjList(){
-          document.querySelectorAll('.mainList ul li').forEach((li, index) => {
+        function fnSetPrjList(list){
+          document.querySelectorAll('.'+list+' ul li').forEach((li, index) => {
             setTimeout(() => {
+              li.style.display = li.dataset.origDisplay || '';
               li.classList.add('animate__flipInX');
-            }, index * 100); // 1초 간격
+            }, index * 50); // 1초 간격
           });
         }
   </script>
@@ -388,7 +391,7 @@
         </div>
         <div class="cocDtList">
           <ul class="hScroll">
-            <li>
+            <li class="waves-effect waves-hColor animate__animated">
               <div class="tit">CERCLA Hazardous Substances</div>
 					    <div class="inputArea">
                 <div class="row">
@@ -420,7 +423,7 @@
                 </div>
               </div>
             </li>
-            <li>
+            <li class="waves-effect waves-hColor animate__animated">
               <div class="tit">Dangerous Materials Control Act (Fire Service Act)</div>
 					    <div class="inputArea">
                 <div class="row">
@@ -452,7 +455,7 @@
                 </div>
               </div>
             </li>
-            <li>
+            <li class="waves-effect waves-hColor animate__animated">
               <div class="tit">Enforcement Order of the Industrial Safety and Health Law - Article 18 (Harmful substances whose names, etc., are to be indicated)</div>
 					    <div class="inputArea">
                 <div class="row">
@@ -484,7 +487,7 @@
                 </div>
               </div>
             </li>
-            <li>
+            <li class="waves-effect waves-hColor animate__animated">
               <div class="tit">Enforcement Order of the Industrial Safety and Health Law - Article 18-2 (Harmful Substances Requiring Notification)</div>
 					    <div class="inputArea">
                 <div class="row">
@@ -516,7 +519,7 @@
                 </div>
               </div>
             </li>
-            <li>
+            <li class="waves-effect waves-hColor animate__animated">
               <div class="tit">Enforcement Order of the Industrial Safety and Health Law - Attached table 1 (Dangerous Substances)</div>
 					    <div class="inputArea">
                 <div class="row">
@@ -548,7 +551,7 @@
                 </div>
               </div>
             </li>
-            <li>
+            <li class="waves-effect waves-hColor animate__animated">
               <div class="tit">Fire Service Law - Hazardous Materials</div>
 					    <div class="inputArea">
                 <div class="row">
@@ -580,7 +583,7 @@
                 </div>
               </div>
             </li>
-            <li>
+            <li class="waves-effect waves-hColor animate__animated">
               <div class="tit">Hazardous Substance List.</div>
 					    <div class="inputArea">
                 <div class="row">
@@ -612,7 +615,7 @@
                 </div>
               </div>
             </li>
-            <li>
+            <li class="waves-effect waves-hColor animate__animated">
               <div class="tit">Integrated pollution prevention and control (IPPC) - Annex III: Indicative list of polluting substances</div>
 					    <div class="inputArea">
                 <div class="row">
@@ -644,7 +647,7 @@
                 </div>
               </div>
             </li>
-            <li>
+            <li class="waves-effect waves-hColor animate__animated">
               <div class="tit">Korea. Designated Wastes, Appendix 4, Code Numbers</div>
 					    <div class="inputArea">
                 <div class="row">
@@ -676,7 +679,7 @@
                 </div>
               </div>
             </li>
-            <li>
+            <li class="waves-effect waves-hColor animate__animated">
               <div class="tit">List of Health Hazardous Substances</div>
 					    <div class="inputArea">
                 <div class="row">
@@ -708,7 +711,7 @@
                 </div>
               </div>
             </li>
-            <li>
+            <li class="waves-effect waves-hColor animate__animated">
               <div class="tit">National Pollutant Release Inventory (NPRI)</div>
 					    <div class="inputArea">
                 <div class="row">
@@ -740,7 +743,7 @@
                 </div>
               </div>
             </li>
-            <li>
+            <li class="waves-effect waves-hColor animate__animated">
               <div class="tit">REACH - Annex XVII: Restrictions on the manufacture, placing on the market and use of certain dangerous substances, preparations and articles</div>
 					    <div class="inputArea">
                 <div class="row">
@@ -772,8 +775,6 @@
                 </div>
               </div>
             </li>
-
-
           </ul>
         </div>
       </div>
