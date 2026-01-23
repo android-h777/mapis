@@ -1,0 +1,491 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+	<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/apis_util.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/highcharts/highcharts.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/jquery.inputmask.js"></script>
+
+	<script>
+		let highchartsArray = [];
+		let currPos = {};
+        $(document).ready(function(){
+			$(window).on('scroll', function() {
+				let scrollPosition = $(window).scrollTop() + parseFloat($(".contArea").css("margin-top")); // 상단 바 보정값
+				$('.cardBox[id]:visible').each(function(idx, o) {
+					const sectionTop = $(o).offset().top;
+					const sectionBottom = sectionTop + $(this).outerHeight() + parseFloat($(this).css("margin-top"));
+					const sectionId = $(o).attr('id');
+					if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+						$('.menu-item').removeClass('active');
+						$('.menu-item[data-target="' + sectionId + '"]').addClass('active');
+						return false;
+					}
+				});
+			});
+			$('.menu-item').on('click', function() {
+				const targetId = $(this).data('target');
+				const targetElement = $('#' + targetId);
+
+				$(".contArticle .cardBox").hide().removeClass("animate__fadeInLeft");
+				targetElement.show().addClass("animate__fadeInLeft");
+				$('.menu-item').removeClass('active');
+				$('.menu-item[data-target="' + targetId + '"]').addClass('active');
+			});
+
+			$('select').formSelect();
+			$('.collapsible').collapsible();
+			$('#regModal').modal();
+
+			au.fnSetDatepicker(null, "dd.mm.yyyy");
+		});
+	</script>
+</head>
+<body class="popup type2">
+	<header class="z-depth-1">
+		<section class="titArea">
+			<div><img src="img/MAPISLogo-25.png"></div>
+			<div class="tit">Notification</div>
+		</section>
+	</header>
+
+	<aside class="leftAside z-depth-1 blurArea">
+		<section>
+			<ul id="menu_stage_2-1" class="menuUl">
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="pjContCard_1">
+					<i class="material-symbols-outlined left">notifications_none</i><span>Notification</span>
+				</li>
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_2">
+					<i class="material-symbols-outlined left">article</i><span>Menual</span>
+				</li>
+			</ul>
+		</section>
+		<section class="btnArea">
+			<div id="addBtn"><a href="javascript:;" class="waves-effect waves-light hBtn hGreen modal-trigger" data-target="regModal"><i class="material-symbols-outlined left">create</i><span class="label">New Post</span></a></div>
+		</section>
+	</aside>
+
+	<div class="contArea">
+		<article id="cont_stage_2-1" class="contArticle" >
+			<section class="cardBox animate__animated animate__fadeInLeft mt10" id="pjContCard_1">
+				<div class="cardTit2"><i class="material-symbols-outlined left">notifications_none</i>Notification</div>
+				<div class="notiList">
+					<ul class="collapsible hScroll" style="overflow: auto; max-height: calc(100% - 170px);">
+						<li class="active">
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								<div>
+									Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+									✅ Open to All<br>
+									These sessions are open to everyone, regardless of department or role.<br>
+									🌐 Language of Instruction<br>
+									All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+									📅 Didn’t Receive an Invite?  <br>
+									If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pl0 mt20" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+					</ul>
+				</div>
+			</section>
+		</article>
+		<article id="cont_stage_2-2" class="contArticle">
+			<section class="cardBox animate__animated mt10" id="pjContCard_2" style="display: none;">
+				<div class="cardTit2"><i class="material-symbols-outlined left">article</i>Menual</div>
+				<div class="notiList">
+					<ul class="collapsible hScroll" style="overflow: auto; max-height: calc(100% - 170px);">
+						<li class="active">
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								<div>
+									Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+									✅ Open to All<br>
+									These sessions are open to everyone, regardless of department or role.<br>
+									🌐 Language of Instruction<br>
+									All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+									📅 Didn’t Receive an Invite?  <br>
+									If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+								</div>
+								<div id="ATTACH_FILE_AREA" class="file-area pl0 mt20" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+						<li>
+							<section class="collapsible-header">
+								<div class="tit">Raw Material Hub| Training & Implementation Schedule</div>
+								<div class="date">10/02/2025</div>
+							</section>
+							<section class="collapsible-body">
+								Outlook calendar invites for the training sessions will be sent to all employees in Technology & Product Stewardship.<br>
+								✅ Open to All<br>
+								These sessions are open to everyone, regardless of department or role.<br>
+								🌐 Language of Instruction<br>
+								All training sessions will be conducted in English. If you require training in another language, please contact us through the Feedback Form.<br>
+								📅 Didn’t Receive an Invite?  <br>
+								If you haven’t received an invite but would like to join a live session, simply click on the date to the right to download the meeting invite directly. Or you visit our TEAMS 5|Calendar to download the invite.
+							</section>
+						</li>
+					</ul>
+				</div>
+			</section>
+		</article>
+	</div>
+
+	<article id="regModal" class="modal" style="width: 80%;">
+		<div class="modal-header mochaBg">
+			<h5>New Post</h5>
+			<div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+		</div>
+		<div class="modal-content">              
+			<div class="inputArea">
+				<div class="row">
+					<div class="col s1 ar">Type</div>
+					<div class="col s11 val wd150px">
+						<select>
+							<option value="1">Notification</option>
+							<option value="2">Menual</option>
+						</select>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col s1 ar">Title</div>
+					<div class="col s11 val">
+					<div class="aniInput">
+						<input type="text" value="" class="browser-default">
+						<span class="focus-border"></span>
+					</div>
+					</div>
+					<div class="col s1 ar">content</div>
+					<div class="col s11 val">
+					<div><img src="/img/edit.PNG" style="width: 100%;"></div>
+					</div>
+				</div>
+				<div class="row">
+					<div class="col s1 ar">Attachments</div>
+					<div class="col s11">
+						<div>
+							<div class="input-field file-field mt0 mb0">
+								<input type="hidden" id="ATTACH_FILE_ID" value="">
+								<div class="btn" id="ATTACH_FILE_BTN">
+									<span>File</span>
+									<div class="MultiFile-wrap" id="ATTACH_FILE_INPUT"><input type="file" id="ATTACH_FILE_INPUT" name="ATTACH_FILE_INPUT" multiple="" class="MultiFile-applied" value=""></div>
+								</div>
+								<div class="file-path-wrapper">
+									<input type="text" class="file-path validate">
+								</div>
+							</div>
+							<div id="ATTACH_FILE_AREA" class="file-area pt5" style="max-height: 84px;overflow: auto;"><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test2.html</span></a></span><span><a class="fileChip hoverable-2" href="javascript:;"><i class="material-symbols-outlined tiny mr5 btn_deleteFile">close</i><span class="link">test.html</span></a></span></div>
+						</div>
+					</div>
+				</div>
+			</div>
+			<div class="btnArea">
+				<a href="javascript:;" class="waves-effect waves-light hBtn hBlue wd100px mr10" id="newPjBtn"><i class="material-icons left">save</i><span class="label">Save</span></a>
+				<a href="javascript:;" class="waves-effect waves-light hBtn hGrey wd100px"><i class="material-icons left">cancel</i><span class="label">Cancel</span></a>
+			</div>
+		</div>
+	</article>
+
+</body> 
+</html>

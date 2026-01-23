@@ -286,6 +286,10 @@
               }
             }
           });
+
+          $("#notiMoreBtn").click(function(){
+            window.open("apis_notice_pop.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
+          });
         });
 
     </script>
@@ -428,6 +432,7 @@
         <div class="cardBox">
           <div class="cardTitArea">
             <div class="cardTit">Notification</div>
+            <div class="roundBox orange" id="notiMoreBtn">more</div>
           </div>
           <div class="contArea boardArea">
             <div class="titArea">
@@ -475,9 +480,7 @@
         <div class="cardBox">
           <div class="cardTitArea">
             <div class="cardTit">My To-Do List</div>
-            <div>
-              <div class="roundBox orange">8 more</div>
-            </div>
+            <div class="roundBox orange">8 more</div>
           </div>
           <div class="contArea">
             <ul class="mainListUl">
