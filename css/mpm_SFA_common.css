@@ -2095,3 +2095,90 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 .listInfo .srchArea:has(input:focus) {
 	border-width: 2px;
 }
+
+.switch label {
+    font-family: 'Roboto-Bold';
+	color: #000;	
+}
+
+.insightCardArea {
+
+}
+.insightCardArea .headerArea {
+  border-top: 1px dashed #a47764;
+  border-left: 1px dashed #a47764;
+  border-right: 1px dashed #a47764;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
+  padding: 20px;
+  margin: 5px 5px 0px 5px;
+  background-color: #eee;	
+}
+.insightCardArea .headerArea .tit {
+	font-size: 16px;
+    font-family: 'Roboto-Bold';
+    line-height: 24px;
+}
+.insightCardArea .on {
+	background-color: #fff;
+    position: relative;
+	z-index: 1;
+	border-style: solid;
+}
+.insightCardArea .on .tit {
+	color: #e87e05;
+}
+.insightCardArea .headerArea .desc {
+	margin-top: 10px;
+	font-size: 14px;
+	min-height: 36px;
+}
+
+.insightCardArea .on .desc {
+	color: #000;
+}
+.insightCardArea .contArea {
+  border: 1px solid #a47764;
+  border-bottom-left-radius: 20px;
+  border-bottom-right-radius: 20px;
+  margin: -1px 5px 5px 5px;
+  padding: 20px 10px;
+  height: calc(100vh - 365px);
+  background-color: #fff;	
+  box-shadow: 0 8px 17px 2px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
+}
+.insightCardArea .contArea .subBox {
+  border: 1px solid #899f6a;
+  padding: 20px;
+  border-radius: 20px;
+  margin: 10px;
+}
+.insightCardArea .contArea .subBox:hover {
+  box-shadow: 0 8px 17px 2px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
+}
+.insightCardArea .contArea .subTit {
+    font-family: 'Roboto-Bold';
+	color: #000;
+	font-size: 14px;
+	position: relative;
+}
+.insightCardArea .contArea .subTit .roundBox {
+	position: absolute;
+	top: 0px;
+	right: 0px;
+	border-radius: 10px;
+	padding: 1px 10px;
+	background-color: #004098;
+	color: #fff;
+	font-family: 'Roboto-Light';
+	font-size: 12px;
+	line-height: 14px;
+}
+.insightCardArea .contArea .subDesv {
+	margin-top: 10px;
+    min-height: 80px;
+	line-height: 20px;
+}
+.insightCardArea .s20 {
+	width: 20%;
+}
