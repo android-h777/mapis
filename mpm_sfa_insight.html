@@ -1,0 +1,474 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>SFA MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_SFA_common.css">
+    <link type="text/css" rel="stylesheet" href="/css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script src="https://code.highcharts.com/highcharts.js"></script>
+    <script src="https://code.highcharts.com/modules/funnel.js"></script> <!-- 🔥 Funnel 모듈 추가 -->
+    <script src="https://code.highcharts.com/modules/item-series.js"></script>
+
+    <script>
+        $(window).scroll(function() {
+          if($(document).scrollTop() < 60){
+            $("nav").removeClass("on", 100);
+          }else{
+            $("nav").addClass("on", 100);
+          }
+        });
+
+      $(document).ready(function(){
+
+
+        $(".bgLayer").click(function(){
+          $(".bgLayer").hide();
+          $(".contArea").removeClass("blur");
+          $(".srchRstArea, .srchDtArea").slideUp();
+        });
+
+        $("#mainSrchInput").focus(function(){
+          $(".bgLayer").show();
+          $(".contArea").addClass("blur");
+          $(".srchDtArea, .srchRstArea").slideDown();
+        });
+
+        $('select').formSelect();
+        
+        fnSetPrjList();
+      });
+
+      function fnSetAniNum(){
+        const counters = document.querySelectorAll('.value');
+        const speed = 1000;
+
+        counters.forEach( counter => {
+          const animate = () => {
+              const value = +counter.getAttribute('akhi');
+              const data = +counter.innerText;
+            
+              const time = value / speed;
+            if(data < value) {
+              counter.innerText = Math.ceil(data + time);
+              setTimeout(animate, 1);
+            }else{
+              counter.innerText = value;
+            }
+          }
+          animate();
+        });
+      }
+
+      function fnSetPrjList(){
+        document.querySelectorAll('.insightCardArea .contArea .subBox').forEach((div, index) => {
+          setTimeout(() => {
+            div.classList.add('animate__flipInX');
+          }, index * 100); // 1초 간격
+        });
+      }
+    </script>
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <article class="navTop">
+        <section class="leftSection">
+          <div class="menuIcon">
+            <div><i class="material-icons">apps</i></div>
+          </div>
+          <div class="logo">
+            <div class="tit"><span class="sfa">SFA</span></div>
+          </div>
+        </section>
+        <section class="centerSection">
+          <div class="srchArea">
+            <i class="material-icons prefix">search</i>
+            <input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput">
+          </div>
+          <div class="srchDtArea aiBtnLi" style="display: none;">
+            <div class="srchBox">
+              <div class="srchArea">
+                <i class="material-icons prefix">search</i>
+                <input type="text" class="browser-default" placeholder="Search" value="">
+              </div>
+              <div class="srchRstArea" style="display: none;">
+                <div class="srchRstList">
+                  <ul>
+                    <li>
+                      <i class="material-icons left">search</i>
+                      <div class="liTit">my accounts</div>
+                    </li>
+                    <li>
+                      <i class="material-icons left">search</i>
+                      <div class="liTit">accounts with account type direct</div>
+                    </li>
+                    <li>
+                      <i class="material-icons left">search</i>
+                      <div class="liTit">my accounts</div>
+                    </li>
+                  </ul>
+                  <ul class="iconUl">
+                    <li class="exLi" data-id="rstDt1">
+                      <div class="iconBox viola">
+                        <i class="material-icons">speed</i>
+                      </div>
+                      <div class="subList">
+                        <div class="liSubTit">Commercial Leader Home Page Dashboard</div>
+                        <div class="font12">Dashboard</div>
+                      </div>
+                    </li>
+                    <li class="exLi" data-id="rstDt2">
+                      <div class="iconBox tendril">
+                        <i class="material-icons">assignment</i>
+                      </div>
+                      <div class="subList">
+                        <div class="liSubTit">Sales Trend Report = LEX</div>
+                        <div class="font12">Report</div>
+                      </div>
+                    </li>
+                    <li class="exLi" data-id="rstDt3">
+                      <div class="iconBox tendril">
+                        <i class="material-icons">assignment</i>
+                      </div>
+                      <div class="subList">
+                        <div class="liSubTit">2020 Q3 NPS Call Report</div>
+                        <div class="font12">Report</div>
+                      </div>
+                    </li>
+                    <li class="exLi" data-id="rstDt4">
+                      <div class="iconBox viola">
+                        <i class="material-icons">speed</i>
+                      </div>
+                      <div class="subList">
+                        <div class="liSubTit">Account Manager Dashboard - CST Andrews</div>
+                        <div class="font12">Dashboard</div>
+                      </div>
+                    </li>
+                    <li class="exLi" data-id="rstDt5">
+                      <div class="iconBox viola">
+                        <i class="material-icons">speed</i>
+                      </div>
+                      <div class="subList">
+                        <div class="liSubTit">Copy of Sample Request - Current & Previous CY (Rosy)</div>
+                        <div class="font12">Dashboard</div>
+                      </div>
+                    </li>
+                  </ul>
+                  <ul class="iconUl">
+                    <li>
+                      <i class="material-icons mr10">format_list_bulleted</i>
+                      <div class="subList">
+                        <div class="liSubTit">Recently Viewed Accounts</div>
+                        <div class="font12">Accounts List</div>
+                      </div>
+                    </li>
+                    <li>
+                      <i class="material-icons mr10">format_list_bulleted</i>
+                      <div class="subList">
+                        <div class="liSubTit">Global Accounts</div>
+                        <div class="font12">Accounts List</div>
+                      </div>
+                    </li>
+                    <li>
+                      <i class="material-icons mr10">format_list_bulleted</i>
+                      <div class="subList">
+                        <div class="liSubTit">Recently Viewed Contacts</div>
+                        <div class="font12">Accounts List</div>
+                      </div>
+                    </li>
+                  </ul>
+                </div>
+                <div class="srchAIArea" style="display: none;">
+
+                  <div id="rstDt1" class="rstDt animate__animated animate__fadeIn" style="display: none;">
+                    <div class="rstDtHeader">
+                      <div class="iconBox viola">
+                        <i class="material-icons">speed</i>
+                      </div>
+                      <div class="subList">
+                        <div class="font16 link fontM">Commercial Leader Home Page Dashboard</div>
+                        <div class="font14">Dashboard</div>
+                      </div>
+                    </div>
+                    <div class="rstDtBody">
+                      <div class="leftArea">
+                        <div>Description</div>
+                        <div class="mt10">Created By</div>
+                        <div class="link">Rosa maria Montemurro</div>
+                        <div class="mt10">Last Modified By</div>
+                        <div class="link">Rosa maria Montemurro</div>
+                      </div>
+                      <div class="rightArea">
+                        <div class="font15 blackTxt fontM">Related List Quick Links</div>
+                        <div class="mt30 ac font14 greenTxt fontM">No related Lists to display</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div id="rstDt2" class="rstDt animate__animated animate__fadeIn" style="display: none;">
+                    <div class="rstDtHeader">
+                      <div class="iconBox tendril">
+                        <i class="material-icons">assignment</i>
+                      </div>
+                      <div class="subList">
+                        <div class="font16 link fontM">Sales Trend Report = LEX</div>
+                        <div class="font14">Report</div>
+                      </div>
+                    </div>
+                    <div class="rstDtBody">
+                      <div class="leftArea">
+                        <div>Description</div>
+                        <div class="mt10">Created By</div>
+                        <div class="link">Jon Feldman</div>
+                        <div class="mt10">Last Modified By</div>
+                        <div class="link">Ramzil Roxann Cleopas</div>
+                      </div>
+                      <div class="rightArea">
+                        <div class="font15 blackTxt fontM">Related List Quick Links</div>
+                        <div class="mt30 ac font14 greenTxt fontM">No related Lists to display</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div id="rstDt3" class="rstDt animate__animated animate__fadeIn" style="display: none;">
+                    <div class="rstDtHeader">
+                      <div class="iconBox tendril">
+                        <i class="material-icons">assignment</i>
+                      </div>
+                      <div class="subList">
+                        <div class="font16 link fontM">2020 Q3 NPS Call Report</div>
+                        <div class="font14">Report</div>
+                      </div>
+                    </div>
+                    <div class="rstDtBody">
+                      <div class="leftArea">
+                        <div>Description</div>
+                        <div class="mt10">Created By</div>
+                        <div class="link">Rosa maria Montemurro</div>
+                        <div class="mt10">Last Modified By</div>
+                        <div class="link">Jon Feldman</div>
+                      </div>
+                      <div class="rightArea">
+                        <div class="font15 blackTxt fontM">Related List Quick Links</div>
+                        <div class="mt30 ac font14 greenTxt fontM">No related Lists to display</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div id="rstDt4" class="rstDt animate__animated animate__fadeIn" style="display: none;">
+                    <div class="rstDtHeader">
+                      <div class="iconBox viola">
+                        <i class="material-icons">speed</i>
+                      </div>
+                      <div class="subList">
+                        <div class="font16 link fontM">Account Manager Dashboard - CST Andrews</div>
+                        <div class="font14">Dashboard</div>
+                      </div>
+                    </div>
+                    <div class="rstDtBody">
+                      <div class="leftArea">
+                        <div>Description</div>
+                        <div class="mt10">Created By</div>
+                        <div class="link">Jon Feldman</div>
+                        <div class="mt10">Last Modified By</div>
+                        <div class="link">Ramzil Roxann Cleopas</div>
+                      </div>
+                      <div class="rightArea">
+                        <div class="font15 blackTxt fontM">Related List Quick Links</div>
+                        <div class="mt30 ac font14 greenTxt fontM">No related Lists to display</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  <div id="rstDt5" class="rstDt animate__animated animate__fadeIn" style="display: none;">
+                    <div class="rstDtHeader">
+                      <div class="iconBox viola">
+                        <i class="material-icons">speed</i>
+                      </div>
+                      <div class="subList">
+                        <div class="font16 link fontM">Copy of Sample Request - Current & Previous CY (Rosy)</div>
+                        <div class="font14">Dashboard</div>
+                      </div>
+                    </div>
+                    <div class="rstDtBody">
+                      <div class="leftArea">
+                        <div>Description</div>
+                        <div class="mt10">Created By</div>
+                        <div class="link">Rosa maria Montemurro</div>
+                        <div class="mt10">Last Modified By</div>
+                        <div class="link">Rosa maria Montemurro</div>
+                      </div>
+                      <div class="rightArea">
+                        <div class="font15 blackTxt fontM">Related List Quick Links</div>
+                        <div class="mt30 ac font14 greenTxt fontM">No related Lists to display</div>
+                      </div>
+                    </div>
+                  </div>
+                  
+                  
+                </div>
+              </div>
+            </div>
+
+          </div>
+        </section>
+        <section class="rightSection">
+          <div class="userInfo">
+            <div><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+          </div>
+        </section>
+      </article>
+      <article class="menuArea">
+        <ul>
+          <li class="on"><a href="mpm_sfa_list.html">Accounts<i class="material-icons prefix">close</i></a></li>
+          <li>Sales Activitys<i class="material-icons prefix">close</i></li>
+          <li>Contacts<i class="material-icons prefix">close</i></li>
+        </ul>
+      </article>
+
+      <article class="menuNavi">
+        <ul>
+          <li class="TypeList waves-effect waves-blue">Accounts</li>
+          <li>Chemistry Connection 1 | Accounts View<i class="material-icons prefix">close</i></li>
+          <li class="on">Chanel Parfums Beaute | Accounts View<i class="material-icons prefix">close</i></li>
+          <li>LEM | Accounts View <i class="material-icons prefix">close</i></li>
+          <li>SACHS CHEMICAL | Accounts View <i class="material-icons prefix">close</i></li>
+          <li>DyStar | Accounts View <i class="material-icons prefix">close</i></li>
+          <li>Valeo Annemasse | Accounts View <i class="material-icons prefix">close</i></li>
+        </ul>        
+      </article>
+      <!--
+      -->
+    </nav>
+  </header>
+
+  <article class="contArea mainCont">
+    <div class="contDt">
+      <div class="contDtArea row mr0" style="width: 100%;">
+        <section>
+          <div class="cardBox">
+            <div class="titHeader">
+              <div>
+                <div class="titArea">
+                  <div class="iconBox viola">
+                    <i class="material-icons">category</i>
+                  </div>
+                  <div class="titBox">
+                    <div class="menuNm"></div>
+                    <div class="tit">Insight</div>
+                  </div>
+                </div>
+                <div class="mt5"><span class="link">19</span> Records have been retrieved.</div>
+              </div>
+              <div class="btnArea" style="display: flex;">
+                <div class="switch mr60" style="display: flex; align-items: center;">
+                  <label>
+                    Grid View
+                    <input type="checkbox" checked>
+                    <span class="lever"></span>
+                    Card View
+                  </label>
+                </div>
+                <div class="mr20" style="display: flex;">
+                  <div class="aniInput">
+                    <input type="text" value="" class="browser-default">
+                    <span class="focus-border"></span>
+                  </div>
+                  <i class="material-icons">search</i>
+                </div>
+                <div>
+                  <a href="javascript:;" class="waves-effect waves-blue hBtn wd100px dropdown-trigger" data-target='dropdown1'><i class="material-icons left">ios_share</i>Export</a>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <section class="insightCardArea">
+          <div class="row">
+            <div class="col s2">
+              <div class="headerArea on">
+                <div class="tit"><i class="material-icons left">dashboard</i>Commercial Dashboards</div>
+                <div class="desc">Conprehensive list of all commercial dashboards</div>
+              </div>
+            </div>
+            <div class="col s2">
+              <div class="headerArea">
+                <div class="tit"><i class="material-icons left">analytics</i>Sales Dashboards</div>
+                <div class="desc">Conprehensive list of all sales dashboards</div>
+              </div>
+            </div>
+            <div class="col s2">
+              <div class="headerArea">
+                <div class="tit"><i class="material-icons left">border_inner</i>Inside Sales</div>
+                <div class="desc">Inside Sales dashboards</div>
+              </div>
+            </div>
+            <div class="col s2">
+              <div class="headerArea">
+                <div class="tit"><i class="material-icons left">fitbit</i>Monitoring</div>
+                <div class="desc">Conprehensive list of all commercial dashboards of cases, samples</div>
+              </div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col s12">
+              <div class="contArea row">
+                <div class="col s20">
+                  <div class="subBox waves-effect waves-green animate__animated">
+                    <div class="subTit">Pipeline by Stage (CY & Next Year)</div>
+                    <div class="subDesv">Description is not available. Please enter a description</div>
+                  </div>
+                </div>
+                <div class="col s20">
+                  <div class="subBox waves-effect waves-green animate__animated">
+                    <div class="subTit">Excess<span class="roundBox">Tableau</span></div>
+                    <div class="subDesv">Display current inventory, inventory in transit, samples in inventory & safety stock</div>
+                  </div>
+                </div>
+                <div class="col s20">
+                  <div class="subBox waves-effect waves-green animate__animated">
+                    <div class="subTit">Digital Growth<span class="roundBox">Tableau</span></div>
+                    <div class="subDesv">Link to 5 key dashboards : Sales Overview, Position & RICO Details, Daily Position Dashboard, Position History & Commercial Leader Dashboard</div>
+                  </div>
+                </div>
+                <div class="col s20">
+                  <div class="subBox waves-effect waves-green animate__animated">
+                    <div class="subTit">Customer Complaint<span class="roundBox">Tableau</span></div>
+                    <div class="subDesv">Insights into Customer complaint data with filtering capabilities</div>
+                  </div>
+                </div>
+
+                <div class="col s20">
+                  <div class="subBox waves-effect waves-green animate__animated">
+                    <div class="subTit">Commercial Information<span class="roundBox">Tableau</span></div>
+                    <div class="subDesv">Link to 5 key dashboards : Sales Overview, Position & RICO Details, Daily Position Dashboard, Position History & Commercial Leader Dashboard</div>
+                  </div>
+                </div>
+                <div class="col s20">
+                  <div class="subBox waves-effect waves-green animate__animated">
+                    <div class="subTit">Commercial Leader<span class="roundBox">Tableau</span></div>
+                    <div class="subDesv">The Commercial Leader Dashboard Provides an overview of the current Sales and total open orders by Global Customer and Sold To Accounts.</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+
+      </div>
+    </div>
+  </article>
+
+  <article class="bgLayer">
+
+  </article>
+</body>
+</html>
