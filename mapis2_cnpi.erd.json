@@ -1,0 +1,6159 @@
+{
+  "$schema": "https://raw.githubusercontent.com/dineug/erd-editor/main/json-schema/schema.json",
+  "version": "3.0.0",
+  "settings": {
+    "width": 2000,
+    "height": 2000,
+    "scrollTop": -1325,
+    "scrollLeft": -800,
+    "zoomLevel": 1,
+    "show": 431,
+    "database": 16,
+    "databaseName": "",
+    "canvasType": "@dineug/erd-editor/builtin-schema-sql",
+    "language": 1,
+    "tableNameCase": 4,
+    "columnNameCase": 2,
+    "bracketType": 1,
+    "relationshipDataTypeSync": true,
+    "relationshipOptimization": false,
+    "columnOrder": [
+      1,
+      2,
+      4,
+      8,
+      16,
+      32,
+      64
+    ],
+    "maxWidthComment": -1,
+    "ignoreSaveSettings": 0
+  },
+  "doc": {
+    "tableIds": [
+      "TS09_CNPI",
+      "TS09_CNPI_ACTION",
+      "TS09_CNPI_ASSESS_LINK",
+      "TS09_CNPI_ASSESS_TASK",
+      "TS09_CNPI_ASSESS_TASK_STATUS",
+      "TS09_CNPI_BASIC",
+      "TS09_CNPI_CONCEPT",
+      "TS09_CNPI_EXPECT_OPPO",
+      "TS09_CNPI_FINANCIAL",
+      "TS09_CNPI_MFG_COST_ESTI",
+      "TS09_CNPI_MFG_COST_ESTI_DTL",
+      "TS09_CNPI_MFG_SCALEUP",
+      "TS09_CNPI_MFG_VOL_CAPA_ANAL",
+      "TS09_CNPI_OWNER",
+      "TS09_CNPI_PATENT",
+      "TS09_CNPI_QUAL_QCPLAN_RESULT",
+      "TS09_CNPI_QUAL_QCPLAN_SPEC",
+      "TS09_CNPI_RISK_GENERIC",
+      "TS09_CNPI_SCHEDULE",
+      "TS09_CNPI_SCHEDULE_GANTT",
+      "TS09_CNPI_SIOP_EXIST",
+      "TS09_CNPI_SIOP_NEW",
+      "TS09_CNPI_SKU",
+      "TS09_CNPI_STAGE_STATUS",
+      "TS09_CNPI_TECH_APPROACH",
+      "TS09_CNPI_TECH_CTQ",
+      "TS09_CNPI_TECH_CUST_VALID",
+      "TS09_CNPI_TECH_FML_DESIGN",
+      "TS09_CNPI_TECH_VOC"
+    ],
+    "relationshipIds": [
+      "rel_action",
+      "rel_assess_link",
+      "rel_assess_task_status",
+      "rel_basic",
+      "rel_concept",
+      "rel_expect_oppo",
+      "rel_financial",
+      "rel_mfg_cost_esti",
+      "rel_mfg_scaleup",
+      "rel_mfg_vol_capa",
+      "rel_owner",
+      "rel_patent",
+      "rel_risk_generic",
+      "rel_schedule",
+      "rel_schedule_gantt",
+      "rel_siop_exist",
+      "rel_siop_new",
+      "rel_sku",
+      "rel_stage_status",
+      "rel_tech_approach",
+      "rel_tech_ctq",
+      "rel_tech_cust_valid",
+      "rel_tech_fml_design",
+      "rel_tech_voc"
+    ],
+    "indexIds": [],
+    "memoIds": []
+  },
+  "collections": {
+    "tableEntities": {
+      "TS09_CNPI": {
+        "id": "TS09_CNPI",
+        "name": "TS09_CNPI",
+        "comment": "Main Table",
+        "columnIds": [
+          "c1",
+          "c2",
+          "c3",
+          "c4",
+          "c5",
+          "c6",
+          "c7",
+          "c8",
+          "c9",
+          "c10"
+        ],
+        "seqColumnIds": [
+          "c1",
+          "c2",
+          "c3",
+          "c4",
+          "c5",
+          "c6",
+          "c7",
+          "c8",
+          "c9",
+          "c10"
+        ],
+        "ui": {
+          "x": 2092.7126119826444,
+          "y": 2486.1618248353875,
+          "zIndex": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_ACTION": {
+        "id": "TS09_CNPI_ACTION",
+        "name": "TS09_CNPI_ACTION",
+        "comment": "",
+        "columnIds": [
+          "a1",
+          "a2",
+          "a3",
+          "a4",
+          "a5",
+          "a6",
+          "a7",
+          "a8",
+          "a9",
+          "a10",
+          "a11"
+        ],
+        "seqColumnIds": [
+          "a1",
+          "a2",
+          "a3",
+          "a4",
+          "a5",
+          "a6",
+          "a7",
+          "a8",
+          "a9",
+          "a10",
+          "a11"
+        ],
+        "ui": {
+          "x": 1200.847695664232,
+          "y": 2000.1753276563009,
+          "zIndex": 1,
+          "widthName": 106,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_ASSESS_LINK": {
+        "id": "TS09_CNPI_ASSESS_LINK",
+        "name": "TS09_CNPI_ASSESS_LINK",
+        "comment": "",
+        "columnIds": [
+          "al1",
+          "al2",
+          "al3",
+          "al4",
+          "al5",
+          "al6"
+        ],
+        "seqColumnIds": [
+          "al1",
+          "al2",
+          "al3",
+          "al4",
+          "al5",
+          "al6"
+        ],
+        "ui": {
+          "x": 1357.5203322638229,
+          "y": 1081.943492757196,
+          "zIndex": 1,
+          "widthName": 133,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_ASSESS_TASK": {
+        "id": "TS09_CNPI_ASSESS_TASK",
+        "name": "TS09_CNPI_ASSESS_TASK",
+        "comment": "",
+        "columnIds": [
+          "at1",
+          "at2",
+          "at3",
+          "at4",
+          "at5",
+          "at6",
+          "at7",
+          "at8",
+          "at9"
+        ],
+        "seqColumnIds": [
+          "at1",
+          "at2",
+          "at3",
+          "at4",
+          "at5",
+          "at6",
+          "at7",
+          "at8",
+          "at9"
+        ],
+        "ui": {
+          "x": 2333.380147421374,
+          "y": 3465.622053722132,
+          "zIndex": 1,
+          "widthName": 134,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_ASSESS_TASK_STATUS": {
+        "id": "TS09_CNPI_ASSESS_TASK_STATUS",
+        "name": "TS09_CNPI_ASSESS_TASK_STATUS",
+        "comment": "",
+        "columnIds": [
+          "ats1",
+          "ats2",
+          "ats3",
+          "ats4",
+          "ats5",
+          "ats6"
+        ],
+        "seqColumnIds": [
+          "ats1",
+          "ats2",
+          "ats3",
+          "ats4",
+          "ats5",
+          "ats6"
+        ],
+        "ui": {
+          "x": 1481.4788104749143,
+          "y": 2924.340346151418,
+          "zIndex": 1,
+          "widthName": 179,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_BASIC": {
+        "id": "TS09_CNPI_BASIC",
+        "name": "TS09_CNPI_BASIC",
+        "comment": "",
+        "columnIds": [
+          "b1",
+          "b2",
+          "b3",
+          "b4",
+          "b5",
+          "b6",
+          "b7",
+          "b8",
+          "b9",
+          "b10",
+          "b11",
+          "b12",
+          "b13",
+          "b14",
+          "b15",
+          "b16",
+          "b17",
+          "b18",
+          "b19",
+          "b20",
+          "b21"
+        ],
+        "seqColumnIds": [
+          "b1",
+          "b2",
+          "b3",
+          "b4",
+          "b5",
+          "b6",
+          "b7",
+          "b8",
+          "b9",
+          "b10",
+          "b11",
+          "b12",
+          "b13",
+          "b14",
+          "b15",
+          "b16",
+          "b17",
+          "b18",
+          "b19",
+          "b20",
+          "b21"
+        ],
+        "ui": {
+          "x": 2520.764495851332,
+          "y": 2801.027880277656,
+          "zIndex": 1,
+          "widthName": 95,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_CONCEPT": {
+        "id": "TS09_CNPI_CONCEPT",
+        "name": "TS09_CNPI_CONCEPT",
+        "comment": "",
+        "columnIds": [
+          "cp1",
+          "cp2",
+          "cp3",
+          "cp4",
+          "cp5",
+          "cp6",
+          "cp7",
+          "cp8",
+          "cp9"
+        ],
+        "seqColumnIds": [
+          "cp1",
+          "cp2",
+          "cp3",
+          "cp4",
+          "cp5",
+          "cp6",
+          "cp7",
+          "cp8",
+          "cp9"
+        ],
+        "ui": {
+          "x": 704.8816115758283,
+          "y": 1798.6581942232594,
+          "zIndex": 1,
+          "widthName": 115,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_EXPECT_OPPO": {
+        "id": "TS09_CNPI_EXPECT_OPPO",
+        "name": "TS09_CNPI_EXPECT_OPPO",
+        "comment": "",
+        "columnIds": [
+          "eo1",
+          "eo2",
+          "eo3",
+          "eo4",
+          "eo5",
+          "eo6",
+          "eo7",
+          "eo8"
+        ],
+        "seqColumnIds": [
+          "eo1",
+          "eo2",
+          "eo3",
+          "eo4",
+          "eo5",
+          "eo6",
+          "eo7",
+          "eo8"
+        ],
+        "ui": {
+          "x": 2379.8057558539194,
+          "y": 1164.0822893886987,
+          "zIndex": 1,
+          "widthName": 140,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_FINANCIAL": {
+        "id": "TS09_CNPI_FINANCIAL",
+        "name": "TS09_CNPI_FINANCIAL",
+        "comment": "",
+        "columnIds": [
+          "fi1",
+          "fi2",
+          "fi3",
+          "fi4",
+          "fi5",
+          "fi6"
+        ],
+        "seqColumnIds": [
+          "fi1",
+          "fi2",
+          "fi3",
+          "fi4",
+          "fi5",
+          "fi6"
+        ],
+        "ui": {
+          "x": 1025.1610856878017,
+          "y": 3116.9689797060896,
+          "zIndex": 1,
+          "widthName": 122,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_MFG_COST_ESTI": {
+        "id": "TS09_CNPI_MFG_COST_ESTI",
+        "name": "TS09_CNPI_MFG_COST_ESTI",
+        "comment": "",
+        "columnIds": [
+          "mce1",
+          "mce2",
+          "mce3",
+          "mce4"
+        ],
+        "seqColumnIds": [
+          "mce1",
+          "mce2",
+          "mce3",
+          "mce4"
+        ],
+        "ui": {
+          "x": 2089.6303398553887,
+          "y": 1587.23607153777,
+          "zIndex": 1,
+          "widthName": 149,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_MFG_COST_ESTI_DTL": {
+        "id": "TS09_CNPI_MFG_COST_ESTI_DTL",
+        "name": "TS09_CNPI_MFG_COST_ESTI_DTL",
+        "comment": "",
+        "columnIds": [
+          "mced1",
+          "mced2",
+          "mced3",
+          "mced4",
+          "mced5",
+          "mced6",
+          "mced7",
+          "mced8"
+        ],
+        "seqColumnIds": [
+          "mced1",
+          "mced2",
+          "mced3",
+          "mced4",
+          "mced5",
+          "mced6",
+          "mced7",
+          "mced8"
+        ],
+        "ui": {
+          "x": -60.98585895244666,
+          "y": 2183.3630367645346,
+          "zIndex": 1,
+          "widthName": 174,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_MFG_SCALEUP": {
+        "id": "TS09_CNPI_MFG_SCALEUP",
+        "name": "TS09_CNPI_MFG_SCALEUP",
+        "comment": "",
+        "columnIds": [
+          "ms1",
+          "ms2",
+          "ms3",
+          "ms4"
+        ],
+        "seqColumnIds": [
+          "ms1",
+          "ms2",
+          "ms3",
+          "ms4"
+        ],
+        "ui": {
+          "x": 721.7945621797278,
+          "y": 1320.2908819698325,
+          "zIndex": 1,
+          "widthName": 142,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_MFG_VOL_CAPA_ANAL": {
+        "id": "TS09_CNPI_MFG_VOL_CAPA_ANAL",
+        "name": "TS09_CNPI_MFG_VOL_CAPA_ANAL",
+        "comment": "",
+        "columnIds": [
+          "mvca1",
+          "mvca2",
+          "mvca3",
+          "mvca4",
+          "mvca5",
+          "mvca6",
+          "mvca7",
+          "mvca8",
+          "mvca9",
+          "mvca10",
+          "mvca11"
+        ],
+        "seqColumnIds": [
+          "mvca1",
+          "mvca2",
+          "mvca3",
+          "mvca4",
+          "mvca5",
+          "mvca6",
+          "mvca7",
+          "mvca8",
+          "mvca9",
+          "mvca10",
+          "mvca11"
+        ],
+        "ui": {
+          "x": 1968.0925988073473,
+          "y": 3018.1235167850436,
+          "zIndex": 1,
+          "widthName": 184,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_OWNER": {
+        "id": "TS09_CNPI_OWNER",
+        "name": "TS09_CNPI_OWNER",
+        "comment": "",
+        "columnIds": [
+          "ow1",
+          "ow2",
+          "ow3",
+          "ow4",
+          "ow5"
+        ],
+        "seqColumnIds": [
+          "ow1",
+          "ow2",
+          "ow3",
+          "ow4",
+          "ow5"
+        ],
+        "ui": {
+          "x": 1149.083951578198,
+          "y": 1532.4993794424881,
+          "zIndex": 1,
+          "widthName": 106,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_PATENT": {
+        "id": "TS09_CNPI_PATENT",
+        "name": "TS09_CNPI_PATENT",
+        "comment": "",
+        "columnIds": [
+          "pt1",
+          "pt2",
+          "pt3",
+          "pt4",
+          "pt5",
+          "pt6",
+          "pt7"
+        ],
+        "seqColumnIds": [
+          "pt1",
+          "pt2",
+          "pt3",
+          "pt4",
+          "pt5",
+          "pt6",
+          "pt7"
+        ],
+        "ui": {
+          "x": 1757.1527917595095,
+          "y": 1952.7797469639672,
+          "zIndex": 1,
+          "widthName": 104,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_QUAL_QCPLAN_RESULT": {
+        "id": "TS09_CNPI_QUAL_QCPLAN_RESULT",
+        "name": "TS09_CNPI_QUAL_QCPLAN_RESULT",
+        "comment": "",
+        "columnIds": [
+          "qqr1",
+          "qqr2",
+          "qqr3",
+          "qqr4",
+          "qqr5",
+          "qqr6"
+        ],
+        "seqColumnIds": [
+          "qqr1",
+          "qqr2",
+          "qqr3",
+          "qqr4",
+          "qqr5",
+          "qqr6"
+        ],
+        "ui": {
+          "x": 3062.258106531584,
+          "y": 2473.987629371096,
+          "zIndex": 1,
+          "widthName": 189,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_QUAL_QCPLAN_SPEC": {
+        "id": "TS09_CNPI_QUAL_QCPLAN_SPEC",
+        "name": "TS09_CNPI_QUAL_QCPLAN_SPEC",
+        "comment": "",
+        "columnIds": [
+          "qqs1",
+          "qqs2",
+          "qqs3",
+          "qqs4",
+          "qqs5"
+        ],
+        "seqColumnIds": [
+          "qqs1",
+          "qqs2",
+          "qqs3",
+          "qqs4",
+          "qqs5"
+        ],
+        "ui": {
+          "x": 3363.808563047346,
+          "y": 1205.5762753686001,
+          "zIndex": 1,
+          "widthName": 177,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_RISK_GENERIC": {
+        "id": "TS09_CNPI_RISK_GENERIC",
+        "name": "TS09_CNPI_RISK_GENERIC",
+        "comment": "",
+        "columnIds": [
+          "rg1",
+          "rg2",
+          "rg3",
+          "rg4",
+          "rg5",
+          "rg6",
+          "rg7",
+          "rg8",
+          "rg9",
+          "rg10",
+          "rg11",
+          "rg12"
+        ],
+        "seqColumnIds": [
+          "rg1",
+          "rg2",
+          "rg3",
+          "rg4",
+          "rg5",
+          "rg6",
+          "rg7",
+          "rg8",
+          "rg9",
+          "rg10",
+          "rg11",
+          "rg12"
+        ],
+        "ui": {
+          "x": 1030.946055580955,
+          "y": 2539.3183999589396,
+          "zIndex": 1,
+          "widthName": 139,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_SCHEDULE": {
+        "id": "TS09_CNPI_SCHEDULE",
+        "name": "TS09_CNPI_SCHEDULE",
+        "comment": "",
+        "columnIds": [
+          "sc1",
+          "sc2",
+          "sc3",
+          "sc4"
+        ],
+        "seqColumnIds": [
+          "sc1",
+          "sc2",
+          "sc3",
+          "sc4"
+        ],
+        "ui": {
+          "x": 2616.5340914998033,
+          "y": 2328.9887358086216,
+          "zIndex": 1,
+          "widthName": 120,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_SCHEDULE_GANTT": {
+        "id": "TS09_CNPI_SCHEDULE_GANTT",
+        "name": "TS09_CNPI_SCHEDULE_GANTT",
+        "comment": "",
+        "columnIds": [
+          "sg1",
+          "sg2",
+          "sg3",
+          "sg4",
+          "sg5",
+          "sg6",
+          "sg7",
+          "sg8"
+        ],
+        "seqColumnIds": [
+          "sg1",
+          "sg2",
+          "sg3",
+          "sg4",
+          "sg5",
+          "sg6",
+          "sg7",
+          "sg8"
+        ],
+        "ui": {
+          "x": 2953.777394128363,
+          "y": 1962.2271680480494,
+          "zIndex": 1,
+          "widthName": 163,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_SIOP_EXIST": {
+        "id": "TS09_CNPI_SIOP_EXIST",
+        "name": "TS09_CNPI_SIOP_EXIST",
+        "comment": "",
+        "columnIds": [
+          "se1",
+          "se2",
+          "se3",
+          "se4",
+          "se5",
+          "se6",
+          "se7",
+          "se8",
+          "se9"
+        ],
+        "seqColumnIds": [
+          "se1",
+          "se2",
+          "se3",
+          "se4",
+          "se5",
+          "se6",
+          "se7",
+          "se8",
+          "se9"
+        ],
+        "ui": {
+          "x": 1859.19827109761,
+          "y": 1054.5255105655829,
+          "zIndex": 1,
+          "widthName": 123,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_SIOP_NEW": {
+        "id": "TS09_CNPI_SIOP_NEW",
+        "name": "TS09_CNPI_SIOP_NEW",
+        "comment": "",
+        "columnIds": [
+          "sn1",
+          "sn2",
+          "sn3",
+          "sn4",
+          "sn5",
+          "sn6",
+          "sn7",
+          "sn8",
+          "sn9"
+        ],
+        "seqColumnIds": [
+          "sn1",
+          "sn2",
+          "sn3",
+          "sn4",
+          "sn5",
+          "sn6",
+          "sn7",
+          "sn8",
+          "sn9"
+        ],
+        "ui": {
+          "x": 555.006121129271,
+          "y": 2316.321994189484,
+          "zIndex": 1,
+          "widthName": 120,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_SKU": {
+        "id": "TS09_CNPI_SKU",
+        "name": "TS09_CNPI_SKU",
+        "comment": "",
+        "columnIds": [
+          "sku1",
+          "sku2",
+          "sku3",
+          "sku4",
+          "sku5",
+          "sku6",
+          "sku7"
+        ],
+        "seqColumnIds": [
+          "sku1",
+          "sku2",
+          "sku3",
+          "sku4",
+          "sku5",
+          "sku6",
+          "sku7"
+        ],
+        "ui": {
+          "x": 1589.4429293215912,
+          "y": 2429.9099237547894,
+          "zIndex": 1,
+          "widthName": 85,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_STAGE_STATUS": {
+        "id": "TS09_CNPI_STAGE_STATUS",
+        "name": "TS09_CNPI_STAGE_STATUS",
+        "comment": "",
+        "columnIds": [
+          "ss1",
+          "ss2",
+          "ss3",
+          "ss4"
+        ],
+        "seqColumnIds": [
+          "ss1",
+          "ss2",
+          "ss3",
+          "ss4"
+        ],
+        "ui": {
+          "x": 1625.5169051453665,
+          "y": 1512.0081813613333,
+          "zIndex": 1,
+          "widthName": 142,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_TECH_APPROACH": {
+        "id": "TS09_CNPI_TECH_APPROACH",
+        "name": "TS09_CNPI_TECH_APPROACH",
+        "comment": "",
+        "columnIds": [
+          "ta1",
+          "ta2",
+          "ta3",
+          "ta4",
+          "ta5"
+        ],
+        "seqColumnIds": [
+          "ta1",
+          "ta2",
+          "ta3",
+          "ta4",
+          "ta5"
+        ],
+        "ui": {
+          "x": 2561.5935123121385,
+          "y": 1672.3094134724186,
+          "zIndex": 1,
+          "widthName": 157,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_TECH_CTQ": {
+        "id": "TS09_CNPI_TECH_CTQ",
+        "name": "TS09_CNPI_TECH_CTQ",
+        "comment": "",
+        "columnIds": [
+          "tc1",
+          "tc2",
+          "tc3",
+          "tc4",
+          "tc5",
+          "tc6",
+          "tc7",
+          "tc8",
+          "tc9",
+          "tc10",
+          "tc11",
+          "tc12"
+        ],
+        "seqColumnIds": [
+          "tc1",
+          "tc2",
+          "tc3",
+          "tc4",
+          "tc5",
+          "tc6",
+          "tc7",
+          "tc8",
+          "tc9",
+          "tc10",
+          "tc11",
+          "tc12"
+        ],
+        "ui": {
+          "x": 1539.9589217426255,
+          "y": 3417.2154196478564,
+          "zIndex": 1,
+          "widthName": 120,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_TECH_CUST_VALID": {
+        "id": "TS09_CNPI_TECH_CUST_VALID",
+        "name": "TS09_CNPI_TECH_CUST_VALID",
+        "comment": "",
+        "columnIds": [
+          "tcv1",
+          "tcv2",
+          "tcv3",
+          "tcv4"
+        ],
+        "seqColumnIds": [
+          "tcv1",
+          "tcv2",
+          "tcv3",
+          "tcv4"
+        ],
+        "ui": {
+          "x": 621.8201048158619,
+          "y": 2855.4862444604614,
+          "zIndex": 1,
+          "widthName": 162,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_TECH_FML_DESIGN": {
+        "id": "TS09_CNPI_TECH_FML_DESIGN",
+        "name": "TS09_CNPI_TECH_FML_DESIGN",
+        "comment": "",
+        "columnIds": [
+          "tfd1",
+          "tfd2",
+          "tfd3"
+        ],
+        "seqColumnIds": [
+          "tfd1",
+          "tfd2",
+          "tfd3"
+        ],
+        "ui": {
+          "x": 2255.4448350226776,
+          "y": 2040.1198309896668,
+          "zIndex": 1,
+          "widthName": 165,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      },
+      "TS09_CNPI_TECH_VOC": {
+        "id": "TS09_CNPI_TECH_VOC",
+        "name": "TS09_CNPI_TECH_VOC",
+        "comment": "",
+        "columnIds": [
+          "tv1",
+          "tv2",
+          "tv3",
+          "tv4"
+        ],
+        "seqColumnIds": [
+          "tv1",
+          "tv2",
+          "tv3",
+          "tv4"
+        ],
+        "ui": {
+          "x": 2897.8972844198715,
+          "y": 1324.8313278815456,
+          "zIndex": 1,
+          "widthName": 121,
+          "widthComment": 60,
+          "color": ""
+        },
+        "meta": {
+          "updateAt": 1769688322431,
+          "createAt": 1769688239397
+        }
+      }
+    },
+    "tableColumnEntities": {
+      "c1": {
+        "id": "c1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "c2": {
+        "id": "c2",
+        "tableId": "",
+        "name": "code",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "c3": {
+        "id": "c3",
+        "tableId": "",
+        "name": "status",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "c4": {
+        "id": "c4",
+        "tableId": "",
+        "name": "current_stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 73,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "c5": {
+        "id": "c5",
+        "tableId": "",
+        "name": "created_by",
+        "comment": "",
+        "dataType": "VARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "c6": {
+        "id": "c6",
+        "tableId": "",
+        "name": "created_at",
+        "comment": "",
+        "dataType": "DATETIME2(3)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 76,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "c7": {
+        "id": "c7",
+        "tableId": "",
+        "name": "updated_by",
+        "comment": "",
+        "dataType": "VARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 64,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "c8": {
+        "id": "c8",
+        "tableId": "",
+        "name": "updated_at",
+        "comment": "",
+        "dataType": "DATETIME2(3)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 62,
+          "widthComment": 60,
+          "widthDataType": 76,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "c9": {
+        "id": "c9",
+        "tableId": "",
+        "name": "deleted_by",
+        "comment": "",
+        "dataType": "VARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "c10": {
+        "id": "c10",
+        "tableId": "",
+        "name": "deleted_at",
+        "comment": "",
+        "dataType": "DATETIME2(3)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 76,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "a1": {
+        "id": "a1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "a2": {
+        "id": "a2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "a3": {
+        "id": "a3",
+        "tableId": "",
+        "name": "seq_no",
+        "comment": "",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "a4": {
+        "id": "a4",
+        "tableId": "",
+        "name": "decision_point",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 78,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "a5": {
+        "id": "a5",
+        "tableId": "",
+        "name": "actions",
+        "comment": "",
+        "dataType": "NVARCHAR(500)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "a6": {
+        "id": "a6",
+        "tableId": "",
+        "name": "resp_user",
+        "comment": "",
+        "dataType": "VARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "a7": {
+        "id": "a7",
+        "tableId": "",
+        "name": "target_date",
+        "comment": "",
+        "dataType": "VARCHAR(8)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 62,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "a8": {
+        "id": "a8",
+        "tableId": "",
+        "name": "status",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "a9": {
+        "id": "a9",
+        "tableId": "",
+        "name": "comments",
+        "comment": "",
+        "dataType": "NVARCHAR(300)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "a10": {
+        "id": "a10",
+        "tableId": "",
+        "name": "updated_by",
+        "comment": "",
+        "dataType": "VARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 64,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "a11": {
+        "id": "a11",
+        "tableId": "",
+        "name": "updated_at",
+        "comment": "",
+        "dataType": "DATETIME2(3)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 62,
+          "widthComment": 60,
+          "widthDataType": 76,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "al1": {
+        "id": "al1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "al2": {
+        "id": "al2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "al3": {
+        "id": "al3",
+        "tableId": "",
+        "name": "assess_type",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 63,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "al4": {
+        "id": "al4",
+        "tableId": "",
+        "name": "seq_no",
+        "comment": "",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "al5": {
+        "id": "al5",
+        "tableId": "",
+        "name": "url",
+        "comment": "",
+        "dataType": "NVARCHAR(2000)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 96,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "al6": {
+        "id": "al6",
+        "tableId": "",
+        "name": "descr",
+        "comment": "",
+        "dataType": "NVARCHAR(255)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "at1": {
+        "id": "at1",
+        "tableId": "",
+        "name": "assess_type",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 63,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "at2": {
+        "id": "at2",
+        "tableId": "",
+        "name": "task",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "at3": {
+        "id": "at3",
+        "tableId": "",
+        "name": "from_date",
+        "comment": "",
+        "dataType": "VARCHAR(8)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "at4": {
+        "id": "at4",
+        "tableId": "",
+        "name": "to_date",
+        "comment": "",
+        "dataType": "VARCHAR(8)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "at5": {
+        "id": "at5",
+        "tableId": "",
+        "name": "task_stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "at6": {
+        "id": "at6",
+        "tableId": "",
+        "name": "task_name",
+        "comment": "",
+        "dataType": "NVARCHAR(200)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "at7": {
+        "id": "at7",
+        "tableId": "",
+        "name": "task_def",
+        "comment": "",
+        "dataType": "NVARCHAR(1000)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 96,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "at8": {
+        "id": "at8",
+        "tableId": "",
+        "name": "task_owner",
+        "comment": "",
+        "dataType": "NVARCHAR(200)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 61,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "at9": {
+        "id": "at9",
+        "tableId": "",
+        "name": "contributors",
+        "comment": "",
+        "dataType": "NVARCHAR(500)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 67,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "ats1": {
+        "id": "ats1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "ats2": {
+        "id": "ats2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "ats3": {
+        "id": "ats3",
+        "tableId": "",
+        "name": "assess_type",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 63,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "ats4": {
+        "id": "ats4",
+        "tableId": "",
+        "name": "task",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "ats5": {
+        "id": "ats5",
+        "tableId": "",
+        "name": "complete_yn",
+        "comment": "",
+        "dataType": "CHAR(1)",
+        "default": "'N'",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 69,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "ats6": {
+        "id": "ats6",
+        "tableId": "",
+        "name": "comment",
+        "comment": "",
+        "dataType": "NVARCHAR(1200)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 96,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "b1": {
+        "id": "b1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "b2": {
+        "id": "b2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "b3": {
+        "id": "b3",
+        "tableId": "",
+        "name": "title",
+        "comment": "",
+        "dataType": "NVARCHAR(300)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "b4": {
+        "id": "b4",
+        "tableId": "",
+        "name": "pl_user",
+        "comment": "",
+        "dataType": "VARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "b5": {
+        "id": "b5",
+        "tableId": "",
+        "name": "business_unit",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 73,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "b6": {
+        "id": "b6",
+        "tableId": "",
+        "name": "mgpp",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "b7": {
+        "id": "b7",
+        "tableId": "",
+        "name": "npc_created_by",
+        "comment": "",
+        "dataType": "VARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 84,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "b8": {
+        "id": "b8",
+        "tableId": "",
+        "name": "npc_created_date",
+        "comment": "",
+        "dataType": "VARCHAR(8)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 94,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "b9": {
+        "id": "b9",
+        "tableId": "",
+        "name": "cust_desired_month",
+        "comment": "",
+        "dataType": "VARCHAR(6)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 107,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239397,
+          "createAt": 1769688239397
+        }
+      },
+      "b10": {
+        "id": "b10",
+        "tableId": "",
+        "name": "iatf_yn",
+        "comment": "",
+        "dataType": "CHAR(1)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "b11": {
+        "id": "b11",
+        "tableId": "",
+        "name": "confidential_yn",
+        "comment": "",
+        "dataType": "CHAR(1)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 82,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "b12": {
+        "id": "b12",
+        "tableId": "",
+        "name": "confidential_reason",
+        "comment": "",
+        "dataType": "NVARCHAR(200)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 105,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "b13": {
+        "id": "b13",
+        "tableId": "",
+        "name": "dev_location",
+        "comment": "",
+        "dataType": "VARCHAR(4)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 68,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "b14": {
+        "id": "b14",
+        "tableId": "",
+        "name": "mfg_location",
+        "comment": "",
+        "dataType": "VARCHAR(4)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 71,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "b15": {
+        "id": "b15",
+        "tableId": "",
+        "name": "image_file_id",
+        "comment": "",
+        "dataType": "VARCHAR(36)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 70,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "b16": {
+        "id": "b16",
+        "tableId": "",
+        "name": "attach_file_id",
+        "comment": "",
+        "dataType": "VARCHAR(36)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 70,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "b17": {
+        "id": "b17",
+        "tableId": "",
+        "name": "know_of_tech",
+        "comment": "",
+        "dataType": "VARCHAR(4)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 74,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "b18": {
+        "id": "b18",
+        "tableId": "",
+        "name": "know_of_market",
+        "comment": "",
+        "dataType": "VARCHAR(4)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 88,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "b19": {
+        "id": "b19",
+        "tableId": "",
+        "name": "npv_discount_rate",
+        "comment": "",
+        "dataType": "NUMERIC(5,4)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 97,
+          "widthComment": 60,
+          "widthDataType": 77,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "b20": {
+        "id": "b20",
+        "tableId": "",
+        "name": "npv_currency",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 72,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "b21": {
+        "id": "b21",
+        "tableId": "",
+        "name": "ip_yn",
+        "comment": "",
+        "dataType": "CHAR(1)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "cp1": {
+        "id": "cp1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "cp2": {
+        "id": "cp2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "cp3": {
+        "id": "cp3",
+        "tableId": "",
+        "name": "brief",
+        "comment": "",
+        "dataType": "NVARCHAR(1000)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 96,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "cp4": {
+        "id": "cp4",
+        "tableId": "",
+        "name": "target",
+        "comment": "",
+        "dataType": "NVARCHAR(500)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "cp5": {
+        "id": "cp5",
+        "tableId": "",
+        "name": "existing_cust",
+        "comment": "",
+        "dataType": "NVARCHAR(250)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 69,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "cp6": {
+        "id": "cp6",
+        "tableId": "",
+        "name": "new_cust",
+        "comment": "",
+        "dataType": "NVARCHAR(250)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "cp7": {
+        "id": "cp7",
+        "tableId": "",
+        "name": "source",
+        "comment": "",
+        "dataType": "NVARCHAR(500)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "cp8": {
+        "id": "cp8",
+        "tableId": "",
+        "name": "competition",
+        "comment": "",
+        "dataType": "NVARCHAR(500)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 66,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "cp9": {
+        "id": "cp9",
+        "tableId": "",
+        "name": "comments",
+        "comment": "",
+        "dataType": "NVARCHAR(500)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "eo1": {
+        "id": "eo1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "eo2": {
+        "id": "eo2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "eo3": {
+        "id": "eo3",
+        "tableId": "",
+        "name": "seq_no",
+        "comment": "",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "eo4": {
+        "id": "eo4",
+        "tableId": "",
+        "name": "timeframe",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "eo5": {
+        "id": "eo5",
+        "tableId": "",
+        "name": "sales",
+        "comment": "",
+        "dataType": "NUMERIC(18,2)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "eo6": {
+        "id": "eo6",
+        "tableId": "",
+        "name": "volume",
+        "comment": "",
+        "dataType": "NUMERIC(18,2)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "eo7": {
+        "id": "eo7",
+        "tableId": "",
+        "name": "sgm_rate",
+        "comment": "",
+        "dataType": "NUMERIC(5,4)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 77,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "eo8": {
+        "id": "eo8",
+        "tableId": "",
+        "name": "maintenance_rate",
+        "comment": "",
+        "dataType": "NUMERIC(5,4)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 96,
+          "widthComment": 60,
+          "widthDataType": 77,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "fi1": {
+        "id": "fi1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "fi2": {
+        "id": "fi2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "fi3": {
+        "id": "fi3",
+        "tableId": "",
+        "name": "type",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "fi4": {
+        "id": "fi4",
+        "tableId": "",
+        "name": "category",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "fi5": {
+        "id": "fi5",
+        "tableId": "",
+        "name": "year",
+        "comment": "",
+        "dataType": "VARCHAR(4)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "fi6": {
+        "id": "fi6",
+        "tableId": "",
+        "name": "value",
+        "comment": "",
+        "dataType": "NUMERIC(18,2)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mce1": {
+        "id": "mce1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mce2": {
+        "id": "mce2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mce3": {
+        "id": "mce3",
+        "tableId": "",
+        "name": "summary",
+        "comment": "",
+        "dataType": "NVARCHAR(300)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mce4": {
+        "id": "mce4",
+        "tableId": "",
+        "name": "attach_file_id",
+        "comment": "",
+        "dataType": "VARCHAR(36)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 70,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mced1": {
+        "id": "mced1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mced2": {
+        "id": "mced2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mced3": {
+        "id": "mced3",
+        "tableId": "",
+        "name": "seq_no",
+        "comment": "",
+        "dataType": "INT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mced4": {
+        "id": "mced4",
+        "tableId": "",
+        "name": "step_name",
+        "comment": "",
+        "dataType": "NVARCHAR(200)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mced5": {
+        "id": "mced5",
+        "tableId": "",
+        "name": "cost_total_material",
+        "comment": "",
+        "dataType": "DECIMAL(18,2)",
+        "default": "0",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 101,
+          "widthComment": 60,
+          "widthDataType": 81,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mced6": {
+        "id": "mced6",
+        "tableId": "",
+        "name": "cost_conversion",
+        "comment": "",
+        "dataType": "DECIMAL(18,2)",
+        "default": "0",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 86,
+          "widthComment": 60,
+          "widthDataType": 81,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mced7": {
+        "id": "mced7",
+        "tableId": "",
+        "name": "cost_packaging",
+        "comment": "",
+        "dataType": "DECIMAL(18,2)",
+        "default": "0",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 83,
+          "widthComment": 60,
+          "widthDataType": 81,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mced8": {
+        "id": "mced8",
+        "tableId": "",
+        "name": "cost_others",
+        "comment": "",
+        "dataType": "DECIMAL(18,2)",
+        "default": "0",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 62,
+          "widthComment": 60,
+          "widthDataType": 81,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ms1": {
+        "id": "ms1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ms2": {
+        "id": "ms2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ms3": {
+        "id": "ms3",
+        "tableId": "",
+        "name": "summary",
+        "comment": "",
+        "dataType": "NVARCHAR(300)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ms4": {
+        "id": "ms4",
+        "tableId": "",
+        "name": "attach_file_id",
+        "comment": "",
+        "dataType": "VARCHAR(36)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 70,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mvca1": {
+        "id": "mvca1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mvca2": {
+        "id": "mvca2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mvca3": {
+        "id": "mvca3",
+        "tableId": "",
+        "name": "region",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mvca4": {
+        "id": "mvca4",
+        "tableId": "",
+        "name": "site",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mvca5": {
+        "id": "mvca5",
+        "tableId": "",
+        "name": "production_asset",
+        "comment": "",
+        "dataType": "VARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 92,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mvca6": {
+        "id": "mvca6",
+        "tableId": "",
+        "name": "available_capacity",
+        "comment": "",
+        "dataType": "VARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 96,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mvca7": {
+        "id": "mvca7",
+        "tableId": "",
+        "name": "value_1",
+        "comment": "",
+        "dataType": "NUMERIC(18,2)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mvca8": {
+        "id": "mvca8",
+        "tableId": "",
+        "name": "value_2",
+        "comment": "",
+        "dataType": "NUMERIC(18,2)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mvca9": {
+        "id": "mvca9",
+        "tableId": "",
+        "name": "value_3",
+        "comment": "",
+        "dataType": "NUMERIC(18,2)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mvca10": {
+        "id": "mvca10",
+        "tableId": "",
+        "name": "value_4",
+        "comment": "",
+        "dataType": "NUMERIC(18,2)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "mvca11": {
+        "id": "mvca11",
+        "tableId": "",
+        "name": "value_5",
+        "comment": "",
+        "dataType": "NUMERIC(18,2)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 83,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ow1": {
+        "id": "ow1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ow2": {
+        "id": "ow2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ow3": {
+        "id": "ow3",
+        "tableId": "",
+        "name": "seq_no",
+        "comment": "",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ow4": {
+        "id": "ow4",
+        "tableId": "",
+        "name": "func",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ow5": {
+        "id": "ow5",
+        "tableId": "",
+        "name": "owner_user",
+        "comment": "",
+        "dataType": "VARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 62,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "pt1": {
+        "id": "pt1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "pt2": {
+        "id": "pt2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "pt3": {
+        "id": "pt3",
+        "tableId": "",
+        "name": "seq_no",
+        "comment": "",
+        "dataType": "SMALLINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "pt4": {
+        "id": "pt4",
+        "tableId": "",
+        "name": "docket",
+        "comment": "",
+        "dataType": "VARCHAR(30)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "pt5": {
+        "id": "pt5",
+        "tableId": "",
+        "name": "patent",
+        "comment": "",
+        "dataType": "NVARCHAR(300)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "pt6": {
+        "id": "pt6",
+        "tableId": "",
+        "name": "title",
+        "comment": "",
+        "dataType": "NVARCHAR(200)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "pt7": {
+        "id": "pt7",
+        "tableId": "",
+        "name": "country",
+        "comment": "",
+        "dataType": "NVARCHAR(100)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "qqr1": {
+        "id": "qqr1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "qqr2": {
+        "id": "qqr2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "qqr3": {
+        "id": "qqr3",
+        "tableId": "",
+        "name": "spec_seq_no",
+        "comment": "",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 68,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "qqr4": {
+        "id": "qqr4",
+        "tableId": "",
+        "name": "result_seq_no",
+        "comment": "",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 74,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "qqr5": {
+        "id": "qqr5",
+        "tableId": "",
+        "name": "header",
+        "comment": "",
+        "dataType": "NVARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 84,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "qqr6": {
+        "id": "qqr6",
+        "tableId": "",
+        "name": "value",
+        "comment": "",
+        "dataType": "NVARCHAR(100)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "qqs1": {
+        "id": "qqs1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "qqs2": {
+        "id": "qqs2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "qqs3": {
+        "id": "qqs3",
+        "tableId": "",
+        "name": "spec_seq_no",
+        "comment": "",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 68,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "qqs4": {
+        "id": "qqs4",
+        "tableId": "",
+        "name": "short_text",
+        "comment": "",
+        "dataType": "NVARCHAR(100)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "qqs5": {
+        "id": "qqs5",
+        "tableId": "",
+        "name": "spec",
+        "comment": "",
+        "dataType": "NVARCHAR(100)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rg1": {
+        "id": "rg1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rg2": {
+        "id": "rg2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rg3": {
+        "id": "rg3",
+        "tableId": "",
+        "name": "category",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rg4": {
+        "id": "rg4",
+        "tableId": "",
+        "name": "seq_no",
+        "comment": "",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rg5": {
+        "id": "rg5",
+        "tableId": "",
+        "name": "risk_item",
+        "comment": "",
+        "dataType": "NVARCHAR(100)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rg6": {
+        "id": "rg6",
+        "tableId": "",
+        "name": "init_prob",
+        "comment": "",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rg7": {
+        "id": "rg7",
+        "tableId": "",
+        "name": "init_imp",
+        "comment": "",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rg8": {
+        "id": "rg8",
+        "tableId": "",
+        "name": "abate_action",
+        "comment": "",
+        "dataType": "NVARCHAR(100)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 69,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rg9": {
+        "id": "rg9",
+        "tableId": "",
+        "name": "final_prob",
+        "comment": "",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rg10": {
+        "id": "rg10",
+        "tableId": "",
+        "name": "final_imp",
+        "comment": "",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rg11": {
+        "id": "rg11",
+        "tableId": "",
+        "name": "owner",
+        "comment": "",
+        "dataType": "NVARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 84,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rg12": {
+        "id": "rg12",
+        "tableId": "",
+        "name": "est_comp_date",
+        "comment": "",
+        "dataType": "VARCHAR(8)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 81,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sc1": {
+        "id": "sc1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sc2": {
+        "id": "sc2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sc3": {
+        "id": "sc3",
+        "tableId": "",
+        "name": "decision_point",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 78,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sc4": {
+        "id": "sc4",
+        "tableId": "",
+        "name": "target_date",
+        "comment": "",
+        "dataType": "VARCHAR(8)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 62,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sg1": {
+        "id": "sg1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sg2": {
+        "id": "sg2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sg3": {
+        "id": "sg3",
+        "tableId": "",
+        "name": "seq_no",
+        "comment": "",
+        "dataType": "SMALLINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sg4": {
+        "id": "sg4",
+        "tableId": "",
+        "name": "lvl",
+        "comment": "",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sg5": {
+        "id": "sg5",
+        "tableId": "",
+        "name": "task_name",
+        "comment": "",
+        "dataType": "NVARCHAR(200)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sg6": {
+        "id": "sg6",
+        "tableId": "",
+        "name": "resources",
+        "comment": "",
+        "dataType": "VARCHAR(4000)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 87,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sg7": {
+        "id": "sg7",
+        "tableId": "",
+        "name": "start",
+        "comment": "",
+        "dataType": "VARCHAR(8)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sg8": {
+        "id": "sg8",
+        "tableId": "",
+        "name": "finish",
+        "comment": "",
+        "dataType": "VARCHAR(8)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "se1": {
+        "id": "se1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "se2": {
+        "id": "se2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "se3": {
+        "id": "se3",
+        "tableId": "",
+        "name": "material",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "se4": {
+        "id": "se4",
+        "tableId": "",
+        "name": "mat_type",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "se5": {
+        "id": "se5",
+        "tableId": "",
+        "name": "volume",
+        "comment": "",
+        "dataType": "NVARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 84,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "se6": {
+        "id": "se6",
+        "tableId": "",
+        "name": "risk",
+        "comment": "",
+        "dataType": "NVARCHAR(100)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "se7": {
+        "id": "se7",
+        "tableId": "",
+        "name": "action",
+        "comment": "",
+        "dataType": "NVARCHAR(100)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "se8": {
+        "id": "se8",
+        "tableId": "",
+        "name": "seq_no",
+        "comment": "",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "se9": {
+        "id": "se9",
+        "tableId": "",
+        "name": "pricing",
+        "comment": "",
+        "dataType": "NVARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 84,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sn1": {
+        "id": "sn1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sn2": {
+        "id": "sn2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sn3": {
+        "id": "sn3",
+        "tableId": "",
+        "name": "material",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sn4": {
+        "id": "sn4",
+        "tableId": "",
+        "name": "vendor",
+        "comment": "",
+        "dataType": "NVARCHAR(100)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sn5": {
+        "id": "sn5",
+        "tableId": "",
+        "name": "volume",
+        "comment": "",
+        "dataType": "NVARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 84,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sn6": {
+        "id": "sn6",
+        "tableId": "",
+        "name": "pricing",
+        "comment": "",
+        "dataType": "NVARCHAR(50)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 84,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sn7": {
+        "id": "sn7",
+        "tableId": "",
+        "name": "risk",
+        "comment": "",
+        "dataType": "NVARCHAR(100)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sn8": {
+        "id": "sn8",
+        "tableId": "",
+        "name": "seq_no",
+        "comment": "",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sn9": {
+        "id": "sn9",
+        "tableId": "",
+        "name": "action",
+        "comment": "",
+        "dataType": "NVARCHAR(100)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sku1": {
+        "id": "sku1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sku2": {
+        "id": "sku2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sku3": {
+        "id": "sku3",
+        "tableId": "",
+        "name": "seq_no",
+        "comment": "",
+        "dataType": "TINYINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sku4": {
+        "id": "sku4",
+        "tableId": "",
+        "name": "mat",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sku5": {
+        "id": "sku5",
+        "tableId": "",
+        "name": "mat_descr",
+        "comment": "",
+        "dataType": "NVARCHAR(300)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sku6": {
+        "id": "sku6",
+        "tableId": "",
+        "name": "type",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "sku7": {
+        "id": "sku7",
+        "tableId": "",
+        "name": "plant",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ss1": {
+        "id": "ss1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ss2": {
+        "id": "ss2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ss3": {
+        "id": "ss3",
+        "tableId": "",
+        "name": "stage_status",
+        "comment": "",
+        "dataType": "VARCHAR(10)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 67,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ss4": {
+        "id": "ss4",
+        "tableId": "",
+        "name": "updated_at",
+        "comment": "",
+        "dataType": "DATETIME2(3)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 62,
+          "widthComment": 60,
+          "widthDataType": 76,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ta1": {
+        "id": "ta1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ta2": {
+        "id": "ta2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ta3": {
+        "id": "ta3",
+        "tableId": "",
+        "name": "subject",
+        "comment": "",
+        "dataType": "NVARCHAR(MAX)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 96,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ta4": {
+        "id": "ta4",
+        "tableId": "",
+        "name": "prev_work",
+        "comment": "",
+        "dataType": "NVARCHAR(1200)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 96,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "ta5": {
+        "id": "ta5",
+        "tableId": "",
+        "name": "attach_file_id",
+        "comment": "",
+        "dataType": "VARCHAR(36)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 70,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tc1": {
+        "id": "tc1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tc2": {
+        "id": "tc2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tc3": {
+        "id": "tc3",
+        "tableId": "",
+        "name": "ctq",
+        "comment": "",
+        "dataType": "NVARCHAR(500)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tc4": {
+        "id": "tc4",
+        "tableId": "",
+        "name": "end_app",
+        "comment": "",
+        "dataType": "NVARCHAR(500)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tc5": {
+        "id": "tc5",
+        "tableId": "",
+        "name": "proc_method",
+        "comment": "",
+        "dataType": "NVARCHAR(500)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 72,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tc6": {
+        "id": "tc6",
+        "tableId": "",
+        "name": "statutory_req",
+        "comment": "",
+        "dataType": "NVARCHAR(500)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 72,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tc7": {
+        "id": "tc7",
+        "tableId": "",
+        "name": "special_req",
+        "comment": "",
+        "dataType": "NVARCHAR(500)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tc8": {
+        "id": "tc8",
+        "tableId": "",
+        "name": "exist_compound_yn",
+        "comment": "",
+        "dataType": "VARCHAR(1)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 106,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tc9": {
+        "id": "tc9",
+        "tableId": "",
+        "name": "exist_compound_sku",
+        "comment": "",
+        "dataType": "NVARCHAR(500)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 111,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tc10": {
+        "id": "tc10",
+        "tableId": "",
+        "name": "exist_compound_desc",
+        "comment": "",
+        "dataType": "NVARCHAR(500)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 117,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tc11": {
+        "id": "tc11",
+        "tableId": "",
+        "name": "comp_grade_yn",
+        "comment": "",
+        "dataType": "VARCHAR(1)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 85,
+          "widthComment": 60,
+          "widthDataType": 68,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tc12": {
+        "id": "tc12",
+        "tableId": "",
+        "name": "comp_grade_desc",
+        "comment": "",
+        "dataType": "NVARCHAR(500)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 97,
+          "widthComment": 60,
+          "widthDataType": 90,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tcv1": {
+        "id": "tcv1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tcv2": {
+        "id": "tcv2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tcv3": {
+        "id": "tcv3",
+        "tableId": "",
+        "name": "cust_valid",
+        "comment": "",
+        "dataType": "NVARCHAR(MAX)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 96,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tcv4": {
+        "id": "tcv4",
+        "tableId": "",
+        "name": "attach_file_id",
+        "comment": "",
+        "dataType": "VARCHAR(36)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 70,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tfd1": {
+        "id": "tfd1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tfd2": {
+        "id": "tfd2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tfd3": {
+        "id": "tfd3",
+        "tableId": "",
+        "name": "subject",
+        "comment": "",
+        "dataType": "NVARCHAR(MAX)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 96,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tv1": {
+        "id": "tv1",
+        "tableId": "",
+        "name": "cnpi_id",
+        "comment": "",
+        "dataType": "BIGINT",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 2,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 60,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tv2": {
+        "id": "tv2",
+        "tableId": "",
+        "name": "stage",
+        "comment": "",
+        "dataType": "VARCHAR(20)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tv3": {
+        "id": "tv3",
+        "tableId": "",
+        "name": "comment",
+        "comment": "",
+        "dataType": "NVARCHAR(1200)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 60,
+          "widthComment": 60,
+          "widthDataType": 96,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "tv4": {
+        "id": "tv4",
+        "tableId": "",
+        "name": "attach_file_id",
+        "comment": "",
+        "dataType": "VARCHAR(36)",
+        "default": "",
+        "options": 0,
+        "ui": {
+          "keys": 0,
+          "widthName": 70,
+          "widthComment": 60,
+          "widthDataType": 75,
+          "widthDefault": 60
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      }
+    },
+    "relationshipEntities": {
+      "rel_action": {
+        "id": "rel_action",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2092.7126119826444,
+          "y": 2568.384047057609,
+          "direction": 1
+        },
+        "end": {
+          "tableId": "TS09_CNPI_ACTION",
+          "columnIds": [
+            "a1"
+          ],
+          "x": 1613.847695664232,
+          "y": 2160.175327656301,
+          "direction": 2
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_assess_link": {
+        "id": "rel_assess_link",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2151.8126119826447,
+          "y": 2486.1618248353875,
+          "direction": 4
+        },
+        "end": {
+          "tableId": "TS09_CNPI_ASSESS_LINK",
+          "columnIds": [
+            "al1"
+          ],
+          "x": 1761.5203322638229,
+          "y": 1181.943492757196,
+          "direction": 2
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_assess_task_status": {
+        "id": "rel_assess_task_status",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2092.7126119826444,
+          "y": 2732.8284915020527,
+          "direction": 1
+        },
+        "end": {
+          "tableId": "TS09_CNPI_ASSESS_TASK_STATUS",
+          "columnIds": [
+            "ats1"
+          ],
+          "x": 1891.4788104749143,
+          "y": 3024.340346151418,
+          "direction": 2
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_basic": {
+        "id": "rel_basic",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2486.7126119826444,
+          "y": 2732.8284915020536,
+          "direction": 2
+        },
+        "end": {
+          "tableId": "TS09_CNPI_BASIC",
+          "columnIds": [
+            "b1"
+          ],
+          "x": 2741.764495851332,
+          "y": 2801.027880277656,
+          "direction": 4
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_concept": {
+        "id": "rel_concept",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2092.7126119826444,
+          "y": 2535.4951581687205,
+          "direction": 1
+        },
+        "end": {
+          "tableId": "TS09_CNPI_CONCEPT",
+          "columnIds": [
+            "cp1"
+          ],
+          "x": 1114.8816115758282,
+          "y": 1934.6581942232594,
+          "direction": 2
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_expect_oppo": {
+        "id": "rel_expect_oppo",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2427.6126119826454,
+          "y": 2486.1618248353875,
+          "direction": 4
+        },
+        "end": {
+          "tableId": "TS09_CNPI_EXPECT_OPPO",
+          "columnIds": [
+            "eo1"
+          ],
+          "x": 2591.8057558539194,
+          "y": 1412.0822893886987,
+          "direction": 8
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_financial": {
+        "id": "rel_financial",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2092.7126119826444,
+          "y": 2765.7173803909413,
+          "direction": 1
+        },
+        "end": {
+          "tableId": "TS09_CNPI_FINANCIAL",
+          "columnIds": [
+            "fi1"
+          ],
+          "x": 1413.1610856878017,
+          "y": 3216.9689797060896,
+          "direction": 2
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_mfg_cost_esti": {
+        "id": "rel_mfg_cost_esti",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2309.412611982645,
+          "y": 2486.1618248353875,
+          "direction": 4
+        },
+        "end": {
+          "tableId": "TS09_CNPI_MFG_COST_ESTI",
+          "columnIds": [
+            "mce1"
+          ],
+          "x": 2292.1303398553887,
+          "y": 1739.23607153777,
+          "direction": 8
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_mfg_scaleup": {
+        "id": "rel_mfg_scaleup",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2092.7126119826444,
+          "y": 2502.606269279832,
+          "direction": 1
+        },
+        "end": {
+          "tableId": "TS09_CNPI_MFG_SCALEUP",
+          "columnIds": [
+            "ms1"
+          ],
+          "x": 1126.7945621797278,
+          "y": 1396.2908819698325,
+          "direction": 2
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_mfg_vol_capa": {
+        "id": "rel_mfg_vol_capa",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2388.2126119826444,
+          "y": 2782.1618248353875,
+          "direction": 8
+        },
+        "end": {
+          "tableId": "TS09_CNPI_MFG_VOL_CAPA_ANAL",
+          "columnIds": [
+            "mvca1"
+          ],
+          "x": 2180.0925988073473,
+          "y": 3018.1235167850436,
+          "direction": 4
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_owner": {
+        "id": "rel_owner",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2112.4126119826446,
+          "y": 2486.1618248353875,
+          "direction": 4
+        },
+        "end": {
+          "tableId": "TS09_CNPI_OWNER",
+          "columnIds": [
+            "ow1"
+          ],
+          "x": 1531.083951578198,
+          "y": 1620.4993794424881,
+          "direction": 2
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_patent": {
+        "id": "rel_patent",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2270.012611982645,
+          "y": 2486.1618248353875,
+          "direction": 4
+        },
+        "end": {
+          "tableId": "TS09_CNPI_PATENT",
+          "columnIds": [
+            "pt1"
+          ],
+          "x": 2152.1527917595095,
+          "y": 2064.779746963967,
+          "direction": 2
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_risk_generic": {
+        "id": "rel_risk_generic",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2092.7126119826444,
+          "y": 2667.0507137242753,
+          "direction": 1
+        },
+        "end": {
+          "tableId": "TS09_CNPI_RISK_GENERIC",
+          "columnIds": [
+            "rg1"
+          ],
+          "x": 1446.946055580955,
+          "y": 2711.3183999589396,
+          "direction": 2
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_schedule": {
+        "id": "rel_schedule",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2486.7126119826444,
+          "y": 2634.161824835387,
+          "direction": 2
+        },
+        "end": {
+          "tableId": "TS09_CNPI_SCHEDULE",
+          "columnIds": [
+            "sc1"
+          ],
+          "x": 2616.5340914998033,
+          "y": 2404.9887358086216,
+          "direction": 1
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_schedule_gantt": {
+        "id": "rel_schedule_gantt",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2486.7126119826444,
+          "y": 2535.4951581687205,
+          "direction": 2
+        },
+        "end": {
+          "tableId": "TS09_CNPI_SCHEDULE_GANTT",
+          "columnIds": [
+            "sg1"
+          ],
+          "x": 2953.777394128363,
+          "y": 2086.2271680480494,
+          "direction": 1
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_siop_exist": {
+        "id": "rel_siop_exist",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2230.612611982645,
+          "y": 2486.1618248353875,
+          "direction": 4
+        },
+        "end": {
+          "tableId": "TS09_CNPI_SIOP_EXIST",
+          "columnIds": [
+            "se1"
+          ],
+          "x": 2056.69827109761,
+          "y": 1326.5255105655829,
+          "direction": 8
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_siop_new": {
+        "id": "rel_siop_new",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2092.7126119826444,
+          "y": 2601.272935946498,
+          "direction": 1
+        },
+        "end": {
+          "tableId": "TS09_CNPI_SIOP_NEW",
+          "columnIds": [
+            "sn1"
+          ],
+          "x": 950.006121129271,
+          "y": 2452.321994189484,
+          "direction": 2
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_sku": {
+        "id": "rel_sku",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2092.7126119826444,
+          "y": 2634.1618248353866,
+          "direction": 1
+        },
+        "end": {
+          "tableId": "TS09_CNPI_SKU",
+          "columnIds": [
+            "sku1"
+          ],
+          "x": 1984.4429293215912,
+          "y": 2541.9099237547894,
+          "direction": 2
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_stage_status": {
+        "id": "rel_stage_status",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2191.212611982645,
+          "y": 2486.1618248353875,
+          "direction": 4
+        },
+        "end": {
+          "tableId": "TS09_CNPI_STAGE_STATUS",
+          "columnIds": [
+            "ss1"
+          ],
+          "x": 2013.5169051453665,
+          "y": 1588.0081813613333,
+          "direction": 2
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_tech_approach": {
+        "id": "rel_tech_approach",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2388.2126119826453,
+          "y": 2486.1618248353875,
+          "direction": 4
+        },
+        "end": {
+          "tableId": "TS09_CNPI_TECH_APPROACH",
+          "columnIds": [
+            "ta1"
+          ],
+          "x": 2561.5935123121385,
+          "y": 1760.3094134724186,
+          "direction": 1
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_tech_ctq": {
+        "id": "rel_tech_ctq",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2191.2126119826444,
+          "y": 2782.1618248353875,
+          "direction": 8
+        },
+        "end": {
+          "tableId": "TS09_CNPI_TECH_CTQ",
+          "columnIds": [
+            "tc1"
+          ],
+          "x": 1765.9589217426255,
+          "y": 3417.2154196478564,
+          "direction": 4
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_tech_cust_valid": {
+        "id": "rel_tech_cust_valid",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2092.7126119826444,
+          "y": 2699.939602613164,
+          "direction": 1
+        },
+        "end": {
+          "tableId": "TS09_CNPI_TECH_CUST_VALID",
+          "columnIds": [
+            "tcv1"
+          ],
+          "x": 1032.820104815862,
+          "y": 2931.4862444604614,
+          "direction": 2
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_tech_fml_design": {
+        "id": "rel_tech_fml_design",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2348.812611982645,
+          "y": 2486.1618248353875,
+          "direction": 4
+        },
+        "end": {
+          "tableId": "TS09_CNPI_TECH_FML_DESIGN",
+          "columnIds": [
+            "tfd1"
+          ],
+          "x": 2455.9448350226776,
+          "y": 2168.1198309896668,
+          "direction": 8
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      },
+      "rel_tech_voc": {
+        "id": "rel_tech_voc",
+        "identification": false,
+        "relationshipType": 4,
+        "startRelationshipType": 1,
+        "start": {
+          "tableId": "TS09_CNPI",
+          "columnIds": [
+            "c1"
+          ],
+          "x": 2467.0126119826455,
+          "y": 2486.1618248353875,
+          "direction": 4
+        },
+        "end": {
+          "tableId": "TS09_CNPI_TECH_VOC",
+          "columnIds": [
+            "tv1"
+          ],
+          "x": 2897.8972844198715,
+          "y": 1400.8313278815456,
+          "direction": 1
+        },
+        "meta": {
+          "updateAt": 1769688239398,
+          "createAt": 1769688239398
+        }
+      }
+    },
+    "indexEntities": {},
+    "indexColumnEntities": {},
+    "memoEntities": {}
+  }
+}
