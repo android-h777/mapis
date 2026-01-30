@@ -5280,6 +5280,12 @@ textarea.materialize-textarea:focus:not([readonly]) {
     margin-left: 2px;
     color: #e87e05;
 }
+.material-icons.helpModal {
+    cursor: pointer;
+    font-size: 16px;
+    margin-left: 2px;
+    color: #bb2649;
+}
 
 .borderBox {
 	border: 1px solid #A47864;

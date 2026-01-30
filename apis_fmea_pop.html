@@ -19,6 +19,7 @@
           $('.datepicker').datepicker();
           $('select').formSelect();
           $('.tooltipped').tooltip();
+          $('.tabs').tabs();
           // $('.modal').modal();
 
           $('#HierarchyViewModal').modal({
@@ -36,7 +37,7 @@
             }
           });
 
-          $('#dataSheetModal').modal({
+          $('#dataSheetModal, #helpModal_DFEMA1, #helpModal_DFEMA2, #helpModal_DFEMA3, #helpModal_PFEMA1, #helpModal_PFEMA2, #helpModal_PFEMA3').modal({
             onOpenStart: function () {
               $("header, aside, .contArea").addClass("modalBlur");
             },
@@ -321,6 +322,7 @@
               <option>UV moisture cure​</option>
               <option>Thermal hardcoat​</option>
               <option>UV hardcoat​</option>
+              <option>Other</option>
             </select>   
           </div>
         </div>
@@ -415,9 +417,6 @@
             </select>
           </div>
         </div>
-
-
-
       </div>
     </section>
 
@@ -435,7 +434,7 @@
           <div class="inputArea mt10">
             <div class="row">
               <div class="col s2 ar tit">
-                Next Higher Level​
+                Next Higher Level​ (NHE)​
                 <i class="material-icons tooltipped helpTooltip" data-position="right" data-html="true" data-tooltip="Subsystem, system, system group, vehicle​">help</i>
               </div>
               <div class="col s10 val">
@@ -447,7 +446,7 @@
             </div>
             <div class="row">
               <div class="col s2 ar tit">
-                Focus Element
+                Focus Element (FE)
                 <i class="material-icons tooltipped helpTooltip" data-position="right" data-html="true" data-tooltip="Designation of the subsystem, component or interface​​">help</i>
               ​​</div>
               <div class="col s10 val">
@@ -459,7 +458,7 @@
             </div>
             <div class="row">
               <div class="col s2 ar tit">
-                Next Lower Level Function and Requirement or Characteristic​
+                Next Lower Level or Characteristic Type (NLL)
                 <i class="material-icons tooltipped helpTooltip" data-position="right" data-html="true" data-tooltip="Component or interface designation or feature​ <br>Type of feature: geometry, material, surface, treatment, coatings, etc.​​">help</i>
               ​</div>
               <div class="col s10 val">
@@ -571,7 +570,7 @@
             <table>
               <colgroup>
                 <col style="width: 400px;">
-                <col style="width: 50px;">
+                <col style="width: 60px;">
                 <col style="width: 280px;">
                 <col style="width: 250px;">
                 <col style="width: 250px;">
@@ -605,10 +604,10 @@
 
                 <tr>
                   <!-- FAILURE ANALYSIS (4) -->
-                  <th>Failure effects (FE) to the Next Higher Element</th>
-                  <th>Severity (S) of the FE​</th>
-                  <th>Failure mode (FM) of the Focus Element</th>
-                  <th class="bdR1">Failure cause (FC) of the Next Lower Element</th>
+                  <th>Failure effects (FE) to NHE​ <i class="material-icons tooltipped helpTooltip" data-position="top" data-html="true" data-tooltip="How could the vehicle, system or subsystem fail to perform the function described at the next higher level<br/>(including potential consequences at end-user level and regulations)​​">help</i></th>
+                  <th>FE Severity (S)<i class="material-icons helpModal modal-trigger" data-target="helpModal_PFEMA3">help</i>​</th>
+                  <th>Failure mode (FM) of FE​​  <i class="material-icons tooltipped helpTooltip" data-position="top" data-html="true" data-tooltip="How could the subsystem, component or interface fail in the execution of the function described as the focus element and lead to the failure effects.<br/>Failure analysis can start with FM, FE or FC as long as an exact failure chain is present Failure analysis can start with FM, FE or FC as long as an exact failure chain is present​​​">help</i></th>
+                  <th class="bdR1">Failure cause (FC) of NLL​​  <i class="material-icons tooltipped helpTooltip" data-position="top" data-html="true" data-tooltip="How could the subsystem,<br/>component or interface fail in the execution of the function described at the next lower level and lead to the failure mode.​​​">help</i></th>
 
                   <!-- RISK ANALYSIS (7) -->
                   <th>Existing prevention control (PC) for FC</th>
@@ -1048,36 +1047,72 @@
     <section class="cardBox mt10" id="pjContCard4">
       <div class="cardTit2"><i class="material-icons left">history</i>History FMEA</div>
       <div class="typeList mt10">
-        <ul class="mainList subCardBox">
-          <li class="waves-effect waves-hColor animate__animated animate__flipInX">
-            <section class="statusBox type1">PFMEA</section>
-            <section class="wd100p">
-              <div class="pjTit">[NAN-#101] Comply with RM input Q'ty (range ±2%)</div>
-              <div class="subInfo">
-                <div>
-                  <div class="roundBox contVal1">Customer : ACTIA</div>
-                  <div class="roundBox contVal2">PRODUCT TYPE : TIA**(A)</div>
-                  <div class="roundBox contVal3">PRODUCT CODE : 84060</div>
-                  <div class="roundBox contVal4">PROCESS : Feeding</div>
+        <div>
+          <ul class="tabs">
+            <li class="tab"><a href="#hFmeaList1">D-FMEA</a></li>
+            <li class="tab"><a href="#hFmeaList2">P-FMEA</a></li>
+          </ul>          
+        </div>
+        <div id="hFmeaList1" class="mt10">
+          <ul class="mainList subCardBox">
+            <li class="waves-effect waves-hColor animate__animated animate__flipInX">
+              <section class="statusBox type2">DFMEA</section>
+              <section class="wd100p">
+                <div class="pjTit">Ohta-DFMEA-2026-025</div>
+                <div class="subInfo">
+                  <div>
+                    <div class="roundBox bdOrange contVal1">SN-100023</div>
+                    <div class="roundBox contVal2">Addition cure adhesive​ display</div>
+                    <div class="roundBox contVal3">Base Material​ : TIA324GF</div>
+                  </div>
                 </div>
-              </div>
-            </section>
-          </li>
-          <li class="waves-effect waves-hColor animate__animated animate__flipInX">
-            <section class="statusBox type2">DFMEA</section>
-            <section class="wd100p">
-              <div class="pjTit">[OHT-#205] Meet all properties required by each ECM module</div>
-              <div class="subInfo">
-                <div>
-                  <div class="roundBox contVal1">Customer : BOSCH</div>
-                  <div class="roundBox contVal2">PRODUCT TYPE : TIA**(B)</div>
-                  <div class="roundBox contVal3">PRODUCT CODE : 67202</div>
-                  <div class="roundBox contVal4">PROCESS : -</div>
+              </section>
+            </li>
+            <li class="waves-effect waves-hColor animate__animated animate__flipInX">
+              <section class="statusBox type2">DFMEA</section>
+              <section class="wd100p">
+                <div class="pjTit">Ohta-DFMEA-2026-012</div>
+                <div class="subInfo">
+                  <div>
+                    <div class="roundBox bdOrange contVal1">SN-100023</div>
+                    <div class="roundBox contVal2">Addition cure adhesive​ display</div>
+                    <div class="roundBox contVal3">Base Material​ : TIA324GF</div>
+                  </div>
                 </div>
-              </div>
-            </section>
-          </li>
-        </ul>
+              </section>
+            </li>
+            <li class="waves-effect waves-hColor animate__animated animate__flipInX">
+              <section class="statusBox type2">DFMEA</section>
+              <section class="wd100p">
+                <div class="pjTit">Ohta-DFMEA-2026-001</div>
+                <div class="subInfo">
+                  <div>
+                    <div class="roundBox bdOrange contVal1">SN-100023</div>
+                    <div class="roundBox contVal2">Addition cure adhesive​ display</div>
+                    <div class="roundBox contVal3">Base Material​ : TIA324GF</div>
+                  </div>
+                </div>
+              </section>
+            </li>
+          </ul>
+        </div>
+        <div id="hFmeaList2" class="mt10">
+          <ul class="mainList subCardBox">
+            <li class="waves-effect waves-hColor animate__animated animate__flipInX">
+              <section class="statusBox type1">PFMEA</section>
+              <section class="wd100p">
+                <div class="pjTit">Ohta-PFMEA-2026-017</div>
+                <div class="subInfo">
+                  <div>
+                    <div class="roundBox bdOrange contVal1">SN-100023</div>
+                    <div class="roundBox contVal2">Addition cure adhesive​ display</div>
+                    <div class="roundBox contVal3">Base Material​ : TIA324GF</div>
+                  </div>
+                </div>
+              </section>
+            </li>
+          </ul>
+        </div>
       </div>
     </section>
     
@@ -1270,6 +1305,794 @@
     </div>
     <div class="modal-content nodeChart">              
       <svg width="1100" height="520"></svg>
+    </div>
+  </article>
+
+  <article id="helpModal_DFEMA1" class="modal" style="width: 80%;">
+    <div class="modal-header mochaBg">
+      <h5>Evaluation criteria: Severity of Potential Failure at Design FMEA​</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div class="font16">Evaluation ranking <span class="fontM">S = Severity of potential Failure​</span></div>
+      <div class="hFixedTable hBorderTable hScroll" style="overflow: auto; max-height: 550px;">
+        <table>
+          <colgroup>
+            <col style="width: 200px;">
+            <col style="width: auto;">
+            <col style="width: 80px;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Effect</th>
+              <th>Evaluation criteria: Severity of Potential Failure at Design FMEA</th>
+              <th>Ranking</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td  class="ac fontM vaM">Hazardous without warning</td>
+              <td>
+                Customer endangered due to the adverse effect on safe system performance
+                without warning before failure or violation of governmental regulations
+              </td>
+              <td class="ac fontM vaM">10<span class="essential">*</span></td>
+            </tr>
+            <tr>
+              <td  class="ac fontM vaM">Hazardous with warning</td>
+              <td>
+                Customer endangered due to the adverse effect on safe system performance
+                with warning before failure or violation of governmental regulations
+              </td>
+              <td class="ac fontM vaM">9<span class="essential">*</span></td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Very high</td>
+              <td>
+                Very high degree of dissatisfaction due to the loss of function without
+                a negative impact on safety or governmental regulations. No delivery.
+              </td>
+              <td class="ac fontM vaM">8</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">High</td>
+              <td>
+                High degree of customer dissatisfaction due to component failure without
+                complete loss of function. Productivity impacted by high scrap or rework
+                levels. Customer extremely dissatisfied.
+              </td>
+              <td class="ac fontM vaM">7</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Moderate</td>
+              <td>
+                Warranty repair or significant manufacturing or assembly complaint.
+                Customer very dissatisfied.
+              </td>
+              <td class="ac fontM vaM">6</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Low</td>
+              <td>
+                Customer is made uncomfortable or their productivity is reduced by the
+                continued degradation of the effect. Customer dissatisfied.
+              </td>
+              <td class="ac fontM vaM">5</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Very Low</td>
+              <td>
+                Customer dissatisfaction due to reduced performance.
+                Most of the customer are dissatisfied (&gt; 75%)
+              </td>
+              <td class="ac fontM vaM">4</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Minor</td>
+              <td>
+                Customer will experience annoyance due to the slight degradation of
+                performance. Approx. 50% of the customer are dissatisfied.
+              </td>
+              <td class="ac fontM vaM">3</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Very Minor</td>
+              <td>
+                Customer will probably experience slight annoyance.
+                Less than 25% of the customer are dissatisfied.
+              </td>
+              <td class="ac fontM vaM">2</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">None</td>
+              <td>
+                Customer will not notice the adverse effect or it is insignificant
+              </td>
+              <td class="ac fontM vaM">1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </article>
+
+  <article id="helpModal_DFEMA2" class="modal" style="width: 80%;">
+    <div class="modal-header mochaBg">
+      <h5>Evaluation criteria: Severity of Potential Failure at Design FMEA​</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div class="font16">Evaluation ranking <span class="fontM">O = Occurrence​</span></div>
+      <div class="hFixedTable hBorderTable hScroll" style="overflow: auto; max-height: 550px;">
+        <table>
+          <colgroup>
+            <col style="width: 200px;">
+            <col style="width: auto;">
+            <col style="width: 80px;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Probability of Failure</th>
+              <th>Possible Failure Rates (FR)</th>
+              <th>Ranking</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ac fontM vaM">Constantly</td>
+              <td>
+                Assured of Failure based on warranty data.
+                FR: 1 of 2
+              </td>
+              <td class="ac fontM vaM">10</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Very high</td>
+              <td>
+                Failure is almost certain based on warranty data.
+                FR: 1 of 10
+              </td>
+              <td class="ac fontM vaM">9</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">High</td>
+              <td>
+                High failure rate without supporting documentation.
+                FR: 1 of 20
+              </td>
+              <td class="ac fontM vaM">8</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Significant</td>
+              <td>
+                Relatively high failure rate with supporting documentation.
+                FR: 1 of 50
+              </td>
+              <td class="ac fontM vaM">7</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Moderate</td>
+              <td>
+                Moderate failure rate without supporting documentation.
+                FR: 1 of 100
+              </td>
+              <td class="ac fontM vaM">6</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Moderate</td>
+              <td>
+                Relatively moderate failure rate with supporting documentation.
+                FR: 1 of 500
+              </td>
+              <td class="ac fontM vaM">5</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Small</td>
+              <td>
+                Occasional failures.
+                FR: 1 of 2,000 (Cpk &lt; 1)
+              </td>
+              <td class="ac fontM vaM">4</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Low</td>
+              <td>
+                Low failure rate without supporting documentation.
+                FR: 1 of 5,000 (Cpk approx. 1)
+              </td>
+              <td class="ac fontM vaM">3</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Very Low</td>
+              <td>
+                Low failure rate with supporting documentation.
+                FR: 1 of 20,000 (Cpk &gt; 1.33)
+              </td>
+              <td class="ac fontM vaM">2</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Unlikely</td>
+              <td>
+                Likelihood of occurrence is remote.
+                FR: 1 of 1,000,000 (Cpk &gt; 1.67)
+              </td>
+              <td class="ac fontM vaM">1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </article>
+
+  <article id="helpModal_DFEMA3" class="modal" style="width: 80%;">
+    <div class="modal-header mochaBg">
+      <h5>Evaluation criteria: Likelihood of Detection at Design FMEA​​</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div class="font16">Evaluation ranking <span class="fontM">D = Failure Detection​​</span></div>
+      <div class="hFixedTable hBorderTable hScroll" style="overflow: auto; max-height: 550px;">
+        <table>
+          <colgroup>
+            <col style="width: 200px;">
+            <col style="width: auto;">
+            <col style="width: 80px;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Detection</th>
+              <th>Criteria: Likelihood of Detection by Design Control</th>
+              <th>Ranking</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ac fontM vaM">Absolute Uncertainly</td>
+              <td>
+                Design Control will not or can not detect a potential cause of Failure; or there is no Design Control.
+                Detection Certainty &lt; 50%
+              </td>
+              <td class="ac fontM vaM">10</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Very Remote</td>
+              <td>
+                Very remote chance the Design Control will detect a potential cause of Failure.
+                Detection Certainty approx. 50%
+              </td>
+              <td class="ac fontM vaM">9</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Remote</td>
+              <td>
+                Remote chance the Design Control will detect a potential cause of Failure.
+                Detection Certainty approx 60%
+              </td>
+              <td class="ac fontM vaM">8</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Very Low</td>
+              <td>
+                Very low chance the Design Control will detect a potential cause of Failure.
+                Detection Certainty approx 70%
+              </td>
+              <td class="ac fontM vaM">7</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Low</td>
+              <td>
+                Low chance the Design Control will detect a potential cause of Failure.
+                Detection Certainty approx. 80%
+              </td>
+              <td class="ac fontM vaM">6</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Moderate</td>
+              <td>
+                Moderate chance the Design Control will detect a potential cause of Failure.
+                Detection Certainty approx. 85%
+              </td>
+              <td class="ac fontM vaM">5</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Moderately High</td>
+              <td>
+                Moderately high chance the Design Control will detect a potential cause of Failure.
+                Detection Certainty approx. 90%
+              </td>
+              <td class="ac fontM vaM">4</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">High</td>
+              <td>
+                High chance the Design Control will detect a potential cause of Failure.
+                Detection Certainty approx. 95%
+              </td>
+              <td class="ac fontM vaM">3</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Very High</td>
+              <td>
+                Very high chance the Design Control will detect a potential cause of Failure.
+                Detection Certainty approx 99%
+              </td>
+              <td class="ac fontM vaM">2</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Almost Certain</td>
+              <td>
+                Design Control will almost certainly detect a potential cause of Failure.
+                Detection Certainty 100%
+              </td>
+              <td class="ac fontM vaM">1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </article>
+
+  <article id="helpModal_PFEMA1" class="modal" style="width: 80%;">
+    <div class="modal-header mochaBg">
+      <h5>Evaluation Criteria: Significance of the potential Failure​​</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div class="font16">Evaluation Table <span class="fontM">S = Severity of the potential defect​</span></div>
+      <div class="hFixedTable hBorderTable hScroll" style="overflow: auto; max-height: 550px;">
+        <table>
+          <colgroup>
+            <col style="width: 160px;">
+            <col style="width: auto;">
+            <col style="width: auto;">
+            <col style="width: auto;">
+            <col style="width: 80px;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Effect</th>
+              <th>Impact on own plant</th>
+              <th>Impact on supplied plant (if known)</th>
+              <th>Impact on end user (if known)</th>
+              <th>Ranking</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ac fontM vaM">High</td>
+              <td>
+                Failure may result in acute health and/or safety risks to production personnel.
+                There could be a company risk threatening the existence of the company.
+              </td>
+              <td>
+                Failure may result in acute health and/or safety risks to production personnel.
+                There could be a company risk threatening the existence of the company.
+              </td>
+              <td>
+                Impact on the safe operation of the vehicle and/or other vehicles,
+                the health of the driver or passenger, other road users or pedestrians.
+              </td>
+              <td class="ac fontM vaM">10<span class="essential">*</span></td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">High</td>
+              <td>
+                Error may result in in-house non-compliance.
+                Unacceptable cost overruns are possible.
+              </td>
+              <td>
+                Error may result in in-house non-compliance.
+                Unacceptable cost overruns are possible.
+              </td>
+              <td>
+                Failure to comply with legal and regulatory requirements.
+              </td>
+              <td class="ac fontM vaM">9<span class="essential">*</span></td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Moderately high</td>
+              <td>
+                100% of the affected production may need to be disposed of.
+                Error may result in in-house non-compliance or chronic health and/or safety risks
+                to production personnel.
+              </td>
+              <td>
+                Equipment shutdown longer than entire production shift; possible supply stoppage;
+                repair or replacement required on-site (end user assembly) except for non-compliance.
+                Failure may result in in-house non-compliance or chronic health and/or safety hazards
+                to production or assembly personnel.
+                Customer is extremely dissatisfied.
+              </td>
+              <td>
+                Loss of a major function necessary for normal vehicle operation over its intended
+                service life.
+              </td>
+              <td class="ac fontM vaM">8</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Moderately high</td>
+              <td>
+                Product could potentially be sorted and a portion (less than 100%) discarded;
+                deviation from process; additional personnel.
+              </td>
+              <td>
+                Equipment shutdown from 1 hour to entire production shift; possible delivery stoppage;
+                repair or replacement required on-site (assembly at end user’s facility) except for non-compliance.
+                Customer is very dissatisfied.
+              </td>
+              <td>
+                Restriction of a main function necessary for normal vehicle operation over the
+                intended service life.
+              </td>
+              <td class="ac fontM vaM">7</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Moderately low</td>
+              <td>
+                100% of product may need to be reworked and accepted.
+              </td>
+              <td>
+                Plant shutdown up to 1 hour.
+                Customer is dissatisfied.
+              </td>
+              <td>
+                Loss of a comfort function.
+              </td>
+              <td class="ac fontM vaM">6</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Moderately low</td>
+              <td>
+                Part of product could possibly be reworked and accepted.
+              </td>
+              <td>
+                Less than 100% of product affected; more defective product very likely;
+                sorting required; no plant shutdown.
+                Customer is reasonably dissatisfied.
+              </td>
+              <td>
+                Restriction of a comfort function.
+              </td>
+              <td class="ac fontM vaM">5</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Moderately low</td>
+              <td>
+                100% of the product may need to be reworked inline as part of the standard
+                process description.
+              </td>
+              <td>
+                Defective product triggers extensive response plan; further defective products
+                unlikely; no sorting required.
+                Defect is noticed by most customers – more than 75%.
+                Almost all customers will notice the defect, even non-critical (reps).
+              </td>
+              <td>
+                Distinctly perceptible impairment of appearance quality (e.g. color).
+              </td>
+              <td class="ac fontM vaM">4</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Low</td>
+              <td>
+                Part of the product may need to be reworked inline as part of the standard
+                process description.
+              </td>
+              <td>
+                Defective product triggers subordinate response plan; additional defective products
+                unlikely; no sorting required.
+                Defect will be noticed by about 50% of customers.
+              </td>
+              <td>
+                Moderately perceptible impairment of appearance quality (e.g. color).
+              </td>
+              <td class="ac fontM vaM">3</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Low</td>
+              <td>
+                Minor difficulty for the process, operation, or operator.
+              </td>
+              <td>
+                Defective product does not trigger response plan; further defective products unlikely;
+                no sorting required; feedback to suppliers required.
+                The defect is perceived by very critical customers – less than 25%.
+              </td>
+              <td>
+                Slightly perceptible quality impairment of appearance (e.g. color).
+              </td>
+              <td class="ac fontM vaM">2</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Very Low</td>
+              <td>
+                No discernible impact.
+              </td>
+              <td>
+                No perceptible or no impact.
+                It is only noticeable by technical personnel.
+              </td>
+              <td>
+                No discernible impact.
+              </td>
+              <td class="ac fontM vaM">1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+    </div>
+  </article>
+
+  <article id="helpModal_PFEMA2" class="modal" style="width: 80%;">
+    <div class="modal-header mochaBg">
+      <h5>Evaluation criteria: Probability of occurrence of the error​</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div class="font16">Evaluation table <span class="fontM">O = Occurrence​​</span></div>
+      <div class="hFixedTable hBorderTable hScroll" style="overflow: auto; max-height: 550px;">
+        <table>
+          <colgroup>
+            <col style="width: 200px;">
+            <col style="width: auto;">
+            <col style="width: 80px;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Possible Failure Rates (FR)</th>
+              <th>Possible Failure Rates (FR)</th>
+              <th>Ranking</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ac fontM vaM">Constantly</td>
+              <td>
+                New process without experience. (Cpk=0.43).<br>
+                Permanent error
+              </td>
+              <td class="ac fontM vaM">10</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Very high</td>
+              <td>
+                New process with no experience. (Cpk=0.55).<br>
+                Several errors per hour
+              </td>
+              <td class="ac fontM vaM">9</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">High</td>
+              <td>
+                New process with known but problematic procedures. (Cpk=0.68).<br>
+                One error per hour
+              </td>
+              <td class="ac fontM vaM">8</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Significant</td>
+              <td>
+                New process with known but problematic procedures. (Cpk=0.77).<br>
+                One error per shift
+              </td>
+              <td class="ac fontM vaM">7</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Moderate</td>
+              <td>
+                New process with adoption of known procedures. Proven process with positive
+                series experience under changed conditions. (Cpk=0.96).<br>
+                Several defects per day
+              </td>
+              <td class="ac fontM vaM">6</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Moderate</td>
+              <td>
+                New process with adoption of known procedures. Proven process with positive
+                series experience under changed conditions. (Cpk=1.1).<br>
+                One defect per week
+              </td>
+              <td class="ac fontM vaM">5</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Small</td>
+              <td>
+                New process with adoption of known procedures. Proven process with positive
+                series experience under changed conditions. (Cpk=1.24).<br>
+                One defect per month
+              </td>
+              <td class="ac fontM vaM">4</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Low</td>
+              <td>
+                Detailed changes to proven processes with positive series experience under
+                similar conditions. (Cpk=1.42).<br>
+                One defect per quarter
+              </td>
+              <td class="ac fontM vaM">3</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Very Low</td>
+              <td>
+                Detail changes to proven processes with positive series experience under
+                comparable conditions. (Cpk=1.58).<br>
+                One defect per year
+              </td>
+              <td class="ac fontM vaM">2</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Unlikely</td>
+              <td>
+                New process under changed conditions with positive completed process
+                capability verification. Proven process with positive series experience
+                under comparable conditions on comparable equipment.<br>
+                Less than 1 failure per year
+              </td>
+              <td class="ac fontM vaM">1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </article>
+
+  <article id="helpModal_PFEMA3" class="modal" style="width: 80%;">
+    <div class="modal-header mochaBg">
+      <h5>Evaluation criteria: Probability of detection of the defect​/h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div class="font16">Evaluation criteria <span class="fontM">D = Detection​</span></div>
+      <div class="hFixedTable hBorderTable hScroll" style="overflow: auto; max-height: 510px;">
+        <table>
+          <colgroup>
+            <col style="width: 160px;">
+            <col style="width: auto;">
+            <col style="width: 60px;">
+            <col style="width: 60px;">
+            <col style="width: 60px;">
+            <col style="width: 80px;">
+          </colgroup>
+          <thead>
+            <tr>
+              <th>Detection</th>
+              <th>Criteria</th>
+              <th>A<span class="essential">*</span></th>
+              <th>B<span class="essential">*</span></th>
+              <th>C<span class="essential">*</span></th>
+              <th>Ranking</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="ac fontM vaM">Absolute Uncertainly</td>
+              <td>
+                No current process monitoring; cannot be detected or process investigation.
+                In 20 of 20 faults is not detected (Cpk ≤ 0.33).<br>
+                No detection of the fault.
+              </td>
+              <td class="ac"></td>
+              <td class="ac"></td>
+              <td class="ac fontM vaM">X</td>
+              <td class="ac fontM vaM">10</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">At most discoverable by chance</td>
+              <td>
+                The fault or its cause cannot be easily detected.
+                Only random checks (audits) take place.
+                In 40 faults is not detected (Cpk ≥ 0.33). 10% undetected.
+              </td>
+              <td class="ac"></td>
+              <td class="ac"></td>
+              <td class="ac fontM vaM">X</td>
+              <td class="ac fontM vaM">9</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Remote</td>
+              <td>
+                The defect or its cause cannot be easily detected.
+                Detection takes place after manufacturing by the worker using visual aids.
+                In 20 defects is not detected (Cpk ≤ 0.67). 5% undetected defects.
+              </td>
+              <td class="ac"></td>
+              <td class="ac"></td>
+              <td class="ac fontM vaM">X</td>
+              <td class="ac fontM vaM">8</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Very Low</td>
+              <td>
+                Detection of the defect occurs during production by the operator using visual aids.
+                In 50 defects is not detected (Cpk ≥ 1.00). 2% undetected defects.
+              </td>
+              <td class="ac"></td>
+              <td class="ac"></td>
+              <td class="ac fontM vaM">X</td>
+              <td class="ac fontM vaM">7</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Low probability</td>
+              <td>
+                Detection is done by the operator.
+                In 100 defects is not detected (Cpk ≥ 1.33). 1% undetected errors.
+              </td>
+              <td class="ac fontM vaM">X</td>
+              <td class="ac fontM vaM">X</td>
+              <td class="ac"></td>
+              <td class="ac fontM vaM">6</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Moderate</td>
+              <td>
+                The fault (cause) is detected in production by the operator.
+                Automatic in-process monitoring is used to detect deviating product parameters
+                and inform the operator (light, horn, etc.).
+                In 200 defects is not detected (Cpk ≥ 1.5). 0.5% undetected faults.
+              </td>
+              <td class="ac fontM vaM">X</td>
+              <td class="ac fontM vaM">X</td>
+              <td class="ac"></td>
+              <td class="ac fontM vaM">5</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Moderately High</td>
+              <td>
+                Detection of the defect is done after manufacturing by automatic monitoring systems
+                that detect deviating products and block them, preventing delivery.
+                In 500 defects is not detected (Cpk ≥ 1.67). 0.2% defects not detected.
+              </td>
+              <td class="ac fontM vaM">X</td>
+              <td class="ac fontM vaM">X</td>
+              <td class="ac"></td>
+              <td class="ac fontM vaM">4</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">High probability</td>
+              <td>
+                The defect (cause) is detected in production with automatic monitoring systems
+                that detect the defect and prevent defective product from being produced.
+                In 1,000 defects is not detected (Cpk ≥ 1.83). 0.1% defects not detected.
+              </td>
+              <td class="ac fontM vaM">X</td>
+              <td class="ac fontM vaM">X</td>
+              <td class="ac"></td>
+              <td class="ac fontM vaM">3</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Very High</td>
+              <td>
+                The defect (cause) is detected in production with automatic monitoring systems
+                that detect the defect and prevent defective product from being produced.
+                In 10,000 defects is not detected (Cpk ≥ 2.0). 0.01% defects not detected.
+              </td>
+              <td class="ac fontM vaM">X</td>
+              <td class="ac fontM vaM">X</td>
+              <td class="ac"></td>
+              <td class="ac fontM vaM">2</td>
+            </tr>
+            <tr>
+              <td class="ac fontM vaM">Almost Certain</td>
+              <td>
+                The defect is prevented due to the design of the fixture.
+                Deviating products cannot be manufactured because the production is equipped
+                with error-preventing measures regarding process and/or product manufacturing.
+                The error cannot occur (Cpk ≥ 2.0).
+                Less than 0.01% undetected defects.
+              </td>
+              <td class="ac fontM vaM">X</td>
+              <td class="ac"></td>
+              <td class="ac"></td>
+              <td class="ac fontM vaM">1</td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="mpmOrange fontM font15">* Inspection types: A: automatic inspection; B: Inspection by a test device; C: Manual/Visual Inspection</div>
     </div>
   </article>
 
