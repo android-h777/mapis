@@ -512,7 +512,8 @@
 
           <div class="cardSubTitArea mt20">
             <div class="cardSubTit">FAILURE ANALYSIS, RISK ANALYSIS AND OPTIMIZATION (STEP 4, 5, 6)​​</div>
-            <div>
+            <div class="btnArea">
+              <a href="javascript:;" class="waves-effect waves-light hBtn hSmall hBlue mr10"><i class="material-icons left">add</i><span class="label">Copy Add Row</span></a>
               <a href="javascript:;" class="waves-effect waves-light hBtn hSmall js-row-add" id="addFailEffBtn"><i class="material-icons left">add</i><span class="label">Add Row</span></a>
             </div>
           </div>    
@@ -593,6 +594,7 @@
                 <col style="width: 50px;">
                 <col style="width: 50px;">
                 <col style="width: 200px;">
+                <col style="width: 50px;">
               </colgroup>
               <thead>
                 <tr>
@@ -600,6 +602,7 @@
                   <th colspan="7" class="bdR1 risk">RISK ANALYSIS</th>
                   <th colspan="12" class="opt">OPTIMIZATION</th>
                   <th rowspan="2">Remarks</th>
+                  <th rowspan="2"></th>
                 </tr>
 
                 <tr>
@@ -610,19 +613,19 @@
                   <th class="bdR1">Failure cause (FC) of NLL​​  <i class="material-icons tooltipped helpTooltip" data-position="top" data-html="true" data-tooltip="How could the subsystem,<br/>component or interface fail in the execution of the function described at the next lower level and lead to the failure mode.​​​">help</i></th>
 
                   <!-- RISK ANALYSIS (7) -->
-                  <th>Existing prevention control (PC) for FC</th>
+                  <th>Existing preventive control for FC​</th>
                   <th>FC Occurrence (O)​<i class="material-icons helpModal modal-trigger" data-target="helpModal_DFEMA2">help</i></th>
-                  <th>Existing detection control (DC) for FC or FM</th>
+                  <th>Existing detection control for FC/FM​</th>
                   <th>FC/FM Detection (D)​<i class="material-icons helpModal modal-trigger" data-target="helpModal_DFEMA3">help</i></th>
                   <th>RPN</th>
                   <th>AP</th>
-                  <th class="bdR1">Special Characteristics</th>
+                  <th class="bdR1">SC<i class="material-icons tooltipped helpTooltip" data-position="top" data-html="true" data-tooltip="Special Characteristics">help</i></th>
 
                   <!-- OPTIMIZATION (11) -->
                   <th>Prevention action</th>
                   <th>Detection action</th>
                   <th>Person responsible</th>
-                  <th>Target completion date</th>
+                  <th>Target Completion date</th>
                   <th>Status</th>
                   <th>Action taken with evidence</th>
                   <th>Completion date</th>
@@ -714,7 +717,7 @@
                     </select>                       
                   </td>
                   <td class="ac">4</td>
-                  <td class="ac">H</td>
+                  <td class="ac"><span class="roundBox viva pd010 fontM">H</span></td>
                   <td class="bdR1">
                     <select class="browser-default">
                       <option>Select</option>
@@ -815,14 +818,15 @@
                       <option value="10">10</option>
                     </select>                       
                   </td>
-                  <td class="ac">4</td>
                   <td class="ac">5</td>
+                  <td class="ac"><span class="roundBox viva pd010 fontM">H</span></td>
                   <td>
                     <div class="aniInput">
                       <input type="text" class="browser-default" placeholder="Remarks">
                       <span class="focus-border"></span>
                     </div>                     
                   </td>
+                  <td class="ac"><i class="material-icons">delete</i></td>
                 </tr>
 
                 <tr>
@@ -905,7 +909,7 @@
                     </select>                       
                   </td>
                   <td class="ac">4</td>
-                  <td class="ac">M</td>
+                  <td class="ac"><span class="roundBox yellow pd010 fontM">M</span></td>
                   <td class="bdR1">
                     <select class="browser-default">
                       <option>Select</option>
@@ -1007,14 +1011,208 @@
                     </select>                       
                   </td>
                   <td class="ac">4</td>
-                  <td class="ac">5</td>
+                  <td class="ac"><span class="roundBox viva pd010 fontM">H</span></td>
                   <td>
                     <div class="aniInput">
                       <input type="text" class="browser-default" placeholder="Remarks">
                       <span class="focus-border"></span>
                     </div>                     
                   </td>
+                  <td class="ac"><i class="material-icons">delete</i></td>
                 </tr>
+
+                <tr>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="Electronic components do not work or do not perform as well​​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <select class="browser-default">
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="Not enough thermal conductivity design​​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td class="bdR1">
+                    <div class="aniInput">
+                        <input type="text" value="Unsuitable choice of filler type​​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="Study the effect of filler type​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <select class="browser-default">
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value=" Measure thermal conductivity​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <select class="browser-default">
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td class="ac">4</td>
+                  <td class="ac"><span class="roundBox green pd010 fontM">L</span></td>
+                  <td class="bdR1">
+                    <select class="browser-default">
+                      <option>Select</option>
+                      <option value="0" selected>SC S​</option>
+                      <option value="1">SC L​</option>
+                      <option value="2">SC F​</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="text​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="text​​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="text​​" class="browser-default" placeholder="">
+                        <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                      <input type="text" class="datepicker browser-default wd100p ac" placeholder="Date">
+                      <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <select class="browser-default">
+                      <option value="0" selected>Open​</option>
+                      <option value="1">In decision​</option>
+                      <option value="2">In implementation​</option>
+                      <option value="3">Completed discarded​​</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                        <input type="text" value="text​​" class="browser-default" placeholder="">
+                      <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <div class="aniInput">
+                      <input type="text" class="datepicker browser-default wd100p ac" placeholder="Date">
+                      <span class="focus-border"></span>
+                    </div>
+                  </td>
+                  <td>
+                    <select class="browser-default">
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <select class="browser-default">
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td>
+                    <select class="browser-default">
+                      <option value="-1">-1</option>
+                      <option value="0" selected>0</option>
+                      <option value="1">1</option>
+                      <option value="2">2</option>
+                      <option value="3">3</option>
+                      <option value="4">4</option>
+                      <option value="5">5</option>
+                      <option value="6">6</option>
+                      <option value="7">7</option>
+                      <option value="8">8</option>
+                      <option value="9">9</option>
+                      <option value="10">10</option>
+                    </select>                       
+                  </td>
+                  <td class="ac">4</td>
+                  <td class="ac"><span class="roundBox green pd010 fontM">L</span></td>
+                  <td>
+                    <div class="aniInput">
+                      <input type="text" class="browser-default" placeholder="Remarks">
+                      <span class="focus-border"></span>
+                    </div>                     
+                  </td>
+                  <td class="ac"><i class="material-icons">delete</i></td>
+                </tr>
+
               </tbody>
             </table>
           </div>

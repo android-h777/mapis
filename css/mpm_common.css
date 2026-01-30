@@ -807,6 +807,9 @@ legend,
 .pd10 {
 	padding: 10px !important;
 }
+.pd010 {
+	padding: 0px 10px !important;
+}
 
 .pd15 {
 	padding: 15px !important;
@@ -3547,6 +3550,11 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	background-color: #bb2649 !important;
     border-color: #bb2649;
     color: #fff;
+}
+.roundBox.yellow {
+	background-color: #F2C94C !important;
+    border-color: #F2C94C;
+    color: #fff;	
 }
 
 .roundBox.bdOrange {
