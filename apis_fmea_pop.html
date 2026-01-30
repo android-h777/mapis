@@ -570,13 +570,13 @@
             <table>
               <colgroup>
                 <col style="width: 400px;">
-                <col style="width: 60px;">
+                <col style="width: 80px;">
                 <col style="width: 280px;">
                 <col style="width: 250px;">
                 <col style="width: 250px;">
-                <col style="width: 50px;">
+                <col style="width: 80px;">
                 <col style="width: 250px;">
-                <col style="width: 50px;">
+                <col style="width: 80px;">
                 <col style="width: 50px;">
                 <col style="width: 50px;">
                 <col style="width: 70px;">
@@ -587,9 +587,9 @@
                 <col style="width: 80px;">
                 <col style="width: 250px;">
                 <col style="width: 80px;">
-                <col style="width: 50px;">
-                <col style="width: 50px;">
-                <col style="width: 50px;">
+                <col style="width: 80px;">
+                <col style="width: 80px;">
+                <col style="width: 80px;">
                 <col style="width: 50px;">
                 <col style="width: 50px;">
                 <col style="width: 200px;">
@@ -605,15 +605,15 @@
                 <tr>
                   <!-- FAILURE ANALYSIS (4) -->
                   <th>Failure effects (FE) to NHE​ <i class="material-icons tooltipped helpTooltip" data-position="top" data-html="true" data-tooltip="How could the vehicle, system or subsystem fail to perform the function described at the next higher level<br/>(including potential consequences at end-user level and regulations)​​">help</i></th>
-                  <th>FE Severity (S)<i class="material-icons helpModal modal-trigger" data-target="helpModal_PFEMA3">help</i>​</th>
+                  <th>FE Severity (S)<i class="material-icons helpModal modal-trigger" data-target="helpModal_DFEMA1">help</i>​</th>
                   <th>Failure mode (FM) of FE​​  <i class="material-icons tooltipped helpTooltip" data-position="top" data-html="true" data-tooltip="How could the subsystem, component or interface fail in the execution of the function described as the focus element and lead to the failure effects.<br/>Failure analysis can start with FM, FE or FC as long as an exact failure chain is present Failure analysis can start with FM, FE or FC as long as an exact failure chain is present​​​">help</i></th>
                   <th class="bdR1">Failure cause (FC) of NLL​​  <i class="material-icons tooltipped helpTooltip" data-position="top" data-html="true" data-tooltip="How could the subsystem,<br/>component or interface fail in the execution of the function described at the next lower level and lead to the failure mode.​​​">help</i></th>
 
                   <!-- RISK ANALYSIS (7) -->
                   <th>Existing prevention control (PC) for FC</th>
-                  <th>Occurrence (O) of the FC</th>
+                  <th>FC Occurrence (O)​<i class="material-icons helpModal modal-trigger" data-target="helpModal_DFEMA2">help</i></th>
                   <th>Existing detection control (DC) for FC or FM</th>
-                  <th>Detection (D) of the FC/FM</th>
+                  <th>FC/FM Detection (D)​<i class="material-icons helpModal modal-trigger" data-target="helpModal_DFEMA3">help</i></th>
                   <th>RPN</th>
                   <th>AP</th>
                   <th class="bdR1">Special Characteristics</th>
@@ -1314,7 +1314,7 @@
       <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
     </div>
     <div class="modal-content">
-      <div class="font16">Evaluation ranking <span class="fontM">S = Severity of potential Failure​</span></div>
+      <div class="font16">Evaluation ranking S = Severity of potential Failure​</div>
       <div class="hFixedTable hBorderTable hScroll" style="overflow: auto; max-height: 550px;">
         <table>
           <colgroup>
@@ -1418,11 +1418,11 @@
 
   <article id="helpModal_DFEMA2" class="modal" style="width: 80%;">
     <div class="modal-header mochaBg">
-      <h5>Evaluation criteria: Severity of Potential Failure at Design FMEA​</h5>
+      <h5>Evaluation criteria: Probability of occurrence of the error​</h5>
       <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
     </div>
     <div class="modal-content">
-      <div class="font16">Evaluation ranking <span class="fontM">O = Occurrence​</span></div>
+      <div class="font16">Evaluation ranking O = Occurrence​</div>
       <div class="hFixedTable hBorderTable hScroll" style="overflow: auto; max-height: 550px;">
         <table>
           <colgroup>
@@ -1530,7 +1530,7 @@
       <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
     </div>
     <div class="modal-content">
-      <div class="font16">Evaluation ranking <span class="fontM">D = Failure Detection​​</span></div>
+      <div class="font16">Evaluation ranking D = Failure Detection​</div>
       <div class="hFixedTable hBorderTable hScroll" style="overflow: auto; max-height: 550px;">
         <table>
           <colgroup>
@@ -1639,7 +1639,7 @@
       <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
     </div>
     <div class="modal-content">
-      <div class="font16">Evaluation Table <span class="fontM">S = Severity of the potential defect​</span></div>
+      <div class="font16">Evaluation Table S = Severity of the potential defect​</div>
       <div class="hFixedTable hBorderTable hScroll" style="overflow: auto; max-height: 550px;">
         <table>
           <colgroup>
@@ -1831,7 +1831,7 @@
       <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
     </div>
     <div class="modal-content">
-      <div class="font16">Evaluation table <span class="fontM">O = Occurrence​​</span></div>
+      <div class="font16">Evaluation table O = Occurrence​​</div>
       <div class="hFixedTable hBorderTable hScroll" style="overflow: auto; max-height: 550px;">
         <table>
           <colgroup>
@@ -1942,11 +1942,11 @@
 
   <article id="helpModal_PFEMA3" class="modal" style="width: 80%;">
     <div class="modal-header mochaBg">
-      <h5>Evaluation criteria: Probability of detection of the defect​/h5>
+      <h5>Evaluation criteria: Probability of detection of the defect​</h5>
       <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
     </div>
     <div class="modal-content">
-      <div class="font16">Evaluation criteria <span class="fontM">D = Detection​</span></div>
+      <div class="font16">Evaluation criteria D = Detection​</div>
       <div class="hFixedTable hBorderTable hScroll" style="overflow: auto; max-height: 510px;">
         <table>
           <colgroup>
