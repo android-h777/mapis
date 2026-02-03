@@ -25,6 +25,14 @@
         });
 
       $(document).ready(function(){
+
+        $('.sidenav').sidenav();
+        $(document).on('click', '.sidenav-overlay, .closeBtns', function() {
+            $('.sidenav').sidenav('close');
+        });
+
+        $('.sidenav').sidenav('open');
+
         Highcharts.chart('container', {
             chart: {
                 type: 'column',
@@ -427,7 +435,7 @@
       <article class="navTop">
         <section class="leftSection">
           <div class="menuIcon">
-            <div><i class="material-icons">apps</i></div>
+            <div data-target="slide-out" class="sidenav-trigger" style=" height: auto; cursor: pointer;"><i class="material-icons">apps</i></div>
           </div>
           <div class="logo">
             <div class="tit"><span class="sfa">SFA</span></div>
@@ -695,6 +703,98 @@
       -->
     </nav>
   </header>
+
+  <aside class="menuAside">
+    <div id="slide-out" class="sidenav glassBox">
+      <div class="menuList hScroll" style="max-height: calc(100vh - 55px); overflow: auto;">
+        <ul class="lv1">
+          <li class="waves-effect waves-hColor">
+            <div><a href="javascript:;" class="lv1Tit"><i class="material-icons left">home</i>Home</a></div></li>
+          <li class="waves-effect waves-hColor">
+            <div><a href="javascript:;" class="lv1Tit"><i class="material-icons left">contacts</i>Customer Management</a></div>
+            <ul class="lv2">
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Account</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Contact</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Lead</a></li>
+            </ul>
+          </li>
+          <li class="waves-effect waves-hColor">
+            <div><a href="javascript:;" class="lv1Tit"><i class="material-icons left">directions_walk</i>Sales Strategy & Planning</a></div>
+            <ul class="lv2">
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Opportunity</a></li>
+            </ul>
+          </li>
+          <li class="waves-effect waves-hColor on">
+            <div><a href="javascript:;" class="lv1Tit"><i class="material-icons left">real_estate_agent</i>Sales Execution & Support</a></div>
+            <ul class="lv2">
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Sales Activity</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Case</a></li>
+              <li class="waves-effect waves-hColor on"><a href="javascript:;">Sample</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Order</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Line Item</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Shipment</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Actual Sales History</a></li>
+            </ul>
+          </li>
+          <li class="waves-effect waves-hColor">
+            <div><a href="javascript:;" class="lv1Tit"><i class="material-icons left">inventory</i>Product Management</a></div>
+            <ul class="lv2">
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Price Book</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Product</a></li>
+            </ul>
+          </li>
+          <li class="waves-effect waves-hColor">
+            <div><a href="javascript:;" class="lv1Tit"><i class="material-icons left">bar_chart</i>Insights & Analytics</a></div>
+          </li>
+          <li class="waves-effect waves-hColor">
+            <div><a href="javascript:;" class="lv1Tit"><i class="material-icons left">people</i>User & Access Management</a></div>
+            <ul class="lv2">
+              <li class="waves-effect waves-hColor"><a href="javascript:;">User Management</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Role Management</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Program Management</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Queue Management</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Access Control Log</a></li>
+            </ul>
+          </li>
+          <li class="waves-effect waves-hColor">
+            <div><a href="javascript:;" class="lv1Tit"><i class="material-icons left">settings</i>System Configuration</a></div>
+            <ul class="lv2">
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Common Code Management</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">System Settings</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Column Property Management</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Language Management</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Search Index Management</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">File Management</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">System Log</a></li>
+            </ul>
+          </li>
+          <li class="waves-effect waves-hColor">
+            <div><a href="javascript:;" class="lv1Tit"><i class="material-icons left">construction</i>Development Tools</a></div>
+            <ul class="lv2">
+              <li class="waves-effect waves-hColor"><a href="javascript:;">LLM Setting</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Template Management</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Interface API</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Developer Tools</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Legacy Objects</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Legacy Dashboards</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Legacy Reports</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Legacy Files</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Legacy Owned Records</a></li>
+            </ul>
+          </li>
+          <li class="waves-effect waves-hColor">
+            <div><a href="javascript:;" class="lv1Tit"><i class="material-icons left">engineering</i>Operation Center</a></div>
+            <ul class="lv2">
+              <li class="waves-effect waves-hColor"><a href="javascript:;">SQL Data Extraction</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">User Activity Log</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Notification Mailer</a></li>
+              <li class="waves-effect waves-hColor"><a href="javascript:;">Email Intake Monitor</a></li>
+            </ul>
+          </li>
+        </ul>
+      </div>
+    </div>
+  </aside>
 
   <article class="contArea mainCont">
     <div class="contDt">

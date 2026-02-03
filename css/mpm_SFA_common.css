@@ -2182,3 +2182,141 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 .insightCardArea .s20 {
 	width: 20%;
 }
+
+
+.menuAside .sidenav {
+    margin: 10px;
+    height: calc(100% - 20px);
+}
+
+.menuAside .menuList {
+	margin: 20px 10px 20px 20px;
+}
+.menuAside .menuList ul.lv1 {
+	margin-right: 10px;
+}
+.menuAside .menuList i.left {
+	margin-right: 10px;
+}
+.menuAside .menuList li {
+	width: 100%;
+	position: relative;
+	padding: 0px 10px;
+	font-size: 15px;
+	display: flex;
+	align-items: center;
+	border-radius: 20px;
+}
+.menuAside .menuList ul.lv1 > li {
+    align-items: flex-start;
+	flex-direction: column;
+	margin-bottom: 5px;
+	border-bottom: 1px dashed #ccc;
+    border-radius: 0px;}
+
+.menuAside .menuList ul.lv1 > li.on{
+	font-family: 'Roboto-Bold';
+	color: #e87e05;
+	box-shadow: 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%), 0 2px 4px -1px rgb(0 0 0 / 30%);
+	background-color: rgba(255, 255, 255, 0.8) !important;
+	border: none;
+	border-radius: 20px;
+}
+.menuAside .menuList ul.lv1 > li:hover {
+	font-family: 'Roboto-Medium';
+	color: #a47764;
+	box-shadow: 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%), 0 2px 4px -1px rgb(0 0 0 / 30%);
+	background-color: rgba(255, 255, 255, 0.8) !important;
+	border: none;
+	border-radius: 20px;
+}
+
+.menuAside .menuList ul.lv1 > li.on::before {
+	content: "";
+	position: absolute;
+	inset: 0px;
+	border: 2px solid #e87e05;
+	border-radius: 20px;
+	pointer-events: none;
+}
+
+.menuAside .menuList ul.lv1 > li:hover::before {
+	content: "";
+	position: absolute;
+	inset: 0px;
+	border: 1px solid #a47764;
+	border-radius: 20px;
+	pointer-events: none;
+}
+
+.menuAside .menuList ul.lv1 > li > a {
+	padding: 0px;
+	color: unset;
+	width: 100%;
+	line-height: 40px;
+	height: 40px;
+}
+.menuAside .menuList ul.lv1 > li > a:hover {
+	background-color: unset;
+	color: unset;
+}
+.menuAside .menuList ul.lv1 > li > a > i {
+	line-height: 40px;
+	height: 40px;
+}
+
+.lv1Tit {
+    display: flex;
+    align-items: center;	
+	font-family: 'Roboto-Medium' !important;
+}
+
+.menuAside .menuList ul.lv2 {
+	width: 100%;
+	margin-top: -10px;
+	margin-bottom: 5px;
+}
+.menuAside .menuList ul.lv2 li {
+	width: 100%;
+	margin: 5px 0px;
+}
+.menuAside .menuList ul.lv2 li > a {
+    height: 30px;
+    line-height: 30px;
+	padding: 0px 25px;
+    width: 100%;
+}
+
+.menuAside .menuList ul.lv2 > li.on, .menuAside .menuList ul.lv2 > li:hover {
+	box-shadow: 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%), 0 2px 4px -1px rgb(0 0 0 / 30%);
+}
+.menuAside .menuList ul.lv2 > li.on > a , .menuAside .menuList ul.lv2 > li:hover > a {
+	font-family: 'Roboto-Bold';
+	color: #e87e05;
+	background-color: transparent;
+}
+.menuAside .menuList ul.lv1 > li > a:hover ul.lv2 > li:hover > a {
+	font-family: 'Roboto-Medium';
+}
+
+.sidenav-overlay {
+	background-color: rgba(255, 255, 255, 0.2) !important;
+}
+
+.glassBox {
+	background: rgba(255, 255, 255, 0.15); /* 반투명 흰색 */
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.37); /* 부드러운 그림자 */
+	backdrop-filter: blur(10px); /* 배경 흐림 효과 */
+	-webkit-backdrop-filter: blur(10px); /* 사파리 호환 */
+	border-radius: 40px; /* 둥근 테두리 */
+	border: 1px solid rgba(255, 255, 255, 0.3); /* 밝은 테두리 */
+	transition: background 0.5s ease, box-shadow 0.5s ease; /* 추가된 부분 */
+}
+.glassBox:hover {
+	background: rgba(255, 255, 255, 0.5); /* 반투명 흰색 */
+	box-shadow: 0 8px 32px 0 rgba(31, 38, 135, 0.67); /* 부드러운 그림자 */
+}
+
+.waves-effect.waves-hColor .waves-ripple {
+	background-color: rgba(164, 119, 100, 0.5);
+}
