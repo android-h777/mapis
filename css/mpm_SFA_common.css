@@ -2216,7 +2216,7 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 
 .menuAside .menuList ul.lv1 > li.on{
 	font-family: 'Roboto-Bold';
-	color: #e87e05;
+	color: #e87e05 !important;
 	box-shadow: 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%), 0 2px 4px -1px rgb(0 0 0 / 30%);
 	background-color: rgba(255, 255, 255, 0.8) !important;
 	border: none;
@@ -2235,7 +2235,7 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	content: "";
 	position: absolute;
 	inset: 0px;
-	border: 2px solid #e87e05;
+	border: 2px solid #e87e05 !important;
 	border-radius: 20px;
 	pointer-events: none;
 }

@@ -1,0 +1,465 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/highcharts/highcharts.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/highcharts/modules/timeline.js"></script>
+    <script>
+        $(document).ready(function(){
+          $('.sidenav').sidenav();
+          $(document).on('click', '.sidenav-overlay, .closeBtns', function() {
+              $('.sidenav').sidenav('close');
+          });
+          $(".bgLayer").click(function(){
+            $(".bgLayer").hide();
+            $(".contArea").removeClass("blur");
+            $(".srchRstArea, .srchDtArea").slideUp();
+          });
+
+          //$('select').formSelect();
+          $('.modal').modal();
+        });
+    </script>
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <article class="navTop">
+        <section class="leftSection">
+          <div class="menuIcon">
+            <div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
+          </div>
+          <div><a href="apis_main.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
+        </section>
+        <section class="centerSection">
+          <div class="srchArea">
+            <i class="material-icons prefix">search</i>
+            <input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput" autocomplete="off">
+          </div>
+        </section>
+        <section class="rightSection">
+          <div class="userInfo">
+            <div class="mr10">
+              <span class="mocha25-text fontM">JONGHO LEE</span>  
+            </div>
+            <i class="material-icons gardenia25 mocha25-text fLine vCenter hCenter mg0">person</i>
+            <div class="btnArea" style="padding-top: 20px; margin-top: 0px; padding-bottom: 20px; margin-bottom: 0px; display: none;">
+              <a id="profileBtn" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">account_circle</span>
+                <span class="label">View Profile</span>
+              </a>
+              <a id="adminBtn" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">admin_panel_settings</span><span class="label">Administrator</span>
+              </a>
+              <a id="" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">volunteer_activism</span><span class="label">Service Now</span>
+              </a>
+              <a id="" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">directions</span><span class="label">Guidance</span>
+              </a>
+              <a id="" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">local_library</span><span class="label">Training</span>
+              </a>
+              <a id="logoutBtn" class="waves-effect waves-light hBtn hViva">
+                <span class="material-symbols-outlined left">logout</span><span class="label">Sign Out</span>
+              </a>
+            </div>
+          </div>
+          <div class="langInfo ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">language</i>
+            <div class="btnArea" style="padding-top: 20px; margin-top: 0px; padding-bottom: 20px; margin-bottom: 0px; display: none;">
+              <a class="waves-effect waves-light hBtn jc hViva on" data-lang="en">English</a><a class="waves-effect waves-light hBtn jc" data-lang="de">German</a><a class="waves-effect waves-light hBtn jc" data-lang="ko">Korean</a><a class="waves-effect waves-light hBtn jc" data-lang="ja">Japanese</a><a class="waves-effect waves-light hBtn jc" data-lang="zh">Chinese</a><a class="waves-effect waves-light hBtn jc" data-lang="it">Italian</a><a class="waves-effect waves-light hBtn jc" data-lang="es">Spanish</a>
+            </div>
+          </div>
+          <div class="notiArea ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">assignment_turned_in</i>
+            <div class="notiCnt pulse"><span class="font11">3</span></div>
+          </div>
+          <div class="notiArea ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">format_list_bulleted</i>
+            <div class="notiCnt pulse"><span class="font11">6</span></div>
+          </div>
+        </section>
+      </article>
+    </nav>
+  </header>
+
+  <aside class="menuAside">
+    <div id="slide-out" class="sidenav glassBox">
+      <div class="userInfoArea">
+        <div class="photo"><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+        <div class="userInfo">
+          <div class="fontB">JONGHO LEE</div>
+          <div>IT Procurement/HR/R&D Team</div>
+        </div>
+      </div>
+      <div class="menuList">
+        <ul>
+          <li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>Home</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_dash.html"><i class="material-icons left">analytics</i>Insight</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_proposal_list.html"><i class="material-icons left">assistant</i>Proposal</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_custom_list.html"><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npt_list.html"><i class="material-icons left">snippet_folder</i>NPT</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_tech_list.html"><i class="material-icons left">build</i>Tech Support</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_fmea_list.html"><i class="material-icons left">playlist_add_check_circle</i>FMEA​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_coc.html"><i class="material-icons left">assignment_late</i>CoC​</a></li>
+          <li class="waves-effect waves-hColor on"><a href="apis_psa.html"><i class="material-icons left">health_and_safety</i>PSA</a></li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <article class="contArea typeList type4">
+    <div class="leftSection">
+      <section class="mainTitArea">
+        <div class="mainTit">PSA</div>
+        <div class="btnArea">
+            <div class="mainSrchInput mr20">
+              <div class="aniInput">
+                <input type="text" value="" class="browser-default" placeholder="Filter Any Values Here">
+                <span class="focus-border"/>
+              </div>                    
+              <div class="srchBtn"><i class="material-icons">search</i></div>
+            </div>
+            <a href="javascript:;" id="saveBtn" class="waves-effect waves-light hBtn hGreen wd120px mr10"><i class="material-icons left">grid_on</i><span class="label">Excel</span></a>
+        </div>
+      </section>
+
+      <section class="mainList cardBox">
+				<div class="fixedTable hBorderTable hScroll mt10" style="overflow: auto; max-height: calc(100% - 305px);">
+          <table>
+            <colgroup>
+              <col style="width: 240px;">    <!-- NPI Id -->
+              <col style="width: auto;">    <!-- Segment -->
+              <col style="width: 190px;">    <!-- Business -->
+              <col style="width: 130px;">    <!-- Changed On -->
+              <col style="width: 170px;">    <!-- Project Leader -->
+              <col style="width: 130px;">    <!-- NPI Stage -->
+              <col style="width: 140px;">    <!-- Category in NPDI -->
+              <col style="width: 110px;">    <!-- Numerical Score -->
+              <col style="width: 160px;">    <!-- PSA Status -->
+              <col style="width: 140px;">    <!-- Leading Ind 1 -->
+              <col style="width: 140px;">    <!-- Leading Ind 2 -->
+              <col style="width: 140px;">    <!-- Leading Ind 3 -->
+              <col style="width: 140px;">    <!-- Leading Ind 4 -->
+              <col style="width: 140px;">    <!-- Leading Ind 5 -->
+              <col style="width: 140px;">    <!-- Leading Ind 6 -->
+            </colgroup>
+
+            <thead>
+              <tr>
+                <th>NPI Id</th>
+                <th>Segment</th>
+                <th>Business</th>
+                <th>Changed On</th>
+                <th>Project Leader</th>
+                <th>NPI Stage</th>
+                <th>Category in NPDI</th>
+                <th>Numerical Score</th>
+                <th>PSA Status</th>
+                <th>Leading Ind 1</th>
+                <th>Leading Ind 2</th>
+                <th>Leading Ind 3</th>
+                <th>Leading Ind 4</th>
+                <th>Leading Ind 5</th>
+                <th>Leading Ind 6</th>
+              </tr>
+            </thead>
+
+            <tbody>
+              <tr>
+                <td>03057 - UVHC<br>3000K50 (Valeo)</td>
+                <td>Formulated<br>Specialties</td>
+                <td>Coatings-<br>HDC/WSC</td>
+                <td>22-Dec-2025</td>
+                <td></td>
+                <td>NPI Go</td>
+                <td>NEUTRAL</td>
+                <td class="ac">0</td>
+                <td>PSA Complete<br>Assessment</td>
+                <td></td><td></td><td></td><td></td><td></td><td></td>
+              </tr>
+
+              <tr>
+                <td>03442 - Borate<br>UVPI</td>
+                <td>Formulated<br>Specialties</td>
+                <td>Coatings-RCL/PSA<br>- 523</td>
+                <td>13-Mar-2025</td>
+                <td>Takashi Koizumi</td>
+                <td>Commercial Go</td>
+                <td>BENEFICIAL<br>IMPACT</td>
+                <td class="ac">12</td>
+                <td>PSA Final Review</td>
+                <td>Design for Safety</td>
+                <td>Optimization of<br>resource<br>efficiencies</td>
+                <td></td><td></td><td></td><td></td>
+              </tr>
+
+              <tr>
+                <td>03442 - Borate<br>UVPI</td>
+                <td>Formulated<br>Specialties</td>
+                <td>Coatings-RCL/PSA<br>- 523</td>
+                <td>08-Dec-2025</td>
+                <td>HARIKRISHNAN.M<br>@MOMENTIVE.CO<br>M</td>
+                <td>Post Launch<br>Review</td>
+                <td>BENEFICIAL<br>IMPACT</td>
+                <td class="ac">13</td>
+                <td>PSA Initial<br>Assessment</td>
+                <td>Design for Safety</td>
+                <td>Optimization of<br>resource<br>efficiencies</td>
+                <td>Renewable<br>Alternatives</td>
+                <td></td><td></td><td></td>
+              </tr>
+
+              <tr>
+                <td>03533 - Low<br>Yellowing<br>Aminosilane</td>
+                <td>Performance<br>Additives</td>
+                <td>CAS/P&amp;E</td>
+                <td>09-Dec-2025</td>
+                <td>ALENKA DIMEC</td>
+                <td>Commercial Go</td>
+                <td>BENEFICIAL<br>IMPACT</td>
+                <td class="ac">10</td>
+                <td>PSA Final Review</td>
+                <td>Design for Safety</td>
+                <td></td><td></td><td></td><td></td>
+                <td>Societal Benefits</td>
+              </tr>
+
+              <tr>
+                <td>03537 - Imine Fxn<br>Silane (FXP 49N<br>Silane)</td>
+                <td>Performance<br>Additives</td>
+                <td>Tire - 433</td>
+                <td>17-Apr-2024</td>
+                <td>Judy.Douglas@mo<br>mentive.com</td>
+                <td>Post Launch<br>Review</td>
+                <td>BENEFICIAL<br>IMPACT</td>
+                <td class="ac">9</td>
+                <td>PSA Final Review</td>
+                <td>Design for Safety</td>
+                <td>Optimization of<br>resource<br>efficiencies</td>
+                <td></td><td></td><td></td>
+                <td>Societal Benefits</td>
+              </tr>
+
+              <tr>
+                <td>03648 - Surfactant<br>for HBL CP-blown<br>Appliance</td>
+                <td>Performance<br>Additives</td>
+                <td>PU - Rigid Molded<br>Specialties Foam -<br>422</td>
+                <td>08-May-2025</td>
+                <td></td>
+                <td>Commercial Go</td>
+                <td>NEUTRAL</td>
+                <td class="ac">1</td>
+                <td>PSA Final Review</td>
+                <td>Design for Safety</td>
+                <td></td><td></td><td></td><td></td><td></td>
+              </tr>
+
+              <tr>
+                <td>03680 - Trisiloxane<br>Fighting Brand</td>
+                <td>Performance<br>Additives</td>
+                <td>Process<br>Industries/Agricultu<br>re - 412</td>
+                <td>05-Nov-2025</td>
+                <td></td>
+                <td>Commercial Go</td>
+                <td>BENEFICIAL<br>IMPACT</td>
+                <td class="ac">4</td>
+                <td>PSA Final Review</td>
+                <td>Design for Safety</td>
+                <td>Optimization of<br>resource<br>efficiencies</td>
+                <td></td><td></td><td></td><td></td>
+              </tr>
+
+              <tr>
+                <td>03773 - LowTemp<br>FastCure Adhesive<br>for TCU, ECUap</td>
+                <td>Formulated<br>Specialties</td>
+                <td>Electronic<br>Materials</td>
+                <td>25-Jun-2024</td>
+                <td>KOKI.OTASHIRO@<br>MOMENTIVE.COM</td>
+                <td>Commercial Go</td>
+                <td>BENEFICIAL<br>IMPACT</td>
+                <td class="ac">45</td>
+                <td>PSA Final Review</td>
+                <td></td>
+                <td>Optimization of<br>resource<br>efficiencies</td>
+                <td></td><td></td><td></td>
+                <td>Societal Benefits</td>
+              </tr>
+
+              <tr>
+                <td>03818 - 1P Pre-<br>cured 4W thermal<br>Gel</td>
+                <td>Formulated<br>Specialties</td>
+                <td>Electronic<br>Materials</td>
+                <td>27-Jun-2024</td>
+                <td>SANDEEP.NAIK@<br>MOMENTIVE.COM</td>
+                <td>Customer<br>Acceptance</td>
+                <td>BENEFICIAL<br>IMPACT</td>
+                <td class="ac">15</td>
+                <td>PSA Initial<br>Assessment</td>
+                <td>Design for Safety</td>
+                <td>Optimization of<br>resource<br>efficiencies</td>
+                <td></td><td></td><td></td><td></td>
+              </tr>
+
+              <tr>
+                <td>03959 - Mitsubishi<br>1P high temp<br>stable gel XE13-</td>
+                <td>Formulated<br>Specialties</td>
+                <td>Electronic<br>Materials</td>
+                <td>02-Jul-2024</td>
+                <td>HIROYOSHI.IIJIMA<br>@MOMENTIVE.CO<br>M</td>
+                <td>Commercial Go</td>
+                <td>BENEFICIAL<br>IMPACT</td>
+                <td class="ac">36</td>
+                <td>PSA Initial<br>Assessment</td>
+                <td></td>
+                <td>Optimization of<br>resource<br>efficiencies</td>
+                <td></td><td></td><td></td><td></td>
+              </tr>
+
+              <tr>
+                <td>03960 - 2P high<br>temp stability Gel<br>(XE14-C6776AB</td>
+                <td>Formulated<br>Specialties</td>
+                <td>Electronic<br>Materials</td>
+                <td>06-May-2024</td>
+                <td>hiroyoshi.iijima@m<br>omentive.com</td>
+                <td>Commercial Go</td>
+                <td>BENEFICIAL<br>IMPACT</td>
+                <td class="ac">9</td>
+                <td>PSA Initial<br>Assessment</td>
+                <td></td>
+                <td>Optimization of<br>resource<br>efficiencies</td>
+                <td></td><td></td><td></td><td></td>
+              </tr>
+
+              <tr>
+                <td>03969 - Next-<br>Generation Phenyl<br>PSA</td>
+                <td>Formulated<br>Specialties</td>
+                <td>Coatings-RCL/PSA<br>- 523</td>
+                <td>06-Jan-2025</td>
+                <td>JU.CHEN@MOME<br>NTIVE.COM</td>
+                <td>Scale-up</td>
+                <td>NEUTRAL</td>
+                <td class="ac">1</td>
+                <td>PSA Initial<br>Assessment</td>
+                <td></td>
+                <td>Optimization of<br>resource<br>efficiencies</td>
+                <td></td><td></td><td></td><td></td>
+              </tr>
+
+              <tr>
+                <td>04065 - 25 Shore<br>A_Oilbleeding Low<br>Cyclics LSR</td>
+                <td>Formulated<br>Specialties</td>
+                <td>Elastomers</td>
+                <td>17-Apr-2024</td>
+                <td>Masanari.Shimaka<br>wa@momentive.co<br>m</td>
+                <td>Post Launch<br>Review</td>
+                <td>BENEFICIAL<br>IMPACT</td>
+                <td class="ac">6</td>
+                <td>PSA Final Review</td>
+                <td></td>
+                <td>Optimization of<br>resource<br>efficiencies</td>
+                <td></td><td></td><td></td><td></td>
+              </tr>
+            </tbody>
+          </table>          
+        </div>
+      </section>
+    </div>
+  </article>
+
+  <article id="searchModal" class="modal" style="width: 800px;">
+    <div class="modal-header mochaBg">
+      <h5>Seach</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div class="srchOptBox">
+        <div class="row">
+          <div class="col s2 tit">CAS Number</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+          <div class="col s2 tit">Synonyms</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Material Number</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+          <div class="col s2 tit">Chemical Group</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Material Desc.</div>
+          <div class="col s4">
+            <div class="aniInput">
+                <input type="text" value="" class="browser-default">
+                <span class="focus-border"></span>
+            </div>
+          </div>
+          <div class="col s2 tit">Site</div>
+          <div class="col s4">
+            <select class="browser-default">
+              <option value="0">ALL</option>
+              <option value="1">Waterford [WTFD]</option>
+              <option value="2">Sistersville [SVLL]</option>
+            </select>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Sort</div>
+          <div class="col s4">
+            <select class="browser-default">
+              <option value="0">Register Date</option>
+              <option value="1">Alphabet</option>
+              <option value="2">Site</option>
+            </select>
+          </div>
+          <div class="col s2 tit">Period</div>
+          <div class="col s4">
+            <select class="browser-default">
+              <option value="0">All</option>
+              <option value="1">1 Month</option>
+              <option value="2">3 Month</option>
+            </select>
+          </div>
+        </div>
+      </div>
+      <div class="btnArea">
+        <a href="javascript:;" class="waves-effect waves-light hBtn hViva wd100px" id="srchOptBtn"><i class="material-icons left">search</i><span class="label">Search</span></a>
+      </div>
+    </div>
+  </article>
+  <article class="bgLayer"></article>
+</body>
+</html>

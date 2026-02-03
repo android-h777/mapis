@@ -2313,6 +2313,10 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 	border-top: 1px dashed #e0e0e0;
 }
 
+.fixedTable.hBorderTable [type="radio"]:not(:checked) + span, .fixedTable.hBorderTable [type="radio"]:checked + span {
+	padding-left: 15px;
+}
+
 .fixedTable .lv1 td {
     background-color: #E1DCCA;
     color: #000;
@@ -2597,6 +2601,10 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	right: 20px;
     top: 20px;
 	width: calc(100% - 710px);
+}
+
+.typeList.type4 .leftSection {
+    width: 100%;
 }
 
 .typeList .mainList {
@@ -5410,4 +5418,34 @@ select.browser-default {
 	border-right: none;
 	border-color: #A47864;
 	border-radius: 0px;
+}
+.mainSrchInput {
+	position: relative;
+}
+.mainSrchInput .aniInput {
+	border: 2px solid #7391c9;
+	background-color: #fff;
+	border-radius: 20px;
+	padding: 0px 80px 0px 20px;
+}
+.mainSrchInput .aniInput .browser-default {
+	line-height: 27px;
+	width: 300px;
+	background-color: #fff;
+}
+.mainSrchInput .aniInput .focus-border {
+	bottom: -1px;
+}
+.mainSrchInput .aniInput :focus ~ .focus-border {
+	width: calc(100% - 20px);
+	left: 10px;
+}
+.mainSrchInput .srchBtn {
+	cursor: pointer;
+	position: absolute;
+    right: 10px;
+    top: 4px;
+}
+.mainSrchInput .srchBtn i {
+	color: #7391c9;
 }
