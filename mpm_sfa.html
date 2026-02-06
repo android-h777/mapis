@@ -53,6 +53,20 @@
         $('.dropdown-trigger').dropdown();
         $('.tabs').tabs();
         $('.collapsible').collapsible({accordion: false});
+        $('select').formSelect();
+
+        $(".clrbUl li .titArea .tit").click(function(){
+          var $li = $(this).parents("li");
+          $li.toggleClass("on").find(".dtArea").slideToggle();
+        });
+
+        $("#contCmmt .post-header .cmmtBtn").click(function(){
+          var $parent = $(this).parents(".post");
+          $parent.toggleClass("on").find(".comment-section").slideToggle();
+        });
+        $("#newPostBtn").click(function(){
+          $(".post.new").show().addClass("animate__flipInX");
+        });
 
         $(".contHeader .cardBox").addClass("animate__animated animate__zoomIn").promise().done(function(){
           $(".contDtArea .cardBox").addClass("animate__animated animate__zoomIn").promise().done(function(){
@@ -107,6 +121,18 @@
           <li>Profit Centers<i class="material-icons prefix">keyboard_arrow_down</i></li>
           <li>More<i class="material-icons prefix">arrow_drop_down</i></li>
         </ul>
+      </article>
+      <article class="menuNavi">
+        <ul>
+          <li class="TypeList waves-effect waves-blue">Accounts</li>
+          <li>Chemistry Connection 1 | Accounts View<i class="material-icons prefix">close</i></li>
+          <li class="on">Chanel Parfums Beaute | Accounts View<i class="material-icons prefix">close</i></li>
+          <li>LEM | Accounts View <i class="material-icons prefix">close</i></li>
+          <li>SACHS CHEMICAL | Accounts View <i class="material-icons prefix">close</i></li>
+          <li>DyStar | Accounts View <i class="material-icons prefix">close</i></li>
+          <li>Valeo Annemasse | Accounts View <i class="material-icons prefix">close</i></li>
+          <li>RAMPF (Taicang) Co., Ltd | Accounts View <i class="material-icons prefix">close</i></li>
+        </ul>        
       </article>
     </nav>
   </header>
@@ -443,34 +469,519 @@
 
       <div class="contDtSubArea">
         <div class="cardBox animate__animated">
-          <div class="cardTit">Create New Opportunity</div>
-          <div class="mt20 ml10">
-            <div><span class="vivaTxt">*</span><span class="blackTxt">Opportunity Record Type</span></div>
-            <div class="mt5">
-              <label>
-                <input class="with-gap" name="group1" type="radio"  />
-                <span>12 Month Opportunity</span>
-              </label>
-            </div>
-            <div>
-              <label>
-                <input class="with-gap" name="group1" type="radio"  />
-                <span>Multi-Year Opportunity</span>
-              </label>
-            </div>
-          </div>
-          <div class="mt10 ml10 blackTxt">Click Create to start a new opportunity</div>
-          <div class="cardBtnArea ar">
-            <a href="javascript:;" class="waves-effect waves-blue hBtn hBlue"><i class="material-icons left">edit</i>Create</a>
-          </div>
-        </div>
-
-        <div class="cardBox animate__animated mt10">
           <ul class="tabs">
-            <li class="tab"><a href="#cont2-1">Activity</a></li>
-            <li class="tab"><a href="#cont2-2">Chatter</a></li>
+            <li class="tab"><a href="#contClrbrt">Collaboration (7)</a></li>
+            <li class="tab"><a href="#contCmmt">Comment (4)</a></li>
           </ul>
-          <section id="cont1">
+          <section id="contClrbrt" class="clrbrtArea">
+            <div class="btnArea">
+              <a href="javascript:;" class="waves-effect waves-blue hBtn type2"><i class="material-icons left">add</i>All Open</a>
+              <a href="javascript:;" class="waves-effect waves-blue hBtn type2 hBlue"><i class="material-icons left">create</i>New Post</a>
+            </div>
+            <ul class="clrbUl">
+              <li class="on">
+                <div class="titArea">
+                  <div class="roundBox green status">Completed</div>
+                  <div class="tit">POP statement</div>
+                </div>
+                <div class="row mt10">
+                  <div class="col s4">Due : <span class="fontM">2025-11-26</span></div>
+                  <div class="col s4">Priority : <span class="roundBox bdViva">High</span></div>
+                  <div class="col s4">Score : <span class="font18 fontM">5</span></div>
+                </div>
+                <div class="row">
+                  <div class="col s12"><span>PS_On/Not On a List_POP</span></div>
+                </div>
+                <div class="row">
+                  <div class="col s6">
+                    Requestor : 
+                    <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="userPic">
+                    <span class="link lineH15">JONGHO LEE</span>
+                  </div>
+                  <div class="col s6">
+                    Collaborator : 
+                    <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" class="userPic">
+                    <span class="link lineH15">Shin Duho</span>
+                  </div>
+                </div>
+                <div class="dtArea">
+                  <ul class="clrbDtUl">
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdGrey">Requested</div>
+                        <div>2025-11-19 06:22</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" class="userPic mr5">
+                          <span class="link lineH15">Shin Duho</span>
+                          <span class="ml10 fontM">Inside Sales - PAC</span>
+                        </div>
+                        <div class="dtCont">
+                          pls help to issue POP statement for the following material.<br/><br/>
+                          76569 TSE2277U-BOX-(44.09lb-20kgs)-SM<br/>
+                          112024 SC1301-CARTON-20KG 
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdOrange">Accepted</div>
+                        <div>2025-11-20 07:25</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="userPic mr5">
+                          <span class="link lineH15">Jongho Lee</span>
+                          <span class="ml10 fontM">PS APAC Operations</span>
+                        </div>
+                        <div class="dtCont">
+                          accept
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdBlue">Action Taken</div>
+                        <div>2025-11-24 03:18</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="userPic mr5">
+                          <span class="link lineH15">Jongho Lee</span>
+                          <span class="ml10 fontM">PS APAC Operations</span>
+                        </div>
+                        <div class="dtCont">
+                          POP statement has been created, please see if attachment can be retrieved. Thank you.
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdGreen">Completed</div>
+                        <div>2025-11-24 04:05</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" class="userPic mr5">
+                          <span class="link lineH15">Shin Duho</span>
+                          <span class="ml10 fontM">Inside Sales - PAC</span>
+                        </div>
+                        <div class="dtCont">
+                          completed
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="btnArea">
+                    <a href="javascript:;" class="waves-effect waves-blue hBtn type2 hBlue"><i class="material-icons left">play_arrow</i>Take Action</a>
+                    <a href="javascript:;" class="waves-effect waves-blue hBtn type2 hOrange"><i class="material-icons left">add</i>Detail</a>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="titArea">
+                  <div class="roundBox yellow status">Forwarded</div>
+                  <div class="tit">conflict minerals</div>
+                </div>
+                <div class="row mt10">
+                  <div class="col s4">Due : <span class="fontM">2025-11-26</span></div>
+                  <div class="col s4">Priority : <span class="roundBox bdOrange">Medium</span></div>
+                  <div class="col s4">Score : <span class="font18 fontM">4</span></div>
+                </div>
+                <div class="row">
+                  <div class="col s12"><span>PS_On/Not On a List_Conflict Minerals</span></div>
+                </div>
+                <div class="row">
+                  <div class="col s6">
+                    Requestor : 
+                    <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="userPic">
+                    <span class="link lineH15">JONGHO LEE</span>
+                  </div>
+                  <div class="col s6">
+                    Collaborator : 
+                    <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" class="userPic">
+                    <span class="link lineH15">Shin Duho</span>
+                  </div>
+                </div>
+                <div class="dtArea" style="display: none;">
+                  <ul class="clrbDtUl">
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdGrey">Requested</div>
+                        <div>2025-11-19 06:22</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" class="userPic mr5">
+                          <span class="link lineH15">Shin Duho</span>
+                          <span class="ml10 fontM">Inside Sales - PAC</span>
+                        </div>
+                        <div class="dtCont">
+                          pls help to issue POP statement for the following material.<br/><br/>
+                          76569 TSE2277U-BOX-(44.09lb-20kgs)-SM<br/>
+                          112024 SC1301-CARTON-20KG 
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdOrange">Accepted</div>
+                        <div>2025-11-20 07:25</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="userPic mr5">
+                          <span class="link lineH15">Jongho Lee</span>
+                          <span class="ml10 fontM">PS APAC Operations</span>
+                        </div>
+                        <div class="dtCont">
+                          accept
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdBlue">Action Taken</div>
+                        <div>2025-11-24 03:18</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="userPic mr5">
+                          <span class="link lineH15">Jongho Lee</span>
+                          <span class="ml10 fontM">PS APAC Operations</span>
+                        </div>
+                        <div class="dtCont">
+                          POP statement has been created, please see if attachment can be retrieved. Thank you.
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdGreen">Completed</div>
+                        <div>2025-11-24 04:05</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" class="userPic mr5">
+                          <span class="link lineH15">Shin Duho</span>
+                          <span class="ml10 fontM">Inside Sales - PAC</span>
+                        </div>
+                        <div class="dtCont">
+                          completed
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="btnArea">
+                    <a href="javascript:;" class="waves-effect waves-blue hBtn type2 hBlue"><i class="material-icons left">play_arrow</i>Take Action</a>
+                    <a href="javascript:;" class="waves-effect waves-blue hBtn type2 hOrange"><i class="material-icons left">add</i>Detail</a>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="titArea">
+                  <div class="roundBox viva status">Rejected</div>
+                  <div class="tit">PFAS</div>
+                </div>
+                <div class="row mt10">
+                  <div class="col s4">Due : <span class="fontM">2025-11-26</span></div>
+                  <div class="col s4">Priority : <span class="roundBox bdViva">High</span></div>
+                  <div class="col s4">Score : <span class="font18 fontM">2</span></div>
+                </div>
+                <div class="row">
+                  <div class="col s12"><span>PS_On/Not On a List_PFAS</span></div>
+                </div>
+                <div class="row">
+                  <div class="col s6">
+                    Requestor : 
+                    <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="userPic">
+                    <span class="link lineH15">JONGHO LEE</span>
+                  </div>
+                  <div class="col s6">
+                    Collaborator : 
+                    <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" class="userPic">
+                    <span class="link lineH15">Shin Duho</span>
+                  </div>
+                </div>
+                <div class="dtArea" style="display: none;">
+                  <ul class="clrbDtUl">
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdGrey">Requested</div>
+                        <div>2025-11-19 06:22</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" class="userPic mr5">
+                          <span class="link lineH15">Shin Duho</span>
+                          <span class="ml10 fontM">Inside Sales - PAC</span>
+                        </div>
+                        <div class="dtCont">
+                          pls help to issue POP statement for the following material.<br/><br/>
+                          76569 TSE2277U-BOX-(44.09lb-20kgs)-SM<br/>
+                          112024 SC1301-CARTON-20KG 
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdOrange">Accepted</div>
+                        <div>2025-11-20 07:25</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="userPic mr5">
+                          <span class="link lineH15">Jongho Lee</span>
+                          <span class="ml10 fontM">PS APAC Operations</span>
+                        </div>
+                        <div class="dtCont">
+                          accept
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdBlue">Action Taken</div>
+                        <div>2025-11-24 03:18</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="userPic mr5">
+                          <span class="link lineH15">Jongho Lee</span>
+                          <span class="ml10 fontM">PS APAC Operations</span>
+                        </div>
+                        <div class="dtCont">
+                          POP statement has been created, please see if attachment can be retrieved. Thank you.
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdGreen">Completed</div>
+                        <div>2025-11-24 04:05</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" class="userPic mr5">
+                          <span class="link lineH15">Shin Duho</span>
+                          <span class="ml10 fontM">Inside Sales - PAC</span>
+                        </div>
+                        <div class="dtCont">
+                          completed
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="btnArea">
+                    <a href="javascript:;" class="waves-effect waves-blue hBtn type2 hBlue"><i class="material-icons left">play_arrow</i>Take Action</a>
+                    <a href="javascript:;" class="waves-effect waves-blue hBtn type2 hOrange"><i class="material-icons left">add</i>Detail</a>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="titArea">
+                  <div class="roundBox orange status">Accepted</div>
+                  <div class="tit">TSCA\PBT</div>
+                </div>
+                <div class="row mt10">
+                  <div class="col s4">Due : <span class="fontM">2025-11-26</span></div>
+                  <div class="col s4">Priority : <span class="roundBox bdGreen">Low</span></div>
+                  <div class="col s4">Score : <span class="font18 fontM">5</span></div>
+                </div>
+                <div class="row">
+                  <div class="col s12"><span>PS_On/Not On a List_Other</span></div>
+                </div>
+                <div class="row">
+                  <div class="col s6">
+                    Requestor : 
+                    <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="userPic">
+                    <span class="link lineH15">JONGHO LEE</span>
+                  </div>
+                  <div class="col s6">
+                    Collaborator : 
+                    <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" class="userPic">
+                    <span class="link lineH15">Shin Duho</span>
+                  </div>
+                </div>
+                <div class="dtArea" style="display: none;">
+                  <ul class="clrbDtUl">
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdGrey">Requested</div>
+                        <div>2025-11-19 06:22</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" class="userPic mr5">
+                          <span class="link lineH15">Shin Duho</span>
+                          <span class="ml10 fontM">Inside Sales - PAC</span>
+                        </div>
+                        <div class="dtCont">
+                          pls help to issue POP statement for the following material.<br/><br/>
+                          76569 TSE2277U-BOX-(44.09lb-20kgs)-SM<br/>
+                          112024 SC1301-CARTON-20KG 
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdOrange">Accepted</div>
+                        <div>2025-11-20 07:25</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="userPic mr5">
+                          <span class="link lineH15">Jongho Lee</span>
+                          <span class="ml10 fontM">PS APAC Operations</span>
+                        </div>
+                        <div class="dtCont">
+                          accept
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdBlue">Action Taken</div>
+                        <div>2025-11-24 03:18</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="userPic mr5">
+                          <span class="link lineH15">Jongho Lee</span>
+                          <span class="ml10 fontM">PS APAC Operations</span>
+                        </div>
+                        <div class="dtCont">
+                          POP statement has been created, please see if attachment can be retrieved. Thank you.
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdGreen">Completed</div>
+                        <div>2025-11-24 04:05</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" class="userPic mr5">
+                          <span class="link lineH15">Shin Duho</span>
+                          <span class="ml10 fontM">Inside Sales - PAC</span>
+                        </div>
+                        <div class="dtCont">
+                          completed
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="btnArea">
+                    <a href="javascript:;" class="waves-effect waves-blue hBtn type2 hBlue"><i class="material-icons left">play_arrow</i>Take Action</a>
+                    <a href="javascript:;" class="waves-effect waves-blue hBtn type2 hOrange"><i class="material-icons left">add</i>Detail</a>
+                  </div>
+                </div>
+              </li>
+              <li>
+                <div class="titArea">
+                  <div class="roundBox blue status">Action Taken</div>
+                  <div class="tit">Prop 65</div>
+                </div>
+                <div class="row mt10">
+                  <div class="col s4">Due : <span class="fontM">2025-11-26</span></div>
+                  <div class="col s4">Priority : <span class="roundBox bdGreen">Low</span></div>
+                  <div class="col s4">Score : <span class="font18 fontM">4</span></div>
+                </div>
+                <div class="row">
+                  <div class="col s12"><span>PS_On/Not On a List_Prop 65</span></div>
+                </div>
+                <div class="row">
+                  <div class="col s6">
+                    Requestor : 
+                    <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="userPic">
+                    <span class="link lineH15">JONGHO LEE</span>
+                  </div>
+                  <div class="col s6">
+                    Collaborator : 
+                    <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" class="userPic">
+                    <span class="link lineH15">Shin Duho</span>
+                  </div>
+                </div>
+                <div class="dtArea" style="display: none;">
+                  <ul class="clrbDtUl">
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdGrey">Requested</div>
+                        <div>2025-11-19 06:22</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" class="userPic mr5">
+                          <span class="link lineH15">Shin Duho</span>
+                          <span class="ml10 fontM">Inside Sales - PAC</span>
+                        </div>
+                        <div class="dtCont">
+                          pls help to issue POP statement for the following material.<br/><br/>
+                          76569 TSE2277U-BOX-(44.09lb-20kgs)-SM<br/>
+                          112024 SC1301-CARTON-20KG 
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdOrange">Accepted</div>
+                        <div>2025-11-20 07:25</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="userPic mr5">
+                          <span class="link lineH15">Jongho Lee</span>
+                          <span class="ml10 fontM">PS APAC Operations</span>
+                        </div>
+                        <div class="dtCont">
+                          accept
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdBlue">Action Taken</div>
+                        <div>2025-11-24 03:18</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="userPic mr5">
+                          <span class="link lineH15">Jongho Lee</span>
+                          <span class="ml10 fontM">PS APAC Operations</span>
+                        </div>
+                        <div class="dtCont">
+                          POP statement has been created, please see if attachment can be retrieved. Thank you.
+                        </div>
+                      </div>
+                    </li>
+                    <li>
+                      <div class="btnArea">
+                        <div class="roundBox bdGreen">Completed</div>
+                        <div>2025-11-24 04:05</div>
+                      </div>
+                      <div class="dtContArea">
+                        <div class="dtContTit">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" class="userPic mr5">
+                          <span class="link lineH15">Shin Duho</span>
+                          <span class="ml10 fontM">Inside Sales - PAC</span>
+                        </div>
+                        <div class="dtCont">
+                          completed
+                        </div>
+                      </div>
+                    </li>
+                  </ul>
+                  <div class="btnArea">
+                    <a href="javascript:;" class="waves-effect waves-blue hBtn type2 hBlue"><i class="material-icons left">play_arrow</i>Take Action</a>
+                    <a href="javascript:;" class="waves-effect waves-blue hBtn type2 hOrange"><i class="material-icons left">add</i>Detail</a>
+                  </div>
+                </div>
+              </li>
+            </ul>
+          </section>
+          <!-- <section id="cont1">
             <div class="histArea">
               <ul class="collapsible expandable">
                 <li class="active">
@@ -642,6 +1153,98 @@
                   </div>
                 </li>
               </ul>
+            </div>
+
+          </section> -->
+          <section id="contCmmt" class="cmmtArea">
+            <div class="btnArea">
+              <div class="aniInput wd200px">
+                  <input type="text" value="" class="browser-default" placeholder="Search this feed">
+                  <span class="focus-border"></span>
+              </div>
+              <a href="javascript:;" class="waves-effect waves-blue hBtn type2 hBlue" id="newPostBtn"><i class="material-icons left">create</i>New Post</a>
+            </div>
+            <div class="feed-container">
+              <div class="post on new animate__animated" style="display: none;">
+                  <div class="write-comment mt0">
+                      <input type="text" placeholder="Write a comment...">
+                      <div class="roundBox blue cmmtSendBtn"><i class="material-icons">arrow_upward</i></div>
+                  </div>
+              </div>
+              <div class="post on">
+                  <div class="post-header">
+                      <div><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" alt="Shin Duho"></div>
+                      <div class="wd100p">
+                          <div class="tit">Shin Duho</div>
+                          <div class="btnArea">
+                            <div class="archived">2025-11-20 07:25</div>
+                            <div class="roundBox font12 bdOrange hBtn cmmtBtn">2 Comments</div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="post-content">
+                      Reached out to Kevin at CHT asking for forecast of materials over the next 6 months.
+                  </div>
+                  <div class="comment-section">
+                      <div class="comment">
+                        <div class="comment-header">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804" class="userPic">
+                        </div>
+                        <div class="comment-cont">
+                          <div class="comment-info">
+                            <span class="userNm">LEE JONGHO</span> <span class="date">2026-01-15 19:59</span>
+                          </div>
+                          <div class="comment-text">
+                            <span class="tagUser">@Shin Duho</span> Response: "Our main source for LDF8-2 has approved a second-source so that will affect MPM88295 volume this year; however, we intend to keep Momentive in a strong second position in our supply mix – I’ll return volume numbers before the end of January. That said, 88295 is now 25% above market on pricing for our two alternate resin/blends. Maybe we can work towards getting closer to that baseline?" Kevin Terlep - Sr. Buyer, CHT                            
+                          </div>
+                        </div>
+                      </div>
+                      <div class="comment">
+                        <div class="comment-header">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20102259" class="userPic">
+                        </div>
+                        <div class="comment-cont">
+                          <div class="comment-info">
+                            <span class="userNm">Shin Duho</span> <span class="date">2026-01-15 19:59</span>
+                          </div>
+                          <div class="comment-text">
+                            Forwarded Kevin's email to David and Toby asking for guidance regarding this account for whether we should pursue through a more competitive price offering.
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  <div class="write-comment">
+                      <input type="text" placeholder="Write a comment...">
+                      <div class="roundBox blue cmmtSendBtn"><i class="material-icons">arrow_upward</i></div>
+                  </div>
+              </div>
+      
+              <div class="post">
+                  <div class="post-header">
+                      <div><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20503079" alt="JOO SANGWON" class="userPic"></div>
+                      <div class="wd100p">
+                          <div class="tit">JOO SANGWON</div>
+                          <div class="btnArea">
+                            <div class="archived">2025-11-20 07:25</div>
+                            <div class="roundBox font12 bdOrange hBtn cmmtBtn">4 Comments</div>
+                          </div>
+                      </div>
+                  </div>
+                  <div class="post-content">
+                      <span class="tagUser">@JI YOUNGCHAN</span>, I am trying to place a sample request on SFDC for this customer and get this block message: "An error occurred while trying to update the record. Please try again. Value does not exist or does not match filter criteria." Can you please check what is wrong here?
+                  </div>
+                  <div class="comment-section" style="display: none;">
+                      <div class="comment">
+                          <img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=20702451" alt="JOO SANGWON">
+                          <div class="comment-text">@JOO SANGWON Atilio Romani Pontes No I don't think there is any block. Earlier before 2018 these type of account were in use for samples via SAP but later introduction to sample request in salesforce they seems to be discontinued.</div>
+                      </div>
+                  </div>
+                  <div class="write-comment">
+                      <input type="text" placeholder="Write a comment...">
+                      <div class="roundBox blue cmmtSendBtn"><i class="material-icons">arrow_upward</i></div>
+                  </div>
+              </div>
+
             </div>
 
           </section>
