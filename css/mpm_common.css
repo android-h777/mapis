@@ -1395,11 +1395,10 @@ legend,
   .menuAside .menuList li {
 	width: 100%;
     position: relative;
-	padding: 0px 10px;
     font-size: 15px;
     display: flex;
     align-items: center;
-	border-radius: 20px;
+	border-radius: 30px;
   }
 
   .menuAside .menuList li.on, .menuAside .menuList li:hover {
@@ -1408,24 +1407,35 @@ legend,
     box-shadow: 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%), 0 2px 4px -1px rgb(0 0 0 / 30%);
 	background-color: rgba(255, 255, 255, 0.8) !important;
   }
+  .menuAside .menuList li.on i, .menuAside .menuList li:hover i {
+	color: #a47764;
+  }
 
   .menuAside .menuList li.on::before, .menuAside .menuList li:hover::before {
 	content: "";
 	position: absolute;
 	inset: 0px;
 	border: 2px solid #a47764;
-	border-radius: 20px;
+	border-radius: 30px;
 	pointer-events: none;
   }
   
   .menuAside .menuList li a {
-	padding: 0px;
+	padding: 0px 20px;
 	color: unset;
 	width: 100%;
+    color: #000;
+    border-bottom: 1px dashed #ccc;
   }
   .menuAside .menuList li a:hover {
 	background-color: unset;
   }
+ 
+  .menuAside .menuList li:has(+ li.on) > a,
+	.menuAside .menuList li:has(+ li:hover) > a {
+	border-bottom: none;
+	}
+
   .sidenav-overlay {
 	background-color: rgba(255, 255, 255, 0.2) !important;
   }
@@ -1688,7 +1698,7 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 	position: relative;;
 }
 .contArea.blur {
-	filter: blur(3px);
+	filter: blur(2px);
 }
 .contArea.dashCont {
 	padding: 0px 15px;
@@ -1743,10 +1753,11 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 	fill: #bb2649;
 }
 .cardBox .cardTit, .cardBox .cardTit2 {
-  font-size: 15px;
+  font-size: 18px;
   font-family: 'Roboto-Medium';
   color: #a47764;
   line-height: 25px;
+  margin-bottom: 10px;
 }
 
 .cardBox .cardTit2.type2 {
@@ -2258,7 +2269,7 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 .fixedTable table thead tr th, .fixedTable table thead tr td.headerTd,
 .hFixedTable table thead tr th, .hFixedTable table thead tr td.headerTd {
 	color: #9a8b4e;
-	font-family: 'Roboto-Regular';
+	font-family: 'Roboto-Medium';
 	border-bottom: 1px solid #9a8b4e;
 	position: sticky;
 	top: 0px;
@@ -2370,6 +2381,14 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 }
 .hFixedTable table tr td:not(:last-child) {
 	border-right: 1px dashed #e0e0e0;
+}
+
+.fixedTable table tr.rowSpanLine td {
+    border-top: 1px solid #9a8b4e !important;
+}
+.fixedTable table tr.rowSpanLine td:first-child, .fixedTable table .stageTit {
+	font-family: 'Roboto-Regular';
+	color: #212121;
 }
 
 body::-webkit-scrollbar, .mainCardBox .collapsible-body::-webkit-scrollbar,
@@ -2841,7 +2860,10 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	border-top: 1px solid #a47764;
     display: flex;
     justify-content: space-between;
-    align-items: center;	
+    align-items: center;
+	position: relative;
+	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+	z-index: 1;
 }
 .popup header .statusArea {
     display: flex;
@@ -2849,12 +2871,13 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	height: 50px;
     padding: 0px 15px;
 	position: relative;
+	overflow: visible;
 }
 
 .popup header .statusArea .bdBox {
     display: flex;
     align-items: flex-end;
-    border: 1px solid #a47764;
+    border: 2px solid #a47764;
     padding: 2px 20px 2px 17px;
     border-radius: 10px;
     line-height: 20px;
@@ -2864,13 +2887,16 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 .popup header .statusArea .bdBox:hover {
 	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
 }
-.popup header .npdiTabMenu {
-	border-top: 1px dashed #a47764;
-}
 .popup header .npdiTabMenu .tabs {
-	background-color: #FBF8F6;
+	background-color: #a47764;
 	display: flex;
     align-items: center;
+    height: 45px;
+	padding-left: 10px;
+}
+.popup header .npdiTabMenu .tabs .tab {
+	line-height: 35px;
+    height: 28px;
 }
 .popup header .npdiTabMenu .tabs .tab a i {
 	font-size: 16px;
@@ -2878,18 +2904,20 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	margin-right: 5px;
 }
 .popup header .npdiTabMenu .tabs .indicator {
-    height: 30px;
-	top: 2px;
+    height: 28px;
+	top: 8px;
     background-color: transparent;
-    border: 2px solid #a47764;
     border-radius: 20px;
-	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+	border: 1px solid #fff;
+	box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
 }
 .popup header .npdiTabMenu .tabs .tab a {
-	font-size: 12px;
+	font-size: 13px;
 	padding: 0px 30px;
     display: flex;
     align-items: center;
+	color: #fff;
+	font-family: 'Roboto-Regular' !important;
 }
 .popup header .npdiTabMenu .tabs .tab a.active {
 	color: #a47764;
@@ -2899,6 +2927,8 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 .popup header .npdiTabMenu .tabs .tab a:focus, .popup header .npdiTabMenu .tabs .tab a:focus.active {
   	outline: none;
     background-color: #fff;
+    border-radius: 20px;
+	color: #a47764;
 }
 
 .popup header .bdBox.ing {
@@ -2907,8 +2937,9 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	font-family: 'Roboto-Medium';
 }
 .popup header .bdBox.fin {
-	color: #899f6a;
+	color: #fff;
 	border-color: #899f6a;
+	background-color: #899f6a;
 }
 .popup header .bdBox.on {
 	background-color: #a47764;
@@ -2919,10 +2950,12 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 }
 
 .onArwArea{
-	position: absolute;
-	bottom: -1px;
-	transition: left 0.3s ease;
+  position: absolute;
+  bottom: -4px;     /* 아래로 빼줘야 그림자 공간 생김 */
+  z-index: 50;
+  pointer-events: none;
 }
+
 
 .popup header .bdBox.ing.on {
 	background-color: #7391c9;
@@ -3006,8 +3039,8 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
     z-index: 3;
 }
 .popup.npdiLayout aside.leftAside {
-	top: 136px;
-    height: calc(100vh - 135px);
+	top: 146px;
+    height: calc(100vh - 145px);
 }
 .popup aside.leftAside .menuTit {
 	padding: 10px 15px;
@@ -3036,7 +3069,7 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
     background-color: #fff;
     border: 2px solid #bb2649;
     border-radius: 10px;
-    color: #a47764;
+    color: #bb2649;
     font-family: 'Roboto-Medium';
     box-shadow: 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%), 0 2px 4px -1px rgb(0 0 0 / 30%);
 }
@@ -3060,7 +3093,7 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 }
 
 .popup.npdiLayout .contArea {
-    margin-top: 150px;
+    margin-top: 165px;
 }
 
 .popup.type2 aside.leftAside {

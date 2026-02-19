@@ -143,7 +143,15 @@
           { code: "166220", name: "SF2002ODK001/IBC/950KG", date: "9.12", type: "rm" }
         ];
         $(document).ready(function(){
-          $('.sidenav').sidenav();
+          $('.sidenav').sidenav({
+            onOpenStart: function() {
+              $(".contArea").addClass("blur");
+            },
+            onCloseEnd: function() {
+              $(".contArea").removeClass("blur");
+            }
+          });
+
           $(document).on('click', '.sidenav-overlay, .closeBtns', function() {
               $('.sidenav').sidenav('close');
           });
@@ -191,7 +199,14 @@
           $('.fixed-action-btn').floatingActionButton();
           $('.tooltipped').tooltip();
           $('select').formSelect();
-          $("#mainMyMenuModal").modal();
+          $("#mainMyMenuModal").modal({
+            onOpenStart: function() {
+              $(".contArea").addClass("blur");
+            },
+            onCloseEnd: function() {
+              $(".contArea").removeClass("blur");
+            }
+          });
 
           $(".bgLayer").click(function(){
             $(".bgLayer").hide();
@@ -348,7 +363,7 @@
       <div class="userInfoArea">
         <div class="photo"><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
         <div class="userInfo">
-          <div class="fontB">JONGHO LEE</div>
+          <div class="fontB blackTxt font16">Jongho Lee</div>
           <div>IT Procurement/HR/R&D Team</div>
         </div>
       </div>
@@ -396,27 +411,27 @@
         <ul>
           <li class="animate__animated">
             <div><a href="apis_npdi_list.html"><div class="menuIconBox waves-effect waves-light"><i class="material-icons">lightbulb</i></div></a></div>
-            <div class="menuTit">NPI</div>
+            <div class="menuTit blackTxt">Standard NPI</div>
             <div class="menuIcon waves-effect waves-hColort modal-trigger" data-target="mainMyMenuModal" style="display: none;"><i class="material-icons">more_vert</i></div>
           </li>
           <li class="animate__animated">
             <div><a href="apis_tech_list.html"><div class="menuIconBox waves-effect waves-light"><i class="material-icons">build</i></div></a></div>
-            <div class="menuTit">Tech Support​</div>
+            <div class="menuTit blackTxt">Tech Support​</div>
             <div class="menuIcon waves-effect waves-hColort modal-trigger" data-target="mainMyMenuModal" style="display: none;"><i class="material-icons">more_vert</i></div>
           </li>
           <li class="animate__animated">
             <div><a href="apis_fmea_list.html"><div class="menuIconBox waves-effect waves-light"><i class="material-icons">playlist_add_check_circle</i></div></a></div>
-            <div class="menuTit">FMEA​​</div>
+            <div class="menuTit blackTxt">FMEA​​</div>
             <div class="menuIcon waves-effect waves-hColort modal-trigger" data-target="mainMyMenuModal" style="display: none;"><i class="material-icons">more_vert</i></div>
           </li>
           <li class="animate__animated">
             <div><a href="apis_item_list.html"><div class="menuIconBox waves-effect waves-light"><i class="material-icons">colorize</i></div></a></div>
-            <div class="menuTit">Raw Material Hub​</div>
+            <div class="menuTit blackTxt">Raw Material Hub​</div>
             <div class="menuIcon waves-effect waves-hColort modal-trigger" data-target="mainMyMenuModal" style="display: none;"><i class="material-icons">more_vert</i></div>
           </li>
           <li class="animate__animated">
             <div><a href="apis_dash.html"><div class="menuIconBox waves-effect waves-light"><i class="material-icons">dashboard</i></div></a></div>
-            <div class="menuTit">Insight</div>
+            <div class="menuTit blackTxt">Insight</div>
             <div class="menuIcon waves-effect waves-hColort modal-trigger" data-target="mainMyMenuModal" style="display: none;"><i class="material-icons">more_vert</i></div>
           </li>
           <li class="animate__animated">

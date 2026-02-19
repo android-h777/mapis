@@ -14,8 +14,8 @@
 	<script src="https://code.jquery.com/ui/1.13.2/jquery-ui.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/apis_util.js"></script>
-	<script src="https://code.highcharts.com/highcharts.js"></script>
-	<script src="https://code.highcharts.com/highcharts-more.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/highcharts/highcharts.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/highcharts/highcharts-more.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/jquery.inputmask.js"></script>
 	<script type="text/javascript" charset="utf-8" src="js/Hoo-gantt.js"></script>
 
@@ -94,7 +94,7 @@
 				}
 			});
 
-			fnSetStageCont(null,'2','4','6',null);
+			fnSetStageCont(null,'2','4','7',null);
 
 			au.fnSetDatepicker(null, "yyyy-mm-dd");
 
@@ -557,9 +557,8 @@
 					<i class="material-symbols-outlined left">circle</i><span>Post Launch Review</span>
 				</div>
 				<div class="onArwArea">
-					<svg width="15" height="10" viewBox="0 0 15 10">
-					<polygon points="7.5,0 0,10 15,10" fill="#FBF8F6"	stroke="none"/>
-					<polyline points="0,10 7.5,0 15,10"	fill="none"	stroke="#a47764" stroke-width="1" stroke-dasharray="3,2"/>
+					<svg width="15" height="14" viewBox="0 0 15 14">
+						<polygon points="7.5,0 0,14 15,14" fill="#a47764"/>
 					</svg>
 				</div>
 			</div>
@@ -3314,13 +3313,13 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td rowspan="1">NPC</td>
+								<td rowspan="1" class="stageTit">NPC</td>
 								<td>Identification of high-level Risks (where applicable)</td>
 								<td>- Highlight any known major risks in Project Summary</td>
 								<td>NPC Requester</td>
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
-							<tr>
+							<tr class="rowSpanLine">
 								<td rowspan="3">NPI GO</td>
 								<td>Preliminary assessment :<br>Prior history, capacity, and cost</td>
 								<td>
@@ -3362,7 +3361,7 @@
 								<td>Process Tech + EHS + Prod Stewardship</td>
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
-							<tr>
+							<tr class="rowSpanLine">
 								<td rowspan="1">Lab Formulation &amp; Scale-Up</td>
 								<td>Sourcing</td>
 								<td>
@@ -3374,7 +3373,7 @@
 								<td>Process Tech + Procurement + SIOP</td>
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
-							<tr>
+							<tr class="rowSpanLine">
 								<td rowspan="2">Comm. GO</td>
 								<td>Product Management &amp; Inventory</td>
 								<td>
@@ -3434,7 +3433,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td rowspan="3">1. AMR</td>
+								<td rowspan="3" class="stageTit">1. AMR</td>
 								<td>Volume</td>
 								<td></td>
 								<td></td>
@@ -3464,7 +3463,7 @@
 								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"/></div></td>
 								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"/></div></td>
 							</tr>
-							<tr>
+							<tr class="rowSpanLine">
 								<td rowspan="3">2. EUR</td>
 								<td>Volume</td>
 								<td></td>
@@ -3495,7 +3494,7 @@
 								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"/></div></td>
 								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"/></div></td>
 							</tr>
-							<tr>
+							<tr class="rowSpanLine">
 								<td rowspan="3">3. APAC</td>
 								<td>Volume</td>
 								<td></td>
@@ -3526,7 +3525,7 @@
 								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"/></div></td>
 								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"/></div></td>
 							</tr>
-							<tr>
+							<tr class="rowSpanLine">
 								<td rowspan="3">4. IMEA</td>
 								<td>Volume</td>
 								<td></td>
@@ -3557,7 +3556,7 @@
 								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"/></div></td>
 								<td><div class="aniInput"><input type="text" class="browser-default num2" value="0.00"><span class="focus-border"/></div></td>
 							</tr>
-							<tr>
+							<tr class="rowSpanLine">
 								<td rowspan="2">GLOBAL (Total)</td>
 								<td>Volume</td>
 								<td></td>
@@ -4542,7 +4541,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td rowspan="2">NPI GO</td>
+								<td rowspan="2" class="stageTit">NPI GO</td>
 								<td>Identification of high level Risks (where applicable)</td>
 								<td>- Highlight any major risks/road blocks/needs with respect to QC/QA in Project Summary</td>
 								<td>BU Technology + QC/QA</td>
@@ -4564,7 +4563,7 @@
 								</td>
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
-							<tr>
+							<tr class="rowSpanLine">
 								<td rowspan="3">Lab Formulation &amp; Scale-Up</td>
 								<td>Test Method Development</td>
 								<td>
@@ -4594,7 +4593,7 @@
 								<td>BU Tech. + Process Tech. + QC</td>
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
-							<tr>
+							<tr class="rowSpanLine">
 								<td rowspan="1">Comm. GO</td>
 								<td>QC Plan implementation and Product/Process Capability Verification</td>
 								<td>
@@ -4753,7 +4752,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td rowspan="2">NPI GO</td>
+								<td rowspan="2" class="stageTit">NPI GO</td>
 								<td>Identification of high level Risk/Opportunity for IP</td>
 								<td>- Preliminary risk/opportunity assessment</td>
 								<td>NPC Requester</td>
@@ -4765,7 +4764,7 @@
 								<td>BU Technology + IP</td>
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
-							<tr>
+							<tr class="rowSpanLine">
 								<td rowspan="5">Lab Formulation & Scale-Up</td>
 								<td>State of the Art / Patent Landscape Search</td>
 								<td>- Assessment of state of the Art for the product concept and provide insights on white spaces</td>
@@ -4796,8 +4795,8 @@
 								<td>IP Legal</td>
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
-							<tr>
-								<td rowspan="2">Comm. GO</td>
+							<tr class="rowSpanLine">
+								<td rowspan="3">Comm. GO</td>
 								<td>FTP Analysis and Opinion</td>
 								<td>- Advise if the developed product has freedom to practise in the countries of MPM interest</td>
 								<td>Technology IP, IP Legal</td>
@@ -4810,7 +4809,6 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td>Comm. GO</td>
 								<td>IP Strategy Verification</td>
 								<td>- Confirm all required filings, publications, NDA/CDAs and FTP assessments are complete</td>
 								<td>Technology IP, IP Legal</td>
@@ -4845,7 +4843,7 @@
 						</thead>
 						<tbody>
 							<tr>
-								<td rowspan="2">NPI GO</td>
+								<td rowspan="2" class="stageTit">NPI GO</td>
 								<td>Identification of high level Risks (if any) related to Regulatory Aspects</td>
 								<td>- Preliminary risk identification</td>
 								<td>NPC Requester</td>
@@ -4867,7 +4865,7 @@
 								<td>(BU Technology + PS) Project Team members</td>
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
-							<tr>
+							<tr class="rowSpanLine">
 								<td rowspan="4">Lab Formulation & Scale-Up</td>
 								<td>Regulatory Risks / Concerns</td>
 								<td>- Updated risk assessment related to regulatory aspects (including status on resolution/mitigation of previously identified risks/concerns)</td>
@@ -4897,8 +4895,8 @@
 								<td>PS team member + BU Technology</td>
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
-							<tr>
-								<td rowspan="3">Comm. GO</td>
+							<tr class="rowSpanLine">
+								<td rowspan="4">Comm. GO</td>
 								<td>Regulatory Risks / Concerns</td>
 								<td>- Confirm all major regulatory risks / concerns are suitably resolved</td>
 								<td>BU Tech + PS team member</td>
@@ -4917,7 +4915,6 @@
 								<td><div class="aniInput"><textarea class="materialize-textarea"></textarea><span class="focus-border"/></div></td>
 							</tr>
 							<tr>
-								<td>Comm. GO</td>
 								<td>Chemical & Government Registrations</td>
 								<td>- Confirm all government and chemical required registrations (for all regions where the product will be launched) are complete</td>
 								<td>Mktg + PS team member</td>
