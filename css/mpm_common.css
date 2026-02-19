@@ -99,7 +99,7 @@ section {
   display: block;
 }
 body {
-  color: #555;
+  color: #424242;
   font-size: 13px;
   font-family: 'Roboto-Light', '맑은 고딕', sans-serif;
   line-height: 1.2;
@@ -1721,7 +1721,7 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 }
 
 .cardBox {
-  border: 1px solid #a47764;
+  border: 2px solid #a47764;
   padding: 20px;
   border-radius: 30px;
   background-color: #fff;
@@ -2383,10 +2383,10 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 	border-right: 1px dashed #e0e0e0;
 }
 
-.fixedTable table tr.rowSpanLine td {
+.fixedTable table tr.rowSpanLine:not(:first-child) td {
     border-top: 1px solid #9a8b4e !important;
 }
-.fixedTable table tr.rowSpanLine td:first-child, .fixedTable table .stageTit {
+.fixedTable table tr.rowSpanLine td:first-child {
 	font-family: 'Roboto-Regular';
 	color: #212121;
 }
