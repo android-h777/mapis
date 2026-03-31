@@ -119,7 +119,7 @@
                 series: {
                     dataLabels: {
                         enabled: true,
-                        format: '${y}k', // 🔥 값 표시 ($100k 형식)
+                        format: '${y}M', // 🔥 값 표시 ($100k 형식)
                         inside: true, // 🔥 도형 안에 배치
                         verticalAlign: 'middle', // 🔥 세로 중앙 정렬
                         align: 'center', // 가로 중앙 정렬
@@ -138,10 +138,13 @@
             series: [{
                 name: 'Stage',
                 data: [
-                    ['New/Price Open', 100],
-                    ['Negotiating', 100]
+                    ['New/Price Open', 340],
+                    ['2', 290],
+                    ['3', 40],
+                    ['4', 10],
+                    ['Negotiating', 6416]
                 ],
-                colors: ['#cac494', '#ebc39e']
+                colors: ['#899f6a', '#7391c9', '#a793b9', '#d19c97', '#a47764']
             }],
             credits: {enabled: false}
         });
@@ -696,7 +699,6 @@
           <li>SACHS CHEMICAL | Accounts View <i class="material-icons prefix">close</i></li>
           <li>DyStar | Accounts View <i class="material-icons prefix">close</i></li>
           <li>Valeo Annemasse | Accounts View <i class="material-icons prefix">close</i></li>
-          <li>RAMPF (Taicang) Co., Ltd | Accounts View <i class="material-icons prefix">close</i></li>
         </ul>        
       </article>
       <!--

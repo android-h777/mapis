@@ -2353,6 +2353,7 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 }
 .clrbrtArea .clrbUl li .titArea {
 	display: flex;
+    align-items: center;
 }
 .clrbrtArea .clrbUl li .titArea .tit {
 	font-size: 16px;
@@ -2491,9 +2492,9 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
     height: 18px;
 }
 .roundBox.status {
-	line-height: 22px;
-	font-size: 14px;
-    height: 24px;
+	line-height: 18px;
+    height: 20px;
+	font-family: 'Roboto-Medium';
 }
 .roundBox.blue {
 	background-color: #7391c9 !important;

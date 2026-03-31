@@ -1,0 +1,3 @@
+- [MPM Prototype Overview](project_overview.md) — MAPIS/SFA 프론트엔드 UI 프로토타입, 화학 제조업 도메인, Materialize+jQuery+Highcharts+RealGrid 기반
+- [Search Page Design](feedback_search_design.md) — 검색 페이지는 npdi_list와 동일 구조 사용, npdiTabMenu+Materialize tabs, CSS는 인라인 금지
+- [Font Size Rule](feedback_font_size.md) — 최소 13px, 유저 지시 없이 폰트 사이즈 변경 금지
