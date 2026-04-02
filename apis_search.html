@@ -448,7 +448,17 @@
           showDetail(cat, parseInt(idx));
         });
 
-        // 상세 제목 클릭 → 팝업
+        // 리스트 타이틀 클릭 → 팝업
+        $(document).on("click", ".mainList .pjTit", function(e){
+          e.stopPropagation();
+          const $li = $(this).closest("li");
+          $(".mainList li").removeClass("on");
+          $li.addClass("on");
+          showDetail($li.attr("data-cat"), parseInt($li.attr("data-idx")));
+          openPopup($li.attr("data-cat"));
+        });
+
+        // 우측 상세 제목 클릭 → 팝업
         $(document).on("click", "#dtTit", function(){
           const $li = $(".mainList li.on");
           if ($li.length) openPopup($li.attr("data-cat"));
