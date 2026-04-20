@@ -2487,17 +2487,29 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	transition: width 0.5s ease;
 	z-index: 0;
 }
-.hBtn:hover::before, .hBtn.on::before {
+.hBtn:hover::before {
 	width: 100%;
 }
-.hBtn:hover, .hBtn.on {
+.hBtn:hover {
 	font-family: 'Roboto-Medium';
 	box-shadow:
 		0 4px 5px 0 rgba(0,0,0,0.14),
 		0 1px 10px 0 rgba(0,0,0,0.12),
 		0 2px 4px -1px rgba(0,0,0,0.3),
 		inset 0 1px 0 rgba(255,255,255,0.3),
-		0 0 12px rgba(164,119,100,0.25);
+		0 0 12px rgba(0,0,0,0.1);
+}
+.hBtn.on::before {
+	width: 100%;
+	transition: none;
+}
+.hBtn.on {
+	font-family: 'Roboto-Medium';
+	box-shadow:
+		0 2px 4px rgba(0,0,0,0.1),
+		inset 0 1px 0 rgba(255,255,255,0.3),
+		0 0 10px rgba(0,0,0,0.08),
+		0 0 3px rgba(0,0,0,0.05);
 }
 .hBtn::after {
 	content: '';
@@ -2508,15 +2520,15 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 		conic-gradient(
 			from var(--ol-angle, 0deg) at var(--olx, 50%) var(--oly, 50%),
 			rgba(255,0,0,0) 0%,
-			rgba(255,0,0,0.06) 8%,
-			rgba(255,165,0,0.06) 16%,
+			rgba(255,0,0,0.02) 8%,
+			rgba(255,165,0,0.02) 16%,
 			rgba(255,255,0,0.06) 24%,
 			rgba(0,255,0,0.06) 33%,
 			rgba(0,200,255,0.06) 42%,
 			rgba(0,100,255,0.06) 50%,
 			rgba(130,0,255,0.06) 58%,
-			rgba(255,0,200,0.06) 66%,
-			rgba(255,0,0,0.06) 75%,
+			rgba(255,0,200,0.02) 66%,
+			rgba(255,0,0,0.02) 75%,
 			rgba(255,0,0,0) 83%,
 			transparent 100%
 		);
@@ -2525,7 +2537,7 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	opacity: 0;
 	transition: opacity 0.3s ease;
 }
-.hBtn:hover::after {
+.hBtn:hover::after, .hBtn.on::after {
 	opacity: 1;
 }
 .hBtn i {
@@ -2690,8 +2702,8 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 .typeList .mainList li.on {
 	color: #000;
 	border-radius: 10px;
-	border: 1px solid rgba(187,38,73,0.2) !important;
-	border-bottom: 1px solid rgba(187,38,73,0.15) !important;
+	border: 1px solid rgba(0,0,0,0.1) !important;
+	border-bottom: 1px solid rgba(0,0,0,0.08) !important;
 	background: linear-gradient(180deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.3) 100%);
 	backdrop-filter: blur(8px);
 	box-shadow:
@@ -2699,8 +2711,8 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 		0 1px 2px rgba(0,0,0,0.08),
 		inset 0 1px 0 rgba(255,255,255,0.9),
 		inset 0 -1px 0 rgba(0,0,0,0.05),
-		0 0 8px rgba(187,38,73,0.12),
-		0 0 2px rgba(187,38,73,0.08);
+		0 0 8px rgba(0,0,0,0.06),
+		0 0 2px rgba(0,0,0,0.04);
 	transform: translateY(-2px);
 	position: relative;
 }
@@ -2713,15 +2725,15 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 		conic-gradient(
 			from var(--ol-angle, 0deg) at var(--olx, 50%) var(--oly, 50%),
 			rgba(255,0,0,0) 0%,
-			rgba(255,0,0,0.05) 8%,
-			rgba(255,165,0,0.05) 16%,
+			rgba(255,0,0,0.02) 8%,
+			rgba(255,165,0,0.02) 16%,
 			rgba(255,255,0,0.05) 24%,
 			rgba(0,255,0,0.05) 33%,
 			rgba(0,200,255,0.05) 42%,
 			rgba(0,100,255,0.05) 50%,
 			rgba(130,0,255,0.05) 58%,
-			rgba(255,0,200,0.05) 66%,
-			rgba(255,0,0,0.05) 75%,
+			rgba(255,0,200,0.02) 66%,
+			rgba(255,0,0,0.02) 75%,
 			rgba(255,0,0,0) 83%,
 			transparent 100%
 		);
@@ -2796,16 +2808,16 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	text-shadow: -0.6px 0 currentColor, 0.6px 0 currentColor;
 }
 .typeList .mainList li:hover {
-	border: 1px solid rgba(164,119,100,0.3) !important;
-	border-bottom: 1px solid rgba(164,119,100,0.2) !important;
+	border: 1px solid rgba(0,0,0,0.1) !important;
+	border-bottom: 1px solid rgba(0,0,0,0.08) !important;
 	border-radius: 10px;
 	background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.25) 100%);
 	backdrop-filter: blur(6px);
 	box-shadow:
 		0 3px 6px rgba(0,0,0,0.1),
 		inset 0 1px 0 rgba(255,255,255,0.8),
-		0 0 15px rgba(164,119,100,0.3),
-		0 0 4px rgba(164,119,100,0.2);
+		0 0 15px rgba(0,0,0,0.08),
+		0 0 4px rgba(0,0,0,0.05);
 	color: #000;
 	transform: translateY(-1px);
 }
@@ -3340,15 +3352,15 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 		conic-gradient(
 			from var(--ol-angle, 0deg) at var(--olx, 50%) var(--oly, 50%),
 			rgba(255,0,0,0) 0%,
-			rgba(255,0,0,0.04) 8%,
-			rgba(255,165,0,0.04) 16%,
+			rgba(255,0,0,0.01) 8%,
+			rgba(255,165,0,0.01) 16%,
 			rgba(255,255,0,0.04) 24%,
 			rgba(0,255,0,0.04) 33%,
 			rgba(0,200,255,0.04) 42%,
 			rgba(0,100,255,0.04) 50%,
 			rgba(130,0,255,0.04) 58%,
-			rgba(255,0,200,0.04) 66%,
-			rgba(255,0,0,0.04) 75%,
+			rgba(255,0,200,0.01) 66%,
+			rgba(255,0,0,0.01) 75%,
 			rgba(255,0,0,0) 83%,
 			transparent 100%
 		);
@@ -4401,7 +4413,7 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
         inset 0 1px 0 rgba(255,255,255,0.7),
         0 2px 4px rgba(0,0,0,0.1),
         0 1px 2px rgba(0,0,0,0.06),
-        0 0 10px rgba(187,38,73,0.15);
+        0 0 10px rgba(0,0,0,0.06);
     border-radius: 30px;
     backdrop-filter: blur(6px);
     overflow: hidden;
@@ -4415,15 +4427,15 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
         conic-gradient(
             from var(--ol-angle, 0deg) at var(--olx, 50%) var(--oly, 50%),
             rgba(255,0,0,0) 0%,
-            rgba(255,0,0,0.06) 8%,
-            rgba(255,165,0,0.06) 16%,
+            rgba(255,0,0,0.02) 8%,
+            rgba(255,165,0,0.02) 16%,
             rgba(255,255,0,0.06) 24%,
             rgba(0,255,0,0.06) 33%,
             rgba(0,200,255,0.06) 42%,
             rgba(0,100,255,0.06) 50%,
             rgba(130,0,255,0.06) 58%,
-            rgba(255,0,200,0.06) 66%,
-            rgba(255,0,0,0.06) 75%,
+            rgba(255,0,200,0.02) 66%,
+            rgba(255,0,0,0.02) 75%,
             rgba(255,0,0,0) 83%,
             transparent 100%
         );
@@ -4440,7 +4452,7 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 		inset 0 1px 0 rgba(255,255,255,0.7),
 		0 2px 4px rgba(0,0,0,0.1),
 		0 1px 2px rgba(0,0,0,0.06),
-		0 0 10px rgba(137,159,106,0.15);
+		0 0 10px rgba(0,0,0,0.06);
 }
 
 .newAppleTab.wd130pxType li {
