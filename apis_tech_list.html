@@ -14,6 +14,7 @@
     <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/highcharts/highcharts.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/highcharts/modules/timeline.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/glass_engine.js"></script>
     <script>
         $(document).ready(function(){
           $('.sidenav').sidenav();
@@ -23,7 +24,7 @@
 
           $(document).on("click", ".newAppleTab li", function(){
               var offset = $(this).offset().left.toFixed(0) - $(this).parent().offset().left.toFixed(0);
-              
+
               $(this).parents(".newAppleTab").find("li").removeClass("on");
               $(this).parents(".newAppleTab").find(".tabBg").animate({left: offset-3});
               $(this).addClass("on");
