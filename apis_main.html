@@ -233,6 +233,16 @@
             $(".bgLayer").trigger("click");
           });
 
+          // Enter 키 → 통합검색 페이지로 이동
+          $("#dtSrchInput, #mainSrchInput").on("keydown", function(e) {
+            if (e.key === "Enter") {
+              const kw = $(this).val().trim() || $("#dtSrchInput").val().trim();
+              if (kw) {
+                window.location.href = "apis_search.html?q=" + encodeURIComponent(kw);
+              }
+            }
+          });
+
           $("#dtSrchInput").on("input", function() {
             const input = $(this).val();
             $("#mainSrchInput").val(input);
@@ -297,6 +307,7 @@
                 $(".srchRstList ul").empty();
                 $(".srchRstArea").hide();
               } else {
+                html += `<li class="viewAllBtn"><a href="apis_search.html?q=${encodeURIComponent(input)}"><i class="material-icons left">search</i>View All Results</a></li>`;
                 $(".srchRstList ul").html(html);
                 $(".srchRstArea").show();
               }

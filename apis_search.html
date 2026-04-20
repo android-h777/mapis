@@ -1,0 +1,651 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM - Search</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/highcharts/highcharts.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/highcharts/modules/timeline.js"></script>
+    <script>
+      // ── 통합검색 데이터 ──
+      const searchData = {
+        rm: [
+          { code: "47", name: "SILBYK 9400 - UNPACKED", status: "Active", site: "Burghausen", creator: "Dr. Weber", date: "2024-08-15", desc: "Silicone-based additive for surface treatment applications" },
+          { code: "2941", name: "LSR 2250 B/UNPACKED", status: "Active", site: "Adrian", creator: "Michael Schmidt", date: "2024-06-20", desc: "Liquid silicone rubber for injection molding" },
+          { code: "5772", name: "HYDROXY M 2 - UNPACKED", status: "Active", site: "Burghausen", creator: "Dr. Weber", date: "2024-03-10", desc: "Hydroxyl-functional silicone intermediate" },
+          { code: "14901", name: "CRYSTALITE 5X", status: "Active", site: "Ohta", creator: "Takeshi Yamada", date: "2023-11-05", desc: "High-purity crystalline silica filler" },
+          { code: "14903", name: "CRYSTALITE VX-R", status: "Active", site: "Ohta", creator: "Takeshi Yamada", date: "2023-11-05", desc: "Surface-treated crystalline silica" },
+          { code: "14904", name: "CRYSTALITE VX-S", status: "Active", site: "Ohta", creator: "Takeshi Yamada", date: "2023-11-05", desc: "Fine-grade crystalline silica for electronic materials" },
+          { code: "16384", name: "EC1000", status: "Active", site: "Ohta", creator: "Jin Park", date: "2024-01-12", desc: "Electrically conductive silicone compound" },
+          { code: "16710", name: "F-51-50", status: "Active", site: "Ohta", creator: "Jin Park", date: "2024-02-18", desc: "Silicone fluid for release coating applications" },
+          { code: "16783", name: "F-70A-4500", status: "Active", site: "Ohta", creator: "Takeshi Yamada", date: "2024-04-22", desc: "High viscosity silicone fluid" },
+          { code: "17199", name: "G-501R(A)", status: "Active", site: "Ohta", creator: "Jin Park", date: "2023-09-30", desc: "Two-part RTV silicone rubber - Part A" },
+          { code: "17200", name: "G-501R(B)", status: "Active", site: "Ohta", creator: "Jin Park", date: "2023-09-30", desc: "Two-part RTV silicone rubber - Part B" },
+          { code: "21472", name: "TSF4703DKS", status: "Active", site: "Ohta", creator: "Takeshi Yamada", date: "2024-05-14", desc: "Dimethyl silicone fluid for transformer insulation" },
+          { code: "43899", name: "OEL PN 1000 - ROH", status: "Active", site: "Burghausen", creator: "Andreas Roos", date: "2024-07-08", desc: "Silicone oil raw material for processing" },
+          { code: "49804", name: "Magnasoft 725", status: "Active", site: "Adrian", creator: "Michael Schmidt", date: "2024-09-01", desc: "Silicone softener for textile finishing" },
+          { code: "53382", name: "Magnasoft BTS", status: "Active", site: "Adrian", creator: "Michael Schmidt", date: "2024-09-15", desc: "Block-type silicone softener emulsion" },
+          { code: "53395", name: "Magnasoft CY-315", status: "Active", site: "Adrian", creator: "Andreas Roos", date: "2024-10-02", desc: "Cyclic silicone softener for fiber treatment" },
+          { code: "55784", name: "SAG 510 SFG", status: "Active", site: "Adrian", creator: "Michael Schmidt", date: "2024-06-11", desc: "Silicone antifoam for industrial processes" },
+          { code: "56302", name: "Wacker Silane CMM2", status: "Active", site: "Burghausen", creator: "Dr. Weber", date: "2024-04-03", desc: "Chloromethyl silane coupling agent" },
+          { code: "74978", name: "VINYDIMETHYLETHOXYSILANE", status: "Active", site: "Burghausen", creator: "Dr. Weber", date: "2024-02-25", desc: "Vinyl-functional silane for crosslinking" },
+          { code: "82809", name: "HYDREX 26130JX", status: "Active", site: "Adrian", creator: "Andreas Roos", date: "2024-11-18", desc: "Hydrophobic silicone emulsion for water repellency" },
+          { code: "145376", name: "RED IRON OXIDE CATHAYCOAT RA11A", status: "Active", site: "Ohta", creator: "Takeshi Yamada", date: "2025-01-07", desc: "Iron oxide pigment for silicone compound coloring" },
+          { code: "174546", name: "TMR-2 25% DEG/DRUM/200KG", status: "Active", site: "Burghausen", creator: "Dr. Weber", date: "2025-02-10", desc: "Trimethylolpropane-based crosslinker in DEG solvent" },
+          { code: "174581", name: "SILICON FLUID AK5000/IBC/950KG", status: "Active", site: "Burghausen", creator: "Andreas Roos", date: "2025-02-14", desc: "Standard-grade silicone fluid 5000 cSt" }
+        ],
+        snpi: [
+          { code: "P25-226", name: "Improvement of Appearance and Workability of Medium-Coat Paint for Water-Soluble 3C1B", status: "On Going", leader: "Andreas Roos", segment: "Industrial", mgpp: "Transportation", date: "2025-01-15", desc: "Optimize mid-coat formulation for improved spray pattern and leveling" },
+          { code: "P25-227", name: "Improvement of quality of medium-high quality paints by shortened conversion to HMMI-type water-soluble 3C1B", status: "On Going", leader: "Michael Schmidt", segment: "Industrial", mgpp: "Transportation", date: "2025-01-20", desc: "Reduce conversion time while maintaining quality standards" },
+          { code: "P25-1", name: "Quality Improvement of Matte Clear SVR Upgrading Paint for Automotive Bodies", status: "On Going", leader: "Takeshi Yamada", segment: "Industrial", mgpp: "Transportation", date: "2025-02-05", desc: "Enhance scratch resistance and haze control in matte clear coat" },
+          { code: "P25-14", name: "Quality Improvement of Matte Clear SVR Upgrading Paint", status: "Completed", leader: "Jin Park", segment: "Consumer", mgpp: "Coatings", date: "2024-11-30", desc: "Final optimization of SVR upgrading paint formulation" },
+          { code: "P25-41", name: "Quality Improvement of Matte Clear SVR Upgrading Paint", status: "Completed", leader: "Jin Park", segment: "Consumer", mgpp: "Coatings", date: "2024-12-15", desc: "Scale-up validation of improved matte clear formulation" },
+          { code: "01054", name: "Electro 242-2 Grey FC", status: "Completed", leader: "Andreas Roos", segment: "Industrial", mgpp: "Electronic Materials", date: "2024-08-20", desc: "Electrically conductive silicone elastomer compound" },
+          { code: "03657", name: "Low viscosity high vinyl polybutadiene", status: "On Going", leader: "Michael Schmidt", segment: "Industrial", mgpp: "Elastomers", date: "2025-03-01", desc: "Develop low-viscosity polybutadiene for improved processability" },
+          { code: "03704", name: "New preservative for Silsoft", status: "Completed", leader: "Andreas Roos", segment: "Consumer", mgpp: "Personal Care", date: "2024-10-10", desc: "Alternative preservative system for silicone emulsion products" },
+          { code: "03701", name: "Low Viscosity Binder Gel T", status: "Completed", leader: "Takeshi Yamada", segment: "Industrial", mgpp: "Sealants", date: "2024-09-22", desc: "Silicone gel binder with reduced viscosity for easier application" },
+          { code: "03702", name: "2.6W Conduction Cure T", status: "On Going", leader: "Jin Park", segment: "Industrial", mgpp: "Electronic Materials", date: "2025-02-28", desc: "Thermally conductive silicone with 2.6 W/mK conductivity" },
+          { code: "03703", name: "10 Watt Thermal Gel", status: "On Going", leader: "Michael Schmidt", segment: "Industrial", mgpp: "Electronic Materials", date: "2025-03-10", desc: "Ultra-high thermal conductivity silicone gel for EV battery cooling" },
+          { code: "03705", name: "Buffer coat silicone for OLED", status: "On Going", leader: "Takeshi Yamada", segment: "Industrial", mgpp: "Electronic Materials", date: "2025-03-15", desc: "Transparent silicone buffer coating for flexible OLED display" },
+          { code: "03710", name: "High refractive index silicone encapsulant for LED", status: "On Going", leader: "Jin Park", segment: "Industrial", mgpp: "Electronic Materials", date: "2025-03-20", desc: "RI > 1.54 silicone for high-power LED packaging" },
+          { code: "03712", name: "Silicone-modified polyester resin for coil coating", status: "On Going", leader: "Andreas Roos", segment: "Industrial", mgpp: "Coatings", date: "2025-03-22", desc: "Hybrid silicone-polyester for improved weatherability of pre-coated metal" },
+          { code: "03715", name: "Low compression set silicone rubber for EV connector seal", status: "On Going", leader: "Michael Schmidt", segment: "Industrial", mgpp: "Elastomers", date: "2025-03-25", desc: "Silicone elastomer with CS < 15% at 175°C for high-temp sealing" },
+          { code: "03718", name: "Transparent silicone adhesive for AR/VR optics", status: "On Going", leader: "Takeshi Yamada", segment: "Industrial", mgpp: "Electronic Materials", date: "2025-03-28", desc: "Optically clear silicone PSA for display lamination" },
+          { code: "03720", name: "Silicone foam sealant for EV battery thermal runaway barrier", status: "On Going", leader: "Jin Park", segment: "Industrial", mgpp: "Sealants", date: "2025-03-30", desc: "Intumescent silicone foam for fire propagation prevention" }
+        ],
+        cnpi: [
+          { code: "C25-001", name: "Custom Silicone Compound for Hyundai EV Battery Seal", status: "On Going", leader: "Jin Park", customer: "Hyundai", date: "2025-01-10", desc: "Custom-formulated silicone gasket for battery pack sealing" },
+          { code: "C25-002", name: "Custom LSR Formulation for Samsung Medical Device", status: "On Going", leader: "Takeshi Yamada", customer: "Samsung", date: "2025-02-01", desc: "Biocompatible LSR for implantable medical device components" },
+          { code: "C25-003", name: "Custom Thermal Paste for LG Energy Solution", status: "Completed", leader: "Michael Schmidt", customer: "LG Energy", date: "2024-11-20", desc: "High-performance TIM for cylindrical battery cell cooling" },
+          { code: "C25-004", name: "Custom Adhesive Sealant for Bosch Automotive Sensor", status: "On Going", leader: "Andreas Roos", customer: "Bosch", date: "2025-01-25", desc: "Temperature-resistant adhesive sealant for ADAS sensor housing" },
+          { code: "C25-005", name: "Custom Silicone Coating for NKT High Voltage Cable", status: "On Going", leader: "Andreas Roos", customer: "NKT", date: "2025-02-14", desc: "HV insulation coating with enhanced dielectric strength" },
+          { code: "C25-006", name: "Custom Encapsulant for Infineon Power Module", status: "Completed", leader: "Jin Park", customer: "Infineon", date: "2024-12-05", desc: "Low-stress silicone encapsulant for SiC power semiconductors" },
+          { code: "C25-007", name: "Custom Release Coating for 3M Film Process", status: "On Going", leader: "Michael Schmidt", customer: "3M", date: "2025-03-01", desc: "Ultra-thin silicone release liner for optical film manufacturing" },
+          { code: "C25-008", name: "Custom Potting Compound for Siemens Transformer", status: "On Going", leader: "Takeshi Yamada", customer: "Siemens", date: "2025-03-05", desc: "High-voltage potting compound for dry-type transformer insulation" },
+          { code: "C25-009", name: "Custom Silicone Gel for Tesla Battery Module Damping", status: "On Going", leader: "Jin Park", customer: "Tesla", date: "2025-03-08", desc: "Vibration-damping silicone gel between cylindrical battery cells" },
+          { code: "C25-010", name: "Custom Silicone Conformal Coating for Continental ECU", status: "On Going", leader: "Andreas Roos", customer: "Continental", date: "2025-03-12", desc: "Moisture-resistant silicone coating for automotive electronic control unit" },
+          { code: "C25-011", name: "Custom Silicone Rubber Keypad for Panasonic Avionics", status: "Completed", leader: "Takeshi Yamada", customer: "Panasonic", date: "2025-01-20", desc: "Flame-retardant silicone rubber for aircraft in-flight entertainment keypad" },
+          { code: "C25-012", name: "Custom Liquid Silicone Rubber for Medtronic Catheter", status: "On Going", leader: "Michael Schmidt", customer: "Medtronic", date: "2025-02-18", desc: "USP Class VI compliant LSR for minimally invasive catheter shaft" },
+          { code: "C25-013", name: "Custom Silicone Optical Lens for Sony Camera Module", status: "On Going", leader: "Takeshi Yamada", customer: "Sony", date: "2025-03-15", desc: "High-clarity silicone lens with low chromatic aberration for compact camera" }
+        ],
+        npt: [
+          { code: "N25-1", name: "Quality Improvement of Matte Clear SVR Upgrading Paint for Automotive Bodies", status: "On Going", leader: "Jin Park", segment: "Industrial", date: "2025-01-08", desc: "New polymer technology for improved matte appearance stability" },
+          { code: "N25-2", name: "Development of High-Temp Resistant Silicone Elastomer", status: "On Going", leader: "Michael Schmidt", segment: "Industrial", date: "2025-02-12", desc: "Silicone elastomer stable above 300°C for aerospace sealing" },
+          { code: "N25-3", name: "Low VOC Formulation for Automotive Sealant", status: "Completed", leader: "Andreas Roos", segment: "Industrial", date: "2024-10-30", desc: "VOC content reduced below 1g/L for automotive interior sealant" },
+          { code: "N25-4", name: "Next-Generation Thermal Interface Material", status: "On Going", leader: "Takeshi Yamada", segment: "Industrial", date: "2025-03-20", desc: "Phase-change TIM with 15 W/mK for AI server cooling" },
+          { code: "N25-5", name: "Bio-based Silicone Surfactant Development", status: "On Going", leader: "Jin Park", segment: "Consumer", date: "2025-02-25", desc: "Renewable-source silicone surfactant for agricultural adjuvant" },
+          { code: "N25-6", name: "Self-healing Silicone Elastomer for Wearable Electronics", status: "On Going", leader: "Takeshi Yamada", segment: "Consumer", date: "2025-03-18", desc: "Autonomous crack repair mechanism in stretchable silicone substrate" },
+          { code: "N25-7", name: "Ultra-low Dielectric Constant Silicone Resin", status: "On Going", leader: "Michael Schmidt", segment: "Industrial", date: "2025-03-25", desc: "Dk < 2.5 silicone resin for 5G mmWave antenna substrate" },
+          { code: "N25-8", name: "Silicone-Graphene Composite for EMI Shielding", status: "On Going", leader: "Jin Park", segment: "Industrial", date: "2025-03-28", desc: "Graphene-filled silicone elastomer with SE > 60dB at 1-18 GHz" },
+          { code: "N25-9", name: "Fluorosilicone Rubber with Improved Fuel Resistance", status: "On Going", leader: "Andreas Roos", segment: "Industrial", date: "2025-03-30", desc: "FVMQ compound with enhanced resistance to bio-diesel blends" }
+        ],
+        tech: [
+          { code: "A25-4099", name: "Request for analysis of foreign matter/dirt generated from the HMMI Sangdo oven filter", status: "On Going", leader: "Jin Park", dept: "Quality Lab", date: "2025-03-10", desc: "FT-IR and SEM/EDS analysis of oven filter contamination" },
+          { code: "A25-4100", name: "Silicone coating delamination issue on flexible PCB substrate", status: "Completed", leader: "Takeshi Yamada", dept: "Application Lab", date: "2025-01-18", desc: "Root cause analysis of adhesion failure on polyimide substrate" },
+          { code: "A25-4101", name: "Viscosity increase in LSR compound during storage at elevated temperature", status: "On Going", leader: "Michael Schmidt", dept: "R&D Lab", date: "2025-02-22", desc: "Shelf life study of LSR at 40°C accelerated aging condition" },
+          { code: "A25-4102", name: "Adhesion failure of RTV sealant on anodized aluminum surface", status: "On Going", leader: "Andreas Roos", dept: "Application Lab", date: "2025-03-05", desc: "Surface energy and primer compatibility investigation" },
+          { code: "A25-4103", name: "Color shift in pigmented silicone elastomer after UV exposure", status: "Completed", leader: "Jin Park", dept: "Quality Lab", date: "2025-01-30", desc: "UV weathering test per ASTM G154 - 1000hr xenon arc exposure" },
+          { code: "A25-4104", name: "Silicone sealant curing failure in low humidity environment", status: "On Going", leader: "Andreas Roos", dept: "Application Lab", date: "2025-03-15", desc: "Moisture-cure kinetics study at RH < 20% condition" },
+          { code: "A25-4105", name: "Outgassing analysis of silicone potting compound for satellite application", status: "On Going", leader: "Takeshi Yamada", dept: "R&D Lab", date: "2025-03-22", desc: "TML and CVCM measurement per ASTM E595 for space qualification" },
+          { code: "A25-4106", name: "Silicone gasket compression force analysis for fuel cell stack", status: "On Going", leader: "Michael Schmidt", dept: "Application Lab", date: "2025-03-25", desc: "CLTE measurement and FEA simulation for optimal gasket compression" },
+          { code: "A25-4107", name: "Silicone encapsulant yellowing issue in high-power LED module", status: "On Going", leader: "Jin Park", dept: "Quality Lab", date: "2025-03-28", desc: "Thermal-oxidative degradation analysis at 150°C continuous operation" },
+          { code: "A25-4108", name: "Silicone release coating transfer to adhesive tape surface", status: "Completed", leader: "Andreas Roos", dept: "Application Lab", date: "2025-02-15", desc: "XPS surface analysis of silicone migration on PSA tape" }
+        ],
+        fmea: [
+          { code: "Ohta-PFMEA-2026-001", name: "Process FMEA - LSR Injection Molding Line", status: "In Progress", site: "Ohta", owner: "Takeshi Yamada", date: "2026-01-15", desc: "Risk assessment for LSR molding process parameters" },
+          { code: "Ohta-DFMEA-2026-001", name: "Design FMEA - High Voltage Insulator Compound", status: "In Progress", site: "Ohta", owner: "Jin Park", date: "2026-01-20", desc: "Design risk analysis for HV insulation material properties" },
+          { code: "Ohta-PFMEA-2026-002", name: "Process FMEA - Silicone Sealant Packaging Line", status: "Completed", site: "Ohta", owner: "Takeshi Yamada", date: "2025-12-10", desc: "Packaging process risk evaluation for cartridge filling" },
+          { code: "BH-PFMEA-2026-001", name: "Process FMEA - Silane Distillation Process", status: "In Progress", site: "Burghausen", owner: "Dr. Weber", date: "2026-02-01", desc: "Distillation column process hazard and risk analysis" },
+          { code: "BH-DFMEA-2026-001", name: "Design FMEA - Thermal Conductive Compound", status: "Completed", site: "Burghausen", owner: "Andreas Roos", date: "2025-11-25", desc: "Filler loading and thermal performance design risk review" },
+          { code: "AD-PFMEA-2026-001", name: "Process FMEA - Emulsion Polymerization", status: "In Progress", site: "Adrian", owner: "Michael Schmidt", date: "2026-01-28", desc: "Emulsion polymerization batch process risk assessment" },
+          { code: "AD-DFMEA-2026-001", name: "Design FMEA - Silicone Pressure Sensitive Adhesive", status: "In Progress", site: "Adrian", owner: "Michael Schmidt", date: "2026-02-10", desc: "Tack and peel strength design parameter risk analysis" },
+          { code: "Ohta-PFMEA-2026-003", name: "Process FMEA - Silicone Fluid Blending Operation", status: "In Progress", site: "Ohta", owner: "Takeshi Yamada", date: "2026-02-15", desc: "Batch blending process risk for viscosity grade control" },
+          { code: "BH-PFMEA-2026-002", name: "Process FMEA - Silane Hydrolysis Reactor", status: "In Progress", site: "Burghausen", owner: "Dr. Weber", date: "2026-02-20", desc: "Exothermic reaction and moisture control risk assessment" },
+          { code: "AD-PFMEA-2026-002", name: "Process FMEA - Silicone Sealant Compounding Line", status: "In Progress", site: "Adrian", owner: "Andreas Roos", date: "2026-03-01", desc: "Filler dispersion and catalyst mixing process risk evaluation" }
+        ]
+      };
+
+      const categoryConfig = {
+        all:  { label: "All",              icon: "apps" },
+        snpi: { label: "SNPI",             icon: "lightbulb",                  popup: "apis_npdi_pop.html" },
+        cnpi: { label: "CNPI",             icon: "integration_instructions",   popup: "apis_custom_pop.html" },
+        npt:  { label: "NPT",             icon: "snippet_folder",             popup: "apis_npt_pop.html" },
+        tech: { label: "Tech Support",     icon: "build",                      popup: "apis_tech_pop.html" },
+        rm:   { label: "Raw Material Hub", icon: "colorize",                   popup: "apis_item_pop.html" },
+        fmea: { label: "FMEA",            icon: "playlist_add_check_circle",  popup: "apis_fmea_pop.html" }
+      };
+
+      let currentTab = "all";
+      let currentResults = {};
+      let currentKeyword = "";
+
+      function getQueryParam(key) {
+        const params = new URLSearchParams(window.location.search);
+        return params.get(key) || "";
+      }
+
+      function doSearch(keyword) {
+        const kw = keyword.toLowerCase().trim();
+        let results = {};
+        Object.keys(searchData).forEach(cat => {
+          results[cat] = searchData[cat].filter(item =>
+            item.name.toLowerCase().includes(kw) ||
+            item.code.toLowerCase().includes(kw)
+          );
+        });
+        return results;
+      }
+
+      function highlightKeyword(text, keyword) {
+        if (!keyword) return text;
+        const regex = new RegExp(`(${keyword.replace(/[.*+?^${}()|[\]\\]/g, '\\$&')})`, 'gi');
+        return text.replace(regex, '<span class="srchHit">$1</span>');
+      }
+
+      function getStatusClass(status) {
+        const s = status.toLowerCase();
+        if (s === 'completed' || s === 'approved' || s === 'issued') return 'green';
+        if (s === 'on going' || s === 'in progress' || s === 'in review' || s === 'active') return 'blue';
+        if (s === 'draft') return 'grey';
+        return '';
+      }
+
+      function updateTabCounts(results) {
+        let total = 0;
+        Object.keys(results).forEach(cat => total += results[cat].length);
+        $('a[href="#tabAll"] .cntBadge').text('(' + total + ')');
+        Object.keys(searchData).forEach(cat => {
+          const tabId = "#tab" + cat.charAt(0).toUpperCase() + cat.slice(1);
+          $('a[href="' + tabId + '"] .cntBadge').text('(' + results[cat].length + ')');
+        });
+        return total;
+      }
+
+      const MAX_ITEMS = 5;
+
+      function renderList(results, keyword) {
+        const tabOrder = ['snpi', 'cnpi', 'npt', 'tech', 'rm', 'fmea'];
+        const cats = currentTab === 'all' ? tabOrder : [currentTab];
+        let html = '';
+
+        cats.forEach(cat => {
+          const items = results[cat];
+          if (!items || items.length === 0) return;
+          const cfg = categoryConfig[cat];
+          const showItems = currentTab === 'all' ? items.slice(0, MAX_ITEMS) : items;
+          const moreCount = items.length - MAX_ITEMS;
+
+          html += `<div class="srchCateGroup">`;
+          html += `<div class="srchCateTitle"><i class="material-icons left">${cfg.icon}</i>${cfg.label}</div>`;
+
+          showItems.forEach((item, idx) => {
+            const highlightedName = highlightKeyword(item.name, keyword);
+            const highlightedCode = highlightKeyword(item.code, keyword);
+
+            let metaArr = [];
+            if (item.leader || item.owner || item.creator) metaArr.push(item.leader || item.owner || item.creator);
+            if (item.site) metaArr.push(item.site);
+            if (item.dept) metaArr.push(item.dept);
+            if (item.customer) metaArr.push(item.customer);
+            if (item.segment) metaArr.push(item.segment);
+            if (item.date) metaArr.push(item.date);
+
+            html += `
+            <li class="waves-effect waves-hColor animate__animated animate__fadeIn" data-cat="${cat}" data-idx="${idx}">
+              <section class="wd100p">
+                <div class="pjTit">[${highlightedCode}] ${highlightedName}</div>
+                <div class="srchMeta">${metaArr.join(' | ')}</div>
+                ${item.desc ? '<div class="srchDesc">' + highlightKeyword(item.desc, keyword) + '</div>' : ''}
+              </section>
+            </li>`;
+          });
+
+          if (currentTab === 'all' && moreCount > 0) {
+            html += `<div class="srchMoreBtn" data-cat="${cat}">${cfg.label} <span class="srchMoreCnt">${moreCount}</span>건 더보기</div>`;
+          }
+
+          html += `</div>`;
+        });
+
+        if (!html) {
+          html = '<div class="noResult"><i class="material-icons">search_off</i><div>No results found</div></div>';
+        }
+
+        $(".mainList .hScroll").html(html);
+        $(".mainList li").first().trigger("click");
+      }
+
+      function showDetail(cat, idx) {
+        const item = currentResults[cat] ? currentResults[cat][idx] : null;
+        if (!item) return;
+        const cfg = categoryConfig[cat];
+
+        $("#dtTit").html("[" + item.code + "] " + item.name);
+
+        let html = '<div class="row subPjInfo">';
+
+        if (cat === 'snpi') {
+          // SNPI 형태
+          html += row('Segment', item.segment);
+          html += row('MGPP', item.mgpp);
+          html += row('Market Segment', 'MASS');
+          html += row('Status', item.status);
+          html += row('Project Leader', item.leader);
+          html += row('Commercial Go Date', item.date);
+          html += row('Innovation Category', 'Adjacent');
+          html += row('Sustainability Impact/Score', 'Beneficial/80');
+          html += row('Target Market/Customers', '<span class="roundBox mr10">NKT</span><span class="roundBox mr10">Pfisterer</span><span class="roundBox mr10">Bosch</span>');
+          html += '</div>';
+          html += '<div class="subTit mt20 ml10">TimeLine</div>';
+          html += '<div class="row"><div class="col s12"><div id="srchTimeline" class="srchChart"></div></div></div>';
+          html += '<div class="subTit mt20 ml10">Revenue</div>';
+          html += '<div class="row"><div class="col s12"><div id="srchRevenue" class="srchChart"></div></div></div>';
+
+        } else if (cat === 'cnpi') {
+          // CNPI 형태
+          html += row('Customer', item.customer);
+          html += row('Segment', 'Industrial');
+          html += row('MGPP', 'Elastomers');
+          html += row('Status', item.status);
+          html += row('Project Leader', item.leader);
+          html += row('Commercial Go Date', item.date);
+          html += row('Innovation Category', 'Core');
+          html += row('Sustainability Impact/Score', 'Neutral/50');
+          html += row('Target Market/Customers', '<span class="roundBox mr10">' + (item.customer || '') + '</span>');
+          html += '</div>';
+          html += '<div class="subTit mt20 ml10">TimeLine</div>';
+          html += '<div class="row"><div class="col s12"><div id="srchTimeline" class="srchChart"></div></div></div>';
+          html += '<div class="subTit mt20 ml10">Revenue</div>';
+          html += '<div class="row"><div class="col s12"><div id="srchRevenue" class="srchChart"></div></div></div>';
+
+        } else if (cat === 'tech') {
+          // Tech Support 형태
+          html += row('Department', item.dept);
+          html += row('Status', item.status);
+          html += row('Leader', item.leader);
+          html += row('Request Date', item.date);
+          if (item.desc) html += row('Description', item.desc);
+          html += '</div>';
+          html += '<div class="subTit mt20 ml10">TimeLine</div>';
+          html += '<div class="row"><div class="col s12"><div id="srchTimeline" class="srchChart"></div></div></div>';
+
+        } else if (cat === 'npt') {
+          // NPT 형태
+          html += row('Segment', item.segment);
+          html += row('Status', item.status);
+          html += row('Project Leader', item.leader);
+          html += row('Date', item.date);
+          if (item.desc) html += row('Description', item.desc);
+          html += '</div>';
+          html += '<div class="subTit mt20 ml10">TimeLine</div>';
+          html += '<div class="row"><div class="col s12"><div id="srchTimeline" class="srchChart"></div></div></div>';
+          html += '<div class="subTit mt20 ml10">Production Forecast</div>';
+          html += '<div class="row"><div class="col s12"><div id="srchForecast" class="srchChart"></div></div></div>';
+
+        } else if (cat === 'rm') {
+          // Raw Material Hub 형태
+          html += row('Site', item.site);
+          html += row('Status', item.status);
+          html += row('Creator', item.creator);
+          html += row('Date', item.date);
+          if (item.desc) html += row('Description', item.desc);
+          html += '</div>';
+          html += '<div class="subTit mt20 ml10">Standard Composition</div>';
+          html += '<table class="rmTable"><thead><tr><th>CAS Number</th><th>CAS Name</th><th>%</th></tr></thead>';
+          html += '<tbody><tr><td>63148-62-9</td><td>Polydimethylsiloxane</td><td>95.0</td></tr>';
+          html += '<tr><td>7631-86-9</td><td>Silicon dioxide</td><td>5.0</td></tr></tbody></table>';
+          html += '<div class="subTit mt20 ml10">Physical & Chemical Properties</div>';
+          html += '<table class="rmTable"><thead><tr><th>Properties</th><th>Reference Value</th></tr></thead>';
+          html += '<tbody><tr><td>Appearance</td><td>Colorless liquid</td></tr>';
+          html += '<tr><td>Viscosity (25°C)</td><td>5,000 cSt</td></tr>';
+          html += '<tr><td>Specific Gravity</td><td>0.97</td></tr></tbody></table>';
+
+        } else if (cat === 'fmea') {
+          // FMEA 형태
+          html += row('Product Type', item.name.includes('PFMEA') ? 'Process FMEA' : 'Design FMEA');
+          html += row('Site', item.site);
+          html += row('Owner', item.owner);
+          html += row('Status', item.status);
+          html += row('Date', item.date);
+          if (item.desc) html += row('Description', item.desc);
+          html += '</div>';
+          html += '<div class="subTit mt20 ml10">FMEA Map</div>';
+          html += '<div id="srchFmeaMap" class="srchChart fmeaMap"></div>';
+        }
+
+        $(".rightSection .cardBox .cardTit").nextAll().remove();
+        $(".rightSection .cardBox").append(html);
+
+        // 차트 렌더링
+        setTimeout(function() { drawCharts(cat); }, 50);
+      }
+
+      function row(label, val) {
+        return '<div class="col s5">' + label + '</div><div class="col s7 val">' + (val || '-') + '</div>';
+      }
+
+      function drawCharts(cat) {
+        var aesopColor = ['#cac494', '#ebc39e', '#cfcecc', '#f0efe0', '#ece3d3'];
+
+        // TimeLine (SNPI/CNPI/NPT/Tech 공통)
+        if ($('#srchTimeline').length) {
+          Highcharts.chart('srchTimeline', {
+            chart: { type: 'timeline', backgroundColor: 'transparent' },
+            xAxis: { visible: false },
+            yAxis: { visible: false },
+            title: { text: '' },
+            series: [{
+              data: cat === 'npt' ? [
+                { name: 'Initiated', label: '2025-01', color: '#899f6a' },
+                { name: 'Lab Scale', label: '2025-06', color: '#899f6a' },
+                { name: 'Completed', label: '2026-01', color: '#eeeeee' }
+              ] : [
+                { name: 'NPC', label: '2024-06', color: '#899f6a' },
+                { name: 'NPI Go', label: '2024-12', color: '#899f6a' },
+                { name: 'Lab Formulation', label: '2025-03', color: '#899f6a' },
+                { name: 'Scale-Up', label: '2025-06', color: '#7391c9' },
+                { name: 'Commercial Go', label: '2025-09', color: '#eeeeee' },
+                { name: 'Post Launch Review', label: '2026-05', color: '#eeeeee' }
+              ]
+            }],
+            credits: { enabled: false }
+          });
+        }
+
+        // Revenue (SNPI/CNPI)
+        if ($('#srchRevenue').length) {
+          Highcharts.chart('srchRevenue', {
+            chart: { type: 'column' },
+            title: { text: '' },
+            xAxis: { categories: ['2025', '2026', '2027', '2028', '2029', '2030'] },
+            yAxis: { min: 0, title: { text: null }, stackLabels: { enabled: true } },
+            legend: { reversed: true },
+            plotOptions: { column: { stacking: 'normal' } },
+            series: [{
+              name: 'Maintenance', color: '#A47864',
+              data: [2.3, 48.4, 148.7, 215.3, 275.3, 237.5]
+            }, {
+              name: 'Growth', color: '#899f6a',
+              data: [214.3, 224.1, 214.7, 189.5, 111.4, 20.0]
+            }],
+            credits: { enabled: false }
+          });
+        }
+
+        // Production Forecast (NPT)
+        if ($('#srchForecast').length) {
+          Highcharts.chart('srchForecast', {
+            chart: { type: 'column' },
+            title: { text: '' },
+            xAxis: { categories: ['2025', '2026', '2027', '2028', '2029', '2030'] },
+            yAxis: { min: 0, title: { text: null } },
+            series: [{
+              name: 'Volume (tons)', color: '#7391c9',
+              data: [5, 25, 80, 150, 220, 300]
+            }],
+            credits: { enabled: false }
+          });
+        }
+
+        // FMEA Map (간단 트리)
+        if ($('#srchFmeaMap').length) {
+          var fmeaHtml = '<div class="fmeaTree">';
+          fmeaHtml += '<div class="fmeaNode root">FMEA</div>';
+          fmeaHtml += '<div class="fmeaChildren">';
+          fmeaHtml += '<div class="fmeaNode">Function 1</div>';
+          fmeaHtml += '<div class="fmeaNode">Function 2</div>';
+          fmeaHtml += '<div class="fmeaNode">Function 3</div>';
+          fmeaHtml += '</div></div>';
+          $('#srchFmeaMap').html(fmeaHtml);
+        }
+      }
+
+      function openPopup(cat) {
+        const cfg = categoryConfig[cat];
+        if (cfg && cfg.popup) {
+          window.open(cfg.popup, "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes");
+        }
+      }
+
+      $(document).ready(function(){
+        $('.sidenav').sidenav();
+        $(document).on('click', '.sidenav-overlay, .closeBtns', function() {
+            $('.sidenav').sidenav('close');
+        });
+
+        // header user dropdown
+        $("nav .rightSection > div").on("mouseenter", function() {
+          $(this).find(".btnArea").stop().slideDown(200);
+        });
+        $("nav .rightSection > div").on("mouseleave", function() {
+          $(this).find(".btnArea").stop().slideUp(200);
+        });
+
+        // Materialize tabs
+        $('#searchTabs').tabs({
+          onShow: function(tab) {
+            const id = $(tab).attr("id");
+            if (id === "tabAll") currentTab = "all";
+            else currentTab = id.replace("tab", "").toLowerCase();
+            renderList(currentResults, currentKeyword);
+          }
+        });
+
+        // 리스트 항목 클릭
+        $(document).on("click", ".mainList li", function(){
+          $(".mainList li").removeClass("on");
+          $(this).addClass("on");
+          const cat = $(this).attr("data-cat");
+          const idx = $(this).attr("data-idx");
+          showDetail(cat, parseInt(idx));
+        });
+
+        // 리스트 타이틀 클릭 → 팝업
+        $(document).on("click", ".mainList .pjTit", function(e){
+          e.stopPropagation();
+          const $li = $(this).closest("li");
+          $(".mainList li").removeClass("on");
+          $li.addClass("on");
+          showDetail($li.attr("data-cat"), parseInt($li.attr("data-idx")));
+          openPopup($li.attr("data-cat"));
+        });
+
+        // 우측 상세 제목 클릭 → 팝업
+        $(document).on("click", "#dtTit", function(){
+          const $li = $(".mainList li.on");
+          if ($li.length) openPopup($li.attr("data-cat"));
+        });
+
+        // 더보기 클릭 → 해당 탭으로 전환
+        $(document).on("click", ".srchMoreBtn", function(){
+          const cat = $(this).attr("data-cat");
+          const tabId = "tab" + cat.charAt(0).toUpperCase() + cat.slice(1);
+          $('#searchTabs').tabs('select', tabId);
+        });
+
+        // 검색 실행
+        function executeSearch(kw) {
+          if (!kw) return;
+          currentKeyword = kw;
+          currentTab = "all";
+          currentResults = doSearch(kw);
+          const total = updateTabCounts(currentResults);
+
+          $('#searchTabs').tabs('select', 'tabAll');
+          renderList(currentResults, kw);
+          $(".searchSummary .keyword").text(kw);
+          $(".searchSummary .totalCnt").text(total);
+          $(".searchSummary").show();
+
+          const url = new URL(window.location);
+          url.searchParams.set("q", kw);
+          history.replaceState(null, "", url);
+        }
+
+        // 헤더 검색창
+        $("#mainSrchInput").on("keydown", function(e) {
+          if (e.key === "Enter") {
+            const kw = $(this).val().trim();
+            if (kw) executeSearch(kw);
+          }
+        });
+
+        // URL 파라미터 진입
+        const keyword = getQueryParam("q");
+        if (keyword) {
+          $("#mainSrchInput").val(keyword);
+          executeSearch(keyword);
+        }
+      });
+    </script>
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <article class="navTop">
+        <section class="leftSection">
+          <div class="menuIcon">
+            <div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
+          </div>
+          <div><a href="apis_main.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
+        </section>
+        <section class="centerSection">
+          <div class="srchArea">
+            <i class="material-icons prefix">search</i>
+            <input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput" autocomplete="off">
+          </div>
+        </section>
+        <section class="rightSection">
+          <div class="userInfo">
+            <div class="mr10">
+              <span class="mocha25-text fontM">JONGHO LEE</span>  
+            </div>
+            <i class="material-icons gardenia25 mocha25-text fLine vCenter hCenter mg0">person</i>
+            <div class="btnArea" style="padding-top: 20px; margin-top: 0px; padding-bottom: 20px; margin-bottom: 0px; display: none;">
+              <a id="profileBtn" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">account_circle</span>
+                <span class="label">View Profile</span>
+              </a>
+              <a id="adminBtn" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">admin_panel_settings</span><span class="label">Administrator</span>
+              </a>
+              <a id="" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">volunteer_activism</span><span class="label">Service Now</span>
+              </a>
+              <a id="" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">directions</span><span class="label">Guidance</span>
+              </a>
+              <a id="" class="waves-effect waves-light hBtn">
+                <span class="material-symbols-outlined left">local_library</span><span class="label">Training</span>
+              </a>
+              <a id="logoutBtn" class="waves-effect waves-light hBtn hViva">
+                <span class="material-symbols-outlined left">logout</span><span class="label">Sign Out</span>
+              </a>
+            </div>
+          </div>
+          <div class="langInfo ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">language</i>
+            <div class="btnArea" style="padding-top: 20px; margin-top: 0px; padding-bottom: 20px; margin-bottom: 0px; display: none;">
+              <a class="waves-effect waves-light hBtn jc hViva on" data-lang="en">English</a><a class="waves-effect waves-light hBtn jc" data-lang="de">German</a><a class="waves-effect waves-light hBtn jc" data-lang="ko">Korean</a><a class="waves-effect waves-light hBtn jc" data-lang="ja">Japanese</a><a class="waves-effect waves-light hBtn jc" data-lang="zh">Chinese</a><a class="waves-effect waves-light hBtn jc" data-lang="it">Italian</a><a class="waves-effect waves-light hBtn jc" data-lang="es">Spanish</a>
+            </div>
+          </div>
+          <div class="notiArea ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">assignment_turned_in</i>
+            <div class="notiCnt pulse"><span class="font11">3</span></div>
+          </div>
+          <div class="notiArea ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">format_list_bulleted</i>
+            <div class="notiCnt pulse"><span class="font11">6</span></div>
+          </div>
+        </section>
+      </article>
+    </nav>
+  </header>
+
+  <aside class="menuAside">
+    <div id="slide-out" class="sidenav glassBox">
+      <div class="userInfoArea">
+        <div class="photo"><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+        <div class="userInfo">
+          <div class="fontB">JONGHO LEE</div>
+          <div>IT Procurement/HR/R&D Team</div>
+        </div>
+      </div>
+      <div class="menuList">
+        <ul>
+          <li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>Home</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_dash.html"><i class="material-icons left">analytics</i>Insight</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_proposal_list.html"><i class="material-icons left">assistant</i>Proposal</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_custom_list.html"><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npt_list.html"><i class="material-icons left">snippet_folder</i>NPT</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_tech_list.html"><i class="material-icons left">build</i>Tech Support</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub​</a></li>
+          <!-- <li class="waves-effect waves-hColor"><a href="mfmea_list.html" target="_blank"><i class="material-icons left">playlist_add_check_circle</i>FMEA(KCC)​</a></li> -->
+          <li class="waves-effect waves-hColor"><a href="apis_fmea_list.html"><i class="material-icons left">playlist_add_check_circle</i>FMEA​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_coc.html"><i class="material-icons left">assignment_late</i>CoC​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_psa.html"><i class="material-icons left">health_and_safety</i>PSA</a></li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <article class="contArea typeList type2 typeSearch">
+    <div class="leftSection">
+      <section class="mainTitArea">
+        <div class="mainTit">Search Results</div>
+        <div class="btnArea">
+          <div class="searchSummary">
+            <span class="totalCnt">0</span> results for "<span class="keyword"></span>"
+          </div>
+        </div>
+      </section>
+
+      <section class="npdiTabMenu">
+        <ul class="tabs" id="searchTabs">
+          <li class="tab"><a class="active" href="#tabAll"><i class="material-icons left">apps</i>All <span class="cntBadge">(0)</span></a></li>
+          <li class="tab"><a href="#tabSnpi"><i class="material-icons left">lightbulb</i>SNPI <span class="cntBadge">(0)</span></a></li>
+          <li class="tab"><a href="#tabCnpi"><i class="material-icons left">integration_instructions</i>CNPI <span class="cntBadge">(0)</span></a></li>
+          <li class="tab"><a href="#tabNpt"><i class="material-icons left">snippet_folder</i>NPT <span class="cntBadge">(0)</span></a></li>
+          <li class="tab"><a href="#tabTech"><i class="material-icons left">build</i>Tech Support <span class="cntBadge">(0)</span></a></li>
+          <li class="tab"><a href="#tabRm"><i class="material-icons left">colorize</i>Raw Material Hub <span class="cntBadge">(0)</span></a></li>
+          <li class="tab"><a href="#tabFmea"><i class="material-icons left">playlist_add_check_circle</i>FMEA <span class="cntBadge">(0)</span></a></li>
+        </ul>
+        <div id="tabAll"></div>
+        <div id="tabSnpi"></div>
+        <div id="tabCnpi"></div>
+        <div id="tabNpt"></div>
+        <div id="tabTech"></div>
+        <div id="tabRm"></div>
+        <div id="tabFmea"></div>
+      </section>
+
+      <section class="mainList cardBox">
+        <ul class="hScroll"></ul>
+      </section>
+    </div>
+
+    <div class="rightSection" style="top: 60px;">
+      <div class="cardBox wd100p">
+        <div class="cardTit"><span class="link" id="dtTit">Select an item</span></div>
+        <div class="row subPjInfo">
+          <div class="col s5">Category</div>
+          <div class="col s7 val">-</div>
+          <div class="col s5">Code</div>
+          <div class="col s7 val">-</div>
+          <div class="col s5">Status</div>
+          <div class="col s7 val">-</div>
+        </div>
+      </div>
+    </div>
+  </article>
+</body>
+</html>
