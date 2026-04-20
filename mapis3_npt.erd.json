@@ -4,8 +4,8 @@
   "settings": {
     "width": 2000,
     "height": 2000,
-    "scrollTop": -207.0735,
-    "scrollLeft": -147.7864,
+    "scrollTop": -315.7401,
+    "scrollLeft": -198,
     "zoomLevel": 0.79,
     "show": 447,
     "database": 2,
@@ -2248,34 +2248,6 @@
       }
     },
     "relationshipEntities": {
-      "T3bMpj-Frsp1qhyjeacoj": {
-        "id": "T3bMpj-Frsp1qhyjeacoj",
-        "identification": false,
-        "relationshipType": 4,
-        "startRelationshipType": 2,
-        "start": {
-          "tableId": "RK6ONTWl0N2WjpM2uskz3",
-          "columnIds": [
-            "Equ3vzwNYUAMifPpMkmba"
-          ],
-          "x": 277,
-          "y": 418,
-          "direction": 8
-        },
-        "end": {
-          "tableId": "Dgnut7BKVqJBtAxHGZfO2",
-          "columnIds": [
-            "pu6dr2xuWFwbHGwZi1vzB"
-          ],
-          "x": 319.3543,
-          "y": 484.4965,
-          "direction": 1
-        },
-        "meta": {
-          "updateAt": 1768823965917,
-          "createAt": 1768823965917
-        }
-      },
       "fhMj4zKsRHxokp7P-LAXr": {
         "id": "fhMj4zKsRHxokp7P-LAXr",
         "identification": true,
