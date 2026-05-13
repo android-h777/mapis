@@ -1371,6 +1371,58 @@ legend,
     height: calc(100% - 20px);
   }
 
+  /* 사이드바 두께 시그널 (투명도 유지, 굴절+가장자리 빛만 강화) */
+  #slide-out.glassBox {
+    backdrop-filter: blur(20px) saturate(1.4);
+    -webkit-backdrop-filter: blur(20px) saturate(1.4);
+    border-top: 1.5px solid rgba(255,255,255,0.6);
+    box-shadow:
+      0 12px 40px rgba(31, 38, 135, 0.32),
+      0 4px 16px rgba(80, 60, 40, 0.10),
+      inset 0 1px 0 rgba(255,255,255,0.55),
+      inset 1px 0 0 rgba(255,255,255,0.18),
+      inset -1px 0 0 rgba(255,255,255,0.15),
+      inset 0 -1px 0 rgba(0,0,0,0.04);
+    overflow: hidden;
+  }
+
+  /* Glass Engine: 사이드바 컨테이너 마우스 트래킹 spotlight (masterdata mr-list-wrap 패턴) */
+  #slide-out.glassBox::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity .3s ease;
+    z-index: 0;
+    background:
+      radial-gradient(
+        ellipse 350px 200px at var(--lw-gx, 50%) var(--lw-gy, 50%),
+        rgba(255,255,255,0.4) 0%,
+        rgba(255,255,255,0.06) 40%,
+        transparent 70%
+      ),
+      conic-gradient(
+        from 0deg at var(--lw-gx, 50%) var(--lw-gy, 50%),
+        rgba(255,0,0,0) 0%,
+        rgba(255,0,0,0.01) 8%,
+        rgba(255,165,0,0.01) 16%,
+        rgba(255,255,0,0.01) 24%,
+        rgba(0,255,0,0.01) 33%,
+        rgba(0,200,255,0.01) 42%,
+        rgba(0,100,255,0.01) 50%,
+        rgba(130,0,255,0.01) 58%,
+        rgba(255,0,200,0.01) 66%,
+        rgba(255,0,0,0.01) 75%,
+        rgba(255,0,0,0) 83%,
+        transparent 100%
+      );
+  }
+  #slide-out.glassBox:hover::before {
+    opacity: 1;
+  }
+
   .menuAside .userInfoArea {
 	padding: 20px;
 	display: flex;
@@ -1404,7 +1456,7 @@ legend,
   .menuAside .menuList li.on, .menuAside .menuList li:hover {
 	font-family: 'Roboto-Bold' !important;
 	color: #a47764;
-    box-shadow: 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%), 0 2px 4px -1px rgb(0 0 0 / 30%);
+    box-shadow: 0 2px 3px 0 rgb(0 0 0 / 7%), 0 1px 5px 0 rgb(0 0 0 / 6%), 0 1px 2px -1px rgb(0 0 0 / 15%);
 	background-color: rgba(255, 255, 255, 0.8) !important;
   }
   .menuAside .menuList li.on i, .menuAside .menuList li:hover i {
@@ -1415,17 +1467,64 @@ legend,
 	content: "";
 	position: absolute;
 	inset: 0px;
-	border: 2px solid #a47764;
+	border: 1px solid #a47764;
 	border-radius: 30px;
 	pointer-events: none;
+	z-index: 3;
   }
-  
+  .menuAside .menuList li.on::before {
+	border-width: 2px;
+  }
+  .menuAside .menuList li.on {
+    box-shadow: 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%), 0 2px 4px -1px rgb(0 0 0 / 30%);
+  }
+
+  /* Glass Engine: 마우스 트래킹 빛 효과 (::after 슬롯 사용, ::before 는 베이지 보더 유지) */
+  .menuAside .menuList li::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	border-radius: 30px;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.2s ease;
+	z-index: 1;
+	background: radial-gradient(
+		circle 90px at var(--olx, 50%) var(--oly, 50%),
+		rgba(255,255,255,0.5) 0%,
+		rgba(255,255,255,0.18) 35%,
+		rgba(255,255,255,0) 75%
+	);
+  }
+  .menuAside .menuList li.on::after,
+  .menuAside .menuList li:hover::after {
+	opacity: 1;
+	background:
+		conic-gradient(
+			from var(--ol-angle, 0deg) at var(--olx, 50%) var(--oly, 50%),
+			rgba(255,0,0,0) 0%,
+			rgba(255,0,0,0.025) 8%,
+			rgba(255,165,0,0.025) 16%,
+			rgba(255,255,0,0.045) 24%,
+			rgba(0,255,0,0.045) 33%,
+			rgba(0,200,255,0.045) 42%,
+			rgba(0,100,255,0.045) 50%,
+			rgba(130,0,255,0.045) 58%,
+			rgba(255,0,200,0.025) 66%,
+			rgba(255,0,0,0.025) 75%,
+			rgba(255,0,0,0) 83%,
+			transparent 100%
+		);
+  }
+
   .menuAside .menuList li a {
 	padding: 0px 20px;
 	color: unset;
 	width: 100%;
     color: #000;
     border-bottom: 1px dashed #ccc;
+	position: relative;
+	z-index: 2;
   }
   .menuAside .menuList li a:hover {
 	background-color: unset;
@@ -1435,6 +1534,99 @@ legend,
 	.menuAside .menuList li:has(+ li:hover) > a {
 	border-bottom: none;
 	}
+
+  /* menuUl: pjtMapBox 패턴 — 분홍 유리판 (보더 1px 통일, 배경/색 깊이로 위계) */
+  .popup aside.leftAside .menuUl .menu-item:hover {
+	background-color: rgba(187, 38, 73, 0.01) !important;
+	border: 1px solid rgba(187, 38, 73, 0.4) !important;
+	box-shadow:
+		0 4px 10px rgba(0,0,0,0.10),
+		0 2px 4px rgba(80, 30, 40, 0.06),
+		inset 0 1px 0 rgba(255,255,255,0.6),
+		inset 1px 0 0 rgba(255,255,255,0.18),
+		inset -1px 0 0 rgba(255,255,255,0.15),
+		inset 0 -1px 0 rgba(0,0,0,0.03) !important;
+  }
+  .popup aside.leftAside .menuUl .menu-item.active {
+	background-color: rgba(187, 38, 73, 0.05) !important;
+	border: 1px solid rgba(187, 38, 73, 0.55) !important;
+	box-shadow:
+		0 6px 16px rgba(0,0,0,0.14),
+		0 3px 6px rgba(80, 30, 40, 0.08),
+		inset 0 1px 0 rgba(255,255,255,0.75),
+		inset 1px 0 0 rgba(255,255,255,0.22),
+		inset -1px 0 0 rgba(255,255,255,0.18),
+		inset 0 -1px 0 rgba(0,0,0,0.04) !important;
+  }
+  .popup aside.leftAside .menuUl .menu-item:hover i,
+  .popup aside.leftAside .menuUl .menu-item.active i {
+	color: inherit !important;
+  }
+
+  /* menuUl .menu-item: 사이드바 .menuList li 와 동일 패턴 (hover/.active) */
+  .menuUl .menu-item {
+	width: 100%;
+	position: relative;
+	font-size: 15px;
+	display: flex;
+	align-items: center;
+	border-radius: 30px;
+	padding: 0 20px;
+	color: #000;
+	cursor: pointer;
+  }
+  .menuUl .menu-item.active,
+  .menuUl .menu-item:hover {
+	color: #a47764;
+	box-shadow: 0 2px 3px 0 rgb(0 0 0 / 7%), 0 1px 5px 0 rgb(0 0 0 / 6%), 0 1px 2px -1px rgb(0 0 0 / 15%);
+	background-color: rgba(255, 255, 255, 0.8) !important;
+  }
+  .menuUl .menu-item.active{
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+  }
+  .menuUl .menu-item.active i,
+  .menuUl .menu-item:hover i {
+	color: #a47764;
+  }
+  .menuUl .menu-item.active {
+	box-shadow: 0 4px 5px 0 rgb(0 0 0 / 14%), 0 1px 10px 0 rgb(0 0 0 / 12%), 0 2px 4px -1px rgb(0 0 0 / 30%);
+  }
+  /* 무지개 conic spotlight (::after) */
+  .menuUl .menu-item::after {
+	content: "";
+	position: absolute;
+	inset: 0;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity 0.2s ease;
+	z-index: 1;
+	background: radial-gradient(
+		circle 90px at var(--olx, 50%) var(--oly, 50%),
+		rgba(255,255,255,0.5) 0%,
+		rgba(255,255,255,0.18) 35%,
+		rgba(255,255,255,0) 75%
+	);
+  }
+  .menuUl .menu-item.active::after,
+  .menuUl .menu-item:hover::after {
+	opacity: 1;
+	background:
+		conic-gradient(
+			from var(--ol-angle, 0deg) at var(--olx, 50%) var(--oly, 50%),
+			rgba(255,0,0,0) 0%,
+			rgba(255,0,0,0.025) 8%,
+			rgba(255,165,0,0.025) 16%,
+			rgba(255,255,0,0.045) 24%,
+			rgba(0,255,0,0.045) 33%,
+			rgba(0,200,255,0.045) 42%,
+			rgba(0,100,255,0.045) 50%,
+			rgba(130,0,255,0.045) 58%,
+			rgba(255,0,200,0.025) 66%,
+			rgba(255,0,0,0.025) 75%,
+			rgba(255,0,0,0) 83%,
+			transparent 100%
+		);
+  }
 
   .sidenav-overlay {
 	background-color: rgba(255, 255, 255, 0.2) !important;
@@ -2328,6 +2520,71 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 	padding-left: 15px;
 }
 
+/* ====================================================================
+   Glass Row Overlay — hBorderTable 행 호버 무지개 효과
+   (masterdata hoo-spec-table 패턴 이식)
+   - 컨테이너에 position: relative + contain: layout paint
+     (자식 overlay 가 .fixedTable overflow:auto 의 scroll 트리거 차단)
+   - JS (glass_engine.js) 의 initGlassOverlay 가 동적으로 overlay 삽입
+   ==================================================================== */
+.fixedTable.hBorderTable,
+.hFixedTable.hBorderTable {
+	position: relative;
+}
+.glassRowOverlay {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 0;
+	height: 0;
+	border-radius: 5px;
+	background:
+		conic-gradient(
+			from var(--ol-angle, 0deg) at var(--olx, 50%) var(--oly, 50%),
+			rgba(255,0,0,0) 0%,
+			rgba(255,0,0,0.05) 8%,
+			rgba(255,165,0,0.05) 16%,
+			rgba(255,255,0,0.05) 24%,
+			rgba(0,255,0,0.05) 33%,
+			rgba(0,200,255,0.05) 42%,
+			rgba(0,100,255,0.05) 50%,
+			rgba(130,0,255,0.05) 58%,
+			rgba(255,0,200,0.05) 66%,
+			rgba(255,0,0,0.05) 75%,
+			rgba(255,0,0,0) 83%,
+			transparent 100%
+		);
+	box-shadow:
+		inset 0 2px 0 rgba(255,255,255,0.9),
+		inset 0 -2px 3px rgba(0,0,0,0.06),
+		inset 1px 0 0 rgba(255,255,255,0.5),
+		inset -1px 0 0 rgba(255,255,255,0.5);
+	pointer-events: none;
+	z-index: 11;
+	opacity: 0;
+	transition: opacity 0.15s ease, top 0.1s ease;
+}
+.glassRowOverlay.active {
+	opacity: 1;
+}
+.glassCaustic {
+	position: absolute;
+	left: 0;
+	bottom: 0;
+	width: 80px;
+	height: 5px;
+	background:
+		radial-gradient(
+			ellipse 100% 100% at 50% 0%,
+			rgba(255,255,255,0.5) 0%,
+			rgba(200,195,220,0.2) 40%,
+			transparent 100%
+		);
+	border-radius: 50%;
+	filter: blur(2px);
+	pointer-events: none;
+}
+
 .fixedTable .lv1 td {
     background-color: #E1DCCA;
     color: #000;
@@ -2457,7 +2714,7 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 }
 
 .hBtn {
-	background-color: rgba(255,255,255,0.85);
+	background-color: rgba(255,255,255,0.55);
 	height: 30px;
 	line-height: 26px;
     display: flex;
@@ -2469,11 +2726,13 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	overflow: hidden;
 	transition: color 0.5s ease, box-shadow 0.3s ease, transform 0.3s ease, background-color 0.3s ease;
 	box-shadow:
-		inset 0 1px 0 rgba(255,255,255,0.7),
-		0 2px 4px rgba(0,0,0,0.1),
-		0 1px 2px rgba(0,0,0,0.06);
+		inset 0 1px 0 rgba(255,255,255,0.8),
+		inset 0 -1px 0 rgba(0,0,0,0.03),
+		0 2px 4px rgba(0,0,0,0.08),
+		0 1px 2px rgba(0,0,0,0.05);
 	font-family: 'Roboto-Regular';
-	backdrop-filter: blur(6px);
+	backdrop-filter: blur(12px) saturate(1.4);
+	-webkit-backdrop-filter: blur(12px) saturate(1.4);
 }
 /* ::before로 테두리 차오르는 효과 구현 */
 .hBtn::before {
@@ -2534,7 +2793,7 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 		);
 	pointer-events: none;
 	z-index: 2;
-	opacity: 0;
+	opacity: 0.5;
 	transition: opacity 0.3s ease;
 }
 .hBtn:hover::after, .hBtn.on::after {
@@ -2682,6 +2941,50 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 .typeList .mainList {
 	padding: 10px;
 }
+
+/* Glass Engine: mainList/rightSection .cardBox 마우스 추적 spotlight (mr-list-wrap 패턴) */
+.typeList .mainList.cardBox,
+.typeList .rightSection > .cardBox {
+	overflow: hidden;
+}
+.typeList .mainList.cardBox::before,
+.typeList .rightSection > .cardBox::before {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity .3s ease;
+	z-index: 0;
+	background:
+		radial-gradient(
+			ellipse 350px 200px at var(--lw-gx, 50%) var(--lw-gy, 50%),
+			rgba(255,255,255,0.4) 0%,
+			rgba(255,255,255,0.06) 40%,
+			transparent 70%
+		),
+		conic-gradient(
+			from 0deg at var(--lw-gx, 50%) var(--lw-gy, 50%),
+			rgba(255,0,0,0) 0%,
+			rgba(255,0,0,0.01) 8%,
+			rgba(255,165,0,0.01) 16%,
+			rgba(255,255,0,0.01) 24%,
+			rgba(0,255,0,0.01) 33%,
+			rgba(0,200,255,0.01) 42%,
+			rgba(0,100,255,0.01) 50%,
+			rgba(130,0,255,0.01) 58%,
+			rgba(255,0,200,0.01) 66%,
+			rgba(255,0,0,0.01) 75%,
+			rgba(255,0,0,0) 83%,
+			transparent 100%
+		);
+}
+.typeList .mainList.cardBox:hover::before,
+.typeList .rightSection > .cardBox:hover::before {
+	opacity: 1;
+}
+
 .typeList .mainList ul {
 	overflow-y: auto;
 	overflow-x: visible;
@@ -2699,7 +3002,8 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	border-radius: 10px;
 	transition: transform 0.25s ease, box-shadow 0.25s ease, background 0.25s ease, border 0.25s ease;
 }
-.typeList .mainList li.on {
+.typeList .mainList li.on,
+.typeList .mainList li:hover {
 	color: #000;
 	border-radius: 10px;
 	border: 1px solid rgba(0,0,0,0.1) !important;
@@ -2716,7 +3020,21 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	transform: translateY(-2px);
 	position: relative;
 }
-.typeList .mainList li.on::before {
+/* .on 단독: 이중 보더로 활성 구분 (외곽=베이지, inset=화이트 하이라이트) */
+.typeList .mainList li.on {
+	border: 1.5px solid rgba(164,119,100,0.55) !important;
+	border-bottom: 1.5px solid rgba(164,119,100,0.45) !important;
+	box-shadow:
+		0 4px 8px rgba(0,0,0,0.12),
+		0 1px 2px rgba(0,0,0,0.08),
+		inset 0 0 0 1px rgba(255,255,255,0.55),
+		inset 0 1px 0 rgba(255,255,255,0.95),
+		inset 0 -1px 0 rgba(0,0,0,0.05),
+		0 0 8px rgba(0,0,0,0.06),
+		0 0 2px rgba(0,0,0,0.04);
+}
+.typeList .mainList li.on::before,
+.typeList .mainList li:hover::before {
 	content: '';
 	position: absolute;
 	inset: 0;
@@ -2740,7 +3058,8 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	pointer-events: none;
 	z-index: 1;
 }
-.typeList .mainList li.on::after {
+.typeList .mainList li.on::after,
+.typeList .mainList li:hover::after {
 	content: '';
 	position: absolute;
 	left: 0; right: 0;
@@ -2752,7 +3071,8 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	z-index: 2;
 }
 .typeList .mainList li .statusBox {
-	border: 2px solid;
+	position: relative;
+	border: 1px solid;
 	border-radius: 10px;
 	width: 100px;
 	height: 40px;
@@ -2761,21 +3081,59 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	justify-content: center;
 	font-family: 'Roboto-Medium';
 	margin-right: 20px;
+	backdrop-filter: blur(8px) saturate(1.3);
+	-webkit-backdrop-filter: blur(8px) saturate(1.3);
+	box-shadow:
+		0 2px 4px rgba(0, 0, 0, 0.08),
+		0 1px 2px rgba(0, 0, 0, 0.04),
+		inset 0 1px 0 rgba(255, 255, 255, 0.55),
+		inset 1px 0 0 rgba(255, 255, 255, 0.20),
+		inset -1px 0 0 rgba(255, 255, 255, 0.15),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.04);
+}
+/* 색수차 효과 (정적 conic, 마우스 트래킹 없음) — 알파 낮게 항상 표시 */
+.typeList .mainList li .statusBox::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	background: conic-gradient(
+		from 0deg at 50% 50%,
+		rgba(255,0,0,0) 0%,
+		rgba(255,0,0,0.03) 8%,
+		rgba(255,165,0,0.03) 16%,
+		rgba(255,255,0,0.045) 24%,
+		rgba(0,255,0,0.045) 33%,
+		rgba(0,200,255,0.045) 42%,
+		rgba(0,100,255,0.045) 50%,
+		rgba(130,0,255,0.045) 58%,
+		rgba(255,0,200,0.03) 66%,
+		rgba(255,0,0,0.03) 75%,
+		rgba(255,0,0,0) 83%,
+		transparent 100%
+	);
 }
 .typeList .mainList li .statusBox.type1 {
-	border-color: #e87e05;
-	color: #e87e05;
+	border-color: rgba(232, 126, 5, 0.55);
+	background-color: rgba(232, 126, 5, 0.05);
+	color: #b5621c;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 .typeList .mainList li .statusBox.type2 {
-	border-color: #899f6a;
-	color: #899f6a;
+	border-color: rgba(137, 159, 106, 0.55);
+	background-color: rgba(137, 159, 106, 0.05);
+	color: #4d5d3b;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 .typeList .mainList li .statusBox.coc {
 	width: 320px;
-	border: 1px solid #899f6a;
-	color: #899f6a;
+	border: 1px solid rgba(137, 159, 106, 0.55);
+	background-color: rgba(137, 159, 106, 0.05);
+	color: #4d5d3b;
 	box-sizing: border-box;
 	min-width: 0;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 .typeList .mainList li .statusBox.coc .statusText{
   display: block;
@@ -2806,20 +3164,6 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 }
 .typeList .mainList li.on .pjTit, .typeList .mainList li:hover .pjTit {
 	text-shadow: -0.6px 0 currentColor, 0.6px 0 currentColor;
-}
-.typeList .mainList li:hover {
-	border: 1px solid rgba(0,0,0,0.1) !important;
-	border-bottom: 1px solid rgba(0,0,0,0.08) !important;
-	border-radius: 10px;
-	background: linear-gradient(180deg, rgba(255,255,255,0.6) 0%, rgba(255,255,255,0.25) 100%);
-	backdrop-filter: blur(6px);
-	box-shadow:
-		0 3px 6px rgba(0,0,0,0.1),
-		inset 0 1px 0 rgba(255,255,255,0.8),
-		0 0 15px rgba(0,0,0,0.08),
-		0 0 4px rgba(0,0,0,0.05);
-	color: #000;
-	transform: translateY(-1px);
 }
 .typeList .mainList li .pjTit:hover {
 	color: #004098;
@@ -2986,15 +3330,54 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 .popup header .statusArea .bdBox {
     display: flex;
     align-items: flex-end;
-    border: 2px solid #a47764;
+    border: 1px solid rgba(164, 119, 100, 0.5);
     padding: 2px 20px 2px 17px;
     border-radius: 10px;
     line-height: 20px;
     font-family: 'Roboto-Regular';
     font-size: 14px;
+	backdrop-filter: blur(8px) saturate(1.3);
+	-webkit-backdrop-filter: blur(8px) saturate(1.3);
+	position: relative;
 }
 .popup header .statusArea .bdBox:hover {
-	box-shadow: 0 2px 2px 0 rgba(0, 0, 0, 0.14), 0 3px 1px -2px rgba(0, 0, 0, 0.12), 0 1px 5px 0 rgba(0, 0, 0, 0.2);
+	box-shadow: 0 4px 8px rgba(0, 0, 0, 0.10), inset 0 1px 0 rgba(255, 255, 255, 0.5);
+}
+/* 마우스 추적 spotlight + 무지개 conic (::after 슬롯, .on::before pulse outline 보존) — 기본부터 표시, hover 시 도드라짐 */
+.popup header .statusArea .bdBox::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	opacity: 0.8;
+	transition: opacity .2s ease;
+	z-index: 0;
+	background:
+		radial-gradient(
+			ellipse 150px 80px at var(--card-gx, 50%) var(--card-gy, 50%),
+			rgba(255,255,255,0.5) 0%,
+			rgba(255,255,255,0.08) 40%,
+			transparent 70%
+		),
+		conic-gradient(
+			from 0deg at var(--card-gx, 50%) var(--card-gy, 50%),
+			rgba(255,0,0,0) 0%,
+			rgba(255,0,0,0.04) 8%,
+			rgba(255,165,0,0.04) 16%,
+			rgba(255,255,0,0.06) 24%,
+			rgba(0,255,0,0.06) 33%,
+			rgba(0,200,255,0.06) 42%,
+			rgba(0,100,255,0.06) 50%,
+			rgba(130,0,255,0.06) 58%,
+			rgba(255,0,200,0.04) 66%,
+			rgba(255,0,0,0.04) 75%,
+			rgba(255,0,0,0) 83%,
+			transparent 100%
+		);
+}
+.popup header .statusArea .bdBox:hover::after {
+	opacity: 1;
 }
 .popup header .npdiTabMenu .tabs {
 	background-color: #a47764;
@@ -3015,10 +3398,49 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 .popup header .npdiTabMenu .tabs .indicator {
     height: 28px;
 	top: 8px;
-    background-color: transparent;
+    background-color: rgba(255, 255, 255, 0.8);
+	backdrop-filter: blur(16px) saturate(1.4);
+	-webkit-backdrop-filter: blur(16px) saturate(1.4);
     border-radius: 20px;
-	border: 1px solid #fff;
-	box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+	border: 1px solid rgba(255, 255, 255, 0.55);
+	border-top: 1.5px solid rgba(255, 255, 255, 0.85);
+	box-shadow:
+		0 4px 10px rgba(0, 0, 0, 0.15),
+		0 2px 4px rgba(80, 50, 35, 0.10),
+		inset 0 1px 0 rgba(255, 255, 255, 0.7),
+		inset 1px 0 0 rgba(255, 255, 255, 0.25),
+		inset -1px 0 0 rgba(255, 255, 255, 0.20),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+	z-index: 0;
+	pointer-events: none;
+}
+/* indicator 정적 색수차 (마우스 트래킹 없음) — statusBox 와 동일 패턴 */
+.popup header .npdiTabMenu .tabs .indicator::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	background: conic-gradient(
+		from 0deg at 50% 50%,
+		rgba(255,0,0,0) 0%,
+		rgba(255,0,0,0.04) 8%,
+		rgba(255,165,0,0.04) 16%,
+		rgba(255,255,0,0.06) 24%,
+		rgba(0,255,0,0.06) 33%,
+		rgba(0,200,255,0.06) 42%,
+		rgba(0,100,255,0.06) 50%,
+		rgba(130,0,255,0.06) 58%,
+		rgba(255,0,200,0.04) 66%,
+		rgba(255,0,0,0.04) 75%,
+		rgba(255,0,0,0) 83%,
+		transparent 100%
+	);
+}
+/* 탭 글씨를 indicator 위로 — indicator 배경이 글씨를 덮지 않게 (Materialize tabs.js 영향 피하려 .tab 아닌 .tab a 에 적용) */
+.popup header .npdiTabMenu .tabs .tab a {
+	position: relative;
+	z-index: 1;
 }
 .popup header .npdiTabMenu .tabs .tab a {
 	font-size: 13px;
@@ -3030,32 +3452,38 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 }
 .popup header .npdiTabMenu .tabs .tab a.active {
 	color: #a47764;
-    background-color: #fff;
+    background-color: transparent;
     border-radius: 20px;
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+	font-family: 'Roboto-Bold' !important;
 }
 .popup header .npdiTabMenu .tabs .tab a:focus, .popup header .npdiTabMenu .tabs .tab a:focus.active {
   	outline: none;
-    background-color: #fff;
+    background-color: transparent;
     border-radius: 20px;
-	color: #a47764;
+	color: #fff;
 }
 
 .popup header .bdBox.ing {
-	color: #7391c9;
-	border-color: #7391c9;
+	color: #3e5377;
+	border-color: rgba(115, 145, 201, 0.55);
+	background-color: rgba(115, 145, 201, 0.28);
 	font-family: 'Roboto-Medium';
 }
 .popup header .bdBox.fin {
-	color: #fff;
-	border-color: #899f6a;
-	background-color: #899f6a;
+	color: #4d5d3b;
+	border-color: rgba(137, 159, 106, 0.55);
+	background-color: rgba(137, 159, 106, 0.28);
 }
 .popup header .bdBox.on {
-	background-color: #a47764;
-	color: #fff;
-	border-color: #a47764;	
+	background-color: rgba(164, 119, 100, 0.35);
+	border-color: rgba(164, 119, 100, 0.6);
 	overflow: visible;
-	box-shadow: 0 4px 5px 0 rgba(0, 0, 0, 0.14), 0 1px 10px 0 rgba(0, 0, 0, 0.12), 0 2px 4px -1px rgba(0, 0, 0, 0.3);
+	font-family: 'Roboto-Medium';
+	box-shadow:
+		0 4px 8px rgba(0, 0, 0, 0.14),
+		0 2px 4px rgba(80, 50, 35, 0.10),
+		inset 0 1px 0 rgba(255, 255, 255, 0.55);
 }
 
 .onArwArea{
@@ -3067,14 +3495,14 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 
 
 .popup header .bdBox.ing.on {
-	background-color: #7391c9;
-	color: #fff;
-	border-color: #7391c9;	
+	background-color: rgba(115, 145, 201, 0.2);
+	border-color: rgba(115, 145, 201, 0.7);
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 .popup header .bdBox.fin.on {
-	background-color: #899f6a;
-	color: #fff;
-	border-color: #899f6a;	
+	background-color: rgba(137, 159, 106, 0.55);
+	border-color: rgba(137, 159, 106, 0.7);
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
 }
 .popup header .statusArea .bdBox i {
 	font-size: 21px;
@@ -3327,45 +3755,179 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	max-height: 80%;
 
 	background: rgba(255, 255, 255, 0.15);
-	box-shadow:
-		0 8px 32px 0 rgba(31, 38, 135, 0.37),
-		inset 0 1px 0 rgba(255,255,255,0.6),
-		inset 0 -1px 0 rgba(0,0,0,0.05);
-	backdrop-filter: blur(10px);
-	-webkit-backdrop-filter: blur(10px);
+	backdrop-filter: blur(20px) saturate(1.4);
+	-webkit-backdrop-filter: blur(20px) saturate(1.4);
 	border: 1px solid rgba(255, 255, 255, 0.3);
-	transition: background 0.5s ease, box-shadow 0.5s ease; /* 추가된 부분 */
+	border-top: 1.5px solid rgba(255,255,255,0.6);
+	box-shadow:
+		0 12px 40px rgba(31, 38, 135, 0.32),
+		0 4px 16px rgba(80, 60, 40, 0.10),
+		inset 0 1px 0 rgba(255,255,255,0.55),
+		inset 1px 0 0 rgba(255,255,255,0.18),
+		inset -1px 0 0 rgba(255,255,255,0.15),
+		inset 0 -1px 0 rgba(0,0,0,0.04);
+	transition: background 0.5s ease, box-shadow 0.5s ease;
 }
 .modal:hover {
 	background: rgba(255, 255, 255, 0.5);
 	box-shadow:
-		0 8px 32px 0 rgba(31, 38, 135, 0.67),
+		0 16px 48px rgba(31, 38, 135, 0.40),
+		0 6px 20px rgba(80, 60, 40, 0.14),
 		inset 0 1px 0 rgba(255,255,255,0.6),
-		inset 0 -1px 0 rgba(0,0,0,0.05);
+		inset 1px 0 0 rgba(255,255,255,0.18),
+		inset -1px 0 0 rgba(255,255,255,0.15),
+		inset 0 -1px 0 rgba(0,0,0,0.04);
 }
-.modal::before {
-	content: '';
-	position: absolute;
-	inset: 0;
-	border-radius: 30px;
-	background:
-		conic-gradient(
-			from var(--ol-angle, 0deg) at var(--olx, 50%) var(--oly, 50%),
-			rgba(255,0,0,0) 0%,
-			rgba(255,0,0,0.01) 8%,
-			rgba(255,165,0,0.01) 16%,
-			rgba(255,255,0,0.04) 24%,
-			rgba(0,255,0,0.04) 33%,
-			rgba(0,200,255,0.04) 42%,
-			rgba(0,100,255,0.04) 50%,
-			rgba(130,0,255,0.04) 58%,
-			rgba(255,0,200,0.01) 66%,
-			rgba(255,0,0,0.01) 75%,
-			rgba(255,0,0,0) 83%,
-			transparent 100%
-		);
-	pointer-events: none;
-	z-index: 0;
+
+/* hooModal: masterdata New Request 톤 (베이지 반투명 + 강한 blur). 재사용 가능 — <div class="modal hooModal"> */
+.modal.hooModal {
+	background: rgba(210, 150, 110, 0.18) !important;
+	backdrop-filter: blur(48px) saturate(2.0);
+	-webkit-backdrop-filter: blur(48px) saturate(2.0);
+	border: 1px solid rgba(255,255,255,0.45);
+	border-top: 1.5px solid rgba(255,255,255,0.7);
+	box-shadow:
+		0 32px 100px rgba(0,0,0,0.25),
+		0 12px 40px rgba(80,60,40,0.15),
+		0 0 0 1px rgba(0,0,0,0.04),
+		inset 0 1px 0 rgba(255,255,255,0.6),
+		inset 0 -1px 0 rgba(255,255,255,0.1);
+}
+.modal.hooModal:hover {
+	background: rgba(210, 150, 110, 0.25) !important;
+	box-shadow:
+		0 40px 120px rgba(0,0,0,0.30),
+		0 16px 48px rgba(80,60,40,0.18),
+		0 0 0 1px rgba(0,0,0,0.04),
+		inset 0 1px 0 rgba(255,255,255,0.6),
+		inset 0 -1px 0 rgba(255,255,255,0.1);
+}
+/* 헤더: mochaBg 진한 브라운 → 연한 베이지 + 검정 글씨 */
+.modal.hooModal .modal-header,
+.modal.hooModal .modal-header.mochaBg {
+	background-color: rgba(210, 150, 110, 0.15) !important;
+	color: #000;
+	border-bottom: 1px solid rgba(210, 150, 110, 0.20);
+}
+.modal.hooModal .modal-header {
+	padding: 10px 14px 10px 20px !important;
+}
+.modal.hooModal .modal-header h5 {
+	color: #000;
+	font-weight: 700;
+	font-size: 14px;
+	margin: 0;
+	line-height: 1.6;
+}
+.modal.hooModal .modal-content {
+	margin-top: 42px !important;
+}
+.modal.hooModal .modal-header .closeBtns {
+	top: 6px;
+	right: 8px;
+}
+
+/* ====================================================================
+   ProcessMap 모달 (.hooModal) 색 유리 시스템
+   - pjtMapBox: 단독 클릭 박스(.waves-effect) + SubBox 컨테이너 분리
+   - pjtMapSubBox: 입체 유리, 색은 .fin/.ing 클래스로 입힘
+   - 그룹 타이틀 색: 부모 .col.fin/.ing 따라 자동 매칭
+   ==================================================================== */
+
+/* fallback 컨테이너 (.fin/.ing 없는 disabled 박스 등) */
+.modal.hooModal .pjtMapBox {
+	background-color: rgba(255, 255, 255, 0.4) !important;
+	box-shadow:
+		0 2px 4px rgba(0,0,0,0.06),
+		inset 0 1px 0 rgba(255,255,255,0.5);
+}
+
+/* SubBox 입체 유리 기본 (색은 .fin/.ing 으로 입힘) */
+.modal.hooModal .pjtMapSubBox {
+	background-color: rgba(255, 255, 255, 0.3);
+	backdrop-filter: blur(10px) saturate(1.4);
+	-webkit-backdrop-filter: blur(10px) saturate(1.4);
+	box-shadow:
+		0 3px 8px rgba(0, 0, 0, 0.10),
+		0 1px 3px rgba(80, 60, 40, 0.06),
+		inset 0 1px 0 rgba(255, 255, 255, 0.7),
+		inset 1px 0 0 rgba(255, 255, 255, 0.25),
+		inset -1px 0 0 rgba(255, 255, 255, 0.20),
+		inset 0 -1px 0 rgba(0, 0, 0, 0.05);
+}
+
+/* SubBox 컨테이너 (행 1, 3) — 흰 투명 유리, 색은 자식 SubBox 가 표시 */
+.modal.hooModal .pjtMapArea .fin .pjtMapBox:not(.waves-effect),
+.modal.hooModal .pjtMapArea .ing .pjtMapBox:not(.waves-effect) {
+	background-color: rgba(255, 255, 255, 0.18) !important;
+	border-color: rgba(255, 255, 255, 0.35) !important;
+	color: inherit;
+}
+
+/* 그룹 타이틀 — flex 첫 줄 차지, 진행상태별 컬러 매칭 */
+.modal.hooModal .pjtMapArea .pjtMapGroupTit {
+	width: 100%;
+	font-family: 'Roboto-Medium';
+	font-size: 14px;
+	letter-spacing: 0.3px;
+	padding: 0 5px 10px 5px;
+}
+.modal.hooModal .pjtMapArea .fin .pjtMapGroupTit { color: #4d5d3b; }
+.modal.hooModal .pjtMapArea .ing .pjtMapGroupTit { color: #3e5377; }
+
+/* === 상태별 색 유리 톤 (보더 대신 배경 컬러 반투명) === */
+/* fin (완료, 녹) — 단독 박스 + SubBox 본체 */
+.modal.hooModal .pjtMapArea .fin .pjtMapBox {
+	background-color: rgba(137, 159, 106, 0.30) !important;
+	border-color: rgba(137, 159, 106, 0.45) !important;
+	border-width: 1px !important;
+	color: #4d5d3b;
+}
+.modal.hooModal .pjtMapSubBox.fin {
+	background-color: rgba(137, 159, 106, 0.30);
+	border-color: rgba(137, 159, 106, 0.45);
+	border-width: 1px;
+	color: #4d5d3b;
+}
+
+/* ing (진행, 파) — 단독 박스 + SubBox 본체 */
+.modal.hooModal .pjtMapArea .ing .pjtMapBox {
+	background-color: rgba(115, 145, 201, 0.30) !important;
+	border-color: rgba(115, 145, 201, 0.45) !important;
+	border-width: 1px !important;
+	color: #3e5377;
+}
+.modal.hooModal .pjtMapSubBox.ing {
+	background-color: rgba(115, 145, 201, 0.30);
+	border-color: rgba(115, 145, 201, 0.45);
+	border-width: 1px;
+	color: #3e5377;
+}
+
+/* 흰 emboss text-shadow — 색 유리 위 어두운 글자 공통 */
+.modal.hooModal .pjtMapArea .fin .pjtMapBox,
+.modal.hooModal .pjtMapArea .ing .pjtMapBox,
+.modal.hooModal .pjtMapSubBox.fin,
+.modal.hooModal .pjtMapSubBox.ing,
+.modal.hooModal .pjtMapArea .pjtMapGroupTit {
+	text-shadow: 0 1px 0 rgba(255, 255, 255, 0.6);
+}
+.modal.hooModal .modal-header .closeBtns {
+	width: 32px;
+	height: 32px;
+	border-radius: 50%;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+	color: rgba(0,0,0,0.5);
+	transition: background .15s ease, color .15s ease;
+}
+.modal.hooModal .modal-header .closeBtns i {
+	font-size: 20px;
+}
+.modal.hooModal .modal-header .closeBtns:hover {
+	background: rgba(210, 150, 110, 0.22);
+	color: #000;
 }
 .modal::after {
 	content: '';
@@ -5039,6 +5601,63 @@ textarea.materialize-textarea:focus:not([readonly]) {
 	font-size: 14px;
 	background-color: #fff;
 	position: relative;
+	transform-style: preserve-3d;
+}
+
+/* masterdata step-card 패턴: 마우스 추적 spotlight + 틸트 (::after 슬롯, .ing::before outline 보존) */
+.pjtMapBox.waves-effect,
+.pjtMapSubBox {
+	cursor: pointer;
+	transition: box-shadow .3s ease, background .2s ease, transform .25s ease;
+}
+.pjtMapBox.waves-effect::after,
+.pjtMapSubBox::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	pointer-events: none;
+	opacity: 0;
+	transition: opacity .2s ease;
+	z-index: 0;
+	background:
+		radial-gradient(
+			ellipse 200px 120px at var(--card-gx, 50%) var(--card-gy, 50%),
+			rgba(255,255,255,0.5) 0%,
+			rgba(255,255,255,0.08) 40%,
+			transparent 70%
+		),
+		conic-gradient(
+			from 0deg at var(--card-gx, 50%) var(--card-gy, 50%),
+			rgba(255,0,0,0) 0%,
+			rgba(255,0,0,0.04) 8%,
+			rgba(255,165,0,0.04) 16%,
+			rgba(255,255,0,0.06) 24%,
+			rgba(0,255,0,0.06) 33%,
+			rgba(0,200,255,0.06) 42%,
+			rgba(0,100,255,0.06) 50%,
+			rgba(130,0,255,0.06) 58%,
+			rgba(255,0,200,0.04) 66%,
+			rgba(255,0,0,0.04) 75%,
+			rgba(255,0,0,0) 83%,
+			transparent 100%
+		);
+}
+.pjtMapBox.waves-effect:hover::after,
+.pjtMapSubBox:hover::after {
+	opacity: 1;
+}
+.pjtMapBox.waves-effect:hover {
+	box-shadow:
+		0 8px 20px rgba(0,0,0,0.12),
+		inset 0 1px 0 rgba(255,255,255,0.7);
+}
+.pjtMapSubBox:hover {
+	background: rgba(255,255,255,0.6);
+	box-shadow:
+		0 6px 16px rgba(0,0,0,0.10),
+		inset 0 1px 0 rgba(255,255,255,0.7);
+	z-index: 10;
 }
 .fin .pjtMapBox:hover > a, .ing .pjtMapBox:hover > a, .fin .pjtMapSubBox:hover > a, .ing .pjtMapSubBox:hover > a {
 	color: #004098 !important;
@@ -5101,6 +5720,7 @@ textarea.materialize-textarea:focus:not([readonly]) {
   border-radius: 30px;
   transition: opacity .3s, transform .3s, -webkit-transform .3s;
   animation: border-pulse-animation-small 1.5s cubic-bezier(0.24, 0, 0.38, 1) infinite;
+  pointer-events: none;
   z-index: -1;
 }
 @keyframes border-pulse-animation-small {
@@ -5437,9 +6057,9 @@ textarea.materialize-textarea:focus:not([readonly]) {
   line-height: 1.35;
   box-shadow: 0 6px 18px rgba(0,0,0,.22);
   opacity: 0;
-  transform: translateY(-4px);
+  transform: translateY(-6px);
   pointer-events: none;
-  transition: opacity .12s ease, transform .12s ease;
+  transition: opacity .3s cubic-bezier(.25,.8,.25,1), transform .3s cubic-bezier(.25,.8,.25,1);
   white-space: normal;
 }
 #npdi-rsp-tooltip.is-on{

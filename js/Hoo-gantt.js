@@ -747,10 +747,21 @@
     }
 
     let hoverEl = null;
+    let hideTimer = null;
 
-    function hide(){
-      hoverEl = null;
-      tip.classList.remove('is-on');
+    function hide(immediate){
+      if(immediate){
+        clearTimeout(hideTimer);
+        hideTimer = null;
+        hoverEl = null;
+        tip.classList.remove('is-on');
+        return;
+      }
+      hideTimer = setTimeout(function(){
+        hoverEl = null;
+        tip.classList.remove('is-on');
+        hideTimer = null;
+      }, 80);
     }
 
     function place(target){
@@ -781,6 +792,8 @@
       .off('mouseenter.npdiRspTip', '.npdi-rsp-badge')
       .on('mouseenter.npdiRspTip', '.npdi-rsp-badge', function(){
         if(NPDI.resExpanded) return;
+        clearTimeout(hideTimer);
+        hideTimer = null;
         hoverEl = this;
 
         const $row = $(this).closest('.npdi-gantt-row');
@@ -799,9 +812,9 @@
         hide();
       });
 
-    window.addEventListener('resize', hide);
-    document.addEventListener('scroll', hide, true);
-    document.addEventListener('pointerdown', hide, true);
+    window.addEventListener('resize', function(){ hide(true); });
+    document.addEventListener('scroll', function(){ hide(true); }, true);
+    document.addEventListener('pointerdown', function(){ hide(true); }, true);
   }
 
   /* =======================
