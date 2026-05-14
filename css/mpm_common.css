@@ -2648,43 +2648,69 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 	color: #212121;
 }
 
+/* 기본 스크롤바 (body / mainCardBox / mainListDetailArea / tabs) — 원래 정의 유지 */
 body::-webkit-scrollbar, .mainCardBox .collapsible-body::-webkit-scrollbar,
-	.mainListDetailArea::-webkit-scrollbar, .hScroll::-webkit-scrollbar,
-	.tabs::-webkit-scrollbar {
+	.mainListDetailArea::-webkit-scrollbar, .tabs::-webkit-scrollbar {
 	width: 10px;
 	height: 10px;
 	background-color: rgba(0, 0, 0, 0.2);
 }
 
 body::-webkit-scrollbar-thumb, .mainCardBox .collapsible-body::-webkit-scrollbar-thumb,
-	.mainListDetailArea::-webkit-scrollbar-thumb, .hScroll::-webkit-scrollbar-thumb,
-	.tabs::-webkit-scrollbar-thumb {
+	.mainListDetailArea::-webkit-scrollbar-thumb, .tabs::-webkit-scrollbar-thumb {
 	background-color: rgba(0, 0, 0, 0.4);
 	border-radius: 10px;
 }
 
-body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-track,
-	.mainListDetailArea::-webkit-scrollbar-track, .hScroll::-webkit-scrollbar-track,
-	.tabs::-webkit-scrollbar-track {
+body::-webkit-scrollbar-track, .mainCardBox .collapsible-body::-webkit-scrollbar-track,
+	.mainListDetailArea::-webkit-scrollbar-track, .tabs::-webkit-scrollbar-track {
 	background-color: rgba(0, 0, 0, 0.3);
 	border-radius: 5px;
 	box-shadow: inset 0px 0px 5px white;
 }
 
+/* .hScroll / 갠트 스크롤 영역 — 그레이 톤 얇게 (width/height 5px) */
+.hScroll::-webkit-scrollbar,
+#npdi-gantt-rows::-webkit-scrollbar,
+.npdi-gantt-right-pane::-webkit-scrollbar {
+	width: 5px;
+	height: 5px;
+	background-color: rgba(0, 0, 0, 0.05);
+}
+.hScroll::-webkit-scrollbar-thumb,
+#npdi-gantt-rows::-webkit-scrollbar-thumb,
+.npdi-gantt-right-pane::-webkit-scrollbar-thumb {
+	background-color: rgba(0, 0, 0, 0.30);
+	border-radius: 5px;
+}
+.hScroll::-webkit-scrollbar-thumb:hover,
+#npdi-gantt-rows::-webkit-scrollbar-thumb:hover,
+.npdi-gantt-right-pane::-webkit-scrollbar-thumb:hover {
+	background-color: rgba(0, 0, 0, 0.55);
+}
+.hScroll::-webkit-scrollbar-track,
+#npdi-gantt-rows::-webkit-scrollbar-track,
+.npdi-gantt-right-pane::-webkit-scrollbar-track {
+	background-color: transparent;
+	border-radius: 5px;
+}
+
+/* .hScrollW — 그레이 톤 얇게 (.hScroll 과 동일 패턴) */
 .hScrollW::-webkit-scrollbar {
-	width: 10px;
-	background-color: rgba(255, 255, 255, 0.2);
+	width: 5px;
+	height: 5px;
+	background-color: rgba(0, 0, 0, 0.05);
 }
-
 .hScrollW::-webkit-scrollbar-thumb {
-	background-color: rgba(0, 0, 0, 0.4);
-	border-radius: 10px;
-}
-
-.hScrollW::-webkit-scrollbar-track {
-	background-color: rgba(0, 0, 0, 0.3);
+	background-color: rgba(0, 0, 0, 0.30);
 	border-radius: 5px;
-	box-shadow: inset 0px 0px 5px white;
+}
+.hScrollW::-webkit-scrollbar-thumb:hover {
+	background-color: rgba(0, 0, 0, 0.55);
+}
+.hScrollW::-webkit-scrollbar-track {
+	background-color: transparent;
+	border-radius: 5px;
 }
 
 
