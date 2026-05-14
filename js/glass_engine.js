@@ -120,6 +120,15 @@ $(document).on('mousemove', '.newAppleTab li.on', function(e) {
   if (tabBg) glassTrack.call(tabBg, e);
 });
 
+/* mainSrchArea 검색박스 알약 — glassTrack 만 (tilt 없음, input 기울어지면 어색) */
+$(document).on('mousemove', '.mainSrchArea .srchArea', glassTrack);
+
+/* myMenuArea menuIconBox — cardSpotlight 만 (transform 없음, narrow card jitter 회피) */
+$(document).on('mousemove', '.myMenuArea .myMenuList li .menuIconBox', cardSpotlight);
+
+/* notiList collapsible li — cardSpotlight 만 (transform 없음, collapsible 동작 영향 회피) */
+$(document).on('mousemove', '.notiList ul li', cardSpotlight);
+
 
 /* ── [2] cardSpotlight 계열 ───────────────────────────────────────────────── */
 
@@ -139,11 +148,54 @@ $(document).on('mouseleave', '.pjtMapBox.waves-effect', function() {
 $(document).on('mousemove', '.pjtMapSubBox, .popup header .statusArea .bdBox', cardSpotlight);
 
 
-/* ── 컨테이너 트래킹 (--lw-gx / --lw-gy, masterdata mr-list-wrap 패턴) ─────── */
-$(document).on('mousemove', '#slide-out.glassBox, .typeList .mainList.cardBox, .typeList .rightSection > .cardBox', function(e) {
-  var r = this.getBoundingClientRect();
-  this.style.setProperty('--lw-gx', ((e.clientX - r.left) / r.width) * 100 + '%');
-  this.style.setProperty('--lw-gy', ((e.clientY - r.top) / r.height) * 100 + '%');
+/* ── 컨테이너 트래킹 (--lw-gx / --lw-gy, masterdata mr-list-wrap 패턴) ─────── *
+ * slide-out 글래스 + 모든 .cardBox 가 이 채널 사용. cardBox 안엔 다른 추적 핸들러를
+ * 가진 자식(mainList li, hBtn, pjtMapBox 등)이 bubble 로 같이 발화하므로 rAF throttle 로
+ * frame 당 1회로 묶음. paint 큰 ::before radial 의 과도한 repaint 회피. */
+var _lwRafPending = false;
+var _lwLastEv = null;
+$(document).on('mousemove', '#slide-out.glassBox, .mainCont .cardBox', function(e) {
+  _lwLastEv = { el: this, x: e.clientX, y: e.clientY };
+  if (_lwRafPending) return;
+  _lwRafPending = true;
+  requestAnimationFrame(function() {
+    _lwRafPending = false;
+    var d = _lwLastEv;
+    if (!d || !d.el.isConnected) return;
+    var r = d.el.getBoundingClientRect();
+    d.el.style.setProperty('--lw-gx', ((d.x - r.left) / r.width) * 100 + '%');
+    d.el.style.setProperty('--lw-gy', ((d.y - r.top) / r.height) * 100 + '%');
+  });
+});
+
+
+/* ── npdiTabMenu indicator 마우스 추적 (--ind-gx/--ind-gy/--ind-angle) ─────── *
+ * indicator 는 pointer-events:none 이라 직접 mousemove 받을 수 없음.
+ * 부모 .tabs 에서 받아서 indicator 박스 기준 좌표로 변환. rAF throttle. */
+var _indRafPending = false;
+var _indLastEv = null;
+$(document).on('mousemove', '.popup header .npdiTabMenu .tabs', function(e) {
+  _indLastEv = { tabs: this, x: e.clientX, y: e.clientY };
+  if (_indRafPending) return;
+  _indRafPending = true;
+  requestAnimationFrame(function() {
+    _indRafPending = false;
+    var d = _indLastEv;
+    if (!d) return;
+    var indicator = d.tabs.querySelector(':scope > .indicator');
+    if (!indicator) return;
+    var r = indicator.getBoundingClientRect();
+    if (r.width === 0) return;
+    var x = ((d.x - r.left) / r.width) * 100;
+    var y = ((d.y - r.top) / r.height) * 100;
+    var angle = Math.atan2(
+      d.y - (r.top + r.height / 2),
+      d.x - (r.left + r.width / 2)
+    ) * 180 / Math.PI;
+    indicator.style.setProperty('--ind-gx', x + '%');
+    indicator.style.setProperty('--ind-gy', y + '%');
+    indicator.style.setProperty('--ind-angle', angle + 'deg');
+  });
 });
 
 
