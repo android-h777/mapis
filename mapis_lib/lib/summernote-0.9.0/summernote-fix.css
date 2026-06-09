@@ -1,0 +1,165 @@
+.note-editor .btn, .note-modal .btn {
+	display: inline-block !important;
+	margin-bottom: 0 !important;
+	text-align: center !important;
+	vertical-align: middle !important;
+	touch-action: manipulation !important;
+	cursor: pointer !important;
+	background-image: none !important;
+	border: 1px solid transparent !important;
+	white-space: nowrap !important;
+	user-select: none !important;
+	
+	text-decoration: inherit;
+    color: inherit;
+    background-color: inherit;
+    text-align: inherit;
+    letter-spacing: inherit;
+    -webkit-transition: inherit;
+    transition: inherit;
+    cursor: inherit;
+    height: inherit;
+    line-height: inherit;
+    -webkit-tap-highlight-color: inherit;
+}
+
+.note-popover .popover-content .note-color .note-dropdown-menu .note-palette .note-color-reset, .note-popover .popover-content .note-color .note-dropdown-menu .note-palette .note-color-select, .note-editor .note-toolbar .note-color .note-dropdown-menu .note-palette .note-color-reset, .note-editor .note-toolbar .note-color .note-dropdown-menu .note-palette .note-color-select {
+	font-size: 11px;
+    margin: 3px 0;
+    padding: 0;
+    cursor: pointer;
+    width: 100%;
+    border-radius: 5px
+}
+
+.note-popover .popover-content .note-color .note-dropdown-menu .note-palette:first-child, .note-editor .note-toolbar .note-color .note-dropdown-menu .note-palette:first-child {
+	margin: 0 5px 0 0 !important;
+}
+.note-popover .popover-content .note-color .note-dropdown-menu .note-palette, .note-editor .note-toolbar .note-color .note-dropdown-menu .note-palette {
+	margin: 0 !important;
+}
+
+.note-modal {
+	top: 100px !important;
+}
+.note-statusbar {
+	display: none !important;
+}
+.note-placeholder {
+	/* color: #9e9e9e !important; */
+	/* MAPIS placeholder integration: Use main hint color variable */
+	color: var(--main-hint-color) !important;
+	font-size: 14px !important;
+	font-family: 'Roboto-Light';
+}
+.note-modal-footer {
+	overflow: hidden;
+}
+
+/* ========================================================================
+ * Summernote 내부 요소를 외부 CSS(Materialize 등)로부터 격리
+ * Isolate Summernote internals from external CSS (Materialize, etc.)
+ * ======================================================================== */
+
+/* --- 1. 체크박스: Materialize가 opacity:0 + position:absolute로 숨기는 것을 복원 --- */
+/* --- 1. Checkbox: Revert Materialize hiding (opacity:0, position:absolute) --- */
+.note-modal [type=checkbox]:not(:checked),
+.note-modal [type=checkbox]:checked,
+.note-modal [type=checkbox] {
+	position: static !important;
+	opacity: 1 !important;
+	pointer-events: auto !important;
+	-webkit-appearance: checkbox !important;
+	appearance: checkbox !important;
+	width: auto !important;
+	height: auto !important;
+	margin: 0 4px 0 0 !important;
+	vertical-align: middle !important;
+}
+
+/* Materialize span 가상요소(커스텀 체크박스) 제거 */
+/* Remove Materialize custom checkbox pseudo-elements */
+.note-modal [type=checkbox] + span:not(.lever):before,
+.note-modal [type=checkbox] + span:not(.lever):after {
+	content: none !important;
+	display: none !important;
+}
+
+/* Materialize span 패딩 리셋 */
+/* Reset Materialize span padding */
+.note-modal [type=checkbox] + span:not(.lever) {
+	padding-left: 0 !important;
+}
+
+/* --- 2. 라디오 버튼도 동일하게 보호 --- */
+/* --- 2. Protect radio buttons the same way --- */
+.note-modal [type=radio]:not(:checked),
+.note-modal [type=radio]:checked,
+.note-modal [type=radio] {
+	position: static !important;
+	opacity: 1 !important;
+	pointer-events: auto !important;
+	-webkit-appearance: radio !important;
+	appearance: radio !important;
+	width: auto !important;
+	height: auto !important;
+	margin: 0 4px 0 0 !important;
+	vertical-align: middle !important;
+}
+
+/* Materialize span 가상요소(커스텀 라디오) 제거 */
+/* Remove Materialize custom radio pseudo-elements */
+.note-modal [type=radio] + span:before,
+.note-modal [type=radio] + span:after {
+	content: none !important;
+	display: none !important;
+}
+.note-modal [type=radio] + span {
+	padding-left: 0 !important;
+}
+
+/* --- 3. 폼 input: Materialize 전역 input 스타일 리셋 --- */
+/* --- 3. Form inputs: Reset Materialize global input styles --- */
+/* Materialize: input[type=text]:not(.browser-default) { height:56px, background:transparent } */
+.note-modal input[type=text],
+.note-modal input[type=url],
+.note-modal input[type=number],
+.note-modal select {
+	box-sizing: border-box !important;
+	height: auto !important;
+	border: 1px solid #ccc !important;
+	border-radius: 3px !important;
+	padding: 4px 8px !important;
+	margin: 0 !important;
+	background-color: #fff !important;
+	color: #333 !important;
+	font-size: 14px !important;
+}
+
+/* --- 4. label: Materialize 전역 label 스타일 리셋 --- */
+/* --- 4. Labels: Reset Materialize global label styles --- */
+/* Materialize: label { font-size:0.8rem, color:on-surface-variant } */
+/* Summernote 기본: .note-modal .note-modal-body label { display:inline-block } — 유지 */
+.note-modal label {
+	font-size: 14px !important;
+	color: #333 !important;
+	transform: none !important;
+	position: static !important;
+}
+
+/* 체크박스 label에만 pointer cursor 적용 */
+/* Apply pointer cursor only to checkbox labels */
+.note-modal .checkbox label,
+.note-modal .sn-checkbox-open-in-new-window label {
+	cursor: pointer !important;
+}
+
+/* --- 5. Summernote 팝오버(링크 미리보기 등)도 보호 --- */
+/* --- 5. Protect Summernote popovers (link preview, etc.) --- */
+.note-popover [type=checkbox] {
+	position: static !important;
+	opacity: 1 !important;
+	pointer-events: auto !important;
+	-webkit-appearance: checkbox !important;
+	appearance: checkbox !important;
+}

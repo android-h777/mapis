@@ -1,0 +1,281 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MAPIS ELN — Experiment</title>
+	<link rel="preload" href="mapis_lib/font/material-symbols-outlined.woff2" as="font" type="font/woff2">
+	<link rel="preload" href="mapis_lib/font/material-symbols-rounded.woff2" as="font" type="font/woff2">
+	<link rel="preload" href="mapis_lib/font/material-symbols-sharp.woff2" as="font" type="font/woff2">
+	<link rel="preload" href="mapis_lib/font/material-icons.woff2" as="font" type="font/woff2">
+    <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/mpm_materialize.css">
+    <link rel="stylesheet" type="text/css" href="mapis_lib/css/common.css">
+    <link type="text/css" rel="stylesheet" href="mapis_lib/css/lib/animate.min.css">
+
+    <link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-3.7.1.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-ui-1.14.1.js"></script>
+    <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/mpm_materialize.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/apis_util.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/highcharts-12.3.0/highcharts.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/highcharts-12.3.0/highcharts-more.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/glass_engine.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="css/eln_proto.css">
+    <script defer src="js/eln_proto.js"></script>
+</head>
+<body class="popup type2">
+	<header class="z-depth-1">
+		<section class="titArea npi">
+			<div><img src="img/MAPISLogo-25.png"></div>
+			<div class="statusTit">
+				<div class="tit">[NT-2605-00142] UV-Curable PSA Viscosity Improvement — RGBOLED</div>
+			</div>
+		</section>
+	</header>
+
+	<aside class="leftAside z-depth-1 blurArea">
+		<section class="hScroll">
+			<ul class="menuUl">
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="card_basic">
+					<i class="material-symbols-outlined left">inventory_2</i><span>Overview</span>
+				</li>
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_fml">
+					<i class="material-symbols-outlined left">blender</i><span>Formulation</span>
+				</li>
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_cond">
+					<i class="material-symbols-outlined left">tune</i><span>Process</span>
+				</li>
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_result">
+					<i class="material-symbols-outlined left">analytics</i><span>Results</span>
+				</li>
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_concl">
+					<i class="material-symbols-outlined left">summarize</i><span>Conclusion</span>
+				</li>
+			</ul>
+		</section>
+		<section class="btnArea">
+			<div><a href="javascript:;" id="elnAddModule" class="waves-effect waves-light hBtn hViva"><i class="material-symbols-outlined left">add_box</i><span class="label">Add Module</span></a></div>
+			<div><a href="javascript:;" id="elnSaveBtn" class="waves-effect waves-light hBtn hBlue mt10"><i class="material-symbols-outlined left">save</i><span class="label">Save</span></a></div>
+		</section>
+	</aside>
+
+	<div class="contArea">
+		<article id="tab_ov" class="contArticle">
+
+			<!-- Overview -->
+			<section class="cardBox animate__animated mt10" id="card_basic">
+				<div class="cardTit2"><i class="material-symbols-outlined left">inventory_2</i>Overview</div>
+				<div class="elnBasic">
+					<!-- Note 제목: 노트의 주인공 -->
+					<label class="elnBasicLabel"><span class="essential">*</span>Note</label>
+					<div class="elnBasicTitle">
+						<input type="text" class="browser-default" value="UV-Curable PSA Viscosity Improvement — RGBOLED" placeholder="Enter note title">
+					</div>
+					<!-- 상태 + 카테고리: 헤더에서 본문 메타 영역으로 이동. status=칩+드롭다운(변경 가능), category=읽기전용 잠금 배지 -->
+					<div class="elnStateRow">
+						<div class="elnStateField">
+							<span class="elnStateLabel">Status</span>
+							<button type="button" class="elnStatusChip" id="elnStatus" data-status="ing" title="Click to change status">
+								<span class="dot"></span><span class="elnStatusLabel">In Progress</span><i class="material-symbols-outlined chev">expand_more</i>
+							</button>
+						</div>
+						<div class="elnStateField">
+							<span class="elnStateLabel">Category</span>
+							<span class="elnCatBadge" id="elnCatBadge" data-cat="fml" title="Category is set at note creation and cannot be changed">
+								<i class="material-symbols-outlined left">blender</i><span class="elnCatLabel">Formulation</span>
+							</span>
+						</div>
+					</div>
+					<!-- 메타 정보: 아이콘 + 라벨/값, CSS Grid 자동 배치 -->
+					<div class="elnMeta">
+						<div class="elnMetaItem">
+							<i class="material-symbols-outlined">menu_book</i>
+							<!-- 클릭 → 노트북 픽커 popover(Unfiled→지정 동선). ?nb= 파라미터로 초기 상태 결정 -->
+							<div class="elnMetaText"><span class="k">Notebook</span><span class="v elnNbPick" id="elnNbMeta" data-nb="RGBOLED Adhesive">RGBOLED Adhesive<i class="material-symbols-outlined">expand_more</i></span></div>
+						</div>
+						<div class="elnMetaItem">
+							<i class="material-symbols-outlined">rocket_launch</i>
+							<div class="elnMetaText"><span class="k">Project</span><span class="v"><a class="link" href="javascript:;">[NPDI-2026-031] RGBOLED Display Adhesive</a></span></div>
+						</div>
+						<div class="elnMetaItem">
+							<i class="material-symbols-outlined">person</i>
+							<div class="elnMetaText"><span class="k">Author</span><span class="v">J.P. Kim</span></div>
+						</div>
+						<div class="elnMetaItem">
+							<i class="material-symbols-outlined">schedule</i>
+							<div class="elnMetaText"><span class="k">Last Modified</span><span class="v">2026-05-28</span></div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Formulation -->
+			<section class="cardBox animate__animated mt10" id="card_fml">
+				<div class="cardTit2"><i class="material-symbols-outlined left">blender</i>Formulation
+					<a class="waves-effect waves-light hBtn hViva right" id="btnOpenFormulator" href="javascript:;" style="float:right;"><i class="material-symbols-outlined left">open_in_new</i><span class="label">Open in formulator</span></a>
+					<a class="waves-effect waves-light hBtn right" id="btnChangeFml" href="javascript:;" style="float:right;margin-right:6px;"><i class="material-symbols-outlined left">checklist</i><span class="label">Select</span></a>
+				</div>
+				<div class="elnBasic">
+					<!-- 본문은 연결된 배합들을 컬럼으로 나란히 비교 -->
+					<label class="elnBasicLabel">Composition <span class="elnHint">— wt% by formulation · click a material for Rawmathub</span></label>
+					<div class="fixedTable hBorderTable hScroll elnFmlCmp">
+						<table>
+							<thead id="fmlCmpCompHead"><!-- JS 렌더: Material | Code | 배합별 컬럼 --></thead>
+							<tbody id="fmlTableBody"><!-- JS 렌더 --></tbody>
+						</table>
+					</div>
+
+					<!-- 분석 임베드 (formulator 분석을 노트 안에 그대로) · 배합별 나란히 비교 -->
+					<label class="elnBasicLabel mt16">Analysis <span class="elnHint">— side-by-side metrics · read-only</span></label>
+					<div class="elnFmlAnalysis">
+						<div class="elnFmlChart"><div id="chartFmlAnalysis" style="height:240px;"></div></div>
+						<div class="elnFmlMetrics">
+							<div class="fixedTable hBorderTable hScroll elnFmlCmp">
+								<table>
+									<thead id="fmlCmpMetricHead"><!-- JS 렌더: Metric | 배합별 컬럼 --></thead>
+									<tbody id="fmlMetricBody"><!-- JS 렌더 --></tbody>
+								</table>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Process -->
+			<section class="cardBox animate__animated mt10" id="card_cond">
+				<div class="cardTit2"><i class="material-symbols-outlined left">tune</i>Process</div>
+				<div class="elnBasic">
+					<div class="elnMeta">
+						<div class="elnMetaItem metric">
+							<i class="material-symbols-outlined">device_thermostat</i>
+							<div class="elnMetaText"><span class="k">Mixing Temp</span><span class="v">25 <em>°C</em></span></div>
+						</div>
+						<div class="elnMetaItem metric">
+							<i class="material-symbols-outlined">timer</i>
+							<div class="elnMetaText"><span class="k">Mixing Time</span><span class="v">30 <em>min</em></span></div>
+						</div>
+						<div class="elnMetaItem metric">
+							<i class="material-symbols-outlined">compress</i>
+							<div class="elnMetaText"><span class="k">Degassing Vacuum</span><span class="v">-0.09 <em>MPa</em></span></div>
+						</div>
+						<div class="elnMetaItem metric">
+							<i class="material-symbols-outlined">wb_sunny</i>
+							<div class="elnMetaText"><span class="k">UV Dose</span><span class="v">1,200 <em>mJ/cm²</em></span></div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Results -->
+			<section class="cardBox animate__animated mt10" id="card_result">
+				<div class="cardTit2"><i class="material-symbols-outlined left">analytics</i>Results</div>
+				<div class="elnBasic">
+					<div class="elnResults">
+						<div class="elnResultsTable">
+							<div class="fixedTable hBorderTable hScroll">
+								<table>
+									<colgroup><col style="width:28%"><col style="width:34%"><col style="width:20%"><col style="width:18%"></colgroup>
+									<thead><tr><th>Item</th><th>Spec</th><th>Measured</th><th>Result</th></tr></thead>
+									<tbody>
+										<tr><td>Viscosity</td><td class="ac">4,500 ± 300 cP</td><td class="ar">4,520</td><td class="ac"><span class="cGreen">Pass</span></td></tr>
+										<tr><td>Cure Rate</td><td class="ac">≥ 95 %</td><td class="ar">96.0</td><td class="ac"><span class="cGreen">Pass</span></td></tr>
+										<tr><td>Haze</td><td class="ac">≤ 1.0 %</td><td class="ar">0.8</td><td class="ac"><span class="cGreen">Pass</span></td></tr>
+									</tbody>
+								</table>
+							</div>
+						</div>
+						<div class="elnResultsChart">
+							<div id="chartViscosity" style="height:240px;"></div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<!-- Conclusion -->
+			<section class="cardBox animate__animated mt10" id="card_concl">
+				<div class="cardTit2"><i class="material-symbols-outlined left">summarize</i>Conclusion</div>
+				<div class="elnBasic">
+					<label class="elnBasicLabel">Conclusion · Summary</label>
+					<div class="elnConcl">
+						<textarea class="browser-default" placeholder="Write the conclusion of this note">v3 reached 4,520 cP viscosity, passing all 3 specs. Recommend transfer to mass-production validation (NPDI-2026-031). CoC issuance pending.</textarea>
+					</div>
+				</div>
+			</section>
+
+		</article>
+	</div>
+
+	<!-- 우측 패널 토글 손잡이 (패널과 분리된 독립 fixed 버튼 — 항상 화면에 노출) -->
+	<button type="button" class="elnRightToggle" id="elnRightToggle" title="Toggle Tags · Links · History panel">
+		<i class="material-symbols-outlined">chevron_left</i>
+	</button>
+
+	<!-- 우측 접이식 연계패널 (status 연동: 진행중=접힘 / 결말=펼침) -->
+	<aside class="elnRightAside" id="elnRight">
+		<div class="elnRightBody">
+			<div class="elnRightTit"><i class="material-symbols-outlined left">sell</i>Tags</div>
+			<div class="elnTagBox">
+				<div class="elnTags" id="elnTags">
+					<span class="elnTag" data-tag="#viscosity">#viscosity<i class="material-symbols-outlined">close</i></span>
+					<span class="elnTag" data-tag="#RGBOLED">#RGBOLED<i class="material-symbols-outlined">close</i></span>
+				</div>
+				<input type="text" id="elnTagInput" class="browser-default" placeholder="Add a tag, then Enter">
+				<div class="elnRecentTags">Recent:
+					<a href="javascript:;" data-tag="#customerA">#customerA</a>
+					<a href="javascript:;" data-tag="#adhesive">#adhesive</a>
+					<a href="javascript:;" data-tag="#UVcure">#UVcure</a>
+				</div>
+			</div>
+			<div class="elnRightTit mt10"><i class="material-symbols-outlined left">hub</i>Related</div>
+			<ul class="elnRefList" id="elnRefList">
+				<li data-ref="fml"><i class="material-symbols-outlined">blender</i><span>FML-EM-2208 v3</span><em>Formulation</em></li>
+				<li data-ref="rm"><i class="material-symbols-outlined">communities</i><span>Rawmathub · 5 materials</span><em>Material</em></li>
+				<li data-ref="npdi"><i class="material-symbols-outlined">rocket_launch</i><span>NPDI-2026-031</span><em>Project</em></li>
+				<li data-ref="note"><i class="material-symbols-outlined">link</i><span>EXP-26-0118 (v2)</span><em>Note</em></li>
+			</ul>
+			<div class="elnRightTit mt10"><i class="material-symbols-outlined left">account_tree</i>History
+				<a href="apis_eln_lineage.html" style="margin-left:auto;font-size:11px;color:#A47864;text-decoration:none;display:inline-flex;align-items:center;gap:2px;">Full view<i class="material-symbols-outlined" style="font-size:14px;">open_in_full</i></a>
+			</div>
+			<div id="elnLineage" class="elnLineage"><!-- Task6에서 렌더 --></div>
+		</div>
+	</aside>
+
+	<script>
+	$(document).ready(function(){
+		// 탭 / 셀렉트 초기화
+		if(window.M){
+			if(M.Tabs) M.Tabs.init(document.querySelectorAll('.tabs'), {});
+			if(M.FormSelect) M.FormSelect.init(document.querySelectorAll('select'), {});
+			if(M.textareaAutoResize) document.querySelectorAll('.materialize-textarea').forEach(function(t){M.textareaAutoResize(t);});
+		}
+		// 좌측 메뉴 → 카드 스크롤 + 활성
+		$('.leftAside .menu-item').on('click', function(){
+			$(this).addClass('active').siblings().removeClass('active');
+			var id = $(this).data('target');
+			if(id){ var el=document.getElementById(id); if(el) el.scrollIntoView({behavior:'smooth', block:'start'}); }
+		});
+		// 글래스 행 오버레이
+		if(typeof initAllHBorderTableOverlays === 'function') initAllHBorderTableOverlays();
+		// 점도 차트 (Highcharts)
+		if(window.Highcharts){
+			Highcharts.chart('chartViscosity', {
+				chart:{type:'column', height:240, backgroundColor:'transparent'},
+				title:{text:'Viscosity Trend (v1→v3)', style:{fontSize:'13px', color:'#5a3e30'}},
+				credits:{enabled:false}, legend:{enabled:false},
+				xAxis:{categories:['v1','v2','v3'], lineColor:'#d9cfc2'},
+				yAxis:{title:{text:'Viscosity (cP)'}, min:4000, max:5400,
+					plotBands:[{from:4200, to:4800, color:'rgba(140,165,113,.18)', label:{text:'Target', style:{color:'#6f7d57', fontSize:'10px'}}}],
+					plotLines:[{value:4500, color:'#8ca571', dashStyle:'Dash', width:1}],
+					gridLineColor:'#eee6da'},
+				tooltip:{valueSuffix:' cP'},
+				series:[{name:'Viscosity', borderRadius:4, data:[
+					{y:5200, color:'#A47864'}, {y:4780, color:'#A47864'}, {y:4520, color:'#8ca571'}
+				]}]
+			});
+		}
+	});
+	</script>
+</body>
+</html>

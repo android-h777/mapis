@@ -1,0 +1,682 @@
+/* MAPIS ELN 프로토타입 전용 스타일 — mapis_lib 위에 얹기만(운영 자산 불가침).
+   합칠 때 이 파일 = ELN이 추가한 CSS 전부. */
+
+/* ── Task3: status 칩 + 드롭다운 (헤더→Overview 본문으로 이동) ── */
+/* 상태(변경가능 칩) + 카테고리(읽기전용 배지)를 한 줄에. 아래 메타 그리드와 hairline으로 분리. */
+.elnStateRow{display:flex;align-items:flex-end;gap:26px;flex-wrap:wrap;
+  margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid #efe7db;}
+/* 필드 = 미니 레이블(위) + 컨트롤(아래). 메타 그리드의 .k/.v 리듬과 동일. */
+.elnStateField{display:flex;flex-direction:column;gap:6px;}
+.elnStateLabel{font-size:11px;font-weight:600;color:#9b8c7e;letter-spacing:.03em;
+  text-transform:uppercase;margin-left:2px;}
+/* 상태 칩: 점(상태색) + 라벨 + chevron. 칩 전체를 상태색으로 은은히 물들임. */
+.elnStatusChip{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px;
+  border:1px solid #e6ddd0;border-radius:18px;background:#fff;cursor:pointer;
+  font-size:13px;font-weight:600;color:#3a2c24;transition:all .15s;}
+.elnStatusChip .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;}
+.elnStatusChip .chev{font-size:18px;color:#9b8c7e;margin-left:1px;}
+.elnStatusChip[data-status="ing"] {background:rgba(47,128,237,.08);border-color:rgba(47,128,237,.30);color:#1f5fb0;}
+.elnStatusChip[data-status="ok"]  {background:rgba(58,170,111,.10);border-color:rgba(58,170,111,.32);color:#2c7a50;}
+.elnStatusChip[data-status="fail"]{background:rgba(214,90,90,.09);border-color:rgba(214,90,90,.30);color:#b03e3e;}
+.elnStatusChip[data-status="hold"]{background:rgba(224,168,62,.12);border-color:rgba(224,168,62,.34);color:#a8782a;}
+.elnStatusChip[data-status="ing"]  .dot{background:#2f80ed;}
+.elnStatusChip[data-status="ok"]   .dot{background:#3aaa6f;}
+.elnStatusChip[data-status="fail"] .dot{background:#d65a5a;}
+.elnStatusChip[data-status="hold"] .dot{background:#e0a83e;}
+.elnStatusChip:hover{filter:brightness(.97);border-color:#A47864;}
+/* status 드롭다운(popover 내부) — 노트북 픽커 메뉴와 동일한 룩 */
+.elnStatusMenu{display:flex;flex-direction:column;min-width:190px;}
+.elnStatusMenuItem{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;
+  cursor:pointer;font-size:13px;color:#3a2c24;transition:background .12s;}
+.elnStatusMenuItem:hover{background:rgba(164,120,100,.08);}
+.elnStatusMenuItem .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;}
+.elnStatusMenuItem .chk{margin-left:auto;font-size:16px;color:#3aaa6f;}
+.elnStatusMenuItem[data-status="ing"]  .dot{background:#2f80ed;}
+.elnStatusMenuItem[data-status="ok"]   .dot{background:#3aaa6f;}
+.elnStatusMenuItem[data-status="fail"] .dot{background:#d65a5a;}
+.elnStatusMenuItem[data-status="hold"] .dot{background:#e0a83e;}
+
+/* ── TaskA0: 액션 인프라(토스트·모달) ── */
+/* 토스트 */
+.elnToastWrap{position:fixed;right:20px;bottom:20px;z-index:2000;display:flex;flex-direction:column;gap:8px;}
+.elnToast{min-width:220px;max-width:340px;padding:12px 16px;border-radius:10px;color:#fff;font-size:13px;
+  box-shadow:0 6px 20px rgba(0,0,0,.18);display:flex;align-items:center;gap:8px;
+  animation:elnToastIn .22s ease;}
+.elnToast i{font-size:18px;}
+.elnToast.info{background:#2f80ed;} .elnToast.ok{background:#3aaa6f;}
+.elnToast.warn{background:#e0a83e;} .elnToast.err{background:#d65a5a;}
+.elnToast.fade{animation:elnToastOut .25s ease forwards;}
+@keyframes elnToastIn{from{transform:translateY(12px);opacity:0;}to{transform:translateY(0);opacity:1;}}
+@keyframes elnToastOut{to{transform:translateY(12px);opacity:0;}}
+/* 모달 */
+.elnModalBack{position:fixed;inset:0;background:rgba(40,30,24,.42);backdrop-filter:blur(3px);
+  z-index:1500;display:flex;align-items:center;justify-content:center;animation:elnFadeIn .18s ease;}
+.elnModal{background:#fff;border-radius:14px;width:560px;max-width:92vw;max-height:84vh;overflow:hidden;
+  box-shadow:0 20px 60px rgba(0,0,0,.28);display:flex;flex-direction:column;animation:elnPop .2s ease;}
+.elnModalHead{padding:16px 20px;border-bottom:1px solid #eee6da;display:flex;align-items:center;gap:8px;
+  font-weight:600;font-size:15px;}
+.elnModalHead i{color:#A47864;}
+.elnModalHead .x{margin-left:auto;cursor:pointer;border:0;background:transparent;color:#999;font-size:20px;line-height:1;}
+.elnModalBody{padding:18px 20px;overflow-y:auto;}
+.elnModalFoot{padding:12px 20px;border-top:1px solid #eee6da;display:flex;justify-content:flex-end;gap:8px;}
+@keyframes elnFadeIn{from{opacity:0;}to{opacity:1;}}
+@keyframes elnPop{from{transform:scale(.96);opacity:0;}to{transform:scale(1);opacity:1;}}
+
+/* ── Task4: 우측 접이식 연계패널 ── */
+.elnRightAside{position:fixed;top:64px;right:0;width:300px;height:calc(100vh - 64px);
+  background:rgba(255,255,255,.92);backdrop-filter:blur(8px);border-left:1px solid #e6ddd0;
+  box-shadow:-4px 0 16px rgba(0,0,0,.06);transition:transform .25s ease;z-index:60;padding:16px;
+  overflow-y:auto;}
+.elnRightAside.collapsed{transform:translateX(300px);}
+/* 손잡이 = 패널과 분리된 독립 fixed 버튼. 화면 오른쪽 끝에 항상 고정/노출.
+   기본(패널 접힘): 화면 오른쪽 끝. 패널 펼침(.open): 패널 폭(300px)만큼 왼쪽으로. */
+.elnRightToggle{position:fixed;right:0;top:84px;width:44px;height:52px;border:0;cursor:pointer;z-index:70;
+  background:#A47864;color:#fff;border-radius:12px 0 0 12px;box-shadow:-3px 0 12px rgba(164,120,100,.35);
+  display:flex;align-items:center;justify-content:center;
+  transition:right .25s ease,background .2s;}
+.elnRightToggle:hover{background:#8a5f4d;}
+.elnRightToggle.open{right:300px;}
+.elnRightToggle .material-symbols-outlined{transition:transform .25s ease;}
+/* 펼쳐진 상태=오른쪽 방향(닫기), 접힌 상태=왼쪽 방향(끌어내기) */
+.elnRightToggle.open .material-symbols-outlined{transform:rotate(180deg);}
+.elnRightTit{font-weight:600;font-size:14px;display:flex;align-items:center;gap:4px;margin-bottom:8px;}
+.elnRefList{list-style:none;margin:0;padding:0;}
+.elnRefList li{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;cursor:pointer;
+  background:rgba(0,0,0,.03);margin-bottom:6px;font-size:13px;transition:background .15s;}
+.elnRefList li:hover{background:rgba(164,120,100,.12);}
+.elnRefList li em{margin-left:auto;font-style:normal;font-size:11px;color:#999;}
+.elnRefList li i{font-size:18px;color:#A47864;}
+
+/* ── TaskA1: 배합 연계 ── */
+.rmName{color:#5a3e30;text-decoration:underline dotted;text-underline-offset:2px;}
+.rmName:hover{color:#A47864;background:rgba(164,120,100,.08);}
+.elnFmlPick{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid #e6ddd0;border-radius:10px;
+  margin-bottom:8px;cursor:pointer;transition:all .15s;}
+.elnFmlPick:hover{border-color:#A47864;background:rgba(164,120,100,.06);}
+.elnFmlPick.on{border-color:#A47864;background:rgba(164,120,100,.12);}
+.elnFmlPick > .chk{font-size:22px;color:#c9bcae;flex:0 0 auto;}      /* 체크박스(다중선택) */
+.elnFmlPick.on > .chk{color:#A47864;}
+.elnFmlPick .txt{min-width:0;}
+.elnFmlPick .tit{font-weight:600;font-size:14px;color:#5a3e30;}
+.elnFmlPick .sub{font-size:12px;color:#999;margin-top:2px;}
+/* 배합 비교표: 헤더 배합코드 강조, 배합 간 값이 다른 wt% 셀 강조 */
+.elnFmlCmp table{width:100%;}
+.elnFmlCmp th b{color:#A47864;}
+.elnCmpDiff{background:rgba(164,120,100,.10);color:#A47864;font-weight:600;}
+
+/* ── Task5: 카테고리 + 자유태그 ── */
+/* 카테고리 = 생성 시 1회 고정. 헤더엔 읽기 전용 잠금 배지(변경 불가). */
+.elnCatBadge{display:inline-flex;align-items:center;gap:4px;height:32px;
+  border:1px solid #d9cfc2;border-radius:16px;padding:0 10px;background:rgba(164,120,100,.10);
+  color:#7a5240;font-size:13px;font-weight:600;vertical-align:middle;cursor:default;}
+.elnCatBadge i.left{font-size:18px;margin-right:0;}
+.elnCatBadge i.lock{font-size:14px;opacity:.5;margin-left:2px;}
+.elnCatBadge[data-cat="gen"]{background:rgba(0,0,0,.05);color:#666;}
+/* 생성 모달 카테고리 선택 카드 */
+.elnNewCats{display:flex;flex-direction:column;gap:8px;}
+.elnNewCat{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid #e6ddd0;
+  border-radius:10px;cursor:pointer;transition:all .15s;}
+.elnNewCat:hover{border-color:#A47864;background:rgba(164,120,100,.06);}
+.elnNewCat.on{border-color:#A47864;background:rgba(164,120,100,.12);}
+.elnNewCat i{font-size:22px;color:#A47864;}
+.elnNewCat .tit{font-weight:600;font-size:14px;color:#5a3e30;}
+.elnNewCat .sub{font-size:12px;color:#999;margin-top:1px;}
+.elnNewCat .pick{margin-left:auto;color:#A47864;display:none;}
+.elnNewCat.on .pick{display:inline;}
+
+/* ── 검색 모달 폼(NPI식 필드 검색) + 결과 상태 ── */
+.elnSrchForm{display:flex;flex-direction:column;gap:14px;}
+.elnSrchGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.elnSrchRow{display:flex;flex-direction:column;gap:6px;}
+.elnSrchRow label{font-size:12px;font-weight:600;color:#A47864;letter-spacing:.02em;}
+.elnSrchForm input.browser-default,
+.elnSrchForm select.browser-default{
+  height:40px;border:1px solid #d9cfc2;border-radius:8px;padding:0 12px;font-size:14px;
+  color:#5a3e30;background:#fff;box-sizing:border-box;width:100%;display:block;}
+.elnSrchForm input.browser-default:focus,
+.elnSrchForm select.browser-default:focus{border-color:#A47864;outline:none;box-shadow:0 0 0 3px rgba(164,120,100,.12);}
+.elnSrchHint{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:8px;
+  background:rgba(164,120,100,.07);color:#7a5240;font-size:12px;line-height:1.5;}
+.elnSrchHint i{font-size:16px;color:#A47864;flex:0 0 auto;margin-top:1px;}
+.elnSrchHint b{font-family:monospace;font-size:13px;background:rgba(164,120,100,.16);border-radius:4px;padding:0 4px;}
+
+/* 헤더 'Clear search' — 검색 결과 모드에서만 노출 */
+/* 검색 결과: 무엇으로 검색했는지 표시(타이틀 옆) */
+.elnSrchCrit{font-size:12px;color:#7a5240;background:rgba(164,120,100,.12);border-radius:12px;
+  padding:3px 11px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:320px;}
+/* Clear 버튼 — 타이틀 옆, 채운 톤으로 눈에 띄게 */
+.elnSrchClear{display:inline-flex;align-items:center;gap:3px;padding:3px 11px;border-radius:14px;
+  border:0;background:#A47864;color:#fff;font-size:12px;font-weight:600;cursor:pointer;transition:background .15s;}
+.elnSrchClear:hover{background:#8a5f4d;}
+.elnSrchClear i{font-size:15px;}
+
+/* 빈 결과 상태(검색 0건) */
+.elnListEmpty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  padding:48px 20px;border:0;color:#b3a595;font-size:14px;text-align:center;cursor:default;}
+.elnListEmpty:hover{background:transparent;}
+.elnListEmpty i{font-size:36px;color:#cdbfae;}
+
+/* ── Basic Data 세련화(row/col 대신 커스텀 레이아웃) ── */
+.elnBasic{padding:6px 4px 4px;}
+.elnBasicLabel{display:block;font-size:12px;font-weight:600;color:#A47864;letter-spacing:.02em;margin:2px 2px 6px;}
+.elnBasicLabel .essential{color:#d65a5a;margin-right:3px;}
+.elnBasicTitle{position:relative;margin-bottom:18px;}
+.elnBasicTitle input{width:100%;border:0;border-bottom:2px solid #e6ddd0;background:transparent;
+  font-family:inherit;font-size:22px;font-weight:600;color:#3a2c24;padding:4px 2px 8px;
+  transition:border-color .2s;}
+.elnBasicTitle input::placeholder{color:#c9bcae;font-weight:500;}
+.elnBasicTitle input:focus{outline:none;border-bottom-color:#A47864;}
+/* 메타: 아이콘 + 라벨/값 카드, 화면 폭에 맞춰 자동 흐름 */
+.elnMeta{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;}
+.elnMetaItem{display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:12px;
+  background:rgba(164,120,100,.05);border:1px solid rgba(164,120,100,.10);transition:all .15s;}
+.elnMetaItem:hover{background:rgba(164,120,100,.09);border-color:rgba(164,120,100,.22);}
+.elnMetaItem > i{font-size:22px;color:#A47864;flex:0 0 auto;opacity:.85;}
+.elnMetaText{display:flex;flex-direction:column;min-width:0;}
+.elnMetaText .k{font-size:11px;color:#9b8c7e;letter-spacing:.03em;text-transform:uppercase;}
+.elnMetaText .v{font-size:14px;color:#3a2c24;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.elnMetaText .v a.link{color:#5a7d9a;}
+/* 공정 조건 = 수치 측정값 강조(같은 그리드, 값만 크게) */
+.elnMetaItem.metric .v{font-size:18px;font-weight:600;}
+.elnMetaItem.metric .v em{font-size:12px;font-weight:500;color:#9b8c7e;font-style:normal;margin-left:2px;}
+/* 결론 텍스트영역 */
+.elnConcl textarea{width:100%;min-height:88px;border:1px solid #e6ddd0;border-radius:12px;
+  background:rgba(164,120,100,.04);font-family:inherit;font-size:14px;line-height:1.6;color:#3a2c24;
+  padding:12px 14px;resize:vertical;transition:border-color .2s,background .2s;}
+.elnConcl textarea:focus{outline:none;border-color:#A47864;background:#fff;}
+.elnConcl textarea::placeholder{color:#c9bcae;}
+
+/* ── Formulation 섹션 세련화 ── */
+.elnBasicLabel.mt16{margin-top:18px;}
+.elnHint{font-weight:500;color:#b3a596;font-size:11px;letter-spacing:0;text-transform:none;}
+/* 배합 식별자 헤더 */
+.elnFmlHead{display:flex;align-items:center;gap:10px;padding:12px 14px;margin-bottom:14px;border-radius:12px;
+  background:linear-gradient(135deg,rgba(164,120,100,.10),rgba(164,120,100,.04));
+  border:1px solid rgba(164,120,100,.16);}
+.elnFmlHead > i{font-size:24px;color:#A47864;flex:0 0 auto;}
+.elnFmlId{font-size:16px;font-weight:600;color:#3a2c24;}
+.elnFmlId b{color:#A47864;}
+.elnFmlId .cGray{font-size:12px;font-weight:400;}
+.elnLinkChip{margin-left:auto;display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;
+  color:#3aaa6f;background:rgba(58,170,111,.12);padding:3px 9px;border-radius:12px;}
+.elnLinkChip i{font-size:14px;}
+/* 분석: 차트 + 지표표 나란히, 좁아지면 줄바꿈 */
+.elnFmlAnalysis{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;align-items:start;}
+.elnResults{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;}
+/* grid 셀 안에서 Highcharts가 셀을 밀어내지 않도록 min-width:0 */
+.elnFmlChart,.elnFmlMetrics,.elnResultsTable,.elnResultsChart{min-width:0;}
+@media (max-width:900px){
+  .elnFmlAnalysis,.elnResults{grid-template-columns:1fr;}
+}
+.elnTagBox{padding:8px;}
+.elnTags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
+.elnTag{display:inline-flex;align-items:center;gap:2px;padding:4px 4px 4px 10px;border-radius:14px;
+  background:rgba(164,120,100,.12);color:#7a5240;font-size:13px;}
+.elnTag i{font-size:15px;cursor:pointer;opacity:.6;}
+.elnTag i:hover{opacity:1;}
+#elnTagInput{height:34px;border:1px solid #d9cfc2;border-radius:8px;padding:0 10px;width:240px;}
+.elnRecentTags{margin-top:8px;font-size:12px;color:#999;}
+.elnRecentTags a{color:#A47864;margin:0 4px;}
+
+/* ── Task6: 계보 미니맵 ── */
+/* History = 파생 트리(들여쓰기로 분기 표현). 깊이는 인라인 padding-left */
+.elnLineage{display:flex;flex-direction:column;gap:2px;}
+.elnLineNode{display:flex;align-items:center;gap:7px;font-size:13px;padding:5px 6px;border-radius:7px;cursor:pointer;}
+.elnLineNode:hover{background:rgba(164,120,100,.08);}
+.elnLineDot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;box-shadow:0 0 0 1px rgba(0,0,0,.06);}
+.elnLineDot.ok{background:#3aaa6f;} .elnLineDot.fail{background:#d65a5a;}
+.elnLineDot.hold{background:#e0a83e;} .elnLineDot.ing{background:#2f80ed;}
+.elnLineNode .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#5a3e30;}
+.elnLineNode.current{font-weight:700;}
+.elnLineNode.current .nm{color:#3a2c24;}
+.elnLineNode .ver{color:#999;font-size:11px;flex:0 0 auto;}
+
+/* ═══════════════════════════════════════════════════════════════
+   화면 간 흐름(데모 동선) — [1]홈 · [2]리스트 · [4]계보 + 글로벌 네비
+   저충실 골격: 레이아웃·이동 위주. 색·보더는 기존 토큰 재사용(톤 일치).
+   ═══════════════════════════════════════════════════════════════ */
+
+/* 글로벌 네비(모든 ELN 화면 공통, 헤더 우측) */
+.elnNav{margin-left:auto;display:flex;gap:4px;align-items:center;padding-right:10px;}
+.elnNav a{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:9px;font-size:13px;
+  color:#7a6757;text-decoration:none;transition:all .15s;}
+.elnNav a i{font-size:18px;}
+.elnNav a:hover{background:rgba(164,120,100,.10);}
+.elnNav a.on{background:#A47864;color:#fff;font-weight:600;}
+.statusTit .elnSub{font-size:12px;color:#9b8c7e;margin-top:2px;}
+/* mapis .titArea i{font-size:30px}보다 강한 특이도로 네비 아이콘 정상화 + 색 상속(active=흰색) */
+.popup header .titArea .elnNav a i{font-size:18px;color:inherit;}
+/* 새 화면 헤더: 제목+부제 세로 배치([3] statusTit는 row 유지) */
+.statusTit.elnHCol{flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;}
+
+/* 공통 status 점 */
+.elnDot{display:inline-block;width:9px;height:9px;border-radius:50%;flex:0 0 auto;}
+.elnDot.ing{background:#2f80ed;} .elnDot.ok{background:#3aaa6f;}
+.elnDot.fail{background:#d65a5a;} .elnDot.hold{background:#e0a83e;}
+/* 공통 섹션 타이틀(계보 모달 등에서 사용) */
+.elnSecTit{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:700;color:#3a2c24;margin:6px 2px 10px;}
+.elnSecTit i{color:#A47864;}
+
+/* ── [2] 리스트 ── */
+/* 좌측 노트북 2단 트리 */
+.elnNbTree{list-style:none;margin:0;padding:0 6px;font-size:13px;}
+.elnNbTree .grp{font-size:11px;color:#9b8c7e;text-transform:uppercase;letter-spacing:.04em;margin:14px 8px 4px;}
+.elnNbTree .nb{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer;color:#5a3e30;}
+.elnNbTree .nb:hover{background:rgba(164,120,100,.08);}
+.elnNbTree .nb.on{background:rgba(164,120,100,.14);font-weight:600;color:#3a2c24;}
+.elnNbTree .nb i{font-size:18px;color:#A47864;}
+.elnNbTree .nb .cnt{margin-left:auto;font-size:11px;color:#b3a596;}
+
+/* 리스트 헤더 + 필터 */
+.elnListHead{display:flex;align-items:center;gap:10px;padding:4px 2px 14px;flex-wrap:wrap;}
+.elnListHead .lt{font-size:18px;font-weight:700;color:#3a2c24;display:flex;align-items:center;gap:7px;}
+.elnListHead .lt i{color:#A47864;}
+.elnListHead .lcnt{font-size:12px;color:#9b8c7e;}
+.elnListFilter{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;}
+.elnFilterChip{font-size:12px;padding:5px 12px;border-radius:14px;border:1px solid #e6ddd0;background:#fff;
+  color:#7a6757;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;}
+.elnFilterChip:hover{border-color:#A47864;}
+.elnFilterChip.on{background:#A47864;color:#fff;border-color:#A47864;}
+
+/* 노트 리스트 행 */
+.elnNoteList{display:flex;flex-direction:column;gap:8px;}
+.elnNoteRow{display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;border:1px solid #e6ddd0;
+  background:#fff;cursor:pointer;transition:all .15s;}
+.elnNoteRow:hover{border-color:#A47864;box-shadow:0 4px 14px rgba(164,120,100,.10);}
+.elnRowMain{flex:1;min-width:0;}
+.elnRowTit{font-size:14px;font-weight:600;color:#3a2c24;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.elnRowMeta{font-size:12px;color:#9b8c7e;margin-top:3px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.elnRowMeta .tag{color:#A47864;}
+.elnRowDate{flex:0 0 auto;font-size:11px;color:#b3a596;width:80px;text-align:right;}
+/* 인라인 status 배지(클릭 시 순환 — 리스트 운영 시연) */
+.elnStatusPill{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:14px;
+  font-size:12px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s;user-select:none;}
+.elnStatusPill[data-st="ing"]{color:#2f80ed;background:rgba(47,128,237,.10);}
+.elnStatusPill[data-st="ok"]{color:#2e8c5c;background:rgba(58,170,111,.12);}
+.elnStatusPill[data-st="fail"]{color:#c14b4b;background:rgba(214,90,90,.12);}
+.elnStatusPill[data-st="hold"]{color:#b9842a;background:rgba(224,168,62,.14);}
+.elnStatusPill:hover{filter:brightness(.96);border-color:currentColor;}
+
+/* ── [4] 계보(큰 트리) ── */
+.elnLinHead{display:flex;align-items:center;gap:10px;padding:4px 2px 14px;flex-wrap:wrap;}
+.elnLinHead .lt{font-size:18px;font-weight:700;color:#3a2c24;display:flex;align-items:center;gap:7px;}
+.elnLinHead .lt i{color:#A47864;}
+.elnLinHead .lsub{font-size:12px;color:#9b8c7e;}
+.elnLinLegend{margin-left:auto;display:flex;gap:12px;font-size:12px;color:#7a6757;}
+.elnLinLegend span{display:inline-flex;align-items:center;gap:5px;}
+.elnBigTree{position:relative;max-width:760px;margin:8px auto;padding-left:8px;}
+.elnBigNode{position:relative;display:flex;gap:16px;padding:0 0 18px 30px;}
+.elnBigNode::before{content:'';position:absolute;left:11px;top:0;bottom:0;width:2px;background:#e6ddd0;}
+.elnBigNode:last-child::before{display:none;}
+.elnBigNode > .dot{position:absolute;left:5px;top:18px;width:15px;height:15px;border-radius:50%;
+  border:3px solid #fff;box-shadow:0 0 0 1px #d9cfc2;flex:0 0 auto;z-index:1;}
+.elnBigNode > .dot.ing{background:#2f80ed;} .elnBigNode > .dot.ok{background:#3aaa6f;}
+.elnBigNode > .dot.fail{background:#d65a5a;} .elnBigNode > .dot.hold{background:#e0a83e;}
+.elnBigCard{flex:1;min-width:0;padding:14px 16px;border-radius:12px;border:1px solid #e6ddd0;background:#fff;
+  cursor:pointer;transition:all .15s;}
+.elnBigCard:hover{border-color:#A47864;box-shadow:0 6px 18px rgba(164,120,100,.12);}
+.elnBigCard.current{border-color:#A47864;background:linear-gradient(135deg,rgba(164,120,100,.08),rgba(164,120,100,.02));}
+.elnBigCard .bctop{display:flex;align-items:center;gap:10px;}
+.elnBigCard .bctit{font-size:14px;font-weight:600;color:#3a2c24;}
+.elnBigCard .bcver{font-size:11px;color:#fff;background:#A47864;padding:1px 8px;border-radius:8px;}
+.elnBigCard .bccur{margin-left:auto;font-size:11px;font-weight:600;color:#A47864;}
+.elnBigCard .bcdesc{font-size:12px;color:#7a6757;margin-top:6px;line-height:1.5;}
+.elnBigCard .bcmetrics{margin-top:8px;display:flex;gap:14px;flex-wrap:wrap;}
+.elnBigCard .bcmetrics .m{font-size:12px;color:#5a3e30;}
+.elnBigCard .bcmetrics .m b{color:#3a2c24;}
+/* 분기(파생) 노드: 살짝 들여쓰기 + 점선 연결 */
+.elnBigNode.branch{padding-left:64px;}
+.elnBigNode.branch::before{left:45px;}
+.elnBigNode.branch > .dot{left:39px;}
+.elnBigNode.branch .elnBigCard{border-style:dashed;}
+.elnBranchLink{position:absolute;left:11px;top:18px;width:34px;height:2px;background:#e6ddd0;}
+
+/* ── [2] 리스트 2패널 (좌 노트북 | 우 노트) — 노트북▸노트 계층 가시화 ── */
+/* navbar(50px) 메인 셸 아래 워크스페이스 영역 */
+/* contArea 좌우 패딩 = 운영 typeList(0 20px)와 통일. 모듈 타이틀은 운영 .mainTitArea + .contArea .mainTit(25px) 그대로 사용 */
+.elnWsArea{padding:0 20px;}
+/* 타이틀 줄: 제목(왼쪽) + 뷰 토글(List⇄Dashboard)·New Note(오른쪽). 토글이 노트셋 카운트와 분리돼 위치 고정 */
+.elnWsTitArea{display:flex;align-items:center;}
+.elnWsTitArea .mainTit{margin-right:auto;}
+.elnWsTitArea .elnHeadRight{margin-left:12px;}
+/* 모듈 타이틀 좌측: ELN Home 돌아가기 버튼(workspace→대시보드 상위 이동) */
+.mainTit .elnCrumbBack{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;
+  border-radius:8px;background:rgba(164,120,100,.08);color:#A47864;margin-right:10px;vertical-align:-7px;transition:background .15s;}
+.mainTit .elnCrumbBack:hover{background:rgba(164,120,100,.18);}
+.mainTit .elnCrumbBack i{font-size:20px;}
+.elnListWrap{display:flex;gap:0;height:calc(100vh - 122px);}
+/* 좌: 노트북 패널 — 좌측에 딱 붙은(flush) 접이식. 카드 라운드/사방테두리 대신 우측 구분선만 */
+.elnNbPanel{width:240px;flex:0 0 auto;background:rgba(255, 255, 255, .3);
+  border-right:1px solid #e6ddd0;padding:12px 10px;overflow:hidden auto;
+  display:flex;flex-direction:column;gap:2px;
+  transition:width .22s ease,padding .22s ease,opacity .18s ease;}
+.elnNbPanel.collapsed{width:0;padding-left:0;padding-right:0;opacity:0;border-right-color:transparent;}
+/* 접기/펼치기 토글 — 노트 헤더에 통합(플로팅 손잡이 아님) */
+.elnNbToggle{flex:0 0 auto;width:36px;height:36px;border-radius:9px;justify-content:center;}
+.elnNbToggle:hover{background:rgba(164,120,100,.18);}
+.elnNbToggle i{font-size:20px;}
+.elnNbPanelTit{font-size:11px;font-weight:700;letter-spacing:.06em;color:#9b8c7e;text-transform:uppercase;
+  padding:6px 8px 8px;display:flex;align-items:center;gap:6px;}
+.elnNbPanelTit i{font-size:16px;color:#A47864;}
+.elnNbItem{display:flex;align-items:center;gap:5px;padding:10px;border-radius:10px;cursor:pointer;
+  transition:all .15s;color:#5a3e30;}
+.elnNbItem:hover{background:rgba(164,120,100,.08);}
+.elnNbItem.on{background:rgba(164,120,100,.14);font-weight:600;color:#3a2c24;}
+.elnNbItem > i{color:#A47864;flex:0 0 auto;font-variation-settings:'FILL' 1;} /* folder·stacks 상시 fill */
+.elnNbItem .nm{flex:1;min-width:0;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.elnNbItem .ct{font-size:11px;color:#9b8c7e;flex:0 0 auto;}
+.elnNbItem.on .ct{color:#A47864;}
+/* hover 시 ⋯ 옵션(이름수정·삭제) — 카운트 자리와 스왑. 시스템 항목(All/No notebook)엔 미부착 */
+.elnNbMore{display:none;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;
+  color:#9b8c7e;flex:0 0 auto;margin:-4px -2px -4px 0;}
+.elnNbMore i{font-size:18px;}
+.elnNbMore:hover{background:rgba(164,120,100,.16);color:#A47864;}
+.elnNbItem:hover .elnNbMore{display:inline-flex;}
+.elnNbItem:hover .ct.hasMore{display:none;}
+/* 노트북 그룹 컨테이너 — My끼리/Shared끼리만 드래그 정렬(그룹 간 이동 불가). 패널과 같은 간격 유지 */
+.elnNbGroup{display:flex;flex-direction:column;gap:2px;}
+.elnNbSortPh{box-sizing:border-box;border:2px dashed #A47864;border-radius:10px;background:rgba(164,120,100,.10);}
+/* 헬퍼(드래그 중 항목)는 transition 제거 — 안 그러면 base의 transition:all .15s 때문에 커서를 늦게 따라옴 */
+.elnNbItem.ui-sortable-helper{transition:none;box-shadow:0 8px 20px rgba(0,0,0,.16);background:#fff;}
+.elnNbGrpLabel{font-size:10px;color:#b3a596;letter-spacing:.05em;
+  padding:10px 8px 3px;border-top:1px solid #f0eadf;margin-top:6px;}
+/* 노트북 패널 하단 New Notebook(노트북 레벨 생성 버튼). margin-top:auto로 하단 고정 */
+.elnNbNew{display:flex;align-items:center;gap:5px;padding:10px;margin-top:auto;border-radius:10px;cursor:pointer;
+  color:#A47864;font-size:14px;font-weight:600;border:1px dashed #d9cfc2;text-decoration:none;transition:all .15s;}
+.elnNbNew:hover{background:rgba(164,120,100,.08);border-color:#A47864;}
+/* Unfiled(미분류 노트 모음) — 정식 폴더(실선·또렷)와 다른 시각언어:
+   점선 테두리 + 흐린 회색 = "여긴 임시 보관소, 정식 폴더 아님". My Notebooks와 살짝 분리. */
+/* No notebook(미분류) — 점선·배경 제거, 흐린 톤으로만 위계 낮춤(정식 노트북보다 약하게) */
+.elnNbUnfiled > i{color:#c4b8a8;}
+.elnNbUnfiled .nm{color:#a99d8e;}
+.elnNbUnfiled .ct{color:#c4b8a8;}
+
+/* ── 모듈러 노트(Add Module — 고정 템플릿 탈피) ── */
+.elnModGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
+.elnModType{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid #e6ddd0;border-radius:10px;cursor:pointer;transition:all .15s;}
+.elnModType:hover{border-color:#A47864;background:rgba(164,120,100,.06);}
+.elnModType > i{font-size:24px;color:#A47864;flex:0 0 auto;}
+.elnModType .tt{font-size:14px;font-weight:600;color:#3a2c24;}
+.elnModType .dd{font-size:12px;color:#9b8c7e;margin-top:1px;}
+/* ── 카드 헤더 레이아웃: flex 전환 — 제목(좌) → 액션버튼 → 닫기(×)는 항상 우측 코너 고정 ──
+   닫기(×)는 JS가 마지막에 추가하는 <a> → flex에서 소스순서대로 맨 오른쪽에 놓임(우측 상단 고정).
+   첫 <a>에 margin-left:auto를 줘 [액션버튼 + ×]를 한 덩어리로 우측 정렬. 버튼은 ×보다 우선순위 낮음. */
+#tab_ov .cardTit2{display:flex;align-items:center;gap:8px;}
+#tab_ov .cardTit2 > i.left{margin-right:0;}            /* float 무시 + 큰 기본여백 제거 → gap으로 일관 간격 */
+#tab_ov .cardTit2 > a:first-of-type{margin-left:auto;} /* 첫 우측요소부터 오른쪽 정렬(닫기는 맨 끝) */
+/* 섹션 잠금(자물쇠) — 우측 코너 고정(삭제 ×를 대체). 클릭 시 섹션이 view(읽기전용) 모드로. */
+.elnModLock{color:#c9bcae;cursor:pointer;flex:0 0 auto;transition:color .15s;}
+.elnModLock:hover{color:#A47864;}
+.elnModLock i{font-size:18px;display:block;}
+.cardBox.locked .elnModLock{color:#A47864;}
+/* 잠긴 섹션: 살짝 톤다운 + 'View only' 표식 + 편집 affordance 차단(읽기 액션은 유지) */
+.cardBox.locked{background:rgba(164,120,100,.035);}
+.cardBox.locked > .cardTit2 > .elnModLock::after{content:'View only';margin-left:6px;font-size:10px;font-weight:600;
+  color:#A47864;background:rgba(164,120,100,.14);padding:2px 7px;border-radius:9px;letter-spacing:.02em;}
+/* 커스텀 편집 컨트롤(form 요소가 아님) — 클릭 차단 + 흐리게 */
+.cardBox.locked .elnStatusChip,
+.cardBox.locked .elnNbPick,
+.cardBox.locked #btnChangeFml,
+.cardBox.locked .elnCatBadge{pointer-events:none;opacity:.6;}
+/* 실제 입력요소는 JS readOnly/disabled가 차단(텍스트 선택·복사는 허용). 시각만 view-모드 톤. */
+.cardBox.locked input,
+.cardBox.locked textarea{background:rgba(0,0,0,.02);color:#6f6357;border-color:#e6ddd0;}
+.elnModText{width:100%;min-height:80px;border:1px solid #e6ddd0;border-radius:12px;background:rgba(164,120,100,.04);
+  font-family:inherit;font-size:14px;line-height:1.6;color:#3a2c24;padding:12px 14px;resize:vertical;}
+.elnModText:focus{outline:none;border-color:#A47864;background:#fff;}
+.elnModChartPh{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;height:160px;
+  border:1px dashed #d9cfc2;border-radius:12px;color:#b3a596;font-size:13px;}
+.elnModChartPh i{font-size:36px;color:#e0d6c8;}
+/* 팝오버(ELN.popover) — 누른 자리에 뜨는 경량 픽커. 모달(1500) 위, 토스트(2000) 아래 */
+.elnPopover{position:fixed;z-index:1800;background:#fff;border:1px solid #e6ddd0;border-radius:12px;
+  box-shadow:0 8px 28px rgba(58,44,36,.16);padding:10px;animation:elnFadeIn .15s ease;}
+.elnPopover .elnModGrid{gap:7px;}
+.elnPopover .elnModType{padding:8px 11px;}
+/* 카드 사이 hover '+' 라인 — Notion식 위치 지정 삽입.
+   top 음수마진 제거(위 카드 겹침 해소) + margin-bottom:-12px로 다음 카드 mt10(10px) 상쇄 → 간격 일정(≈20px). */
+.elnModDivider{position:relative;height:22px;margin:0 0 -10px;display:flex;align-items:center;justify-content:center;
+  opacity:0;transition:opacity .15s;cursor:pointer;z-index:5;}
+.elnModDivider:hover{opacity:1;}
+.elnModDivider::before{content:'';position:absolute;left:8px;right:8px;top:50%;height:0;border-bottom: 1px dashed #A47864;}
+.elnModDivider .pl{position:relative;background:#fff;box-shadow:0 0 0 1px #A47864 inset;color:#A47864;border-radius:50%;
+  width:20px;height:20px;display:flex;align-items:center;justify-content:center;}
+.elnModDivider .pl i{font-size:18px;}
+/* 본문 끝 상시 '+ Add module' 점선 블록 */
+.elnAddEnd{display:flex;align-items:center;justify-content:center;gap:7px;margin:14px 0 30px;padding:13px;
+  border:1px dashed #d9cfc2;border-radius:12px;color:#b3a596;font-size:13px;cursor:pointer;transition:all .15s;}
+.elnAddEnd:hover{border-color:#A47864;color:#A47864;background:rgba(164,120,100,.05);}
+.elnAddEnd i{font-size:18px;}
+/* Notebook 메타 클릭(지정/이동) — Unfiled면 주황 강조 */
+.elnNbPick{cursor:pointer;display:inline-flex;align-items:center;gap:2px;
+  border-bottom:1px dashed rgba(164,120,100,.45);transition:color .15s;}
+.elnNbPick:hover{color:#A47864;}
+.elnNbPick i{font-size:15px;color:#A47864;}
+.elnNbPick.unfiled{color:#b9842a;}
+/* Notebook 픽커 popover 목록 */
+.elnNbPopList{display:flex;flex-direction:column;min-width:230px;}
+.elnNbPopItem{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;
+  font-size:13.5px;color:#3a2c24;}
+.elnNbPopItem:hover{background:rgba(164,120,100,.08);}
+.elnNbPopItem > i{font-size:18px;color:#A47864;font-variation-settings:'FILL' 1;} /* 픽커·메뉴 아이콘도 fill */
+.elnNbPopItem .chk{margin-left:auto;font-size:16px;color:#3aaa6f;}
+.elnNbPopItem.new{border-top:1px solid #efe7db;margin-top:4px;padding-top:11px;color:#7a5240;font-weight:600;}
+/* 픽커 팝오버 내 Unfiled — 리스트 좌패널과 동일한 "임시 보관소" 시각언어(점선·흐림·분리) */
+.elnNbPopItem.unfiled{border:1px dotted #cdbfae;background:rgba(0,0,0,.012);margin-bottom:7px;}
+.elnNbPopItem.unfiled > i{color:#b3a596;}
+.elnNbPopItem.unfiled span{color:#8a7d6f;}
+.elnNbPopItem.unfiled:hover{border-color:#b8a690;background:rgba(164,120,100,.06);}
+/* 위험 액션(삭제) — 붉은 톤 */
+.elnNbPopItem.danger > i,
+.elnNbPopItem.danger span{color:#c0392b;}
+.elnNbPopItem.danger:hover{background:rgba(192,57,43,.08);}
+/* ⋯ 메뉴의 Color 행(그룹 기본 리셋 + 팔레트 스와치) */
+.elnNbColorRow{display:flex;flex-direction:column;gap:7px;padding:4px 11px 11px;border-bottom:1px solid #efe7db;margin-bottom:5px;}
+.elnNbColorRow .lb{font-size:11px;font-weight:600;color:#9b8c7e;letter-spacing:.03em;}
+.elnNbColorRow .sw{display:flex;gap:5px;}                      /* 큐레이션 — 한 줄(nowrap) */
+.elnNbSw{width:18px;height:18px;border-radius:50%;cursor:pointer;box-sizing:border-box;flex:0 0 auto;
+  border:2px solid transparent;box-shadow:0 0 0 1px rgba(0,0,0,.08) inset;transition:transform .12s,box-shadow .12s;}
+.elnNbSw:hover{transform:scale(1.18);}
+.elnNbSw.on{border-color:#fff;box-shadow:0 0 0 2px #3a2c24;}   /* 선택 = 흰 간격 + 진한 외곽 링(또렷) */
+/* 노트북 색 점(요약·픽커 등) */
+.elnNbDot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:0 0 auto;margin-right:6px;}
+/* danger 버튼 — mapis .hBtn 아웃라인 idiom(색+테두리+::before 틴트)을 빨강으로 */
+.hBtn.elnDanger{color:#c0392b;border:1px solid rgba(192,57,43,.7);}
+.hBtn.elnDanger::before{background-color:rgba(192,57,43,.08);}
+/* 중: 노트 목록 컬럼 */
+.elnNotePanel{flex:1;min-width:300px;display:flex;flex-direction:column;padding:0 16px;}
+.elnNotePanelHead{display:flex;align-items:center;gap:10px;padding:2px 4px 12px;flex-wrap:wrap;}
+.elnNotePanelHead .pt{font-size:18px;font-weight:700;color:#3a2c24;display:flex;align-items:center;gap:7px;}
+.elnNotePanelHead .pt i{color:#A47864;}
+.elnNotePanelHead .pc{font-size:12px;color:#9b8c7e;display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px;margin-left:auto;}
+/* 통합 화면: All Notes 항목 + All뷰 노트북명 칩 */
+/* 헤더 status 필터 칩(현황 표시 + 클릭 필터 겸용 — newAppleTab 대체) */
+.elnHdrFilter{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:#7a6757;
+  padding:4px 9px;border-radius:13px;cursor:pointer;border:1px solid transparent;transition:all .15s;}
+.elnHdrFilter:hover{background:rgba(164,120,100,.08);}
+.elnHdrFilter.on{background:rgba(164,120,100,.12);border-color:rgba(164,120,100,.3);color:#7a5240;font-weight:600;}
+.elnHdrFilter .elnDot{width:8px;height:8px;}
+.elnNbAll > i{color:#A47864;}
+.roundBox.elnNbChip{color:#A47864;background:rgba(164,120,100,.10);font-weight:600;}
+/* All Notes 뷰: 노트북명 라벨(제목 위, 풀네임 — pill 대신) */
+.elnNoteNb{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--gray60);margin-bottom:2px;}
+.elnNoteNb i{font-size:16px;}
+
+/* ── 뷰 전환 토글 (List ⇄ Dashboard) ── */
+.elnViewToggle{display:inline-flex;background:rgba(164,120,100,.08);border-radius:9px;padding:2px;flex:0 0 auto;}
+.elnViewToggle a{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:7px;font-size:13px;color:#7a6757;transition:all .15s;}
+.elnViewToggle a.on{background:#fff;color:#A47864;font-weight:600;box-shadow:0 1px 3px rgba(58,44,36,.08);}
+
+/* ── Dashboard 뷰 (같은 노트셋 현황 조망) ── */
+.elnDashView{height:calc(100vh - 185px);overflow:auto;padding:4px 8px 20px;}
+.elnDashGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;align-items:start;}
+.elnDashCard{background:#fff;border:1px solid #A47864;border-radius:20px;padding:15px 20px;}
+.elnDashCard.span2{grid-column:1 / -1;}
+.elnDashCardTit{font-size:13px;font-weight:700;color:#3a2c24;margin-bottom:10px;}
+.elnDashCardTit b{color:#A47864;}
+.elnDashStatBar{display:flex;height:16px;border-radius:8px;overflow:hidden;gap:2px;background:rgba(0,0,0,.03);}
+.elnDashSeg{min-width:4px;transition:flex .2s;}
+.elnDashSeg.blue{background:#2f80ed;} .elnDashSeg.green{background:#3aaa6f;}
+.elnDashSeg.red{background:#d65a5a;} .elnDashSeg.orange{background:#e0a83e;}
+.elnDashLegend{display:flex;gap:16px;flex-wrap:wrap;margin-top:11px;font-size:12px;color:#5a3e30;}
+.elnDashLeg{display:inline-flex;align-items:center;gap:5px;}
+.elnDashLeg b{color:#3a2c24;}
+.elnDashWeek{margin-top:11px;padding-top:11px;border-top:1px dashed #eee0d2;font-size:12.5px;color:#7a6757;}
+.elnDashWeek b{color:#3a2c24;}
+.elnDashRow{display:flex;align-items:center;gap:10px;margin:7px 0;font-size:12.5px;}
+.elnDashRow .dn{width:150px;flex:0 0 auto;color:#5a3e30;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.elnDashRow .dbar{flex:1;height:8px;background:rgba(164,120,100,.1);border-radius:4px;overflow:hidden;}
+.elnDashRow .dbar span{display:block;height:100%;background:#A47864;border-radius:4px;}
+.elnDashRow .dv{width:26px;text-align:right;color:#9b8c7e;flex:0 0 auto;}
+.elnDashHi{display:flex;align-items:center;gap:9px;padding:9px 7px;border-radius:8px;cursor:pointer;transition:background .15s;}
+.elnDashHi:hover{background:rgba(164,120,100,.07);}
+.elnDashHi .ht{flex:1;min-width:0;font-size:13px;color:#3a2c24;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.elnDashHi .hn{font-size:11px;color:#9b8c7e;flex:0 0 auto;}
+.elnDashEmpty{font-size:12.5px;color:#b3a596;padding:6px 4px;}
+/* Success rate KPI(큰 숫자 지표) */
+.elnDashKpi{font-size:38px;font-weight:700;color:#A47864;line-height:1;margin:6px 0 8px;}
+.elnDashKpi .u{font-size:18px;font-weight:600;margin-left:2px;}
+.elnDashKpiSub{font-size:12px;color:#7a6757;}
+.elnDashKpiSub b{color:#3a2c24;}
+/* This week 활동 추이 미니 바차트 */
+.elnWkChart{display:flex;align-items:flex-end;gap:8px;height:64px;padding-top:6px;}
+.elnWkCol{flex:1;display:flex;flex-direction:column;align-items:center;gap:5px;height:100%;justify-content:flex-end;}
+.elnWkBar{width:100%;max-width:22px;min-height:3px;background:rgba(164,120,100,.25);border-radius:4px 4px 0 0;transition:height .2s;}
+.elnWkBar.today{background:#A47864;}
+.elnWkLb{font-size:10px;color:#b3a596;}
+/* Top tags(태그 집계 칩) */
+.elnDashTags{display:flex;flex-wrap:wrap;gap:7px;}
+.elnDashTag{display:inline-flex;align-items:center;gap:5px;font-size:12px;color:#7a6757;
+  background:rgba(164,120,100,.08);border:1px solid #eee0d2;padding:4px 10px;border-radius:13px;}
+.elnDashTag b{color:#A47864;font-size:11px;}
+/* 헤더 우측 그룹(status필터 + New Note) — 뷰 전환해도 토글/New Note 위치 고정 */
+.elnHeadRight{margin-left:auto;display:flex;align-items:center;gap:10px;}
+
+/* 우측 요약 'Full view' → 계보 모달(별도 화면 대체) */
+.elnFullView{cursor:pointer;}
+.elnLinModalHead{font-size:14px;font-weight:600;color:#3a2c24;margin-bottom:14px;}
+.elnLinModalBody .elnBigTree{margin:0;max-width:560px;}
+/* 노트 패널 안에서 mapis mainList의 고정 높이를 패널에 맞게 오버라이드 */
+.elnNotePanel .typeList{padding:0;}
+.elnNotePanel .mainList{padding:0;}
+.elnNotePanel .mainList ul{height:calc(100vh - 185px);padding:4px 6px;}
+/* statusBox: 운영 고정 height(40px) 대신 행 높이만큼 stretch(노트북명+제목+칩 다 채움), 최소 40 보장 */
+.elnNotePanel .typeList .mainList li .statusBox{height:auto;min-height:40px;}
+/* 빈 노트북 안내 */
+.elnNoteEmpty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+  height:240px;color:#b3a596;font-size:13px;}
+.elnNoteEmpty i{font-size:40px;color:#e0d6c8;}
+
+/* 우: 요약 + 계보 패널 (flush) — 노트 클릭 시 채워짐 */
+.cardBox2{background:#fff;padding:12px 10px;border-radius:30px;border:2px solid #a47764;}
+.elnSummary{width:384px;flex:0 0 auto;overflow-y:auto;display:flex;flex-direction:column;}
+.elnSummary.empty{align-items:center;justify-content:center;}
+.elnSumPlaceholder{color:#b3a596;font-size:13px;text-align:center;display:flex;flex-direction:column;
+  align-items:center;gap:10px;padding:30px;}
+.elnSumPlaceholder i{font-size:42px;color:#e0d6c8;}
+.elnSumHead{padding:16px 18px 14px;border-bottom:1px solid #efe7db;}
+.elnSumStatusRow{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
+.elnSumPill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:13px;font-size:12px;font-weight:600;}
+.elnSumPill[data-st="ing"]{color:#2f80ed;background:rgba(47,128,237,.12);}
+.elnSumPill[data-st="ok"]{color:#2e8c5c;background:rgba(58,170,111,.14);}
+.elnSumPill[data-st="fail"]{color:#c14b4b;background:rgba(214,90,90,.14);}
+.elnSumPill[data-st="hold"]{color:#b9842a;background:rgba(224,168,62,.16);}
+.elnSumCode{font-size:11px;color:#9b8c7e;}
+.elnSumTit{font-size:16px;font-weight:700;color:#3a2c24;line-height:1.4;}
+.elnSumSec{padding:14px 18px;border-bottom:1px solid #efe7db;}
+.elnSumSecTit{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#9b8c7e;
+  margin-bottom:10px;display:flex;align-items:center;gap:5px;}
+.elnSumSecTit i{font-size:15px;color:#A47864;}
+.elnSumSecTit .more{margin-left:auto;font-weight:600;font-size:11px;color:#A47864;text-decoration:none;
+  display:inline-flex;align-items:center;gap:2px;text-transform:none;letter-spacing:0;}
+.elnSumMeta{display:flex;flex-direction:column;gap:8px;}
+.elnSumMetaRow{display:flex;font-size:13px;gap:8px;}
+.elnSumMetaRow .k{color:#9b8c7e;width:74px;flex:0 0 auto;}
+.elnSumMetaRow .v{color:#3a2c24;font-weight:500;min-width:0;}
+/* 우측 요약의 Notebook = 클릭해서 다른 노트북으로 이동(팝업 노트북 픽커와 동일 패턴) */
+.elnSumNbPick{display:inline-flex;align-items:center;gap:1px;cursor:pointer;border-radius:6px;
+  padding:1px 5px;margin:-1px -5px;transition:background .15s,color .15s;background:rgba(164,120,100,.10);}
+.elnSumNbPick:hover{color:#A47864;}
+.elnSumNbPick i{font-size:15px;color:#9b8c7e;}
+.elnSumNbPick:hover i{color:#A47864;}
+.elnSumChips{display:flex;flex-wrap:wrap;gap:6px;}
+.elnSumChip{font-size:12px;color:#7a5240;background:rgba(164,120,100,.12);padding:3px 9px;border-radius:11px;
+  cursor:pointer;transition:background .15s,color .15s;}
+.elnSumChip:hover{background:rgba(164,120,100,.22);color:#5a3e30;}
+/* 리스트 행의 태그 = 칩이 아니라 별도 줄에 링크처럼(클릭 → 그 태그 검색) */
+.elnNoteTags{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:5px;}
+.elnTagLink{font-size:12px;color:#5a7d9a;cursor:pointer;text-decoration:none;line-height:1.3;}
+.elnTagLink:hover{color:#A47864;text-decoration:underline;}
+.elnSumFml{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:10px;
+  background:rgba(164,120,100,.07);border:1px solid rgba(164,120,100,.14);font-size:13px;color:#5a3e30;}
+.elnSumFml i{color:#A47864;font-size:20px;}
+.elnSumFml b{color:#3a2c24;}
+.elnSumFml .chip{margin-left:auto;font-size:10px;color:#3aaa6f;background:rgba(58,170,111,.12);padding:2px 7px;border-radius:9px;flex:0 0 auto;}
+.elnSumNoLin{font-size:12px;color:#b3a596;font-style:italic;}
+.elnSumFoot{margin-top:auto;padding:14px 18px;border-top:1px solid #efe7db;}
+.elnSumFoot .hBtn{width:100%;justify-content:center;display:flex;}
+
+/* ── 드래그 재정렬(jQuery UI sortable) — 카드 & 좌측 목차 ── */
+/* 드롭 자리 표시(placeholder). forcePlaceholderSize로 원본 크기 복사됨. */
+.elnSortPh{border:2px dashed #A47864;border-radius:14px;background:rgba(164,120,100,.07);
+  margin:0 0 10px;visibility:visible !important;}
+.elnSortPhMenu{border:2px dashed #A47864;border-radius:9px;background:rgba(164,120,100,.12);
+  list-style:none;height:36px;margin:2px 0;visibility:visible !important;}
+/* 드래그 중인 요소(helper) — 살짝 떠 보이게 */
+.ui-sortable-helper{box-shadow:0 12px 32px rgba(58,44,36,.22);}
+/* 좌측 목차: 아이템 = 클릭(카드 이동)이라 pointer. hover 시 좌측 아이콘이 드래그 핸들(swap_vert ↑↓)로 바뀌고(JS),
+   그 아이콘만 sortable handle 역할 → 아이콘에만 grab(잡는 손). */
+.leftAside .menuUl .menu-item{cursor:pointer;}
+.leftAside .menuUl .menu-item .elnNavHandle{cursor:grab;border-radius:6px;transition:color .12s,background .12s;}
+.leftAside .menuUl .menu-item:hover .elnNavHandle{color:#A47864;}
+.leftAside .menuUl .menu-item .elnNavHandle:hover{background:rgba(164,120,100,.16);}
+.leftAside .menuUl .menu-item .elnNavHandle:active{cursor:grabbing;}
+
+/* ── 우측 패널: 파일 첨부 + URL 링크 ── */
+.elnAttachBox{display:flex;flex-direction:column;gap:8px;}
+.elnAttachDrop{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px dashed #d9cfc2;border-radius:10px;
+  cursor:pointer;color:#9b8c7e;font-size:12px;transition:all .15s;}
+.elnAttachDrop:hover,.elnAttachDrop.drag{border-color:#A47864;background:rgba(164,120,100,.06);color:#7a5240;}
+.elnAttachDrop > i{font-size:20px;color:#A47864;}
+.elnAttachDrop b{color:#A47864;}
+.elnAttachList,.elnLinkList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;}
+.elnAttachItem,.elnLinkItem{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;
+  background:rgba(0,0,0,.03);font-size:12px;}
+.elnAttachItem > i,.elnLinkItem a > i{font-size:17px;color:#A47864;flex:0 0 auto;}
+.elnAttachItem .nm,.elnLinkItem .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#3a2c24;}
+.elnAttachItem em{font-style:normal;font-size:10px;color:#9b8c7e;flex:0 0 auto;}
+.elnLinkItem a{display:flex;align-items:center;gap:7px;flex:1;min-width:0;text-decoration:none;color:#3a2c24;}
+.elnLinkItem a:hover .nm{color:#A47864;text-decoration:underline;}
+.elnLinkItem a .go{font-size:13px;color:#9b8c7e;flex:0 0 auto;}
+.elnAttachItem .x,.elnLinkItem .x{font-size:15px;color:#c9bcae;cursor:pointer;flex:0 0 auto;}
+.elnAttachItem .x:hover,.elnLinkItem .x:hover{color:#d65a5a;}
+/* URL 입력 줄 */
+.elnLinkAdd{display:flex;align-items:center;gap:6px;margin-top:2px;}
+.elnLinkAdd > i{font-size:17px;color:#A47864;flex:0 0 auto;}
+.elnLinkAdd input{flex:1;min-width:0;border:1px solid #e6ddd0;border-radius:8px;padding:6px 9px;font-size:12px;background:#fff;}
+.elnLinkAdd input:focus{outline:none;border-color:#A47864;}
+.elnLinkAddBtn{flex:0 0 auto;border:0;border-radius:8px;background:#A47864;color:#fff;font-size:12px;font-weight:600;
+  padding:6px 11px;cursor:pointer;transition:background .15s;}
+.elnLinkAddBtn:hover{background:#8a5f4d;}
+
+/* ── 모듈 제목 인라인 편집 + 메모(설명) 줄 ── */
+.elnModTitle{border-radius:4px;padding:0 4px;cursor:text;transition:background .12s;}
+.elnModTitle:hover{background:rgba(164,120,100,.08);}
+.elnModTitle:focus{outline:none;background:#fff;box-shadow:0 0 0 1px #A47864;}
+.elnModMemo{font-size:12px;color:#6f6357;padding:2px 5px;border-radius:6px;margin:-4px 2px 10px;
+  outline:none;cursor:text;min-height:18px;line-height:1.5;transition:background .12s;}
+.elnModMemo:hover{background:rgba(164,120,100,.06);}
+.elnModMemo:focus{background:#fff;box-shadow:0 0 0 1px #A47864;}
+.elnModMemo:empty::before{content:attr(data-ph);color:#c9bcae;font-style:italic;}
+/* 잠금 시 제목/메모 편집 차단(JS가 contenteditable=false도 설정) */
+.cardBox.locked .elnModTitle,.cardBox.locked .elnModMemo{pointer-events:none;}
+.cardBox.locked .elnModTitle:hover,.cardBox.locked .elnModMemo:hover{background:transparent;}
+
+/* ── 우측 패널 가로 리사이즈 — 폭을 --eln-right-w(기본 300px)로 공유, 좌측 가장자리 드래그 ── */
+/* 스크롤은 본문(elnRightBody)이 담당 → 가장자리 리사이저가 스크롤에 안 휩쓸림 */
+.elnRightAside{width:var(--eln-right-w,300px);overflow:hidden;}
+.elnRightAside .elnRightBody{height:100%;overflow-y:auto;overflow-x:hidden;}
+.elnRightAside.collapsed{transform:translateX(var(--eln-right-w,300px));}
+.elnRightToggle.open{right:var(--eln-right-w,300px);}
+.elnRightResizer{position:absolute;left:0;top:0;bottom:0;width:6px;cursor:ew-resize;z-index:5;transition:background .12s;}
+.elnRightResizer:hover,.elnRightResizer.drag{background:rgba(164,120,100,.28);}
+body.elnResizing{cursor:ew-resize;user-select:none;}

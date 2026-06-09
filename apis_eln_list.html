@@ -1,0 +1,1056 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MAPIS ELN</title>
+	<link rel="preload" href="mapis_lib/font/material-symbols-outlined.woff2" as="font" type="font/woff2">
+	<link rel="preload" href="mapis_lib/font/material-symbols-rounded.woff2" as="font" type="font/woff2">
+	<link rel="preload" href="mapis_lib/font/material-symbols-sharp.woff2" as="font" type="font/woff2">
+	<link rel="preload" href="mapis_lib/font/material-icons.woff2" as="font" type="font/woff2">
+	<link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/mpm_materialize.css">
+    <link rel="stylesheet" type="text/css" href="mapis_lib/css/common.css">
+    <link type="text/css" rel="stylesheet" href="mapis_lib/css/lib/animate.min.css">
+
+    <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-3.7.1.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-ui-1.14.1.js"></script>
+    <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/mpm_materialize.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/apis_util.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/glass_engine.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="css/eln_proto.css">
+    <script defer src="js/eln_proto.js"></script>
+</head>
+<body>
+	<!-- 공통 헤더(navbar-fixed) — 실제 운영에서 header.html이 들어오는 자리. apis_npdi_list 구조 차용 -->
+	<header class="navbar-fixed">
+		<nav>
+			<article class="navTop">
+				<section class="leftSection">
+					<div class="menuIcon">
+						<div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
+					</div>
+					<div><a href="apis_eln_list.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
+				</section>
+				<section class="centerSection">
+					<div class="srchArea">
+						<i class="material-icons prefix">search</i>
+						<input type="text" class="browser-default" placeholder="Search notes, notebooks, tags…" value="" id="mainSrchInput" autocomplete="off">
+					</div>
+				</section>
+				<section class="rightSection">
+					<div class="userInfo">
+						<div class="mr10"><span class="mocha25-text fontM">J.P. KIM</span></div>
+						<i class="material-icons mocha25-text fLine vCenter hCenter mg0">person</i>
+					</div>
+				</section>
+			</article>
+		</nav>
+	</header>
+
+	<!-- 사이드 메뉴(sidenav) — 햄버거로 열림. ELN 네비 + MAPIS 모듈 -->
+	<aside class="menuAside">
+		<div id="slide-out" class="sidenav glassBox">
+			<div class="userInfoArea">
+				<div class="photo"><i class="material-icons" style="font-size:46px;color:#A47864;">account_circle</i></div>
+				<div class="userInfo">
+					<div class="fontB">J.P. Kim</div>
+					<div>R&amp;D · Adhesive Lab</div>
+				</div>
+			</div>
+			<div class="menuList">
+				<ul>
+					<li class="waves-effect waves-hColor on"><a href="apis_eln_list.html"><i class="material-icons left">science</i>ELN</a></li>
+					<li><a class="subheader" style="color:#9b8c7e;font-size:11px;letter-spacing:.04em;pointer-events:none;">MAPIS MODULES</a></li>
+					<li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>MAPIS Home</a></li>
+					<li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
+					<li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub</a></li>
+				</ul>
+			</div>
+		</div>
+	</aside>
+
+	<!-- 본문: 통합 화면 (좌 노트북 네비 | 중 노트목록/대시보드 | 우 요약+계보). 좌측 'All Notes'=전체 최근순, 노트북=그 노트북. List⇄Dashboard 뷰 전환 -->
+	<article class="contArea elnWsArea">
+		<section class="mainTitArea elnWsTitArea">
+			<div class="mainTit">ELN List</div>
+			<!-- 뷰 전환(List⇄Dashboard) + New Note를 타이틀 줄로 — 노트셋 카운트 폭과 무관하게 위치 고정 -->
+			<div class="elnViewToggle">
+				<a href="javascript:;" class="on" data-view="list"><i class="material-symbols-outlined">view_list</i>List</a>
+				<a href="javascript:;" data-view="dash"><i class="material-symbols-outlined">dashboard</i>Dashboard</a>
+			</div>
+			<div class="elnHeadRight">
+				<!-- ELN 전용 검색(헤더 통합검색과 별개) — 옵션 모달 -->
+				<div><a href="javascript:;" id="elnSearchBtn" class="waves-effect waves-light hBtn"><i class="material-symbols-outlined left">search</i><span class="label">Search</span></a></div>
+				<div><a href="javascript:;" id="elnNewNote" class="waves-effect waves-light hBtn hViva"><i class="material-symbols-outlined left">note_add</i><span class="label">New Note</span></a></div>
+			</div>
+		</section>
+		<div class="elnListWrap">
+
+			<!-- 좌: 노트북 패널 (딱 붙은 flush, 접이식). 최상단 All Notes = 전체 노트 진입 -->
+			<aside class="elnNbPanel cardBox2" id="elnNbPanel">
+				<div class="elnNbItem elnNbAll on" data-nb="all"><i class="material-symbols-outlined fill">stacks</i><span class="nm">All Notes</span><span class="ct">17</span></div>
+				<!-- No Notebook: 노트북 미지정(저마찰 기록 — 일단 쓰고 정리는 나중). 흐린 톤으로 덜 강조 -->
+				<div class="elnNbItem elnNbUnfiled" data-nb="unfiled"><i class="material-symbols-outlined fill">folder_off</i><span class="nm">No Notebook</span><span class="ct">2</span></div>
+				<div class="elnNbGrpLabel" style="margin-top:4px;">MY NOTEBOOKS</div>
+				<!-- My Notebooks — 이 안에서만 드래그 정렬 -->
+				<div class="elnNbGroup" data-group="my">
+					<div class="elnNbItem" data-nb="rgboled"><i class="material-symbols-outlined fill">folder</i><span class="nm">RGBOLED Adhesive</span><span class="ct">6</span></div>
+					<div class="elnNbItem" data-nb="foled"><i class="material-symbols-outlined fill">folder</i><span class="nm">Flexible OLED</span><span class="ct">3</span></div>
+					<div class="elnNbItem" data-nb="optical"><i class="material-symbols-outlined fill">folder</i><span class="nm">Optical Clear Resin</span><span class="ct">2</span></div>
+				</div>
+				<div class="elnNbGrpLabel">SHARED NOTEBOOKS</div>
+				<!-- Shared Notebooks — 이 안에서만 드래그 정렬 -->
+				<div class="elnNbGroup" data-group="shared">
+					<div class="elnNbItem" data-nb="customerA"><i class="material-symbols-outlined fill">folder_shared</i><span class="nm">Customer A Project</span><span class="ct">4</span></div>
+				</div>
+				<a href="javascript:;" id="elnNewNotebook" class="elnNbNew"><i class="material-symbols-outlined">create_new_folder</i>New Notebook</a>
+			</aside>
+
+			<!-- 중: 노트 목록 / 대시보드 (뷰 전환) -->
+			<div class="elnNotePanel">
+				<div class="elnNotePanelHead">
+					<a class="elnNbToggle waves-effect waves-light hBtn" id="elnNbToggle" title="Hide / show notebooks"><i class="material-symbols-outlined mr0">chevron_left</i></a>
+					<div class="pt"><i class="material-symbols-outlined fill" id="nbIcon">stacks</i><span id="nbName">All Notes</span></div>
+					<!-- 검색 결과 모드: 무엇으로 검색했는지(기준) + 타이틀 옆 Clear 버튼 -->
+					<span id="elnSrchCrit" class="elnSrchCrit" style="display:none;"></span>
+					<a href="javascript:;" id="elnSrchClear" class="elnSrchClear" style="display:none;"><i class="material-symbols-outlined">close</i>Clear</a>
+					<div class="pc" id="nbCount">17 notes</div>
+				</div>
+
+				<!-- List 뷰 -->
+				<div class="typeList type4" id="elnListView">
+					<section class="leftSection">
+						<section class="mainList">
+							<ul class="hScroll" id="noteListUl"><!-- JS 렌더 --></ul>
+						</section>
+					</section>
+				</div>
+				<!-- Dashboard 뷰 (같은 노트셋의 현황 조망) -->
+				<div class="elnDashView" id="elnDashView" style="display:none;"><!-- JS 렌더 --></div>
+			</div>
+
+			<!-- 우: 선택 노트 요약 + 계보 (List 뷰에서만) -->
+			<aside class="elnSummary cardBox2 empty" id="elnSummary">
+				<div class="elnSumPlaceholder"><i class="material-symbols-outlined">touch_app</i>Select a note to see its summary &amp; lineage</div>
+			</aside>
+
+		</div>
+	</article>
+
+	<script>
+	// status 코드 ↔ statusBox 색클래스 + 라벨 (mapis 팔레트 재사용)
+	var ST = [
+		{k:'ing',  cls:'blue',   t:'Ongoing'},
+		{k:'ok',   cls:'green',  t:'Success'},
+		{k:'fail', cls:'red',    t:'Failed'},
+		{k:'hold', cls:'orange', t:'On Hold'}
+	];
+	function stByKey(k){ return ST.filter(function(s){return s.k===k;})[0] || ST[0]; }
+
+	// 노트 상세는 팝업(window.open). 노트의 노트북 키를 ?nb= 로 전달 — 상세의 Notebook 메타가 이어받음
+	function openNote(nb){ window.open('apis_eln_pop.html' + (nb ? ('?nb=' + encodeURIComponent(nb)) : ''), 'elnNoteDetail', 'width=1480,height=900,scrollbars=yes,resizable=yes'); }
+
+	// 노트북별 노트셋 (요약·계보 데이터 포함, 데모 목업)
+	var NB = {
+		unfiled: { name:'No Notebook', icon:'folder_off', notes:[
+			{code:'NT-2606-00007', title:'Quick idea — low-VOC solvent swap to try', st:'ing', ver:'', cat:'General', fml:'', tags:[], author:'J.P. Kim', date:'2026-06-02'},
+			{code:'NT-2606-00004', title:'Lab meeting memo — June experiment planning', st:'ok', ver:'', cat:'General', fml:'', tags:[], author:'J.P. Kim', date:'2026-05-31'}
+		]},
+		// history = parent 링크로 계산(저장 X). rgboled는 분기 트리: 098 ├118(├142 └097) └072
+		rgboled: { name:'RGBOLED Adhesive', icon:'folder', notes:[
+			{code:'NT-2605-00142', title:'UV-Curable PSA Viscosity Improvement — RGBOLED', st:'ing', ver:'v3', cat:'Formulation', fml:'FML-EM-2208', tags:['#viscosity','#RGBOLED'], author:'J.P. Kim', date:'2026-05-28', parent:'NT-2605-00118'},
+			{code:'NT-2605-00118', title:'Viscosity Modifier ratio tuning (v2)', st:'hold', ver:'v2', cat:'Formulation', fml:'FML-EM-2207', tags:['#viscosity'], author:'J.P. Kim', date:'2026-05-27', parent:'NT-2605-00098'},
+			{code:'NT-2605-00097', title:'Cure rate vs UV dose — condition sweep', st:'ok', ver:'v1', cat:'Formulation', fml:'', tags:['#UVcure'], author:'J.P. Kim', date:'2026-05-24', parent:'NT-2605-00118'},
+			{code:'NT-2605-00098', title:'Initial trial — spec not met', st:'fail', ver:'v1', cat:'Formulation', fml:'FML-EM-2206', tags:['#viscosity'], author:'J.P. Kim', date:'2026-05-21'},
+			{code:'NT-2605-00085', title:'Supplier sample evaluation — Silicone PSA base', st:'ok', ver:'', cat:'General', fml:'', tags:['#supplier'], author:'J.P. Kim', date:'2026-05-18'},
+			{code:'NT-2605-00072', title:'Crosslinker screening for adhesion', st:'ing', ver:'', cat:'Formulation', fml:'', tags:['#adhesion'], author:'J.P. Kim', date:'2026-05-15', parent:'NT-2605-00098'}
+		]},
+		foled: { name:'Flexible OLED', icon:'folder', notes:[
+			{code:'NT-2604-00210', title:'Bendable adhesive — fatigue test', st:'ing', ver:'v2', cat:'Formulation', fml:'FML-FX-1120', tags:['#bending'], author:'S.Y. Park', date:'2026-04-30', parent:'NT-2604-00198'},
+			{code:'NT-2604-00198', title:'Low-temperature cure exploration', st:'ok', ver:'v1', cat:'Formulation', fml:'FML-FX-1118', tags:['#lowtemp'], author:'S.Y. Park', date:'2026-04-22'},
+			{code:'NT-2604-00150', title:'Substrate compatibility memo', st:'ok', ver:'', cat:'General', fml:'', tags:['#substrate'], author:'S.Y. Park', date:'2026-04-10'}
+		]},
+		optical: { name:'Optical Clear Resin', icon:'folder', notes:[
+			{code:'NT-2603-00120', title:'Haze reduction — final formulation', st:'ok', ver:'v3', cat:'Formulation', fml:'FML-OC-3310', tags:['#haze'], author:'M.J. Lee', date:'2026-03-28'},
+			{code:'NT-2603-00088', title:'Yellowing aging test (85°C/85%RH)', st:'ing', ver:'v1', cat:'Formulation', fml:'FML-OC-3308', tags:['#aging'], author:'M.J. Lee', date:'2026-03-12'}
+		]},
+		customerA: { name:'Customer A Project', icon:'folder_shared', notes:[
+			{code:'NT-2605-00301', title:'Customer A — OCR spec review', st:'ing', ver:'', cat:'General', fml:'', tags:['#customerA'], author:'J.P. Kim', date:'2026-05-30'},
+			{code:'NT-2605-00288', title:'Adhesion to PET film', st:'ok', ver:'v2', cat:'Formulation', fml:'FML-CA-4410', tags:['#adhesion'], author:'J.P. Kim', date:'2026-05-26'},
+			{code:'NT-2605-00270', title:'Cost-down reformulation', st:'hold', ver:'v1', cat:'Formulation', fml:'FML-CA-4408', tags:['#costdown'], author:'J.P. Kim', date:'2026-05-20'},
+			{code:'NT-2605-00255', title:'Kickoff meeting notes', st:'ok', ver:'', cat:'General', fml:'', tags:['#kickoff'], author:'J.P. Kim', date:'2026-05-12'}
+		]}
+	};
+
+	var curNbKey = 'all', curFilter = 'all', curNotes = [], curView = 'list', curSummaryNote = null, curSearch = null;
+
+	// 노트셋 집계: 'all'=모든 노트북 노트 합쳐 최근 수정순(내림차순) / 그 외=해당 노트북. 각 노트에 _nb/_nbName/_nbIcon 부착
+	function getNotes(key){
+		var arr = [];
+		if(key === 'all'){
+			Object.keys(NB).forEach(function(k){
+				NB[k].notes.forEach(function(n){
+					arr.push(Object.assign({ _nb:k, _nbName:NB[k].name, _nbIcon:NB[k].icon }, n));
+				});
+			});
+			arr.sort(function(a,b){ return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0); });
+		} else {
+			NB[key].notes.forEach(function(n){
+				arr.push(Object.assign({ _nb:key, _nbName:NB[key].name, _nbIcon:NB[key].icon }, n));
+			});
+		}
+		return arr;
+	}
+
+	function statusCounts(notes){
+		var c = { ing:0, ok:0, fail:0, hold:0 };
+		notes.forEach(function(n){ if(c[n.st] != null) c[n.st]++; });
+		return c;
+	}
+	// 헤더 카운트 = status 필터 칩(현황 표시 + 클릭 필터 겸용 — newAppleTab 대체)
+	function headerCount(notes){
+		var c = statusCounts(notes);
+		var chip = function(f, label, dotK, title){
+			var on = (curFilter === f);
+			// 비활성 칩만 materialize 툴팁(활성은 라벨이 펼쳐져 보이므로 불필요)
+			var cls = 'elnHdrFilter' + (on ? ' on' : ' tooltipped');
+			var tt = on ? '' : ' data-position="bottom" data-tooltip="' + title + '"';
+			return '<span class="' + cls + '" data-f="' + f + '"' + tt + '>' +
+				(dotK ? '<span class="elnDot ' + dotK + '"></span>' : '') +
+				(on && dotK ? '<span class="lb">' + title + '</span>' : '') +
+				'<span class="num">' + label + '</span></span>';
+		};
+		return chip('all', 'All ' + notes.length, '', 'All notes') +
+			chip('ing', c.ing, 'ing', 'Ongoing') + chip('ok', c.ok, 'ok', 'Success') +
+			chip('fail', c.fail, 'fail', 'Failed') + chip('hold', c.hold, 'hold', 'On Hold');
+	}
+	// nbCount 갱신 + materialize 툴팁 재초기화(필터칩이 동적 재생성되므로 매번 init)
+	function setHeaderCount(){
+		$(".material-tooltip").remove();
+		var el = document.getElementById('nbCount');
+		el.innerHTML = headerCount(curNotes);
+		if(window.M && M.Tooltip) M.Tooltip.init(el.querySelectorAll('.tooltipped'));
+	}
+
+	function noteChips(n){
+		var arr = [];
+		if(n.ver) arr.push(n.ver);
+		arr.push(n.cat);
+		if(n.fml) arr.push(n.fml);
+		return arr; // 태그는 칩에서 제외 → 별도 링크 줄로(renderNoteList)
+	}
+
+	// 노트 배열을 중앙 리스트에 렌더 — 노트북 뷰·검색 결과 공용. showNb=제목 위 노트북 라벨 표시 여부
+	function renderNoteList(notes, showNb){
+		var ul = document.getElementById('noteListUl');
+		ul.innerHTML = '';
+		if(!notes.length){
+			var empty = document.createElement('li');
+			empty.className = 'elnListEmpty';
+			empty.innerHTML = '<i class="material-symbols-outlined">search_off</i>No notes match.';
+			ul.appendChild(empty);
+		}
+		notes.forEach(function(n, i){
+			var s = stByKey(n.st);
+			var li = document.createElement('li');
+			li.className = 'waves-effect waves-hColor animate__animated';
+			li.setAttribute('data-st', n.st);
+			li.setAttribute('data-idx', i);
+			var box = document.createElement('section');
+			box.className = 'statusBox ' + s.cls;
+			box.textContent = s.t;
+			var main = document.createElement('section');
+			main.className = 'wd100p';
+			// All Notes 뷰: 어느 노트북 노트인지 제목 위에 풀네임 라벨로(pill 대신)
+			if(showNb){
+				var nbl = document.createElement('div');
+				nbl.className = 'elnNoteNb';
+				nbl.innerHTML = '<i class="material-symbols-outlined fill">' + (n._nbIcon || 'folder') + '</i>' + esc(n._nbName);
+				var nicon = nbl.querySelector('i'); if(nicon) nicon.style.color = nbColor(n._nb); // 노트북 색
+				main.appendChild(nbl);
+			}
+			var tit = document.createElement('div');
+			tit.className = 'pjTit';
+			tit.textContent = '[' + n.code + '] ' + n.title;
+			var sub = document.createElement('div'); sub.className = 'subInfo';
+			noteChips(n).forEach(function(c){
+				var rb = document.createElement('div'); rb.className = 'roundBox'; rb.textContent = c;
+				sub.appendChild(rb);
+			});
+			main.appendChild(tit); main.appendChild(sub);
+			// 태그 = 칩이 아니라 별도 줄에 링크처럼(클릭 → 그 태그 검색)
+			if(n.tags && n.tags.length){
+				var tagLine = document.createElement('div'); tagLine.className = 'elnNoteTags';
+				n.tags.forEach(function(t){
+					var a = document.createElement('a'); a.href = 'javascript:;'; a.className = 'elnTagLink';
+					a.textContent = t; a.title = 'Search this tag'; a.setAttribute('data-tag', t);
+					tagLine.appendChild(a);
+				});
+				main.appendChild(tagLine);
+			}
+			li.appendChild(box); li.appendChild(main);
+			ul.appendChild(li);
+		});
+		setHeaderCount();
+		applyFilter();
+	}
+	function renderNotes(key){
+		curNotes = getNotes(key);
+		renderNoteList(curNotes, key === 'all');
+	}
+
+	// Dashboard 뷰: 같은 노트셋(curNotes)의 현황 조망 — 2열 그리드 카드들. 진행중·주목·태그는 실데이터 집계
+	function renderDashboard(notes){
+		var c = statusCounts(notes), total = notes.length || 1;
+		var pct = function(v){ return Math.round(v / total * 100); };
+		var cards = [];
+
+		// 1) Status overview (전체폭) — 분포 바 + 범례
+		var seg = ST.map(function(s){
+			var v = c[s.k]; if(!v) return '';
+			return '<div class="elnDashSeg ' + s.cls + '" style="flex:' + v + '" title="' + s.t + ' ' + v + '"></div>';
+		}).join('');
+		var legend = ST.map(function(s){
+			return '<span class="elnDashLeg"><span class="elnDot ' + s.k + '"></span>' + s.t + ' <b>' + c[s.k] + '</b></span>';
+		}).join('');
+		cards.push('<div class="elnDashCard span2" title="전체 노트의 상태별 분포 — 진행중·성공·실패·보류 비율을 한눈에"><div class="elnDashCardTit">Status overview · ' + notes.length + ' notes</div>' +
+			'<div class="elnDashStatBar">' + seg + '</div><div class="elnDashLegend">' + legend + '</div></div>');
+
+		// 2) This week (요일별 활동 추이 — 데모 목업)
+		var week = [['Mon',3],['Tue',5],['Wed',2],['Thu',6],['Fri',4],['Sat',1],['Sun',0]], wkMax = 6, wkSum = 0;
+		var wkBars = week.map(function(d, i){
+			wkSum += d[1];
+			var h = Math.round(d[1] / wkMax * 100);
+			return '<div class="elnWkCol"><div class="elnWkBar' + (i===4?' today':'') + '" style="height:' + h + '%" title="' + d[1] + ' edits"></div><span class="elnWkLb">' + d[0].charAt(0) + '</span></div>';
+		}).join('');
+		cards.push('<div class="elnDashCard" title="최근 7일간 요일별 노트 편집 활동량 (데모 데이터)"><div class="elnDashCardTit">This week · <b>' + wkSum + '</b> edits</div>' +
+			'<div class="elnWkChart">' + wkBars + '</div></div>');
+
+		// 3) Success rate (완료 성공률 — 지표)
+		var closed = c.ok + c.fail, rate = closed ? Math.round(c.ok / closed * 100) : 0;
+		cards.push('<div class="elnDashCard" title="결론난 노트(성공+실패) 중 성공 비율"><div class="elnDashCardTit">Success rate</div>' +
+			'<div class="elnDashKpi">' + rate + '<span class="u">%</span></div>' +
+			'<div class="elnDashKpiSub"><b>' + c.ok + '</b> succeeded · <b>' + c.fail + '</b> failed · of ' + closed + ' closed</div></div>');
+
+		// 4) By notebook(All 뷰) / By category(노트북 뷰)
+		if(curNbKey === 'all'){
+			var counts = {}, order = [];
+			notes.forEach(function(n){ if(counts[n._nbName] == null){ counts[n._nbName] = 0; order.push(n._nbName); } counts[n._nbName]++; });
+			cards.push('<div class="elnDashCard" title="노트북별 노트 개수 분포"><div class="elnDashCardTit">By notebook</div>' +
+				order.map(function(nm){
+					var v = counts[nm];
+					return '<div class="elnDashRow"><span class="dn">' + esc(nm) + '</span><span class="dbar"><span style="width:' + pct(v) + '%"></span></span><span class="dv">' + v + '</span></div>';
+				}).join('') + '</div>');
+		} else {
+			var catC = {}, catO = [];
+			notes.forEach(function(n){ var k = n.cat || 'General'; if(catC[k] == null){ catC[k] = 0; catO.push(k); } catC[k]++; });
+			cards.push('<div class="elnDashCard" title="카테고리별 노트 개수 분포"><div class="elnDashCardTit">By category</div>' +
+				catO.map(function(k){
+					var v = catC[k];
+					return '<div class="elnDashRow"><span class="dn">' + esc(k) + '</span><span class="dbar"><span style="width:' + pct(v) + '%"></span></span><span class="dv">' + v + '</span></div>';
+				}).join('') + '</div>');
+		}
+
+		// 5) Formulation links (배합 연계 — ELN 고유: 배합↔노트 연결)
+		var linked = notes.filter(function(n){ return n.fml; });
+		var fmls = linked.map(function(n){ return n.fml; });
+		var uniqFml = fmls.filter(function(v, i){ return fmls.indexOf(v) === i; });
+		cards.push('<div class="elnDashCard" title="배합(Formulation)과 연계된 노트 — ELN의 핵심: 배합 결과를 노트에 연결"><div class="elnDashCardTit">Formulation links · <b>' + linked.length + '</b></div>' +
+			(uniqFml.length ? '<div class="elnDashTags">' + uniqFml.map(function(f){ return '<span class="elnDashTag">' + esc(f) + '</span>'; }).join('') + '</div>' : '<div class="elnDashEmpty">No linked formulations.</div>') + '</div>');
+
+		// 6) In progress (진행중 하이라이트 — 클릭→상세)
+		var hi = notes.filter(function(n){ return n.st === 'ing'; }).slice(0, 5);
+		cards.push('<div class="elnDashCard" title="진행 중인 노트 — 이어서 작업할 것 (클릭하면 상세 열림)"><div class="elnDashCardTit">In progress — pick up</div>' +
+			(hi.length ? hi.map(function(n){
+				return '<div class="elnDashHi" data-code="' + n.code + '"><span class="elnDot ing"></span><span class="ht">' + esc(n.title) + '</span><span class="hn">' + esc(n._nbName) + '</span></div>';
+			}).join('') : '<div class="elnDashEmpty">No notes in progress.</div>') + '</div>');
+
+		// 7) Needs attention (On Hold + Failed — 막힌 것 주목)
+		var attn = notes.filter(function(n){ return n.st === 'hold' || n.st === 'fail'; }).slice(0, 5);
+		cards.push('<div class="elnDashCard" title="보류·실패 상태로 점검이 필요한 노트 (클릭하면 상세 열림)"><div class="elnDashCardTit">Needs attention</div>' +
+			(attn.length ? attn.map(function(n){
+				return '<div class="elnDashHi" data-code="' + n.code + '"><span class="elnDot ' + n.st + '"></span><span class="ht">' + esc(n.title) + '</span><span class="hn">' + stByKey(n.st).t + '</span></div>';
+			}).join('') : '<div class="elnDashEmpty">Nothing on hold or failed.</div>') + '</div>');
+
+		// 8) Top tags (전체폭) — 태그 집계
+		var tagC = {};
+		notes.forEach(function(n){ (n.tags||[]).forEach(function(t){ tagC[t] = (tagC[t]||0) + 1; }); });
+		var tags = Object.keys(tagC).sort(function(a,b){ return tagC[b] - tagC[a]; });
+		if(tags.length){
+			cards.push('<div class="elnDashCard span2" title="가장 많이 사용된 태그 순위 — 연구 주제 분포"><div class="elnDashCardTit">Top tags</div><div class="elnDashTags">' +
+				tags.map(function(t){ return '<span class="elnDashTag">' + esc(t) + '<b>' + tagC[t] + '</b></span>'; }).join('') + '</div></div>');
+		}
+
+		document.getElementById('elnDashView').innerHTML = '<div class="elnDashGrid">' + cards.join('') + '</div>';
+	}
+
+	function applyFilter(){
+		document.querySelectorAll('#noteListUl li').forEach(function(li){
+			li.style.display = (curFilter==='all' || li.getAttribute('data-st')===curFilter) ? '' : 'none';
+		});
+	}
+
+	function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+	/* ── History = parent 링크로 계산하는 파생 트리(분기 지원). lineage 배열을 저장하지 않음 ── */
+	function lineageIndex(){ var idx = {}; getNotes('all').forEach(function(n){ idx[n.code] = n; }); return idx; }
+	function lineageChildren(code){ return getNotes('all').filter(function(n){ return n.parent === code; }); }
+	function lineageRoot(note, idx){ var r = note, g = 0; while(r && r.parent && idx[r.parent] && g++ < 100) r = idx[r.parent]; return r; }
+	// 노트가 속한 전체 파생 트리를 평탄화: [{note, depth, current}] (자식은 날짜 오름차순). 루트부터 DFS
+	function computeLineage(note){
+		var idx = lineageIndex();
+		var root = lineageRoot(note, idx);
+		var out = [];
+		(function walk(code, depth){
+			var node = idx[code]; if(!node) return;
+			out.push({ note: node, depth: depth, current: node.code === note.code });
+			lineageChildren(code).sort(function(a, b){ return a.date < b.date ? -1 : (a.date > b.date ? 1 : 0); })
+				.forEach(function(k){ walk(k.code, depth + 1); });
+		})(root.code, 0);
+		return out;
+	}
+
+	function renderSummary(n){
+		curSummaryNote = n;
+		var sum = document.getElementById('elnSummary');
+		var s = stByKey(n.st);
+		var nbName = n._nbName || NB[curNbKey].name;
+		var chipsHtml = (n.tags||[]).map(function(t){ return '<span class="elnSumChip" data-tag="'+esc(t)+'" title="Search this tag">'+esc(t)+'</span>'; }).join('');
+		var fmlHtml = n.fml ?
+			'<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">blender</i>Formulation</div>'+
+			'<div class="elnSumFml"><i class="material-symbols-outlined">science</i><span><b>'+esc(n.fml)+'</b></span>'+
+			'<span class="chip"><i class="material-symbols-outlined" style="font-size:12px;vertical-align:-2px;">link</i> Linked</span></div></div>' : '';
+		var lin = computeLineage(n);
+		var linHtml;
+		if(lin.length > 1){
+			linHtml = '<div class="elnLineage">' + lin.map(function(L){
+				return '<div class="elnLineNode'+(L.current?' current':'')+'" data-code="'+esc(L.note.code)+'" style="padding-left:'+(2 + L.depth*15)+'px" title="'+esc(L.note.title)+'">'+
+					'<span class="elnLineDot '+L.note.st+'"></span><span class="nm">'+esc(L.note.title)+'</span>'+
+					(L.note.ver?'<span class="ver">'+esc(L.note.ver)+'</span>':'')+'</div>';
+			}).join('') + '</div>';
+		} else {
+			linHtml = '<div class="elnSumNoLin">Root note — no derivation yet.</div>';
+		}
+		sum.classList.remove('empty');
+		sum.innerHTML =
+			'<div class="elnSumHead">'+
+				'<div class="elnSumStatusRow"><span class="elnSumPill" data-st="'+n.st+'"><span class="elnDot '+n.st+'"></span>'+s.t+'</span><span class="elnSumCode">'+esc(n.code)+'</span></div>'+
+				'<div class="elnSumTit">'+esc(n.title)+'</div>'+
+			'</div>'+
+			'<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">info</i>Details</div>'+
+				'<div class="elnSumMeta">'+
+					'<div class="elnSumMetaRow"><span class="k">Notebook</span><span class="v elnSumNbPick" title="Move to another notebook"><span class="elnNbDot" style="background:'+nbColor(n._nb)+'"></span>'+esc(nbName)+'<i class="material-symbols-outlined">expand_more</i></span></div>'+
+					'<div class="elnSumMetaRow"><span class="k">Category</span><span class="v">'+esc(n.cat)+'</span></div>'+
+					'<div class="elnSumMetaRow"><span class="k">Author</span><span class="v">'+esc(n.author)+'</span></div>'+
+					'<div class="elnSumMetaRow"><span class="k">Modified</span><span class="v">'+esc(n.date)+'</span></div>'+
+				'</div>'+
+			'</div>'+
+			fmlHtml +
+			(chipsHtml ? '<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">sell</i>Tags</div><div class="elnSumChips">'+chipsHtml+'</div></div>' : '')+
+			'<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">account_tree</i>History'+
+				'<a href="javascript:;" class="more elnFullView">Full view<i class="material-symbols-outlined" style="font-size:13px;">open_in_full</i></a></div>'+linHtml+'</div>';
+	}
+
+	// 계보 전체 트리(모달용) — parent 링크로 계산한 파생 트리를 들여쓰기로(분기 표현)
+	function buildLineageTree(n){
+		var wrap = document.createElement('div');
+		wrap.className = 'elnBigTree';
+		var lin = computeLineage(n);
+		if(lin.length <= 1){
+			wrap.innerHTML = '<div class="elnSumNoLin">Root note — no derivation yet.</div>';
+			return wrap;
+		}
+		lin.forEach(function(L){
+			var note = L.note, s = stByKey(note.st);
+			var node = document.createElement('div');
+			node.className = 'elnBigNode';
+			node.style.marginLeft = (L.depth * 26) + 'px'; // 깊이 = 분기 들여쓰기
+			node.setAttribute('data-code', note.code);
+			node.innerHTML =
+				'<span class="dot '+note.st+'"></span>'+
+				'<div class="elnBigCard'+(L.current?' current':'')+'">'+
+					'<div class="bctop"><span class="bctit">'+esc(note.title)+'</span>'+
+						(note.ver?'<span class="bcver">'+esc(note.ver)+'</span>':'')+
+						(L.current?'<span class="bccur">● you are here</span>':'')+'</div>'+
+					'<div class="bcmetrics"><span class="m"><span class="elnDot '+note.st+'" style="vertical-align:-1px;margin-right:4px;"></span>'+s.t+'</span>'+
+						'<span class="m" style="color:#9b8c7e;">'+esc(note.code)+'</span></div>'+
+				'</div>';
+			wrap.appendChild(node);
+		});
+		return wrap;
+	}
+	function openLineageModal(n){
+		if(!n) return;
+		var body = document.createElement('div');
+		body.className = 'elnLinModalBody';
+		var head = document.createElement('div');
+		head.className = 'elnLinModalHead';
+		head.textContent = n.title;
+		body.appendChild(head);
+		body.appendChild(buildLineageTree(n));
+		if(window.ELN && ELN.modal){
+			ELN.modal({ title: 'History', icon: 'account_tree', body: body, actions: [ { label:'Close', type:'' } ] });
+		}
+	}
+
+	function clearSummary(){
+		var sum = document.getElementById('elnSummary');
+		sum.classList.add('empty');
+		curSummaryNote = null;
+		sum.innerHTML = '<div class="elnSumPlaceholder"><i class="material-symbols-outlined">touch_app</i>Select a note to see its summary &amp; lineage</div>';
+	}
+
+	function selectFirst(){
+		var ul = document.getElementById('noteListUl');
+		var first = ul.querySelector('li[data-idx]'); // 빈 결과 안내(li[.elnListEmpty])는 건너뜀
+		if(first){
+			ul.querySelectorAll('li').forEach(function(x){ x.classList.remove('on'); });
+			first.classList.add('on');
+			renderSummary(curNotes[+first.getAttribute('data-idx')]);
+		} else {
+			clearSummary();
+		}
+	}
+
+	// 뷰 적용: List=목록+필터+요약 / Dashboard=현황 조망(필터·요약 숨김)
+	function applyView(){
+		var isList = (curView === 'list');
+		document.getElementById('elnListView').style.display = isList ? '' : 'none';
+		document.getElementById('elnDashView').style.display = isList ? 'none' : '';
+		document.getElementById('elnSummary').style.display = isList ? '' : 'none';
+		if(isList){
+			setHeaderCount(); // 필터 칩(클릭 가능)
+			selectFirst();
+		} else {
+			document.getElementById('nbCount').textContent = curNotes.length + ' notes'; // 대시보드: 단순 카운트
+			renderDashboard(curNotes);
+		}
+	}
+
+	/* ── NPI식 필드 검색(모달) — 제목·태그·status·카테고리·노트북 + 와일드카드(* ?). 결과는 중앙 리스트 재사용 ── */
+	// glob(* ?) → 정규식. 일반 단어도 같은 경로(특수문자 이스케이프 후 부분일치)로 통합
+	function globRegex(term){
+		var esc = String(term).replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\?/g, '.');
+		return new RegExp(esc, 'i');
+	}
+	// 노트가 조건(c) 전부에 부합하는지(AND). 빈 필드는 무시
+	function noteMatches(n, c){
+		if(c.keyword && !globRegex(c.keyword).test('[' + n.code + '] ' + n.title)) return false;
+		if(c.tags){
+			var rx = globRegex(c.tags);
+			if(!(n.tags || []).some(function(t){ return rx.test(t); })) return false;
+		}
+		if(c.status !== 'all' && n.st !== c.status) return false;
+		if(c.category !== 'all' && n.cat !== c.category) return false;
+		if(c.notebook !== 'all' && n._nb !== c.notebook) return false;
+		return true;
+	}
+	// 검색 조건 → 사람이 읽는 설명(헤더에 "무엇으로 검색했는지" 표시)
+	function describeCriteria(c){
+		var p = [];
+		if(c.keyword) p.push('“' + c.keyword + '”');
+		if(c.tags) p.push('tag ' + c.tags);
+		if(c.status && c.status !== 'all') p.push('status: ' + stByKey(c.status).t);
+		if(c.category && c.category !== 'all') p.push('category: ' + c.category);
+		if(c.notebook && c.notebook !== 'all') p.push('in ' + ((NB[c.notebook] && NB[c.notebook].name) || c.notebook));
+		return p.join('  ·  ');
+	}
+	// 검색 실행: 전체에서 조건 필터 → '검색 결과' 모드로 중앙 리스트 렌더(노트북 선택 해제, 항상 List 뷰)
+	function runSearch(c){
+		curSearch = c;
+		curNbKey = '__search__';
+		curFilter = 'all';
+		curNotes = getNotes('all').filter(function(n){ return noteMatches(n, c); });
+		document.querySelectorAll('.elnNbItem').forEach(function(x){ x.classList.remove('on'); var i = x.querySelector('i'); if(i) i.classList.remove('fill'); });
+		document.getElementById('nbName').textContent = 'Search results';
+		document.getElementById('nbIcon').textContent = 'search';
+		document.getElementById('nbIcon').style.color = ''; // 검색 헤더 아이콘은 기본색
+		var clr = document.getElementById('elnSrchClear'); if(clr) clr.style.display = '';
+		var crit = document.getElementById('elnSrchCrit'); if(crit){ var d = describeCriteria(c); crit.textContent = d; crit.style.display = d ? '' : 'none'; }
+		curView = 'list';
+		var tg = document.querySelector('.elnViewToggle');
+		if(tg){ tg.querySelectorAll('a').forEach(function(x){ x.classList.remove('on'); }); var la = tg.querySelector('a[data-view="list"]'); if(la) la.classList.add('on'); }
+		renderNoteList(curNotes, true);
+		applyView();
+		ELN.toast(curNotes.length ? ('Found ' + curNotes.length + ' note' + (curNotes.length > 1 ? 's' : '') + '.') : 'No notes match your search.', curNotes.length ? 'ok' : 'warn');
+	}
+	// 검색 해제 → All Notes 복귀(위임 핸들러가 헤더·렌더·Clear 숨김까지 처리)
+	function clearSearch(){
+		var all = document.querySelector('.elnNbItem.elnNbAll');
+		if(all) all.click();
+	}
+	// 태그 칩 클릭 → 그 태그만으로 즉시 검색(모달 없이 결과 렌더)
+	function searchByTag(tag){
+		if(!tag) return;
+		runSearch({ keyword: '', tags: tag, status: 'all', category: 'all', notebook: 'all' });
+	}
+	// 검색 모달 — 필드 폼 + 와일드카드 안내. prefill = navbar 입력값을 keyword로 선반영
+	function openSearchModal(prefill){
+		var form = document.createElement('div');
+		form.className = 'elnSrchForm';
+		form.innerHTML =
+			'<div class="elnSrchRow"><label>Keyword</label>' +
+				'<input type="text" id="srchKeyword" class="browser-default" placeholder="Title or code…  (use * ?)" autocomplete="off"></div>' +
+			'<div class="elnSrchRow"><label>Tags</label>' +
+				'<input type="text" id="srchTags" class="browser-default" list="srchTagList" placeholder="e.g. #viscosity  (type to autocomplete · * ?)" autocomplete="off">' +
+				'<datalist id="srchTagList"></datalist></div>' +
+			'<div class="elnSrchGrid">' +
+				'<div class="elnSrchRow"><label>Status</label><select id="srchStatus" class="browser-default"></select></div>' +
+				'<div class="elnSrchRow"><label>Category</label><select id="srchCategory" class="browser-default"></select></div>' +
+			'</div>' +
+			'<div class="elnSrchRow"><label>Notebook</label><select id="srchNotebook" class="browser-default"></select></div>' +
+			'<div class="elnSrchHint"><i class="material-symbols-outlined">tips_and_updates</i>' +
+				'<span><b>*</b> matches any characters, <b>?</b> matches a single one. Leave a field blank to ignore it.</span></div>';
+		function opt(sel, value, label){ var o = document.createElement('option'); o.value = value; o.textContent = label; sel.appendChild(o); }
+		var stSel = form.querySelector('#srchStatus');
+		opt(stSel, 'all', 'Any status'); ST.forEach(function(s){ opt(stSel, s.k, s.t); });
+		var catSel = form.querySelector('#srchCategory');
+		opt(catSel, 'all', 'Any category');
+		var cats = []; getNotes('all').forEach(function(n){ if(n.cat && cats.indexOf(n.cat) < 0) cats.push(n.cat); });
+		cats.forEach(function(c){ opt(catSel, c, c); });
+		var nbSel = form.querySelector('#srchNotebook');
+		opt(nbSel, 'all', 'All notebooks');
+		Object.keys(NB).forEach(function(k){ opt(nbSel, k, NB[k].name); });
+		// 태그 자동완성 — 데이터에 존재하는 태그 전부를 datalist로(중복 제거)
+		var tagDL = form.querySelector('#srchTagList'); var tseen = {};
+		getNotes('all').forEach(function(n){ (n.tags || []).forEach(function(t){ if(!tseen[t]){ tseen[t] = 1; var o = document.createElement('option'); o.value = t; tagDL.appendChild(o); } }); });
+		var kw = form.querySelector('#srchKeyword');
+		if(prefill) kw.value = prefill;
+
+		function gather(){
+			return {
+				keyword: kw.value.trim(),
+				tags: form.querySelector('#srchTags').value.trim(),
+				status: stSel.value,
+				category: catSel.value,
+				notebook: nbSel.value
+			};
+		}
+		var ref = ELN.modal({
+			title: 'Search notes', icon: 'search', body: form,
+			actions: [
+				{ label: 'Cancel', type: '' },
+				{ label: 'Search', type: 'hViva', onClick: function(){ runSearch(gather()); } }
+			]
+		});
+		// Enter = 즉시 검색(모달 닫고 결과)
+		[kw, form.querySelector('#srchTags')].forEach(function(inp){
+			inp.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); runSearch(gather()); ref.close(); } });
+		});
+		setTimeout(function(){ kw.focus(); }, 60);
+	}
+
+	/* ── 노트북 이름수정·삭제 — hover ⋯ 메뉴(시스템 항목 All/No Notebook 제외) ── */
+	// 좌측 패널 카운트 갱신(삭제/이동 후 동기)
+	function refreshNbCounts(){
+		document.querySelectorAll('.elnNbItem').forEach(function(item){
+			var key = item.getAttribute('data-nb');
+			var ct = item.querySelector('.ct'); if(!ct) return;
+			if(key === 'all') ct.textContent = getNotes('all').length;
+			else if(NB[key]) ct.textContent = NB[key].notes.length;
+		});
+	}
+	// 이름수정 모달
+	function renameNotebook(key){
+		var nb = NB[key]; if(!nb) return;
+		var inp = document.createElement('input');
+		inp.type = 'text'; inp.className = 'browser-default'; inp.value = nb.name;
+		inp.style.cssText = 'width:100%;height:40px;border:1px solid #d9cfc2;border-radius:8px;padding:0 12px;font-size:14px;';
+		ELN.modal({
+			title: 'Rename Notebook', icon: 'edit', body: inp,
+			actions: [
+				{ label: 'Save', type: 'hViva', onClick: function(){
+					var name = (inp.value || '').trim();
+					if(!name){ ELN.toast('Enter a notebook name.', 'warn'); return true; } // 모달 유지
+					nb.name = name;
+					var nm = document.querySelector('.elnNbItem[data-nb="' + key + '"] .nm'); if(nm) nm.textContent = name;
+					if(curNbKey === key){ var h = document.getElementById('nbName'); if(h) h.textContent = name; }
+					ELN.toast('Renamed to "' + name + '".', 'ok');
+				} },
+				{ label: 'Cancel', type: '' }
+			]
+		});
+		setTimeout(function(){ inp.focus(); inp.select(); }, 60);
+	}
+	// 삭제(확인 모달) — 노트는 No Notebook으로 이동(비파괴)
+	function deleteNotebook(key){
+		var nb = NB[key]; if(!nb) return;
+		var cnt = nb.notes.length;
+		var msg = 'Delete notebook "' + nb.name + '"?' + (cnt ? (' Its ' + cnt + ' note' + (cnt > 1 ? 's' : '') + ' will be moved to No Notebook.') : '');
+		ELN.modal({
+			title: 'Delete Notebook', icon: 'delete', body: msg,
+			actions: [
+				{ label: 'Delete', type: 'elnDanger', onClick: function(){
+					NB.unfiled.notes = NB.unfiled.notes.concat(nb.notes); // 비파괴 이동
+					delete NB[key];
+					var item = document.querySelector('.elnNbItem[data-nb="' + key + '"]'); if(item) item.remove();
+					refreshNbCounts();
+					ELN.toast('Notebook "' + nb.name + '" deleted' + (cnt ? (' · ' + cnt + ' moved to No Notebook') : '') + '.', 'ok');
+					if(curNbKey === key){ var all = document.querySelector('.elnNbItem.elnNbAll'); if(all) all.click(); }
+					else if(curNbKey === 'all' || curNbKey === 'unfiled'){ renderNotes(curNbKey); applyView(); }
+				} },
+				{ label: 'Cancel', type: '' }
+			]
+		});
+	}
+	/* ── 노트북 색상(혼합: 그룹 기본 + 개별 덮어쓰기). 색은 NB[key].color에 저장 ── */
+	var NB_GROUP_COLOR = { my:'#A47864', shared:'#A47864', unfiled:'#b3a596' }; // 그룹 기본색(Shared도 일단 My와 동일)
+	// 큐레이션 빠른 팔레트 10색 — PANTONE 2025·2026 혼합(첫=mocha25=그룹 기본). mocha/cfblue/tendril/viola/rose + willow/sea26/blue26/choco/stone
+	var NB_PALETTE = ['#A47864','#7391C8','#8ca571','#a893bd','#D19C97','#9B8B50','#89BDD3','#4D677D','#56443F','#A89A8E'];
+	// 확장 팔레트 = mpm_materialize.css에서 추출한 머티리얼 색(패밀리 × lighten-5~darken-4). [이름, [10shade]]
+	var MD_PALETTE = [
+		["RED",['#FFEBEE','#FFCDD2','#EF9A9A','#E57373','#EF5350','#F44336','#E53935','#D32F2F','#C62828','#B71C1C']],
+		["PINK",['#FCE4EC','#F8BBD0','#F48FB1','#F06292','#EC407A','#E91E63','#D81B60','#C2185B','#AD1457','#880E4F']],
+		["PURPLE",['#F3E5F5','#E1BEE7','#CE93D8','#BA68C8','#AB47BC','#9C27B0','#8E24AA','#7B1FA2','#6A1B9A','#4A148C']],
+		["DEEP PURPLE",['#EDE7F6','#D1C4E9','#B39DDB','#9575CD','#7E57C2','#673AB7','#5E35B1','#512DA8','#4527A0','#311B92']],
+		["INDIGO",['#E8EAF6','#C5CAE9','#9FA8DA','#7986CB','#5C6BC0','#3F51B5','#3949AB','#303F9F','#283593','#1A237E']],
+		["BLUE",['#E3F2FD','#BBDEFB','#90CAF9','#64B5F6','#42A5F5','#2196F3','#1E88E5','#1976D2','#1565C0','#0D47A1']],
+		["LIGHT BLUE",['#E1F5FE','#B3E5FC','#81D4FA','#4FC3F7','#29B6F6','#03A9F4','#039BE5','#0288D1','#0277BD','#01579B']],
+		["CYAN",['#E0F7FA','#B2EBF2','#80DEEA','#4DD0E1','#26C6DA','#00BCD4','#00ACC1','#0097A7','#00838F','#006064']],
+		["TEAL",['#E0F2F1','#B2DFDB','#80CBC4','#4DB6AC','#26A69A','#009688','#00897B','#00796B','#00695C','#004D40']],
+		["GREEN",['#E8F5E9','#C8E6C9','#A5D6A7','#81C784','#66BB6A','#4CAF50','#43A047','#388E3C','#2E7D32','#1B5E20']],
+		["LIGHT GREEN",['#F1F8E9','#DCEDC8','#C5E1A5','#AED581','#9CCC65','#8BC34A','#7CB342','#689F38','#558B2F','#33691E']],
+		["LIME",['#F9FBE7','#F0F4C3','#E6EE9C','#DCE775','#D4E157','#CDDC39','#C0CA33','#AFB42B','#9E9D24','#827717']],
+		["YELLOW",['#FFFDE7','#FFF9C4','#FFF59D','#FFF176','#FFEE58','#FFEB3B','#FDD835','#FBC02D','#F9A825','#F57F17']],
+		["AMBER",['#FFF8E1','#FFECB3','#FFE082','#FFD54F','#FFCA28','#FFC107','#FFB300','#FFA000','#FF8F00','#FF6F00']],
+		["ORANGE",['#FFF3E0','#FFE0B2','#FFCC80','#FFB74D','#FFA726','#FF9800','#FB8C00','#F57C00','#EF6C00','#E65100']],
+		["DEEP ORANGE",['#FBE9E7','#FFCCBC','#FFAB91','#FF8A65','#FF7043','#FF5722','#F4511E','#E64A19','#D84315','#BF360C']],
+		["BROWN",['#EFEBE9','#D7CCC8','#BCAAA4','#A1887F','#8D6E63','#795548','#6D4C41','#5D4037','#4E342E','#3E2723']],
+		["BLUE GREY",['#ECEFF1','#CFD8DC','#B0BEC5','#90A4AE','#78909C','#607D8B','#546E7A','#455A64','#37474F','#263238']],
+		["GREY",['#FAFAFA','#F5F5F5','#EEEEEE','#E0E0E0','#BDBDBD','#9E9E9E','#757575','#616161','#424242','#212121']],
+		["BLACK",['#000000']]
+	];
+	function nbGroupOf(key){ if(key === 'unfiled') return 'unfiled'; return (NB[key] && NB[key].icon === 'folder_shared') ? 'shared' : 'my'; }
+	function nbColor(key){ return (NB[key] && NB[key].color) || NB_GROUP_COLOR[nbGroupOf(key)] || '#A47864'; }
+	// 좌측 패널 항목의 폴더 아이콘에 색 반영(직속 i만 — ⋯ 아이콘 제외)
+	function applyNbColor(item){
+		var key = item.getAttribute('data-nb');
+		if(!key || key === 'all' || key === 'unfiled') return; // All/No Notebook은 고정색
+		var ic = item.querySelector(':scope > i'); if(ic) ic.style.color = nbColor(key);
+	}
+	// 색 지정/해제 → NB 저장 + 패널·리스트·요약 반영(color=null이면 그룹 기본으로 리셋)
+	function setNotebookColor(key, color){
+		if(!NB[key]) return;
+		if(color) NB[key].color = color; else delete NB[key].color;
+		var item = document.querySelector('.elnNbItem[data-nb="' + key + '"]'); if(item) applyNbColor(item);
+		if(curNbKey === key){ var hi = document.getElementById('nbIcon'); if(hi) hi.style.color = nbColor(key); } // 열려있는 노트북이면 헤더 아이콘도
+		var keep = curSummaryNote && curSummaryNote.code;
+		if(curSearch){ runSearch(curSearch); if(keep) reselectByCode(keep); }                          // 검색 결과 행 라벨 갱신
+		else if(curNbKey === 'all'){ renderNotes('all'); applyView(); if(keep) reselectByCode(keep); }  // All Notes 행 라벨 갱신
+		else if(curSummaryNote && curSummaryNote._nb === key) renderSummary(curSummaryNote);            // 요약 점 갱신
+		ELN.toast(color ? 'Notebook color updated.' : 'Color reset to group default.', 'ok');
+	}
+	// ⋯ 클릭 → Color 스와치 + Rename/Delete 팝오버
+	function openNbMenu(anchor, key){
+		var menu = document.createElement('div'); menu.className = 'elnNbPopList';
+		// Color: 큐레이션 10색(첫=그룹 기본) + materialize 전체(항상 표시·세로 스크롤). 기본색 클릭 = override 해제
+		var cur = NB[key] && NB[key].color;
+		var groupDef = NB_GROUP_COLOR[nbGroupOf(key)] || '#A47864';
+		var effU = (cur || groupDef).toUpperCase(); // 현재 적용색(override 없으면 그룹 기본)
+		function pick(color){ ref.close(); setNotebookColor(key, color); }
+		function pickSwatch(c){ pick(c.toUpperCase() === groupDef.toUpperCase() ? null : c); } // 기본색이면 override 해제
+		function mkSwatch(color){
+			var isDef = color.toUpperCase() === groupDef.toUpperCase();
+			var s = document.createElement('span'); s.className = 'elnNbSw' + (effU === color.toUpperCase() ? ' on' : '');
+			s.style.background = color; s.title = isDef ? 'Default' : color;
+			s.addEventListener('click', function(){ pickSwatch(color); });
+			return s;
+		}
+		var crow = document.createElement('div'); crow.className = 'elnNbColorRow';
+		var lb = document.createElement('span'); lb.className = 'lb'; lb.textContent = 'Color'; crow.appendChild(lb);
+		// 큐레이션 빠른 선택(첫 색 = Default)
+		var sw = document.createElement('div'); sw.className = 'sw';
+		NB_PALETTE.forEach(function(c){ sw.appendChild(mkSwatch(c)); });
+		crow.appendChild(sw);
+		// materialize 전체 — 항상 표시, 세로 스크롤
+		menu.appendChild(crow);
+		[['edit', 'Rename', renameNotebook], ['delete', 'Delete', deleteNotebook]].forEach(function(row){
+			var el = document.createElement('div'); el.className = 'elnNbPopItem' + (row[0] === 'delete' ? ' danger' : '');
+			var ic = document.createElement('i'); ic.className = 'material-symbols-outlined'; ic.textContent = row[0];
+			var nm = document.createElement('span'); nm.textContent = row[1];
+			el.appendChild(ic); el.appendChild(nm);
+			el.addEventListener('click', function(){ ref.close(); row[2](key); });
+			menu.appendChild(el);
+		});
+		var ref = ELN.popover({ anchor: anchor, content: menu, width: 260 }); // 큐레이션 10색·머티리얼 10/행을 한 줄에 수용
+	}
+	// 항목에 ⋯ 버튼 부착(시스템 항목 제외). 카운트엔 hasMore 표식 → hover 시 스왑
+	function decorateNbItem(item){
+		var key = item.getAttribute('data-nb');
+		if(!key || key === 'all' || key === 'unfiled') return; // All Notes·No Notebook은 고정
+		if(item.querySelector('.elnNbMore')) return;
+		var ct = item.querySelector('.ct'); if(ct) ct.classList.add('hasMore');
+		var more = document.createElement('a');
+		more.href = 'javascript:;'; more.className = 'elnNbMore'; more.title = 'Notebook options';
+		more.innerHTML = '<i class="material-symbols-outlined">more_horiz</i>';
+		more.addEventListener('click', function(e){ e.stopPropagation(); openNbMenu(more, key); });
+		item.appendChild(more);
+		applyNbColor(item); // 폴더 아이콘 색(그룹 기본 / 개별 override)
+	}
+	// 노트북 생성(상위 스코프) — My Notebooks 그룹에 추가. New Notebook 버튼·요약 픽커 공용
+	function addNotebook(name){
+		var key = 'nb_' + (Object.keys(NB).length + 1);
+		NB[key] = { name:name, icon:'folder', notes:[] };
+		var grp = document.querySelector('.elnNbGroup[data-group="my"]') || document.getElementById('elnNbPanel');
+		var it = document.createElement('div');
+		it.className = 'elnNbItem'; it.setAttribute('data-nb', key);
+		var ic = document.createElement('i'); ic.className = 'material-symbols-outlined'; ic.textContent = 'folder';
+		var nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = name;
+		var ct = document.createElement('span'); ct.className = 'ct'; ct.textContent = '0';
+		it.appendChild(ic); it.appendChild(nm); it.appendChild(ct);
+		grp.appendChild(it);
+		decorateNbItem(it); // 새 노트북도 hover ⋯ 부착
+		if(window.jQuery && jQuery(grp).hasClass('ui-sortable')) jQuery(grp).sortable('refresh'); // 정렬 대상에 포함
+		return key;
+	}
+
+	/* ── 우측 요약에서 노트를 다른 노트북으로 이동(픽커 popover) ── */
+	// 노트(복사본)의 원본을 NB[old]에서 빼 NB[new]로 옮김. 이후 현재 뷰 재렌더 + 가능하면 재선택
+	function moveNoteToNotebook(note, newKey){
+		if(!note) return;
+		var oldKey = note._nb;
+		if(oldKey === newKey || !NB[newKey]) return;
+		var src = NB[oldKey] && NB[oldKey].notes;
+		var orig = note;
+		if(src){ var i = src.map(function(x){ return x.code; }).indexOf(note.code); if(i >= 0) orig = src.splice(i, 1)[0]; }
+		NB[newKey].notes.push(orig);
+		refreshNbCounts();
+		ELN.toast('Moved to "' + NB[newKey].name + '".', 'ok');
+		if(curSearch) runSearch(curSearch); // 검색 결과는 재필터(노트북 조건이면 빠질 수 있음)
+		else { renderNotes(curNbKey); applyView(); }
+		reselectByCode(note.code); // 여전히 보이면 그 노트 유지 선택
+	}
+	function reselectByCode(code){
+		var i = curNotes.map(function(x){ return x.code; }).indexOf(code);
+		if(i < 0) return; // 현재 뷰에 없음 → applyView가 이미 첫 항목 선택
+		var li = document.querySelector('#noteListUl li[data-idx="' + i + '"]');
+		if(!li) return;
+		document.querySelectorAll('#noteListUl li').forEach(function(x){ x.classList.remove('on'); });
+		li.classList.add('on');
+		renderSummary(curNotes[i]);
+	}
+	// 노트북 픽커 — No Notebook 먼저(점선), 나머지, 그리고 New Notebook…
+	function openSummaryNbPicker(anchor, note){
+		if(!note) return;
+		var list = document.createElement('div'); list.className = 'elnNbPopList';
+		var keys = Object.keys(NB).slice().sort(function(a, b){ return a === 'unfiled' ? -1 : (b === 'unfiled' ? 1 : 0); });
+		keys.forEach(function(key){
+			var nb = NB[key];
+			var it = document.createElement('div');
+			it.className = 'elnNbPopItem' + (key === 'unfiled' ? ' unfiled' : '');
+			var ic = document.createElement('i'); ic.className = 'material-symbols-outlined'; ic.textContent = nb.icon || 'folder';
+			if(key !== 'unfiled') ic.style.color = nbColor(key); // 노트북 색
+			var nm = document.createElement('span'); nm.textContent = nb.name;
+			it.appendChild(ic); it.appendChild(nm);
+			if(key === note._nb){ var chk = document.createElement('i'); chk.className = 'material-symbols-outlined chk'; chk.textContent = 'check'; it.appendChild(chk); }
+			it.addEventListener('click', function(){ ref.close(); moveNoteToNotebook(note, key); });
+			list.appendChild(it);
+		});
+		var nw = document.createElement('div'); nw.className = 'elnNbPopItem new';
+		nw.innerHTML = '<i class="material-symbols-outlined">create_new_folder</i><span>New Notebook…</span>';
+		nw.addEventListener('click', function(){
+			ref.close();
+			var inp = document.createElement('input');
+			inp.type = 'text'; inp.className = 'browser-default'; inp.placeholder = 'Notebook name';
+			inp.style.cssText = 'width:100%;height:40px;border:1px solid #d9cfc2;border-radius:8px;padding:0 12px;font-size:14px;';
+			ELN.modal({
+				title: 'New Notebook', icon: 'create_new_folder', body: inp,
+				actions: [
+					{ label: 'Create', type: 'hViva', onClick: function(){
+						var name = (inp.value || '').trim() || 'Untitled Notebook';
+						moveNoteToNotebook(note, addNotebook(name));
+					} },
+					{ label: 'Cancel', type: '' }
+				]
+			});
+			setTimeout(function(){ inp.focus(); }, 60);
+		});
+		list.appendChild(nw);
+		var ref = ELN.popover({ anchor: anchor, content: list, width: 240 });
+	}
+
+	/* ── 좌측 노트북 그룹별 드래그 정렬(jQuery UI sortable) — My끼리/Shared끼리, 그룹 간 이동 불가 ── */
+	function initNbSortable(){
+		var $ = window.jQuery;
+		if(!$ || !$.fn || !$.fn.sortable) return; // 없으면 조용히 패스
+		$('.elnNbGroup').each(function(){
+			$(this).sortable({
+				items: '> .elnNbItem',
+				placeholder: 'elnNbSortPh',
+				axis: 'y',                // 세로 리스트 → 수직 이동만
+				distance: 10,              // 클릭(선택)과 드래그 구분
+				tolerance: 'pointer',
+				opacity: 0.9,
+				cursor: 'grabbing',       // 드래그 중 커서 = grabbing(잡고 있는 손)
+				start: function(e, ui){ ui.placeholder.outerHeight(ui.item.outerHeight()); } // 플레이스홀더 전체높이(=border 포함) = 실제 항목 높이
+				// connectWith 미설정 → 각 그룹 독립(그룹 경계 넘는 이동 차단)
+			});
+		});
+	}
+
+	$(document).ready(function(){
+		// 공통 헤더 sidenav 초기화 (apis_npdi_list 패턴)
+		$('.sidenav').sidenav();
+		$(document).on('click', '.sidenav-overlay, .closeBtns', function(){ $('.sidenav').sidenav('close'); });
+
+		renderNotes(curNbKey);
+		applyView();
+		// 초기 활성 노트북(All Notes) 아이콘 fill 모드
+		var _initOn = document.querySelector('.elnNbItem.on > i'); if(_initOn) _initOn.classList.add('fill');
+		// 노트북 항목에 hover ⋯(Rename/Delete) 부착
+		document.querySelectorAll('.elnNbItem').forEach(decorateNbItem);
+		// My끼리/Shared끼리 드래그 정렬
+		initNbSortable();
+
+		// 노트 리스트 이벤트 위임: statusBox=순환 / 타이틀=상세 팝업 / 그 외=요약 선택
+		document.getElementById('noteListUl').addEventListener('click', function(e){
+			var li = e.target.closest('li');
+			if(!li || !li.hasAttribute('data-idx')) return; // 빈 결과 안내 행은 무시
+			var n = curNotes[+li.getAttribute('data-idx')];
+			// 태그 칩 클릭 → 그 태그로 즉시 검색
+			var tagLink = e.target.closest('.elnTagLink');
+			if(tagLink){ e.stopPropagation(); searchByTag(tagLink.getAttribute('data-tag')); return; }
+			// 타이틀 클릭 → 상세 팝업 (그 노트의 노트북 컨텍스트 전달)
+			if(e.target.closest('.pjTit')){ e.stopPropagation(); openNote(n._nb); return; }
+			var box = e.target.closest('.statusBox');
+			if(box){
+				e.stopPropagation();
+				var idx = ST.map(function(s){return s.k;}).indexOf(n.st);
+				var nx = ST[(idx+1) % ST.length];
+				n.st = nx.k;
+				ST.forEach(function(s){ box.classList.remove(s.cls); });
+				box.classList.add(nx.cls);
+				box.textContent = nx.t;
+				li.setAttribute('data-st', nx.k);
+				setHeaderCount(); // 현황 즉시 갱신
+				applyFilter();
+				if(li.classList.contains('on')) renderSummary(n);
+				if(window.ELN && ELN.toast) ELN.toast('Status → "'+nx.t+'"', 'info');
+				return;
+			}
+			document.querySelectorAll('#noteListUl li').forEach(function(x){ x.classList.remove('on'); });
+			li.classList.add('on');
+			renderSummary(n);
+		});
+
+		// 좌측 노트북 클릭 → 노트셋 교체 (현재 뷰 유지: List/Dashboard 그대로)
+		document.getElementById('elnNbPanel').addEventListener('click', function(e){
+			var item = e.target.closest('.elnNbItem');
+			if(!item) return;
+			// 노트북 선택은 검색 결과 모드를 빠져나감(Clear 숨김)
+			curSearch = null;
+			var _clr = document.getElementById('elnSrchClear'); if(_clr) _clr.style.display = 'none';
+			var _crit = document.getElementById('elnSrchCrit'); if(_crit) _crit.style.display = 'none';
+			document.querySelectorAll('.elnNbItem').forEach(function(n){ n.classList.remove('on'); var _i = n.querySelector('i'); if(_i) _i.classList.remove('fill'); });
+			item.classList.add('on');
+			var _ai = item.querySelector('i'); if(_ai) _ai.classList.add('fill'); // 활성 노트북 아이콘 fill 모드
+			curNbKey = item.getAttribute('data-nb');
+			var disp = (curNbKey === 'all') ? { name:'All Notes', icon:'stacks' } : NB[curNbKey];
+			document.getElementById('nbName').textContent = disp.name;
+			document.getElementById('nbIcon').textContent = disp.icon;
+			document.getElementById('nbIcon').style.color = (curNbKey === 'all' || curNbKey === 'unfiled') ? '' : nbColor(curNbKey); // 헤더 아이콘도 노트북 색
+			curFilter = 'all';
+			renderNotes(curNbKey);
+			applyView();
+		});
+
+		// 뷰 전환 토글 (List ⇄ Dashboard)
+		document.querySelector('.elnViewToggle').addEventListener('click', function(e){
+			var a = e.target.closest('a[data-view]');
+			if(!a) return;
+			var v = a.getAttribute('data-view');
+			if(v === curView) return;
+			curView = v;
+			this.querySelectorAll('a').forEach(function(x){ x.classList.remove('on'); });
+			a.classList.add('on');
+			applyView();
+		});
+
+		// Dashboard 하이라이트 클릭 → 상세 팝업
+		document.getElementById('elnDashView').addEventListener('click', function(e){
+			var hi = e.target.closest('.elnDashHi');
+			if(!hi) return;
+			var code = hi.getAttribute('data-code');
+			var n = curNotes.filter(function(x){ return x.code === code; })[0];
+			if(n) openNote(n._nb);
+		});
+
+		// 우측 요약의 'Full view' → 계보 모달 (별도 화면 대체)
+		document.getElementById('elnSummary').addEventListener('click', function(e){
+			var nbPick = e.target.closest('.elnSumNbPick');
+			if(nbPick){ openSummaryNbPicker(nbPick, curSummaryNote); return; }
+			var tagc = e.target.closest('.elnSumChip');
+			if(tagc){ searchByTag(tagc.getAttribute('data-tag')); return; }
+			// 계보 노드 클릭 → 그 노트로 요약 전환(트리 탐색). 리스트에 있으면 하이라이트도
+			var linNode = e.target.closest('.elnLineNode[data-code]');
+			if(linNode){
+				var code = linNode.getAttribute('data-code');
+				var tgt = getNotes('all').filter(function(x){ return x.code === code; })[0];
+				if(tgt){
+					renderSummary(tgt);
+					var i = curNotes.map(function(x){ return x.code; }).indexOf(code);
+					if(i >= 0){ document.querySelectorAll('#noteListUl li').forEach(function(x){ x.classList.remove('on'); }); var li = document.querySelector('#noteListUl li[data-idx="'+i+'"]'); if(li) li.classList.add('on'); }
+				}
+				return;
+			}
+			if(e.target.closest('.elnFullView')){ e.preventDefault(); openLineageModal(curSummaryNote); }
+		});
+
+		// 노트북 패널 접기/펼치기
+		var toggle = document.getElementById('elnNbToggle');
+		if(toggle) toggle.addEventListener('click', function(){
+			var p = document.getElementById('elnNbPanel');
+			var col = p.classList.toggle('collapsed');
+			toggle.querySelector('i').textContent = col ? 'chevron_right' : 'chevron_left';
+		});
+
+		// 헤더 현황 칩 클릭 = status 필터(현황 표시 겸 드릴다운 — newAppleTab 대체)
+		document.getElementById('nbCount').addEventListener('click', function(e){
+			var chip = e.target.closest('.elnHdrFilter');
+			if(!chip) return;
+			curFilter = chip.getAttribute('data-f');
+			applyFilter();
+			setHeaderCount(); // 활성 표시 갱신
+		});
+
+		// New Note(노트 레벨) → 상세 팝업. All Notes 뷰면 노트북 미지정으로 시작
+		var b = document.getElementById('elnNewNote');
+		if(b) b.addEventListener('click', function(){
+			if(window.ELN && ELN.toast) ELN.toast('Opening a new note…', 'info');
+			openNote(curNbKey === 'all' ? '' : curNbKey);
+		});
+
+		var nbBtn = document.getElementById('elnNewNotebook');
+		if(nbBtn) nbBtn.addEventListener('click', function(){
+			var inp = document.createElement('input');
+			inp.type = 'text'; inp.className = 'browser-default'; inp.placeholder = 'Notebook name';
+			inp.style.cssText = 'width:100%;height:40px;border:1px solid #d9cfc2;border-radius:8px;padding:0 12px;font-size:14px;';
+			ELN.modal({
+				title: 'New Notebook', icon: 'create_new_folder', body: inp,
+				actions: [
+					{ label: 'Create', type: 'hViva', onClick: function(){
+						var name = (inp.value || '').trim() || 'Untitled Notebook';
+						var key = addNotebook(name);
+						if(window.ELN && ELN.toast) ELN.toast('Notebook "' + name + '" created', 'ok');
+						var ni = document.querySelector('.elnNbItem[data-nb="' + key + '"]');
+						if(ni) ni.click(); // 새 노트북 자동 선택(위임 핸들러가 처리)
+					} },
+					{ label: 'Cancel', type: '' }
+				]
+			});
+			setTimeout(function(){ inp.focus(); }, 50);
+		});
+
+		// ELN 전용 검색 버튼(타이틀줄) → 옵션 모달. 헤더 통합검색창(#mainSrchInput)은 ELN과 무관 → 건드리지 않음
+		var elnSearchBtn = document.getElementById('elnSearchBtn');
+		if(elnSearchBtn) elnSearchBtn.addEventListener('click', function(){ openSearchModal(''); });
+		// 검색 결과 헤더의 Clear → All Notes 복귀
+		var srchClear = document.getElementById('elnSrchClear');
+		if(srchClear) srchClear.addEventListener('click', clearSearch);
+	});
+	</script>
+</body>
+</html>
