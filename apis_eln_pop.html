@@ -12,6 +12,7 @@
     <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/mpm_materialize.css">
     <link rel="stylesheet" type="text/css" href="mapis_lib/css/common.css">
     <link type="text/css" rel="stylesheet" href="mapis_lib/css/lib/animate.min.css">
+    <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/sweetalert2.min.css">
 
     <link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
     <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-3.7.1.js"></script>
@@ -21,6 +22,7 @@
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/highcharts-12.3.0/highcharts.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/highcharts-12.3.0/highcharts-more.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/glass_engine.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/sweetalert2.all.min.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/eln_proto.css">
     <script defer src="js/eln_proto.js"></script>
@@ -58,6 +60,7 @@
 		<section class="btnArea">
 			<div><a href="javascript:;" id="elnAddModule" class="waves-effect waves-light hBtn hViva"><i class="material-symbols-outlined left">add_box</i><span class="label">Add Module</span></a></div>
 			<div><a href="javascript:;" id="elnSaveBtn" class="waves-effect waves-light hBtn hBlue mt10"><i class="material-symbols-outlined left">save</i><span class="label">Save</span></a></div>
+			<div><a href="javascript:;" id="elnNewVersion" class="waves-effect waves-light hBtn mt10" title="Create a new version derived from this note"><i class="material-symbols-outlined left">account_tree</i><span class="label">New version</span></a></div>
 		</section>
 	</aside>
 
@@ -91,13 +94,13 @@
 					<!-- 메타 정보: 아이콘 + 라벨/값, CSS Grid 자동 배치 -->
 					<div class="elnMeta">
 						<div class="elnMetaItem">
-							<i class="material-symbols-outlined">menu_book</i>
-							<!-- 클릭 → 노트북 픽커 popover(Unfiled→지정 동선). ?nb= 파라미터로 초기 상태 결정 -->
+							<i class="material-symbols-outlined">folder</i>
+							<!-- 클릭 → 노트북 픽커 popover(No Notebook→지정 동선). ?nb= 파라미터로 초기 상태 결정 -->
 							<div class="elnMetaText"><span class="k">Notebook</span><span class="v elnNbPick" id="elnNbMeta" data-nb="RGBOLED Adhesive">RGBOLED Adhesive<i class="material-symbols-outlined">expand_more</i></span></div>
 						</div>
 						<div class="elnMetaItem">
 							<i class="material-symbols-outlined">rocket_launch</i>
-							<div class="elnMetaText"><span class="k">Project</span><span class="v"><a class="link" href="javascript:;">[NPDI-2026-031] RGBOLED Display Adhesive</a></span></div>
+							<div class="elnMetaText"><span class="k">Project</span><span class="v elnProjVal" id="elnProjVal" data-proj="[SN-26-0031] RGBOLED Display Adhesive"><a class="link elnProjLink" href="javascript:;" title="Open project">[SN-26-0031] RGBOLED Display Adhesive</a><a href="javascript:;" class="elnProjChange" title="Change project"><i class="material-symbols-outlined">swap_horiz</i></a></span></div>
 						</div>
 						<div class="elnMetaItem">
 							<i class="material-symbols-outlined">person</i>
@@ -199,7 +202,7 @@
 				<div class="elnBasic">
 					<label class="elnBasicLabel">Conclusion · Summary</label>
 					<div class="elnConcl">
-						<textarea class="browser-default" placeholder="Write the conclusion of this note">v3 reached 4,520 cP viscosity, passing all 3 specs. Recommend transfer to mass-production validation (NPDI-2026-031). CoC issuance pending.</textarea>
+						<textarea class="browser-default" placeholder="Write the conclusion of this note">v3 reached 4,520 cP viscosity, passing all 3 specs. Recommend transfer to mass-production validation (SN-26-0031). CoC issuance pending.</textarea>
 					</div>
 				</div>
 			</section>
@@ -215,30 +218,32 @@
 	<!-- 우측 접이식 연계패널 (status 연동: 진행중=접힘 / 결말=펼침) -->
 	<aside class="elnRightAside" id="elnRight">
 		<div class="elnRightBody">
-			<div class="elnRightTit"><i class="material-symbols-outlined left">sell</i>Tags</div>
+			<div class="elnRightTit"><i class="material-symbols-outlined">sell</i>Tags</div>
 			<div class="elnTagBox">
 				<div class="elnTags" id="elnTags">
 					<span class="elnTag" data-tag="#viscosity">#viscosity<i class="material-symbols-outlined">close</i></span>
 					<span class="elnTag" data-tag="#RGBOLED">#RGBOLED<i class="material-symbols-outlined">close</i></span>
 				</div>
 				<input type="text" id="elnTagInput" class="browser-default" placeholder="Add a tag, then Enter">
-				<div class="elnRecentTags">Recent:
-					<a href="javascript:;" data-tag="#customerA">#customerA</a>
-					<a href="javascript:;" data-tag="#adhesive">#adhesive</a>
-					<a href="javascript:;" data-tag="#UVcure">#UVcure</a>
-				</div>
+				<div class="elnRecTags" id="elnRecTags"><!-- Recommended: JS가 컨텍스트 기반 추천 렌더 --></div>
 			</div>
-			<div class="elnRightTit mt10"><i class="material-symbols-outlined left">hub</i>Related</div>
-			<ul class="elnRefList" id="elnRefList">
-				<li data-ref="fml"><i class="material-symbols-outlined">blender</i><span>FML-EM-2208 v3</span><em>Formulation</em></li>
-				<li data-ref="rm"><i class="material-symbols-outlined">communities</i><span>Rawmathub · 5 materials</span><em>Material</em></li>
-				<li data-ref="npdi"><i class="material-symbols-outlined">rocket_launch</i><span>NPDI-2026-031</span><em>Project</em></li>
-				<li data-ref="note"><i class="material-symbols-outlined">link</i><span>EXP-26-0118 (v2)</span><em>Note</em></li>
-			</ul>
-			<div class="elnRightTit mt10"><i class="material-symbols-outlined left">account_tree</i>History
-				<a href="apis_eln_lineage.html" style="margin-left:auto;font-size:11px;color:#A47864;text-decoration:none;display:inline-flex;align-items:center;gap:2px;">Full view<i class="material-symbols-outlined" style="font-size:14px;">open_in_full</i></a>
+			<div class="elnRightTit mt10"><i class="material-symbols-outlined">blender</i>Formulations<span class="elnRefCnt">2</span></div>
+			<a class="elnRefItem" data-ref="fml">FML-EM-2208<em>v3</em></a>
+			<a class="elnRefItem" data-ref="fml">FML-AC-1130<em>v1</em></a>
+			<div class="elnRightTit mt10"><i class="material-symbols-outlined">communities</i>Materials<span class="elnRefCnt">5</span><span class="elnRefSrc">Rawmathub</span></div>
+			<a class="elnRefItem" data-ref="rm">RM-S1042<em>Silicone PSA Base</em></a>
+			<a class="elnRefItem" data-ref="rm">RM-T55<em>Solvent (Toluene)</em></a>
+			<a class="elnRefItem" data-ref="rm">RM-V210<em>Viscosity Modifier</em></a>
+			<a class="elnRefItem elnRefMore" data-ref="rm">+2 more…</a>
+			<div class="elnRightTit mt10"><i class="material-symbols-outlined">rocket_launch</i>Project</div>
+			<a class="elnRefItem" data-ref="npdi">SN-26-0031<em>RGBOLED Display Adhesive</em></a>
+			<div class="elnRightTit mt10"><i class="material-symbols-outlined">arrow_upward</i>Derived from<span class="elnRefSrc">parent</span></div>
+			<a class="elnRefItem" data-ref="note">EXP-26-0118<em>v2</em></a>
+			<div class="elnRightTit mt10"><i class="material-symbols-outlined">account_tree</i>History
+				<a href="javascript:;" id="elnHistoryFull" class="more">Full view<i class="material-symbols-outlined" style="font-size:14px;">open_in_full</i></a>
 			</div>
-			<div id="elnLineage" class="elnLineage"><!-- Task6에서 렌더 --></div>
+			<div id="elnLineage" class="elnLineage"><!-- renderLineage()가 parent 트리 렌더 --></div>
+			<!-- New version 버튼은 좌측 btnArea(Add Module/Save 라인)로 이동 -->
 		</div>
 	</aside>
 

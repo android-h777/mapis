@@ -117,7 +117,7 @@
 					<!-- 검색 결과 모드: 무엇으로 검색했는지(기준) + 타이틀 옆 Clear 버튼 -->
 					<span id="elnSrchCrit" class="elnSrchCrit" style="display:none;"></span>
 					<a href="javascript:;" id="elnSrchClear" class="elnSrchClear" style="display:none;"><i class="material-symbols-outlined">close</i>Clear</a>
-					<div class="pc" id="nbCount">17 notes</div>
+					<div class="pc" id="nbCount"></div>
 				</div>
 
 				<!-- List 뷰 -->
@@ -129,7 +129,7 @@
 					</section>
 				</div>
 				<!-- Dashboard 뷰 (같은 노트셋의 현황 조망) -->
-				<div class="elnDashView" id="elnDashView" style="display:none;"><!-- JS 렌더 --></div>
+				<div class="elnDashView hScroll" id="elnDashView" style="display:none;"><!-- JS 렌더 --></div>
 			</div>
 
 			<!-- 우: 선택 노트 요약 + 계보 (List 뷰에서만) -->
@@ -143,7 +143,7 @@
 	<script>
 	// status 코드 ↔ statusBox 색클래스 + 라벨 (mapis 팔레트 재사용)
 	var ST = [
-		{k:'ing',  cls:'blue',   t:'Ongoing'},
+		{k:'ing',  cls:'blue',   t:'In Progress'},
 		{k:'ok',   cls:'green',  t:'Success'},
 		{k:'fail', cls:'red',    t:'Failed'},
 		{k:'hold', cls:'orange', t:'On Hold'}
@@ -215,16 +215,13 @@
 		var c = statusCounts(notes);
 		var chip = function(f, label, dotK, title){
 			var on = (curFilter === f);
-			// 비활성 칩만 materialize 툴팁(활성은 라벨이 펼쳐져 보이므로 불필요)
-			var cls = 'elnHdrFilter' + (on ? ' on' : ' tooltipped');
-			var tt = on ? '' : ' data-position="bottom" data-tooltip="' + title + '"';
-			return '<span class="' + cls + '" data-f="' + f + '"' + tt + '>' +
+			// 레이블 펼침 제거 — 모든 칩을 항상 [점+숫자+툴팁]으로(너비 고정). 활성은 .on 강조만.
+			return '<span class="elnHdrFilter tooltipped' + (on ? ' on' : '') + '" data-f="' + f + '" data-position="bottom" data-tooltip="' + title + '">' +
 				(dotK ? '<span class="elnDot ' + dotK + '"></span>' : '') +
-				(on && dotK ? '<span class="lb">' + title + '</span>' : '') +
 				'<span class="num">' + label + '</span></span>';
 		};
 		return chip('all', 'All ' + notes.length, '', 'All notes') +
-			chip('ing', c.ing, 'ing', 'Ongoing') + chip('ok', c.ok, 'ok', 'Success') +
+			chip('ing', c.ing, 'ing', 'In Progress') + chip('ok', c.ok, 'ok', 'Success') +
 			chip('fail', c.fail, 'fail', 'Failed') + chip('hold', c.hold, 'hold', 'On Hold');
 	}
 	// nbCount 갱신 + materialize 툴팁 재초기화(필터칩이 동적 재생성되므로 매번 init)
@@ -235,11 +232,12 @@
 		if(window.M && M.Tooltip) M.Tooltip.init(el.querySelectorAll('.tooltipped'));
 	}
 
+	// 카테고리 → 기존 roundBox 색 클래스(디자인 시스템 재사용). 미정의 카테고리는 stone25
+	var CAT_CLASS = { General: 'stone25', Formulation: 'mocha25' };
 	function noteChips(n){
 		var arr = [];
-		if(n.ver) arr.push(n.ver);
-		arr.push(n.cat);
-		if(n.fml) arr.push(n.fml);
+		// category only pill (multi-ready). version / formulation-code excluded
+		if(Array.isArray(n.cat)) arr = arr.concat(n.cat); else if(n.cat) arr.push(n.cat);
 		return arr; // 태그는 칩에서 제외 → 별도 링크 줄로(renderNoteList)
 	}
 
@@ -277,10 +275,12 @@
 			tit.textContent = '[' + n.code + '] ' + n.title;
 			var sub = document.createElement('div'); sub.className = 'subInfo';
 			noteChips(n).forEach(function(c){
-				var rb = document.createElement('div'); rb.className = 'roundBox'; rb.textContent = c;
+				var rb = document.createElement('div'); rb.className = 'mr0 roundBox ' + (CAT_CLASS[c] || 'stone25'); rb.textContent = c;
 				sub.appendChild(rb);
 			});
-			main.appendChild(tit); main.appendChild(sub);
+			var meta = document.createElement('div'); meta.className = 'elnNoteMeta'; // pill + tags on one line
+			meta.appendChild(sub);
+			main.appendChild(tit); main.appendChild(meta);
 			// 태그 = 칩이 아니라 별도 줄에 링크처럼(클릭 → 그 태그 검색)
 			if(n.tags && n.tags.length){
 				var tagLine = document.createElement('div'); tagLine.className = 'elnNoteTags';
@@ -289,7 +289,7 @@
 					a.textContent = t; a.title = 'Search this tag'; a.setAttribute('data-tag', t);
 					tagLine.appendChild(a);
 				});
-				main.appendChild(tagLine);
+				meta.appendChild(tagLine);
 			}
 			li.appendChild(box); li.appendChild(main);
 			ul.appendChild(li);
@@ -413,6 +413,15 @@
 		return out;
 	}
 
+	function directLineage(note){
+		// 직계만: 조상 전부(root→current) + 분기 전까지의 자손. 전체 분기는 Full view 그래프
+		var idx = lineageIndex(), out = [], c = note, g = 0;
+		while(c && g++ < 200){ out.unshift({ note: c, current: c.code === note.code }); c = c.parent ? idx[c.parent] : null; }
+		var cur = note, h = 0;
+		while(h++ < 200){ var kids = lineageChildren(cur.code); if(kids.length !== 1) break; cur = kids[0]; out.push({ note: cur, current: false }); }
+		return out;
+	}
+
 	function renderSummary(n){
 		curSummaryNote = n;
 		var sum = document.getElementById('elnSummary');
@@ -423,11 +432,11 @@
 			'<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">blender</i>Formulation</div>'+
 			'<div class="elnSumFml"><i class="material-symbols-outlined">science</i><span><b>'+esc(n.fml)+'</b></span>'+
 			'<span class="chip"><i class="material-symbols-outlined" style="font-size:12px;vertical-align:-2px;">link</i> Linked</span></div></div>' : '';
-		var lin = computeLineage(n);
+		var lin = directLineage(n);   // 직계만(조상 + 분기 전 자손) — 일직선 history
 		var linHtml;
 		if(lin.length > 1){
 			linHtml = '<div class="elnLineage">' + lin.map(function(L){
-				return '<div class="elnLineNode'+(L.current?' current':'')+'" data-code="'+esc(L.note.code)+'" style="padding-left:'+(2 + L.depth*15)+'px" title="'+esc(L.note.title)+'">'+
+				return '<div class="elnLineNode'+(L.current?' current':'')+'" data-code="'+esc(L.note.code)+'" title="'+esc(L.note.title)+'">'+
 					'<span class="elnLineDot '+L.note.st+'"></span><span class="nm">'+esc(L.note.title)+'</span>'+
 					(L.note.ver?'<span class="ver">'+esc(L.note.ver)+'</span>':'')+'</div>';
 			}).join('') + '</div>';
@@ -484,16 +493,19 @@
 	}
 	function openLineageModal(n){
 		if(!n) return;
-		var body = document.createElement('div');
-		body.className = 'elnLinModalBody';
-		var head = document.createElement('div');
-		head.className = 'elnLinModalHead';
-		head.textContent = n.title;
-		body.appendChild(head);
-		body.appendChild(buildLineageTree(n));
-		if(window.ELN && ELN.modal){
-			ELN.modal({ title: 'History', icon: 'account_tree', body: body, actions: [ { label:'Close', type:'' } ] });
-		}
+		if(!(window.ELN && ELN.modal && ELN.historyGraph)) return;
+		// Full view = git-history 그래프(공용 ELN.historyGraph). 요약 인라인은 일직선, 여기선 분기 그래프
+		var wrap = document.createElement('div');
+		wrap.className = 'elnGraphScroll';
+		var svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+		svg.setAttribute('class','elnHistoryGraph');
+		wrap.appendChild(svg);
+		ELN.modal({ title: 'History', icon: 'account_tree', body: wrap, actions: [ { label:'Close', type:'' } ] });
+		ELN.historyGraph(svg, { notes: getNotes('all'), currentCode: n.code, onOpenNote: function(code){
+			if(code === n.code){ ELN.toast('This is the selected note.', 'info'); return; }
+			var t = getNotes('all').filter(function(x){ return x.code === code; })[0];
+			ELN.toast('Opening ' + code + (t ? ' — ' + t.title : '') + '.', 'info');
+		}});
 	}
 
 	function clearSummary(){
@@ -525,7 +537,7 @@
 			setHeaderCount(); // 필터 칩(클릭 가능)
 			selectFirst();
 		} else {
-			document.getElementById('nbCount').textContent = curNotes.length + ' notes'; // 대시보드: 단순 카운트
+			document.getElementById('nbCount').textContent = "";
 			renderDashboard(curNotes);
 		}
 	}

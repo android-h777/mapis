@@ -58,6 +58,26 @@
 .elnModalHead i{color:#A47864;}
 .elnModalHead .x{margin-left:auto;cursor:pointer;border:0;background:transparent;color:#999;font-size:20px;line-height:1;}
 .elnModalBody{padding:18px 20px;overflow-y:auto;}
+/* 모달 input: materialize underline 스타일 무력화 → 깔끔한 박스 (browser-default 유무 무관) */
+.elnModalBody input[type=text],.elnModalBody input:not([type]){width:100%;box-sizing:border-box;height:auto;border:1px solid #e6ddd0;border-radius:10px;background:#fff;padding:10px 12px;font-size:14px;color:#3a2c24;box-shadow:none;margin:0;}
+.elnModalBody input[type=text]:focus,.elnModalBody input:not([type]):focus{outline:none;border-color:#A47864;box-shadow:0 0 0 1px #A47864;}
+/* Project quick-search 픽커 */
+.elnPickWrap{display:flex;flex-direction:column;}
+.elnPickSearch{width:100%;box-sizing:border-box;border:1px solid #e6ddd0;border-radius:8px;padding:8px 10px;font-size:13px;color:#3a2c24;margin-bottom:8px;}
+.elnPickSearch:focus{outline:none;border-color:#A47864;box-shadow:0 0 0 1px #A47864;}
+.elnPickList{max-height:280px;overflow-y:auto;}
+.elnPickRow{padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:#3a2c24;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.elnPickRow:hover{background:rgba(164,120,100,.10);}
+.elnPickRow.cur{color:#A47864;font-weight:600;}
+.elnPickEmpty{padding:12px;text-align:center;color:#b3a596;font-size:13px;}
+/* Project 메타: 타이틀=링크(조회), swap 아이콘=변경(quick-search 진입) */
+.elnMetaText .v.elnProjVal{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;}  /* .v의 nowrap/overflow 덮어쓰기 */
+.elnProjVal .elnProjLink{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}  /* 이름만 ellipsis */
+.elnProjChange{flex:0 0 auto;display:inline-flex;align-items:center;gap:2px;font-size:11px;font-weight:600;color:#9b8c7e;cursor:pointer;border-radius:7px;padding:2px 7px;background:rgba(0,0,0,.045);transition:color .15s,background .15s;}  /* 칩은 절대 안 줄어듦 → 항상 보임 */
+.elnProjChange:hover{color:var(--orangetiger);background:rgba(232,126,5,.12);}
+.elnProjChange i{font-size:14px;}
+.elnMetaText .v.elnProjVal.empty .elnProjLink{color:#9b8c7e;font-style:italic;cursor:default;text-decoration:none;pointer-events:none;}  /* No Project: 비링크 muted */
+.elnPickNone{color:#9b8c7e;font-style:italic;}  /* 픽커의 No Project 행 */
 .elnModalFoot{padding:12px 20px;border-top:1px solid #eee6da;display:flex;justify-content:flex-end;gap:8px;}
 @keyframes elnFadeIn{from{opacity:0;}to{opacity:1;}}
 @keyframes elnPop{from{transform:scale(.96);opacity:0;}to{transform:scale(1);opacity:1;}}
@@ -79,13 +99,18 @@
 .elnRightToggle .material-symbols-outlined{transition:transform .25s ease;}
 /* 펼쳐진 상태=오른쪽 방향(닫기), 접힌 상태=왼쪽 방향(끌어내기) */
 .elnRightToggle.open .material-symbols-outlined{transform:rotate(180deg);}
-.elnRightTit{font-weight:600;font-size:14px;display:flex;align-items:center;gap:4px;margin-bottom:8px;}
+/* .elnRightTit 스타일은 .elnSumSecTit 통합 정의로 일원화(아래 .elnSumSec 영역 참조) */
 .elnRefList{list-style:none;margin:0;padding:0;}
-.elnRefList li{display:flex;align-items:center;gap:8px;padding:8px;border-radius:8px;cursor:pointer;
-  background:rgba(0,0,0,.03);margin-bottom:6px;font-size:13px;transition:background .15s;}
-.elnRefList li:hover{background:rgba(164,120,100,.12);}
-.elnRefList li em{margin-left:auto;font-style:normal;font-size:11px;color:#999;}
-.elnRefList li i{font-size:18px;color:#A47864;}
+/* 그룹형 related: 타입별(복수 항목) + 개수 배지 + Derived from(부모) */
+.elnRefGroup{margin-bottom:11px;}
+.elnRefHead{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#9b8c7e;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px;}
+.elnRefHead i{font-size:16px;color:#A47864;}
+.elnRefCnt{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:rgba(164,120,100,.16);color:#A47864;font-size:10px;font-weight:700;}
+.elnRefSrc{margin-left:auto;font-weight:500;text-transform:none;letter-spacing:0;color:#b3a596;font-size:10px;}
+.elnRefItem{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:8px;cursor:pointer;font-size:13px;color:#3a2c24;text-decoration:none;}
+.elnRefItem:hover{background:rgba(164,120,100,.12);}
+.elnRefItem em{margin-left:auto;font-style:normal;font-size:11px;color:#9b8c7e;font-weight:400;text-align:right;padding-left:8px;}
+.elnRefMore{color:#5a7d9a;font-size:12px;font-weight:500;}
 
 /* ── TaskA1: 배합 연계 ── */
 .rmName{color:#5a3e30;text-decoration:underline dotted;text-underline-offset:2px;}
@@ -182,7 +207,7 @@
 /* 결론 텍스트영역 */
 .elnConcl textarea{width:100%;min-height:88px;border:1px solid #e6ddd0;border-radius:12px;
   background:rgba(164,120,100,.04);font-family:inherit;font-size:14px;line-height:1.6;color:#3a2c24;
-  padding:12px 14px;resize:vertical;transition:border-color .2s,background .2s;}
+  padding:12px 14px;transition:border-color .2s,background .2s;}
 .elnConcl textarea:focus{outline:none;border-color:#A47864;background:#fff;}
 .elnConcl textarea::placeholder{color:#c9bcae;}
 
@@ -208,15 +233,20 @@
 @media (max-width:900px){
   .elnFmlAnalysis,.elnResults{grid-template-columns:1fr;}
 }
-.elnTagBox{padding:8px;}
+.elnTagBox{padding:0 5px;}
 .elnTags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
 .elnTag{display:inline-flex;align-items:center;gap:2px;padding:4px 4px 4px 10px;border-radius:14px;
   background:rgba(164,120,100,.12);color:#7a5240;font-size:13px;}
 .elnTag i{font-size:15px;cursor:pointer;opacity:.6;}
 .elnTag i:hover{opacity:1;}
 #elnTagInput{height:34px;border:1px solid #d9cfc2;border-radius:8px;padding:0 10px;width:240px;}
-.elnRecentTags{margin-top:8px;font-size:12px;color:#999;}
-.elnRecentTags a{color:#A47864;margin:0 4px;}
+/* 태그 추천 칩(Recommended) — 적용된 태그와 구분: 점선+'+'아이콘(클릭=추가), hover 시 채움 */
+.elnRecTags{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px;}
+.elnRecLabel{font-size:11px;font-weight:600;color:#9b8c7e;text-transform:uppercase;letter-spacing:.03em;}
+.elnRecChip{display:inline-flex;align-items:center;gap:2px;font-size:12px;color:#5a7d9a;background:rgba(90,125,154,.08);border:1px dashed #c2d0db;border-radius:13px;padding:2px 9px 2px 5px;cursor:pointer;transition:color .15s,background .15s,border-color .15s;}
+.elnRecChip:hover{color:#fff;background:#5a7d9a;border-color:#5a7d9a;}
+.elnRecChip i{font-size:14px;}
+.elnRecEmpty{font-size:12px;color:#b3a596;font-style:italic;}
 
 /* ── Task6: 계보 미니맵 ── */
 /* History = 파생 트리(들여쓰기로 분기 표현). 깊이는 인라인 padding-left */
@@ -230,6 +260,34 @@
 .elnLineNode.current{font-weight:700;}
 .elnLineNode.current .nm{color:#3a2c24;}
 .elnLineNode .ver{color:#999;font-size:11px;flex:0 0 auto;}
+.elnLineNode.isNew{background:rgba(58,170,111,.10);animation:elnNewPulse 1.1s ease;}
+.elnLineNode.isNew .nm{color:#2f6f4f;}
+@keyframes elnNewPulse{0%{background:rgba(58,170,111,.34);}100%{background:rgba(58,170,111,.10);}}
+.elnSumNoLin{font-size:12px;color:#9b8c7e;padding:6px 4px;}
+.elnNewVerBtn{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:8px;padding:7px;
+  border:1px dashed #cdbfae;border-radius:8px;color:#8a6f5d;font-size:12.5px;text-decoration:none;transition:all .15s;}
+.elnNewVerBtn:hover{background:rgba(164,120,100,.08);border-color:#A47864;color:#7a5240;}
+.elnNewVerBtn i{font-size:17px;}
+
+/* History "Full view" 모달 — git-history SVG 그래프(직접 렌더) */
+.elnGraphScroll{overflow-x:auto;}
+.elnHistoryGraph{display:block;}
+.elnHistoryGraph .gLink{fill:none;stroke:#cdbfae;stroke-width:2;}
+.elnHistoryGraph .gDot{stroke:#fff;stroke-width:2;}
+.elnHistoryGraph .gDot.exp{cursor:pointer;}
+.elnHistoryGraph .gSign{stroke:#fff;stroke-width:1.7;stroke-linecap:round;pointer-events:none;}
+.elnHistoryGraph .gNode.exp:hover .gDot{stroke:#7a5240;stroke-width:2.5;}
+.elnHistoryGraph .curRing{animation:elnHistPulse 1.8s ease-in-out infinite;transform-origin:center;}
+.elnHistoryGraph .gCode{font-size:11px;fill:#a8978a;font-family:ui-monospace,Menlo,Consolas,monospace;}
+.elnHistoryGraph .gTitle{font-size:13.5px;fill:#3a2c24;font-weight:600;}
+.elnHistoryGraph .gTitle.cur{fill:#1f1712;font-weight:800;}
+.elnHistoryGraph .gVer{font-size:10.5px;fill:#8a7766;}
+.elnHistoryGraph .gHidden{font-size:10.5px;fill:#b07b53;font-weight:700;}
+.elnHistoryGraph .gPill{font-size:10.5px;font-weight:700;}
+.elnHistoryGraph .gCurBadge{font-size:10.5px;font-weight:800;fill:#7a5240;}
+.elnHistoryGraph .gHit{cursor:pointer;}
+.elnHistoryGraph .gNode.lnkHover .gTitle{fill:#7a5240;text-decoration:underline;}
+@keyframes elnHistPulse{0%,100%{opacity:.18;}50%{opacity:.42;}}
 
 /* ═══════════════════════════════════════════════════════════════
    화면 간 흐름(데모 동선) — [1]홈 · [2]리스트 · [4]계보 + 글로벌 네비
@@ -404,23 +462,26 @@
 #tab_ov .cardTit2{display:flex;align-items:center;gap:8px;}
 #tab_ov .cardTit2 > i.left{margin-right:0;}            /* float 무시 + 큰 기본여백 제거 → gap으로 일관 간격 */
 #tab_ov .cardTit2 > a:first-of-type{margin-left:auto;} /* 첫 우측요소부터 오른쪽 정렬(닫기는 맨 끝) */
-/* 섹션 잠금(자물쇠) — 우측 코너 고정(삭제 ×를 대체). 클릭 시 섹션이 view(읽기전용) 모드로. */
-.elnModLock{color:#c9bcae;cursor:pointer;flex:0 0 auto;transition:color .15s;}
-.elnModLock:hover{color:#A47864;}
+/* 섹션 잠금(자물쇠) — 우측 코너. 클릭 시 섹션이 view(읽기전용) 모드로. 삭제 ×는 자물쇠 오른쪽에 별도 */
+.elnModLock{color:#c9bcae;cursor:pointer;flex:0 0 auto;transition:color .15s;}  /* 안 잠김: 삭제 ×와 동일색 */
+.elnModLock:hover{color:var(--orangetiger);}                                    /* hover: 잠김 색 미리보기 */
 .elnModLock i{font-size:18px;display:block;}
-.cardBox.locked .elnModLock{color:#A47864;}
-/* 잠긴 섹션: 살짝 톤다운 + 'View only' 표식 + 편집 affordance 차단(읽기 액션은 유지) */
-.cardBox.locked{background:rgba(164,120,100,.035);}
-.cardBox.locked > .cardTit2 > .elnModLock::after{content:'View only';margin-left:6px;font-size:10px;font-weight:600;
-  color:#A47864;background:rgba(164,120,100,.14);padding:2px 7px;border-radius:9px;letter-spacing:.02em;}
+.cardBox.locked .elnModLock{color:var(--orangetiger);}                          /* 잠김(view 모드): orange tiger로 확 띄게 */
+/* 잠금 카드 구분: 테두리를 브랜드색 → 뮤트 그레이로(콘텐츠는 또렷하게 유지) */
+.cardBox.locked{border-color:#cfc7ba;}
+/* view 모드여도 데이터는 또렷하게 — disabled/readonly 기본 흐림 제거(역설 방지) */
+.cardBox.locked input,.cardBox.locked textarea,.cardBox.locked select,.cardBox.locked select:disabled,.cardBox.locked input:disabled{opacity:1;color:#3a2c24;-webkit-text-fill-color:#3a2c24;cursor:default;}
+/* 섹션 삭제(×) — 자물쇠 오른쪽 코너 끝. hover 시 빨강(삭제 affordance). (Local History E7sZ에서 복원) */
+.elnModDel{color:#c9bcae;cursor:pointer;flex:0 0 auto;transition:color .15s;}
+.elnModDel:hover{color:#d65a5a;}
+.elnModDel i{font-size:18px;display:block;}
+/* 잠긴 섹션: 'View only' 문구 없이 자물쇠 아이콘(lock)+색상(#A47864)만으로 구분. 편집 affordance 차단(입력요소는 JS가 readonly/disabled) */
 /* 커스텀 편집 컨트롤(form 요소가 아님) — 클릭 차단 + 흐리게 */
 .cardBox.locked .elnStatusChip,
 .cardBox.locked .elnNbPick,
 .cardBox.locked #btnChangeFml,
-.cardBox.locked .elnCatBadge{pointer-events:none;opacity:.6;}
-/* 실제 입력요소는 JS readOnly/disabled가 차단(텍스트 선택·복사는 허용). 시각만 view-모드 톤. */
-.cardBox.locked input,
-.cardBox.locked textarea{background:rgba(0,0,0,.02);color:#6f6357;border-color:#e6ddd0;}
+.cardBox.locked .elnCatBadge{pointer-events:none;}
+/* 실제 입력요소는 JS readOnly/disabled가 차단(텍스트 선택·복사는 허용). 별도 배경/색 변경 없음 — 과한 view-톤 제거(사용자 요청) */
 .elnModText{width:100%;min-height:80px;border:1px solid #e6ddd0;border-radius:12px;background:rgba(164,120,100,.04);
   font-family:inherit;font-size:14px;line-height:1.6;color:#3a2c24;padding:12px 14px;resize:vertical;}
 .elnModText:focus{outline:none;border-color:#A47864;background:#fff;}
@@ -483,8 +544,8 @@
 .hBtn.elnDanger{color:#c0392b;border:1px solid rgba(192,57,43,.7);}
 .hBtn.elnDanger::before{background-color:rgba(192,57,43,.08);}
 /* 중: 노트 목록 컬럼 */
-.elnNotePanel{flex:1;min-width:300px;display:flex;flex-direction:column;padding:0 16px;}
-.elnNotePanelHead{display:flex;align-items:center;gap:10px;padding:2px 4px 12px;flex-wrap:wrap;}
+.elnNotePanel{flex:1;min-width:300px;display:flex;flex-direction:column;padding:0 16px;box-sizing:border-box;}
+.elnNotePanelHead{display:flex;align-items:center;gap:10px;padding:2px 4px 12px;flex-wrap:wrap;flex:0 0 auto;}
 .elnNotePanelHead .pt{font-size:18px;font-weight:700;color:#3a2c24;display:flex;align-items:center;gap:7px;}
 .elnNotePanelHead .pt i{color:#A47864;}
 .elnNotePanelHead .pc{font-size:12px;color:#9b8c7e;display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px;margin-left:auto;}
@@ -507,7 +568,7 @@
 .elnViewToggle a.on{background:#fff;color:#A47864;font-weight:600;box-shadow:0 1px 3px rgba(58,44,36,.08);}
 
 /* ── Dashboard 뷰 (같은 노트셋 현황 조망) ── */
-.elnDashView{height:calc(100vh - 185px);overflow:auto;padding:4px 8px 20px;}
+.elnDashView{flex:1;min-height:0;height:auto;overflow:auto;padding:4px 8px 20px;}
 .elnDashGrid{display:grid;grid-template-columns:repeat(2,1fr);gap:12px;align-items:start;}
 .elnDashCard{background:#fff;border:1px solid #A47864;border-radius:20px;padding:15px 20px;}
 .elnDashCard.span2{grid-column:1 / -1;}
@@ -555,10 +616,11 @@
 .elnFullView{cursor:pointer;}
 .elnLinModalHead{font-size:14px;font-weight:600;color:#3a2c24;margin-bottom:14px;}
 .elnLinModalBody .elnBigTree{margin:0;max-width:560px;}
-/* 노트 패널 안에서 mapis mainList의 고정 높이를 패널에 맞게 오버라이드 */
-.elnNotePanel .typeList{padding:0;}
-.elnNotePanel .mainList{padding:0;}
-.elnNotePanel .mainList ul{height:calc(100vh - 185px);padding:4px 6px;}
+/* 가운데 칼럼 flex-fill: 헤더 고정 + List/Dash가 남는 높이 자동 흡수(calc 매직넘버 제거). min-height:0 = flex 자식 overflow 핵심 */
+.elnNotePanel .typeList{padding:0;flex:1;min-height:0;display:flex;flex-direction:column;}
+.elnNotePanel .leftSection{flex:1;min-height:0;display:flex;flex-direction:column;}
+.elnNotePanel .mainList{padding:0;flex:1;min-height:0;display:flex;flex-direction:column;}
+.elnNotePanel .mainList ul{flex:1;min-height:0;height:auto;overflow:hidden auto;padding:4px 6px;}
 /* statusBox: 운영 고정 height(40px) 대신 행 높이만큼 stretch(노트북명+제목+칩 다 채움), 최소 40 보장 */
 .elnNotePanel .typeList .mainList li .statusBox{height:auto;min-height:40px;}
 /* 빈 노트북 안내 */
@@ -567,7 +629,7 @@
 .elnNoteEmpty i{font-size:40px;color:#e0d6c8;}
 
 /* 우: 요약 + 계보 패널 (flush) — 노트 클릭 시 채워짐 */
-.cardBox2{background:#fff;padding:12px 10px;border-radius:30px;border:2px solid #a47764;}
+.cardBox2{background:#fff;padding:12px 10px;border-radius:30px;border:1px solid #a47764;}
 .elnSummary{width:384px;flex:0 0 auto;overflow-y:auto;display:flex;flex-direction:column;}
 .elnSummary.empty{align-items:center;justify-content:center;}
 .elnSumPlaceholder{color:#b3a596;font-size:13px;text-align:center;display:flex;flex-direction:column;
@@ -580,13 +642,14 @@
 .elnSumPill[data-st="ok"]{color:#2e8c5c;background:rgba(58,170,111,.14);}
 .elnSumPill[data-st="fail"]{color:#c14b4b;background:rgba(214,90,90,.14);}
 .elnSumPill[data-st="hold"]{color:#b9842a;background:rgba(224,168,62,.16);}
-.elnSumCode{font-size:11px;color:#9b8c7e;}
+.elnSumCode{font-size:14px;color:#3a2c24;}
 .elnSumTit{font-size:16px;font-weight:700;color:#3a2c24;line-height:1.4;}
 .elnSumSec{padding:14px 18px;border-bottom:1px solid #efe7db;}
-.elnSumSecTit{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#9b8c7e;
-  margin-bottom:10px;display:flex;align-items:center;gap:5px;}
-.elnSumSecTit i{font-size:15px;color:#A47864;}
-.elnSumSecTit .more{margin-left:auto;font-weight:600;font-size:11px;color:#A47864;text-decoration:none;
+/* 섹션 타이틀 통일 — list의 elnSumSecTit 스타일 기준으로 pop elnRightTit도 맞춤 */
+.elnSumSecTit, .elnRightTit{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#9b8c7e;
+  display:flex;align-items:center;gap:5px;}
+.elnSumSecTit i, .elnRightTit i{font-size:15px;color:#A47864;}
+.elnSumSecTit .more, .elnRightTit .more{margin-left:auto;font-weight:600;font-size:11px;color:#A47864;text-decoration:none;
   display:inline-flex;align-items:center;gap:2px;text-transform:none;letter-spacing:0;}
 .elnSumMeta{display:flex;flex-direction:column;gap:8px;}
 .elnSumMetaRow{display:flex;font-size:13px;gap:8px;}
@@ -603,7 +666,15 @@
   cursor:pointer;transition:background .15s,color .15s;}
 .elnSumChip:hover{background:rgba(164,120,100,.22);color:#5a3e30;}
 /* 리스트 행의 태그 = 칩이 아니라 별도 줄에 링크처럼(클릭 → 그 태그 검색) */
-.elnNoteTags{display:flex;flex-wrap:wrap;gap:4px 12px;margin-top:5px;}
+.elnNoteTags{display:flex;flex-wrap:wrap;gap:2px 5px;margin-top:5px;}
+/* 리스트 li: 카테고리 pill + 태그를 한 줄에(사이 마진 column-gap), General/Formulation pill 너비 106px 고정 */
+.elnNoteMeta{display:flex;align-items:center;flex-wrap:wrap;gap:5px 10px;margin-top:5px;}
+.elnNoteMeta .subInfo{display:flex;flex-wrap:wrap;gap:6px;margin:0;}
+.elnNoteMeta .subInfo .roundBox{width:106px;max-width:none !important;text-align:center;box-sizing:border-box;}
+.elnNoteMeta .elnNoteTags{margin-top:0;}
+/* 카테고리 pill 색은 기존 디자인 시스템 클래스(mocha25/stone25 등) 재사용 — JS CAT_CLASS 매핑 */
+/* On Hold statusBox = 짙은 회색(검정 계열). cls 데이터 안 건드리고 ELN 리스트 스코프로만 override */
+#noteListUl li .statusBox.orange{border-color:#3a3a3a!important;color:#3a3a3a!important;}
 .elnTagLink{font-size:12px;color:#5a7d9a;cursor:pointer;text-decoration:none;line-height:1.3;}
 .elnTagLink:hover{color:#A47864;text-decoration:underline;}
 .elnSumFml{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:10px;
@@ -626,6 +697,8 @@
 /* 좌측 목차: 아이템 = 클릭(카드 이동)이라 pointer. hover 시 좌측 아이콘이 드래그 핸들(swap_vert ↑↓)로 바뀌고(JS),
    그 아이콘만 sortable handle 역할 → 아이콘에만 grab(잡는 손). */
 .leftAside .menuUl .menu-item{cursor:pointer;}
+/* 좌측 목차(TOC): 긴 섹션명은 최대 2줄 + ellipsis. min-width:0 없으면 flex에서 안 줄어들어 잘려 사라짐 */
+.leftAside .menuUl .menu-item span{flex:1 1 auto;min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3;word-break:break-word;}
 .leftAside .menuUl .menu-item .elnNavHandle{cursor:grab;border-radius:6px;transition:color .12s,background .12s;}
 .leftAside .menuUl .menu-item:hover .elnNavHandle{color:#A47864;}
 .leftAside .menuUl .menu-item .elnNavHandle:hover{background:rgba(164,120,100,.16);}
