@@ -80,6 +80,8 @@
 			<div class="elnViewToggle">
 				<a href="javascript:;" class="on" data-view="list"><i class="material-symbols-outlined">view_list</i>List</a>
 				<a href="javascript:;" data-view="dash"><i class="material-symbols-outlined">dashboard</i>Dashboard</a>
+				<a href="javascript:;" data-view="chem"><i class="material-symbols-outlined">hexagon</i>Chem</a>
+				<a href="javascript:;" data-view="formulation"><i class="material-symbols-outlined">science</i>Formulation</a>
 			</div>
 			<div class="elnHeadRight">
 				<!-- ELN 전용 검색(헤더 통합검색과 별개) — 옵션 모달 -->
@@ -116,7 +118,7 @@
 					<div class="pt"><i class="material-symbols-outlined fill" id="nbIcon">stacks</i><span id="nbName">All Notes</span></div>
 					<!-- 검색 결과 모드: 무엇으로 검색했는지(기준) + 타이틀 옆 Clear 버튼 -->
 					<span id="elnSrchCrit" class="elnSrchCrit" style="display:none;"></span>
-					<a href="javascript:;" id="elnSrchClear" class="elnSrchClear" style="display:none;"><i class="material-symbols-outlined">close</i>Clear</a>
+					<a href="javascript:;" id="elnSrchClear" class="elnSrchClear" style="display:none;"><i class="material-symbols-outlined">filter_alt_off</i>Clear filters</a>
 					<div class="pc" id="nbCount"></div>
 				</div>
 
@@ -130,9 +132,19 @@
 				</div>
 				<!-- Dashboard 뷰 (같은 노트셋의 현황 조망) -->
 				<div class="elnDashView hScroll" id="elnDashView" style="display:none;"><!-- JS 렌더 --></div>
+				<!-- Chem 뷰 (목록형 — List와 동일 행 구조 + 노트별 ChemStudio 구조 이미지) -->
+				<div class="typeList type4 elnLensView" id="elnChemView" style="display:none;">
+					<section class="leftSection"><section class="mainList"><ul class="hScroll" id="elnChemUl"><!-- JS 렌더 --></ul></section></section>
+				</div>
+				<!-- Formulation 뷰 (목록형 — List와 동일 행 구조 + 노트별 주요 배합정보) -->
+				<div class="typeList type4 elnLensView" id="elnFmlView" style="display:none;">
+					<section class="leftSection"><section class="mainList"><ul class="hScroll" id="elnFmlUl"><!-- JS 렌더 --></ul></section></section>
+				</div>
 			</div>
 
-			<!-- 우: 선택 노트 요약 + 계보 (List 뷰에서만) -->
+			<!-- 요약 접기/펼치기 핸들 (List·Chem·Formulation 뷰) -->
+			<a href="javascript:;" id="elnSumToggle" class="elnSumToggle" title="Collapse / expand summary"><i class="material-symbols-outlined">chevron_right</i></a>
+			<!-- 우: 선택 노트 요약 + 계보 -->
 			<aside class="elnSummary cardBox2 empty" id="elnSummary">
 				<div class="elnSumPlaceholder"><i class="material-symbols-outlined">touch_app</i>Select a note to see its summary &amp; lineage</div>
 			</aside>
@@ -150,8 +162,97 @@
 	];
 	function stByKey(k){ return ST.filter(function(s){return s.k===k;})[0] || ST[0]; }
 
-	// 노트 상세는 팝업(window.open). 노트의 노트북 키를 ?nb= 로 전달 — 상세의 Notebook 메타가 이어받음
-	function openNote(nb){ window.open('apis_eln_pop.html' + (nb ? ('?nb=' + encodeURIComponent(nb)) : ''), 'elnNoteDetail', 'width=1480,height=900,scrollbars=yes,resizable=yes'); }
+	// 노트 상세는 팝업(window.open). 노트북 키(?nb=)·시작 템플릿(?tmpl=)을 전달 — 상세가 이어받음
+	function openNote(nb, tmpl){
+		var q = [];
+		if(nb) q.push('nb=' + encodeURIComponent(nb));
+		if(tmpl) q.push('tmpl=' + encodeURIComponent(tmpl));
+		window.open('apis_eln_pop.html' + (q.length ? '?' + q.join('&') : ''), 'elnNoteDetail', 'width=1480,height=900,scrollbars=yes,resizable=yes');
+	}
+
+	/* ── 시작 템플릿 — New Note 시 구조(섹션 구성)를 먼저 선택. Public(고정) + My Templates(localStorage 공유) ── */
+	var ELN_TEMPLATES = [
+		{ key:'empty',       icon:'description', name:'Blank',       desc:'Just the Overview — build it up yourself.', sections:['Overview'] },
+		{ key:'general',     icon:'note',        name:'General',     desc:'Overview + a free-form Notes section.',     sections:['Overview','Notes'] },
+		{ key:'formulation', icon:'science',     name:'Formulation', desc:'Overview + Formulation + Conclusion.',       sections:['Overview','Formulation','Conclusion'] }
+	];
+	// My Templates 저장소(목업) — list/pop 두 창이 같은 origin localStorage로 공유
+	function loadMyTemplates(){ try { return JSON.parse(localStorage.getItem('eln.myTemplates') || '[]'); } catch(e){ return []; } }
+	// 템플릿 픽커 모달 — 선택 시 그 구조로 새 노트 열기(?tmpl=)
+	function openTemplatePicker(nb){
+		var wrap = document.createElement('div');
+		wrap.className = 'elnTmplPicker';
+		function card(t, custom){
+			var chips = (t.sections||[]).map(function(s){ var lbl = (typeof s === 'string') ? s : (s.label || s.type); return '<span class="elnTmplChip">'+esc(lbl)+'</span>'; }).join('');
+			// 커스텀 템플릿만 공유 버튼(타 동료에게 전달). 카드는 div(role=button) — 버튼 안 버튼 중첩 회피
+			var share = custom ? '<a href="javascript:;" class="elnTmplShare" data-key="'+esc(t.key)+'" title="Share with a colleague"><i class="material-symbols-outlined">share</i></a>' : '';
+			return '<div class="elnTmplCard" role="button" tabindex="0" data-key="'+esc(t.key)+'"'+(custom?' data-custom="1"':'')+'>'
+				+ share
+				+ '<div class="elnTmplCardTop"><i class="material-symbols-outlined">'+esc(t.icon||'description')+'</i><span class="elnTmplName">'+esc(t.name)+'</span></div>'
+				+ (t.desc ? '<div class="elnTmplDesc">'+esc(t.desc)+'</div>' : '')
+				+ '<div class="elnTmplChips">'+chips+'</div></div>';
+		}
+		var mine = loadMyTemplates();
+		wrap.innerHTML = '<div class="elnTmplGroupLabel">My Templates</div>'
+			+ (mine.length
+				? '<div class="elnTmplGrid">' + mine.map(function(t){ return card(t, true); }).join('') + '</div>'
+				: '<div class="elnTmplEmpty">No custom templates yet — save a note’s structure as a template from the note editor.</div>')
+			+ '<div class="elnTmplGroupLabel">Public Templates</div>'
+			+ '<div class="elnTmplGrid">' + ELN_TEMPLATES.map(function(t){ return card(t, false); }).join('') + '</div>';
+		var ref = ELN.modal({ title:'Start a new note', icon:'note_add', body:wrap, actions:[ { label:'Cancel', type:'' } ] });
+		wrap.querySelectorAll('.elnTmplCard').forEach(function(cardEl){
+			cardEl.addEventListener('click', function(e){
+				if(e.target.closest('.elnTmplShare')) return;          // 공유 버튼 클릭은 카드 선택과 분리
+				ref.close(); openNote(nb, cardEl.getAttribute('data-key'));
+			});
+		});
+		wrap.querySelectorAll('.elnTmplShare').forEach(function(sh){
+			sh.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); openShareTemplate(sh.getAttribute('data-key'), sh); });
+		});
+	}
+	// 공유 대상(목업 동료) + 템플릿 공유 — 퀵서치 popover. 여러 명에게 연속 전송 가능(전송 시 체크 표시)
+	var ELN_USERS = [
+		{ id:'sypark', name:'S.Y. Park', team:'Flexible OLED' },
+		{ id:'mjlee',  name:'M.J. Lee',  team:'Optical Clear Resin' },
+		{ id:'hwcho',  name:'H.W. Cho',  team:'Adhesives R&D' },
+		{ id:'ksyoon', name:'K.S. Yoon', team:'Analysis' },
+		{ id:'jwseo',  name:'J.W. Seo',  team:'RGBOLED Adhesive' },
+		{ id:'ehan',   name:'E. Han',    team:'Customer A Project' }
+	];
+	function userInitials(name){ return name.replace(/[^A-Za-z.\s]/g,'').split(/[.\s]+/).filter(Boolean).map(function(p){ return p[0]; }).slice(0,2).join('').toUpperCase(); }
+	function openShareTemplate(tmplKey, anchor){
+		var tmpl = loadMyTemplates().filter(function(t){ return t.key===tmplKey; })[0];
+		var nm = tmpl ? tmpl.name : 'template';
+		var wrap = document.createElement('div'); wrap.className = 'elnPickWrap';
+		var head = document.createElement('div'); head.className = 'elnShareHead';
+		head.innerHTML = '<i class="material-symbols-outlined">share</i>Share “'+esc(nm)+'”';
+		var search = document.createElement('input'); search.type='text'; search.className='browser-default elnPickSearch'; search.placeholder='Search colleagues…';
+		var ul = document.createElement('div'); ul.className='elnPickList';
+		var sent = {};
+		function render(q){
+			ul.innerHTML='';
+			var ql=(q||'').toLowerCase();
+			var matches = ELN_USERS.filter(function(u){ return (u.name+' '+u.team+' '+u.id).toLowerCase().indexOf(ql)>=0; });
+			if(!matches.length){ var em=document.createElement('div'); em.className='elnPickEmpty'; em.textContent='No colleagues match.'; ul.appendChild(em); return; }
+			matches.forEach(function(u){
+				var it=document.createElement('div'); it.className='elnPickRow elnUserRow'+(sent[u.id]?' sent':'');
+				it.innerHTML='<span class="elnUserAv">'+esc(userInitials(u.name))+'</span>'
+					+'<span class="elnUserMeta"><b>'+esc(u.name)+'</b><span>'+esc(u.team)+'</span></span>'
+					+(sent[u.id] ? '<i class="material-symbols-outlined elnUserSent">check_circle</i>' : '<i class="material-symbols-outlined elnUserSend">send</i>');
+				it.addEventListener('click', function(){
+					if(sent[u.id]) return;
+					sent[u.id]=1;
+					ELN.toast('Shared “'+nm+'” with '+u.name+'.', 'ok');
+					render(search.value);
+				});
+				ul.appendChild(it);
+			});
+		}
+		search.addEventListener('input', function(){ render(search.value); });
+		wrap.appendChild(head); wrap.appendChild(search); wrap.appendChild(ul); render('');
+		ELN.popover({ anchor: anchor, content: wrap, width: 300 });
+		setTimeout(function(){ try{ search.focus(); }catch(e){} }, 60);
+	}
 
 	// 노트북별 노트셋 (요약·계보 데이터 포함, 데모 목업)
 	var NB = {
@@ -233,11 +334,10 @@
 	}
 
 	// 카테고리 → 기존 roundBox 색 클래스(디자인 시스템 재사용). 미정의 카테고리는 stone25
-	var CAT_CLASS = { General: 'stone25', Formulation: 'mocha25' };
 	function noteChips(n){
 		var arr = [];
 		// category only pill (multi-ready). version / formulation-code excluded
-		if(Array.isArray(n.cat)) arr = arr.concat(n.cat); else if(n.cat) arr.push(n.cat);
+		// 카테고리 표시 제거 — 시작 템플릿 선택용으로만 쓰고 휘발(저장·표시 X). pill 없음.
 		return arr; // 태그는 칩에서 제외 → 별도 링크 줄로(renderNoteList)
 	}
 
@@ -273,14 +373,9 @@
 			var tit = document.createElement('div');
 			tit.className = 'pjTit';
 			tit.textContent = '[' + n.code + '] ' + n.title;
-			var sub = document.createElement('div'); sub.className = 'subInfo';
-			noteChips(n).forEach(function(c){
-				var rb = document.createElement('div'); rb.className = 'mr0 roundBox ' + (CAT_CLASS[c] || 'stone25'); rb.textContent = c;
-				sub.appendChild(rb);
-			});
+			main.appendChild(tit); 
+
 			var meta = document.createElement('div'); meta.className = 'elnNoteMeta'; // pill + tags on one line
-			meta.appendChild(sub);
-			main.appendChild(tit); main.appendChild(meta);
 			// 태그 = 칩이 아니라 별도 줄에 링크처럼(클릭 → 그 태그 검색)
 			if(n.tags && n.tags.length){
 				var tagLine = document.createElement('div'); tagLine.className = 'elnNoteTags';
@@ -290,6 +385,7 @@
 					tagLine.appendChild(a);
 				});
 				meta.appendChild(tagLine);
+				main.appendChild(meta);
 			}
 			li.appendChild(box); li.appendChild(main);
 			ul.appendChild(li);
@@ -413,15 +509,44 @@
 		return out;
 	}
 
-	function directLineage(note){
-		// 직계만: 조상 전부(root→current) + 분기 전까지의 자손. 전체 분기는 Full view 그래프
-		var idx = lineageIndex(), out = [], c = note, g = 0;
-		while(c && g++ < 200){ out.unshift({ note: c, current: c.code === note.code }); c = c.parent ? idx[c.parent] : null; }
-		var cur = note, h = 0;
-		while(h++ < 200){ var kids = lineageChildren(cur.code); if(kids.length !== 1) break; cur = kids[0]; out.push({ note: cur, current: false }); }
-		return out;
-	}
 
+	var SECTION_META = {
+		'Formulation':  {icon:'blender',     render:function(n){ return (n.fml?'<div class="elnSumFml"><i class="material-symbols-outlined">science</i><span><b>'+esc(n.fml)+'</b></span><span class="chip"><i class="material-symbols-outlined" style="font-size:12px;vertical-align:-2px;">link</i> Linked</span></div>':'<div class="elnSecDesc">No formulation linked</div>')+'<div class="elnSecSub">Process</div><div class="elnSecMini">25 °C · 30 min · Vacuum −0.09 MPa · UV 1,200 mJ/cm²</div><div class="elnSecSub">Results</div><div class="elnSecMini">Viscosity 4,520 cP <b class="cGreen">Pass</b> · Cure 96% <b class="cGreen">Pass</b> · Haze 0.8% <b class="cGreen">Pass</b></div>'; }},
+		'Conclusion':   {icon:'summarize',   render:function(n){ return '<div class="elnSecDesc">Met all 3 specs; recommend transfer to mass-production validation.</div>'; }},
+		'Notes':        {icon:'notes',       render:function(n){ return '<div class="elnSecDesc">Free-form working notes.</div>'; }},
+		'Meeting Notes':{icon:'groups',      render:function(n){ return '<div class="elnSecDesc">Attendees, decisions, action items.</div>'; }},
+		'Action Items': {icon:'checklist',   render:function(n){ return '<div class="elnSecDesc">Follow-up tasks.</div>'; }}
+	};
+	function kv(k,v){ return '<div class="elnSecKV"><span>'+esc(k)+'</span><b>'+esc(v||'—')+'</b></div>'; }
+	// 노트의 헤더(모듈) 구성 — 시작 템플릿(cat) 기준 목업. 실제론 노트가 가진 모듈. n.headers 있으면 우선
+	function noteHeaders(n){
+		if(Array.isArray(n.headers)) return n.headers;
+		return (n.cat === 'Formulation') ? ['Overview','Formulation','Conclusion'] : ['Overview','Notes'];   // Process·Results는 Formulation 모듈 내부
+	}
+	// summary용 헤더 구성 아코디언(<details> 네이티브 collapsible, 접힘 기본). Formulation 내용도 안에 포함
+	function noteSectionsHtml(n){
+		// Overview는 상단 'Overview' 섹션(기본 정보)으로 승격 → Sections 목록에선 생략
+		var hs = noteHeaders(n).filter(function(h){ return h !== 'Overview'; });
+		return '<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">view_agenda</i>Sections<span class="elnSecCnt">'+hs.length+'</span></div><div class="elnSecList">'+
+			hs.map(function(h){
+				var m = SECTION_META[h] || {icon:'article', render:function(){ return ''; }};
+				return '<details class="elnSecItem"><summary><i class="material-symbols-outlined">'+m.icon+'</i><span class="elnSecNm">'+esc(h)+'</span><i class="material-symbols-outlined elnSecChev">expand_more</i></summary><div class="elnSecBody">'+m.render(n)+'</div></details>';
+			}).join('')+'</div></div>';
+	}
+	// 노트북 → 소속 프로젝트(목업). 실제론 노트별 project 링크. 코드 체계는 상세화면과 동일(SN/CN/PT-YY-NNNN)
+	var NB_PROJECT = {
+		rgboled:  '[SN-26-0031] RGBOLED Display Adhesive',
+		foled:    '[CN-26-0064] Flexible OLED Lamination',
+		optical:  '[PT-25-0182] Optical Clear Resin',
+		customerA:'[SN-26-0090] Customer A OCR Program'
+	};
+	function noteProject(n){ return n.project || NB_PROJECT[n._nb] || ''; }
+	// Project 값 → 그냥 텍스트. 값 없으면 muted 'No project'
+	function projHtml(n){
+		var proj = noteProject(n);
+		if(!proj) return '<span class="v elnSumMuted">No project</span>';
+		return '<span class="v elnSumProj">'+esc(proj)+'</span>';
+	}
 	function renderSummary(n){
 		curSummaryNote = n;
 		var sum = document.getElementById('elnSummary');
@@ -432,32 +557,31 @@
 			'<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">blender</i>Formulation</div>'+
 			'<div class="elnSumFml"><i class="material-symbols-outlined">science</i><span><b>'+esc(n.fml)+'</b></span>'+
 			'<span class="chip"><i class="material-symbols-outlined" style="font-size:12px;vertical-align:-2px;">link</i> Linked</span></div></div>' : '';
-		var lin = directLineage(n);   // 직계만(조상 + 분기 전 자손) — 일직선 history
+		// History = 자기가 속한 파생 트리 전체를 시간 내림차순(최신이 위)으로 평면 나열. 트리 구조(분기)는 무시.
+		// 현재 노트는 제자리에서 pulse로 위치 표시. 깊은 분기 구조는 Full view 그래프에서.
+		var lin = computeLineage(n).slice().sort(function(a, b){ return a.note.date < b.note.date ? 1 : (a.note.date > b.note.date ? -1 : 0); });
 		var linHtml;
 		if(lin.length > 1){
-			linHtml = '<div class="elnLineage">' + lin.map(function(L){
-				return '<div class="elnLineNode'+(L.current?' current':'')+'" data-code="'+esc(L.note.code)+'" title="'+esc(L.note.title)+'">'+
-					'<span class="elnLineDot '+L.note.st+'"></span><span class="nm">'+esc(L.note.title)+'</span>'+
-					(L.note.ver?'<span class="ver">'+esc(L.note.ver)+'</span>':'')+'</div>';
-			}).join('') + '</div>';
+			var lnNode = function(L){ return '<div class="elnLineNode'+(L.current?' current':'')+'" data-code="'+esc(L.note.code)+'" title="'+esc(L.note.title)+'"><span class="elnLineDot '+L.note.st+'"></span><span class="nm">'+esc(L.note.title)+'</span></div>'; };
+			linHtml = '<div class="elnLineage">' + lin.map(lnNode).join('') + '</div>';
 		} else {
 			linHtml = '<div class="elnSumNoLin">Root note — no derivation yet.</div>';
 		}
 		sum.classList.remove('empty');
 		sum.innerHTML =
 			'<div class="elnSumHead">'+
-				'<div class="elnSumStatusRow"><span class="elnSumPill" data-st="'+n.st+'"><span class="elnDot '+n.st+'"></span>'+s.t+'</span><span class="elnSumCode">'+esc(n.code)+'</span></div>'+
+				'<div class="elnSumStatusRow"><span class="elnSumPill dotOnly" data-st="'+n.st+'" title="'+esc(s.t)+'"><span class="elnDot '+n.st+'"></span></span><span class="elnSumCode">'+esc(n.code)+'</span></div>'+
 				'<div class="elnSumTit">'+esc(n.title)+'</div>'+
 			'</div>'+
-			'<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">info</i>Details</div>'+
+			'<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">info</i>Overview</div>'+
 				'<div class="elnSumMeta">'+
 					'<div class="elnSumMetaRow"><span class="k">Notebook</span><span class="v elnSumNbPick" title="Move to another notebook"><span class="elnNbDot" style="background:'+nbColor(n._nb)+'"></span>'+esc(nbName)+'<i class="material-symbols-outlined">expand_more</i></span></div>'+
-					'<div class="elnSumMetaRow"><span class="k">Category</span><span class="v">'+esc(n.cat)+'</span></div>'+
+					'<div class="elnSumMetaRow"><span class="k">Project</span>'+projHtml(n)+'</div>'+
 					'<div class="elnSumMetaRow"><span class="k">Author</span><span class="v">'+esc(n.author)+'</span></div>'+
 					'<div class="elnSumMetaRow"><span class="k">Modified</span><span class="v">'+esc(n.date)+'</span></div>'+
 				'</div>'+
 			'</div>'+
-			fmlHtml +
+			noteSectionsHtml(n) +
 			(chipsHtml ? '<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">sell</i>Tags</div><div class="elnSumChips">'+chipsHtml+'</div></div>' : '')+
 			'<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">account_tree</i>History'+
 				'<a href="javascript:;" class="more elnFullView">Full view<i class="material-symbols-outlined" style="font-size:13px;">open_in_full</i></a></div>'+linHtml+'</div>';
@@ -527,19 +651,85 @@
 		}
 	}
 
-	// 뷰 적용: List=목록+필터+요약 / Dashboard=현황 조망(필터·요약 숨김)
+	// 뷰 적용: List·Chem·Formulation = 우측 요약 표시(접기 가능) / Dashboard = 요약 숨김
+	var VIEW_HOST = { list:'elnListView', dash:'elnDashView', chem:'elnChemView', formulation:'elnFmlView' };
+	var SHOW_SUMMARY = { list:1, chem:1, formulation:1 };
 	function applyView(){
 		var isList = (curView === 'list');
-		document.getElementById('elnListView').style.display = isList ? '' : 'none';
-		document.getElementById('elnDashView').style.display = isList ? 'none' : '';
-		document.getElementById('elnSummary').style.display = isList ? '' : 'none';
+		Object.keys(VIEW_HOST).forEach(function(v){ var el = document.getElementById(VIEW_HOST[v]); if(el) el.style.display = (v === curView) ? '' : 'none'; });
+		var showSum = !!SHOW_SUMMARY[curView];
+		document.getElementById('elnSummary').style.display = showSum ? '' : 'none';   // 요약 패널(접기 상태는 collapsed 클래스가 별도 유지)
+		var tg = document.getElementById('elnSumToggle'); if(tg) tg.style.display = showSum ? '' : 'none';
 		if(isList){
 			setHeaderCount(); // 필터 칩(클릭 가능)
 			selectFirst();
 		} else {
 			document.getElementById('nbCount').textContent = "";
-			renderDashboard(curNotes);
+			if(curView === 'dash') renderDashboard(curNotes);
+			else if(curView === 'chem'){ renderChemView(curNotes); selectFirstLens('elnChemUl'); }
+			else if(curView === 'formulation'){ renderFmlView(curNotes); selectFirstLens('elnFmlUl'); }
 		}
+	}
+	// 렌즈 뷰 첫 행 선택 → 요약 표시 (List의 selectFirst와 동형)
+	function selectFirstLens(ulId){
+		var ul = document.getElementById(ulId); if(!ul) return;
+		var first = ul.querySelector('li[data-idx]');
+		if(first){ ul.querySelectorAll('li').forEach(function(x){ x.classList.remove('on'); }); first.classList.add('on'); renderSummary(curNotes[+first.getAttribute('data-idx')]); }
+		else clearSummary();
+	}
+
+	/* ── Chem / Formulation 뷰 — List와 동일한 행 구조(statusBox + wd100p)에 도메인 요소만 추가.
+	   같은 노트셋을 도메인 렌즈로 보여줌. 전체 노트 노출(데이터 없으면 placeholder) ── */
+	// 목업: 배합(fml) 있는 노트는 ChemStudio 구조도 연결돼 있다고 가정
+	function noteHasChem(n){ return !!n.fml; }
+	var CHEM_MOCK = ['Styrene · C₈H₈','Acrylic acid · C₃H₄O₂','Methyl methacrylate · C₅H₈O₂','2-Ethylhexyl acrylate · C₁₁H₂₀O₂','Isobornyl acrylate · C₁₃H₂₀O₂'];
+	// 노트별 구조 목록(목업) — 배합 있는 노트는 1~3개 구조를 가진다고 가정(코드 기반 결정적)
+	function chemListFor(n){
+		if(!n.fml) return [];
+		var h=0, c=n.code||''; for(var i=0;i<c.length;i++) h+=c.charCodeAt(i);
+		var count = 1 + (h % 3), out = [];
+		for(var k=0;k<count;k++) out.push(CHEM_MOCK[(h+k) % CHEM_MOCK.length]);
+		return out;
+	}
+	function chemThumbSvg(){ return '<svg viewBox="0 0 60 60" class="elnChemThumbSvg" aria-hidden="true"><polygon points="30,9 47,19.5 47,40.5 30,51 13,40.5 13,19.5"/><circle cx="30" cy="30" r="11"/></svg>'; }
+	// List 행과 동일한 머리(상태 + 노트북라벨 + 제목) — 렌즈 뷰 공용
+	function lensRowHead(n, s){
+		return '<section class="statusBox '+s.cls+'">'+s.t+'</section>'
+			+ '<section class="wd100p"><div class="elnNoteNb" data-nb="'+esc(n._nb)+'"><i class="material-symbols-outlined fill">'+(n._nbIcon||'folder')+'</i>'+esc(n._nbName)+'</div>'
+			+ '<div class="pjTit">['+esc(n.code)+'] '+esc(n.title)+'</div>';
+	}
+	function paintNbColor(li, n){ var i = li.querySelector('.elnNoteNb i'); if(i) i.style.color = nbColor(n._nb); }
+
+	// Chem 뷰: List 행 + 노트의 구조 '복수개' 모두 칩 스트립으로. 구조 없으면 비우고 행 자체를 희미하게
+	function renderChemView(notes){
+		var ul = document.getElementById('elnChemUl'); ul.innerHTML = '';
+		if(!notes.length){ ul.innerHTML = '<li class="elnListEmpty"><i class="material-symbols-outlined">hexagon</i>No notes.</li>'; return; }
+		notes.forEach(function(n, i){
+			var s = stByKey(n.st), structs = chemListFor(n), has = structs.length > 0;
+			var li = document.createElement('li'); li.className = 'waves-effect waves-hColor' + (has ? '' : ' elnLensDimRow'); li.setAttribute('data-idx', i);
+			var strip = has ? '<div class="elnChemStrip">' + structs.map(function(name){
+				return '<span class="elnChemChip">'+chemThumbSvg()+'<span class="elnChemChipNm">'+esc(name)+'</span></span>';
+			}).join('') + '</div>' : '';
+			li.innerHTML = lensRowHead(n, s) + strip + '</section>';
+			paintNbColor(li, n); ul.appendChild(li);
+		});
+	}
+
+	// Formulation 뷰: List 행 + 주요 배합정보(코드·Process·Results). 배합 없으면 비우고 행 자체를 희미하게
+	function renderFmlView(notes){
+		var ul = document.getElementById('elnFmlUl'); ul.innerHTML = '';
+		if(!notes.length){ ul.innerHTML = '<li class="elnListEmpty"><i class="material-symbols-outlined">science</i>No notes.</li>'; return; }
+		notes.forEach(function(n, i){
+			var s = stByKey(n.st), has = !!n.fml;
+			var li = document.createElement('li'); li.className = 'waves-effect waves-hColor' + (has ? '' : ' elnLensDimRow'); li.setAttribute('data-idx', i);
+			var info = has
+				? '<div class="elnFmlLine"><span class="elnFmlCode"><i class="material-symbols-outlined">science</i>'+esc(n.fml)+'</span></div>'
+					+ '<div class="elnFmlMeta"><span class="k">Process</span><span>25 °C · 30 min · UV 1,200 mJ/cm²</span></div>'
+					+ '<div class="elnFmlMeta"><span class="k">Results</span><span><b>Visc</b> 4,520 cP <em class="cPass">Pass</em> · <b>Cure</b> 96% <em class="cPass">Pass</em> · <b>Haze</b> 0.8% <em class="cPass">Pass</em></span></div>'
+				: '';
+			li.innerHTML = lensRowHead(n, s) + info + '</section>';
+			paintNbColor(li, n); ul.appendChild(li);
+		});
 	}
 
 	/* ── NPI식 필드 검색(모달) — 제목·태그·status·카테고리·노트북 + 와일드카드(* ?). 결과는 중앙 리스트 재사용 ── */
@@ -556,19 +746,29 @@
 			if(!(n.tags || []).some(function(t){ return rx.test(t); })) return false;
 		}
 		if(c.status !== 'all' && n.st !== c.status) return false;
-		if(c.category !== 'all' && n.cat !== c.category) return false;
 		if(c.notebook !== 'all' && n._nb !== c.notebook) return false;
 		return true;
 	}
-	// 검색 조건 → 사람이 읽는 설명(헤더에 "무엇으로 검색했는지" 표시)
+	// 검색 조건 → 필드별 칩 HTML(헤더에 "어떤 필드로 어떻게 검색했는지" 한눈에 표시)
+	// 각 칩 = 아이콘 + 필드라벨(k) + 값(v). status는 색 점(dot)으로 상태 직관화.
+	function critChip(icon, label, value){
+		return '<span class="elnSrchCritChip"><i class="material-symbols-outlined">' + icon + '</i>' +
+			'<span class="k">' + label + '</span><span class="v">' + esc(value) + '</span></span>';
+	}
 	function describeCriteria(c){
+		var DOT = { blue:'#4a90d9', green:'#3aaa6f', red:'#d65a5a', orange:'#d9953f' };
 		var p = [];
-		if(c.keyword) p.push('“' + c.keyword + '”');
-		if(c.tags) p.push('tag ' + c.tags);
-		if(c.status && c.status !== 'all') p.push('status: ' + stByKey(c.status).t);
-		if(c.category && c.category !== 'all') p.push('category: ' + c.category);
-		if(c.notebook && c.notebook !== 'all') p.push('in ' + ((NB[c.notebook] && NB[c.notebook].name) || c.notebook));
-		return p.join('  ·  ');
+		if(c.keyword) p.push(critChip('search', 'Keyword', c.keyword));
+		if(c.tags) p.push(critChip('sell', 'Tag', c.tags));
+		if(c.status && c.status !== 'all'){
+			var s = stByKey(c.status);
+			p.push('<span class="elnSrchCritChip"><span class="dot" style="background:' + (DOT[s.cls] || '#9b8c7e') + ';"></span>' +
+				'<span class="k">Status</span><span class="v">' + esc(s.t) + '</span></span>');
+		}
+		if(c.notebook && c.notebook !== 'all') p.push(critChip('folder', 'Notebook', (NB[c.notebook] && NB[c.notebook].name) || c.notebook));
+		if(!p.length) return '';
+		// 리딩 라벨 — 이 줄이 "적용된 검색 필터"임을 명시(검색 결과 요약과 혼동 방지)
+		return '<span class="lead"><i class="material-symbols-outlined">filter_alt</i>Filtered by</span>' + p.join('');
 	}
 	// 검색 실행: 전체에서 조건 필터 → '검색 결과' 모드로 중앙 리스트 렌더(노트북 선택 해제, 항상 List 뷰)
 	function runSearch(c){
@@ -581,7 +781,7 @@
 		document.getElementById('nbIcon').textContent = 'search';
 		document.getElementById('nbIcon').style.color = ''; // 검색 헤더 아이콘은 기본색
 		var clr = document.getElementById('elnSrchClear'); if(clr) clr.style.display = '';
-		var crit = document.getElementById('elnSrchCrit'); if(crit){ var d = describeCriteria(c); crit.textContent = d; crit.style.display = d ? '' : 'none'; }
+		var crit = document.getElementById('elnSrchCrit'); if(crit){ var d = describeCriteria(c); crit.innerHTML = d; crit.style.display = d ? '' : 'none'; }
 		curView = 'list';
 		var tg = document.querySelector('.elnViewToggle');
 		if(tg){ tg.querySelectorAll('a').forEach(function(x){ x.classList.remove('on'); }); var la = tg.querySelector('a[data-view="list"]'); if(la) la.classList.add('on'); }
@@ -597,7 +797,7 @@
 	// 태그 칩 클릭 → 그 태그만으로 즉시 검색(모달 없이 결과 렌더)
 	function searchByTag(tag){
 		if(!tag) return;
-		runSearch({ keyword: '', tags: tag, status: 'all', category: 'all', notebook: 'all' });
+		runSearch({ keyword: '', tags: tag, status: 'all', notebook: 'all' });
 	}
 	// 검색 모달 — 필드 폼 + 와일드카드 안내. prefill = navbar 입력값을 keyword로 선반영
 	function openSearchModal(prefill){
@@ -611,18 +811,13 @@
 				'<datalist id="srchTagList"></datalist></div>' +
 			'<div class="elnSrchGrid">' +
 				'<div class="elnSrchRow"><label>Status</label><select id="srchStatus" class="browser-default"></select></div>' +
-				'<div class="elnSrchRow"><label>Category</label><select id="srchCategory" class="browser-default"></select></div>' +
+				'<div class="elnSrchRow"><label>Notebook</label><select id="srchNotebook" class="browser-default"></select></div>' +
 			'</div>' +
-			'<div class="elnSrchRow"><label>Notebook</label><select id="srchNotebook" class="browser-default"></select></div>' +
 			'<div class="elnSrchHint"><i class="material-symbols-outlined">tips_and_updates</i>' +
 				'<span><b>*</b> matches any characters, <b>?</b> matches a single one. Leave a field blank to ignore it.</span></div>';
 		function opt(sel, value, label){ var o = document.createElement('option'); o.value = value; o.textContent = label; sel.appendChild(o); }
 		var stSel = form.querySelector('#srchStatus');
 		opt(stSel, 'all', 'Any status'); ST.forEach(function(s){ opt(stSel, s.k, s.t); });
-		var catSel = form.querySelector('#srchCategory');
-		opt(catSel, 'all', 'Any category');
-		var cats = []; getNotes('all').forEach(function(n){ if(n.cat && cats.indexOf(n.cat) < 0) cats.push(n.cat); });
-		cats.forEach(function(c){ opt(catSel, c, c); });
 		var nbSel = form.querySelector('#srchNotebook');
 		opt(nbSel, 'all', 'All notebooks');
 		Object.keys(NB).forEach(function(k){ opt(nbSel, k, NB[k].name); });
@@ -637,7 +832,6 @@
 				keyword: kw.value.trim(),
 				tags: form.querySelector('#srchTags').value.trim(),
 				status: stSel.value,
-				category: catSel.value,
 				notebook: nbSel.value
 			};
 		}
@@ -990,6 +1184,19 @@
 			if(n) openNote(n._nb);
 		});
 
+		// Chem·Formulation 렌즈 뷰: 행 클릭 → 요약 선택 / 제목(.pjTit) 클릭 → 노트 열기 (List와 동일 동선)
+		['elnChemView','elnFmlView'].forEach(function(viewId){
+			var ulId = (viewId === 'elnChemView') ? 'elnChemUl' : 'elnFmlUl';
+			document.getElementById(viewId).addEventListener('click', function(e){
+				var li = e.target.closest('li[data-idx]'); if(!li) return;
+				var n = curNotes[+li.getAttribute('data-idx')];
+				if(e.target.closest('.pjTit')){ e.stopPropagation(); openNote(n._nb); return; }
+				document.querySelectorAll('#'+ulId+' li').forEach(function(x){ x.classList.remove('on'); });
+				li.classList.add('on');
+				renderSummary(n);
+			});
+		});
+
 		// 우측 요약의 'Full view' → 계보 모달 (별도 화면 대체)
 		document.getElementById('elnSummary').addEventListener('click', function(e){
 			var nbPick = e.target.closest('.elnSumNbPick');
@@ -1004,7 +1211,11 @@
 				if(tgt){
 					renderSummary(tgt);
 					var i = curNotes.map(function(x){ return x.code; }).indexOf(code);
-					if(i >= 0){ document.querySelectorAll('#noteListUl li').forEach(function(x){ x.classList.remove('on'); }); var li = document.querySelector('#noteListUl li[data-idx="'+i+'"]'); if(li) li.classList.add('on'); }
+					if(i >= 0){
+						document.querySelectorAll('#noteListUl li').forEach(function(x){ x.classList.remove('on'); });
+						var li = document.querySelector('#noteListUl li[data-idx="'+i+'"]');
+						if(li){ li.classList.add('on'); li.scrollIntoView({ block:'nearest', behavior:'smooth' }); } // 선택 항목으로 리스트 스크롤 따라가기
+					}
 				}
 				return;
 			}
@@ -1028,11 +1239,17 @@
 			setHeaderCount(); // 활성 표시 갱신
 		});
 
-		// New Note(노트 레벨) → 상세 팝업. All Notes 뷰면 노트북 미지정으로 시작
+		// 요약 패널 접기/펼치기 — collapsed 클래스(width:0). 토글 핸들은 List·Chem·Formulation 뷰에서 노출
+		var sumToggle = document.getElementById('elnSumToggle');
+		if(sumToggle) sumToggle.addEventListener('click', function(){
+			var col = document.getElementById('elnSummary').classList.toggle('collapsed');
+			var i = sumToggle.querySelector('i'); if(i) i.textContent = col ? 'chevron_left' : 'chevron_right';
+		});
+
+		// New Note(노트 레벨) → 시작 템플릿 픽커 먼저. All Notes 뷰면 노트북 미지정으로 시작
 		var b = document.getElementById('elnNewNote');
 		if(b) b.addEventListener('click', function(){
-			if(window.ELN && ELN.toast) ELN.toast('Opening a new note…', 'info');
-			openNote(curNbKey === 'all' ? '' : curNbKey);
+			openTemplatePicker(curNbKey === 'all' ? '' : curNbKey);
 		});
 
 		var nbBtn = document.getElementById('elnNewNotebook');

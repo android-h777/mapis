@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<title>ELN History Graph — 미리보기(스크래치)</title>
+<style>
+  body{margin:0;font-family:-apple-system,"Apple SD Gothic Neo","Malgun Gothic",sans-serif;
+    background:linear-gradient(135deg,#efe9e1,#f6f2ec);color:#3a2c24;padding:32px;}
+  h1{font-size:16px;font-weight:700;margin:0 0 4px;}
+  .sub{font-size:12.5px;color:#9b8c7e;margin:0 0 20px;}
+  .panel{background:rgba(255,255,255,.72);border:1px solid #e6ddd0;border-radius:16px;
+    box-shadow:0 8px 30px rgba(90,62,48,.10);padding:20px 24px;max-width:640px;}
+  .panelTit{display:flex;align-items:center;gap:8px;font-weight:700;font-size:14px;margin-bottom:6px;color:#5a3e30;}
+  .legend{display:flex;gap:14px;flex-wrap:wrap;font-size:12px;color:#7a6757;margin:8px 0 6px;}
+  .legend span{display:inline-flex;align-items:center;gap:5px;}
+  .legend i{width:9px;height:9px;border-radius:50%;display:inline-block;}
+  .hint{font-size:11.5px;color:#b07b53;margin:0 0 14px;}
+  .actionLog{font-size:12.5px;color:#7a5240;font-weight:600;min-height:18px;margin:10px 2px 0;}
+  .barRow{display:flex;gap:8px;margin-bottom:12px;}
+  .barRow button{font-size:12px;border:1px solid #d9cfc2;background:#fff;color:#7a5240;border-radius:8px;
+    padding:5px 11px;cursor:pointer;}
+  .barRow button:hover{background:rgba(164,120,100,.08);border-color:#A47864;}
+  /* SVG graph */
+  .gDot{stroke:#fff;stroke-width:2;}
+  .gDot.exp{cursor:pointer;}
+  .gSign{stroke:#fff;stroke-width:1.7;stroke-linecap:round;pointer-events:none;}
+  .gNode.exp:hover .gDot{stroke:#7a5240;stroke-width:2.5;}
+  .gLink{fill:none;stroke:#cdbfae;stroke-width:2;}
+  .gHit{cursor:pointer;}
+  .gCode{font-size:11px;fill:#a8978a;font-family:ui-monospace,Menlo,Consolas,monospace;}
+  .gTitle{font-size:13.5px;fill:#3a2c24;font-weight:600;}
+  .gTitle.cur{fill:#1f1712;font-weight:800;}
+  .gVer{font-size:10.5px;fill:#8a7766;}
+  .gHidden{font-size:10.5px;fill:#b07b53;font-weight:700;}
+  .gPill{font-size:10.5px;font-weight:700;}
+  .gCurBadge{font-size:10.5px;font-weight:800;fill:#7a5240;}
+  .gNode.lnkHover .gTitle{fill:#7a5240;text-decoration:underline;}
+  .curRing{animation:pulse 1.8s ease-in-out infinite;transform-origin:center;}
+  @keyframes pulse{0%,100%{opacity:.18;}50%{opacity:.42;}}
+  .note{font-size:12px;color:#9b8c7e;margin-top:16px;line-height:1.6;}
+</style>
+</head>
+<body>
+  <h1>ELN — Note History (모달 확대뷰 후보: 직접 SVG git-history 그래프)</h1>
+  <p class="sub">요약 인라인 패널은 일직선 시간순, 이 화면(모달)에서만 분기 그래프. ※ 스크래치 미리보기 파일</p>
+
+  <div class="panel">
+    <div class="panelTit">⌥ History — UV-Curable PSA Viscosity Improvement (RGBOLED)</div>
+    <div class="legend">
+      <span><i style="background:#2f80ed"></i>In Progress</span>
+      <span><i style="background:#3aaa6f"></i>Success</span>
+      <span><i style="background:#d65a5a"></i>Failed</span>
+      <span><i style="background:#e0a83e"></i>On Hold</span>
+    </div>
+    <p class="hint">동그라미 클릭 = 가지 접기/펴기 (점 안 <b>+</b>=접힘·더 있음, <b>−</b>=펼침) · 타이틀 클릭 = 해당 노트 팝업으로 이동(데모)</p>
+    <div class="barRow">
+      <button onclick="expandAll()">전부 펼치기</button>
+      <button onclick="collapseAll()">전부 접기</button>
+    </div>
+    <svg id="graph" width="580" height="360" role="img"></svg>
+    <p id="actionLog" class="actionLog"></p>
+  </div>
+
+  <p class="note">마음에 드는지 / 바꾸고 싶은 점(점 크기·선 곡률·세로 간격·현재노드 강조·접기 affordance·애니메이션 등) 알려주세요 →
+  확정되면 이 <b>renderGraph</b> 함수를 그대로 <b>apis_eln_pop.html</b> 모달에 이식합니다.</p>
+
+<script>
+/* ── pop의 eln_proto.js와 동일한 계보 모델(여기선 독립 검증용으로 복제) ── */
+var STATUS = { ing:{c:'#2f80ed',t:'In Progress'}, ok:{c:'#3aaa6f',t:'Success'},
+               fail:{c:'#d65a5a',t:'Failed'},     hold:{c:'#e0a83e',t:'On Hold'} };
+var LINEAGE_NOTES = [
+  { code:'NT-2605-00098', title:'Initial trial — spec not met',                   st:'fail', ver:'v1', date:'2026-05-21' },
+  { code:'NT-2605-00118', title:'Viscosity Modifier ratio tuning',                st:'hold', ver:'v2', date:'2026-05-27', parent:'NT-2605-00098' },
+  { code:'NT-2605-00097', title:'Cure rate vs UV dose — sweep',                   st:'ok',   ver:'v1', date:'2026-05-24', parent:'NT-2605-00118' },
+  { code:'NT-2605-00072', title:'Crosslinker screening for adhesion',             st:'ing',  ver:'',   date:'2026-05-15', parent:'NT-2605-00098' },
+  { code:'NT-2605-00142', title:'UV-Curable PSA Viscosity Improvement',           st:'ing',  ver:'v3', date:'2026-05-28', parent:'NT-2605-00118' }
+];
+var CURRENT = 'NT-2605-00142';
+var collapsed = {};                 // code -> true면 그 노드의 하위 가지를 숨김
+
+function index(){ var m={}; LINEAGE_NOTES.forEach(function(n){m[n.code]=n;}); return m; }
+function children(c){ return LINEAGE_NOTES.filter(function(n){return n.parent===c;}); }
+function root(n,m){ var r=n,g=0; while(r&&r.parent&&m[r.parent]&&g++<100) r=m[r.parent]; return r; }
+function byDate(a,b){ return a.date<b.date?-1:(a.date>b.date?1:0); }
+function countDescendants(c){ var n=0; children(c).forEach(function(k){ n+=1+countDescendants(k.code); }); return n; }
+
+/* 접힘 상태를 반영한 "보이는 노드 목록" — 접힌 노드의 자식은 순회에서 제외 */
+function visibleLineage(){
+  var m=index(), s=m[CURRENT]; if(!s) return [];
+  var rt=root(s,m), out=[];
+  (function walk(c,depth){
+    var nd=m[c]; if(!nd) return;
+    var kids=children(c).sort(byDate);
+    out.push({ note:nd, depth:depth, current:nd.code===CURRENT,
+               hasKids:kids.length>0, collapsed:!!collapsed[c],
+               hidden:collapsed[c]?countDescendants(c):0 });
+    if(!collapsed[c]) kids.forEach(function(k){ walk(k.code, depth+1); });
+  })(rt.code, 0);
+  return out;
+}
+
+/* ── 직접 SVG 렌더: depth=레인(x), 순서=행(y), 부모로 ㄴ자 연결선, ▾로 접기 ── */
+function renderGraph(svg){
+  var lin = visibleLineage();
+  var LEFT=24, LANE=24, TOP=34, ROW=62, CR=9;
+  var LABELGAP=20;   // 레이블 시작 = 각 노드 점에서 항상 일정한 간격(요청)
+  var laneX=function(d){ return LEFT+d*LANE; };
+  var rowY =function(i){ return TOP+i*ROW; };
+  var rowOf={}; lin.forEach(function(L,i){ rowOf[L.note.code]=i; });
+  var frag='';
+
+  // 1) 연결선(노드 뒤)
+  lin.forEach(function(L,i){
+    var p=L.note.parent; if(!p || rowOf[p]==null) return;
+    var pi=rowOf[p], px=laneX(lin[pi].depth), py=rowY(pi), cx=laneX(L.depth), cy=rowY(i);
+    frag += '<path class="gLink" d="M'+px+' '+py+' V'+(cy-CR)+' Q'+px+' '+cy+' '+(px+CR)+' '+cy+' H'+cx+'"/>';
+  });
+
+  // 2) 노드(점 + ▾캐럿 + 라벨)
+  lin.forEach(function(L,i){
+    var n=L.note, s=STATUS[n.st]||STATUS.ing, x=laneX(L.depth), y=rowY(i);
+    var labelX=x+LABELGAP;   // 점 기준 고정 간격(요청)
+    var r = 8;   // 모든 노드 동일 크기(+/− 유무·현재 여부와 무관). 현재는 외곽 링으로 구분
+    frag += '<g class="gNode'+(L.hasKids?' exp':'')+'" data-code="'+n.code+'">';
+    if(L.current) frag += '<circle class="curRing" cx="'+x+'" cy="'+y+'" r="14" fill="'+s.c+'"/>';
+    frag += '<circle class="gDot'+(L.hasKids?' exp':'')+'" cx="'+x+'" cy="'+y+'" r="'+r+'" fill="'+s.c+'"/>';
+    // 자식 있는 노드: 점 안 +/− 로 상태 표현(접힘=+ 더 있음, 펼침=−)
+    if(L.hasKids){
+      frag += '<line class="gSign" x1="'+(x-3.2)+'" y1="'+y+'" x2="'+(x+3.2)+'" y2="'+y+'"/>';
+      if(L.collapsed) frag += '<line class="gSign" x1="'+x+'" y1="'+(y-3.2)+'" x2="'+x+'" y2="'+(y+3.2)+'"/>';
+    }
+    frag += '<text class="gTitle'+(L.current?' cur':'')+'" x="'+labelX+'" y="'+(y-3)+'">'+n.title+
+            (n.ver?'   <tspan class="gVer">'+n.ver+'</tspan>':'')+
+            (L.collapsed?'   <tspan class="gHidden">+'+L.hidden+' hidden</tspan>':'')+'</text>';
+    frag += '<text class="gCode" x="'+labelX+'" y="'+(y+13)+'">'+n.code+
+            '   <tspan class="gPill" fill="'+s.c+'">● '+s.t+'</tspan>'+
+            (L.current?'   <tspan class="gCurBadge">◀ you are here</tspan>':'')+'</text>';
+    frag += '<rect class="gHit" data-code="'+n.code+'" x="'+labelX+'" y="'+(y-16)+'" width="'+(572-labelX)+'" height="32" fill="transparent"/>';
+    frag += '</g>';
+  });
+
+  svg.setAttribute('height', rowY(lin.length-1)+TOP);
+  svg.innerHTML = frag;
+  // 동그라미(자식 있는 노드) 클릭 = 접기/펴기
+  svg.querySelectorAll('.gDot.exp').forEach(function(d){
+    d.addEventListener('click', function(e){
+      e.stopPropagation();
+      var code=d.parentNode.getAttribute('data-code');
+      collapsed[code] = !collapsed[code];
+      renderGraph(svg);
+    });
+  });
+  // 타이틀(라벨 히트영역) = 해당 노트 팝업으로 이동
+  svg.querySelectorAll('.gHit').forEach(function(h){
+    var g=h.parentNode;
+    h.addEventListener('click', function(){ openNote(h.getAttribute('data-code')); });
+    h.addEventListener('mouseenter', function(){ g.classList.add('lnkHover'); });
+    h.addEventListener('mouseleave', function(){ g.classList.remove('lnkHover'); });
+  });
+}
+
+/* 실제 pop에선 여기가 "해당 노트로 navigate"가 됨(데모: 액션 로그 표시) */
+function openNote(code){
+  var n=index()[code], log=document.getElementById('actionLog');
+  if(code===CURRENT) log.textContent='● 현재 보고 있는 노트입니다 — '+code;
+  else log.textContent='→ 노트 팝업으로 이동: '+code+'  '+(n?'('+n.title+')':'');
+}
+
+function expandAll(){ collapsed={}; renderGraph(document.getElementById('graph')); }
+function collapseAll(){ collapsed={}; LINEAGE_NOTES.forEach(function(n){ if(children(n.code).length) collapsed[n.code]=true; }); renderGraph(document.getElementById('graph')); }
+
+renderGraph(document.getElementById('graph'));
+</script>
+</body>
+</html>

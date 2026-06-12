@@ -96,22 +96,35 @@
     if (opts.width) pop.style.width = (opts.width + 12) + 'px';
     pop.appendChild(opts.content);
     document.body.appendChild(pop);
-    var r = opts.anchor.getBoundingClientRect();
-    var x = Math.min(Math.max(8, r.left), window.innerWidth - pop.offsetWidth - 8);
-    var y = r.bottom + 6;
-    if (y + pop.offsetHeight > window.innerHeight - 8) y = Math.max(8, r.top - pop.offsetHeight - 6);
+    var x, y, w = pop.offsetWidth, h = pop.offsetHeight, gap = 6;
+    if (opts.atPointer) {                              // 섹션 사이/하단 '+': 마우스 포인터 위치 추종
+      var px = opts.atPointer.x, py = opts.atPointer.y;
+      x = Math.min(Math.max(8, px - w / 2), window.innerWidth - w - 8);
+      var upY = py - h - gap, downY = py + gap;
+      if (upY >= 8) y = upY;                            // 기본: 위로
+      else if (downY + h <= window.innerHeight - 8) y = downY;  // 위 공간 없으면 아래로
+      else y = 8;                                       // 둘 다 없으면 위(클램프)
+    } else {                                            // 좌측 Add module 버튼: 앵커 기준(기존 위치 유지)
+      var r = opts.anchor.getBoundingClientRect();
+      x = Math.min(Math.max(8, r.left), window.innerWidth - w - 8);
+      y = r.bottom + 6;
+      if (y + h > window.innerHeight - 8) y = Math.max(8, r.top - h - 6);
+    }
     pop.style.left = x + 'px'; pop.style.top = y + 'px';
     function close() {
       pop.remove();
       document.removeEventListener('mousedown', onDoc, true);
       document.removeEventListener('keydown', onKey, true);
+      document.removeEventListener('scroll', onScroll, true);
     }
     function onDoc(e) { if (!pop.contains(e.target)) close(); }
     function onKey(e) { if (e.key === 'Escape') close(); }
+    function onScroll(e) { if (e && pop.contains(e.target)) return; close(); }   // 바깥 스크롤이면 닫기(앵커서 떨어짐), 팝오버 내부 스크롤은 유지
     // 픽커를 연 클릭 자체가 바로 닫아버리지 않도록 다음 틱에 등록
     setTimeout(function () {
       document.addEventListener('mousedown', onDoc, true);
       document.addEventListener('keydown', onKey, true);
+      document.addEventListener('scroll', onScroll, true);   // capture → 모든 스크롤 컨테이너 포착
     }, 0);
     return { close: close, el: pop };
   };
@@ -181,7 +194,7 @@
   /* ── Task4: 우측 접이식 연계패널 + status 연동 + 참조 클릭 액션 ── */
   var REF_INFO = {
     fml:  { msg: 'Opening formulation in formulator' },
-    rm:   { msg: 'Opening material in Rawmathub' },
+    rm:   { msg: 'Opening material in Rawmathub', url: 'apis_item_pop.html' },
     npdi: { msg: 'Navigating to project' },
     note: { msg: 'Opening parent note' }
   };
@@ -215,6 +228,13 @@
         var info = REF_INFO[item.getAttribute('data-ref')];
         if (!info) return;
         var label = (item.textContent || '').trim().replace(/\s+/g, ' ');
+        if (info.url) {   // material 등: 모달/토스트 없이 바로 팝업 창
+          var code = (label.split(/\s+/)[0] || '');
+          window.open(info.url + (code ? '?code=' + encodeURIComponent(code) : ''),
+            'eln_' + item.getAttribute('data-ref') + '_' + code,
+            'width=1480,height=900,scrollbars=yes,resizable=yes');
+          return;
+        }
         ELN.toast(info.msg + (label ? ' — ' + label : '') + '.', 'info');
       });
     }
@@ -635,11 +655,11 @@
      apis_eln_list.html과 동일 모델. 계보를 배열로 저장하지 않고 각 노트의 parent만 두고
      트리를 유도한다(git 커밋 그래프식). 데이터는 list의 RGBOLED 노트북 서브트리(NT-코드)와 일치. */
   var LINEAGE_NOTES = [
-    { code: 'NT-2605-00098', title: 'Initial trial — spec not met',                   st: 'fail', ver: 'v1', date: '2026-05-21' },
-    { code: 'NT-2605-00118', title: 'Viscosity Modifier ratio tuning (v2)',           st: 'hold', ver: 'v2', date: '2026-05-27', parent: 'NT-2605-00098' },
-    { code: 'NT-2605-00097', title: 'Cure rate vs UV dose — condition sweep',         st: 'ok',   ver: 'v1', date: '2026-05-24', parent: 'NT-2605-00118' },
-    { code: 'NT-2605-00072', title: 'Crosslinker screening for adhesion',             st: 'ing',  ver: '',   date: '2026-05-15', parent: 'NT-2605-00098' },
-    { code: 'NT-2605-00142', title: 'UV-Curable PSA Viscosity Improvement — RGBOLED', st: 'ing',  ver: 'v3', date: '2026-05-28', parent: 'NT-2605-00118' }
+    { code: 'NT-2605-00098', title: 'Initial trial — spec not met',                   st: 'fail', ver: 'v1', date: '2026-05-21', nb: 'Flexible OLED',      project: 'SN-26-0018' },
+    { code: 'NT-2605-00118', title: 'Viscosity Modifier ratio tuning (v2)',           st: 'hold', ver: 'v2', date: '2026-05-27', parent: 'NT-2605-00098', nb: 'RGBOLED Adhesive',   project: 'SN-26-0031' },
+    { code: 'NT-2605-00097', title: 'Cure rate vs UV dose — condition sweep',         st: 'ok',   ver: 'v1', date: '2026-05-24', parent: 'NT-2605-00118', nb: 'RGBOLED Adhesive',   project: 'SN-26-0031' },
+    { code: 'NT-2605-00072', title: 'Crosslinker screening for adhesion',             st: 'ing',  ver: '',   date: '2026-05-15', parent: 'NT-2605-00098', nb: 'Crosslinker Studies', project: 'SN-26-0031' },
+    { code: 'NT-2605-00142', title: 'UV-Curable PSA Viscosity Improvement — RGBOLED', st: 'ing',  ver: 'v3', date: '2026-05-28', parent: 'NT-2605-00118', nb: 'RGBOLED Adhesive',   project: 'SN-26-0031' }
   ];
   var CURRENT_CODE = 'NT-2605-00142';  // 지금 보고 있는 노트(헤더 [NT-2605-00142]와 일치)
   var newVerSeq = 3;                   // 현재 v3 → "New version"은 v4부터
@@ -676,30 +696,12 @@
     var box = document.getElementById('elnLineage');
     if (!box) return;
     box.innerHTML = '';
-    var lin = directLineage(CURRENT_CODE);
-    if (lin.length <= 1) {
-      var empty = document.createElement('div');
-      empty.className = 'elnSumNoLin';
-      empty.textContent = 'Root note — no derivation yet.';
-      box.appendChild(empty);
-      return;
-    }
-    // computeLineage가 이미 DFS(부모→자식, 형제 날짜순) 순서 → Full view 그래프와 동일 정렬로 일치
-    lin.forEach(function (L) {
-      var n = L.note;
-      var node = document.createElement('div');
-      node.className = 'elnLineNode' + (L.current ? ' current' : '') + (n._new ? ' isNew' : '');
-      node.dataset.code = n.code;
-      node.title = n.title + ' · ' + n.code;
-      var dot = document.createElement('span');
-      dot.className = 'elnLineDot ' + n.st;
-      var nm = document.createElement('span');
-      nm.className = 'nm';
-      nm.textContent = n.title;
-      node.appendChild(dot); node.appendChild(nm);
-      if (n.ver) { var ver = document.createElement('span'); ver.className = 'ver'; ver.textContent = n.ver; node.appendChild(ver); }
-      box.appendChild(node);
-    });
+    box.className = 'elnLineage elnGraphScroll';
+    var svg = document.createElementNS(SVGNS, 'svg');
+    svg.setAttribute('class', 'elnHistoryGraph');
+    box.appendChild(svg);
+    // History 열면 그래프(구 Full view 내용)를 바로 표시 — 모달/Full view 링크 없이
+    ELN.historyGraph(svg, { notes: LINEAGE_NOTES, currentCode: CURRENT_CODE, onOpenNote: openNoteFromGraph });
   }
 
   function initLineage() {
@@ -748,6 +750,15 @@
   var STATUS_COLOR = { ing: '#2f80ed', ok: '#3aaa6f', fail: '#d65a5a', hold: '#e0a83e' };
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
+  // 모든 textarea: 수동 resize·스크롤 없이 내용에 따라 높이 자동 조절. 위임 input 리스너로 동적 모듈까지 커버
+  function autoGrowTextarea(el) {
+    if (!el || el.classList.contains('note-codable')) return;   // Summernote codeview 제외
+    el.style.height = 'auto';
+    el.style.height = el.scrollHeight + 'px';
+  }
+  document.addEventListener('input', function (e) { if (e.target && e.target.tagName === 'TEXTAREA') autoGrowTextarea(e.target); }, true);
+  document.addEventListener('DOMContentLoaded', function () { document.querySelectorAll('textarea').forEach(autoGrowTextarea); });
+
   ELN.historyGraph = function (svg, opts) {
     opts = opts || {};
     var notes = opts.notes || [], current = opts.currentCode, onOpen = opts.onOpenNote || function () {};
@@ -776,6 +787,8 @@
       var laneX = function (d) { return LEFT + d * LANE; };
       var rowY = function (i) { return TOP + i * ROW; };
       var rowOf = {}; lin.forEach(function (L, i) { rowOf[L.note.code] = i; });
+      // 현재 노트의 notebook/project — 같으면 생략, 다른 노드에만 표시(계보는 그룹 경계를 넘나듦)
+      var curNote = (function () { for (var k = 0; k < notes.length; k++) if (notes[k].code === current) return notes[k]; return {}; })();
       var frag = '';
       lin.forEach(function (L, i) {
         var p = L.note.parent; if (!p || rowOf[p] == null) return;
@@ -785,18 +798,20 @@
       lin.forEach(function (L, i) {
         var n = L.note, col = STATUS_COLOR[n.st] || STATUS_COLOR.ing, x = laneX(L.depth), y = rowY(i), labelX = x + LABELGAP;
         frag += '<g class="gNode' + (L.hasKids ? ' exp' : '') + '" data-code="' + esc(n.code) + '">';
-        if (L.current) frag += '<circle class="curRing" cx="' + x + '" cy="' + y + '" r="14" fill="' + col + '"/>';
+        if (L.current) frag += '<circle class="curRingPing" cx="' + x + '" cy="' + y + '" r="12"/><circle class="curRing" cx="' + x + '" cy="' + y + '" r="11.5"/>';
         frag += '<circle class="gDot' + (L.hasKids ? ' exp' : '') + '" cx="' + x + '" cy="' + y + '" r="' + R + '" fill="' + col + '"/>';
         if (L.hasKids) {
           frag += '<line class="gSign" x1="' + (x - 3.2) + '" y1="' + y + '" x2="' + (x + 3.2) + '" y2="' + y + '"/>';
           if (L.collapsed) frag += '<line class="gSign" x1="' + x + '" y1="' + (y - 3.2) + '" x2="' + x + '" y2="' + (y + 3.2) + '"/>';
         }
         frag += '<text class="gTitle' + (L.current ? ' cur' : '') + '" x="' + labelX + '" y="' + (y - 3) + '">' + esc(n.title) +
-          (n.ver ? '   <tspan class="gVer">' + esc(n.ver) + '</tspan>' : '') +
+          '' +
           (L.collapsed ? '   <tspan class="gHidden">+' + L.hidden + ' hidden</tspan>' : '') + '</text>';
         frag += '<text class="gCode" x="' + labelX + '" y="' + (y + 13) + '">' + esc(n.code) +
           '   <tspan class="gPill" fill="' + col + '">● ' + esc(STATUS_LABEL[n.st] || n.st) + '</tspan>' +
-          (L.current ? '   <tspan class="gCurBadge">◀ you are here</tspan>' : '') + '</text>';
+          (n.nb && n.nb !== curNote.nb ? '   <tspan class="gDiff">▸ ' + esc(n.nb) + '</tspan>' : '') +
+          (n.project && n.project !== curNote.project ? '   <tspan class="gDiff">· ' + esc(n.project) + '</tspan>' : '') +
+          '</text>';
         frag += '<rect class="gHit" data-code="' + esc(n.code) + '" x="' + labelX + '" y="' + (y - 16) + '" width="' + (W - labelX - 8) + '" height="32" fill="transparent"/>';
         frag += '</g>';
       });
@@ -845,31 +860,32 @@
 
   /* ── BIOVIA식 모듈러 노트: 기본 템플릿 + 모듈 추가/삭제(고정 템플릿 탈피) ── */
   var MODULE_TYPES = [
-    { key: 'text',     icon: 'notes',       title: 'Text Note',          desc: 'Free-form rich text' },
-    { key: 'table',    icon: 'table_chart', title: 'Data Table',         desc: 'Structured measurement table' },
-    { key: 'chart',    icon: 'bar_chart',   title: 'Chart',              desc: 'Plot a quick chart' },
-    { key: 'process',  icon: 'tune',        title: 'Process Conditions', desc: 'Temp · time · dose …' },
-    { key: 'material', icon: 'science',     title: 'Materials',          desc: 'Raw materials (Rawmathub)' },
-    { key: 'obs',      icon: 'visibility',  title: 'Observation',        desc: 'What you observed' },
+    { key: 'editor',   icon: 'edit_note',   title: 'Editor',             desc: 'Rich-text editor (Summernote) — text, tables, images' },
+    { key: 'table',    icon: 'table_chart', title: 'Data Table',         desc: 'Editable table — row/col add, Excel paste, optional chart' },
+    { key: 'chem',     icon: 'hexagon',     title: 'ChemStudio',         desc: 'Sketch a chemical structure' },
     { key: 'fml',      icon: 'blender',     title: 'Formulation',        desc: 'Embed from formulator' },
-    { key: 'concl',    icon: 'summarize',   title: 'Conclusion',         desc: 'Summary & next steps' },
-    { key: 'attach',   icon: 'attach_file', title: 'Attachments',        desc: 'Files & documents' },
-    { key: 'links',    icon: 'link',        title: 'Links',              desc: 'External URLs' }
+    { key: 'related',  icon: 'hub',         title: 'Related Items',      desc: 'Link materials · projects · notes · URLs' },
+    { key: 'attach',   icon: 'attach_file', title: 'Attachments',        desc: 'Files & documents' }
   ];
 
   function moduleSampleBody(key) {
     switch (key) {
-      case 'text':  return '<textarea class="browser-default elnModText" placeholder="Write here…"></textarea>';
-      case 'obs':   return '<textarea class="browser-default elnModText" placeholder="Describe what you observed…"></textarea>';
-      case 'concl': return '<textarea class="browser-default elnModText" placeholder="Conclusion & next steps…"></textarea>';
-      case 'table': return '<div class="fixedTable hBorderTable hScroll"><table><thead><tr><th>Item</th><th>Value</th><th>Unit</th></tr></thead>'
-        + '<tbody><tr><td>—</td><td>—</td><td>—</td></tr><tr><td>—</td><td>—</td><td>—</td></tr></tbody></table></div>';
-      case 'chart': return '<div class="elnModChartPh"><i class="material-symbols-outlined">bar_chart</i>Chart placeholder — bind data to render</div>';
-      case 'process': return '<div class="elnMeta">'
-        + '<div class="elnMetaItem metric"><i class="material-symbols-outlined">device_thermostat</i><div class="elnMetaText"><span class="k">Temp</span><span class="v">— <em>°C</em></span></div></div>'
-        + '<div class="elnMetaItem metric"><i class="material-symbols-outlined">timer</i><div class="elnMetaText"><span class="k">Time</span><span class="v">— <em>min</em></span></div></div></div>';
-      case 'material': return '<div class="fixedTable hBorderTable hScroll"><table><thead><tr><th>Material</th><th>Code</th><th>wt%</th></tr></thead>'
-        + '<tbody><tr><td>—</td><td>—</td><td>—</td></tr></tbody></table></div>';
+      case 'editor': return '<div class="elnSummernote"></div>';
+      case 'table': return '<div class="elnDataBox">'
+        + '<div class="elnDataToolbar">'
+        + '<a href="javascript:;" class="elnDataBtn" data-act="addRow"><i class="material-symbols-outlined">add</i>Row</a>'
+        + '<a href="javascript:;" class="elnDataBtn" data-act="addCol"><i class="material-symbols-outlined">add</i>Column</a>'
+        + '<span class="elnDataHint"><i class="material-symbols-outlined">content_paste</i>셀 클릭 후 Ctrl+V로 Excel 붙여넣기</span>'
+        + '<label class="elnDataChartToggle"><input type="checkbox" class="elnDataChartChk">Chart</label>'
+        + '</div>'
+        + '<div class="elnDataTableWrap"><table class="elnDataTable">'
+        + '<thead><tr><th contenteditable="true">Item</th><th contenteditable="true">Value</th><th contenteditable="true">Unit</th></tr></thead>'
+        + '<tbody>'
+        + '<tr><td contenteditable="true">Viscosity</td><td contenteditable="true">4520</td><td contenteditable="true">cP</td></tr>'
+        + '<tr><td contenteditable="true">Cure</td><td contenteditable="true">96</td><td contenteditable="true">%</td></tr>'
+        + '<tr><td contenteditable="true">Haze</td><td contenteditable="true">0.8</td><td contenteditable="true">%</td></tr>'
+        + '</tbody></table></div>'
+        + '<div class="elnDataChart" style="display:none;"></div></div>';
       case 'fml': return '<div class="elnFmlHead"><i class="material-symbols-outlined">science</i>'
         + '<div class="elnFmlId">No formulation linked yet</div>'
         + '<a href="javascript:;" class="elnLinkChip" style="cursor:pointer;"><i class="material-symbols-outlined">link</i>Link…</a></div>';
@@ -877,10 +893,19 @@
         + '<label class="elnAttachDrop"><i class="material-symbols-outlined">upload_file</i>'
         + '<span>Drop files or <b>choose</b></span><input type="file" class="elnFileInput" multiple hidden></label>'
         + '<ul class="elnAttachList"></ul></div>';
-      case 'links': return '<div class="elnAttachBox">'
-        + '<div class="elnLinkAdd"><input type="text" class="elnLinkInput browser-default" placeholder="Paste a URL, then Add">'
-        + '<button type="button" class="elnLinkAddBtn">Add</button></div>'
-        + '<ul class="elnLinkList"></ul></div>';
+      case 'related': return '<div class="elnRelBox">'
+        + '<ul class="elnRelList">'
+        + '<li class="elnRelItem"><i class="material-symbols-outlined">science</i><span class="elnRelType">Material</span><a href="javascript:;" class="elnRelLink">[RM-0421] UV Photoinitiator</a><i class="material-symbols-outlined elnRelDel" title="Remove">close</i></li>'
+        + '<li class="elnRelItem"><i class="material-symbols-outlined">rocket_launch</i><span class="elnRelType">Project</span><a href="javascript:;" class="elnRelLink">[SN-26-0031] RGBOLED Display Adhesive</a><i class="material-symbols-outlined elnRelDel" title="Remove">close</i></li>'
+        + '</ul>'
+        + '<a href="javascript:;" class="elnLinkChip elnRelAddBtn"><i class="material-symbols-outlined">add</i>Add Item</a></div>';
+      case 'chem': return '<div class="elnChemBox">'
+        + '<ul class="elnChemList"></ul>'
+        + '<div class="elnChemEmptyLine"><i class="material-symbols-outlined">hexagon</i>No structures yet — add one or more from ChemStudio.</div>'
+        + '<div class="elnChemAdd">'
+        + '<a href="javascript:;" class="elnLinkChip elnChemOpen" style="margin-left:0;"><i class="material-symbols-outlined">add</i>Add New</a>'
+        + '<a href="javascript:;" class="elnLinkChip elnChemLink" style="margin-left:0;"><i class="material-symbols-outlined">library_add</i>Add Existing</a>'
+        + '</div></div>';
       default: return '<div class="elnModText">…</div>';
     }
   }
@@ -940,6 +965,12 @@
     var sp = document.querySelector('.leftAside .menuUl .menu-item[data-target="' + cardId + '"] span');
     if (sp) sp.textContent = text;
   }
+  // 좌측 메뉴 라벨 = short title(메모) > 카드 제목(헤더) > '(Untitled)'
+  function tocLabelFor(card) {
+    var memo = card.querySelector('.elnModMemo'), title = card.querySelector('.elnModTitle');
+    var short = memo ? memo.textContent.trim() : '', full = title ? title.textContent.trim() : '';
+    return short || full || '(Untitled)';
+  }
 
   // 카드 헤더 크롬: 제목 인라인 편집(span) + 메모(설명) 줄 — 모든 카드 공용, 1회만 적용
   function setupCardChrome(card) {
@@ -957,14 +988,11 @@
       span.setAttribute('contenteditable', 'true');
       span.spellcheck = false;
       span.title = 'Click to rename';
-      span.textContent = node ? node.textContent.trim() : 'Untitled';
+      span.textContent = node ? node.textContent.trim() : '';
       if (node) tit.replaceChild(span, node); else tit.appendChild(span);
-      span.addEventListener('input', function () { syncTocLabel(card.id, span.textContent.trim() || 'Untitled'); });
+      span.addEventListener('input', function () { syncTocLabel(card.id, tocLabelFor(card)); });
       span.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); span.blur(); } });
-      span.addEventListener('blur', function () {
-        if (!span.textContent.trim()) span.textContent = 'Untitled';
-        syncTocLabel(card.id, span.textContent.trim());
-      });
+      span.addEventListener('blur', function () { syncTocLabel(card.id, tocLabelFor(card)); });  // 빈 제목은 카드엔 그대로, 메뉴만 '(Untitled)'
     }
     // 2) 메모(설명) 줄 — 헤더 다음, 본문 앞
     if (!card.querySelector('.elnModMemo')) {
@@ -972,20 +1000,128 @@
       memo.className = 'elnModMemo';
       memo.setAttribute('contenteditable', 'true');
       memo.spellcheck = false;
-      memo.setAttribute('data-ph', 'Add a short description…');
+      memo.setAttribute('data-ph', 'Short title for left menu (optional)');
+      memo.addEventListener('input', function () { syncTocLabel(card.id, tocLabelFor(card)); });  // 메모 = 메뉴 short title
       tit.insertAdjacentElement('afterend', memo);
     }
+    setupIconPicker(card);   // 3) 헤더 lead 아이콘 클릭 → 아이콘/채움 변경
+  }
+  // 헤더 lead 아이콘 변경 — 후보 그리드 + Fill 토글(라이브 적용). 패밀리는 material-symbols-outlined 하나로 통일
+  var ICON_CANDIDATES = ['science', 'experiment', 'biotech', 'hexagon', 'blender', 'labs',
+    'summarize', 'notes', 'description', 'article', 'edit_note', 'table_chart', 'bar_chart', 'show_chart', 'timeline',
+    'hub', 'attach_file', 'link', 'draw', 'checklist', 'task_alt', 'fact_check', 'groups', 'inventory_2',
+    'category', 'rocket_launch', 'account_tree', 'sell', 'lightbulb', 'target', 'thermostat', 'water_drop',
+    'analytics', 'query_stats', 'monitoring', 'bubble_chart', 'scatter_plot', 'stacked_line_chart', 'calculate',
+    'schema', 'polyline', 'colorize', 'opacity', 'eco', 'factory', 'precision_manufacturing', 'engineering',
+    'build', 'tune', 'settings', 'key', 'verified', 'workspace_premium', 'emoji_objects', 'psychology',
+    'vaccines', 'clinical_notes', 'assignment', 'flag', 'bookmark', 'label', 'image', 'picture_as_pdf',
+    'event', 'bolt', 'whatshot', 'ac_unit', 'grade', 'recycling',
+    'cancel', 'linked_services', 'search_check', 'info', 'help', 'error'];
+  // 헤더 lead 아이콘 → 좌측 목차(menu-item) 아이콘 동기화(이름·채움)
+  function syncNavIcon(ic) {
+    var card = ic.closest('.cardBox'); if (!card) return;
+    var nav = document.querySelector('.leftAside .menu-item[data-target="' + card.id + '"] i'); if (!nav) return;
+    nav.textContent = (ic.textContent || '').trim();
+    nav.classList.toggle('fill', ic.classList.contains('fill'));
+  }
+  // 같은 문자열을 아이콘폰트 / 일반폰트로 각각 측정. 유효 ligature는 한 글리프로 합쳐져 텍스트보다 훨씬 좁아짐
+  function _measureW(name, asIcon) {
+    var p = document.createElement('span');
+    if (asIcon) p.className = 'material-symbols-outlined';
+    p.style.cssText = 'position:absolute;left:-9999px;top:-9999px;visibility:hidden;font-size:48px;line-height:1;white-space:nowrap;letter-spacing:normal;font-variation-settings:normal;' + (asIcon ? '' : 'font-family:sans-serif;');
+    p.textContent = name;
+    document.body.appendChild(p);
+    var w = p.offsetWidth; document.body.removeChild(p);
+    return w;
+  }
+  function isValidSymbol(name) {
+    if (!/^[a-z0-9_]{2,}$/.test(name)) return false;              // 형식: 소문자·숫자·언더스코어(2자+)
+    var iconW = _measureW(name, true), textW = _measureW(name, false);
+    return iconW > 0 && textW > 0 && iconW < textW * 0.7;        // 글리프(좁음) vs 텍스트(넓음)
+  }
+  function setupIconPicker(card) {
+    if (card.id === 'card_basic' || card.id === 'card_approval') return;   // 고정 시스템 카드(Overview·Approval)는 아이콘 변경 불가
+    var tit = card.querySelector('.cardTit2'); if (!tit) return;
+    var ic = tit.querySelector('i.left'); if (!ic || ic._iconWired) return;
+    ic._iconWired = true;
+    ic.classList.add('elnIconPick');
+    ic.title = 'Change icon';
+    ic.addEventListener('click', function (e) {
+      if (card.classList.contains('locked')) return;   // 잠금(view only) 시 변경 불가
+      e.stopPropagation();
+      openIconPicker(ic);
+    });
+  }
+  function openIconPicker(ic) {
+    var wrap = document.createElement('div'); wrap.className = 'elnIconPicker';
+    var grid = document.createElement('div'); grid.className = 'elnIconGrid hScroll';
+    var cur = (ic.textContent || '').trim();
+    ICON_CANDIDATES.filter(function (n, i, a) { return a.indexOf(n) === i; }).sort().forEach(function (name) {   // 중복 제거 + 알파벳 정렬
+      var b = document.createElement('button'); b.type = 'button';
+      b.className = 'elnIconOpt' + (name === cur ? ' on' : '');
+      b.title = name;
+      b.innerHTML = '<i class="material-symbols-outlined' + (ic.classList.contains('fill') ? ' fill' : '') + '">' + name + '</i>';
+      b.addEventListener('click', function () {
+        ic.textContent = name;
+        syncNavIcon(ic);                                          // 좌측 목차 아이콘도 동기화
+        grid.querySelectorAll('.elnIconOpt').forEach(function (x) { x.classList.remove('on'); });
+        b.classList.add('on');
+      });
+      grid.appendChild(b);
+    });
+    var filled = ic.classList.contains('fill');
+    var fillRow = document.createElement('div'); fillRow.className = 'elnIconFill';
+    fillRow.innerHTML = '<span class="lbl">Style</span><div class="elnIconFillToggle">'
+      + '<button type="button" class="elnFillOpt' + (!filled ? ' on' : '') + '" data-fill="0">Outline</button>'
+      + '<button type="button" class="elnFillOpt' + (filled ? ' on' : '') + '" data-fill="1">Fill</button></div>';
+    fillRow.querySelectorAll('.elnFillOpt').forEach(function (opt) {
+      opt.addEventListener('click', function () {
+        var on = opt.getAttribute('data-fill') === '1';
+        ic.classList.toggle('fill', on);
+        syncNavIcon(ic);                                          // 좌측 목차 아이콘 채움도 동기화
+        fillRow.querySelectorAll('.elnFillOpt').forEach(function (x) { x.classList.remove('on'); });
+        opt.classList.add('on');
+        grid.querySelectorAll('.elnIconOpt i').forEach(function (gi) { gi.classList.toggle('fill', on); });   // 미리보기도 채움 반영
+      });
+    });
+    // 전체 목록 access — 폰트에 codepoints가 없어 추출 불가하므로, 어떤 Material Symbol이든 이름을 직접 입력
+    var custom = document.createElement('div'); custom.className = 'elnIconCustom';
+    custom.innerHTML = '<input type="text" class="browser-default elnIconInput" placeholder="Type any Material Symbol name…">'
+      + '<span class="elnIconPreview" title="Apply"><i class="material-symbols-outlined' + (ic.classList.contains('fill') ? ' fill' : '') + '">' + esc((ic.textContent || '').trim() || 'add') + '</i></span>';
+    var hint = document.createElement('div'); hint.className = 'elnIconHint';
+    hint.innerHTML = 'Browse names at <a href="https://fonts.google.com/icons" target="_blank" rel="noopener" class="elnIconLink">fonts.google.com/icons</a>';
+    var input = custom.querySelector('.elnIconInput'), prevI = custom.querySelector('.elnIconPreview i');
+    function reflect() {                                          // 입력 반영 + 무효 감지(깨진 텍스트 대신 'block' 아이콘)
+      var v = input.value.trim();
+      if (!v) { prevI.textContent = 'add'; custom.classList.remove('invalid'); return; }
+      var ok = isValidSymbol(v);
+      custom.classList.toggle('invalid', !ok);
+      prevI.textContent = ok ? v : 'block';
+    }
+    input.addEventListener('input', reflect);
+    function applyCustom() {
+      var v = input.value.trim(); if (!v) return;
+      if (!isValidSymbol(v)) { ELN.toast('“' + v + '” is not a valid Material Symbol.', 'warn'); return; }
+      ic.textContent = v; syncNavIcon(ic);
+      grid.querySelectorAll('.elnIconOpt').forEach(function (x) { x.classList.remove('on'); });
+      ELN.toast('Icon set: ' + v, 'ok');
+    }
+    input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); applyCustom(); } });
+    custom.querySelector('.elnIconPreview').addEventListener('click', applyCustom);
+    wrap.appendChild(grid); wrap.appendChild(custom); wrap.appendChild(hint); wrap.appendChild(fillRow);
+    ELN.popover({ anchor: ic, content: wrap, width: 282 });
   }
 
   var modSeq = 0;
   // after = 이 카드 다음에 삽입할 기준 카드(null이면 맨 끝 — 상시 + 블록 앞)
-  function addNoteModule(t, after) {
+  function addNoteModule(t, after, silent) {
     var article = document.getElementById('tab_ov');
     if (!article) return;
     var id = 'card_mod_' + (++modSeq);
     var sec = document.createElement('section');
     sec.className = 'cardBox animate__animated animate__fadeIn mt10';
     sec.id = id;
+    sec.setAttribute('data-modtype', t.key);   // 템플릿 캡처용 — 이 카드의 모듈 타입
     var tit = document.createElement('div');
     tit.className = 'cardTit2';
     var ic = document.createElement('i'); ic.className = 'material-symbols-outlined left'; ic.textContent = t.icon;
@@ -995,6 +1131,8 @@
     var body = document.createElement('div'); body.className = 'elnBasic';
     body.innerHTML = moduleSampleBody(t.key);
     wireModuleBody(t.key, body);   // 첨부/링크 모듈이면 인스턴스 배선
+    body.querySelectorAll('textarea').forEach(autoGrowTextarea);   // 추가된 textarea 초기 높이
+
     sec.appendChild(body);
     if (after && after.parentNode === article) article.insertBefore(sec, after.nextSibling);
     else article.insertBefore(sec, document.getElementById('elnAddEnd'));
@@ -1015,12 +1153,11 @@
     }
     refreshDividers();
     if (typeof initAllHBorderTableOverlays === 'function') { try { initAllHBorderTableOverlays(); } catch (e) {} }
-    ELN.toast('Module "' + t.title + '" added.', 'ok');
-    sec.scrollIntoView({ behavior: 'smooth', block: 'center' });
+    if (!silent) { ELN.toast('Module "' + t.title + '" added.', 'ok'); sec.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
   }
 
   // 모듈 픽커 — 모달 대신 누른 자리에 앵커되는 popover(기존 8종 그리드 재사용)
-  function openModulePicker(anchor, after) {
+  function openModulePicker(anchor, after, ev) {
     var grid = document.createElement('div'); grid.className = 'elnModGrid';
     MODULE_TYPES.forEach(function (t) {
       var item = document.createElement('div'); item.className = 'elnModType';
@@ -1033,7 +1170,8 @@
       item.addEventListener('click', function () { ref.close(); addNoteModule(t, after); });
       grid.appendChild(item);
     });
-    var ref = ELN.popover({ anchor: anchor, content: grid, width: 400 });
+    var ref = ev ? ELN.popover({ atPointer: { x: ev.clientX, y: ev.clientY }, content: grid, width: 400 })
+                 : ELN.popover({ anchor: anchor, content: grid, width: 400 });
   }
 
   // 카드 사이 hover '+' 라인 — Notion식 위치 지정 삽입. 추가/삭제 때마다 재배치.
@@ -1041,14 +1179,14 @@
     var article = document.getElementById('tab_ov');
     if (!article) return;
     article.querySelectorAll(':scope > .elnModDivider').forEach(function (d) { d.remove(); });
-    var cards = article.querySelectorAll(':scope > .cardBox');
+    var cards = article.querySelectorAll(':scope > .cardBox:not(#card_approval)');   // Approval 카드는 divider 대상 제외
     cards.forEach(function (card, i) {
       if (i === cards.length - 1) return; // 마지막 카드 뒤는 상시 + 블록이 담당
       var div = document.createElement('div');
       div.className = 'elnModDivider';
       div.title = 'Insert module here';
-      div.innerHTML = '<span class="pl"><i class="material-symbols-outlined">add</i></span>';
-      div.addEventListener('click', function () { openModulePicker(div, card); });
+      div.innerHTML = '<span class="pl z-depth-1"><i class="material-symbols-outlined">add</i></span>';
+      div.addEventListener('click', function (e) { openModulePicker(div, card, e); });   // 포인터 위치 추종
       article.insertBefore(div, card.nextSibling);
     });
   }
@@ -1061,12 +1199,14 @@
     var end = document.createElement('div');
     end.id = 'elnAddEnd'; end.className = 'elnAddEnd';
     end.innerHTML = '<i class="material-symbols-outlined">add</i>Add module';
-    end.addEventListener('click', function () { openModulePicker(end, null); });
-    article.appendChild(end);
+    end.addEventListener('click', function (e) { openModulePicker(end, null, e); });   // 포인터 위치 추종
+    var apprCard = document.getElementById('card_approval');
+    if (apprCard) article.insertBefore(end, apprCard); else article.appendChild(end);   // '+Add'·모듈은 Approval 카드 '위'에
     // 좌측 버튼(보조 진입점) — popover 픽커, 맨 끝에 추가
     btn.addEventListener('click', function () { openModulePicker(btn, null); });
-    // 모든 카드(Overview 포함) 헤더에 자물쇠 + 제목 편집/메모 주입.
+    // 모든 카드(Overview 포함) 헤더에 자물쇠 + 제목 편집/메모 주입. (Approval 카드는 시스템 섹션 — 제외)
     document.querySelectorAll('.contArea article > .cardBox').forEach(function (card) {
+      if (card.id === 'card_approval') return;
       injectLockBtn(card);
       if (card.id !== 'card_basic') injectDeleteBtn(card);   // Overview(필수 노트)는 삭제 제외
       setupCardChrome(card);
@@ -1084,6 +1224,269 @@
   }
   document.addEventListener('DOMContentLoaded', initModuleSystem);
 
+  /* ── 시작 템플릿 — 초기 구조(?tmpl=)·교체·저장 통합. 핵심: realizeTemplate(현재→타깃 재조정) ── */
+  var MY_TMPL_KEY = 'eln.myTemplates';
+  function loadMyTemplates() { try { return JSON.parse(localStorage.getItem(MY_TMPL_KEY) || '[]'); } catch (e) { return []; } }
+  function saveMyTemplates(arr) { try { localStorage.setItem(MY_TMPL_KEY, JSON.stringify(arr)); } catch (e) {} }
+  var STATIC_SECTION = { card_basic: 'overview', card_fml: 'formulation', card_concl: 'conclusion' };
+  var MODULE_KEYS = ['editor', 'table', 'fml', 'related', 'attach', 'chem'];
+  // Public 템플릿 정의(pop 측) — sections는 [{type,label}]
+  var PUBLIC_TEMPLATES = [
+    { key: 'empty',       icon: 'description', name: 'Blank',       sections: [{ type: 'overview', label: 'Overview' }] },
+    { key: 'general',     icon: 'note',        name: 'General',     sections: [{ type: 'overview', label: 'Overview' }, { type: 'editor', label: 'Notes' }] },
+    { key: 'formulation', icon: 'science',     name: 'Formulation', sections: [{ type: 'overview', label: 'Overview' }, { type: 'formulation', label: 'Formulation' }, { type: 'conclusion', label: 'Conclusion' }] }
+  ];
+  function templateByKey(key) { return PUBLIC_TEMPLATES.concat(loadMyTemplates()).filter(function (t) { return t.key === key; })[0]; }
+  function templateSections(key) { var t = templateByKey(key); return (t && t.sections) || []; }
+  // 정적 섹션(Formulation/Conclusion) 표시·숨김(데이터 보존 — 제거 대신 hide) + 좌측 네비 동기화
+  // 현재 노트의 섹션 구성을 [{type,label}] 순서대로 캡처(데이터 제외). 제목은 .elnModTitle(아이콘과 분리된 깨끗한 텍스트)
+  function captureStructure() {
+    var out = [];
+    document.querySelectorAll('#tab_ov > .cardBox').forEach(function (card) {
+      var type = STATIC_SECTION[card.id] || card.getAttribute('data-modtype');
+      if (!type) return;
+      var titEl = card.querySelector('.elnModTitle');
+      var label = titEl ? (titEl.textContent || '').trim() : '';
+      if (!label) label = type.charAt(0).toUpperCase() + type.slice(1);
+      out.push({ type: type, label: label });
+    });
+    return out;
+  }
+  function removeSection(id) {                                   // 카드 + 좌측 네비 함께 제거
+    var card = document.getElementById(id); if (card) card.remove();
+    var nav = document.querySelector('.menu-item[data-target="' + id + '"]'); if (nav) nav.remove();
+  }
+  // 현재 구조를 타깃 템플릿 구조로 재조정. Overview·겹치는 동적 모듈은 유지(데이터 보존),
+  // 타깃에 없는 섹션은 제거(정적 리치카드는 재생성 불가 → 한 번 빠지면 그 세션에선 복구 안 됨),
+  // 타깃에만 있는 동적 모듈은 빈 상태로 추가. 끝에 divider 재배치. {added,removed} 반환
+  function realizeTemplate(key) {
+    var target = templateSections(key);
+    if (!target.length) return { added: 0, removed: 0 };
+    var targetTypes = target.map(function (s) { return s.type; });
+    var summary = { added: 0, removed: 0 };
+    ['card_fml', 'card_concl'].forEach(function (id) {           // 정적 카드: 타깃에 없으면 제거
+      if (targetTypes.indexOf(STATIC_SECTION[id]) >= 0) return;
+      if (document.getElementById(id)) { removeSection(id); summary.removed++; }
+    });
+    var present = {};                                           // 동적 모듈 재조정
+    document.querySelectorAll('#tab_ov > .cardBox').forEach(function (card) {
+      if (STATIC_SECTION[card.id]) return;
+      var type = card.getAttribute('data-modtype'); if (!type) return;
+      if (targetTypes.indexOf(type) >= 0) present[type] = true; // 겹침 → 유지(데이터 보존)
+      else { card.remove(); summary.removed++; }                // 타깃에 없음 → 제거
+    });
+    target.forEach(function (s) {                               // 타깃에만 있는 동적 모듈 추가(조용히)
+      if (s.type === 'overview' || MODULE_KEYS.indexOf(s.type) < 0 || present[s.type]) return;
+      var mt = MODULE_TYPES.filter(function (m) { return m.key === s.type; })[0];
+      if (mt) { addNoteModule({ key: mt.key, icon: mt.icon, title: s.label || mt.title }, null, true); present[s.type] = true; summary.added++; }
+    });
+    refreshDividers();   // 카드 추가/제거 후 섹션 사이 '+' 정리(제거만 한 경우에도 orphan divider 제거)
+    return summary;
+  }
+  function initTemplate() {                                     // 초기 로드: ?tmpl= 있으면 그 구조로
+    var tmpl = '';
+    try { tmpl = new URLSearchParams(location.search).get('tmpl') || ''; } catch (e) {}
+    if (tmpl) realizeTemplate(tmpl);
+  }
+  document.addEventListener('DOMContentLoaded', initTemplate);  // initModuleSystem(elnAddEnd·addNoteModule) 이후 실행
+  // 두 구조가 완전히 동일한지(타입·라벨 순서까지) — 중복 저장 방지용
+  function sectionsEqual(a, b) {
+    if (a.length !== b.length) return false;
+    for (var i = 0; i < a.length; i++) { if (a[i].type !== b[i].type || a[i].label !== b[i].label) return false; }
+    return true;
+  }
+  // "Save template" — 현재 구조에 이름 붙여 My Templates(localStorage, list와 공유)에 저장.
+  // 구조가 완전히 동일한 템플릿이 이미 있으면 저장 중단(실제 구현 시 서버측에서도 동일 체크 권장)
+  function saveCurrentAsTemplate() {
+    var sections = captureStructure();
+    var dup = loadMyTemplates().filter(function (t) { return sectionsEqual(t.sections || [], sections); })[0];
+    if (dup) { ELN.toast('An identical template already exists: “' + dup.name + '”. Not saved.', 'warn'); return; }
+    var input = document.createElement('input');
+    input.type = 'text'; input.className = 'browser-default'; input.placeholder = 'Template name (e.g. UV-cure workflow)';
+    ELN.modal({
+      title: 'Save as template', icon: 'bookmark_add', body: input,
+      actions: [
+        { label: 'Cancel', type: '' },
+        { label: 'Save', type: 'hViva', onClick: function () {
+          var name = (input.value || '').trim();
+          if (!name) { ELN.toast('Enter a template name.', 'warn'); return true; }   // 빈 이름 — 모달 유지
+          var arr = loadMyTemplates();
+          arr.unshift({ key: 'my_' + Date.now(), name: name, icon: 'bookmark', custom: true, sections: sections });
+          saveMyTemplates(arr);
+          ELN.toast('Template “' + name + '” saved (' + sections.length + ' sections).', 'ok');
+        } }
+      ]
+    });
+    setTimeout(function () { input.focus(); }, 60);
+  }
+  // "Swap template" — 현재 노트를 다른 템플릿으로 교체(Overview·겹침 유지). 픽커 모달
+  function openTemplateSwitcher() {
+    var wrap = document.createElement('div'); wrap.className = 'elnTmplPicker';
+    function card(t) {
+      var chips = (t.sections || []).map(function (s) { var lbl = (typeof s === 'string') ? s : (s.label || s.type); return '<span class="elnTmplChip">' + esc(lbl) + '</span>'; }).join('');
+      return '<button type="button" class="elnTmplCard" data-key="' + esc(t.key) + '">'
+        + '<div class="elnTmplCardTop"><i class="material-symbols-outlined">' + esc(t.icon || 'description') + '</i><span class="elnTmplName">' + esc(t.name) + '</span></div>'
+        + '<div class="elnTmplChips">' + chips + '</div></button>';
+    }
+    var mine = loadMyTemplates();
+    wrap.innerHTML = '<div class="elnTmplSwitchNote"><i class="material-symbols-outlined">info</i>Overview and overlapping sections are kept with their data; non-matching sections are removed.</div>'
+      + (mine.length ? '<div class="elnTmplGroupLabel">My Templates</div><div class="elnTmplGrid">' + mine.map(card).join('') + '</div>' : '')
+      + '<div class="elnTmplGroupLabel">Public Templates</div><div class="elnTmplGrid">' + PUBLIC_TEMPLATES.map(card).join('') + '</div>';
+    var ref = ELN.modal({ title: 'Swap template', icon: 'swap_horiz', body: wrap, actions: [ { label: 'Cancel', type: '' } ] });
+    wrap.querySelectorAll('.elnTmplCard').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        var key = btn.getAttribute('data-key'), t = templateByKey(key);
+        ref.close();
+        var s = realizeTemplate(key);
+        ELN.toast('Swapped to ' + (t ? t.name : key) + ' — data kept · +' + s.added + ' / −' + s.removed + ' section(s).', 'ok');
+      });
+    });
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    var save = document.getElementById('elnSaveTemplate');
+    if (save) save.addEventListener('click', function (e) { e.preventDefault(); saveCurrentAsTemplate(); });
+    var swap = document.getElementById('elnChangeTemplate');
+    if (swap) swap.addEventListener('click', function (e) { e.preventDefault(); openTemplateSwitcher(); });
+  });
+
+  /* ── 전자결재(Approval/결재선) — MAPIS 결재 패턴. 상신·승인·반려·반송·취소, 최종 승인 시 노트 잠금·불변 ── */
+  function nowStamp() { try { return new Date().toISOString().slice(0, 16).replace('T', ' '); } catch (e) { return '—'; } }
+  var ELN_APPROVAL = {
+    status: 'draft',   // draft | pending | approved | rejected
+    cursor: 0,         // 현재 결재 단계(line 인덱스)
+    line: [
+      { role: 'Drafter · 기안',  name: 'J.P. Kim',  state: 'pending', date: '' },
+      { role: 'Reviewer · 검토', name: 'S.Y. Park', state: 'pending', date: '' },
+      { role: 'Approver · 승인', name: 'M.J. Lee',  state: 'pending', date: '' }
+    ]
+  };
+  var APPR_BADGE = {
+    pending:  { t: '결재중 · In approval', cls: 'pending' },
+    approved: { t: '승인완료 · Approved',  cls: 'approved' },
+    rejected: { t: '반려 · Rejected',      cls: 'rejected' }
+  };
+  var APPR_STATE = {
+    pending:  { t: 'Pending',  cls: 'pending' }, drafted:  { t: 'Drafted', cls: 'drafted' },
+    approved: { t: 'Approved', cls: 'approved' }, rejected: { t: 'Rejected', cls: 'rejected' }, returned: { t: 'Returned', cls: 'returned' }
+  };
+  // 최종 승인 시 카드 잠금(toast 없이) — toggleCardLock의 잠금 동작 복제
+  function lockCardSilently(card) {
+    if (card.classList.contains('locked')) return;
+    card.classList.add('locked');
+    var lock = card.querySelector('.elnModLock'); if (lock) { var ic = lock.querySelector('i'); if (ic) ic.textContent = 'lock'; }
+    card.querySelectorAll('.elnBasic input, .elnBasic textarea').forEach(function (el) { el.readOnly = true; });
+    card.querySelectorAll('.elnBasic select').forEach(function (el) { el.disabled = true; });
+    card.querySelectorAll('.elnModTitle, .elnModMemo').forEach(function (el) { el.setAttribute('contenteditable', 'false'); });
+  }
+  function lockNoteApproved() {
+    document.querySelectorAll('#tab_ov > .cardBox').forEach(function (card) { if (card.id !== 'card_approval') lockCardSilently(card); });   // Approval 카드 외 전 섹션 잠금·불변
+    document.body.classList.add('elnApproved');                                  // 구조 변경 affordance 차단(CSS)
+  }
+  function renderApprovalBadge() {
+    var el = document.getElementById('elnApprovalBadge'); if (!el) return;
+    if (ELN_APPROVAL.status === 'draft') { el.style.display = 'none'; return; }
+    var b = APPR_BADGE[ELN_APPROVAL.status] || APPR_BADGE.pending;
+    var icon = ELN_APPROVAL.status === 'approved' ? 'verified' : (ELN_APPROVAL.status === 'rejected' ? 'cancel' : 'pending_actions');
+    el.className = 'elnApprBadge ' + b.cls;
+    el.innerHTML = '<i class="material-symbols-outlined">' + icon + '</i>' + esc(b.t);
+    el.style.display = '';
+  }
+  // 결재선 + 액션을 하단 고정 Approval 카드(#elnApprCardBody)에 인라인 렌더
+  function renderApprovalCard() {
+    var body = document.getElementById('elnApprCardBody'); if (!body) return;
+    function rowHtml(ln, i) {
+      var st = APPR_STATE[ln.state] || APPR_STATE.pending;
+      var cur = ELN_APPROVAL.status === 'pending' && i === ELN_APPROVAL.cursor;
+      return '<tr' + (cur ? ' class="cur"' : '') + '><td>' + esc(ln.role) + '</td><td>' + esc(ln.name) + '</td>'
+        + '<td class="d">' + (ln.date || '—') + '</td><td><span class="elnApprChip ' + st.cls + '">' + st.t + '</span></td></tr>';
+    }
+    function actionsHtml() {
+      var s = ELN_APPROVAL.status;
+      if (s === 'draft') return '<button type="button" class="elnApprAct go" data-act="submit">상신 Submit</button>';
+      if (s === 'approved') return '<div class="elnApprDone"><i class="material-symbols-outlined">verified</i>최종 승인 완료 — 노트가 잠겨 불변 처리되었습니다.</div>';
+      if (s === 'rejected') return '<button type="button" class="elnApprAct go" data-act="resubmit">재상신 Re-submit</button>'
+        + '<button type="button" class="elnApprAct ghost" data-act="cancel">취소 Cancel</button>';
+      return '<div class="elnApprAsName">As <b>' + esc(ELN_APPROVAL.line[ELN_APPROVAL.cursor].name) + '</b> (' + esc(ELN_APPROVAL.line[ELN_APPROVAL.cursor].role) + ')</div>'
+        + '<button type="button" class="elnApprAct go" data-act="approve">승인 Approve</button>'
+        + '<button type="button" class="elnApprAct warn" data-act="return">반송 Return</button>'
+        + '<button type="button" class="elnApprAct danger" data-act="reject">반려 Reject</button>'
+        + '<button type="button" class="elnApprAct ghost" data-act="cancel">취소 Cancel</button>';
+    }
+    body.innerHTML = '<table class="elnApprTable"><thead><tr><th>Approval Type</th><th>Name</th><th>Date</th><th>Status</th></tr></thead>'
+      + '<tbody>' + ELN_APPROVAL.line.map(rowHtml).join('') + '</tbody></table>'
+      + '<div class="elnApprActions">' + actionsHtml() + '</div>';
+    body.querySelectorAll('.elnApprAct').forEach(function (btn) {
+      btn.addEventListener('click', function () { doApprovalAction(btn.getAttribute('data-act')); });
+    });
+  }
+  function doApprovalAction(act) {
+    var A = ELN_APPROVAL;
+    if (act === 'submit' || act === 'resubmit') {
+      A.line.forEach(function (l) { l.state = 'pending'; l.date = ''; });
+      A.line[0].state = 'drafted'; A.line[0].date = nowStamp(); A.status = 'pending'; A.cursor = 1;
+      ELN.toast('상신되었습니다 — 결재 진행중.', 'ok');
+    } else if (act === 'approve') {
+      A.line[A.cursor].state = 'approved'; A.line[A.cursor].date = nowStamp(); A.cursor++;
+      if (A.cursor >= A.line.length) { A.status = 'approved'; lockNoteApproved(); ELN.toast('최종 승인 — 노트 잠금·불변.', 'ok'); }
+      else ELN.toast('승인 — 다음 결재자에게 이관.', 'ok');
+    } else if (act === 'return') {
+      A.line[A.cursor].state = 'returned'; A.cursor = Math.max(1, A.cursor - 1); A.line[A.cursor].state = 'pending'; A.line[A.cursor].date = '';
+      ELN.toast('반송 — 이전 단계로.', 'info');
+    } else if (act === 'reject') {
+      A.line[A.cursor].state = 'rejected'; A.status = 'rejected'; ELN.toast('반려되었습니다.', 'warn');
+    } else if (act === 'cancel') {
+      A.line.forEach(function (l) { l.state = 'pending'; l.date = ''; }); A.status = 'draft'; A.cursor = 0;
+      ELN.toast('상신 취소 — 임시저장.', 'info');
+    }
+    renderApprovalBadge();
+    renderApprovalCard();
+  }
+  document.addEventListener('DOMContentLoaded', function () { renderApprovalCard(); renderApprovalBadge(); });   // 하단 고정 카드 초기 렌더
+
+  /* ── 포스트잇 — 섹션에 우클릭으로 부착(섹션 상대좌표 → reflow에 강함). 드래그 이동·접기·삭제. 저장은 실구현에서(프로토타입 제외) ── */
+  function addPostit(card, clientX, clientY) {
+    card.classList.add('elnPostitHost');   // 섹션을 positioning context로(상대좌표 기준계)
+    var rect = card.getBoundingClientRect(), W = 200;
+    var x = Math.max(4, Math.min(clientX - rect.left, card.clientWidth - W - 4));
+    var y = Math.max(4, Math.min(clientY - rect.top, card.clientHeight - 30 - 4));
+    var p = document.createElement('div'); p.className = 'elnPostit';
+    p.style.left = x + 'px'; p.style.top = y + 'px'; p.style.width = W + 'px';
+    p.innerHTML = '<div class="elnPostitBar"><i class="elnPostitGrip material-symbols-outlined">drag_indicator</i>'
+      + '<a href="javascript:;" class="elnPostitCollapse" title="Collapse"><i class="material-symbols-outlined">expand_less</i></a>'
+      + '<a href="javascript:;" class="elnPostitClose" title="Remove"><i class="material-symbols-outlined">close</i></a></div>'
+      + '<div class="elnPostitBody" contenteditable="true" data-ph="Note…"></div>';
+    card.appendChild(p);
+    p.querySelector('.elnPostitCollapse').addEventListener('click', function () {
+      var col = p.classList.toggle('collapsed');
+      this.querySelector('i').textContent = col ? 'expand_more' : 'expand_less';
+    });
+    p.querySelector('.elnPostitClose').addEventListener('click', function () { p.remove(); });
+    var bar = p.querySelector('.elnPostitBar');
+    bar.addEventListener('mousedown', function (e) {
+      if (e.target.closest('.elnPostitCollapse, .elnPostitClose')) return;
+      e.preventDefault();
+      var sx = e.clientX, sy = e.clientY, ox = parseFloat(p.style.left) || 0, oy = parseFloat(p.style.top) || 0;
+      var cw = card.clientWidth, ch = card.clientHeight, pw = p.offsetWidth, ph = p.offsetHeight;
+      function mv(ev) {
+        p.style.left = Math.max(2, Math.min(ox + (ev.clientX - sx), cw - pw - 2)) + 'px';
+        p.style.top = Math.max(2, Math.min(oy + (ev.clientY - sy), ch - ph - 2)) + 'px';
+      }
+      function up() { document.removeEventListener('mousemove', mv); document.removeEventListener('mouseup', up); }
+      document.addEventListener('mousemove', mv); document.addEventListener('mouseup', up);
+    });
+    setTimeout(function () { try { p.querySelector('.elnPostitBody').focus(); } catch (e) {} }, 30);
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    var article = document.getElementById('tab_ov'); if (!article) return;
+    article.addEventListener('contextmenu', function (e) {
+      // 편집/인터랙티브 요소 위에선 네이티브 메뉴 유지
+      if (e.target.closest('input, textarea, [contenteditable="true"], .note-editable, a, button, .elnPostit, .elnModLock, .elnModDel')) return;
+      var card = e.target.closest('.cardBox'); if (!card) return;
+      e.preventDefault();
+      addPostit(card, e.clientX, e.clientY);
+    });
+  });
+
   /* ── Notebook 지정(No Notebook → 노트북 선택) — Overview 메타 클릭 → popover ── */
   // 워크스페이스(apis_eln_list.html)의 NB 키와 동일하게 유지(프로토타입 목업 데이터)
   var NOTEBOOKS = [
@@ -1098,12 +1501,9 @@
     var v = document.getElementById('elnNbMeta');
     if (!v) return;
     v.setAttribute('data-nb', name);
-    v.innerHTML = '';
-    v.appendChild(document.createTextNode(name));
-    var ic = document.createElement('i');
-    ic.className = 'material-symbols-outlined'; ic.textContent = 'expand_more';
-    v.appendChild(ic);
-    v.classList.toggle('unfiled', name === 'No Notebook');
+    v.classList.toggle('empty', name === 'No Notebook');
+    var link = v.querySelector('.elnNbLink');
+    if (link) link.textContent = name;
   }
 
   function openNotebookPicker(anchor) {
@@ -1164,7 +1564,8 @@
     try { key = new URLSearchParams(location.search).get('nb'); } catch (e) {}
     var nb = NOTEBOOKS.filter(function (n) { return n.key === key; })[0];
     setNotebookMeta(nb ? nb.name : (v.getAttribute('data-nb') || 'RGBOLED Adhesive'));
-    v.addEventListener('click', function () { openNotebookPicker(v); });
+    var chg = v.querySelector('.elnNbChange');
+    if (chg) chg.addEventListener('click', function (e) { e.preventDefault(); openNotebookPicker(chg); });   // 값은 무이벤트(plain text), swap만 dropdown 픽커
   }
   document.addEventListener('DOMContentLoaded', initNotebookMeta);
 
@@ -1258,6 +1659,62 @@
   }
   document.addEventListener('DOMContentLoaded', initProjectMeta);
 
+  /* ── 상위 노트(Derived from) 지정 — 모든 노트에서 검색 선택. 계보는 notebook/project와 무관, 부모만 따라감 ── */
+  function setParentMeta(code) {
+    var val = document.getElementById('elnParentVal');
+    if (!val) return;
+    var idx = lineageIndex(), p = code ? idx[code] : null;
+    val.setAttribute('data-parent', code || '');
+    val.classList.toggle('empty', !code);
+    var link = val.querySelector('.elnParentLink');
+    if (link) link.textContent = p ? ('[' + p.code + '] ' + p.title) : 'None (root note)';
+    var cur = idx[CURRENT_CODE];
+    if (cur) { if (code) cur.parent = code; else delete cur.parent; }
+    renderLineage();   // parent 갱신 → History 그래프 재계산
+  }
+  function descendantsOf(code) {
+    var out = {};
+    (function walk(c) { lineageChildren(c).forEach(function (k) { if (!out[k.code]) { out[k.code] = 1; walk(k.code); } }); })(code);
+    return out;
+  }
+  function openParentPicker(anchor) {
+    var val = document.getElementById('elnParentVal');
+    var cur = val ? (val.getAttribute('data-parent') || '') : '';
+    var blocked = descendantsOf(CURRENT_CODE); blocked[CURRENT_CODE] = 1;   // 자기 자신·자손 제외(순환 방지)
+    var wrap = document.createElement('div'); wrap.className = 'elnPickWrap';
+    var search = document.createElement('input');
+    search.type = 'text'; search.className = 'browser-default elnPickSearch'; search.placeholder = 'Search notes…';
+    var list = document.createElement('div'); list.className = 'elnPickList';
+    function render(q) {
+      list.innerHTML = '';
+      var ql = (q || '').toLowerCase();
+      if (!ql || 'none root'.indexOf(ql) >= 0) {
+        var none = document.createElement('div'); none.className = 'elnPickRow elnPickNone' + (!cur ? ' cur' : ''); none.textContent = 'None (root note)';
+        none.addEventListener('click', function () { ref.close(); if (!cur) return; setParentMeta(''); ELN.toast('Parent removed — root note.', 'info'); });
+        list.appendChild(none);
+      }
+      var cands = LINEAGE_NOTES.filter(function (n) { return !blocked[n.code] && (n.code + ' ' + n.title).toLowerCase().indexOf(ql) >= 0; });
+      cands.forEach(function (n) {
+        var it = document.createElement('div'); it.className = 'elnPickRow' + (n.code === cur ? ' cur' : '');
+        it.textContent = '[' + n.code + '] ' + n.title;
+        it.addEventListener('click', function () { ref.close(); if (n.code === cur) return; setParentMeta(n.code); ELN.toast('Parent set to ' + n.code + '.', 'ok'); });
+        list.appendChild(it);
+      });
+      if (!cands.length && (ql && 'none root'.indexOf(ql) < 0)) { var em = document.createElement('div'); em.className = 'elnPickEmpty'; em.textContent = 'No notes match.'; list.appendChild(em); }
+    }
+    search.addEventListener('input', function () { render(search.value); });
+    wrap.appendChild(search); wrap.appendChild(list); render('');
+    var ref = ELN.popover({ anchor: anchor, content: wrap, width: 380 });
+    setTimeout(function () { search.focus(); }, 60);
+  }
+  function initParentMeta() {
+    var val = document.getElementById('elnParentVal');
+    if (!val) return;
+    var chg = val.querySelector('.elnParentChange');
+    if (chg) chg.addEventListener('click', function (e) { e.preventDefault(); openParentPicker(chg); });
+  }
+  document.addEventListener('DOMContentLoaded', initParentMeta);
+
   /* ── animate.css 진입 연출 1회성 처리 — 끝나면 클래스 제거 ── */
   // fadeInLeft(목차)·fadeIn(동적 모듈)은 최초 마운트 연출용. 끝난 뒤 클래스가 남으면
   // 이후 드래그 재정렬 등과 어수선하게 얽힘. animationend는 버블링 → document 한 곳에서 위임 정리.
@@ -1273,13 +1730,15 @@
 
   /* ── 좌측 목차 드래그 핸들 — hover 시 좌측 아이콘이 swap_vert(↑↓)로 바뀜. 그 아이콘 = sortable handle ── */
   function setupNavItem(li) {
-    if (!li || li.getAttribute('data-target') === 'card_basic') return; // Overview 고정 → 핸들 없음
-    var ic = li.querySelector('.material-symbols-outlined.left');
-    if (!ic || ic.classList.contains('elnNavHandle')) return;            // 이미 처리됨
-    ic.classList.add('elnNavHandle');
-    ic.dataset.icon = (ic.textContent || '').trim();                     // 원본 글리프 보관
-    li.addEventListener('mouseenter', function () { ic.textContent = 'swap_vert'; }); // PC에서 위아래 재정렬 = 직관적
-    li.addEventListener('mouseleave', function () { ic.textContent = ic.dataset.icon; });
+    var tgt = li && li.getAttribute('data-target');
+    if (!li || tgt === 'card_basic' || tgt === 'card_approval') return; // Overview·Approval 고정 → 핸들 없음
+    if (li.querySelector('.elnNavHandle')) return;                       // 이미 처리됨
+    // 좌측 아이콘·레이블은 건드리지 않고, 우측에 별도 드래그 핸들(absolute)을 띄움 → 레이블 레이아웃 영향 없음
+    var h = document.createElement('i');
+    h.className = 'material-symbols-outlined elnNavHandle';
+    h.textContent = 'swap_vert';
+    h.title = 'Drag to reorder';
+    li.appendChild(h);
   }
   function initNavHandles() {
     document.querySelectorAll('.leftAside .menuUl .menu-item').forEach(setupNavItem);
@@ -1314,6 +1773,7 @@
       var end = document.getElementById('elnAddEnd');
       var ids = pinBasicFirst($menu.children('.menu-item').map(function () { return $(this).attr('data-target'); }).get());
       ids.forEach(function (id) {
+        if (id === 'card_approval') return;             // 결재 카드는 최하단 고정(+Add 아래) — 이동 안 함
         var card = document.getElementById(id);
         if (card) article.insertBefore(card, end);
       });
@@ -1321,13 +1781,15 @@
 
     // 좌측 목차: Overview 항목 제외. 옮기면 카드가 따라옴.
     $menu.sortable({
-      items: '> .menu-item:not([data-target="card_basic"])',
-      handle: '.elnNavHandle',        // 좌측 아이콘만 드래그 손잡이
+      items: '> .menu-item:not([data-target="card_basic"]):not([data-target="card_approval"])',
+      axis: "y",
+      handle: '.elnNavHandle',        // 우측 별도 핸들(좌측 아이콘·레이블 불변)
       placeholder: 'elnSortPhMenu',
+      revert: 200,
       forcePlaceholderSize: true,
       tolerance: 'pointer',
       distance: 5,
-      opacity: 0.92,
+      opacity: 0.9,
       update: function () {
         syncCardsToMenu();
         if (typeof refreshDividers === 'function') refreshDividers();
@@ -1401,26 +1863,332 @@
     drop.addEventListener('drop', function (e) { e.preventDefault(); drop.classList.remove('drag'); addFiles(e.dataTransfer && e.dataTransfer.files); });
   }
 
-  // Links 모듈 본문 배선(URL 추가) — scope = 해당 모듈 본문
-  function wireLinkModule(scope) {
-    var addBtn = scope.querySelector('.elnLinkAddBtn');
-    var inp = scope.querySelector('.elnLinkInput');
-    var list = scope.querySelector('.elnLinkList');
-    if (!list) return;
-    function add() {
-      var url = normalizeUrl(inp && inp.value);
-      if (!url) { ELN.toast('Enter a URL first.', 'warn'); return; }
-      addUrlItem(list, url);
-      if (inp) inp.value = '';
-      ELN.toast('Link added.', 'ok');
+  // Related Items 모듈 — Material/Project/Note/URL 혼합 링크. scope = 모듈 본문
+  function wireRelatedModule(scope) {
+    var list = scope.querySelector('.elnRelList');
+    var addBtn = scope.querySelector('.elnRelAddBtn');
+    if (!list || !addBtn) return;
+    var TYPE_ICON = { Material: 'science', Project: 'rocket_launch', Note: 'description', URL: 'link' };
+    // 타입별 후보 풀(프로토타입 목업) — Project·Note는 기존 데이터 재사용
+    function poolFor(label) {
+      if (label === 'Material') return ['[RM-0421] UV Photoinitiator', '[RM-0532] Acrylic Monomer', '[RM-0210] Silica Filler (12 nm)', '[RM-0388] Silane Coupling Agent', '[RM-0145] Defoamer'];
+      if (label === 'Project') return (typeof PROJECTS !== 'undefined' ? PROJECTS : []);
+      if (label === 'Note') return LINEAGE_NOTES.map(function (n) { return '[' + n.code + '] ' + n.title; });
+      return [];
     }
-    if (addBtn) addBtn.addEventListener('click', add);
-    if (inp) inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); add(); } });
+    function addRow(label, text) {
+      var li = document.createElement('li'); li.className = 'elnRelItem';
+      li.innerHTML = '<i class="material-symbols-outlined">' + TYPE_ICON[label] + '</i><span class="elnRelType">' + label + '</span>'
+        + '<a href="javascript:;" class="elnRelLink">' + esc(text) + '</a><i class="material-symbols-outlined elnRelDel" title="Remove">close</i>';
+      li.querySelector('.elnRelDel').addEventListener('click', function () { li.remove(); });
+      list.appendChild(li);
+    }
+    list.querySelectorAll('.elnRelDel').forEach(function (d) {                 // 샘플 행 삭제 배선
+      d.addEventListener('click', function () { d.closest('.elnRelItem').remove(); });
+    });
+    // 2단계: 타입 선택 → 해당 타입 quick-search → 항목 선택
+    function openTypeSearch(label) {
+      var items = poolFor(label);
+      var wrap = document.createElement('div'); wrap.className = 'elnPickWrap';
+      var back = document.createElement('div'); back.className = 'elnPickBack';
+      back.innerHTML = '<i class="material-symbols-outlined">chevron_left</i>' + label;
+      var search = document.createElement('input'); search.type = 'text'; search.className = 'browser-default elnPickSearch'; search.placeholder = 'Search ' + label.toLowerCase() + '…';
+      var ul = document.createElement('div'); ul.className = 'elnPickList';
+      function render(q) {
+        ul.innerHTML = '';
+        var ql = (q || '').toLowerCase();
+        var matches = items.filter(function (s) { return s.toLowerCase().indexOf(ql) >= 0; });
+        if (!matches.length) { var em = document.createElement('div'); em.className = 'elnPickEmpty'; em.textContent = 'No ' + label.toLowerCase() + ' match.'; ul.appendChild(em); return; }
+        matches.forEach(function (s) {
+          var it = document.createElement('div'); it.className = 'elnPickRow'; it.textContent = s;
+          it.addEventListener('click', function () { ref.close(); addRow(label, s); ELN.toast(label + ' linked.', 'ok'); });
+          ul.appendChild(it);
+        });
+      }
+      back.addEventListener('click', function () { ref.close(); openAddMenu(); });   // 타입 메뉴로 되돌아가기
+      search.addEventListener('input', function () { render(search.value); });
+      wrap.appendChild(back); wrap.appendChild(search); wrap.appendChild(ul); render('');
+      var ref = ELN.popover({ anchor: addBtn, content: wrap, width: 380 });
+      setTimeout(function () { search.focus(); }, 60);
+    }
+    // 1단계: 타입 메뉴(URL은 검색 불필요 → 인라인)
+    function openAddMenu() {
+      var wrap = document.createElement('div'); wrap.className = 'elnRelMenu';
+      var urlRow = document.createElement('div'); urlRow.className = 'elnRelUrlRow';
+      var inp = document.createElement('input'); inp.type = 'text'; inp.className = 'browser-default'; inp.placeholder = 'Paste a URL…';
+      var ub = document.createElement('button'); ub.type = 'button'; ub.className = 'elnLinkAddBtn'; ub.textContent = 'Add';
+      function addUrl() { var u = normalizeUrl(inp.value); if (!u) { ELN.toast('Enter a URL first.', 'warn'); return; } ref.close(); addRow('URL', u); ELN.toast('Link added.', 'ok'); }
+      ub.addEventListener('click', addUrl);
+      inp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); addUrl(); } });
+      urlRow.appendChild(inp); urlRow.appendChild(ub); wrap.appendChild(urlRow);
+      ['Material', 'Project', 'Note'].forEach(function (label) {              // 타입 → 다음 단계(quick-search)
+        var b = document.createElement('div'); b.className = 'elnRelMenuItem';
+        b.innerHTML = '<i class="material-symbols-outlined">' + TYPE_ICON[label] + '</i>' + label + '<i class="material-symbols-outlined elnRelMenuChev">chevron_right</i>';
+        b.addEventListener('click', function () { ref.close(); openTypeSearch(label); });
+        wrap.appendChild(b);
+      });
+      var ref = ELN.popover({ anchor: addBtn, content: wrap, width: 260 });
+      setTimeout(function () { inp.focus(); }, 60);
+    }
+    addBtn.addEventListener('click', openAddMenu);
   }
-  // 모듈 본문 키별 추가 배선(첨부/링크 등)
+  // 모듈 본문 키별 추가 배선(첨부/Related)
   function wireModuleBody(key, body) {
     if (key === 'attach') wireFileModule(body);
-    else if (key === 'links') wireLinkModule(body);
+    else if (key === 'related') wireRelatedModule(body);
+    else if (key === 'chem') wireChemModule(body);
+    else if (key === 'editor') wireEditorModule(body);
+    else if (key === 'table') wireDataModule(body);
+  }
+  /* ── Data Table 모듈 — 편집 셀 + 행/열 추가 + Excel 붙여넣기(탭/줄바꿈 파싱) + 선택적 차트 ── */
+  function wireDataModule(body) {
+    var box = body.querySelector('.elnDataBox'); if (!box) return;
+    var table = box.querySelector('.elnDataTable');
+    function colCount() { return table.querySelector('thead tr').children.length; }
+    function newCell(tag, txt) { var c = document.createElement(tag); c.setAttribute('contenteditable', 'true'); c.textContent = txt || ''; return c; }
+    function addRow() { var tr = document.createElement('tr'); for (var i = 0; i < colCount(); i++) tr.appendChild(newCell('td')); table.querySelector('tbody').appendChild(tr); }
+    function addCol() {
+      table.querySelector('thead tr').appendChild(newCell('th', 'Col'));
+      table.querySelectorAll('tbody tr').forEach(function (tr) { tr.appendChild(newCell('td')); });
+    }
+    box.querySelectorAll('.elnDataBtn').forEach(function (b) {
+      b.addEventListener('click', function () { var a = b.getAttribute('data-act'); if (a === 'addRow') addRow(); else if (a === 'addCol') addCol(); if (chartOn()) renderChart(); });
+    });
+    // Excel 붙여넣기 — 포커스 셀부터 탭(열)·줄바꿈(행)으로 채움. 부족하면 행/열 자동 확장
+    table.addEventListener('paste', function (e) {
+      var txt = ((e.clipboardData || window.clipboardData) || {}).getData ? (e.clipboardData || window.clipboardData).getData('text/plain') : '';
+      if (!txt || (txt.indexOf('\t') < 0 && txt.indexOf('\n') < 0)) return;   // 단일 값은 기본 동작
+      e.preventDefault();
+      var grid = txt.replace(/\r/g, '').replace(/\n+$/, '').split('\n').map(function (r) { return r.split('\t'); });
+      var startCell = e.target.closest('td, th'); if (!startCell) return;
+      var startRow = startCell.closest('tr'), inHead = startRow.parentNode.tagName === 'THEAD';
+      var startCol = Array.prototype.indexOf.call(startRow.children, startCell);
+      var bodyRows = Array.prototype.slice.call(table.querySelectorAll('tbody tr'));
+      var startBodyIdx = inHead ? -1 : bodyRows.indexOf(startRow);
+      grid.forEach(function (cells, ri) {
+        var targetRow;
+        if (inHead && ri === 0) targetRow = table.querySelector('thead tr');
+        else {
+          var bi = inHead ? ri - 1 : startBodyIdx + ri;
+          while (bodyRows.length <= bi) { addRow(); bodyRows = Array.prototype.slice.call(table.querySelectorAll('tbody tr')); }
+          targetRow = bodyRows[bi];
+        }
+        cells.forEach(function (val, ci) {
+          var ti = startCol + ci;
+          while (targetRow.children.length <= ti) addCol();
+          targetRow.children[ti].textContent = val;
+        });
+      });
+      if (chartOn()) renderChart();
+      ELN.toast('Excel 데이터 붙여넣기 완료 (' + grid.length + '행).', 'ok');
+    });
+    // 차트 토글 + 렌더(첫 열=라벨, 첫 숫자열=값). Highcharts 있으면 컬럼차트, 없으면 placeholder
+    var chk = box.querySelector('.elnDataChartChk'), chartBox = box.querySelector('.elnDataChart');
+    function chartOn() { return chk && chk.checked; }
+    function renderChart() {
+      var rows = Array.prototype.slice.call(table.querySelectorAll('tbody tr'));
+      var cats = [], vals = [];
+      rows.forEach(function (tr) {
+        var c = tr.children; if (!c.length) return;
+        cats.push((c[0].textContent || '').trim());
+        var num = NaN; for (var i = 1; i < c.length; i++) { var n = parseFloat((c[i].textContent || '').replace(/,/g, '')); if (!isNaN(n)) { num = n; break; } }
+        vals.push(isNaN(num) ? 0 : num);
+      });
+      if (window.Highcharts) {
+        chartBox.innerHTML = '';
+        Highcharts.chart(chartBox, {
+          chart: { type: 'column', height: 220, backgroundColor: 'transparent' }, title: { text: null }, credits: { enabled: false }, legend: { enabled: false },
+          xAxis: { categories: cats, lineColor: '#d9cfc2' }, yAxis: { title: { text: null }, gridLineColor: '#eee6da' },
+          series: [{ data: vals, color: '#A47864' }]
+        });
+      } else { chartBox.innerHTML = '<div class="elnModChartPh"><i class="material-symbols-outlined">bar_chart</i>Chart (Highcharts 미로드)</div>'; }
+    }
+    if (chk) chk.addEventListener('change', function () { chartBox.style.display = chk.checked ? '' : 'none'; if (chk.checked) renderChart(); });
+    // 셀 편집 시 차트 갱신(차트 켜져 있을 때만)
+    table.addEventListener('input', function () { if (chartOn()) renderChart(); });
+  }
+  /* 붙여넣기(Excel 등) 저장 전략 — 별도 'Excel Paste' 모듈은 제거(Editor가 붙여넣기 UX를 커버).
+     실제 구현 시 참고: Summernote는 붙여넣은 이미지를 base64로 HTML(nvarchar(max))에 인라인하므로
+     - 이미지: onImageUpload 훅에서 파일 스토리지로 업로드 → <img src=파일URL>로 치환(HTML 비대화 방지)
+     - 표: 붙여넣은 <table> HTML을 그대로 nvarchar(max)에 보관(이미 그렇게 동작) */
+  // Editor 모듈 — Summernote(lite) 초기화. 미로드 시 contenteditable 폴백
+  function wireEditorModule(body) {
+    var el = body.querySelector('.elnSummernote'); if (!el) return;
+    if (window.$ && $.fn && $.fn.summernote) {
+      $(el).summernote({
+        placeholder: 'Write rich text — formatting, tables, images…',
+        height: 200,
+        toolbar: [
+          ['style', ['style']],
+          ['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+          ['color', ['color']],
+          ['para', ['ul', 'ol', 'paragraph']],
+          ['table', ['table']],
+          ['insert', ['link', 'picture']],
+          ['view', ['codeview']]
+        ]
+      });
+    } else {
+      el.setAttribute('contenteditable', 'true');
+      el.classList.add('elnSummernoteFallback');
+      el.setAttribute('data-ph', 'Write rich text…');
+    }
+  }
+
+  /* ── ChemStudio 모듈 — 외부 화학구조식 앱(별도 프로그램) 연계. 엔진은 목업.
+     실배포: Open=ChemStudio Thymeleaf 앱을 iframe 임베드 / Link=저장된 구조 조회.
+     참고 계약(apis_item_pop.html): GET https://apisml.kccworld.co.kr:5112/chemDraw/?cas=&name= → {mol, molecule, formula} (3Dmol 렌더).
+     데이터 모델(chemDrawPopup.jsp): Molecular Name · CAS-No · SMILES/Formula. ── */
+  // ChemStudio에 저장돼 있다고 가정하는 구조 라이브러리(목업) — Link existing 통합검색 대상
+  var CHEM_LIBRARY = [
+    { name: 'Styrene', cas: '100-42-5', formula: 'C8H8' },
+    { name: 'Acrylic acid', cas: '79-10-7', formula: 'C3H4O2' },
+    { name: 'Methyl methacrylate', cas: '80-62-6', formula: 'C5H8O2' },
+    { name: '2-Ethylhexyl acrylate', cas: '103-11-7', formula: 'C11H20O2' },
+    { name: 'Isobornyl acrylate', cas: '5888-33-5', formula: 'C13H20O2' },
+    { name: 'Trimethoxy(methyl)silane', cas: '1185-55-3', formula: 'C4H12O3Si' }
+  ];
+  // 샘플 분자 = 스타이렌(벤젠고리 + 비닐). 목업 썸네일/미리보기 공용. withHandles=에디터 캔버스용 원자 핸들 표시
+  function chemMoleculeSvg(withHandles) {
+    var handles = withHandles ? '<g class="elnChemHandles">'
+      + ['72,40', '98,55', '98,85', '72,100', '46,85', '46,55', '122,43', '146,52'].map(function (p) { var c = p.split(','); return '<circle cx="' + c[0] + '" cy="' + c[1] + '" r="2.7"/>'; }).join('')
+      + '</g>' : '';
+    return '<svg class="elnChemMol" viewBox="0 0 180 130" xmlns="http://www.w3.org/2000/svg">'
+      + '<polygon class="bond" points="72,40 98,55 98,85 72,100 46,85 46,55"/>'
+      + '<circle class="aromatic" cx="72" cy="70" r="17"/>'
+      + '<line class="bond" x1="98" y1="55" x2="122" y2="43"/>'
+      + '<line class="bond" x1="122" y1="43" x2="146" y2="52"/>'
+      + '<line class="bond" x1="124.5" y1="38.6" x2="148.5" y2="47.6"/>'
+      + handles + '</svg>';
+  }
+  function chemFormulaHtml(f) { return esc(f).replace(/(\d+)/g, '<sub>$1</sub>'); }   // C8H8 → C₈H₈
+  function wireChemModule(body) {
+    var box = body.querySelector('.elnChemBox'); if (!box) return;
+    var list = box.querySelector('.elnChemList');
+    var open = box.querySelector('.elnChemOpen'); if (open) open.addEventListener('click', function () { openChemStudio(list, null); });
+    var link = box.querySelector('.elnChemLink'); if (link) link.addEventListener('click', function () { openChemLink(list, link, null); });
+    syncChemEmpty(box);
+  }
+  // 빈 안내줄 표시/숨김 — 구조 0개일 때만 노출
+  function syncChemEmpty(box) {
+    var list = box.querySelector('.elnChemList'), line = box.querySelector('.elnChemEmptyLine');
+    if (line) line.style.display = list.children.length ? 'none' : '';
+  }
+  // 구조 1건을 <li>에 렌더 + 액션 배선(편집/교체/삭제). source='drawn'(그림) | 'linked'(참조)
+  function setChemItem(li, data) {
+    // Drawn/Linked 구분 없음 — 내부에서 그린 것도 결국 ChemStudio에 저장·로드되므로 전부 동일(연결된 구조)
+    li.className = 'elnChemItem';
+    li._chemData = data;
+    li.innerHTML = '<span class="elnChemStage">' + chemMoleculeSvg(false) + '</span>'
+      + '<span class="elnChemInfo">'
+      + '<span class="elnChemName2">' + esc(data.name) + '</span>'
+      + '<span class="elnChemFormula2">' + (data.formula ? chemFormulaHtml(data.formula) : '')
+        + (data.cas ? '<span class="elnChemCasTxt">· CAS ' + esc(data.cas) + '</span>' : '') + '</span>'
+      + '</span>'
+      + '<span class="elnChemItemActions">'
+      + '<a href="javascript:;" class="elnChemOpenItem" title="Open in ChemStudio"><i class="material-symbols-outlined">open_in_new</i></a>'
+      + '<a href="javascript:;" class="elnChemChange" title="Change structure"><i class="material-symbols-outlined">swap_horiz</i></a>'
+      + '<i class="material-symbols-outlined elnChemDel" title="Remove">close</i></span>';
+    var box = li.closest('.elnChemBox'), list = li.parentNode;
+    var open = li.querySelector('.elnChemOpenItem'); if (open) open.addEventListener('click', function () { openChemStudio(list, li); });
+    var change = li.querySelector('.elnChemChange'); if (change) change.addEventListener('click', function () { openChemLink(list, change, li); });
+    var del = li.querySelector('.elnChemDel'); if (del) del.addEventListener('click', function () { li.remove(); if (box) syncChemEmpty(box); });
+  }
+  // 신규 추가(append) 또는 기존 <li> 제자리 교체
+  function addOrUpdateChem(list, existingLi, data) {
+    var li = existingLi || document.createElement('li');
+    if (!existingLi) list.appendChild(li);
+    setChemItem(li, data);
+    var box = list.closest('.elnChemBox'); if (box) syncChemEmpty(box);
+  }
+  // ① Open ChemStudio — 외부 앱 임베드(목업). 실배포 시 .elnChemCanvas 자리를 <iframe src="<ChemStudio URL>">로 교체
+  function openChemStudio(list, existingLi) {
+    var ex = (existingLi && existingLi._chemData) || null;
+    var nm0 = (ex && ex.name) || 'Styrene';
+    var cas0 = (ex && ex.cas) || '100-42-5';
+    var fm0 = (ex && ex.formula) || 'C8H8';
+    var TOOLS = [
+      { k: 'select', ic: 'arrow_selector_tool', t: 'Select / move' },
+      { k: 'single', glyph: '—', t: 'Single bond' },
+      { k: 'double', glyph: '=', t: 'Double bond' },
+      { k: 'triple', glyph: '≡', t: 'Triple bond' },
+      { k: 'ring', ic: 'hexagon', t: 'Benzene ring' },
+      { k: 'C', glyph: 'C', t: 'Carbon' },
+      { k: 'N', glyph: 'N', t: 'Nitrogen' },
+      { k: 'O', glyph: 'O', t: 'Oxygen' },
+      { k: 'erase', ic: 'ink_eraser', t: 'Erase' }
+    ];
+    var toolsHtml = TOOLS.map(function (tl) {
+      var inner = tl.ic ? '<i class="material-symbols-outlined">' + tl.ic + '</i>' : tl.glyph;
+      return '<button type="button" class="elnChemToolBtn' + (tl.k === 'ring' ? ' on' : '') + '" data-tool="' + tl.k + '" title="' + tl.t + '">' + inner + '</button>';
+    }).join('');
+    var wrap = document.createElement('div');
+    wrap.className = 'elnChemEditor';
+    wrap.innerHTML =
+      '<div class="elnChemFrame">'
+      + '<div class="elnChemFrameBar"><span class="dots"><i></i><i></i><i></i></span>'
+      + '<span class="elnChemFrameUrl"><i class="material-symbols-outlined">lock</i>apisml.kccworld.co.kr / chemStudio</span>'
+      + '<span class="elnChemBrand"><b>Chem</b>Studio</span></div>'
+      + '<div class="elnChemStudioMain">'
+      + '<div class="elnChemTools">' + toolsHtml + '</div>'
+      + '<div class="elnChemCanvasWrap">'
+      + '<div class="elnChemCanvas">' + chemMoleculeSvg(true) + '</div>'
+      + '<div class="elnChemHintBar"><i class="material-symbols-outlined">draw</i>Embedded ChemStudio — pick a tool, then sketch on the canvas.</div>'
+      + '</div></div></div>'
+      + '<div class="elnChemMeta">'
+      + '<label>Molecular Name<input type="text" class="browser-default elnChemName" value="' + esc(nm0) + '"></label>'
+      + '<label>CAS-No<input type="text" class="browser-default elnChemCas" value="' + esc(cas0) + '"></label>'
+      + '<label>Formula<input type="text" class="browser-default elnChemFormula" value="' + esc(fm0) + '"></label>'
+      + '</div>';
+    wrap.querySelectorAll('.elnChemToolBtn').forEach(function (btn) {
+      btn.addEventListener('click', function () {
+        wrap.querySelectorAll('.elnChemToolBtn').forEach(function (b) { b.classList.remove('on'); });
+        btn.classList.add('on');
+      });
+    });
+    var editing = !!existingLi;
+    ELN.modal({
+      title: 'ChemStudio', icon: 'hexagon', body: wrap,
+      actions: [
+        { label: 'Cancel', type: '' },
+        { label: editing ? 'Update structure' : 'Insert into note', type: 'hViva', onClick: function () {
+          addOrUpdateChem(list, existingLi, {
+            name: (wrap.querySelector('.elnChemName').value || '').trim() || 'Untitled structure',
+            cas: (wrap.querySelector('.elnChemCas').value || '').trim(),
+            formula: (wrap.querySelector('.elnChemFormula').value || '').trim()
+          });
+          ELN.toast(editing ? 'Structure updated.' : 'Structure added.', 'ok');
+        } }
+      ]
+    });
+  }
+  // ② Link existing — 저장된 구조 통합검색(Formula/명칭/CAS) 팝오버. 선택 시 참조로 삽입
+  function openChemLink(list, anchor, existingLi) {
+    var wrap = document.createElement('div'); wrap.className = 'elnPickWrap';
+    var search = document.createElement('input');
+    search.type = 'text'; search.className = 'browser-default elnPickSearch'; search.placeholder = 'Formula / name / CAS-No…';
+    var ul = document.createElement('div'); ul.className = 'elnPickList';
+    function render(q) {
+      ul.innerHTML = '';
+      var ql = (q || '').toLowerCase();
+      var matches = CHEM_LIBRARY.filter(function (c) { return (c.name + ' ' + c.cas + ' ' + c.formula).toLowerCase().indexOf(ql) >= 0; });
+      if (!matches.length) { var em = document.createElement('div'); em.className = 'elnPickEmpty'; em.textContent = 'No structure match.'; ul.appendChild(em); return; }
+      matches.forEach(function (c) {
+        var it = document.createElement('div'); it.className = 'elnPickRow elnChemRow';
+        it.innerHTML = '<span class="elnChemRowThumb">' + chemMoleculeSvg(false) + '</span>'
+          + '<span class="elnChemRowMeta"><b>' + esc(c.name) + '</b><span>' + chemFormulaHtml(c.formula) + ' · CAS ' + esc(c.cas) + '</span></span>';
+        it.addEventListener('click', function () {
+          ref.close();
+          addOrUpdateChem(list, existingLi, { name: c.name, cas: c.cas, formula: c.formula });
+          ELN.toast(existingLi ? 'Structure changed.' : 'Structure added from ChemStudio.', 'ok');
+        });
+        ul.appendChild(it);
+      });
+    }
+    search.addEventListener('input', function () { render(search.value); });
+    wrap.appendChild(search); wrap.appendChild(ul); render('');
+    var ref = ELN.popover({ anchor: anchor, content: wrap, width: 360 });
+    setTimeout(function () { search.focus(); }, 60);
   }
 
   /* ── 우측 패널 가로 리사이즈 — 좌측 가장자리 드래그. 폭은 CSS 변수 --eln-right-w로 공유 ── */
