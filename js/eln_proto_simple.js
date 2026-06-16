@@ -130,8 +130,8 @@
   };
 
   /* ── Task3: status 칩 + 드롭다운 (헤더→Overview 본문으로 이동) ── */
-  // 4-버튼 세그먼트 → 단일 상태 칩. 클릭 시 ELN.popover로 4개 옵션 펼침(노트북 픽커와 동일 패턴).
-  var STATUS_ORDER = ['ing', 'ok', 'fail', 'hold'];
+  // simple: 워크플로우 3종(In Progress → In Approval → Approved). 클릭 시 ELN.popover로 옵션 펼침.
+  var STATUS_ORDER = ['ing', 'appr', 'ok'];
 
   function applyStatusChip(chip, st) {
     chip.setAttribute('data-status', st);
@@ -175,7 +175,16 @@
   document.addEventListener('DOMContentLoaded', initStatusSeg);
 
   /* ── TaskA0: 기본 버튼 액션 연결(Save) + status 변경 토스트 ── */
-  var STATUS_LABEL = { ing: 'In Progress', ok: 'Success', fail: 'Failed', hold: 'On Hold' };
+  var STATUS_LABEL = { ing: 'In Progress', appr: 'In Approval', ok: 'Approved' };
+
+  // 헤더 status 알약(roundBox) — simple: 수동 드롭다운 제거, 결재 흐름이 값을 갱신.
+  var STATUS_PILL = { ing: 'blue', appr: 'viola25', ok: 'green' };   // ing=파랑, appr=보라(Viola), ok=초록
+  function setHeadStatus(st) {
+    var el = document.getElementById('elnHeadStatus'); if (!el) return;
+    el.className = 'roundBox ' + (STATUS_PILL[st] || 'grey');
+    el.setAttribute('data-status', st);
+    el.textContent = STATUS_LABEL[st] || st;
+  }
 
   function initBaseActions() {
     var save = document.getElementById('elnSaveBtn');
@@ -747,7 +756,7 @@
      pop·list 양쪽이 호출. notes(parent 포함 배열)+currentCode를 주면 트리/접기/SVG를 자체 계산.
      요약 인라인은 일직선, 이 그래프는 분기 트리. 점=접기/펴기(점 안 +/−), 타이틀=onOpenNote(code). */
   var SVGNS = 'http://www.w3.org/2000/svg';
-  var STATUS_COLOR = { ing: '#2f80ed', ok: '#3aaa6f', fail: '#d65a5a', hold: '#e0a83e' };
+  var STATUS_COLOR = { ing: '#2f80ed', appr: '#a893bd', ok: '#3aaa6f' };
   function esc(s) { return String(s).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;'); }
 
   // 모든 textarea: 수동 resize·스크롤 없이 내용에 따라 높이 자동 조절. 위임 input 리스너로 동적 모듈까지 커버
@@ -1122,7 +1131,7 @@
 
     sec.appendChild(body);
     if (after && after.parentNode === article) article.insertBefore(sec, after.nextSibling);
-    else article.insertBefore(sec, document.getElementById('elnAddEnd'));
+    else article.insertBefore(sec, document.getElementById('card_approval'));   // 좌측 'Add Module' → Approval 카드 위에 추가
     injectDeleteBtn(sec);   // 우측 코너에 삭제 ×
     setupCardChrome(sec);   // 제목 인라인 편집 + 메모 줄
     // 좌측 목차도 같은 순서로 동기(기준 카드의 li 뒤에 삽입)
@@ -1161,34 +1170,17 @@
   }
 
   // 카드 사이 hover '+' 라인 — Notion식 위치 지정 삽입. 추가/삭제 때마다 재배치.
+  // simple: 카드 사이 '+' divider 미사용 — 좌측 'Add Module' 버튼이 유일 진입점. 잔존 divider만 정리.
   function refreshDividers() {
     var article = document.getElementById('tab_ov');
     if (!article) return;
     article.querySelectorAll(':scope > .elnModDivider').forEach(function (d) { d.remove(); });
-    var cards = article.querySelectorAll(':scope > .cardBox:not(#card_approval)');   // Approval 카드는 divider 대상 제외
-    cards.forEach(function (card, i) {
-      if (i === cards.length - 1) return; // 마지막 카드 뒤는 상시 + 블록이 담당
-      var div = document.createElement('div');
-      div.className = 'elnModDivider';
-      div.title = 'Insert module here';
-      div.innerHTML = '<span class="pl z-depth-1"><i class="material-symbols-outlined">add</i></span>';
-      div.addEventListener('click', function (e) { openModulePicker(div, card, e); });   // 포인터 위치 추종
-      article.insertBefore(div, card.nextSibling);
-    });
   }
 
   function initModuleSystem() {
     var btn = document.getElementById('elnAddModule');
     if (!btn) return; // 상세 화면에서만 동작
-    var article = document.getElementById('tab_ov');
-    // 본문 끝 상시 '+ Add module' 점선 블록
-    var end = document.createElement('div');
-    end.id = 'elnAddEnd'; end.className = 'elnAddEnd';
-    end.innerHTML = '<i class="material-symbols-outlined">add</i>Add module';
-    end.addEventListener('click', function (e) { openModulePicker(end, null, e); });   // 포인터 위치 추종
-    var apprCard = document.getElementById('card_approval');
-    if (apprCard) article.insertBefore(end, apprCard); else article.appendChild(end);   // '+Add'·모듈은 Approval 카드 '위'에
-    // 좌측 버튼(보조 진입점) — popover 픽커, 맨 끝에 추가
+    // simple: 본문 끝 '+Add module' 블록·카드 사이 divider 제거 — 좌측 'Add Module' 버튼이 유일 진입점.
     btn.addEventListener('click', function () { openModulePicker(btn, null); });
     // 모든 카드(Overview 포함) 헤더에 제목 편집/메모 주입. (Approval 카드는 시스템 섹션 — 제외)
     document.querySelectorAll('.contArea article > .cardBox').forEach(function (card) {
@@ -1445,6 +1437,7 @@
       apprView = !apprView;
       if (apprView) ELN_APPR_ROWS.forEach(function (r) { if (r.status === 'APPR' && !r.date) r.date = nowStamp().slice(0, 10); });   // 승인행 날짜 자동(목업)
       setNoteApproved(apprView);                                        // 노트 전체 view ⇄ edit 일괄 전환
+      setHeadStatus(apprView ? 'ok' : 'appr');                          // 헤더 status: 승인=Approved / 편집복귀=In Approval
       renderApprovalCard(); renderApprovalBadge();
       ELN.toast(apprView ? '승인 모드 — 노트 전체를 View로 전환했습니다.' : '편집 모드로 전환했습니다.', 'ok');
     } else if (act === 'addRow') {
@@ -1452,6 +1445,7 @@
       ELN_APPR_ROWS.push({ type: 'APPR', role: '', assignee: '-', status: '', date: '', comment: '' });
       renderApprovalCard();
     } else if (act === 'sendEmail') {
+      setHeadStatus('appr');                                            // 결재 요청 발송 → In Approval
       ELN.toast('승인 요청 메일을 발송했습니다 (목업).', 'ok');
     }
   }
@@ -1801,12 +1795,12 @@
         if (li) $menu[0].appendChild(li);
       });
     }
-    // 좌측 목차 순서 → 카드를 같은 순서로 재배치(끝의 '+ Add module' 블록 앞에 삽입)
+    // 좌측 목차 순서 → 카드를 같은 순서로 재배치(최하단 고정 Approval 카드 앞에 삽입)
     function syncCardsToMenu() {
-      var end = document.getElementById('elnAddEnd');
+      var end = document.getElementById('card_approval');
       var ids = pinBasicFirst($menu.children('.menu-item').map(function () { return $(this).attr('data-target'); }).get());
       ids.forEach(function (id) {
-        if (id === 'card_approval') return;             // 결재 카드는 최하단 고정(+Add 아래) — 이동 안 함
+        if (id === 'card_approval') return;             // 결재 카드는 최하단 고정 — 이동 안 함
         var card = document.getElementById(id);
         if (card) article.insertBefore(card, end);
       });
@@ -1823,10 +1817,18 @@
       tolerance: 'pointer',
       distance: 5,
       opacity: 0.9,
-      update: function () {
+      update: function (e, ui) {
         syncCardsToMenu();
         if (typeof refreshDividers === 'function') refreshDividers();
         ELN.toast('Module order updated.', 'ok');
+        // 정렬한 섹션으로 스크롤 + 좌측 목차 active 동기
+        var id = ui && ui.item ? ui.item.attr('data-target') : null;
+        var card = id ? document.getElementById(id) : null;
+        if (card) {
+          card.scrollIntoView({ behavior: 'smooth', block: 'start' });
+          $menu.children('.menu-item').removeClass('active');
+          ui.item.addClass('active');
+        }
       }
     });
   }

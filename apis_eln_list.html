@@ -37,7 +37,7 @@
 				<section class="centerSection">
 					<div class="srchArea">
 						<i class="material-icons prefix">search</i>
-						<input type="text" class="browser-default" placeholder="Search notes, notebooks, tags…" value="" id="mainSrchInput" autocomplete="off">
+						<input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput" autocomplete="off">
 					</div>
 				</section>
 				<section class="rightSection">
@@ -72,14 +72,13 @@
 		</div>
 	</aside>
 
-	<!-- 본문: 통합 화면 (좌 노트북 네비 | 중 노트목록/대시보드 | 우 요약+계보). 좌측 'All Notes'=전체 최근순, 노트북=그 노트북. List⇄Dashboard 뷰 전환 -->
+	<!-- 본문: 통합 화면 (좌 노트북 네비 | 중 노트목록 | 우 요약+계보). 좌측 'All Notes'=전체 최근순, 노트북=그 노트북. List·Chem·Formulation 뷰 전환 -->
 	<article class="contArea elnWsArea">
 		<section class="mainTitArea elnWsTitArea">
 			<div class="mainTit">ELN List</div>
-			<!-- 뷰 전환(List⇄Dashboard) + New Note를 타이틀 줄로 — 노트셋 카운트 폭과 무관하게 위치 고정 -->
+			<!-- 뷰 전환(List·Chem·Formulation) + New Note를 타이틀 줄로 — 노트셋 카운트 폭과 무관하게 위치 고정 -->
 			<div class="elnViewToggle">
 				<a href="javascript:;" class="on" data-view="list"><i class="material-symbols-outlined">view_list</i>List</a>
-				<a href="javascript:;" data-view="dash"><i class="material-symbols-outlined">dashboard</i>Dashboard</a>
 				<a href="javascript:;" data-view="chem"><i class="material-symbols-outlined">hexagon</i>Chem</a>
 				<a href="javascript:;" data-view="formulation"><i class="material-symbols-outlined">science</i>Formulation</a>
 			</div>
@@ -111,10 +110,9 @@
 				<a href="javascript:;" id="elnNewNotebook" class="elnNbNew"><i class="material-symbols-outlined">create_new_folder</i>New Notebook</a>
 			</aside>
 
-			<!-- 중: 노트 목록 / 대시보드 (뷰 전환) -->
+			<!-- 중: 노트 목록 (뷰 전환: List·Chem·Formulation) -->
 			<div class="elnNotePanel">
 				<div class="elnNotePanelHead">
-					<a class="elnNbToggle waves-effect waves-light hBtn" id="elnNbToggle" title="Hide / show notebooks"><i class="material-symbols-outlined mr0">chevron_left</i></a>
 					<div class="pt"><i class="material-symbols-outlined fill" id="nbIcon">stacks</i><span id="nbName">All Notes</span></div>
 					<!-- 검색 결과 모드: 무엇으로 검색했는지(기준) + 타이틀 옆 Clear 버튼 -->
 					<span id="elnSrchCrit" class="elnSrchCrit" style="display:none;"></span>
@@ -130,8 +128,6 @@
 						</section>
 					</section>
 				</div>
-				<!-- Dashboard 뷰 (같은 노트셋의 현황 조망) -->
-				<div class="elnDashView hScroll" id="elnDashView" style="display:none;"><!-- JS 렌더 --></div>
 				<!-- Chem 뷰 (목록형 — List와 동일 행 구조 + 노트별 ChemStudio 구조 이미지) -->
 				<div class="typeList type4 elnLensView" id="elnChemView" style="display:none;">
 					<section class="leftSection"><section class="mainList"><ul class="hScroll" id="elnChemUl"><!-- JS 렌더 --></ul></section></section>
@@ -142,8 +138,6 @@
 				</div>
 			</div>
 
-			<!-- 요약 접기/펼치기 핸들 (List·Chem·Formulation 뷰) -->
-			<a href="javascript:;" id="elnSumToggle" class="elnSumToggle" title="Collapse / expand summary"><i class="material-symbols-outlined">chevron_right</i></a>
 			<!-- 우: 선택 노트 요약 + 계보 -->
 			<aside class="elnSummary cardBox2 empty" id="elnSummary">
 				<div class="elnSumPlaceholder"><i class="material-symbols-outlined">touch_app</i>Select a note to see its summary &amp; lineage</div>
@@ -398,91 +392,6 @@
 		renderNoteList(curNotes, key === 'all');
 	}
 
-	// Dashboard 뷰: 같은 노트셋(curNotes)의 현황 조망 — 2열 그리드 카드들. 진행중·주목·태그는 실데이터 집계
-	function renderDashboard(notes){
-		var c = statusCounts(notes), total = notes.length || 1;
-		var pct = function(v){ return Math.round(v / total * 100); };
-		var cards = [];
-
-		// 1) Status overview (전체폭) — 분포 바 + 범례
-		var seg = ST.map(function(s){
-			var v = c[s.k]; if(!v) return '';
-			return '<div class="elnDashSeg ' + s.cls + '" style="flex:' + v + '" title="' + s.t + ' ' + v + '"></div>';
-		}).join('');
-		var legend = ST.map(function(s){
-			return '<span class="elnDashLeg"><span class="elnDot ' + s.k + '"></span>' + s.t + ' <b>' + c[s.k] + '</b></span>';
-		}).join('');
-		cards.push('<div class="elnDashCard span2" title="전체 노트의 상태별 분포 — 진행중·성공·실패·보류 비율을 한눈에"><div class="elnDashCardTit">Status overview · ' + notes.length + ' notes</div>' +
-			'<div class="elnDashStatBar">' + seg + '</div><div class="elnDashLegend">' + legend + '</div></div>');
-
-		// 2) This week (요일별 활동 추이 — 데모 목업)
-		var week = [['Mon',3],['Tue',5],['Wed',2],['Thu',6],['Fri',4],['Sat',1],['Sun',0]], wkMax = 6, wkSum = 0;
-		var wkBars = week.map(function(d, i){
-			wkSum += d[1];
-			var h = Math.round(d[1] / wkMax * 100);
-			return '<div class="elnWkCol"><div class="elnWkBar' + (i===4?' today':'') + '" style="height:' + h + '%" title="' + d[1] + ' edits"></div><span class="elnWkLb">' + d[0].charAt(0) + '</span></div>';
-		}).join('');
-		cards.push('<div class="elnDashCard" title="최근 7일간 요일별 노트 편집 활동량 (데모 데이터)"><div class="elnDashCardTit">This week · <b>' + wkSum + '</b> edits</div>' +
-			'<div class="elnWkChart">' + wkBars + '</div></div>');
-
-		// 3) Success rate (완료 성공률 — 지표)
-		var closed = c.ok + c.fail, rate = closed ? Math.round(c.ok / closed * 100) : 0;
-		cards.push('<div class="elnDashCard" title="결론난 노트(성공+실패) 중 성공 비율"><div class="elnDashCardTit">Success rate</div>' +
-			'<div class="elnDashKpi">' + rate + '<span class="u">%</span></div>' +
-			'<div class="elnDashKpiSub"><b>' + c.ok + '</b> succeeded · <b>' + c.fail + '</b> failed · of ' + closed + ' closed</div></div>');
-
-		// 4) By notebook(All 뷰) / By category(노트북 뷰)
-		if(curNbKey === 'all'){
-			var counts = {}, order = [];
-			notes.forEach(function(n){ if(counts[n._nbName] == null){ counts[n._nbName] = 0; order.push(n._nbName); } counts[n._nbName]++; });
-			cards.push('<div class="elnDashCard" title="노트북별 노트 개수 분포"><div class="elnDashCardTit">By notebook</div>' +
-				order.map(function(nm){
-					var v = counts[nm];
-					return '<div class="elnDashRow"><span class="dn">' + esc(nm) + '</span><span class="dbar"><span style="width:' + pct(v) + '%"></span></span><span class="dv">' + v + '</span></div>';
-				}).join('') + '</div>');
-		} else {
-			var catC = {}, catO = [];
-			notes.forEach(function(n){ var k = n.cat || 'General'; if(catC[k] == null){ catC[k] = 0; catO.push(k); } catC[k]++; });
-			cards.push('<div class="elnDashCard" title="카테고리별 노트 개수 분포"><div class="elnDashCardTit">By category</div>' +
-				catO.map(function(k){
-					var v = catC[k];
-					return '<div class="elnDashRow"><span class="dn">' + esc(k) + '</span><span class="dbar"><span style="width:' + pct(v) + '%"></span></span><span class="dv">' + v + '</span></div>';
-				}).join('') + '</div>');
-		}
-
-		// 5) Formulation links (배합 연계 — ELN 고유: 배합↔노트 연결)
-		var linked = notes.filter(function(n){ return n.fml; });
-		var fmls = linked.map(function(n){ return n.fml; });
-		var uniqFml = fmls.filter(function(v, i){ return fmls.indexOf(v) === i; });
-		cards.push('<div class="elnDashCard" title="배합(Formulation)과 연계된 노트 — ELN의 핵심: 배합 결과를 노트에 연결"><div class="elnDashCardTit">Formulation links · <b>' + linked.length + '</b></div>' +
-			(uniqFml.length ? '<div class="elnDashTags">' + uniqFml.map(function(f){ return '<span class="elnDashTag">' + esc(f) + '</span>'; }).join('') + '</div>' : '<div class="elnDashEmpty">No linked formulations.</div>') + '</div>');
-
-		// 6) In progress (진행중 하이라이트 — 클릭→상세)
-		var hi = notes.filter(function(n){ return n.st === 'ing'; }).slice(0, 5);
-		cards.push('<div class="elnDashCard" title="진행 중인 노트 — 이어서 작업할 것 (클릭하면 상세 열림)"><div class="elnDashCardTit">In progress — pick up</div>' +
-			(hi.length ? hi.map(function(n){
-				return '<div class="elnDashHi" data-code="' + n.code + '"><span class="elnDot ing"></span><span class="ht">' + esc(n.title) + '</span><span class="hn">' + esc(n._nbName) + '</span></div>';
-			}).join('') : '<div class="elnDashEmpty">No notes in progress.</div>') + '</div>');
-
-		// 7) Needs attention (On Hold + Failed — 막힌 것 주목)
-		var attn = notes.filter(function(n){ return n.st === 'hold' || n.st === 'fail'; }).slice(0, 5);
-		cards.push('<div class="elnDashCard" title="보류·실패 상태로 점검이 필요한 노트 (클릭하면 상세 열림)"><div class="elnDashCardTit">Needs attention</div>' +
-			(attn.length ? attn.map(function(n){
-				return '<div class="elnDashHi" data-code="' + n.code + '"><span class="elnDot ' + n.st + '"></span><span class="ht">' + esc(n.title) + '</span><span class="hn">' + stByKey(n.st).t + '</span></div>';
-			}).join('') : '<div class="elnDashEmpty">Nothing on hold or failed.</div>') + '</div>');
-
-		// 8) Top tags (전체폭) — 태그 집계
-		var tagC = {};
-		notes.forEach(function(n){ (n.tags||[]).forEach(function(t){ tagC[t] = (tagC[t]||0) + 1; }); });
-		var tags = Object.keys(tagC).sort(function(a,b){ return tagC[b] - tagC[a]; });
-		if(tags.length){
-			cards.push('<div class="elnDashCard span2" title="가장 많이 사용된 태그 순위 — 연구 주제 분포"><div class="elnDashCardTit">Top tags</div><div class="elnDashTags">' +
-				tags.map(function(t){ return '<span class="elnDashTag">' + esc(t) + '<b>' + tagC[t] + '</b></span>'; }).join('') + '</div></div>');
-		}
-
-		document.getElementById('elnDashView').innerHTML = '<div class="elnDashGrid">' + cards.join('') + '</div>';
-	}
-
 	function applyFilter(){
 		document.querySelectorAll('#noteListUl li').forEach(function(li){
 			li.style.display = (curFilter==='all' || li.getAttribute('data-st')===curFilter) ? '' : 'none';
@@ -651,22 +560,20 @@
 		}
 	}
 
-	// 뷰 적용: List·Chem·Formulation = 우측 요약 표시(접기 가능) / Dashboard = 요약 숨김
-	var VIEW_HOST = { list:'elnListView', dash:'elnDashView', chem:'elnChemView', formulation:'elnFmlView' };
+	// 뷰 적용: List·Chem·Formulation 모두 우측 요약 표시(접기 가능)
+	var VIEW_HOST = { list:'elnListView', chem:'elnChemView', formulation:'elnFmlView' };
 	var SHOW_SUMMARY = { list:1, chem:1, formulation:1 };
 	function applyView(){
 		var isList = (curView === 'list');
 		Object.keys(VIEW_HOST).forEach(function(v){ var el = document.getElementById(VIEW_HOST[v]); if(el) el.style.display = (v === curView) ? '' : 'none'; });
 		var showSum = !!SHOW_SUMMARY[curView];
-		document.getElementById('elnSummary').style.display = showSum ? '' : 'none';   // 요약 패널(접기 상태는 collapsed 클래스가 별도 유지)
-		var tg = document.getElementById('elnSumToggle'); if(tg) tg.style.display = showSum ? '' : 'none';
+		document.getElementById('elnSummary').style.display = showSum ? '' : 'none';   // 요약 패널 표시
 		if(isList){
 			setHeaderCount(); // 필터 칩(클릭 가능)
 			selectFirst();
 		} else {
 			document.getElementById('nbCount').textContent = "";
-			if(curView === 'dash') renderDashboard(curNotes);
-			else if(curView === 'chem'){ renderChemView(curNotes); selectFirstLens('elnChemUl'); }
+			if(curView === 'chem'){ renderChemView(curNotes); selectFirstLens('elnChemUl'); }
 			else if(curView === 'formulation'){ renderFmlView(curNotes); selectFirstLens('elnFmlUl'); }
 		}
 	}
@@ -1142,7 +1049,7 @@
 			renderSummary(n);
 		});
 
-		// 좌측 노트북 클릭 → 노트셋 교체 (현재 뷰 유지: List/Dashboard 그대로)
+		// 좌측 노트북 클릭 → 노트셋 교체 (현재 뷰 유지: List/Chem/Formulation 그대로)
 		document.getElementById('elnNbPanel').addEventListener('click', function(e){
 			var item = e.target.closest('.elnNbItem');
 			if(!item) return;
@@ -1163,7 +1070,7 @@
 			applyView();
 		});
 
-		// 뷰 전환 토글 (List ⇄ Dashboard)
+		// 뷰 전환 토글 (List · Chem · Formulation)
 		document.querySelector('.elnViewToggle').addEventListener('click', function(e){
 			var a = e.target.closest('a[data-view]');
 			if(!a) return;
@@ -1173,15 +1080,6 @@
 			this.querySelectorAll('a').forEach(function(x){ x.classList.remove('on'); });
 			a.classList.add('on');
 			applyView();
-		});
-
-		// Dashboard 하이라이트 클릭 → 상세 팝업
-		document.getElementById('elnDashView').addEventListener('click', function(e){
-			var hi = e.target.closest('.elnDashHi');
-			if(!hi) return;
-			var code = hi.getAttribute('data-code');
-			var n = curNotes.filter(function(x){ return x.code === code; })[0];
-			if(n) openNote(n._nb);
 		});
 
 		// Chem·Formulation 렌즈 뷰: 행 클릭 → 요약 선택 / 제목(.pjTit) 클릭 → 노트 열기 (List와 동일 동선)
@@ -1222,14 +1120,6 @@
 			if(e.target.closest('.elnFullView')){ e.preventDefault(); openLineageModal(curSummaryNote); }
 		});
 
-		// 노트북 패널 접기/펼치기
-		var toggle = document.getElementById('elnNbToggle');
-		if(toggle) toggle.addEventListener('click', function(){
-			var p = document.getElementById('elnNbPanel');
-			var col = p.classList.toggle('collapsed');
-			toggle.querySelector('i').textContent = col ? 'chevron_right' : 'chevron_left';
-		});
-
 		// 헤더 현황 칩 클릭 = status 필터(현황 표시 겸 드릴다운 — newAppleTab 대체)
 		document.getElementById('nbCount').addEventListener('click', function(e){
 			var chip = e.target.closest('.elnHdrFilter');
@@ -1237,13 +1127,6 @@
 			curFilter = chip.getAttribute('data-f');
 			applyFilter();
 			setHeaderCount(); // 활성 표시 갱신
-		});
-
-		// 요약 패널 접기/펼치기 — collapsed 클래스(width:0). 토글 핸들은 List·Chem·Formulation 뷰에서 노출
-		var sumToggle = document.getElementById('elnSumToggle');
-		if(sumToggle) sumToggle.addEventListener('click', function(){
-			var col = document.getElementById('elnSummary').classList.toggle('collapsed');
-			var i = sumToggle.querySelector('i'); if(i) i.textContent = col ? 'chevron_left' : 'chevron_right';
 		});
 
 		// New Note(노트 레벨) → 시작 템플릿 픽커 먼저. All Notes 뷰면 노트북 미지정으로 시작

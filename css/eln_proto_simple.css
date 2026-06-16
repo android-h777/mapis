@@ -23,6 +23,9 @@
 .elnStatusChip[data-status="ok"]   .dot{background:#3aaa6f;}
 .elnStatusChip[data-status="fail"] .dot{background:#d65a5a;}
 .elnStatusChip[data-status="hold"] .dot{background:#e0a83e;}
+/* simple 신규: In Approval(보라 — 브랜드 Viola, --viola25 #a893bd) */
+.elnStatusChip[data-status="appr"]{background:rgba(168,147,189,.16);border-color:rgba(168,147,189,.42);color:#6b5587;}
+.elnStatusChip[data-status="appr"] .dot{background:var(--viola25);}
 .elnStatusChip:hover{filter:brightness(.97);border-color:#A47864;}
 /* status 드롭다운(popover 내부) — 노트북 픽커 메뉴와 동일한 룩 */
 .elnStatusMenu{display:flex;flex-direction:column;min-width:190px;}
@@ -35,6 +38,7 @@
 .elnStatusMenuItem[data-status="ok"]   .dot{background:#3aaa6f;}
 .elnStatusMenuItem[data-status="fail"] .dot{background:#d65a5a;}
 .elnStatusMenuItem[data-status="hold"] .dot{background:#e0a83e;}
+.elnStatusMenuItem[data-status="appr"] .dot{background:var(--viola25);}
 
 /* ── TaskA0: 액션 인프라(토스트·모달) ── */
 /* 토스트 */
@@ -92,6 +96,11 @@
 .elnOvSec > summary .more{margin-left:auto;font-weight:600;font-size:11px;color:#A47864;text-decoration:none;display:inline-flex;align-items:center;gap:2px;}
 .elnOvSec > summary .more + ::after,.elnOvSec > summary .more ~ ::after{margin-left:8px;}
 .elnOvSec .elnTagBox,.elnOvSec > .elnLineage{padding:4px 12px 12px;}
+/* Project: 넓을 필요 없는 단일 값 → 컴팩트 인라인 한 줄(내용 폭만, 풀폭 아님) */
+.elnProjLine{display:inline-flex;align-items:center;gap:7px;max-width:100%;margin:8px 0 2px;font-size:13px;color:#3a2c24;}
+.elnProjLine > i{font-size:18px;color:#A47864;flex:0 0 auto;}
+.elnProjLine .k{flex:0 0 auto;font-size:11px;font-weight:600;text-transform:uppercase;letter-spacing:.03em;color:#9b8c7e;}
+.elnProjLine .elnProjVal{display:inline-flex;align-items:center;gap:6px;min-width:0;overflow:hidden;}
 /* .elnRightTit 스타일은 .elnSumSecTit 통합 정의로 일원화(아래 .elnSumSec 영역 참조) */
 .elnRefList{list-style:none;margin:0;padding:0;}
 /* 그룹형 related: 타입별(복수 항목) + 개수 배지 + Derived from(부모) */
@@ -327,7 +336,7 @@
 
 /* 공통 status 점 */
 .elnDot{display:inline-block;width:9px;height:9px;border-radius:50%;flex:0 0 auto;}
-.elnDot.ing{background:#2f80ed;} .elnDot.ok{background:#3aaa6f;}
+.elnDot.ing{background:#2f80ed;} .elnDot.appr{background:#a893bd;} .elnDot.ok{background:#3aaa6f;}
 .elnDot.fail{background:#d65a5a;} .elnDot.hold{background:#e0a83e;}
 /* 공통 섹션 타이틀(계보 모달 등에서 사용) */
 .elnSecTit{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:700;color:#3a2c24;margin:6px 2px 10px;}
@@ -419,7 +428,7 @@
   border-radius:8px;background:rgba(164,120,100,.08);color:#A47864;margin-right:10px;vertical-align:-7px;transition:background .15s;}
 .mainTit .elnCrumbBack:hover{background:rgba(164,120,100,.18);}
 .mainTit .elnCrumbBack i{font-size:20px;}
-.elnListWrap{display:flex;gap:0;height:calc(100vh - 122px);}
+.elnListWrap{display:flex;gap:0;height:calc(100vh - 70px);}   /* 타이틀 전용 줄 제거 → 리스트 높이 확보 */
 /* 좌: 노트북 패널 — 좌측에 딱 붙은(flush) 접이식. 카드 라운드/사방테두리 대신 우측 구분선만 */
 .elnNbPanel{width:240px;flex:0 0 auto;background:rgba(255, 255, 255, .3);
   border-right:1px solid #e6ddd0;padding:12px 10px;overflow:hidden auto;
@@ -801,6 +810,39 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 #noteListUl li .statusBox.orange{border-color:#3a3a3a!important;color:#3a3a3a!important;}
 .elnTagLink{font-size:12px;color:#5a7d9a;cursor:pointer;text-decoration:none;line-height:1.3;}
 .elnTagLink:hover{color:#A47864;text-decoration:underline;}
+/* ── 행 footer: 콘텐츠(좌) + 날짜·작성자/노트수(우하단). 공통 .subInfo space-between를 ID로 override ── */
+.elnNoteFoot{display:flex;align-items:flex-end;justify-content:space-between;gap:10px;margin-top:7px;}
+/* 태그 줄: 자연스럽게 여러 줄로 wrap(각 태그는 통째 유지) */
+.elnNoteFoot .elnNoteTags{margin-top:0;flex:1 1 auto;min-width:0;align-items:center;}
+.elnNoteFoot .elnTagLink{flex:0 0 auto;white-space:nowrap;}
+.elnNoTag{font-size:12px;line-height:1.3;color:#b3a596;}       /* 태그 없음 = 회색 안내. line-height를 .elnTagLink와 동일하게 → 행 높이 일치 */
+.elnNoteMetaRight{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;
+  font-size:11.5px;color:#9b8c7e;white-space:nowrap;line-height:1.3;}
+.elnNoteMetaRight .a{color:#7a6a5c;font-weight:500;}
+.elnNoteMetaRight .dot{color:#cdbfae;}
+/* 좌 Project 행: 핀 좌측정렬 wrap + 노트 개수는 pill 아닌 우하단 텍스트 */
+#projListUl .elnNoteFoot .subInfo{height:auto;justify-content:flex-start;flex-wrap:wrap;
+  gap:5px 6px;margin:0;flex:1 1 auto;min-width:0;}
+#projListUl .elnNoteFoot .subInfo .roundBox{margin:0;}
+.elnProjCount{flex:0 0 auto;font-size:11.5px;color:#9b8c7e;white-space:nowrap;align-self:flex-end;}
+/* ── 통합 검색(A안): 레이아웃은 즉시 전환(좌측 display:none), 결과 패널만 transform+opacity로 등장(GPU=단일 모션·버벅임 없음) ── */
+.elnListWrap.searching > .leftSection{ display:none; }
+.elnListWrap.searching > .rightSection{ padding-left:0; animation:elnResultsIn .32s cubic-bezier(.4,0,.2,1) both; }
+@keyframes elnResultsIn{ from{ opacity:0; transform:translateY(10px); } to{ opacity:1; transform:none; } }
+.elnNoteHead .elnSrchCrit{ flex:1 1 auto; min-width:0; }
+.elnNoteHead #elnNewNote{ flex:0 0 auto; }   /* 작성자 그룹(.elnUserLabel margin-left:auto)에 이어 우측에 함께 정렬 */
+/* 검색 모드 Clear = 솔리드 강조 버튼(레이아웃이 바뀌므로 '돌아가는 길'을 또렷하게) + 등장 팝 */
+.elnNoteHead .elnSrchClear{ flex:0 0 auto; padding:7px 15px 7px 12px; font-size:12.5px; font-weight:700;
+  background:#A47864; border-color:#A47864; color:#fff; box-shadow:0 3px 10px rgba(164,120,100,.38);
+  animation:elnClearPop .35s cubic-bezier(.34,1.56,.64,1) both; }
+.elnNoteHead .elnSrchClear i{ color:#fff; font-size:17px; }
+.elnNoteHead .elnSrchClear:hover{ background:#8a5f4d; border-color:#8a5f4d; color:#fff;
+  box-shadow:0 5px 16px rgba(138,95,77,.5); }
+.elnNoteHead .elnSrchClear:hover i{ color:#fff; }
+@keyframes elnClearPop{ from{ transform:scale(.8); opacity:0; } 60%{ transform:scale(1.06); } to{ transform:scale(1); opacity:1; } }
+/* 결과 행 제목 앞 프로젝트 칩(통합 검색에서만) */
+.elnNoteProj{display:inline-block;font-size:11px;font-weight:600;color:#5a7d9a;background:rgba(90,125,154,.12);
+  border-radius:8px;padding:1px 7px;margin-right:7px;vertical-align:middle;white-space:nowrap;}
 .elnSumFml{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:10px;
   background:rgba(164,120,100,.07);border:1px solid rgba(164,120,100,.14);font-size:13px;color:#5a3e30;}
 .elnSumFml i{color:#A47864;font-size:20px;}
@@ -895,8 +937,8 @@ body.elnApproved .elnModTitle:hover,body.elnApproved .elnModMemo:hover{backgroun
 body.elnApproved #tab_ov input::placeholder,body.elnApproved #tab_ov textarea::placeholder{color:transparent;}
 body.elnApproved #tab_ov input::-webkit-input-placeholder,body.elnApproved #tab_ov textarea::-webkit-input-placeholder{color:transparent;}
 body.elnApproved .elnModMemo:empty::before{content:"";}
-/* 좌측 목차 클릭 스크롤 시 고정 헤더(position:fixed, ≈115px)가 카드를 가리지 않게 — scrollIntoView가 scroll-margin-top 존중 */
-#tab_ov .cardBox{scroll-margin-top:120px;}
+/* 좌측 목차 클릭 스크롤 시 고정 헤더(position:fixed, height:50px / 본문 margin-top:65px)가 카드를 가리지 않게 — scrollIntoView가 scroll-margin-top 존중. (이전 120px는 옛 큰 헤더 기준이라 과해서 카드가 너무 내려갔음) */
+#tab_ov .cardBox{scroll-margin-top:72px;}
 /* contenteditable 텍스트(제목·메모 등): 마우스 안 올려도 편집 가능함을 은은히 — 점선 밑줄(text-decoration이라 레이아웃 영향 없음).
    테이블 셀·Summernote·포스트잇은 제외(이미 명확하거나 자체 UI). 잠금 시 신호 제거 */
 #tab_ov [contenteditable="true"]:not(.note-editable):not(.elnPostitBody):not(.elnModMemo):not(td):not(th){
@@ -1089,3 +1131,47 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions{display:none;}
 .elnUserSent{margin-left:auto;color:#3aaa6f;font-size:18px;flex:0 0 auto;}
 .elnUserRow.sent{cursor:default;}
 @media (max-width:560px){.elnTmplGrid{grid-template-columns:1fr;}}
+
+/* ════ apis_eln_list_simple 전용 — 좌·우 모두 원래 list 행(typeList type4). 좌측은 AppleTab/Search/New 헤더 포함 ════ */
+.elnListWrap .mainList li{ cursor:pointer; }
+/* 좌 Project 패널 헤더(AppleTab + Search/New + 검색결과칩) */
+.elnProjPanel .elnNotePanelHead{ gap:10px; flex-wrap:wrap; align-items:center; }
+.elnProjBtns{ display:flex; gap:8px; margin-left:auto; }
+.elnProjPanel .elnSrchCrit{ flex-basis:100%; }
+.elnProjPanel .elnSrchClear{ flex-basis:auto; }   /* 버튼 = 콘텐츠 너비(100% 줄차지 방지) */
+
+/* status 3색 — statusBox (ST cls: blue/viola/green) */
+#projListUl .statusBox.blue,  #noteListUl .statusBox.blue  { background:#eaf2fc; color:#2f80ed; border-color:#cfe1f8; }
+#projListUl .statusBox.viola, #noteListUl .statusBox.viola { background:#f2eef6; color:#7d6597; border-color:#ddd0e8; }
+#projListUl .statusBox.green,  #noteListUl .statusBox.green  { background:#e9f6ef; color:#3aaa6f; border-color:#cfe9db; }
+/* Active = 공통 .statusBox.orange(var(--orangetiger)) 재사용 — 별도 색 규칙 불필요 */
+
+/* 노트 태그·빈결과 */
+.elnListEmpty{ display:flex; align-items:center; gap:8px; color:#b3a596; padding:14px; }
+
+/* ── 좌 leftSection / 우 rightSection (elnListWrap flex 5:5). common 단독 .rightSection(row·center·gap)을 column·stretch로 override ── */
+.elnListWrap > .leftSection, .elnListWrap > .rightSection{ flex:1 1 0; min-width:0; display:flex; flex-direction:column; justify-content:flex-start; align-items:stretch; gap:0; }
+.elnListWrap > .leftSection{ flex:6 1 0; padding:0 14px 0 0; }
+.elnListWrap > .rightSection{ flex:4 1 0; padding:0 0 0 18px; border-left:1px solid rgba(164,120,100,.15); }
+
+/* 우 rightSection을 cardBox로 감싸 summary 패널 느낌 (좌 네비 리스트와 대비 → 계층) */
+.rightSection > .elnNoteBox{ flex:1 1 0; min-height:0; display:flex; flex-direction:column; overflow:hidden; padding:8px 8px 10px; }
+.rightSection > .elnNoteBox > .typeList{ flex:1; min-height:0; }
+
+/* 좌 leftSection의 Project list도 cardBox로 감싸 우측과 대칭 (apis_npdi_list의 mainList cardBox 참고) */
+.leftSection > .elnProjBox{ flex:1 1 0; min-height:0; display:flex; flex-direction:column; overflow:hidden; padding:8px 8px 10px; }
+.leftSection > .elnProjBox > .typeList{ flex:1; min-height:0; }
+
+/* 가운데 경계선 제거(요청) + 결과 컬럼 max-width·중앙정렬을 상시 적용(일반 모드선 비구속 → 진입/해제 점프 없이 부드럽게) */
+.elnListWrap > .rightSection{ border-left:none; padding-left:14px; max-width:1000px; margin:0 auto; }
+/* 좌·우 패널 헤더 (좌: AppleTab+Search/New · 우: 작성자 select) — cardBox 위 같은 높이 */
+.elnPaneHead{ flex:0 0 auto; display:flex; align-items:center; gap:10px; flex-wrap:wrap; padding:0; margin:10px 0 0; min-height:50px; box-sizing:border-box; }
+/* 'ELN List' 타이틀을 좌측 패널 헤더 안 인라인으로(별도 줄 제거) — 큰 폰트·패딩 제거하고 탭·버튼과 한 줄 */
+.elnPaneHead .mainTit{ font-size:25px; padding:0; margin:0 4px 0 0; line-height:1.2; }
+.elnHeadBtns{ display:flex; gap:8px; margin-left:auto; }
+.elnNoteHead{ justify-content:flex-start; }
+.elnUserLabel{ display:inline-flex; align-items:center; gap:4px; font-size:12px; font-weight:600; color:#7a6757; }
+.elnUserLabel i{ font-size:16px; color:#A47864; }
+/* materialize 전역 select{width:100%} 무력화 → 내용폭에 맞춰 적당히, 우측 정렬 */
+.elnUserSelect{ height:34px; border:1px solid #d9cfc2; border-radius:8px; padding:0 10px; font-size:13px; background:#fff; width:auto; min-width:150px; max-width:220px; }
+.elnNoteHead .elnUserLabel{ margin-left:auto; }   /* Author 라벨+select 그룹을 우측 가장자리로 */

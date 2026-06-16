@@ -1,0 +1,443 @@
+<!DOCTYPE html lang="en">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MAPIS datahub</title>
+	<link rel="preload" href="mapis_lib/font/material-symbols-outlined.woff2" as="font" type="font/woff2">
+	<link rel="preload" href="mapis_lib/font/material-symbols-rounded.woff2" as="font" type="font/woff2">
+	<link rel="preload" href="mapis_lib/font/material-symbols-sharp.woff2" as="font" type="font/woff2">
+	<link rel="preload" href="mapis_lib/font/material-icons.woff2" as="font" type="font/woff2">
+	<link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/mpm_materialize.css">
+    <link rel="stylesheet" type="text/css" href="mapis_lib/css/common.css">
+    <link type="text/css" rel="stylesheet" href="mapis_lib/css/lib/animate.min.css">
+
+    <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-3.7.1.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-ui-1.14.1.js"></script>
+    <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/mpm_materialize.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/apis_util.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/glass_engine.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="css/datahub_proto.css">
+</head>
+<body>
+	<!-- 공통 헤더(navbar-fixed) — 전 모듈 공통: 로고(좌)·srchArea global search(센터)·userInfo(우) -->
+	<header class="navbar-fixed">
+		<nav>
+			<article class="navTop">
+				<section class="leftSection">
+					<div class="menuIcon">
+						<div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
+					</div>
+					<div><a href="apis_datahub_list.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
+				</section>
+				<section class="centerSection">
+					<div class="srchArea">
+						<i class="material-icons prefix">search</i>
+						<input type="text" class="browser-default" placeholder="Search across MAPIS" value="" id="mainSrchInput" autocomplete="off">
+					</div>
+				</section>
+				<section class="rightSection">
+					<div class="userInfo">
+						<div class="mr10"><span class="mocha25-text fontM">Global Technology</span></div>
+						<i class="material-icons mocha25-text fLine vCenter hCenter mg0">person</i>
+					</div>
+				</section>
+			</article>
+		</nav>
+	</header>
+
+	<!-- 사이드 메뉴(sidenav) — datahub 활성 + MAPIS 모듈 -->
+	<aside class="menuAside">
+		<div id="slide-out" class="sidenav glassBox">
+			<div class="userInfoArea">
+				<div class="photo"><i class="material-icons" style="font-size:46px;color:#A47864;">account_circle</i></div>
+				<div class="userInfo">
+					<div class="fontB">Global Technology</div>
+					<div>Technical Report Hub</div>
+				</div>
+			</div>
+			<div class="menuList">
+				<ul>
+					<li class="waves-effect waves-hColor on"><a href="apis_datahub_list.html"><i class="material-icons left">database</i>DataHub</a></li>
+					<li><a class="subheader" style="color:#9b8c7e;font-size:11px;letter-spacing:.04em;pointer-events:none;">MAPIS MODULES</a></li>
+					<li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>MAPIS Home</a></li>
+					<li class="waves-effect waves-hColor"><a href="apis_eln_list.html"><i class="material-icons left">science</i>ELN</a></li>
+					<li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
+					<li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub</a></li>
+				</ul>
+			</div>
+		</div>
+	</aside>
+
+	<!-- 본문: DataHub — 좌 검색+필터 카드 | 우 Discovery↔Results -->
+	<article class="contArea dhArea">
+		<section class="mainTitArea">
+			<div class="mainTit">DataHub</div>
+		</section>
+
+		<div class="dhBody">
+			<!-- 좌: datahub 검색 + 필터(공통 .cardBox). 헤더 검색은 global, 이 패널이 datahub 검색 -->
+			<aside class="cardBox dhFacet hScroll">
+				<div class="dhSearchBox">
+					<div class="dhSearchField">
+						<i class="material-symbols-outlined">search</i>
+						<input type="text" id="dhSearchInput" placeholder="Search reports…" autocomplete="off">
+						<i class="material-symbols-outlined dhSearchClear" id="dhSearchClear" title="Clear search">close</i>
+					</div>
+					<a href="javascript:;" id="dhSearchBtn" class="waves-effect waves-light hBtn viva dhSearchBtn"><i class="material-icons left">search</i><span class="label">Search</span></a>
+				</div>
+
+				<div class="dhFacetSec">
+					<div class="dhFacetTit"><i class="material-symbols-outlined">filter_alt</i>Filters<span class="lnk" id="dhFacetClear">Reset</span></div>
+				</div>
+				<div class="dhFacetSec">
+					<div class="dhFacetTit"><i class="material-symbols-outlined">public</i>Region Indexes<span class="cnt" id="dhIdxCnt"></span></div>
+					<div id="dhIndexList"><!-- JS --></div>
+					<span class="dhFacetTit lnk" id="dhIdxToggle" style="text-transform:none;font-weight:600;">Deselect all</span>
+				</div>
+				<div class="dhFacetSec">
+					<div class="dhFacetTit"><i class="material-symbols-outlined">shield</i>Classification</div>
+					<div id="dhClassList"><!-- JS --></div>
+				</div>
+				<div class="dhFacetSec">
+					<div class="dhFacetTit"><i class="material-symbols-outlined">description</i>Document Type</div>
+					<select id="dhFType"><!-- JS --></select>
+				</div>
+				<div class="dhFacetSec">
+					<div class="dhFacetTit"><i class="material-symbols-outlined">event</i>Date Created</div>
+					<select id="dhFDate">
+						<option value="all">Any time</option>
+						<option value="2024">2023 – now</option>
+						<option value="2018">2018 – 2022</option>
+						<option value="0">Before 2018</option>
+					</select>
+				</div>
+				<div class="dhFacetSec">
+					<div class="dhFacetTit"><i class="material-symbols-outlined">apartment</i>Business Unit</div>
+					<select id="dhFBu"><!-- JS --></select>
+				</div>
+			</aside>
+
+			<!-- 우: main(일반 영역) — Discovery ↔ Results -->
+			<div class="dhMain hScroll" id="dhMain"><!-- JS 렌더 --></div>
+		</div>
+	</article>
+
+	<div class="dhToastWrap" id="dhToastWrap"></div>
+
+	<script>
+	/* ════════════════════════════════════════════════════════════
+	   datahub Search Home — 목업(시각 우선, 규칙 비enforce).
+	   검색 = 좌 cardBox(#dhSearchInput). 헤더 srchArea(#mainSrchInput) = global(타 모듈 포함).
+	   ════════════════════════════════════════════════════════════ */
+
+	var INDEXES = [
+		{id:'CN', nm:'CN — Shanghai'}, {id:'DE', nm:'DE — Leverkusen'}, {id:'IN', nm:'IN — Bangalore'},
+		{id:'IT', nm:'IT — Termoli'}, {id:'JP', nm:'JP — Ohta'}, {id:'KR', nm:'KR — All Regions'},
+		{id:'TH', nm:'Thailand'}, {id:'UK', nm:'UK — Abingdon'}, {id:'US', nm:'US — All Regions'}
+	];
+	var CLASSES = [
+		{c:1, nm:'Class 1 · Public',            sc:'green',  dot:'dhc1', lock:false},
+		{c:2, nm:'Class 2 · Internal',          sc:'blue',   dot:'dhc2', lock:false},
+		{c:3, nm:'Class 3 · Confidential',      sc:'orange', dot:'dhc3', lock:true},
+		{c:4, nm:'Class 4 · Highly Restricted', sc:'red',    dot:'dhc4', lock:true}
+	];
+	var TYPES = [
+		{t:'TIS', nm:'TIS Report', ic:'article'}, {t:'TMR', nm:'Tech / Market Review', ic:'summarize'},
+		{t:'PTM', nm:'Process Transfer Memo', ic:'swap_horiz'}, {t:'Trip', nm:'Trip Report', ic:'flight'},
+		{t:'IP', nm:'Improvement Project', ic:'trending_up'}
+	];
+	function typeInfo(t){ return TYPES.filter(function(x){return x.t===t;})[0] || {t:t,nm:t,ic:'description'}; }
+	function classInfo(c){ return CLASSES.filter(function(x){return x.c===c;})[0] || CLASSES[1]; }
+	function idxName(id){ var x=INDEXES.filter(function(i){return i.id===id;})[0]; return x?x.nm:id; }
+
+	var REPORTS = [
+		{code:'LEV-24-02',  title:'Bio-based Silicone Feasibility Study (JDA)',         type:'TIS', site:'LEV', idx:'DE', author:'Dr. Stephan Boß',           bu:'Elastomers',   date:'2026-06-14', cls:4, hits:162},
+		{code:'KR-23-11',   title:'Low-Temperature Cure Silicone for Flexible Display', type:'TIS', site:'KR',  idx:'KR', author:'S.Y. Park',                bu:'Specialty',    date:'2026-06-12', cls:3, hits:274},
+		{code:'ITC-22-31',  title:'Antifoam Improvement Project — Phase 2',             type:'IP',  site:'ITC', idx:'IN', author:'Indumathi M.',             bu:'Fluids',       date:'2026-06-10', cls:2, hits:176},
+		{code:'LEV-23-07',  title:'Development of a Baking Paper Release Coating',      type:'TIS', site:'LEV', idx:'DE', author:'Markus Bley',              bu:'Coatings',     date:'2026-06-05', cls:2, hits:352},
+		{code:'TML-22-02',  title:'Resin Intermediate Process Transfer Memorandum',    type:'PTM', site:'TML', idx:'IT', author:'G. Rossi',                 bu:'Resins',       date:'2026-05-28', cls:2, hits:205},
+		{code:'KR-22-03',   title:'OLED Encapsulation Adhesive — Scale-up Request',     type:'PTM', site:'KR',  idx:'KR', author:'J.P. Kim',                 bu:'Specialty',    date:'2026-05-20', cls:2, hits:298},
+		{code:'BKK-21-19',  title:'Sealant Field Trial Report — SE Asia',              type:'Trip',site:'BKK', idx:'TH', author:'S. Phong',                 bu:'Sealants',     date:'2026-05-12', cls:2, hits:188},
+		{code:'SH-21-08',   title:'Defoamer Performance in Architectural Coatings',    type:'TIS', site:'SH',  idx:'CN', author:'Wei Zhang',                bu:'Coatings',     date:'2026-04-30', cls:2, hits:241},
+		{code:'ABD-20-15',  title:'Specialty Fluids for Personal Care Formulations',   type:'TMR', site:'ABD', idx:'UK', author:'J. Whitfield',             bu:'Personal Care',date:'2026-04-18', cls:1, hits:233},
+		{code:'TT-18-12',   title:'Water Phase Sensory Elastomer',                     type:'TIS', site:'TT',  idx:'US', author:'Mukesh Kumar',             bu:'Elastomers',   date:'2026-03-22', cls:2, hits:359},
+		{code:'SV-19-06',   title:'Urethane Additives Applications Guide',             type:'TMR', site:'SV',  idx:'US', author:'L. Heisler',               bu:'Additives',    date:'2026-02-15', cls:2, hits:432},
+		{code:'SV-19-10',   title:'Urethane Additives Technology Review',              type:'TMR', site:'SV',  idx:'US', author:'L. Heisler',               bu:'Additives',    date:'2026-02-10', cls:2, hits:388},
+		{code:'WTC-11-29',  title:'In-situ Functionalized Nano Ceria Dispersions',     type:'TIS', site:'WTC', idx:'IN', author:'Asha Jhonsi, Karthikeyan M.',bu:'Fluids',     date:'2026-01-20', cls:2, hits:554},
+		{code:'JPN-15-04',  title:'Patent Survey for UV Curable Frontsheet',           type:'TIS', site:'JPN', idx:'JP', author:'Kazuhisa Ono',             bu:'Specialty',    date:'2025-12-08', cls:3, hits:518},
+		{code:'TT-12-16',   title:'Silicone Fluids Technology Highlights — Annual',    type:'TMR', site:'TT',  idx:'US', author:'Global Silicone Fluids Tech',bu:'Fluids',     date:'2025-11-30', cls:3, hits:374},
+		{code:'2008-MPM-16',title:'SF1632 Part 1: Root Cause Analysis',                type:'TIS', site:'WF',  idx:'US', author:'Global Silicone Fluids Tech',bu:'Fluids',     date:'2025-11-12', cls:4, hits:379},
+		{code:'JPN-10-07',  title:'Effect of Crosslinkage and Reinforcement',          type:'TIS', site:'JPN', idx:'JP', author:'H. Sato',                  bu:'Elastomers',   date:'2025-10-05', cls:2, hits:572},
+		{code:'JPN-09-24',  title:'HCR New Portfolio; The Development Roadmap',         type:'TIS', site:'JPN', idx:'JP', author:'T. Nakamura',              bu:'Elastomers',   date:'2025-09-18', cls:3, hits:575},
+		{code:'ITC-12-13',  title:'Patentability Search: Acrylate Functional Silicones',type:'TIS',site:'ITC',idx:'IN', author:'Madhuri Raju, A. Dhanabalan',bu:'Specialty',  date:'2025-08-22', cls:1, hits:632},
+		{code:'WTC-11-45',  title:'Surface Modification of Ceria Using Silanes',       type:'TIS', site:'WTC', idx:'IN', author:'Karthikeyan Murugesan',    bu:'Fluids',       date:'2025-07-30', cls:2, hits:636},
+		{code:'TT-11-16',   title:'Hydrosilylation with Iron-Pyridine Catalysts',      type:'TIS', site:'TT',  idx:'US', author:'Kenrick M. Lewis',         bu:'Additives',    date:'2025-06-25', cls:2, hits:798},
+		{code:'LEV-20-27',  title:'Liquid Silicone Rubber — Handbook of Processing',   type:'TIS', site:'LEV', idx:'DE', author:'Enise Michalski',          bu:'Elastomers',   date:'2025-05-15', cls:2, hits:1441}
+	];
+	var MY_REGION = 'US';   // 데모상 접근 권역(잠금 시각 표현용 — enforce 아님)
+	var MAXHITS = Math.max.apply(null, REPORTS.map(function(r){return r.hits;}));
+
+	function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+	function toast(msg, kind){
+		var ic={ok:'check_circle',info:'info',warn:'lock',mocha:'bolt'}[kind||'info']||'info';
+		var el=document.createElement('div'); el.className='dhToast '+(kind||'info');
+		el.innerHTML='<i class="material-symbols-outlined">'+ic+'</i><span>'+esc(msg)+'</span>';
+		document.getElementById('dhToastWrap').appendChild(el);
+		setTimeout(function(){ el.classList.add('fade'); setTimeout(function(){ el.remove(); },260); }, 2400);
+	}
+
+	var activeIdx={}; INDEXES.forEach(function(i){ activeIdx[i.id]=true; });
+	var activeCls={1:true,2:true,3:true,4:true};
+	var curQuery='', searchMode=false;
+
+	function openReport(code){
+		var r=REPORTS.filter(function(x){return x.code===code;})[0]; if(!r) return;
+		if(r.cls>=3 && r.idx!==MY_REGION){
+			toast('“'+r.code+'” is Class '+r.cls+' ('+idxName(r.idx)+'). Title & metadata only — full access is region-restricted.','warn'); return;
+		}
+		toast('Opening “'+r.code+'” — '+r.title,'mocha');
+		// 다음 단계: window.open('apis_datahub_pop.html?code='+encodeURIComponent(code), 'dhReport', 'width=1280,height=900,...');
+	}
+
+	/* ── 인라인 등급 배지(카드·순위·결과행 공통) ── */
+	function classBadge(c){ return '<span class="dhClassBadge c'+c+'">'+(classInfo(c).lock?'<i class="material-symbols-outlined">lock</i>':'')+'C'+c+'</span>'; }
+
+	/* ── facet 렌더(Materialize .filled-in 체크박스) ── */
+	function renderFacet(){
+		var il=document.getElementById('dhIndexList'); il.innerHTML=INDEXES.map(function(i){
+			var cnt=REPORTS.filter(function(r){return r.idx===i.id;}).length;
+			return '<label class="dhChk"><input type="checkbox" class="filled-in" data-idx="'+i.id+'"'+(activeIdx[i.id]?' checked':'')+'/>'+
+				'<span class="nm">'+esc(i.nm)+'</span><span class="rc">'+cnt+'</span></label>';
+		}).join('');
+		var cl=document.getElementById('dhClassList'); cl.innerHTML=CLASSES.map(function(c){
+			var cnt=REPORTS.filter(function(r){return r.cls===c.c;}).length;
+			return '<label class="dhChk"><input type="checkbox" class="filled-in" data-cls="'+c.c+'"'+(activeCls[c.c]?' checked':'')+'/>'+
+				'<span class="nm"><span class="cdot '+c.dot+'"></span>'+esc(c.nm)+'</span>'+
+				(c.lock?'<i class="material-symbols-outlined">lock</i>':'')+
+				'<span class="rc">'+cnt+'</span></label>';
+		}).join('');
+		document.getElementById('dhFType').innerHTML='<option value="all">All types</option>'+TYPES.map(function(t){
+			return '<option value="'+t.t+'">'+esc(t.nm)+' ('+REPORTS.filter(function(r){return r.type===t.t;}).length+')</option>';
+		}).join('');
+		var bus=[]; REPORTS.forEach(function(r){ if(bus.indexOf(r.bu)<0) bus.push(r.bu); }); bus.sort();
+		document.getElementById('dhFBu').innerHTML='<option value="all">All units</option>'+bus.map(function(b){return '<option>'+esc(b)+'</option>';}).join('');
+		updateIdxCount();
+	}
+	function updateIdxCount(){
+		var on=Object.keys(activeIdx).filter(function(k){return activeIdx[k];}).length;
+		document.getElementById('dhIdxCnt').textContent=on+'/'+INDEXES.length;
+		document.getElementById('dhIdxToggle').textContent = on===INDEXES.length ? 'Deselect all' : 'Select all';
+	}
+
+	/* ── Discovery(빈 상태) — 인트로 + Recently Added(카드) + Most Referenced(순위) + Browse by Type(타일) ── */
+	function repCard(r){
+		return '<div class="dhRepCard" data-code="'+esc(r.code)+'">'+
+			'<div class="rcTop"><span class="rcType">'+esc(r.type)+'</span>'+classBadge(r.cls)+'</div>'+
+			'<div class="rcTitle">'+esc(r.title)+'</div>'+
+			'<div class="rcMeta"><span class="code">'+esc(r.code)+'</span><span class="dot">·</span>'+esc(r.author)+'</div>'+
+			'<div class="rcFoot"><span class="rcSite"><i class="material-symbols-outlined">public</i>'+esc(idxName(r.idx))+'</span>'+
+			'<span style="margin-left:auto;font-size:11px;color:#bcae9d;">'+esc(r.date)+'</span></div>'+
+		'</div>';
+	}
+	function rankRow(r,i){
+		var pct=Math.max(6, Math.round(r.hits/MAXHITS*100));
+		return '<div class="dhRankRow" data-code="'+esc(r.code)+'"><span class="dhRankNo">'+(i+1)+'</span>'+
+			'<div class="dhRankMain"><div class="dhRankTit">'+esc(r.title)+'</div>'+
+			'<div class="dhRankSub"><span class="code">'+esc(r.code)+'</span>'+classBadge(r.cls)+
+			'<span>'+esc(idxName(r.idx))+'</span></div></div>'+
+			'<div class="dhRankBar"><span style="width:'+pct+'%"></span></div>'+
+			'<span class="dhRankHits"><i class="material-symbols-outlined">visibility</i>'+r.hits+'</span></div>';
+	}
+	function renderDiscovery(){
+		searchMode=false;
+		var recent=REPORTS.slice().sort(function(a,b){return a.date<b.date?1:-1;}).slice(0,8);
+		var ranked=REPORTS.slice().sort(function(a,b){return b.hits-a.hits;}).slice(0,8);
+		var html='<div class="dhDiscover">';
+		html+='<div class="dhIntro"><div class="dhIntroTxt">'+
+			'<h1><i class="material-symbols-outlined">database</i>Technical Report Hub</h1>'+
+			'<p>Momentive Global Technology — find, read, and contribute technical reports across all sites and regions.</p>'+
+			'</div><div class="dhIntroStats">'+
+			'<div class="dhStat"><b>12,480</b><span>Reports</span></div>'+
+			'<div class="dhStat"><b>9</b><span>Region indexes</span></div>'+
+			'<div class="dhStat"><b>37</b><span>Added this week</span></div></div></div>';
+		html+='<div class="dhSec"><div class="dhSecHead"><span class="st"><i class="material-symbols-outlined">schedule</i>Recently Added</span>'+
+			'<span class="more" data-browse="recent">View all<i class="material-symbols-outlined">chevron_right</i></span></div>'+
+			'<div class="dhCardGrid">'+recent.map(repCard).join('')+'</div></div>';
+		html+='<div class="dhSec"><div class="dhSecHead"><span class="st"><i class="material-symbols-outlined">local_fire_department</i>Most Referenced</span>'+
+			'<span class="more" data-browse="top">View all<i class="material-symbols-outlined">chevron_right</i></span></div>'+
+			'<div class="dhRankList">'+ranked.map(function(r,i){return rankRow(r,i);}).join('')+'</div></div>';
+		html+='<div class="dhSec"><div class="dhSecHead"><span class="st"><i class="material-symbols-outlined">category</i>Browse by Document Type</span></div>'+
+			'<div class="dhTypeTiles">'+TYPES.map(function(t){
+				return '<div class="dhTypeTile" data-type="'+t.t+'"><i class="material-symbols-outlined">'+t.ic+'</i>'+
+					'<div><div class="tt">'+esc(t.nm)+'</div><div class="tc">'+REPORTS.filter(function(r){return r.type===t.t;}).length+' reports</div></div></div>';
+			}).join('')+'</div></div>';
+		html+='<div class="dhSec"><div class="dhSecHead"><span class="st"><i class="material-symbols-outlined">travel_explore</i>Browse by Region</span></div>'+
+			'<div class="dhTypeTiles">'+INDEXES.map(function(i){
+				return '<div class="dhTypeTile" data-idx="'+i.id+'"><i class="material-symbols-outlined">public</i>'+
+					'<div><div class="tt">'+esc(i.nm)+'</div><div class="tc">'+REPORTS.filter(function(r){return r.idx===i.id;}).length+' reports</div></div></div>';
+			}).join('')+'</div></div>';
+		html+='</div>';
+		document.getElementById('dhMain').innerHTML=html;
+	}
+
+	/* ── 검색/필터 결과 ── */
+	function currentMatches(){
+		var ft=document.getElementById('dhFType').value, fd=document.getElementById('dhFDate').value, fb=document.getElementById('dhFBu').value;
+		var q=curQuery.toLowerCase().trim();
+		return REPORTS.filter(function(r){
+			if(!activeIdx[r.idx]) return false;
+			if(!activeCls[r.cls]) return false;
+			if(ft!=='all' && r.type!==ft) return false;
+			if(fb!=='all' && r.bu!==fb) return false;
+			if(fd!=='all'){ var y=parseInt(r.date.slice(0,4),10);
+				if(fd==='2024' && y<2023) return false;
+				if(fd==='2018' && (y<2018||y>2022)) return false;
+				if(fd==='0' && y>=2018) return false; }
+			if(q && (r.title+' '+r.code+' '+r.author+' '+r.bu+' '+r.type).toLowerCase().indexOf(q)<0) return false;
+			return true;
+		}).sort(function(a,b){return b.hits-a.hits;});
+	}
+	function resultRow(r){
+		var locked=(r.cls>=3 && r.idx!==MY_REGION);
+		var lockHint=locked?'<span class="dhRowLockHint"><i class="material-symbols-outlined" style="font-size:13px;">lock</i>Metadata only · region-restricted</span>':'';
+		return '<div class="dhResultRow'+(locked?' locked':'')+'" data-code="'+esc(r.code)+'">'+
+			'<div class="dhRowIcon"><i class="material-symbols-outlined">'+(locked?'lock':typeInfo(r.type).ic)+'</i></div>'+
+			'<div class="dhRowBody"><div class="dhRowTitle"><span class="tt">'+esc(r.title)+'</span>'+classBadge(r.cls)+'</div>'+
+			'<div class="dhRowMeta"><span class="code">'+esc(r.code)+'</span><span class="dot">·</span>'+
+				'<span class="type">'+esc(r.type)+'</span><span class="dot">·</span>'+
+				'<span class="site"><i class="material-symbols-outlined">public</i>'+esc(idxName(r.idx))+'</span><span class="dot">·</span>'+
+				'<span>'+esc(r.author)+'</span>'+(lockHint?'<span class="dot">·</span>'+lockHint:'')+'</div></div>'+
+			'<div class="dhRowRight"><div class="dhRowRel"><span class="h">'+r.hits+'</span><span class="hl">refs</span></div>'+
+			'<div class="dhRowActs">'+
+				'<span class="dhRowAct dhBasket" data-code="'+esc(r.code)+'" title="Add to basket"><i class="material-symbols-outlined">add_shopping_cart</i></span>'+
+				'<span class="dhRowAct dhDl" data-code="'+esc(r.code)+'" title="'+(locked?'Restricted':'Download')+'"><i class="material-symbols-outlined">'+(locked?'lock':'download')+'</i></span>'+
+			'</div></div></div>';
+	}
+	function crit(ic,k,v,key){
+		return '<span class="dhCritChip" data-crit="'+key+'"><i class="material-symbols-outlined k">'+ic+'</i>'+
+			'<span>'+esc(k)+': <b>'+esc(v)+'</b></span><i class="material-symbols-outlined x">close</i></span>';
+	}
+	function critRow(){
+		var chips=[];
+		if(curQuery) chips.push(crit('search','Keyword',curQuery,'q'));
+		var ft=document.getElementById('dhFType').value; if(ft!=='all') chips.push(crit('description','Type',typeInfo(ft).nm,'type'));
+		var fb=document.getElementById('dhFBu').value; if(fb!=='all') chips.push(crit('apartment','Unit',fb,'bu'));
+		var offIdx=INDEXES.filter(function(i){return !activeIdx[i.id];}).length;
+		if(offIdx) chips.push(crit('public','Indexes',(INDEXES.length-offIdx)+' of '+INDEXES.length,'idx'));
+		var offCls=[1,2,3,4].filter(function(c){return !activeCls[c];}).length;
+		if(offCls) chips.push(crit('shield','Class',[1,2,3,4].filter(function(c){return activeCls[c];}).map(function(c){return 'C'+c;}).join(', '),'cls'));
+		if(!chips.length) return '';
+		return '<div class="dhCritRow"><span class="lead"><i class="material-symbols-outlined">filter_alt</i>Filtered by</span>'+chips.join('')+'</div>';
+	}
+	function renderResults(){
+		searchMode=true;
+		var list=currentMatches();
+		var html='<div class="dhResults">';
+		html+='<div class="dhResultsHead"><div class="dhResultsCount">Documents <b>1–'+list.length+'</b> of <b>'+list.length+'</b>'+
+			(curQuery?' for <span class="q">“'+esc(curQuery)+'”</span>':'')+'</div>'+
+			'<div class="dhResultsTools"><select class="dhSortSel" id="dhSort">'+
+			'<option value="rel">Sort: Relevance</option><option value="date">Newest</option><option value="hits">Most referenced</option>'+
+			'</select></div></div>';
+		html+=critRow();
+		if(!list.length){
+			html+='<div class="dhEmpty"><i class="material-symbols-outlined">search_off</i>'+
+				'<div class="et">No reports match your search.</div>'+
+				'<div class="es">Try removing a filter or broadening your keywords.</div></div>';
+		} else {
+			html+='<div class="dhResultList">'+list.map(resultRow).join('')+'</div>';
+			html+='<div class="dhPager"><a class="nav">‹ Prev</a><a class="on">1</a><a>2</a><a>3</a><a>4</a><a class="nav">Next ›</a></div>';
+		}
+		html+='</div>';
+		document.getElementById('dhMain').innerHTML=html;
+		var ss=document.getElementById('dhSort'); if(ss) ss.addEventListener('change',function(){ applySort(this.value); });
+	}
+	function applySort(mode){
+		var list=currentMatches();
+		if(mode==='date') list.sort(function(a,b){return a.date<b.date?1:-1;});
+		else list.sort(function(a,b){return b.hits-a.hits;});
+		var wrap=document.querySelector('.dhResultList'); if(wrap) wrap.innerHTML=list.map(resultRow).join('');
+	}
+
+	function setQueryInput(v){ var s=document.getElementById('dhSearchInput'); if(!s) return; s.value=v; var f=s.closest('.dhSearchField'); if(f) f.classList.toggle('has', !!v); }
+	function doSearch(){ curQuery=(document.getElementById('dhSearchInput').value||'').trim(); renderResults(); }
+	function backToDiscovery(){ curQuery=''; setQueryInput(''); renderDiscovery(); }
+	function removeCrit(key){
+		if(key==='q'){ curQuery=''; setQueryInput(''); }
+		else if(key==='type') document.getElementById('dhFType').value='all';
+		else if(key==='bu') document.getElementById('dhFBu').value='all';
+		else if(key==='idx'){ INDEXES.forEach(function(i){ activeIdx[i.id]=true; }); renderFacet(); }
+		else if(key==='cls'){ activeCls={1:true,2:true,3:true,4:true}; renderFacet(); }
+		var anyCrit = curQuery || document.getElementById('dhFType').value!=='all' || document.getElementById('dhFBu').value!=='all'
+			|| INDEXES.some(function(i){return !activeIdx[i.id];}) || [1,2,3,4].some(function(c){return !activeCls[c];});
+		if(anyCrit) renderResults(); else backToDiscovery();
+	}
+	function onFacetChange(){ renderResults(); }
+
+	$(document).ready(function(){
+		$('.sidenav').sidenav();
+		$(document).on('click', '.sidenav-overlay, .closeBtns', function(){ $('.sidenav').sidenav('close'); });
+
+		renderFacet();
+		renderDiscovery();
+
+		// datahub 검색(좌 cardBox) — Enter / Search 버튼
+		var sq=document.getElementById('dhSearchInput');
+		sq.addEventListener('input', function(){ var f=sq.closest('.dhSearchField'); if(f) f.classList.toggle('has', !!sq.value); });
+		sq.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); this.value.trim()?doSearch():backToDiscovery(); } });
+		document.getElementById('dhSearchBtn').addEventListener('click', function(){ sq.value.trim()?doSearch():backToDiscovery(); });
+		document.getElementById('dhSearchClear').addEventListener('click', function(){ removeCrit('q'); });
+		// 헤더 srchArea = global(타 모듈 포함) — datahub 검색은 좌 패널로 안내
+		var gq=document.getElementById('mainSrchInput');
+		if(gq) gq.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); toast('Global search spans all MAPIS modules. Use the DataHub panel on the left to search reports.','info'); } });
+
+		// facet: 인덱스/등급 체크 + 셀렉트 + 토글/리셋
+		document.getElementById('dhIndexList').addEventListener('change', function(e){
+			var cb=e.target.closest('input[data-idx]'); if(!cb) return;
+			activeIdx[cb.getAttribute('data-idx')]=cb.checked; updateIdxCount(); onFacetChange();
+		});
+		document.getElementById('dhClassList').addEventListener('change', function(e){
+			var cb=e.target.closest('input[data-cls]'); if(!cb) return;
+			activeCls[+cb.getAttribute('data-cls')]=cb.checked; onFacetChange();
+		});
+		['dhFType','dhFDate','dhFBu'].forEach(function(id){ document.getElementById(id).addEventListener('change', onFacetChange); });
+		document.getElementById('dhIdxToggle').addEventListener('click', function(){
+			var on=Object.keys(activeIdx).filter(function(k){return activeIdx[k];}).length;
+			var next=(on!==INDEXES.length); INDEXES.forEach(function(i){ activeIdx[i.id]=next; });
+			renderFacet(); (curQuery||INDEXES.some(function(i){return !activeIdx[i.id];}))?renderResults():renderDiscovery();
+		});
+		document.getElementById('dhFacetClear').addEventListener('click', function(){
+			INDEXES.forEach(function(i){ activeIdx[i.id]=true; }); activeCls={1:true,2:true,3:true,4:true};
+			document.getElementById('dhFType').value='all'; document.getElementById('dhFDate').value='all'; document.getElementById('dhFBu').value='all';
+			renderFacet(); backToDiscovery(); toast('Filters reset.','ok');
+		});
+
+		// 메인 위임: 타입타일 / more / 기준칩 제거 / basket / download / 카드·순위·결과행 클릭
+		document.getElementById('dhMain').addEventListener('click', function(e){
+			var basket=e.target.closest('.dhBasket');
+			if(basket){ e.stopPropagation(); basket.classList.toggle('on');
+				var on=basket.classList.contains('on'); var bi=basket.querySelector('i'); if(bi) bi.textContent= on?'shopping_cart':'add_shopping_cart';
+				toast(on?('Added '+basket.getAttribute('data-code')+' to basket.'):'Removed from basket.', on?'ok':'info'); return; }
+			var dl=e.target.closest('.dhDl');
+			if(dl){ e.stopPropagation(); var dcode=dl.getAttribute('data-code'); var dr=REPORTS.filter(function(x){return x.code===dcode;})[0];
+				if(dr && dr.cls>=3 && dr.idx!==MY_REGION) toast('Download blocked — Class '+dr.cls+' is region-restricted ('+idxName(dr.idx)+').','warn');
+				else toast('Downloading '+dcode+'… (mock)','mocha'); return; }
+			var critEl=e.target.closest('.dhCritChip');
+			if(critEl){ e.stopPropagation(); removeCrit(critEl.getAttribute('data-crit')); return; }
+			var tile=e.target.closest('.dhTypeTile');
+			if(tile){ curQuery=''; setQueryInput('');
+				if(tile.hasAttribute('data-idx')){ var rid=tile.getAttribute('data-idx'); INDEXES.forEach(function(i){ activeIdx[i.id]=(i.id===rid); }); renderFacet(); }
+				else document.getElementById('dhFType').value=tile.getAttribute('data-type');
+				renderResults(); return; }
+			var more=e.target.closest('.more[data-browse]');
+			if(more){ curQuery=''; setQueryInput(''); renderResults(); return; }
+			var card=e.target.closest('[data-code]');
+			if(card){ openReport(card.getAttribute('data-code')); return; }
+		});
+	});
+	</script>
+</body>
+</html>
