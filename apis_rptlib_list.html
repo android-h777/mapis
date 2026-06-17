@@ -72,66 +72,48 @@
 		</div>
 	</aside>
 
-	<!-- 본문: Technical Report Library — 좌 검색+필터 카드 | 우 Discovery↔Results -->
+	<!-- 본문: Technical Report Library — 상단 검색 히어로 + 가로 필터 칩 + 풀폭 결과 -->
 	<article class="contArea rlArea">
 		<section class="mainTitArea">
 			<div class="mainTit">Technical Report Library</div>
+			<a href="javascript:;" id="rlHome" class="rlHome" title="Back to Discovery home"><i class="material-symbols-outlined">home</i><span>Home</span></a>
 		</section>
 
-		<div class="rlBody">
-			<!-- 좌: Technical Report Library 검색 + 필터(공통 .cardBox). 헤더 검색은 global, 이 패널이 Technical Report Library 검색 -->
-			<aside class="cardBox rlFacet hScroll">
-				<div class="rlSearchBox">
-					<div class="rlSearchField">
-						<i class="material-symbols-outlined">search</i>
-						<input type="text" id="rlSearchInput" placeholder="Search reports…" autocomplete="off">
-						<i class="material-symbols-outlined rlSearchClear" id="rlSearchClear" title="Clear search">close</i>
-					</div>
-					<a href="javascript:;" id="rlSearchBtn" class="waves-effect waves-light hBtn viva rlSearchBtn"><i class="material-icons left">search</i><span class="label">Search</span></a>
-				</div>
-
-				<div class="rlFacetSec">
-					<div class="rlFacetTit"><i class="material-symbols-outlined">filter_alt</i>Filters<span class="lnk" id="rlFacetClear">Reset</span></div>
-				</div>
-				<div class="rlFacetSec">
-					<div class="rlFacetTit"><i class="material-symbols-outlined">public</i>Region Indexes<span class="cnt" id="rlIdxCnt"></span></div>
-					<div id="rlIndexList"><!-- JS --></div>
-					<span class="rlFacetTit lnk" id="rlIdxToggle" style="text-transform:none;font-weight:600;">Deselect all</span>
-				</div>
-				<div class="rlFacetSec">
-					<div class="rlFacetTit"><i class="material-symbols-outlined">shield</i>Classification</div>
-					<div id="rlClassList"><!-- JS --></div>
-				</div>
-				<div class="rlFacetSec">
-					<div class="rlFacetTit"><i class="material-symbols-outlined">description</i>Document Type</div>
-					<select id="rlFType"><!-- JS --></select>
-				</div>
-				<div class="rlFacetSec">
-					<div class="rlFacetTit"><i class="material-symbols-outlined">event</i>Date Created</div>
-					<select id="rlFDate">
-						<option value="all">Any time</option>
-						<option value="2024">2023 – now</option>
-						<option value="2018">2018 – 2022</option>
-						<option value="0">Before 2018</option>
-					</select>
-				</div>
-				<div class="rlFacetSec">
-					<div class="rlFacetTit"><i class="material-symbols-outlined">apartment</i>Business Unit</div>
-					<select id="rlFBu"><!-- JS --></select>
-				</div>
-			</aside>
-
-			<!-- 우: main(일반 영역) — Discovery ↔ Results -->
-			<div class="rlMain hScroll" id="rlMain"><!-- JS 렌더 --></div>
+		<!-- 검색 히어로 — 모듈 검색(헤더 srchArea는 전 모듈 global) -->
+		<div class="rlSearchHero">
+			<div class="rlSearchField">
+				<i class="material-symbols-outlined">search</i>
+				<input type="text" id="rlSearchInput" placeholder="Search technical reports — title, code, author…" autocomplete="off">
+				<i class="material-symbols-outlined rlSearchClear" id="rlSearchClear" title="Clear">close</i>
+			</div>
+			<a href="javascript:;" id="rlSearchBtn" class="waves-effect waves-light hBtn viva rlSearchBtn off"><i class="material-icons left">search</i><span class="label">Search</span></a>
 		</div>
+
+		<!-- 필터 칩 바 + Saved searches -->
+		<div class="rlFilterBar" id="rlFilterBar">
+			<div class="rlChips" id="rlChips"><!-- JS --></div>
+			<span class="rlBarSep"></span>
+			<div class="rlBarActions">
+				<div class="rlSavedWrap" id="rlSavedWrap">
+					<a href="javascript:;" class="rlSavedBtn" id="rlSavedBtn"><i class="material-symbols-outlined">bookmark</i><span>Saved</span><i class="material-symbols-outlined ar">expand_more</i></a>
+					<div class="rlSavedMenu" id="rlSavedMenu"><!-- JS --></div>
+				</div>
+				<a href="javascript:;" class="rlReset" id="rlFacetClear"><i class="material-symbols-outlined">restart_alt</i>Reset</a>
+			</div>
+			<div class="rlPop" id="rlPop"><!-- JS 팝오버 --></div>
+		</div>
+
+		<!-- Discovery ↔ Results (풀폭) -->
+		<div class="rlMain hScroll" id="rlMain"><!-- JS 렌더 --></div>
 	</article>
 
 	<div class="rlToastWrap" id="rlToastWrap"></div>
 
 	<script>
 	/* ════════════════════════════════════════════════════════════
-	   Technical Report Library Search Home — 목업(시각 우선, 규칙 비enforce).
-	   검색 = 좌 cardBox(#rlSearchInput). 헤더 srchArea(#mainSrchInput) = global(타 모듈 포함).
+	   Technical Report Library — 목업(시각 우선, 규칙 비enforce).
+	   검색 = 상단 히어로(#rlSearchInput) + 가로 필터 칩(팝오버). 헤더 srchArea(#mainSrchInput) = global.
+	   상호작용 = staged(쌓기) → Search 버튼이 일괄 적용(deferred). Home = 첫 화면 복귀+리셋.
 	   ════════════════════════════════════════════════════════════ */
 
 	var INDEXES = [
@@ -180,6 +162,7 @@
 	];
 	var MY_REGION = 'US';   // 데모상 접근 권역(잠금 시각 표현용 — enforce 아님)
 	var MAXHITS = Math.max.apply(null, REPORTS.map(function(r){return r.hits;}));
+	var DATE_LABELS = {all:'Any time','2024':'2023 – now','2018':'2018 – 2022','0':'Before 2018'};
 
 	function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 	function toast(msg, kind){
@@ -190,9 +173,20 @@
 		setTimeout(function(){ el.classList.add('fade'); setTimeout(function(){ el.remove(); },260); }, 2400);
 	}
 
+	/* ── staged 상태(좌 패널 대신 칩/검색창이 편집) ── */
 	var activeIdx={}; INDEXES.forEach(function(i){ activeIdx[i.id]=true; });
 	var activeCls={1:true,2:true,3:true,4:true};
-	var curQuery='', searchMode=false;
+	var stType='all', stDate='all', stBu='all';
+	var applied=null;      // 적용 스냅샷(우측 렌더 기준). null = Discovery
+	var searchMode=false;  // 현재 뷰가 Results 인가
+	var dirty=false;       // staged 미적용 → Search 버튼 활성
+	var openPop=null;      // 현재 열린 칩 팝오버 key
+
+	function stagedQuery(){ return (document.getElementById('rlSearchInput').value||'').trim(); }
+	function snapshotApplied(){
+		applied={ q:stagedQuery(), idx:Object.assign({},activeIdx), cls:Object.assign({},activeCls), type:stType, date:stDate, bu:stBu };
+	}
+	function setDirty(v){ dirty=!!v; var b=document.getElementById('rlSearchBtn'); if(b) b.classList.toggle('off', !dirty); }
 
 	function openReport(code){
 		var r=REPORTS.filter(function(x){return x.code===code;})[0]; if(!r) return;
@@ -206,34 +200,122 @@
 	/* ── 인라인 등급 배지(카드·순위·결과행 공통) ── */
 	function classBadge(c){ return '<span class="rlClassBadge c'+c+'">'+(classInfo(c).lock?'<i class="material-symbols-outlined">lock</i>':'')+'C'+c+'</span>'; }
 
-	/* ── facet 렌더(Materialize .filled-in 체크박스) ── */
-	function renderFacet(){
-		var il=document.getElementById('rlIndexList'); il.innerHTML=INDEXES.map(function(i){
-			var cnt=REPORTS.filter(function(r){return r.idx===i.id;}).length;
-			return '<label class="rlChk"><input type="checkbox" class="filled-in" data-idx="'+i.id+'"'+(activeIdx[i.id]?' checked':'')+'/>'+
-				'<span class="nm">'+esc(i.nm)+'</span><span class="rc">'+cnt+'</span></label>';
-		}).join('');
-		var cl=document.getElementById('rlClassList'); cl.innerHTML=CLASSES.map(function(c){
-			var cnt=REPORTS.filter(function(r){return r.cls===c.c;}).length;
-			return '<label class="rlChk"><input type="checkbox" class="filled-in" data-cls="'+c.c+'"'+(activeCls[c.c]?' checked':'')+'/>'+
-				'<span class="nm"><span class="cdot '+c.dot+'"></span>'+esc(c.nm)+'</span>'+
-				(c.lock?'<i class="material-symbols-outlined">lock</i>':'')+
-				'<span class="rc">'+cnt+'</span></label>';
-		}).join('');
-		document.getElementById('rlFType').innerHTML='<option value="all">All types</option>'+TYPES.map(function(t){
-			return '<option value="'+t.t+'">'+esc(t.nm)+' ('+REPORTS.filter(function(r){return r.type===t.t;}).length+')</option>';
-		}).join('');
-		var bus=[]; REPORTS.forEach(function(r){ if(bus.indexOf(r.bu)<0) bus.push(r.bu); }); bus.sort();
-		document.getElementById('rlFBu').innerHTML='<option value="all">All units</option>'+bus.map(function(b){return '<option>'+esc(b)+'</option>';}).join('');
-		updateIdxCount();
+	/* ════════════ 필터 칩 + 팝오버 ════════════ */
+	function busList(){ var bus=[]; REPORTS.forEach(function(r){ if(bus.indexOf(r.bu)<0) bus.push(r.bu); }); bus.sort(); return bus; }
+	function idxOnCount(){ return INDEXES.filter(function(i){return activeIdx[i.id];}).length; }
+	function clsOnList(){ return [1,2,3,4].filter(function(c){return activeCls[c];}); }
+	var CHIPS=[
+		{key:'type',   ic:'description', name:'Type'},
+		{key:'region', ic:'public',      name:'Region'},
+		{key:'class',  ic:'shield',      name:'Class'},
+		{key:'date',   ic:'event',       name:'Date'},
+		{key:'bu',     ic:'apartment',   name:'Unit'}
+	];
+	function chipState(key){
+		if(key==='type')   return {active:stType!=='all', text:stType==='all'?'Type':'Type · '+typeInfo(stType).t};
+		if(key==='region'){ var on=idxOnCount(); return {active:on!==INDEXES.length, text:on===INDEXES.length?'Region':'Region · '+on+' of '+INDEXES.length}; }
+		if(key==='class'){ var on=clsOnList(); return {active:on.length!==4, text:on.length===4?'Class':'Class · '+on.map(function(c){return 'C'+c;}).join(',')}; }
+		if(key==='date')   return {active:stDate!=='all', text:stDate==='all'?'Date':'Date · '+DATE_LABELS[stDate]};
+		if(key==='bu')     return {active:stBu!=='all', text:stBu==='all'?'Unit':'Unit · '+stBu};
+		return {active:false, text:key};
 	}
-	function updateIdxCount(){
-		var on=Object.keys(activeIdx).filter(function(k){return activeIdx[k];}).length;
-		document.getElementById('rlIdxCnt').textContent=on+'/'+INDEXES.length;
-		document.getElementById('rlIdxToggle').textContent = on===INDEXES.length ? 'Deselect all' : 'Select all';
+	function renderChips(){
+		document.getElementById('rlChips').innerHTML=CHIPS.map(function(c){
+			var s=chipState(c.key);
+			return '<button class="rlChip'+(s.active?' on':'')+(openPop===c.key?' open':'')+'" data-chip="'+c.key+'">'+
+				'<i class="material-symbols-outlined ci">'+c.ic+'</i><span class="lab">'+esc(s.text)+'</span>'+
+				(s.active?'<i class="material-symbols-outlined cx" data-clear="'+c.key+'">close</i>':'<i class="material-symbols-outlined ar">expand_more</i>')+
+			'</button>';
+		}).join('');
+	}
+	function popContent(key){
+		if(key==='region'){
+			var on=idxOnCount();
+			var rows=INDEXES.map(function(i){
+				var cnt=REPORTS.filter(function(r){return r.idx===i.id;}).length;
+				return '<label class="rlChk"><input type="checkbox" class="filled-in" data-idx="'+i.id+'"'+(activeIdx[i.id]?' checked':'')+'/>'+
+					'<span class="nm">'+esc(i.nm)+'</span><span class="rc">'+cnt+'</span></label>';
+			}).join('');
+			return '<div class="popHead">Region Indexes<span class="lnk" data-idxtoggle>'+(on===INDEXES.length?'Deselect all':'Select all')+'</span></div><div class="popList">'+rows+'</div>';
+		}
+		if(key==='class'){
+			var rows=CLASSES.map(function(c){
+				var cnt=REPORTS.filter(function(r){return r.cls===c.c;}).length;
+				return '<label class="rlChk"><input type="checkbox" class="filled-in" data-cls="'+c.c+'"'+(activeCls[c.c]?' checked':'')+'/>'+
+					'<span class="nm"><span class="cdot '+c.dot+'"></span>'+esc(c.nm)+'</span>'+
+					(c.lock?'<i class="material-symbols-outlined">lock</i>':'')+'<span class="rc">'+cnt+'</span></label>';
+			}).join('');
+			return '<div class="popHead">Classification</div><div class="popList">'+rows+'</div>';
+		}
+		if(key==='type'){
+			var opts=[{v:'all',t:'All types'}].concat(TYPES.map(function(t){return {v:t.t,t:t.nm+' ('+REPORTS.filter(function(r){return r.type===t.t;}).length+')'};}));
+			return '<div class="popList opt">'+opts.map(function(o){return '<a href="javascript:;" class="popOpt'+(stType===o.v?' sel':'')+'" data-type="'+esc(o.v)+'">'+esc(o.t)+(stType===o.v?'<i class="material-symbols-outlined">check</i>':'')+'</a>';}).join('')+'</div>';
+		}
+		if(key==='date'){
+			var ds=[['all','Any time'],['2024','2023 – now'],['2018','2018 – 2022'],['0','Before 2018']];
+			return '<div class="popList opt">'+ds.map(function(d){return '<a href="javascript:;" class="popOpt'+(stDate===d[0]?' sel':'')+'" data-date="'+d[0]+'">'+esc(d[1])+(stDate===d[0]?'<i class="material-symbols-outlined">check</i>':'')+'</a>';}).join('')+'</div>';
+		}
+		if(key==='bu'){
+			var opts=[{v:'all',t:'All units'}].concat(busList().map(function(b){return {v:b,t:b};}));
+			return '<div class="popList opt">'+opts.map(function(o){return '<a href="javascript:;" class="popOpt'+(stBu===o.v?' sel':'')+'" data-bu="'+esc(o.v)+'">'+esc(o.t)+(stBu===o.v?'<i class="material-symbols-outlined">check</i>':'')+'</a>';}).join('')+'</div>';
+		}
+		return '';
+	}
+	function openPopover(key){
+		if(openPop===key){ closePopover(); return; }
+		closeSaved();
+		openPop=key;
+		var pop=document.getElementById('rlPop');
+		pop.innerHTML=popContent(key);
+		var chip=document.querySelector('.rlChip[data-chip="'+key+'"]');
+		if(chip){ var left=chip.offsetLeft; var bar=document.getElementById('rlFilterBar');
+			pop.style.left=Math.min(left, bar.clientWidth-Math.min(300,pop.offsetWidth||280)-2)+'px'; }
+		pop.classList.add('show');
+		renderChips();
+	}
+	function closePopover(){ if(openPop===null) return; openPop=null; var pop=document.getElementById('rlPop'); pop.classList.remove('show'); pop.innerHTML=''; renderChips(); }
+	function clearChip(key){
+		if(key==='type') stType='all';
+		else if(key==='region') INDEXES.forEach(function(i){ activeIdx[i.id]=true; });
+		else if(key==='class') activeCls={1:true,2:true,3:true,4:true};
+		else if(key==='date') stDate='all';
+		else if(key==='bu') stBu='all';
+		onStageChange();
+	}
+	function onStageChange(){ setDirty(true); renderChips(); }
+
+	/* ════════════ Saved searches ════════════ */
+	function idxAll(){ var o={}; INDEXES.forEach(function(i){ o[i.id]=true; }); return o; }
+	function clsAll(){ return {1:true,2:true,3:true,4:true}; }
+	var SAVED=[
+		{name:'My region · Class 1–2', q:'', idx:idxAll(), cls:{1:true,2:true,3:false,4:false}, type:'all', date:'all', bu:'all'},
+		{name:'Recent TIS reports',    q:'', idx:idxAll(), cls:clsAll(), type:'TIS', date:'2024', bu:'all'},
+		{name:'Elastomers — all sites',q:'', idx:idxAll(), cls:clsAll(), type:'all', date:'all', bu:'Elastomers'}
+	];
+	function renderSaved(){
+		var items=SAVED.map(function(s,i){
+			return '<a href="javascript:;" class="savedItem" data-saved="'+i+'"><i class="material-symbols-outlined">bookmark</i><span>'+esc(s.name)+'</span></a>';
+		}).join('');
+		document.getElementById('rlSavedMenu').innerHTML=(SAVED.length?items:'<div class="savedEmpty">No saved searches yet</div>')+
+			'<a href="javascript:;" class="savedItem add" id="rlSaveCur"><i class="material-symbols-outlined">add</i><span>Save current search…</span></a>';
+	}
+	function openSaved(){ closePopover(); document.getElementById('rlSavedWrap').classList.add('open'); }
+	function closeSaved(){ document.getElementById('rlSavedWrap').classList.remove('open'); }
+	function loadSaved(i){
+		var s=SAVED[i]; if(!s) return;
+		activeIdx=Object.assign({},s.idx); activeCls=Object.assign({},s.cls);
+		stType=s.type; stDate=s.date; stBu=s.bu; setQueryInput(s.q||'');
+		setDirty(true); renderChips(); closeSaved();
+		toast('Loaded “'+s.name+'” — press Search to run.','info');
+	}
+	function saveCurrent(){
+		var name=window.prompt('Name this search', stagedQuery()||'Untitled search');
+		if(!name || !name.trim()) return;
+		SAVED.push({ name:name.trim(), q:stagedQuery(), idx:Object.assign({},activeIdx), cls:Object.assign({},activeCls), type:stType, date:stDate, bu:stBu });
+		renderSaved(); closeSaved(); toast('Saved “'+name.trim()+'”.','ok');
 	}
 
-	/* ── Discovery(빈 상태) — 인트로 + Recently Added(카드) + Most Referenced(순위) + Browse by Type(타일) ── */
+	/* ════════════ Discovery(빈 상태) ════════════ */
 	function repCard(r){
 		return '<div class="rlRepCard" data-code="'+esc(r.code)+'">'+
 			'<div class="rcTop"><span class="rcType">'+esc(r.type)+'</span>'+classBadge(r.cls)+'</div>'+
@@ -284,13 +366,13 @@
 		document.getElementById('rlMain').innerHTML=html;
 	}
 
-	/* ── 검색/필터 결과 ── */
+	/* ════════════ 검색 결과 ════════════ */
 	function currentMatches(){
-		var ft=document.getElementById('rlFType').value, fd=document.getElementById('rlFDate').value, fb=document.getElementById('rlFBu').value;
-		var q=curQuery.toLowerCase().trim();
+		var a=applied||{idx:activeIdx,cls:activeCls,type:'all',date:'all',bu:'all',q:''};
+		var idx=a.idx, cls=a.cls, ft=a.type, fd=a.date, fb=a.bu, q=(a.q||'').toLowerCase();
 		return REPORTS.filter(function(r){
-			if(!activeIdx[r.idx]) return false;
-			if(!activeCls[r.cls]) return false;
+			if(!idx[r.idx]) return false;
+			if(!cls[r.cls]) return false;
 			if(ft!=='all' && r.type!==ft) return false;
 			if(fb!=='all' && r.bu!==fb) return false;
 			if(fd!=='all'){ var y=parseInt(r.date.slice(0,4),10);
@@ -317,32 +399,16 @@
 				'<span class="rlRowAct rlDl" data-code="'+esc(r.code)+'" title="'+(locked?'Restricted':'Download')+'"><i class="material-symbols-outlined">'+(locked?'lock':'download')+'</i></span>'+
 			'</div></div></div>';
 	}
-	function crit(ic,k,v,key){
-		return '<span class="rlCritChip" data-crit="'+key+'"><i class="material-symbols-outlined k">'+ic+'</i>'+
-			'<span>'+esc(k)+': <b>'+esc(v)+'</b></span><i class="material-symbols-outlined x">close</i></span>';
-	}
-	function critRow(){
-		var chips=[];
-		if(curQuery) chips.push(crit('search','Keyword',curQuery,'q'));
-		var ft=document.getElementById('rlFType').value; if(ft!=='all') chips.push(crit('description','Type',typeInfo(ft).nm,'type'));
-		var fb=document.getElementById('rlFBu').value; if(fb!=='all') chips.push(crit('apartment','Unit',fb,'bu'));
-		var offIdx=INDEXES.filter(function(i){return !activeIdx[i.id];}).length;
-		if(offIdx) chips.push(crit('public','Indexes',(INDEXES.length-offIdx)+' of '+INDEXES.length,'idx'));
-		var offCls=[1,2,3,4].filter(function(c){return !activeCls[c];}).length;
-		if(offCls) chips.push(crit('shield','Class',[1,2,3,4].filter(function(c){return activeCls[c];}).map(function(c){return 'C'+c;}).join(', '),'cls'));
-		if(!chips.length) return '';
-		return '<div class="rlCritRow"><span class="lead"><i class="material-symbols-outlined">filter_alt</i>Filtered by</span>'+chips.join('')+'</div>';
-	}
 	function renderResults(){
 		searchMode=true;
 		var list=currentMatches();
+		var aq=applied&&applied.q;
 		var html='<div class="rlResults">';
 		html+='<div class="rlResultsHead"><div class="rlResultsCount">Documents <b>1–'+list.length+'</b> of <b>'+list.length+'</b>'+
-			(curQuery?' for <span class="q">“'+esc(curQuery)+'”</span>':'')+'</div>'+
+			(aq?' for <span class="q">“'+esc(aq)+'”</span>':'')+'</div>'+
 			'<div class="rlResultsTools"><select class="rlSortSel" id="rlSort">'+
 			'<option value="rel">Sort: Relevance</option><option value="date">Newest</option><option value="hits">Most referenced</option>'+
 			'</select></div></div>';
-		html+=critRow();
 		if(!list.length){
 			html+='<div class="rlEmpty"><i class="material-symbols-outlined">search_off</i>'+
 				'<div class="et">No reports match your search.</div>'+
@@ -362,60 +428,81 @@
 		var wrap=document.querySelector('.rlResultList'); if(wrap) wrap.innerHTML=list.map(resultRow).join('');
 	}
 
+	/* ════════════ 적용 / 홈 ════════════ */
 	function setQueryInput(v){ var s=document.getElementById('rlSearchInput'); if(!s) return; s.value=v; var f=s.closest('.rlSearchField'); if(f) f.classList.toggle('has', !!v); }
-	function doSearch(){ curQuery=(document.getElementById('rlSearchInput').value||'').trim(); renderResults(); }
-	function backToDiscovery(){ curQuery=''; setQueryInput(''); renderDiscovery(); }
-	function removeCrit(key){
-		if(key==='q'){ curQuery=''; setQueryInput(''); }
-		else if(key==='type') document.getElementById('rlFType').value='all';
-		else if(key==='bu') document.getElementById('rlFBu').value='all';
-		else if(key==='idx'){ INDEXES.forEach(function(i){ activeIdx[i.id]=true; }); renderFacet(); }
-		else if(key==='cls'){ activeCls={1:true,2:true,3:true,4:true}; renderFacet(); }
-		var anyCrit = curQuery || document.getElementById('rlFType').value!=='all' || document.getElementById('rlFBu').value!=='all'
-			|| INDEXES.some(function(i){return !activeIdx[i.id];}) || [1,2,3,4].some(function(c){return !activeCls[c];});
-		if(anyCrit) renderResults(); else backToDiscovery();
+	function applySearch(){ snapshotApplied(); setDirty(false); closePopover(); renderResults(); }
+	function goHome(){
+		INDEXES.forEach(function(i){ activeIdx[i.id]=true; }); activeCls={1:true,2:true,3:true,4:true};
+		stType='all'; stDate='all'; stBu='all'; setQueryInput('');
+		applied=null; setDirty(false); closePopover(); renderChips(); renderDiscovery();
 	}
-	function onFacetChange(){ renderResults(); }
 
 	$(document).ready(function(){
 		$('.sidenav').sidenav();
 		$(document).on('click', '.sidenav-overlay, .closeBtns', function(){ $('.sidenav').sidenav('close'); });
 
-		renderFacet();
-		renderDiscovery();
+		renderChips(); renderSaved(); renderDiscovery(); setDirty(false);
 
-		// Technical Report Library 검색(좌 cardBox) — Enter / Search 버튼
+		// 타이틀 ⌂ 홈 — 첫 화면 복귀 + 리셋
+		document.getElementById('rlHome').addEventListener('click', goHome);
+
+		// 검색 히어로 — Enter / Search 버튼 = 일괄 적용. 입력은 staged만.
 		var sq=document.getElementById('rlSearchInput');
-		sq.addEventListener('input', function(){ var f=sq.closest('.rlSearchField'); if(f) f.classList.toggle('has', !!sq.value); });
-		sq.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); this.value.trim()?doSearch():backToDiscovery(); } });
-		document.getElementById('rlSearchBtn').addEventListener('click', function(){ sq.value.trim()?doSearch():backToDiscovery(); });
-		document.getElementById('rlSearchClear').addEventListener('click', function(){ removeCrit('q'); });
-		// 헤더 srchArea = global(타 모듈 포함) — Technical Report Library 검색은 좌 패널로 안내
-		var gq=document.getElementById('mainSrchInput');
-		if(gq) gq.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); toast('Global search spans all MAPIS modules. Use the Technical Report Library panel on the left to search reports.','info'); } });
+		sq.addEventListener('input', function(){ var f=sq.closest('.rlSearchField'); if(f) f.classList.toggle('has', !!sq.value); setDirty(true); });
+		sq.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); applySearch(); } });
+		document.getElementById('rlSearchBtn').addEventListener('click', function(){ if(dirty) applySearch(); });
+		document.getElementById('rlSearchClear').addEventListener('click', function(){ setQueryInput(''); setDirty(true); sq.focus(); });
 
-		// facet: 인덱스/등급 체크 + 셀렉트 + 토글/리셋
-		document.getElementById('rlIndexList').addEventListener('change', function(e){
-			var cb=e.target.closest('input[data-idx]'); if(!cb) return;
-			activeIdx[cb.getAttribute('data-idx')]=cb.checked; updateIdxCount(); onFacetChange();
+		// 헤더 srchArea = global — 모듈 검색은 상단 검색바로 안내
+		var gq=document.getElementById('mainSrchInput');
+		if(gq) gq.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); toast('Global search spans all MAPIS modules. Use the search bar above the results to find reports.','info'); } });
+
+		// 필터 칩 바: 칩 클릭=팝오버 토글, X=클리어
+		document.getElementById('rlChips').addEventListener('click', function(e){
+			var cx=e.target.closest('[data-clear]');
+			if(cx){ e.stopPropagation(); clearChip(cx.getAttribute('data-clear')); return; }
+			var chip=e.target.closest('.rlChip');
+			if(chip){ e.stopPropagation(); openPopover(chip.getAttribute('data-chip')); }
 		});
-		document.getElementById('rlClassList').addEventListener('change', function(e){
-			var cb=e.target.closest('input[data-cls]'); if(!cb) return;
-			activeCls[+cb.getAttribute('data-cls')]=cb.checked; onFacetChange();
+		// 팝오버 내부: 멀티(체크) = change, 단일(옵션)/전체토글 = click
+		document.getElementById('rlPop').addEventListener('click', function(e){
+			var tg=e.target.closest('[data-idxtoggle],[data-type],[data-date],[data-bu]'); if(!tg) return;
+			e.stopPropagation();
+			if(tg.hasAttribute('data-idxtoggle')){
+				var next=(idxOnCount()!==INDEXES.length); INDEXES.forEach(function(i){ activeIdx[i.id]=next; });
+				document.getElementById('rlPop').innerHTML=popContent('region'); onStageChange(); return;
+			}
+			if(tg.hasAttribute('data-type')){ stType=tg.getAttribute('data-type'); onStageChange(); closePopover(); return; }
+			if(tg.hasAttribute('data-date')){ stDate=tg.getAttribute('data-date'); onStageChange(); closePopover(); return; }
+			if(tg.hasAttribute('data-bu')){ stBu=tg.getAttribute('data-bu'); onStageChange(); closePopover(); return; }
 		});
-		['rlFType','rlFDate','rlFBu'].forEach(function(id){ document.getElementById(id).addEventListener('change', onFacetChange); });
-		document.getElementById('rlIdxToggle').addEventListener('click', function(){
-			var on=Object.keys(activeIdx).filter(function(k){return activeIdx[k];}).length;
-			var next=(on!==INDEXES.length); INDEXES.forEach(function(i){ activeIdx[i.id]=next; });
-			renderFacet(); (curQuery||INDEXES.some(function(i){return !activeIdx[i.id];}))?renderResults():renderDiscovery();
+		document.getElementById('rlPop').addEventListener('change', function(e){
+			var ci=e.target.closest('input[data-idx]'); if(ci){ activeIdx[ci.getAttribute('data-idx')]=ci.checked; onStageChange(); return; }
+			var cc=e.target.closest('input[data-cls]'); if(cc){ activeCls[+cc.getAttribute('data-cls')]=cc.checked; onStageChange(); return; }
 		});
+
+		// Reset — 필터 staged 기본값으로(키워드 유지). Search 눌러야 반영.
 		document.getElementById('rlFacetClear').addEventListener('click', function(){
 			INDEXES.forEach(function(i){ activeIdx[i.id]=true; }); activeCls={1:true,2:true,3:true,4:true};
-			document.getElementById('rlFType').value='all'; document.getElementById('rlFDate').value='all'; document.getElementById('rlFBu').value='all';
-			renderFacet(); backToDiscovery(); toast('Filters reset.','ok');
+			stType='all'; stDate='all'; stBu='all';
+			closePopover(); setDirty(true); renderChips(); toast('Filters reset — press Search to apply.','info');
 		});
 
-		// 메인 위임: 타입타일 / more / 기준칩 제거 / basket / download / 카드·순위·결과행 클릭
+		// Saved 드롭다운
+		document.getElementById('rlSavedBtn').addEventListener('click', function(e){ e.stopPropagation(); document.getElementById('rlSavedWrap').classList.contains('open')?closeSaved():openSaved(); });
+		document.getElementById('rlSavedMenu').addEventListener('click', function(e){
+			var add=e.target.closest('#rlSaveCur'); if(add){ e.stopPropagation(); saveCurrent(); return; }
+			var it=e.target.closest('[data-saved]'); if(it){ e.stopPropagation(); loadSaved(+it.getAttribute('data-saved')); return; }
+		});
+
+		// 바깥 클릭 / Esc → 팝오버·Saved 닫기
+		document.addEventListener('click', function(e){
+			if(openPop!==null && !e.target.closest('#rlPop') && !e.target.closest('.rlChip')) closePopover();
+			if(!e.target.closest('#rlSavedWrap')) closeSaved();
+		});
+		document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closePopover(); closeSaved(); } });
+
+		// 본문 위임: basket / download / 타일(원클릭 검색) / more / 카드·행 클릭
 		document.getElementById('rlMain').addEventListener('click', function(e){
 			var basket=e.target.closest('.rlBasket');
 			if(basket){ e.stopPropagation(); basket.classList.toggle('on');
@@ -425,15 +512,14 @@
 			if(dl){ e.stopPropagation(); var dcode=dl.getAttribute('data-code'); var dr=REPORTS.filter(function(x){return x.code===dcode;})[0];
 				if(dr && dr.cls>=3 && dr.idx!==MY_REGION) toast('Download blocked — Class '+dr.cls+' is region-restricted ('+idxName(dr.idx)+').','warn');
 				else toast('Downloading '+dcode+'… (mock)','mocha'); return; }
-			var critEl=e.target.closest('.rlCritChip');
-			if(critEl){ e.stopPropagation(); removeCrit(critEl.getAttribute('data-crit')); return; }
 			var tile=e.target.closest('.rlTypeTile');
-			if(tile){ curQuery=''; setQueryInput('');
-				if(tile.hasAttribute('data-idx')){ var rid=tile.getAttribute('data-idx'); INDEXES.forEach(function(i){ activeIdx[i.id]=(i.id===rid); }); renderFacet(); }
-				else document.getElementById('rlFType').value=tile.getAttribute('data-type');
-				renderResults(); return; }
+			if(tile){ setQueryInput('');
+				if(tile.hasAttribute('data-idx')){ var rid=tile.getAttribute('data-idx'); INDEXES.forEach(function(i){ activeIdx[i.id]=(i.id===rid); }); }
+				else { stType=tile.getAttribute('data-type'); }
+				renderChips(); applySearch(); return; }
 			var more=e.target.closest('.more[data-browse]');
-			if(more){ curQuery=''; setQueryInput(''); renderResults(); return; }
+			if(more){ var b=more.getAttribute('data-browse'); setQueryInput(''); applySearch();
+				var ss=document.getElementById('rlSort'); if(ss){ ss.value=(b==='recent'?'date':'hits'); applySort(ss.value); } return; }
 			var card=e.target.closest('[data-code]');
 			if(card){ openReport(card.getAttribute('data-code')); return; }
 		});
