@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>MAPIS datahub</title>
+    <title>MAPIS Technical Report Library</title>
 	<link rel="preload" href="mapis_lib/font/material-symbols-outlined.woff2" as="font" type="font/woff2">
 	<link rel="preload" href="mapis_lib/font/material-symbols-rounded.woff2" as="font" type="font/woff2">
 	<link rel="preload" href="mapis_lib/font/material-symbols-sharp.woff2" as="font" type="font/woff2">
@@ -20,7 +20,7 @@
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/apis_util.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/glass_engine.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="css/datahub_proto.css">
+    <link rel="stylesheet" type="text/css" href="css/rptlib_proto.css">
 </head>
 <body>
 	<!-- 공통 헤더(navbar-fixed) — 전 모듈 공통: 로고(좌)·srchArea global search(센터)·userInfo(우) -->
@@ -31,7 +31,7 @@
 					<div class="menuIcon">
 						<div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
 					</div>
-					<div><a href="apis_datahub_list.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
+					<div><a href="apis_rptlib_list.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
 				</section>
 				<section class="centerSection">
 					<div class="srchArea">
@@ -49,7 +49,7 @@
 		</nav>
 	</header>
 
-	<!-- 사이드 메뉴(sidenav) — datahub 활성 + MAPIS 모듈 -->
+	<!-- 사이드 메뉴(sidenav) — Technical Report Library 활성 + MAPIS 모듈 -->
 	<aside class="menuAside">
 		<div id="slide-out" class="sidenav glassBox">
 			<div class="userInfoArea">
@@ -61,7 +61,7 @@
 			</div>
 			<div class="menuList">
 				<ul>
-					<li class="waves-effect waves-hColor on"><a href="apis_datahub_list.html"><i class="material-icons left">database</i>DataHub</a></li>
+					<li class="waves-effect waves-hColor on"><a href="apis_rptlib_list.html"><i class="material-icons left">database</i>Technical Report Library</a></li>
 					<li><a class="subheader" style="color:#9b8c7e;font-size:11px;letter-spacing:.04em;pointer-events:none;">MAPIS MODULES</a></li>
 					<li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>MAPIS Home</a></li>
 					<li class="waves-effect waves-hColor"><a href="apis_eln_list.html"><i class="material-icons left">science</i>ELN</a></li>
@@ -72,66 +72,66 @@
 		</div>
 	</aside>
 
-	<!-- 본문: DataHub — 좌 검색+필터 카드 | 우 Discovery↔Results -->
-	<article class="contArea dhArea">
+	<!-- 본문: Technical Report Library — 좌 검색+필터 카드 | 우 Discovery↔Results -->
+	<article class="contArea rlArea">
 		<section class="mainTitArea">
-			<div class="mainTit">DataHub</div>
+			<div class="mainTit">Technical Report Library</div>
 		</section>
 
-		<div class="dhBody">
-			<!-- 좌: datahub 검색 + 필터(공통 .cardBox). 헤더 검색은 global, 이 패널이 datahub 검색 -->
-			<aside class="cardBox dhFacet hScroll">
-				<div class="dhSearchBox">
-					<div class="dhSearchField">
+		<div class="rlBody">
+			<!-- 좌: Technical Report Library 검색 + 필터(공통 .cardBox). 헤더 검색은 global, 이 패널이 Technical Report Library 검색 -->
+			<aside class="cardBox rlFacet hScroll">
+				<div class="rlSearchBox">
+					<div class="rlSearchField">
 						<i class="material-symbols-outlined">search</i>
-						<input type="text" id="dhSearchInput" placeholder="Search reports…" autocomplete="off">
-						<i class="material-symbols-outlined dhSearchClear" id="dhSearchClear" title="Clear search">close</i>
+						<input type="text" id="rlSearchInput" placeholder="Search reports…" autocomplete="off">
+						<i class="material-symbols-outlined rlSearchClear" id="rlSearchClear" title="Clear search">close</i>
 					</div>
-					<a href="javascript:;" id="dhSearchBtn" class="waves-effect waves-light hBtn viva dhSearchBtn"><i class="material-icons left">search</i><span class="label">Search</span></a>
+					<a href="javascript:;" id="rlSearchBtn" class="waves-effect waves-light hBtn viva rlSearchBtn"><i class="material-icons left">search</i><span class="label">Search</span></a>
 				</div>
 
-				<div class="dhFacetSec">
-					<div class="dhFacetTit"><i class="material-symbols-outlined">filter_alt</i>Filters<span class="lnk" id="dhFacetClear">Reset</span></div>
+				<div class="rlFacetSec">
+					<div class="rlFacetTit"><i class="material-symbols-outlined">filter_alt</i>Filters<span class="lnk" id="rlFacetClear">Reset</span></div>
 				</div>
-				<div class="dhFacetSec">
-					<div class="dhFacetTit"><i class="material-symbols-outlined">public</i>Region Indexes<span class="cnt" id="dhIdxCnt"></span></div>
-					<div id="dhIndexList"><!-- JS --></div>
-					<span class="dhFacetTit lnk" id="dhIdxToggle" style="text-transform:none;font-weight:600;">Deselect all</span>
+				<div class="rlFacetSec">
+					<div class="rlFacetTit"><i class="material-symbols-outlined">public</i>Region Indexes<span class="cnt" id="rlIdxCnt"></span></div>
+					<div id="rlIndexList"><!-- JS --></div>
+					<span class="rlFacetTit lnk" id="rlIdxToggle" style="text-transform:none;font-weight:600;">Deselect all</span>
 				</div>
-				<div class="dhFacetSec">
-					<div class="dhFacetTit"><i class="material-symbols-outlined">shield</i>Classification</div>
-					<div id="dhClassList"><!-- JS --></div>
+				<div class="rlFacetSec">
+					<div class="rlFacetTit"><i class="material-symbols-outlined">shield</i>Classification</div>
+					<div id="rlClassList"><!-- JS --></div>
 				</div>
-				<div class="dhFacetSec">
-					<div class="dhFacetTit"><i class="material-symbols-outlined">description</i>Document Type</div>
-					<select id="dhFType"><!-- JS --></select>
+				<div class="rlFacetSec">
+					<div class="rlFacetTit"><i class="material-symbols-outlined">description</i>Document Type</div>
+					<select id="rlFType"><!-- JS --></select>
 				</div>
-				<div class="dhFacetSec">
-					<div class="dhFacetTit"><i class="material-symbols-outlined">event</i>Date Created</div>
-					<select id="dhFDate">
+				<div class="rlFacetSec">
+					<div class="rlFacetTit"><i class="material-symbols-outlined">event</i>Date Created</div>
+					<select id="rlFDate">
 						<option value="all">Any time</option>
 						<option value="2024">2023 – now</option>
 						<option value="2018">2018 – 2022</option>
 						<option value="0">Before 2018</option>
 					</select>
 				</div>
-				<div class="dhFacetSec">
-					<div class="dhFacetTit"><i class="material-symbols-outlined">apartment</i>Business Unit</div>
-					<select id="dhFBu"><!-- JS --></select>
+				<div class="rlFacetSec">
+					<div class="rlFacetTit"><i class="material-symbols-outlined">apartment</i>Business Unit</div>
+					<select id="rlFBu"><!-- JS --></select>
 				</div>
 			</aside>
 
 			<!-- 우: main(일반 영역) — Discovery ↔ Results -->
-			<div class="dhMain hScroll" id="dhMain"><!-- JS 렌더 --></div>
+			<div class="rlMain hScroll" id="rlMain"><!-- JS 렌더 --></div>
 		</div>
 	</article>
 
-	<div class="dhToastWrap" id="dhToastWrap"></div>
+	<div class="rlToastWrap" id="rlToastWrap"></div>
 
 	<script>
 	/* ════════════════════════════════════════════════════════════
-	   datahub Search Home — 목업(시각 우선, 규칙 비enforce).
-	   검색 = 좌 cardBox(#dhSearchInput). 헤더 srchArea(#mainSrchInput) = global(타 모듈 포함).
+	   Technical Report Library Search Home — 목업(시각 우선, 규칙 비enforce).
+	   검색 = 좌 cardBox(#rlSearchInput). 헤더 srchArea(#mainSrchInput) = global(타 모듈 포함).
 	   ════════════════════════════════════════════════════════════ */
 
 	var INDEXES = [
@@ -140,10 +140,10 @@
 		{id:'TH', nm:'Thailand'}, {id:'UK', nm:'UK — Abingdon'}, {id:'US', nm:'US — All Regions'}
 	];
 	var CLASSES = [
-		{c:1, nm:'Class 1 · Public',            sc:'green',  dot:'dhc1', lock:false},
-		{c:2, nm:'Class 2 · Internal',          sc:'blue',   dot:'dhc2', lock:false},
-		{c:3, nm:'Class 3 · Confidential',      sc:'orange', dot:'dhc3', lock:true},
-		{c:4, nm:'Class 4 · Highly Restricted', sc:'red',    dot:'dhc4', lock:true}
+		{c:1, nm:'Class 1 · Public',            sc:'green',  dot:'rlc1', lock:false},
+		{c:2, nm:'Class 2 · Internal',          sc:'blue',   dot:'rlc2', lock:false},
+		{c:3, nm:'Class 3 · Confidential',      sc:'orange', dot:'rlc3', lock:true},
+		{c:4, nm:'Class 4 · Highly Restricted', sc:'red',    dot:'rlc4', lock:true}
 	];
 	var TYPES = [
 		{t:'TIS', nm:'TIS Report', ic:'article'}, {t:'TMR', nm:'Tech / Market Review', ic:'summarize'},
@@ -184,9 +184,9 @@
 	function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
 	function toast(msg, kind){
 		var ic={ok:'check_circle',info:'info',warn:'lock',mocha:'bolt'}[kind||'info']||'info';
-		var el=document.createElement('div'); el.className='dhToast '+(kind||'info');
+		var el=document.createElement('div'); el.className='rlToast '+(kind||'info');
 		el.innerHTML='<i class="material-symbols-outlined">'+ic+'</i><span>'+esc(msg)+'</span>';
-		document.getElementById('dhToastWrap').appendChild(el);
+		document.getElementById('rlToastWrap').appendChild(el);
 		setTimeout(function(){ el.classList.add('fade'); setTimeout(function(){ el.remove(); },260); }, 2400);
 	}
 
@@ -200,42 +200,42 @@
 			toast('“'+r.code+'” is Class '+r.cls+' ('+idxName(r.idx)+'). Title & metadata only — full access is region-restricted.','warn'); return;
 		}
 		toast('Opening “'+r.code+'” — '+r.title,'mocha');
-		// 다음 단계: window.open('apis_datahub_pop.html?code='+encodeURIComponent(code), 'dhReport', 'width=1280,height=900,...');
+		// 다음 단계: window.open('apis_rptlib_pop.html?code='+encodeURIComponent(code), 'rlReport', 'width=1280,height=900,...');
 	}
 
 	/* ── 인라인 등급 배지(카드·순위·결과행 공통) ── */
-	function classBadge(c){ return '<span class="dhClassBadge c'+c+'">'+(classInfo(c).lock?'<i class="material-symbols-outlined">lock</i>':'')+'C'+c+'</span>'; }
+	function classBadge(c){ return '<span class="rlClassBadge c'+c+'">'+(classInfo(c).lock?'<i class="material-symbols-outlined">lock</i>':'')+'C'+c+'</span>'; }
 
 	/* ── facet 렌더(Materialize .filled-in 체크박스) ── */
 	function renderFacet(){
-		var il=document.getElementById('dhIndexList'); il.innerHTML=INDEXES.map(function(i){
+		var il=document.getElementById('rlIndexList'); il.innerHTML=INDEXES.map(function(i){
 			var cnt=REPORTS.filter(function(r){return r.idx===i.id;}).length;
-			return '<label class="dhChk"><input type="checkbox" class="filled-in" data-idx="'+i.id+'"'+(activeIdx[i.id]?' checked':'')+'/>'+
+			return '<label class="rlChk"><input type="checkbox" class="filled-in" data-idx="'+i.id+'"'+(activeIdx[i.id]?' checked':'')+'/>'+
 				'<span class="nm">'+esc(i.nm)+'</span><span class="rc">'+cnt+'</span></label>';
 		}).join('');
-		var cl=document.getElementById('dhClassList'); cl.innerHTML=CLASSES.map(function(c){
+		var cl=document.getElementById('rlClassList'); cl.innerHTML=CLASSES.map(function(c){
 			var cnt=REPORTS.filter(function(r){return r.cls===c.c;}).length;
-			return '<label class="dhChk"><input type="checkbox" class="filled-in" data-cls="'+c.c+'"'+(activeCls[c.c]?' checked':'')+'/>'+
+			return '<label class="rlChk"><input type="checkbox" class="filled-in" data-cls="'+c.c+'"'+(activeCls[c.c]?' checked':'')+'/>'+
 				'<span class="nm"><span class="cdot '+c.dot+'"></span>'+esc(c.nm)+'</span>'+
 				(c.lock?'<i class="material-symbols-outlined">lock</i>':'')+
 				'<span class="rc">'+cnt+'</span></label>';
 		}).join('');
-		document.getElementById('dhFType').innerHTML='<option value="all">All types</option>'+TYPES.map(function(t){
+		document.getElementById('rlFType').innerHTML='<option value="all">All types</option>'+TYPES.map(function(t){
 			return '<option value="'+t.t+'">'+esc(t.nm)+' ('+REPORTS.filter(function(r){return r.type===t.t;}).length+')</option>';
 		}).join('');
 		var bus=[]; REPORTS.forEach(function(r){ if(bus.indexOf(r.bu)<0) bus.push(r.bu); }); bus.sort();
-		document.getElementById('dhFBu').innerHTML='<option value="all">All units</option>'+bus.map(function(b){return '<option>'+esc(b)+'</option>';}).join('');
+		document.getElementById('rlFBu').innerHTML='<option value="all">All units</option>'+bus.map(function(b){return '<option>'+esc(b)+'</option>';}).join('');
 		updateIdxCount();
 	}
 	function updateIdxCount(){
 		var on=Object.keys(activeIdx).filter(function(k){return activeIdx[k];}).length;
-		document.getElementById('dhIdxCnt').textContent=on+'/'+INDEXES.length;
-		document.getElementById('dhIdxToggle').textContent = on===INDEXES.length ? 'Deselect all' : 'Select all';
+		document.getElementById('rlIdxCnt').textContent=on+'/'+INDEXES.length;
+		document.getElementById('rlIdxToggle').textContent = on===INDEXES.length ? 'Deselect all' : 'Select all';
 	}
 
 	/* ── Discovery(빈 상태) — 인트로 + Recently Added(카드) + Most Referenced(순위) + Browse by Type(타일) ── */
 	function repCard(r){
-		return '<div class="dhRepCard" data-code="'+esc(r.code)+'">'+
+		return '<div class="rlRepCard" data-code="'+esc(r.code)+'">'+
 			'<div class="rcTop"><span class="rcType">'+esc(r.type)+'</span>'+classBadge(r.cls)+'</div>'+
 			'<div class="rcTitle">'+esc(r.title)+'</div>'+
 			'<div class="rcMeta"><span class="code">'+esc(r.code)+'</span><span class="dot">·</span>'+esc(r.author)+'</div>'+
@@ -245,48 +245,48 @@
 	}
 	function rankRow(r,i){
 		var pct=Math.max(6, Math.round(r.hits/MAXHITS*100));
-		return '<div class="dhRankRow" data-code="'+esc(r.code)+'"><span class="dhRankNo">'+(i+1)+'</span>'+
-			'<div class="dhRankMain"><div class="dhRankTit">'+esc(r.title)+'</div>'+
-			'<div class="dhRankSub"><span class="code">'+esc(r.code)+'</span>'+classBadge(r.cls)+
+		return '<div class="rlRankRow" data-code="'+esc(r.code)+'"><span class="rlRankNo">'+(i+1)+'</span>'+
+			'<div class="rlRankMain"><div class="rlRankTit">'+esc(r.title)+'</div>'+
+			'<div class="rlRankSub"><span class="code">'+esc(r.code)+'</span>'+classBadge(r.cls)+
 			'<span>'+esc(idxName(r.idx))+'</span></div></div>'+
-			'<div class="dhRankBar"><span style="width:'+pct+'%"></span></div>'+
-			'<span class="dhRankHits"><i class="material-symbols-outlined">visibility</i>'+r.hits+'</span></div>';
+			'<div class="rlRankBar"><span style="width:'+pct+'%"></span></div>'+
+			'<span class="rlRankHits"><i class="material-symbols-outlined">visibility</i>'+r.hits+'</span></div>';
 	}
 	function renderDiscovery(){
 		searchMode=false;
 		var recent=REPORTS.slice().sort(function(a,b){return a.date<b.date?1:-1;}).slice(0,8);
 		var ranked=REPORTS.slice().sort(function(a,b){return b.hits-a.hits;}).slice(0,8);
-		var html='<div class="dhDiscover">';
-		html+='<div class="dhIntro"><div class="dhIntroTxt">'+
+		var html='<div class="rlDiscover">';
+		html+='<div class="rlIntro"><div class="rlIntroTxt">'+
 			'<h1><i class="material-symbols-outlined">database</i>Technical Report Hub</h1>'+
 			'<p>Momentive Global Technology — find, read, and contribute technical reports across all sites and regions.</p>'+
-			'</div><div class="dhIntroStats">'+
-			'<div class="dhStat"><b>12,480</b><span>Reports</span></div>'+
-			'<div class="dhStat"><b>9</b><span>Region indexes</span></div>'+
-			'<div class="dhStat"><b>37</b><span>Added this week</span></div></div></div>';
-		html+='<div class="dhSec"><div class="dhSecHead"><span class="st"><i class="material-symbols-outlined">schedule</i>Recently Added</span>'+
+			'</div><div class="rlIntroStats">'+
+			'<div class="rlStat"><b>12,480</b><span>Reports</span></div>'+
+			'<div class="rlStat"><b>9</b><span>Region indexes</span></div>'+
+			'<div class="rlStat"><b>37</b><span>Added this week</span></div></div></div>';
+		html+='<div class="rlSec"><div class="rlSecHead"><span class="st"><i class="material-symbols-outlined">schedule</i>Recently Added</span>'+
 			'<span class="more" data-browse="recent">View all<i class="material-symbols-outlined">chevron_right</i></span></div>'+
-			'<div class="dhCardGrid">'+recent.map(repCard).join('')+'</div></div>';
-		html+='<div class="dhSec"><div class="dhSecHead"><span class="st"><i class="material-symbols-outlined">local_fire_department</i>Most Referenced</span>'+
+			'<div class="rlCardGrid">'+recent.map(repCard).join('')+'</div></div>';
+		html+='<div class="rlSec"><div class="rlSecHead"><span class="st"><i class="material-symbols-outlined">local_fire_department</i>Most Referenced</span>'+
 			'<span class="more" data-browse="top">View all<i class="material-symbols-outlined">chevron_right</i></span></div>'+
-			'<div class="dhRankList">'+ranked.map(function(r,i){return rankRow(r,i);}).join('')+'</div></div>';
-		html+='<div class="dhSec"><div class="dhSecHead"><span class="st"><i class="material-symbols-outlined">category</i>Browse by Document Type</span></div>'+
-			'<div class="dhTypeTiles">'+TYPES.map(function(t){
-				return '<div class="dhTypeTile" data-type="'+t.t+'"><i class="material-symbols-outlined">'+t.ic+'</i>'+
+			'<div class="rlRankList">'+ranked.map(function(r,i){return rankRow(r,i);}).join('')+'</div></div>';
+		html+='<div class="rlSec"><div class="rlSecHead"><span class="st"><i class="material-symbols-outlined">category</i>Browse by Document Type</span></div>'+
+			'<div class="rlTypeTiles">'+TYPES.map(function(t){
+				return '<div class="rlTypeTile" data-type="'+t.t+'"><i class="material-symbols-outlined">'+t.ic+'</i>'+
 					'<div><div class="tt">'+esc(t.nm)+'</div><div class="tc">'+REPORTS.filter(function(r){return r.type===t.t;}).length+' reports</div></div></div>';
 			}).join('')+'</div></div>';
-		html+='<div class="dhSec"><div class="dhSecHead"><span class="st"><i class="material-symbols-outlined">travel_explore</i>Browse by Region</span></div>'+
-			'<div class="dhTypeTiles">'+INDEXES.map(function(i){
-				return '<div class="dhTypeTile" data-idx="'+i.id+'"><i class="material-symbols-outlined">public</i>'+
+		html+='<div class="rlSec"><div class="rlSecHead"><span class="st"><i class="material-symbols-outlined">travel_explore</i>Browse by Region</span></div>'+
+			'<div class="rlTypeTiles">'+INDEXES.map(function(i){
+				return '<div class="rlTypeTile" data-idx="'+i.id+'"><i class="material-symbols-outlined">public</i>'+
 					'<div><div class="tt">'+esc(i.nm)+'</div><div class="tc">'+REPORTS.filter(function(r){return r.idx===i.id;}).length+' reports</div></div></div>';
 			}).join('')+'</div></div>';
 		html+='</div>';
-		document.getElementById('dhMain').innerHTML=html;
+		document.getElementById('rlMain').innerHTML=html;
 	}
 
 	/* ── 검색/필터 결과 ── */
 	function currentMatches(){
-		var ft=document.getElementById('dhFType').value, fd=document.getElementById('dhFDate').value, fb=document.getElementById('dhFBu').value;
+		var ft=document.getElementById('rlFType').value, fd=document.getElementById('rlFDate').value, fb=document.getElementById('rlFBu').value;
 		var q=curQuery.toLowerCase().trim();
 		return REPORTS.filter(function(r){
 			if(!activeIdx[r.idx]) return false;
@@ -303,75 +303,75 @@
 	}
 	function resultRow(r){
 		var locked=(r.cls>=3 && r.idx!==MY_REGION);
-		var lockHint=locked?'<span class="dhRowLockHint"><i class="material-symbols-outlined" style="font-size:13px;">lock</i>Metadata only · region-restricted</span>':'';
-		return '<div class="dhResultRow'+(locked?' locked':'')+'" data-code="'+esc(r.code)+'">'+
-			'<div class="dhRowIcon"><i class="material-symbols-outlined">'+(locked?'lock':typeInfo(r.type).ic)+'</i></div>'+
-			'<div class="dhRowBody"><div class="dhRowTitle"><span class="tt">'+esc(r.title)+'</span>'+classBadge(r.cls)+'</div>'+
-			'<div class="dhRowMeta"><span class="code">'+esc(r.code)+'</span><span class="dot">·</span>'+
+		var lockHint=locked?'<span class="rlRowLockHint"><i class="material-symbols-outlined" style="font-size:13px;">lock</i>Metadata only · region-restricted</span>':'';
+		return '<div class="rlResultRow'+(locked?' locked':'')+'" data-code="'+esc(r.code)+'">'+
+			'<div class="rlRowIcon"><i class="material-symbols-outlined">'+(locked?'lock':typeInfo(r.type).ic)+'</i></div>'+
+			'<div class="rlRowBody"><div class="rlRowTitle"><span class="tt">'+esc(r.title)+'</span>'+classBadge(r.cls)+'</div>'+
+			'<div class="rlRowMeta"><span class="code">'+esc(r.code)+'</span><span class="dot">·</span>'+
 				'<span class="type">'+esc(r.type)+'</span><span class="dot">·</span>'+
 				'<span class="site"><i class="material-symbols-outlined">public</i>'+esc(idxName(r.idx))+'</span><span class="dot">·</span>'+
 				'<span>'+esc(r.author)+'</span>'+(lockHint?'<span class="dot">·</span>'+lockHint:'')+'</div></div>'+
-			'<div class="dhRowRight"><div class="dhRowRel"><span class="h">'+r.hits+'</span><span class="hl">refs</span></div>'+
-			'<div class="dhRowActs">'+
-				'<span class="dhRowAct dhBasket" data-code="'+esc(r.code)+'" title="Add to basket"><i class="material-symbols-outlined">add_shopping_cart</i></span>'+
-				'<span class="dhRowAct dhDl" data-code="'+esc(r.code)+'" title="'+(locked?'Restricted':'Download')+'"><i class="material-symbols-outlined">'+(locked?'lock':'download')+'</i></span>'+
+			'<div class="rlRowRight"><div class="rlRowRel"><span class="h">'+r.hits+'</span><span class="hl">refs</span></div>'+
+			'<div class="rlRowActs">'+
+				'<span class="rlRowAct rlBasket" data-code="'+esc(r.code)+'" title="Add to basket"><i class="material-symbols-outlined">add_shopping_cart</i></span>'+
+				'<span class="rlRowAct rlDl" data-code="'+esc(r.code)+'" title="'+(locked?'Restricted':'Download')+'"><i class="material-symbols-outlined">'+(locked?'lock':'download')+'</i></span>'+
 			'</div></div></div>';
 	}
 	function crit(ic,k,v,key){
-		return '<span class="dhCritChip" data-crit="'+key+'"><i class="material-symbols-outlined k">'+ic+'</i>'+
+		return '<span class="rlCritChip" data-crit="'+key+'"><i class="material-symbols-outlined k">'+ic+'</i>'+
 			'<span>'+esc(k)+': <b>'+esc(v)+'</b></span><i class="material-symbols-outlined x">close</i></span>';
 	}
 	function critRow(){
 		var chips=[];
 		if(curQuery) chips.push(crit('search','Keyword',curQuery,'q'));
-		var ft=document.getElementById('dhFType').value; if(ft!=='all') chips.push(crit('description','Type',typeInfo(ft).nm,'type'));
-		var fb=document.getElementById('dhFBu').value; if(fb!=='all') chips.push(crit('apartment','Unit',fb,'bu'));
+		var ft=document.getElementById('rlFType').value; if(ft!=='all') chips.push(crit('description','Type',typeInfo(ft).nm,'type'));
+		var fb=document.getElementById('rlFBu').value; if(fb!=='all') chips.push(crit('apartment','Unit',fb,'bu'));
 		var offIdx=INDEXES.filter(function(i){return !activeIdx[i.id];}).length;
 		if(offIdx) chips.push(crit('public','Indexes',(INDEXES.length-offIdx)+' of '+INDEXES.length,'idx'));
 		var offCls=[1,2,3,4].filter(function(c){return !activeCls[c];}).length;
 		if(offCls) chips.push(crit('shield','Class',[1,2,3,4].filter(function(c){return activeCls[c];}).map(function(c){return 'C'+c;}).join(', '),'cls'));
 		if(!chips.length) return '';
-		return '<div class="dhCritRow"><span class="lead"><i class="material-symbols-outlined">filter_alt</i>Filtered by</span>'+chips.join('')+'</div>';
+		return '<div class="rlCritRow"><span class="lead"><i class="material-symbols-outlined">filter_alt</i>Filtered by</span>'+chips.join('')+'</div>';
 	}
 	function renderResults(){
 		searchMode=true;
 		var list=currentMatches();
-		var html='<div class="dhResults">';
-		html+='<div class="dhResultsHead"><div class="dhResultsCount">Documents <b>1–'+list.length+'</b> of <b>'+list.length+'</b>'+
+		var html='<div class="rlResults">';
+		html+='<div class="rlResultsHead"><div class="rlResultsCount">Documents <b>1–'+list.length+'</b> of <b>'+list.length+'</b>'+
 			(curQuery?' for <span class="q">“'+esc(curQuery)+'”</span>':'')+'</div>'+
-			'<div class="dhResultsTools"><select class="dhSortSel" id="dhSort">'+
+			'<div class="rlResultsTools"><select class="rlSortSel" id="rlSort">'+
 			'<option value="rel">Sort: Relevance</option><option value="date">Newest</option><option value="hits">Most referenced</option>'+
 			'</select></div></div>';
 		html+=critRow();
 		if(!list.length){
-			html+='<div class="dhEmpty"><i class="material-symbols-outlined">search_off</i>'+
+			html+='<div class="rlEmpty"><i class="material-symbols-outlined">search_off</i>'+
 				'<div class="et">No reports match your search.</div>'+
 				'<div class="es">Try removing a filter or broadening your keywords.</div></div>';
 		} else {
-			html+='<div class="dhResultList">'+list.map(resultRow).join('')+'</div>';
-			html+='<div class="dhPager"><a class="nav">‹ Prev</a><a class="on">1</a><a>2</a><a>3</a><a>4</a><a class="nav">Next ›</a></div>';
+			html+='<div class="rlResultList">'+list.map(resultRow).join('')+'</div>';
+			html+='<div class="rlPager"><a class="nav">‹ Prev</a><a class="on">1</a><a>2</a><a>3</a><a>4</a><a class="nav">Next ›</a></div>';
 		}
 		html+='</div>';
-		document.getElementById('dhMain').innerHTML=html;
-		var ss=document.getElementById('dhSort'); if(ss) ss.addEventListener('change',function(){ applySort(this.value); });
+		document.getElementById('rlMain').innerHTML=html;
+		var ss=document.getElementById('rlSort'); if(ss) ss.addEventListener('change',function(){ applySort(this.value); });
 	}
 	function applySort(mode){
 		var list=currentMatches();
 		if(mode==='date') list.sort(function(a,b){return a.date<b.date?1:-1;});
 		else list.sort(function(a,b){return b.hits-a.hits;});
-		var wrap=document.querySelector('.dhResultList'); if(wrap) wrap.innerHTML=list.map(resultRow).join('');
+		var wrap=document.querySelector('.rlResultList'); if(wrap) wrap.innerHTML=list.map(resultRow).join('');
 	}
 
-	function setQueryInput(v){ var s=document.getElementById('dhSearchInput'); if(!s) return; s.value=v; var f=s.closest('.dhSearchField'); if(f) f.classList.toggle('has', !!v); }
-	function doSearch(){ curQuery=(document.getElementById('dhSearchInput').value||'').trim(); renderResults(); }
+	function setQueryInput(v){ var s=document.getElementById('rlSearchInput'); if(!s) return; s.value=v; var f=s.closest('.rlSearchField'); if(f) f.classList.toggle('has', !!v); }
+	function doSearch(){ curQuery=(document.getElementById('rlSearchInput').value||'').trim(); renderResults(); }
 	function backToDiscovery(){ curQuery=''; setQueryInput(''); renderDiscovery(); }
 	function removeCrit(key){
 		if(key==='q'){ curQuery=''; setQueryInput(''); }
-		else if(key==='type') document.getElementById('dhFType').value='all';
-		else if(key==='bu') document.getElementById('dhFBu').value='all';
+		else if(key==='type') document.getElementById('rlFType').value='all';
+		else if(key==='bu') document.getElementById('rlFBu').value='all';
 		else if(key==='idx'){ INDEXES.forEach(function(i){ activeIdx[i.id]=true; }); renderFacet(); }
 		else if(key==='cls'){ activeCls={1:true,2:true,3:true,4:true}; renderFacet(); }
-		var anyCrit = curQuery || document.getElementById('dhFType').value!=='all' || document.getElementById('dhFBu').value!=='all'
+		var anyCrit = curQuery || document.getElementById('rlFType').value!=='all' || document.getElementById('rlFBu').value!=='all'
 			|| INDEXES.some(function(i){return !activeIdx[i.id];}) || [1,2,3,4].some(function(c){return !activeCls[c];});
 		if(anyCrit) renderResults(); else backToDiscovery();
 	}
@@ -384,53 +384,53 @@
 		renderFacet();
 		renderDiscovery();
 
-		// datahub 검색(좌 cardBox) — Enter / Search 버튼
-		var sq=document.getElementById('dhSearchInput');
-		sq.addEventListener('input', function(){ var f=sq.closest('.dhSearchField'); if(f) f.classList.toggle('has', !!sq.value); });
+		// Technical Report Library 검색(좌 cardBox) — Enter / Search 버튼
+		var sq=document.getElementById('rlSearchInput');
+		sq.addEventListener('input', function(){ var f=sq.closest('.rlSearchField'); if(f) f.classList.toggle('has', !!sq.value); });
 		sq.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); this.value.trim()?doSearch():backToDiscovery(); } });
-		document.getElementById('dhSearchBtn').addEventListener('click', function(){ sq.value.trim()?doSearch():backToDiscovery(); });
-		document.getElementById('dhSearchClear').addEventListener('click', function(){ removeCrit('q'); });
-		// 헤더 srchArea = global(타 모듈 포함) — datahub 검색은 좌 패널로 안내
+		document.getElementById('rlSearchBtn').addEventListener('click', function(){ sq.value.trim()?doSearch():backToDiscovery(); });
+		document.getElementById('rlSearchClear').addEventListener('click', function(){ removeCrit('q'); });
+		// 헤더 srchArea = global(타 모듈 포함) — Technical Report Library 검색은 좌 패널로 안내
 		var gq=document.getElementById('mainSrchInput');
-		if(gq) gq.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); toast('Global search spans all MAPIS modules. Use the DataHub panel on the left to search reports.','info'); } });
+		if(gq) gq.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); toast('Global search spans all MAPIS modules. Use the Technical Report Library panel on the left to search reports.','info'); } });
 
 		// facet: 인덱스/등급 체크 + 셀렉트 + 토글/리셋
-		document.getElementById('dhIndexList').addEventListener('change', function(e){
+		document.getElementById('rlIndexList').addEventListener('change', function(e){
 			var cb=e.target.closest('input[data-idx]'); if(!cb) return;
 			activeIdx[cb.getAttribute('data-idx')]=cb.checked; updateIdxCount(); onFacetChange();
 		});
-		document.getElementById('dhClassList').addEventListener('change', function(e){
+		document.getElementById('rlClassList').addEventListener('change', function(e){
 			var cb=e.target.closest('input[data-cls]'); if(!cb) return;
 			activeCls[+cb.getAttribute('data-cls')]=cb.checked; onFacetChange();
 		});
-		['dhFType','dhFDate','dhFBu'].forEach(function(id){ document.getElementById(id).addEventListener('change', onFacetChange); });
-		document.getElementById('dhIdxToggle').addEventListener('click', function(){
+		['rlFType','rlFDate','rlFBu'].forEach(function(id){ document.getElementById(id).addEventListener('change', onFacetChange); });
+		document.getElementById('rlIdxToggle').addEventListener('click', function(){
 			var on=Object.keys(activeIdx).filter(function(k){return activeIdx[k];}).length;
 			var next=(on!==INDEXES.length); INDEXES.forEach(function(i){ activeIdx[i.id]=next; });
 			renderFacet(); (curQuery||INDEXES.some(function(i){return !activeIdx[i.id];}))?renderResults():renderDiscovery();
 		});
-		document.getElementById('dhFacetClear').addEventListener('click', function(){
+		document.getElementById('rlFacetClear').addEventListener('click', function(){
 			INDEXES.forEach(function(i){ activeIdx[i.id]=true; }); activeCls={1:true,2:true,3:true,4:true};
-			document.getElementById('dhFType').value='all'; document.getElementById('dhFDate').value='all'; document.getElementById('dhFBu').value='all';
+			document.getElementById('rlFType').value='all'; document.getElementById('rlFDate').value='all'; document.getElementById('rlFBu').value='all';
 			renderFacet(); backToDiscovery(); toast('Filters reset.','ok');
 		});
 
 		// 메인 위임: 타입타일 / more / 기준칩 제거 / basket / download / 카드·순위·결과행 클릭
-		document.getElementById('dhMain').addEventListener('click', function(e){
-			var basket=e.target.closest('.dhBasket');
+		document.getElementById('rlMain').addEventListener('click', function(e){
+			var basket=e.target.closest('.rlBasket');
 			if(basket){ e.stopPropagation(); basket.classList.toggle('on');
 				var on=basket.classList.contains('on'); var bi=basket.querySelector('i'); if(bi) bi.textContent= on?'shopping_cart':'add_shopping_cart';
 				toast(on?('Added '+basket.getAttribute('data-code')+' to basket.'):'Removed from basket.', on?'ok':'info'); return; }
-			var dl=e.target.closest('.dhDl');
+			var dl=e.target.closest('.rlDl');
 			if(dl){ e.stopPropagation(); var dcode=dl.getAttribute('data-code'); var dr=REPORTS.filter(function(x){return x.code===dcode;})[0];
 				if(dr && dr.cls>=3 && dr.idx!==MY_REGION) toast('Download blocked — Class '+dr.cls+' is region-restricted ('+idxName(dr.idx)+').','warn');
 				else toast('Downloading '+dcode+'… (mock)','mocha'); return; }
-			var critEl=e.target.closest('.dhCritChip');
+			var critEl=e.target.closest('.rlCritChip');
 			if(critEl){ e.stopPropagation(); removeCrit(critEl.getAttribute('data-crit')); return; }
-			var tile=e.target.closest('.dhTypeTile');
+			var tile=e.target.closest('.rlTypeTile');
 			if(tile){ curQuery=''; setQueryInput('');
 				if(tile.hasAttribute('data-idx')){ var rid=tile.getAttribute('data-idx'); INDEXES.forEach(function(i){ activeIdx[i.id]=(i.id===rid); }); renderFacet(); }
-				else document.getElementById('dhFType').value=tile.getAttribute('data-type');
+				else document.getElementById('rlFType').value=tile.getAttribute('data-type');
 				renderResults(); return; }
 			var more=e.target.closest('.more[data-browse]');
 			if(more){ curQuery=''; setQueryInput(''); renderResults(); return; }
