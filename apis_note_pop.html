@@ -1,0 +1,244 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM — Lab Note</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/glass_engine.js"></script>
+
+</head>
+<body class="popup type2">
+    <header class="z-depth-1">
+        <section class="titArea npi">
+            <div><img src="img/MAPISLogo-25.png"></div>
+            <div class="statusTit">
+                <div class="tit" id="noteHeadTit">[NT-2605-00142] UV-Curable PSA Viscosity Improvement — RGBOLED</div>
+                <div class="roundBox blue" id="noteHeadStatus">In Progress</div>
+            </div>
+        </section>
+    </header>
+
+    <aside class="leftAside z-depth-1 blurArea">
+        <div class="menuTit">Lab Note</div>
+        <section class="hScroll">
+            <ul class="menuUl">
+                <li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="card_basic">
+                    <i class="material-symbols-outlined left">inventory_2</i><span>Basic Data</span>
+                </li>
+                <li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_fml">
+                    <i class="material-symbols-outlined left">blender</i><span>Formulation</span>
+                </li>
+                <li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_concl">
+                    <i class="material-symbols-outlined left">summarize</i><span>Conclusion</span>
+                </li>
+                <li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_approval">
+                    <i class="material-symbols-outlined left">approval</i><span>Approval</span>
+                </li>
+            </ul>
+        </section>
+        <section class="btnArea">
+            <div><a href="javascript:;" id="noteSaveBtn" class="waves-effect waves-light hBtn hBlue"><i class="material-symbols-outlined left">save</i><span class="label">Save</span></a></div>
+        </section>
+    </aside>
+
+    <div class="contArea">
+        <!-- Basic Data -->
+        <section class="cardBox mt10" id="card_basic">
+            <div class="cardTit2"><i class="material-symbols-outlined left">inventory_2</i>Basic Data</div>
+            <div class="inputArea">
+                <div class="row">
+                    <div class="col s2 ar pl0"><span class="essential">*</span>Note Title</div>
+                    <div class="col s10">
+                        <div class="aniInput">
+                            <input type="text" value="UV-Curable PSA Viscosity Improvement — RGBOLED" class="browser-default fontR font14" placeholder="Enter note title">
+                            <span class="focus-border"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s2 ar pl0">Project</div>
+                    <div class="col s10">
+                        <div class="aniInput">
+                            <input type="text" id="noteProjInput" value="[SN-26-0031] RGBOLED Display Adhesive" class="browser-default fontR font14" placeholder="Search a project…" autocomplete="off">
+                            <span class="focus-border"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col s2 ar pl0">Tags</div>
+                    <div class="col s10">
+                        <div class="noteTagBox" id="noteTags">
+                            <span class="noteTag" data-tag="#viscosity">#viscosity<i class="material-icons">close</i></span>
+                            <span class="noteTag" data-tag="#RGBOLED">#RGBOLED<i class="material-icons">close</i></span>
+                            <input type="text" id="noteTagInput" class="noteTagInput browser-default" placeholder="Add a tag, then Enter">
+                        </div>
+                        <div class="noteRecTags" id="noteRecTags"><!-- JS 렌더 --></div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Formulation -->
+        <section class="cardBox mt10" id="card_fml">
+            <div class="cardTit2"><i class="material-symbols-outlined left">blender</i>Formulation
+                <a class="waves-effect waves-light hBtn hViva right" href="javascript:;"><i class="material-symbols-outlined left">open_in_new</i><span class="label">Open in formulator</span></a>
+            </div>
+            <div class="inputArea">
+                <label class="fontM fmlLabel">Composition <span class="cGray">— wt% · FML-EM-2208</span></label>
+                <div class="fixedTable hBorderTable hScroll mt10">
+                    <table class="fmlCompTable">
+                        <thead><tr><th>Material</th><th>Code</th><th class="ar">wt%</th></tr></thead>
+                        <tbody>
+                            <tr><td>Silicone PSA base</td><td>RM-1021</td><td class="ar">62.0</td></tr>
+                            <tr><td>UV initiator</td><td>RM-3308</td><td class="ar">2.5</td></tr>
+                            <tr><td>Viscosity modifier</td><td>RM-2207</td><td class="ar">5.5</td></tr>
+                            <tr><td>Solvent (low-VOC)</td><td>RM-0480</td><td class="ar">30.0</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <label class="fontM fmlLabel gap">Process</label>
+                <div class="metricGrid">
+                    <div class="metricItem"><i class="material-symbols-outlined">device_thermostat</i><div><span class="k">Mixing Temp</span><span class="v">25<em>°C</em></span></div></div>
+                    <div class="metricItem"><i class="material-symbols-outlined">timer</i><div><span class="k">Mixing Time</span><span class="v">30<em>min</em></span></div></div>
+                    <div class="metricItem"><i class="material-symbols-outlined">compress</i><div><span class="k">Degassing</span><span class="v">-0.09<em>MPa</em></span></div></div>
+                    <div class="metricItem"><i class="material-symbols-outlined">wb_sunny</i><div><span class="k">UV Dose</span><span class="v">1,200<em>mJ/cm²</em></span></div></div>
+                </div>
+
+                <label class="fontM fmlLabel gap">Results</label>
+                <div class="fixedTable hBorderTable hScroll mt10">
+                    <table class="fmlResTable">
+                        <thead><tr><th>Item</th><th>Spec</th><th class="ar">Measured</th><th class="ac">Result</th></tr></thead>
+                        <tbody>
+                            <tr><td>Viscosity</td><td class="ac">4,500 ± 300 cP</td><td class="ar">4,520</td><td class="ac"><span class="cGreen">Pass</span></td></tr>
+                            <tr><td>Cure Rate</td><td class="ac">≥ 95 %</td><td class="ar">96.0</td><td class="ac"><span class="cGreen">Pass</span></td></tr>
+                            <tr><td>Haze</td><td class="ac">≤ 1.0 %</td><td class="ar">0.8</td><td class="ac"><span class="cGreen">Pass</span></td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+
+        <!-- Conclusion -->
+        <section class="cardBox mt10" id="card_concl">
+            <div class="cardTit2"><i class="material-symbols-outlined left">summarize</i>Conclusion</div>
+            <div class="inputArea">
+                <textarea class="materialize-textarea browser-default conclText">v3 reached 4,520 cP viscosity, passing all 3 specs. Recommend transfer to mass-production validation (SN-26-0031). CoC issuance pending.</textarea>
+            </div>
+        </section>
+
+        <!-- Approval -->
+        <section class="cardBox mt10" id="card_approval">
+            <div class="cardTit2"><i class="material-symbols-outlined left">approval</i>Approval</div>
+            <div class="inputArea">
+                <div class="fixedTable hBorderTable hScroll">
+                    <table class="apprTable">
+                        <thead><tr><th>Step</th><th>Assignee</th><th>Status</th><th>Date</th></tr></thead>
+                        <tbody>
+                            <tr><td>Author</td><td>Jongho Lee</td><td><span class="apprChip done">Submitted</span></td><td>2026-05-28</td></tr>
+                            <tr><td>Review</td><td>Changmoo Jeong</td><td><span class="apprChip done">Approved</span></td><td>2026-05-29</td></tr>
+                            <tr><td>Approve</td><td>K.S. Yoon</td><td><span class="apprChip wait">Pending</span></td><td>—</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <script>
+    var TAG_VOCAB = ['#PSA', '#silicone', '#UVcure', '#adhesive', '#crosslinker', '#reliability', '#optical', '#coating'];
+    function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+    function toast(m){ if(window.M && M.toast) M.toast({html: esc(m)}); }
+
+    function currentTags(){
+        return Array.prototype.map.call(document.querySelectorAll('#noteTags .noteTag'), function(c){ return c.getAttribute('data-tag'); });
+    }
+    function addTag(text){
+        text = text.trim(); if(!text) return;
+        if(text[0] !== '#') text = '#' + text;
+        if(currentTags().indexOf(text) >= 0){ toast('Tag already exists.'); return; }
+        var input = document.getElementById('noteTagInput');
+        var chip = document.createElement('span'); chip.className = 'noteTag'; chip.setAttribute('data-tag', text);
+        chip.appendChild(document.createTextNode(text));
+        var ic = document.createElement('i'); ic.className = 'material-icons'; ic.textContent = 'close';
+        chip.appendChild(ic);
+        input.parentNode.insertBefore(chip, input);
+        renderRecommended();
+    }
+    function renderRecommended(){
+        var box = document.getElementById('noteRecTags'); if(!box) return;
+        box.innerHTML = '';
+        var lab = document.createElement('span'); lab.className = 'noteRecLabel';
+        lab.innerHTML = '<i class="material-symbols-outlined">auto_awesome</i>Recommended';
+        box.appendChild(lab);
+        var applied = currentTags();
+        var recs = TAG_VOCAB.filter(function(t){ return applied.indexOf(t) < 0; }).slice(0, 6);
+        if(!recs.length){ var none = document.createElement('span'); none.className = 'noteRecEmpty'; none.textContent = 'No more suggestions'; box.appendChild(none); return; }
+        recs.forEach(function(t){
+            var a = document.createElement('a'); a.href = 'javascript:;'; a.className = 'noteRecChip'; a.setAttribute('data-tag', t);
+            var ic = document.createElement('i'); ic.className = 'material-symbols-outlined'; ic.textContent = 'add';
+            a.appendChild(ic); a.appendChild(document.createTextNode(t));
+            box.appendChild(a);
+        });
+    }
+
+    $(document).ready(function(){
+        if(window.M){
+            if(M.textareaAutoResize) document.querySelectorAll('.materialize-textarea').forEach(function(t){ M.textareaAutoResize(t); });
+        }
+
+        try {
+            var qp = new URLSearchParams(location.search);
+            var code = qp.get('code'), project = qp.get('project');
+            if(code){
+                var titEl = document.getElementById('noteHeadTit');
+                titEl.textContent = '[' + code + '] ' + titEl.textContent.replace(/^\[[^\]]*\]\s*/, '');
+            }
+            if(project) document.getElementById('noteProjInput').value = project;
+        } catch(e){}
+
+        document.querySelectorAll('.menu-item').forEach(function(mi){
+            mi.addEventListener('click', function(){
+                var card = document.getElementById(mi.getAttribute('data-target'));
+                if(card) card.scrollIntoView({ behavior:'smooth', block:'start' });
+                document.querySelectorAll('.menu-item').forEach(function(x){ x.classList.remove('active'); });
+                mi.classList.add('active');
+            });
+        });
+        $(window).on('scroll', function(){
+            var pos = $(window).scrollTop() + 120;
+            $('.cardBox[id]').each(function(){
+                var top = $(this).offset().top, bottom = top + $(this).outerHeight();
+                if(pos >= top && pos < bottom){
+                    $('.menu-item').removeClass('active');
+                    $('.menu-item[data-target="' + this.id + '"]').addClass('active');
+                    return false;
+                }
+            });
+        });
+
+        var tagInput = document.getElementById('noteTagInput');
+        if(tagInput) tagInput.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); addTag(tagInput.value); tagInput.value = ''; } });
+        document.getElementById('noteTags').addEventListener('click', function(e){
+            var x = e.target.closest('.noteTag i'); if(!x) return;
+            x.closest('.noteTag').remove(); renderRecommended();
+        });
+        document.getElementById('noteRecTags').addEventListener('click', function(e){
+            var chip = e.target.closest('.noteRecChip'); if(!chip) return;
+            addTag(chip.getAttribute('data-tag'));
+        });
+        renderRecommended();
+
+        document.getElementById('noteSaveBtn').addEventListener('click', function(){ toast('Saved (mockup).'); });
+    });
+    </script>
+</body>
+</html>

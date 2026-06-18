@@ -25,6 +25,9 @@
     sp.textContent = msg;
     t.appendChild(ic); t.appendChild(sp);
     wrap.appendChild(t);
+    // 글래스엔진 색추적 — 시스템 전역 glassTrack/glassClear 재사용(--olx/--oly/--ol-angle 갱신 → ::before conic)
+    t.addEventListener('mousemove', function (e) { if (typeof glassTrack === 'function') glassTrack.call(t, e); });
+    t.addEventListener('mouseleave', function () { if (typeof glassClear === 'function') glassClear(t); });
     setTimeout(function () {
       t.classList.add('fade');
       setTimeout(function () { t.remove(); }, 260);
@@ -452,6 +455,9 @@
   function openInFormulator(key) {
     var f = FORMULATIONS[key]; if (!f) return;
     ELN.toast(f.code + ' ' + f.ver + ' · opening formulator in new window', 'info');
+    // siliconeFormula 를 mapis 하위로 가져옴(배포용) → mapis 기준 상대경로
+    window.open('siliconeFormula/index.html?code=' + encodeURIComponent(f.code),
+      'siliconeFormulator', 'width=1480,height=900,scrollbars=yes,resizable=yes');
   }
 
   function openFmlRmInfo(code) {
@@ -550,6 +556,10 @@
     var box = document.getElementById('elnRecTags');
     if (!box) return;
     box.innerHTML = '';
+    // 선두 레이블 — 이 칩들이 '추천 태그'임을 명시(클릭=추가)
+    var lab = document.createElement('span'); lab.className = 'elnRecLabel';
+    lab.innerHTML = '<i class="material-symbols-outlined">auto_awesome</i>Recommended';
+    box.appendChild(lab);
     var recs = recommendTags(6);
     if (!recs.length) {
       var none = document.createElement('span'); none.className = 'elnRecEmpty'; none.textContent = 'No more suggestions';
@@ -908,7 +918,7 @@
       }
       case 'fml': return '<div class="elnFmlHead"><i class="material-symbols-outlined">science</i>'
         + '<div class="elnFmlId">No formulation linked yet</div>'
-        + '<a href="javascript:;" class="elnLinkChip" style="cursor:pointer;"><i class="material-symbols-outlined">link</i>Link…</a></div>';
+        + '<a href="javascript:;" class="waves-effect waves-light hBtn elnFmlLink"><i class="material-symbols-outlined left">link</i>Link…</a></div>';
       case 'attach': return '<div class="elnAttachBox">'
         + '<label class="elnAttachDrop"><i class="material-symbols-outlined">upload_file</i>'
         + '<span>Drop files or <b>choose</b></span><input type="file" class="elnFileInput" multiple hidden></label>'
@@ -918,13 +928,13 @@
         + '<li class="elnRelItem"><i class="material-symbols-outlined">science</i><span class="elnRelType">Material</span><a href="javascript:;" class="elnRelLink">[RM-0421] UV Photoinitiator</a><i class="material-symbols-outlined elnRelDel" title="Remove">close</i></li>'
         + '<li class="elnRelItem"><i class="material-symbols-outlined">rocket_launch</i><span class="elnRelType">Project</span><a href="javascript:;" class="elnRelLink">[SN-26-0031] RGBOLED Display Adhesive</a><i class="material-symbols-outlined elnRelDel" title="Remove">close</i></li>'
         + '</ul>'
-        + '<a href="javascript:;" class="elnLinkChip elnRelAddBtn"><i class="material-symbols-outlined">add</i>Add Item</a></div>';
+        + '<a href="javascript:;" class="waves-effect waves-light hBtn elnRelAddBtn"><i class="material-symbols-outlined left">add</i>Add Item</a></div>';
       case 'chem': return '<div class="elnChemBox">'
         + '<ul class="elnChemList"></ul>'
         + '<div class="elnChemEmptyLine"><i class="material-symbols-outlined">hexagon</i>No structures yet — add one or more from ChemStudio.</div>'
         + '<div class="elnChemAdd">'
-        + '<a href="javascript:;" class="elnLinkChip elnChemOpen" style="margin-left:0;"><i class="material-symbols-outlined">add</i>Add New</a>'
-        + '<a href="javascript:;" class="elnLinkChip elnChemLink" style="margin-left:0;"><i class="material-symbols-outlined">library_add</i>Add Existing</a>'
+        + '<a href="javascript:;" class="waves-effect waves-light hBtn elnChemOpen"><i class="material-symbols-outlined left">add</i>Add New</a>'
+        + '<a href="javascript:;" class="waves-effect waves-light hBtn elnChemLink"><i class="material-symbols-outlined left">library_add</i>Add Existing</a>'
         + '</div></div>';
       default: return '<div class="elnModText">…</div>';
     }
@@ -961,46 +971,42 @@
     var sp = document.querySelector('.leftAside .menuUl .menu-item[data-target="' + cardId + '"] span');
     if (sp) sp.textContent = text;
   }
-  // 좌측 메뉴 라벨 = short title(메모) > 카드 제목(헤더) > '(Untitled)'
+  // 좌측 메뉴 라벨 = 카드 제목(헤더) > '(Untitled)'
   function tocLabelFor(card) {
-    var memo = card.querySelector('.elnModMemo'), title = card.querySelector('.elnModTitle');
-    var short = memo ? memo.textContent.trim() : '', full = title ? title.textContent.trim() : '';
-    return short || full || '(Untitled)';
+    var title = card.querySelector('.elnModTitle');
+    var full = title ? (title.value != null ? title.value : title.textContent).trim() : '';
+    return full || '(Untitled)';
   }
 
-  // 카드 헤더 크롬: 제목 인라인 편집(span) + 메모(설명) 줄 — 모든 카드 공용, 1회만 적용
+  // 카드 헤더 크롬: 제목 인라인 편집(input) — 모든 카드 공용, 1회만 적용
   function setupCardChrome(card) {
     var tit = card.querySelector('.cardTit2');
     if (!tit) return;
-    // 1) 제목 → 편집 가능한 span (헤더의 첫 텍스트 노드를 감쌈)
+    // 1) 제목 → aniInput 텍스트 입력(원래 input과 동일 룩, 헤더 flex에서 남은 폭 전부 차지). 헤더의 첫 텍스트 노드를 input value로
     if (!tit.querySelector('.elnModTitle')) {
       var node = null;
       for (var i = 0; i < tit.childNodes.length; i++) {
         var c = tit.childNodes[i];
         if (c.nodeType === 3 && c.textContent.trim()) { node = c; break; }
       }
-      var span = document.createElement('span');
-      span.className = 'elnModTitle';
-      span.setAttribute('contenteditable', 'true');
-      span.spellcheck = false;
-      span.title = 'Click to rename';
-      span.textContent = node ? node.textContent.trim() : '';
-      if (node) tit.replaceChild(span, node); else tit.appendChild(span);
-      span.addEventListener('input', function () { syncTocLabel(card.id, tocLabelFor(card)); });
-      span.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); span.blur(); } });
-      span.addEventListener('blur', function () { syncTocLabel(card.id, tocLabelFor(card)); });  // 빈 제목은 카드엔 그대로, 메뉴만 '(Untitled)'
+      var wrap = document.createElement('div');
+      wrap.className = 'aniInput elnModTitleWrap';
+      var input = document.createElement('input');
+      input.type = 'text';
+      input.className = 'browser-default elnModTitle';
+      input.spellcheck = false;
+      input.title = 'Click to rename';
+      input.placeholder = 'Section title';
+      input.value = node ? node.textContent.trim() : '';
+      wrap.appendChild(input);
+      var fb = document.createElement('span'); fb.className = 'focus-border';
+      wrap.appendChild(fb);
+      if (node) tit.replaceChild(wrap, node); else tit.appendChild(wrap);
+      input.addEventListener('input', function () { syncTocLabel(card.id, tocLabelFor(card)); });
+      input.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); input.blur(); } });
+      input.addEventListener('blur', function () { syncTocLabel(card.id, tocLabelFor(card)); });  // 빈 제목은 카드엔 그대로, 메뉴만 '(Untitled)'
     }
-    // 2) 메모(설명) 줄 — 헤더 다음, 본문 앞
-    if (!card.querySelector('.elnModMemo')) {
-      var memo = document.createElement('div');
-      memo.className = 'elnModMemo';
-      memo.setAttribute('contenteditable', 'true');
-      memo.spellcheck = false;
-      memo.setAttribute('data-ph', 'Short title for left menu (optional)');
-      memo.addEventListener('input', function () { syncTocLabel(card.id, tocLabelFor(card)); });  // 메모 = 메뉴 short title
-      tit.insertAdjacentElement('afterend', memo);
-    }
-    setupIconPicker(card);   // 3) 헤더 lead 아이콘 클릭 → 아이콘/채움 변경
+    setupIconPicker(card);   // 2) 헤더 lead 아이콘 클릭 → 아이콘/채움 변경
   }
   // 헤더 lead 아이콘 변경 — 후보 그리드 + Fill 토글(라이브 적용). 패밀리는 material-symbols-outlined 하나로 통일
   var ICON_CANDIDATES = ['science', 'experiment', 'biotech', 'hexagon', 'blender', 'labs',
@@ -1129,6 +1135,15 @@
     wireModuleBody(t.key, body);   // 첨부/링크 모듈이면 인스턴스 배선
     body.querySelectorAll('textarea').forEach(autoGrowTextarea);   // 추가된 textarea 초기 높이
 
+    // 모듈 add 컨트롤(Add New/Add Existing/Add Item/Link…) → 제목 아래 별도 툴바(우측 정렬). Formulation 카드(.elnFmlToolbar)와 동일
+    var addCtl = body.querySelector('.elnChemAdd, .elnRelAddBtn, .elnFmlLink');
+    if (addCtl) {
+      var modToolbar = document.createElement('div');
+      modToolbar.className = 'elnFmlToolbar';
+      modToolbar.appendChild(addCtl);
+      sec.appendChild(modToolbar);
+    }
+
     sec.appendChild(body);
     if (after && after.parentNode === article) article.insertBefore(sec, after.nextSibling);
     else article.insertBefore(sec, document.getElementById('card_approval'));   // 좌측 'Add Module' → Approval 카드 위에 추가
@@ -1142,13 +1157,56 @@
       li.setAttribute('data-target', id);
       li.innerHTML = '<i class="material-symbols-outlined left">' + t.icon + '</i><span>' + t.title + '</span>';
       var refLi = after ? ul.querySelector('.menu-item[data-target="' + after.id + '"]') : null;
+      // Approval은 시스템 항목 — 항상 목차 맨 아래 고정. 기준 없으면 Approval 앞에 삽입
+      var apprLi = ul.querySelector('.menu-item[data-target="card_approval"]');
       if (refLi) ul.insertBefore(li, refLi.nextSibling);
+      else if (apprLi) ul.insertBefore(li, apprLi);
       else ul.appendChild(li);
       setupNavItem(li);   // 새 목차 항목도 드래그 핸들 적용
     }
     refreshDividers();
     if (typeof initAllHBorderTableOverlays === 'function') { try { initAllHBorderTableOverlays(); } catch (e) {} }
     if (!silent) { ELN.toast('Module "' + t.title + '" added.', 'ok'); sec.scrollIntoView({ behavior: 'smooth', block: 'center' }); }
+  }
+
+  // Add Module 모달 — 시스템 Materialize 모달(#addModuleModal) 사용.
+  // 글래스/오버레이/뒤배경 blur는 기본 .modal 규칙 + glass_engine.js(.modal mousemove)가 처리.
+  // 여기선 모듈 타일 그리드만 렌더 + 모달 열기.
+  function renderModulePicker(after) {
+    var grid = document.getElementById('addModuleGrid');
+    if (!grid) return;
+    grid.innerHTML = '';
+    MODULE_TYPES.forEach(function (t) {
+      var card = document.createElement('div'); card.className = 'elnAddPickCard waves-effect';
+      var ic = document.createElement('i'); ic.className = 'material-symbols-outlined'; ic.textContent = t.icon;
+      var tt = document.createElement('div'); tt.className = 't'; tt.textContent = t.title;
+      var dd = document.createElement('div'); dd.className = 'd'; dd.textContent = t.desc;
+      card.appendChild(ic); card.appendChild(tt); card.appendChild(dd);
+      // per-box 색추적 + 3D 틸트 — 색추적은 시스템 글래스엔진(glass_engine.js의 전역 glassTrack)을 그대로 재사용
+      card.addEventListener('mousemove', function (e) {
+        if (typeof glassTrack === 'function') glassTrack.call(card, e);   // --olx/--oly/--ol-angle 갱신 (카드 ::before 글로우)
+        var r = card.getBoundingClientRect();
+        var x = ((e.clientX - r.left) / r.width) * 100, y = ((e.clientY - r.top) / r.height) * 100;
+        card.style.transform = 'perspective(600px) rotateX(' + ((50 - y) / 50 * 8) + 'deg) rotateY(' + ((x - 50) / 50 * 8) + 'deg) scale(1.02)';
+      });
+      card.addEventListener('mouseleave', function () {
+        if (typeof glassClear === 'function') glassClear(card);
+        card.style.transition = 'transform .3s ease'; card.style.transform = '';
+        setTimeout(function () { card.style.transition = ''; }, 300);
+      });
+      card.addEventListener('click', function () {
+        var inst = window.M && M.Modal.getInstance(document.getElementById('addModuleModal'));
+        if (inst) inst.close();
+        addNoteModule(t, after);
+      });
+      grid.appendChild(card);
+    });
+  }
+  function openAddModuleModal(after) {
+    renderModulePicker(after);
+    var el = document.getElementById('addModuleModal');
+    var inst = window.M && (M.Modal.getInstance(el) || M.Modal.init(el));
+    if (inst) inst.open();
   }
 
   // 모듈 픽커 — 모달 대신 누른 자리에 앵커되는 popover(기존 8종 그리드 재사용)
@@ -1181,7 +1239,15 @@
     var btn = document.getElementById('elnAddModule');
     if (!btn) return; // 상세 화면에서만 동작
     // simple: 본문 끝 '+Add module' 블록·카드 사이 divider 제거 — 좌측 'Add Module' 버튼이 유일 진입점.
-    btn.addEventListener('click', function () { openModulePicker(btn, null); });
+    // Add Module 모달 초기화 — apis_npdi_pop ProcessMap과 동일: 열릴 때 뒤배경에 .modalBlur, 닫힐 때 해제
+    var addModalEl = document.getElementById('addModuleModal');
+    if (addModalEl && window.M && M.Modal) {
+      M.Modal.init(addModalEl, {
+        onOpenStart: function () { document.querySelectorAll('header, aside, .contArea').forEach(function (n) { n.classList.add('modalBlur'); }); },
+        onCloseStart: function () { document.querySelectorAll('header, aside, .contArea').forEach(function (n) { n.classList.remove('modalBlur'); }); }
+      });
+    }
+    btn.addEventListener('click', function () { openAddModuleModal(null); });
     // 모든 카드(Overview 포함) 헤더에 제목 편집/메모 주입. (Approval 카드는 시스템 섹션 — 제외)
     document.querySelectorAll('.contArea article > .cardBox').forEach(function (card) {
       if (card.id === 'card_approval') return;
@@ -1223,7 +1289,7 @@
       var type = STATIC_SECTION[card.id] || card.getAttribute('data-modtype');
       if (!type) return;
       var titEl = card.querySelector('.elnModTitle');
-      var label = titEl ? (titEl.textContent || '').trim() : '';
+      var label = titEl ? ((titEl.value != null ? titEl.value : titEl.textContent) || '').trim() : '';
       if (!label) label = type.charAt(0).toUpperCase() + type.slice(1);
       out.push({ type: type, label: label });
     });
@@ -1449,7 +1515,8 @@
       ELN.toast('승인 요청 메일을 발송했습니다 (목업).', 'ok');
     }
   }
-  document.addEventListener('DOMContentLoaded', function () { renderApprovalCard(); renderApprovalBadge(); });   // 하단 고정 카드 초기 렌더
+  // Approval 카드는 apis_npdi_pop 와 동일한 정적 내용(HTML)으로 대체 → JS 렌더(renderApprovalCard/Badge) 초기 호출 제거.
+  // 워크플로 함수들은 트리거(버튼)가 없어 비활성 상태로 남음.
 
   /* ── 포스트잇 — 섹션에 우클릭으로 부착(섹션 상대좌표 → reflow에 강함). 드래그 이동·접기·삭제. 저장은 실구현에서(프로토타입 제외) ── */
   function addPostit(card, clientX, clientY) {
@@ -1486,13 +1553,6 @@
   }
   document.addEventListener('DOMContentLoaded', function () {
     var article = document.getElementById('tab_ov'); if (!article) return;
-    // ambient hint — 우클릭 포스트잇은 비필수 기능. 옅고 정적, 닫기 없음, 클릭 비차단(주목 요구 X)
-    if (!article.querySelector('.elnRclickHint')) {
-      var hint = document.createElement('div');
-      hint.className = 'elnRclickHint';
-      hint.innerHTML = '<i class="material-symbols-outlined">sticky_note_2</i>Right-click a section to add a sticky note';
-      article.insertBefore(hint, article.firstChild);
-    }
     // 우클릭 → context menu(액션 배열 → 향후 확장 용이). 메뉴 아이템 클릭으로 액션 실행
     var CTX_ACTIONS = [
       { icon: 'sticky_note_2', label: 'Add sticky note', run: function (card, x, y) { addPostit(card, x, y); } }
@@ -1608,65 +1668,7 @@
     '[SN-25-0176] UV-Blocking Optical Adhesive'
   ];
 
-  function setProjectMeta(name) {
-    var val = document.getElementById('elnProjVal');
-    if (!val) return;
-    var empty = !name || name === 'No Project';
-    val.setAttribute('data-proj', empty ? '' : name);
-    val.classList.toggle('empty', empty);
-    var link = val.querySelector('.elnProjLink');
-    if (link) { link.textContent = empty ? 'No Project' : name; link.title = empty ? 'No linked project' : 'Open project'; }
-  }
-
-  function openProjectPicker(anchor) {
-    var v = document.getElementById('elnProjVal');
-    var cur = v ? (v.getAttribute('data-proj') || '') : '';
-    var wrap = document.createElement('div'); wrap.className = 'elnPickWrap';
-    var search = document.createElement('input');
-    search.type = 'text'; search.className = 'browser-default elnPickSearch'; search.placeholder = 'Search projects…';
-    var list = document.createElement('div'); list.className = 'elnPickList';
-    function render(q) {
-      list.innerHTML = '';
-      var ql = (q || '').toLowerCase();
-      var shownNone = false;
-      // No Project (빈값 — 연계 프로젝트 없음). Notebook의 No Notebook 개념
-      if (!ql || 'no project'.indexOf(ql) >= 0) {
-        var none = document.createElement('div');
-        none.className = 'elnPickRow elnPickNone' + (!cur ? ' cur' : '');
-        none.textContent = 'No Project';
-        none.addEventListener('click', function () {
-          ref.close();
-          if (!cur) return;
-          setProjectMeta('');
-          ELN.toast('Project link removed.', 'info');
-        });
-        list.appendChild(none); shownNone = true;
-      }
-      var matches = PROJECTS.filter(function (p) { return p.toLowerCase().indexOf(ql) >= 0; });
-      if (!matches.length && !shownNone) {
-        var em = document.createElement('div'); em.className = 'elnPickEmpty'; em.textContent = 'No projects match.';
-        list.appendChild(em); return;
-      }
-      matches.forEach(function (p) {
-        var it = document.createElement('div'); it.className = 'elnPickRow' + (p === cur ? ' cur' : '');
-        it.textContent = p;
-        it.addEventListener('click', function () {
-          ref.close();
-          if (p === cur) return;
-          setProjectMeta(p);
-          ELN.toast('Project changed to "' + p + '".', 'ok');
-        });
-        list.appendChild(it);
-      });
-    }
-    search.addEventListener('input', function () { render(search.value); });
-    wrap.appendChild(search); wrap.appendChild(list);
-    render('');
-    var ref = ELN.popover({ anchor: anchor, content: wrap, width: 380 });
-    setTimeout(function () { search.focus(); }, 60);
-  }
-
-  // 프로젝트명 클릭 → 그 프로젝트 팝업(조회). 변경은 swap 아이콘으로 분리
+  // Project = 텍스트 + 링크(읽기 표시). 링크 클릭 → 그 프로젝트 상세 팝업(조회). 변경 UI 없음.
   function openProjectDetail() {
     var val = document.getElementById('elnProjVal');
     var name = val ? (val.getAttribute('data-proj') || '') : '';
@@ -1675,16 +1677,45 @@
     ELN.toast('Opening project ' + (code || name) + '…', 'info');
     window.open('apis_npdi_pop.html', 'elnProjectDetail', 'width=1480,height=900,scrollbars=yes,resizable=yes');
   }
-
   function initProjectMeta() {
     var val = document.getElementById('elnProjVal');
     if (!val) return;
     var link = val.querySelector('.elnProjLink');
-    var chg = val.querySelector('.elnProjChange');
     if (link) link.addEventListener('click', function (e) { e.preventDefault(); openProjectDetail(); });
-    if (chg) chg.addEventListener('click', function (e) { e.preventDefault(); openProjectPicker(chg); }); // swap → quick-search
   }
   document.addEventListener('DOMContentLoaded', initProjectMeta);
+
+  /* ── Schedule 위치 — 이 노트가 작성된 과제 Detailed Schedule(apis_npdi_pop) 위치. 스테이지(L1) → 그 아래 태스크 선택 ── */
+  var PROJ_SCHEDULE = [
+    { stage:'NPC',                tasks:['Basic Data & Concept Overview','DFV Rating','NPC Review'] },
+    { stage:'NPI GO',             tasks:['Project Overview','Update Basic Data','Initial Project Schedule','Select Project Team & Stakeholders','Initial Project Financials','Functional Deliverables','NPI GO Review'] },
+    { stage:'LAB FORMULATION',    tasks:['Update Project Overview Section','Update Functional Deliverables','LAB FORM. Review'] },
+    { stage:'SCALE-UP',           tasks:['Update Project Overview Section','Update Functional Deliverables','SCALE-UP Review'] },
+    { stage:'COMMERCIAL GO',      tasks:['Update Project Overview Section','Update Functional Deliverables','COMM GO Review'] },
+    { stage:'POST LAUNCH REVIEW', tasks:['Performance Review','Quality & Capability Review','Financials Review (Plan vs Actual)','Project Learnings Capture','Stake Holder Review and Sign Off'] }
+  ];
+  function schedStageByName(n){ return PROJ_SCHEDULE.filter(function (s){ return s.stage === n; })[0] || null; }
+  // 선택 스테이지의 태스크로 Task select 채움
+  function fillSchedTasks(stageName, selectedTask){
+    var sel = document.getElementById('elnSchedTask'); if (!sel) return;
+    var st = schedStageByName(stageName), tasks = st ? st.tasks : [];
+    sel.innerHTML = tasks.map(function (t){ return '<option value="' + esc(t) + '"' + (t === selectedTask ? ' selected' : '') + '>' + esc(t) + '</option>'; }).join('');
+  }
+  // npdi와 동일하게 Materialize FormSelect로 렌더 (중복 wrapper 방지: destroy 먼저)
+  function schedReinit(sel){ if (window.M && M.FormSelect && sel){ var i = M.FormSelect.getInstance(sel); if (i) i.destroy(); M.FormSelect.init(sel); } }
+  function initScheduleMeta(){
+    var stageSel = document.getElementById('elnSchedStage');
+    var taskSel  = document.getElementById('elnSchedTask');
+    if (!stageSel || !taskSel) return;   // 상세 페이지에서만
+    // 기본값(목업): 이 노트는 SCALE-UP 스테이지 / Update Project Overview Section 태스크에 작성
+    var defStage = 'SCALE-UP', defTask = 'Update Project Overview Section';
+    stageSel.innerHTML = PROJ_SCHEDULE.map(function (s){ return '<option value="' + esc(s.stage) + '"' + (s.stage === defStage ? ' selected' : '') + '>' + esc(s.stage) + '</option>'; }).join('');
+    fillSchedTasks(defStage, defTask);
+    stageSel.addEventListener('change', function (){ fillSchedTasks(this.value, null); schedReinit(taskSel); });
+    // 페이지 공통 FormSelect init(하단 inline) 이후 한 번 더 적용 → 옵션 반영 + 단일 wrapper 보장
+    setTimeout(function (){ schedReinit(stageSel); schedReinit(taskSel); }, 0);
+  }
+  document.addEventListener('DOMContentLoaded', initScheduleMeta);
 
   /* ── 상위 노트(Derived from) 지정 — 모든 노트에서 검색 선택. 계보는 notebook/project와 무관, 부모만 따라감 ── */
   function setParentMeta(code) {
@@ -1818,6 +1849,11 @@
       distance: 5,
       opacity: 0.9,
       update: function (e, ui) {
+        // 시스템 항목 재고정 — Basic은 항상 맨 위, Approval은 항상 맨 아래(아래로 드롭돼도 되돌림)
+        var $basic = $menu.children('.menu-item[data-target="card_basic"]');
+        if ($basic.length) $menu.prepend($basic);
+        var $appr = $menu.children('.menu-item[data-target="card_approval"]');
+        if ($appr.length) $menu.append($appr);
         syncCardsToMenu();
         if (typeof refreshDividers === 'function') refreshDividers();
         ELN.toast('Module order updated.', 'ok');
@@ -2225,10 +2261,15 @@
       + handles + '</svg>';
   }
   function chemFormulaHtml(f) { return esc(f).replace(/(\d+)/g, '<sub>$1</sub>'); }   // C8H8 → C₈H₈
+  // ChemStudio = mapis 하위로 가져온 chemDraw 프로젝트(apis_chemDraw_list.html). 새 구조/편집 모두 실제 에디터 새 창으로.
+  function openChemDraw(data) {
+    var q = (data && data.name) ? ('?name=' + encodeURIComponent(data.name) + (data.cas ? '&cas=' + encodeURIComponent(data.cas) : '')) : '';
+    window.open('chemDraw/apis_chemDraw_list.html' + q, 'apisChemStudio', 'width=1480,height=900,scrollbars=yes,resizable=yes');
+  }
   function wireChemModule(body) {
     var box = body.querySelector('.elnChemBox'); if (!box) return;
     var list = box.querySelector('.elnChemList');
-    var open = box.querySelector('.elnChemOpen'); if (open) open.addEventListener('click', function () { openChemStudio(list, null); });
+    var open = box.querySelector('.elnChemOpen'); if (open) open.addEventListener('click', function () { openChemDraw(null); });
     var link = box.querySelector('.elnChemLink'); if (link) link.addEventListener('click', function () { openChemLink(list, link, null); });
     syncChemEmpty(box);
   }
@@ -2253,7 +2294,7 @@
       + '<a href="javascript:;" class="elnChemChange" title="Change structure"><i class="material-symbols-outlined">swap_horiz</i></a>'
       + '<i class="material-symbols-outlined elnChemDel" title="Remove">close</i></span>';
     var box = li.closest('.elnChemBox'), list = li.parentNode;
-    var open = li.querySelector('.elnChemOpenItem'); if (open) open.addEventListener('click', function () { openChemStudio(list, li); });
+    var open = li.querySelector('.elnChemOpenItem'); if (open) open.addEventListener('click', function () { openChemDraw(li._chemData); });
     var change = li.querySelector('.elnChemChange'); if (change) change.addEventListener('click', function () { openChemLink(list, change, li); });
     var del = li.querySelector('.elnChemDel'); if (del) del.addEventListener('click', function () { li.remove(); if (box) syncChemEmpty(box); });
   }
@@ -2264,7 +2305,7 @@
     setChemItem(li, data);
     var box = list.closest('.elnChemBox'); if (box) syncChemEmpty(box);
   }
-  // ① Open ChemStudio — 외부 앱 임베드(목업). 실배포 시 .elnChemCanvas 자리를 <iframe src="<ChemStudio URL>">로 교체
+  // [미사용] 임베드 ChemStudio 목업 — 이제 Add New/편집은 openChemDraw()로 실제 chemDraw(apis_chemDraw_list.html) 새 창 진입. 참고용 보존.
   function openChemStudio(list, existingLi) {
     var ex = (existingLi && existingLi._chemData) || null;
     var nm0 = (ex && ex.name) || 'Styrene';

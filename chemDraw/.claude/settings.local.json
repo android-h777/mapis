@@ -1,0 +1,17 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(pip install:*)",
+      "Bash(python -c \"\nimport openpyxl\nwb = openpyxl.load_workbook\\('D:/Project/chemDraw/APIS 배합툴설계-크로스폴리머2 \\(1\\).xlsx'\\)\nprint\\('시트 목록:', wb.sheetnames\\)\nfor name in wb.sheetnames:\n    ws = wb[name]\n    print\\(f'\\\\n=== [{name}] \\({ws.max_row}행 x {ws.max_column}열\\) ==='\\)\n    for row in ws.iter_rows\\(min_row=1, max_row=min\\(ws.max_row, 30\\), values_only=False\\):\n        vals = []\n        for c in row:\n            v = c.value\n            if v is not None:\n                vals.append\\(f'{c.coordinate}:{v}'\\)\n        if vals:\n            print\\(' | '.join\\(vals\\)\\)\n\" 2>&1)",
+      "Bash(\"C:\\\\Users\\\\Administrator\\\\AppData\\\\Local\\\\Microsoft\\\\WindowsApps\\\\python.exe\" -m pip install openpyxl 2>&1)",
+      "Bash(cmd.exe /c \"python -m pip install openpyxl\" 2>&1)",
+      "Bash(node -e \"const XLSX = require\\('xlsx'\\); const wb = XLSX.readFile\\('D:/Project/chemDraw/APIS 배합툴설계-크로스폴리머2 \\(1\\).xlsx'\\); console.log\\(JSON.stringify\\(wb.SheetNames\\)\\);\" 2>&1)",
+      "Bash(npm install:*)",
+      "Bash(cd D:/Project/chemDraw && node -p \"\nvar XLSX = require\\('xlsx'\\);\nvar wb = XLSX.readFile\\('APIS 배합툴설계-크로스폴리머2 \\(1\\).xlsx'\\);\nvar result = {sheets: wb.SheetNames};\nwb.SheetNames.forEach\\(function\\(name\\) {\n  var ws = wb.Sheets[name];\n  var data = XLSX.utils.sheet_to_json\\(ws, {header:1, defval:''}\\);\n  result[name] = data.slice\\(0, 40\\);\n}\\);\nJSON.stringify\\(result, null, 2\\);\n\" 2>&1)",
+      "Bash(mkdir -p \"D:/Project/siliconeFormula/css\" \"D:/Project/siliconeFormula/js\" \"D:/Project/siliconeFormula/img\" \"D:/Project/siliconeFormula/fonts\")",
+      "Read(//d/Project/**)",
+      "Bash(cp \"D:/Project/chemDraw/css/materialize.css\" \"D:/Project/siliconeFormula/css/\" && cp \"D:/Project/chemDraw/css/animate.min.css\" \"D:/Project/siliconeFormula/css/\" 2>/dev/null; ls \"D:/Project/chemDraw/fonts/\" 2>&1 | head -10)",
+      "Bash(cp -r \"D:/Project/chemDraw/fonts/\"* \"D:/Project/siliconeFormula/fonts/\" 2>&1)"
+    ]
+  }
+}

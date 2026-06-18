@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>MAPIS ELN — Experiment</title>
+    <title>MAPIS Lab Note — Experiment</title>
 	<link rel="preload" href="mapis_lib/font/material-symbols-outlined.woff2" as="font" type="font/woff2">
 	<link rel="preload" href="mapis_lib/font/material-symbols-rounded.woff2" as="font" type="font/woff2">
 	<link rel="preload" href="mapis_lib/font/material-symbols-sharp.woff2" as="font" type="font/woff2">
@@ -40,10 +40,6 @@
 				<div id="elnHeadStatus" class="roundBox blue" data-status="ing">In Progress</div>
 				<div id="elnApprovalBadge" class="elnApprBadge" style="display:none;"></div>
 			</div>
-			<div class="elnHeadMeta">
-				<span class="elnHeadK">Author</span><span>J.P. Kim</span>
-				<span class="elnHeadK">Modified</span><span>2026-05-28</span>
-			</div>
 		</section>
 	</header>
 
@@ -51,7 +47,7 @@
 		<section class="hScroll">
 			<ul class="menuUl">
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="card_basic">
-					<i class="material-symbols-outlined left">inventory_2</i><span>Overview</span>
+					<i class="material-symbols-outlined left">inventory_2</i><span>Basic Data</span>
 				</li>
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_fml">
 					<i class="material-symbols-outlined left">blender</i><span>Formulation</span>
@@ -77,39 +73,61 @@
 
 			<!-- Overview -->
 			<section class="cardBox animate__animated mt10" id="card_basic">
-				<div class="cardTit2"><i class="material-symbols-outlined left">inventory_2</i>Overview</div>
+				<div class="cardTit2"><i class="material-symbols-outlined left">inventory_2</i>Basic Data</div>
 				<div class="elnBasic">
-					<!-- Note 제목: 노트의 주인공 -->
-					<label class="elnBasicLabel"><span class="essential">*</span>Note</label>
-					<div class="elnBasicTitle">
-						<input type="text" class="browser-default" value="UV-Curable PSA Viscosity Improvement — RGBOLED" placeholder="Enter note title">
+					<!-- Note 제목: 노트의 주인공. apis_npdi_pop의 Name 필드 양식(레이블+aniInput 한 줄) 차용 -->
+					<div class="elnBasicRow">
+						<label class="elnBasicLabel"><span class="essential">*</span>Note Title</label>
+						<div class="elnBasicTitle">
+							<div class="aniInput">
+								<input type="text" value="UV-Curable PSA Viscosity Improvement — RGBOLED" class="browser-default fontR font14" placeholder="Enter note title">
+								<span class="focus-border"/>
+							</div>
+						</div>
 					</div>
 					<!-- status: Overview 드롭다운 제거 → 헤더 알약으로. category 제거. Author·Modified는 헤더 우측 상단 -->
-					<!-- Project — 넓을 필요 없는 단일 값 → 컴팩트 인라인 한 줄(섹션 아님) -->
-					<div class="elnProjLine">
-						<i class="material-symbols-outlined">rocket_launch</i><span class="k">Project</span>
-						<span class="elnProjVal" id="elnProjVal" data-proj="[SN-26-0031] RGBOLED Display Adhesive"><a class="link elnProjLink" href="javascript:;" title="Open project">[SN-26-0031] RGBOLED Display Adhesive</a><a href="javascript:;" class="elnProjChange" title="Change project"><i class="material-symbols-outlined">swap_horiz</i></a></span>
+					<!-- Project — 읽기 표시: [코드] 이름 링크(클릭 시 프로젝트 상세 팝업) -->
+					<div class="elnBasicRow">
+						<label class="elnBasicLabel">Project</label>
+						<span class="elnProjVal" id="elnProjVal" data-proj="[SN-26-0031] RGBOLED Display Adhesive">
+							<a class="link elnProjLink" href="javascript:;" title="Open project">[SN-26-0031] RGBOLED Display Adhesive</a>
+						</span>
 					</div>
-					<!-- Tags — 우측 패널에서 Overview로 이동(기본 펼침) -->
-					<details class="elnOvSec" open>
-						<summary><i class="material-symbols-outlined">sell</i>Tags</summary>
+					<!-- Schedule — 이 노트가 작성된 과제 스케줄 위치(스테이지 → 태스크). apis_npdi_pop Detailed Schedule 태스크 참조 -->
+					<div class="elnBasicRow">
+						<label class="elnBasicLabel">Stage</label>
+						<div class="elnSchedSel">
+							<div class="elnSchedField stage"><select id="elnSchedStage"></select></div>
+							<div class="elnSchedField task"><select id="elnSchedTask"></select></div>
+						</div>
+					</div>
+					<!-- Tags — Note와 동일 row 양식. 값 자리는 칩 + 입력 + 추천(멀티라인이라 상단 정렬) -->
+					<div class="elnBasicRow alignTop">
+						<label class="elnBasicLabel">Tags</label>
 						<div class="elnTagBox">
 							<div class="elnTags" id="elnTags">
 								<span class="elnTag" data-tag="#viscosity">#viscosity<i class="material-symbols-outlined">close</i></span>
 								<span class="elnTag" data-tag="#RGBOLED">#RGBOLED<i class="material-symbols-outlined">close</i></span>
 							</div>
-							<input type="text" id="elnTagInput" class="browser-default" placeholder="Add a tag, then Enter">
-							<div class="elnRecTags" id="elnRecTags"><!-- Recommended: JS 렌더 --></div>
+							<div class="elnTagAddRow">
+								<div class="aniInput">
+									<input type="text" id="elnTagInput" class="browser-default fontR font14" placeholder="Add a tag, then Enter">
+									<span class="focus-border"/>
+								</div>
+								<div class="elnRecTags" id="elnRecTags"><!-- Recommended: JS 렌더 --></div>
+							</div>
 						</div>
-					</details>
+					</div>
 				</div>
 			</section>
 
 			<!-- Formulation -->
 			<section class="cardBox animate__animated mt10" id="card_fml">
-				<div class="cardTit2"><i class="material-symbols-outlined left">blender</i>Formulation
-					<a class="waves-effect waves-light hBtn hViva right" id="btnOpenFormulator" href="javascript:;" style="float:right;"><i class="material-symbols-outlined left">open_in_new</i><span class="label">Open in formulator</span></a>
-					<a class="waves-effect waves-light hBtn right" id="btnChangeFml" href="javascript:;" style="float:right;margin-right:6px;"><i class="material-symbols-outlined left">checklist</i><span class="label">Select</span></a>
+				<div class="cardTit2"><i class="material-symbols-outlined left">blender</i>Formulation</div>
+				<!-- 타이틀과 분리된 액션 툴바 — 제목 아래 줄로 분리 -->
+				<div class="elnFmlToolbar">
+					<a class="waves-effect waves-light hBtn" id="btnChangeFml" href="javascript:;"><i class="material-symbols-outlined left">checklist</i><span class="label">Select</span></a>
+					<a class="waves-effect waves-light hBtn hViva" id="btnOpenFormulator" href="javascript:;"><i class="material-symbols-outlined left">open_in_new</i><span class="label">Open in formulator</span></a>
 				</div>
 				<div class="elnBasic">
 					<!-- 본문은 연결된 배합들을 컬럼으로 나란히 비교 -->
@@ -188,10 +206,40 @@
 				</div>
 			</section>
 
-			<!-- Approval(전자결재) — 최하단 고정 시스템 카드(모듈 아님). 결재선·액션은 JS 인라인 렌더 -->
+			<!-- Approval — apis_npdi_pop 의 Approval 카드와 동일(Dates + Decision Point Approval Status) -->
 			<section class="cardBox animate__animated mt10" id="card_approval">
 				<div class="cardTit2"><i class="material-symbols-outlined left">approval</i>Approval</div>
-				<div class="elnBasic" id="elnApprCardBody"><!-- renderApprovalCard() --></div>
+				<div>
+					<div class="inputArea">
+						<div class="cardSubTit mt30">Decision Point Approval Status</div>
+						<div class="fixedTable hBorderTable hScroll mg10">
+							<table class="elnApprDpTable">
+								<thead>
+									<tr>
+										<th>Approval Type</th>
+										<th>Name</th>
+										<th>Date</th>
+										<th>Status</th>
+									</tr>
+								</thead>
+								<tbody>
+									<tr>
+										<td class="ac">Marketing Leader</td>
+										<td class="ac">Jim Quan</td>
+										<td class="ac">26.09.2025</td>
+										<td class="ac"><span class="roundBox tendril25">Approved</span></td>
+									</tr>
+									<tr>
+										<td class="ac">Technology Leader</td>
+										<td class="ac">Charles Kim</td>
+										<td class="ac">-</td>
+										<td class="ac"></td>
+									</tr>
+								</tbody>
+							</table>
+						</div>
+					</div>
+				</div>
 			</section>
 
 		</article>
@@ -199,6 +247,18 @@
 
 	<!-- 우측 패널 토글 손잡이 (패널과 분리된 독립 fixed 버튼 — 항상 화면에 노출) -->
 	<!-- 우측 패널 제거 — Tags·History는 Overview 카드 내부 collapsible로 이동 -->
+
+	<!-- Add Module 모달 — 시스템 Materialize 모달(apis_npdi_pop ProcessMap과 동일 패턴).
+	     글래스/오버레이/뒤배경 blur는 기본 .modal 규칙 + glass_engine.js가 처리. 그리드는 JS 렌더 -->
+	<div id="addModuleModal" class="modal hooModal" style="width:520px;">
+		<div class="modal-header mochaBg">
+			<h5><i class="material-symbols-outlined left">add_box</i>Add Module</h5>
+			<div class="closeBtns modal-close"><i class="material-symbols-outlined">close</i></div>
+		</div>
+		<div class="modal-content">
+			<div class="elnAddPickGrid" id="addModuleGrid"><!-- renderModulePicker() --></div>
+		</div>
+	</div>
 
 	<script>
 	$(document).ready(function(){

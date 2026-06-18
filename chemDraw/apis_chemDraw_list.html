@@ -1,0 +1,1498 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>APIS MPM</title>
+  <link rel="stylesheet" type="text/css" href="css/materialize.css">
+  <link rel="stylesheet" type="text/css" href="css/chem_common.css">
+  <link type="text/css" rel="stylesheet" href="css/animate.min.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+  <script>
+    /* ═══════════════════════════════════════
+       Periodic Table Data
+       ═══════════════════════════════════════ */
+    // [symbol, Z, gridRow, gridCol, category, valence, cpkColor, name]
+    /* 폴링 전기음성도 (Pauling Electronegativity) */
+    var PT_EN = {
+      H:2.20,Li:0.98,Be:1.57,B:2.04,C:2.55,N:3.04,O:3.44,F:3.98,
+      Na:0.93,Mg:1.31,Al:1.61,Si:1.90,P:2.19,S:2.58,Cl:3.16,
+      K:0.82,Ca:1.00,Sc:1.36,Ti:1.54,V:1.63,Cr:1.66,Mn:1.55,Fe:1.83,Co:1.88,Ni:1.91,Cu:1.90,Zn:1.65,
+      Ga:1.81,Ge:2.01,As:2.18,Se:2.55,Br:2.96,
+      Rb:0.82,Sr:0.95,Y:1.22,Zr:1.33,Nb:1.60,Mo:2.16,Tc:1.90,Ru:2.20,Rh:2.28,Pd:2.20,Ag:1.93,Cd:1.69,
+      In:1.78,Sn:1.96,Sb:2.05,Te:2.10,I:2.66,
+      Cs:0.79,Ba:0.89,Hf:1.30,Ta:1.50,W:2.36,Re:1.90,Os:2.20,Ir:2.20,Pt:2.28,Au:2.54,
+      Hg:2.00,Tl:1.62,Pb:2.33,Bi:2.02,Po:2.00,At:2.20,
+      Fr:0.70,Ra:0.90,Rf:1.30,
+      La:1.10,Ce:1.12,Pr:1.13,Nd:1.14,Pm:1.13,Sm:1.17,Eu:1.20,Gd:1.20,Tb:1.10,Dy:1.22,
+      Ho:1.23,Er:1.24,Tm:1.25,Yb:1.10,Lu:1.27,
+      Ac:1.10,Th:1.30,Pa:1.50,U:1.38,Np:1.36,Pu:1.28,Am:1.30,Cm:1.30,Bk:1.30,Cf:1.30,
+      Es:1.30,Fm:1.30,Md:1.30,No:1.30,Lr:1.30
+    };
+    var PT_MASS = {
+      H:1.008,He:4.003,Li:6.941,Be:9.012,B:10.81,C:12.011,N:14.007,O:15.999,F:18.998,Ne:20.180,
+      Na:22.990,Mg:24.305,Al:26.982,Si:28.086,P:30.974,S:32.065,Cl:35.453,Ar:39.948,
+      K:39.098,Ca:40.078,Sc:44.956,Ti:47.867,V:50.942,Cr:51.996,Mn:54.938,Fe:55.845,Co:58.933,Ni:58.693,Cu:63.546,Zn:65.38,
+      Ga:69.723,Ge:72.64,As:74.922,Se:78.96,Br:79.904,Kr:83.798,
+      Rb:85.468,Sr:87.62,Y:88.906,Zr:91.224,Nb:92.906,Mo:95.95,Tc:'(98)',Ru:101.07,Rh:102.906,Pd:106.42,Ag:107.868,Cd:112.411,
+      In:114.818,Sn:118.71,Sb:121.76,Te:127.6,I:126.904,Xe:131.293,
+      Cs:132.905,Ba:137.327,Hf:178.49,Ta:180.948,W:183.84,Re:186.207,Os:190.23,Ir:192.217,Pt:195.084,Au:196.967,
+      Hg:200.59,Tl:204.383,Pb:207.2,Bi:208.980,Po:'(209)',At:'(210)',Rn:'(222)',
+      Fr:'(223)',Ra:'(226)',Rf:'(267)',Db:'(268)',Sg:'(269)',Bh:'(270)',Hs:'(269)',Mt:'(277)',Ds:'(281)',Rg:'(282)',
+      Cn:'(285)',Nh:'(286)',Fl:'(290)',Mc:'(290)',Lv:'(293)',Ts:'(294)',Og:'(294)',
+      La:138.905,Ce:140.116,Pr:140.908,Nd:144.242,Pm:'(145)',Sm:150.36,Eu:151.964,Gd:157.25,Tb:158.925,Dy:162.5,
+      Ho:164.930,Er:167.259,Tm:168.934,Yb:173.04,Lu:174.967,
+      Ac:'(227)',Th:232.038,Pa:231.036,U:238.029,Np:237.048,Pu:'(244)',Am:'(243)',Cm:'(247)',Bk:'(247)',Cf:'(251)',
+      Es:'(252)',Fm:'(257)',Md:'(258)',No:'(259)',Lr:'(262)'
+    };
+    var PT_DATA = [
+      ['H',1,1,1,'nm',1,'#FFFFFF','Hydrogen'],['He',2,1,18,'ng',0,'#D9FFFF','Helium'],
+      ['Li',3,2,1,'am',1,'#CC80FF','Lithium'],['Be',4,2,2,'ae',2,'#C2FF00','Beryllium'],
+      ['B',5,2,13,'md',3,'#FFB5B5','Boron'],['C',6,2,14,'nm',4,'#333333','Carbon'],
+      ['N',7,2,15,'nm',3,'#3050F8','Nitrogen'],['O',8,2,16,'nm',2,'#FF0D0D','Oxygen'],
+      ['F',9,2,17,'ha',1,'#90E050','Fluorine'],['Ne',10,2,18,'ng',0,'#B3E3F5','Neon'],
+      ['Na',11,3,1,'am',1,'#AB5CF2','Sodium'],['Mg',12,3,2,'ae',2,'#8AFF00','Magnesium'],
+      ['Al',13,3,13,'pt',3,'#BFA6A6','Aluminium'],['Si',14,3,14,'md',4,'#F0C8A0','Silicon'],
+      ['P',15,3,15,'nm',3,'#FF8000','Phosphorus'],['S',16,3,16,'nm',2,'#FFFF30','Sulfur'],
+      ['Cl',17,3,17,'ha',1,'#1FF01F','Chlorine'],['Ar',18,3,18,'ng',0,'#80D1E3','Argon'],
+      ['K',19,4,1,'am',1,'#8F40D4','Potassium'],['Ca',20,4,2,'ae',2,'#3DFF00','Calcium'],
+      ['Sc',21,4,3,'tm',3,'#E6E6E6','Scandium'],['Ti',22,4,4,'tm',4,'#BFC2C7','Titanium'],
+      ['V',23,4,5,'tm',5,'#A6A6AB','Vanadium'],['Cr',24,4,6,'tm',3,'#8A99C7','Chromium'],
+      ['Mn',25,4,7,'tm',2,'#9C7AC7','Manganese'],['Fe',26,4,8,'tm',3,'#E06633','Iron'],
+      ['Co',27,4,9,'tm',2,'#F090A0','Cobalt'],['Ni',28,4,10,'tm',2,'#50D050','Nickel'],
+      ['Cu',29,4,11,'tm',2,'#C88033','Copper'],['Zn',30,4,12,'tm',2,'#7D80B0','Zinc'],
+      ['Ga',31,4,13,'pt',3,'#C28F8F','Gallium'],['Ge',32,4,14,'md',4,'#668F8F','Germanium'],
+      ['As',33,4,15,'md',3,'#BD80E3','Arsenic'],['Se',34,4,16,'nm',2,'#FFA100','Selenium'],
+      ['Br',35,4,17,'ha',1,'#A62929','Bromine'],['Kr',36,4,18,'ng',0,'#5CB8D1','Krypton'],
+      ['Rb',37,5,1,'am',1,'#702EB0','Rubidium'],['Sr',38,5,2,'ae',2,'#00FF00','Strontium'],
+      ['Y',39,5,3,'tm',3,'#94FFFF','Yttrium'],['Zr',40,5,4,'tm',4,'#94E0E0','Zirconium'],
+      ['Nb',41,5,5,'tm',5,'#73C2C9','Niobium'],['Mo',42,5,6,'tm',6,'#54B5B5','Molybdenum'],
+      ['Tc',43,5,7,'tm',7,'#3B9E9E','Technetium'],['Ru',44,5,8,'tm',4,'#248F8F','Ruthenium'],
+      ['Rh',45,5,9,'tm',3,'#0A7D8C','Rhodium'],['Pd',46,5,10,'tm',2,'#006985','Palladium'],
+      ['Ag',47,5,11,'tm',1,'#C0C0C0','Silver'],['Cd',48,5,12,'tm',2,'#FFD98F','Cadmium'],
+      ['In',49,5,13,'pt',3,'#A67573','Indium'],['Sn',50,5,14,'pt',4,'#668080','Tin'],
+      ['Sb',51,5,15,'md',3,'#9E63B5','Antimony'],['Te',52,5,16,'md',2,'#D47A00','Tellurium'],
+      ['I',53,5,17,'ha',1,'#940094','Iodine'],['Xe',54,5,18,'ng',0,'#429EB0','Xenon'],
+      ['Cs',55,6,1,'am',1,'#57178F','Caesium'],['Ba',56,6,2,'ae',2,'#00C900','Barium'],
+      ['Hf',72,6,4,'tm',4,'#4DC2FF','Hafnium'],['Ta',73,6,5,'tm',5,'#4DA6FF','Tantalum'],
+      ['W',74,6,6,'tm',6,'#2194D6','Tungsten'],['Re',75,6,7,'tm',7,'#267DAB','Rhenium'],
+      ['Os',76,6,8,'tm',4,'#266696','Osmium'],['Ir',77,6,9,'tm',4,'#175487','Iridium'],
+      ['Pt',78,6,10,'tm',4,'#D0D0E0','Platinum'],['Au',79,6,11,'tm',3,'#FFD123','Gold'],
+      ['Hg',80,6,12,'tm',2,'#B8B8D0','Mercury'],['Tl',81,6,13,'pt',1,'#A6544D','Thallium'],
+      ['Pb',82,6,14,'pt',2,'#575961','Lead'],['Bi',83,6,15,'pt',3,'#9E4FB5','Bismuth'],
+      ['Po',84,6,16,'pt',2,'#AB5C00','Polonium'],['At',85,6,17,'ha',1,'#754F45','Astatine'],
+      ['Rn',86,6,18,'ng',0,'#428296','Radon'],
+      ['Fr',87,7,1,'am',1,'#420066','Francium'],['Ra',88,7,2,'ae',2,'#007D00','Radium'],
+      ['Rf',104,7,4,'tm',4,'#CC0059','Rutherfordium'],['Db',105,7,5,'tm',5,'#D1004F','Dubnium'],
+      ['Sg',106,7,6,'tm',6,'#D90045','Seaborgium'],['Bh',107,7,7,'tm',7,'#E0003B','Bohrium'],
+      ['Hs',108,7,8,'tm',4,'#E60032','Hassium'],['Mt',109,7,9,'uk',4,'#EB0026','Meitnerium'],
+      ['Ds',110,7,10,'uk',4,'#EB0026','Darmstadtium'],['Rg',111,7,11,'uk',3,'#EB0026','Roentgenium'],
+      ['Cn',112,7,12,'tm',2,'#EB0026','Copernicium'],['Nh',113,7,13,'uk',1,'#EB0026','Nihonium'],
+      ['Fl',114,7,14,'uk',2,'#EB0026','Flerovium'],['Mc',115,7,15,'uk',1,'#EB0026','Moscovium'],
+      ['Lv',116,7,16,'uk',2,'#EB0026','Livermorium'],['Ts',117,7,17,'uk',1,'#EB0026','Tennessine'],
+      ['Og',118,7,18,'uk',0,'#EB0026','Oganesson'],
+      ['La',57,9,3,'la',3,'#70D4FF','Lanthanum'],['Ce',58,9,4,'la',3,'#FFFFC7','Cerium'],
+      ['Pr',59,9,5,'la',3,'#D9FFC7','Praseodymium'],['Nd',60,9,6,'la',3,'#C7FFC7','Neodymium'],
+      ['Pm',61,9,7,'la',3,'#A3FFC7','Promethium'],['Sm',62,9,8,'la',3,'#8FFFC7','Samarium'],
+      ['Eu',63,9,9,'la',3,'#61FFC7','Europium'],['Gd',64,9,10,'la',3,'#45FFC7','Gadolinium'],
+      ['Tb',65,9,11,'la',3,'#30FFC7','Terbium'],['Dy',66,9,12,'la',3,'#1FFFC7','Dysprosium'],
+      ['Ho',67,9,13,'la',3,'#00FF9C','Holmium'],['Er',68,9,14,'la',3,'#00E675','Erbium'],
+      ['Tm',69,9,15,'la',3,'#00D452','Thulium'],['Yb',70,9,16,'la',3,'#00BF38','Ytterbium'],
+      ['Lu',71,9,17,'la',3,'#00AB24','Lutetium'],
+      ['Ac',89,10,3,'ac',3,'#70ABFA','Actinium'],['Th',90,10,4,'ac',4,'#00BAFF','Thorium'],
+      ['Pa',91,10,5,'ac',4,'#00A1FF','Protactinium'],['U',92,10,6,'ac',4,'#008FFF','Uranium'],
+      ['Np',93,10,7,'ac',4,'#0080FF','Neptunium'],['Pu',94,10,8,'ac',3,'#006BFF','Plutonium'],
+      ['Am',95,10,9,'ac',3,'#545CF2','Americium'],['Cm',96,10,10,'ac',3,'#785CE3','Curium'],
+      ['Bk',97,10,11,'ac',3,'#8A4FE3','Berkelium'],['Cf',98,10,12,'ac',3,'#A136D4','Californium'],
+      ['Es',99,10,13,'ac',3,'#B31FD4','Einsteinium'],['Fm',100,10,14,'ac',3,'#B31FBA','Fermium'],
+      ['Md',101,10,15,'ac',3,'#B30DA6','Mendelevium'],['No',102,10,16,'ac',2,'#BD0D87','Nobelium'],
+      ['Lr',103,10,17,'ac',3,'#C70066','Lawrencium']
+    ];
+    var PT_CAT_COLORS = {
+      'am':'rgba(239,83,80,0.12)','ae':'rgba(255,202,40,0.10)','tm':'rgba(186,104,200,0.10)','pt':'rgba(144,164,174,0.10)',
+      'md':'rgba(102,187,106,0.10)','nm':'rgba(77,208,225,0.10)','ha':'rgba(255,238,88,0.10)','ng':'rgba(79,195,247,0.10)',
+      'la':'rgba(240,98,146,0.12)','ac':'rgba(255,138,101,0.12)','uk':'rgba(189,189,189,0.08)'
+    };
+    var PT_CAT_GLOW = {
+      'am':'239,83,80','ae':'255,202,40','tm':'186,104,200','pt':'144,164,174',
+      'md':'102,187,106','nm':'77,208,225','ha':'255,238,88','ng':'79,195,247',
+      'la':'240,98,146','ac':'255,138,101','uk':'189,189,189'
+    };
+    var PT_CAT_NAMES = {
+      'am':'Alkali Metal','ae':'Alkaline Earth','tm':'Transition Metal','pt':'Post-transition',
+      'md':'Metalloid','nm':'Nonmetal','ha':'Halogen','ng':'Noble Gas',
+      'la':'Lanthanide','ac':'Actinide','uk':'Unknown'
+    };
+
+    /* ═══════════════════════════════════════
+       Element Slots (10 fixed + sessionStorage)
+       ═══════════════════════════════════════ */
+    var CD_DEFAULT_ELEMENTS = ['C','H','O','N','S','P','F','Cl','Br','I'];
+    var CD_MAX_SLOTS = 10;
+
+    function cdGetElementSlots() {
+      try {
+        var saved = sessionStorage.getItem('cdElementSlots');
+        if (saved) return JSON.parse(saved);
+      } catch(e) {}
+      return CD_DEFAULT_ELEMENTS.slice();
+    }
+    function cdSaveElementSlots(slots) {
+      try { sessionStorage.setItem('cdElementSlots', JSON.stringify(slots)); } catch(e) {}
+    }
+    function cdRenderElementSlots() {
+      var slots = cdGetElementSlots();
+      var container = document.getElementById('cdElementSlots');
+      if (!container) return;
+      container.innerHTML = '';
+      slots.forEach(function(sym) {
+        var btn = document.createElement('div');
+        btn.className = 'btnBox waves-effect waves-hColor';
+        btn.setAttribute('data-element', sym);
+        btn.textContent = sym;
+        container.appendChild(btn);
+      });
+    }
+
+    /* ═══════════════════════════════════════
+       Periodic Table Functions
+       ═══════════════════════════════════════ */
+    function buildPeriodicTable() {
+      var html = '';
+      var existing = {};
+      document.querySelectorAll('#cdElementSlots .btnBox[data-element]').forEach(function(el) {
+        existing[el.getAttribute('data-element')] = true;
+      });
+      /* Row labels for f-block */
+      html += '<div class="pt-cell pt-ref" style="grid-row:9;grid-column:1;grid-column-end:3;border:none;justify-content:flex-end;"><span class="pt-sym" style="font-size:10px;color:rgba(244,143,177,0.8);">Lanthanides</span></div>';
+      html += '<div class="pt-cell pt-ref" style="grid-row:10;grid-column:1;grid-column-end:3;border:none;justify-content:flex-end;"><span class="pt-sym" style="font-size:10px;color:rgba(255,171,145,0.8);">Actinides</span></div>';
+      PT_DATA.forEach(function(el) {
+        var sym = el[0], z = el[1], r = el[2], c = el[3], cat = el[4], name = el[7];
+        var catColor = PT_CAT_COLORS[cat] || '#e0e0e0';
+        var glowRgb = PT_CAT_GLOW[cat] || '189,189,189';
+        var added = existing[sym] ? ' pt-added' : '';
+        var radioactive = (typeof PT_MASS[sym] === 'string' && PT_MASS[sym].indexOf('(') === 0) ? ' pt-radioactive' : '';
+        var checkHtml = existing[sym] ? '<span class="pt-check-overlay">\u2713</span>' : '';
+        html += '<div class="pt-cell pt-hidden' + added + radioactive + '" data-pt-sym="' + sym + '" ' +
+          'style="grid-row:' + r + ';grid-column:' + c + ';background:' + catColor +
+          ';box-shadow:0 0 12px rgba(' + glowRgb + ',0.25), inset 0 0 10px rgba(' + glowRgb + ',0.08)' +
+          ';border-color:rgba(' + glowRgb + ',0.2);--cat-glow:' + glowRgb + ';--pulse-delay:' + (Math.random() * 2).toFixed(2) + 's' +
+          (radioactive ? ';--decay-dx:' + (Math.random()>0.5?1:-1) * (20 + Math.random()*25).toFixed(0) + 'px' +
+            ';--decay-dy:' + (Math.random()>0.5?1:-1) * (20 + Math.random()*25).toFixed(0) + 'px' +
+            ';--decay-duration:' + (2.5 + Math.random()*2).toFixed(1) + 's' +
+            ';--decay-delay:' + (Math.random()*3).toFixed(1) + 's' +
+            ';--decay-dx2:' + (Math.random()>0.5?1:-1) * (18 + Math.random()*22).toFixed(0) + 'px' +
+            ';--decay-dy2:' + (Math.random()>0.5?1:-1) * (18 + Math.random()*22).toFixed(0) + 'px' +
+            ';--decay-duration2:' + (2 + Math.random()*2).toFixed(1) + 's' +
+            ';--decay-delay2:' + (Math.random()*3).toFixed(1) + 's' : '') +
+          ';" ' +
+          'data-pt-name="' + name + '" data-pt-cat="' + (PT_CAT_NAMES[cat]||'') + '" data-pt-mass="' + (PT_MASS[sym]||'') + '" data-pt-en="' + (PT_EN[sym]||'') + '">' +
+          checkHtml +
+          (radioactive ? '<span class="pt-decay-p2"></span>' : '') +
+          '<span class="pt-z">' + z + '</span>' +
+          '<span class="pt-en">' + (PT_EN[sym] || '') + '</span>' +
+          '<span class="pt-sym">' + sym + '</span>' +
+          '<span class="pt-mass">' + (PT_MASS[sym] || '') + '</span></div>';
+      });
+      document.getElementById('cdPTGrid').innerHTML = html;
+      /* Legend */
+      var PT_LEGEND_COLORS = {
+        'am':'rgba(239,83,80,0.7)','ae':'rgba(255,202,40,0.7)','tm':'rgba(186,104,200,0.6)',
+        'pt':'rgba(144,164,174,0.6)','md':'rgba(102,187,106,0.7)','nm':'rgba(77,208,225,0.7)',
+        'ha':'rgba(255,238,88,0.7)','ng':'rgba(79,195,247,0.7)','la':'rgba(240,98,146,0.7)',
+        'ac':'rgba(255,138,101,0.7)','uk':'rgba(189,189,189,0.5)'
+      };
+      var legend = '';
+      Object.keys(PT_CAT_COLORS).forEach(function(cat) {
+        legend += '<span class="pt-legend-item"><span class="pt-legend-dot" style="background:' + (PT_LEGEND_COLORS[cat]||PT_CAT_COLORS[cat]) + ';"></span>' + PT_CAT_NAMES[cat] + '</span>';
+      });
+      document.getElementById('cdPTLegend').innerHTML = legend;
+    }
+
+    function openPeriodicTable() {
+      buildPeriodicTable();
+      var overlay = document.getElementById('cdPeriodicTableOverlay');
+      overlay.classList.add('active');
+      /* random pop-in animation */
+      setTimeout(function() {
+        var cells = document.querySelectorAll('#cdPTGrid .pt-cell[data-pt-sym]');
+        cells.forEach(function(c) {
+          var delay = Math.random() * 700;
+          setTimeout(function() {
+            c.classList.remove('pt-hidden');
+            c.classList.add('pt-pop');
+            c.addEventListener('animationend', function handler() {
+              c.classList.remove('pt-pop');
+              c.style.opacity = '1';
+              c.style.transform = '';
+              c.removeEventListener('animationend', handler);
+            });
+          }, delay);
+        });
+      }, 150);
+    }
+
+    function closePeriodicTable() {
+      document.getElementById('cdPeriodicTableOverlay').classList.remove('active');
+    }
+
+    function addElementFromPT(sym) {
+      var slots = cdGetElementSlots();
+      /* Already in toolbar */
+      if (slots.indexOf(sym) >= 0) {
+        closePeriodicTable();
+        return;
+      }
+      /* Add to left, remove from right if full */
+      if (slots.length >= CD_MAX_SLOTS) {
+        slots.pop();
+      }
+      slots.unshift(sym);
+      cdSaveElementSlots(slots);
+      cdRenderElementSlots();
+      closePeriodicTable();
+    }
+
+    document.addEventListener('DOMContentLoaded', function() {
+
+      /* ToolsArea specular highlight */
+      (function() {
+        var toolsArea = document.querySelector('.modal .editorModeArea .toolsArea');
+        if (!toolsArea) return;
+        toolsArea.addEventListener('mousemove', function(e) {
+          var rect = toolsArea.getBoundingClientRect();
+          var x = ((e.clientX - rect.left) / rect.width * 100);
+          var y = ((e.clientY - rect.top) / rect.height * 100);
+          toolsArea.style.setProperty('--tools-light-x', x + '%');
+          toolsArea.style.setProperty('--tools-light-y', y + '%');
+        });
+        toolsArea.addEventListener('mouseleave', function() {
+          toolsArea.style.setProperty('--tools-light-x', '-100%');
+          toolsArea.style.setProperty('--tools-light-y', '50%');
+        });
+      })();
+
+      /* btnBox waves effect */
+      document.querySelectorAll('.toolsArea .btnBox').forEach(function(btn) {
+        btn.classList.add('waves-effect', 'waves-hColor');
+      });
+
+      /* Render element slots from sessionStorage */
+      cdRenderElementSlots();
+
+      /* + button → open periodic table */
+      document.getElementById('cdAddElementBtn').addEventListener('click', function() {
+        openPeriodicTable();
+      });
+
+      /* PT cell click → add element */
+      document.addEventListener('click', function(e) {
+        var cell = e.target.closest('.pt-cell[data-pt-sym]');
+        if (!cell) return;
+        addElementFromPT(cell.getAttribute('data-pt-sym'));
+      });
+
+      /* PT close button */
+      document.getElementById('cdPTClose').addEventListener('click', function() {
+        closePeriodicTable();
+      });
+
+      /* PT overlay click (outside modal) */
+      document.getElementById('cdPeriodicTableOverlay').addEventListener('click', function(e) {
+        if (e.target === this) closePeriodicTable();
+      });
+
+      /* 커스텀 툴팁 — 즉시 표시 */
+      (function() {
+        var tip = document.createElement('div');
+        tip.id = 'ptTooltip';
+        tip.style.cssText = 'position:fixed;pointer-events:none;z-index:9999;opacity:0;transition:opacity 0.12s;' +
+          'background:rgba(10,10,20,0.92);border:1px solid rgba(255,255,255,0.15);border-radius:8px;' +
+          'padding:8px 12px;font-family:SUIT-Regular;font-size:12px;color:rgba(255,255,255,0.9);' +
+          'backdrop-filter:blur(10px);box-shadow:0 4px 20px rgba(0,0,0,0.5);white-space:nowrap;';
+        document.body.appendChild(tip);
+        var ptGrid = document.getElementById('cdPTGrid');
+        ptGrid.addEventListener('mouseover', function(e) {
+          var cell = e.target.closest('.pt-cell[data-pt-sym]');
+          if (!cell) { tip.style.opacity = '0'; return; }
+          var sym = cell.getAttribute('data-pt-sym');
+          var name = cell.getAttribute('data-pt-name');
+          var cat = cell.getAttribute('data-pt-cat');
+          var mass = cell.getAttribute('data-pt-mass');
+          var en = cell.getAttribute('data-pt-en');
+          var rgb = getComputedStyle(cell).getPropertyValue('--cat-glow').trim() || '255,255,255';
+          tip.innerHTML = '<span style="color:rgba(' + rgb + ',1);font-family:SUIT-Bold;font-size:16px;">' + sym + '</span>' +
+            ' <span style="color:rgba(255,255,255,0.8);font-size:13px;">' + name + '</span>' +
+            '<span style="color:rgba(255,255,255,0.55);font-size:12px;margin-left:6px;">' + cat + '</span>' +
+            '<br><span style="color:rgba(255,255,255,0.85);font-size:12px;">⚖ ' + mass + ' u</span>' +
+            (en ? '<span style="color:rgba(' + rgb + ',0.8);font-size:12px;margin-left:10px;">EN ' + en + '</span>' : '');
+          tip.style.opacity = '1';
+        });
+        ptGrid.addEventListener('mousemove', function(e) {
+          tip.style.left = (e.clientX + 14) + 'px';
+          tip.style.top = (e.clientY + 14) + 'px';
+        });
+        ptGrid.addEventListener('mouseleave', function() {
+          tip.style.opacity = '0';
+        });
+      })();
+
+      /* 근접 글로우 (Proximity Glow): 역제곱 법칙 기반 */
+      /* 빛의 세기 ∝ 1/d² — 거리가 2배면 밝기 1/4 */
+      (function() {
+        var ptGrid = document.getElementById('cdPTGrid');
+        var glowRadius = 200; // 글로우 영향 범위 (px)
+
+        ptGrid.addEventListener('mousemove', function(e) {
+          var cells = ptGrid.querySelectorAll('.pt-cell[data-pt-sym]');
+          var mx = e.clientX;
+          var my = e.clientY;
+
+          cells.forEach(function(cell) {
+            var rect = cell.getBoundingClientRect();
+            var cx = rect.left + rect.width / 2;
+            var cy = rect.top + rect.height / 2;
+            var dx = mx - cx;
+            var dy = my - cy;
+            var dist = Math.sqrt(dx * dx + dy * dy);
+
+            var defaultShadow = cell.getAttribute('data-default-shadow') || '';
+            var defaultBorder = cell.getAttribute('data-default-border') || '';
+
+            if (dist < glowRadius) {
+              // 역제곱 법칙: intensity = 1 / (1 + (d/k)²), k=감쇠 계수
+              var k = 40;
+              var intensity = 1 / (1 + (dist / k) * (dist / k));
+              var rgb = getComputedStyle(cell).getPropertyValue('--cat-glow').trim() || '255,255,255';
+              var blur = Math.round(intensity * 35);
+              var opacity = (intensity * 1.3).toFixed(2);
+              var innerOpacity = (intensity * 0.9).toFixed(2);
+
+              // 기본 shadow + proximity glow 합산
+              var proxShadow =
+                '0 0 ' + blur + 'px rgba(' + rgb + ',' + opacity + '),' +
+                'inset 0 -12px 16px -8px rgba(' + rgb + ',' + innerOpacity + ')';
+              cell.style.boxShadow = defaultShadow ? defaultShadow + ',' + proxShadow : proxShadow;
+              cell.style.borderColor = 'rgba(' + rgb + ',' + Math.max(0.2, intensity * 0.8).toFixed(2) + ')';
+            } else {
+              cell.style.boxShadow = defaultShadow;
+              cell.style.borderColor = defaultBorder;
+            }
+          });
+        });
+
+        // 기본 스타일 저장
+        ptGrid.addEventListener('mouseenter', function() {
+          var cells = ptGrid.querySelectorAll('.pt-cell[data-pt-sym]');
+          cells.forEach(function(cell) {
+            if (!cell.hasAttribute('data-default-border')) {
+              cell.setAttribute('data-default-border', cell.style.borderColor || '');
+              cell.setAttribute('data-default-shadow', cell.style.boxShadow || '');
+            }
+          });
+        });
+
+        ptGrid.addEventListener('mouseleave', function() {
+          var cells = ptGrid.querySelectorAll('.pt-cell[data-pt-sym]');
+          cells.forEach(function(cell) {
+            cell.style.boxShadow = cell.getAttribute('data-default-shadow') || '';
+            cell.style.borderColor = cell.getAttribute('data-default-border') || '';
+          });
+        });
+      })();
+
+      /* Element Slot 드래그 순서 변경 (마우스 이벤트, 실시간 gap) */
+      var cdElDrag = { el: null, ghost: null, active: false, startX: 0, startY: 0, offsetX: 0, offsetY: 0, targetIdx: -1 };
+
+      document.addEventListener('mousedown', function(e) {
+        var btn = e.target.closest('#cdElementSlots .btnBox');
+        if (!btn || e.button !== 0) return;
+        var rect = btn.getBoundingClientRect();
+        cdElDrag.el = btn;
+        cdElDrag.startX = e.clientX;
+        cdElDrag.startY = e.clientY;
+        cdElDrag.active = false;
+        cdElDrag.offsetX = e.clientX - rect.left;
+        cdElDrag.offsetY = e.clientY - rect.top;
+        e.preventDefault();
+      });
+
+      document.addEventListener('mousemove', function(e) {
+        if (!cdElDrag.el) return;
+        var dx = e.clientX - cdElDrag.startX;
+        var dy = e.clientY - cdElDrag.startY;
+
+        if (!cdElDrag.active) {
+          if (Math.abs(dx) < 5 && Math.abs(dy) < 5) return;
+          cdElDrag.active = true;
+          var ghost = cdElDrag.el.cloneNode(true);
+          ghost.className = 'btnBox cd-el-ghost';
+          ghost.style.cssText = 'position:fixed;z-index:10000;pointer-events:none;opacity:0.85;box-shadow:0 4px 16px rgba(0,0,0,0.3);transform:scale(1.15);';
+          ghost.style.width = cdElDrag.el.offsetWidth + 'px';
+          ghost.style.height = cdElDrag.el.offsetHeight + 'px';
+          document.body.appendChild(ghost);
+          cdElDrag.ghost = ghost;
+          cdElDrag.el.style.opacity = '0';
+          cdElDrag.el.style.width = '0';
+          cdElDrag.el.style.minWidth = '0';
+          cdElDrag.el.style.padding = '0';
+          cdElDrag.el.style.margin = '0';
+          cdElDrag.el.style.border = 'none';
+          cdElDrag.el.style.overflow = 'hidden';
+          cdElDrag.el.style.transition = 'width 0.2s ease, min-width 0.2s ease, padding 0.2s ease, margin 0.2s ease';
+          var siblings = document.querySelectorAll('#cdElementSlots .btnBox');
+          siblings.forEach(function(s) {
+            if (s !== cdElDrag.el) s.style.transition = 'margin 0.2s ease';
+          });
+          document.body.style.cursor = 'grabbing';
+        }
+
+        cdElDrag.ghost.style.left = (e.clientX - cdElDrag.offsetX) + 'px';
+        cdElDrag.ghost.style.top = (e.clientY - cdElDrag.offsetY) + 'px';
+
+        var children = Array.from(document.querySelectorAll('#cdElementSlots .btnBox')).filter(function(c) { return c !== cdElDrag.el; });
+        var newTarget = -1;
+        for (var i = 0; i < children.length; i++) {
+          var r = children[i].getBoundingClientRect();
+          if (e.clientX < r.left + r.width / 2) { newTarget = i; break; }
+        }
+        if (newTarget === -1) newTarget = children.length;
+
+        if (newTarget !== cdElDrag.targetIdx) {
+          cdElDrag.targetIdx = newTarget;
+          children.forEach(function(c) { c.style.marginLeft = ''; c.style.marginRight = ''; });
+          if (newTarget < children.length) {
+            children[newTarget].style.marginLeft = '34px';
+          } else if (children.length > 0) {
+            children[children.length - 1].style.marginRight = '34px';
+          }
+        }
+      });
+
+      document.addEventListener('mouseup', function() {
+        if (!cdElDrag.el) return;
+        if (cdElDrag.active && cdElDrag.ghost) {
+          var container = document.getElementById('cdElementSlots');
+          var children = Array.from(container.querySelectorAll('.btnBox')).filter(function(c) { return c !== cdElDrag.el; });
+          children.forEach(function(c) { c.style.marginLeft = ''; c.style.marginRight = ''; c.style.transition = ''; });
+          cdElDrag.el.removeAttribute('style');
+          if (cdElDrag.targetIdx >= children.length) {
+            container.appendChild(cdElDrag.el);
+          } else {
+            container.insertBefore(cdElDrag.el, children[cdElDrag.targetIdx]);
+          }
+          cdElDrag.ghost.remove();
+          var newSlots = [];
+          container.querySelectorAll('[data-element]').forEach(function(el) {
+            newSlots.push(el.getAttribute('data-element'));
+          });
+          cdSaveElementSlots(newSlots);
+          document.body.style.cursor = '';
+        }
+        cdElDrag.el = null;
+        cdElDrag.ghost = null;
+        cdElDrag.active = false;
+        cdElDrag.targetIdx = -1;
+      });
+
+      // newAppleTab 클릭 (이벤트 위임)
+      document.addEventListener('click', function(e) {
+        var li = e.target.closest('.newAppleTab li');
+        if (!li) return;
+
+        var tab = li.closest('.newAppleTab');
+        var offset = Math.round(li.getBoundingClientRect().left - tab.getBoundingClientRect().left);
+
+        tab.querySelectorAll('li').forEach(function(el) { el.classList.remove('on'); });
+        li.classList.add('on');
+
+        var tabBg = tab.querySelector('.tabBg');
+        if (tabBg) {
+          tabBg.style.transition = 'left 0.4s ease';
+          tabBg.style.left = (offset - 3) + 'px';
+        }
+      });
+
+      // 모달 트리거 클릭
+      document.querySelectorAll('.modal-trigger').forEach(function(trigger) {
+        trigger.addEventListener('click', function(e) {
+          e.preventDefault();
+          var modal = document.querySelector(this.getAttribute('href'));
+          if (modal) openModal(modal);
+        });
+      });
+
+      // 모달 닫기 버튼 (Close, hGrey) 
+      document.querySelectorAll('.modal .hBtn.hGrey, .modal .modal-close').forEach(function(btn) {
+        btn.addEventListener('click', function(e) {
+          e.preventDefault();
+          var modal = this.closest('.modal');
+          if (modal) closeModal(modal);
+        });
+      });
+
+      // 리플 이펙트 (클릭 위치 기반)
+      document.addEventListener('click', function(e) {
+        var el = e.target.closest('.waves-effect');
+        if (!el) return;
+
+        var rect = el.getBoundingClientRect();
+        var size = Math.max(rect.width, rect.height) * 2;
+        var ripple = document.createElement('span');
+        ripple.className = 'waves-ripple';
+        ripple.style.width = ripple.style.height = size + 'px';
+        ripple.style.left = (e.clientX - rect.left - size / 2) + 'px';
+        ripple.style.top = (e.clientY - rect.top - size / 2) + 'px';
+        el.appendChild(ripple);
+
+        ripple.addEventListener('animationend', function() {
+          ripple.remove();
+        });
+      });
+
+      // 카드 마우스 추적 조명 + 프레넬 반사 효과
+      // Schlick's Fresnel approximation: R = R0 + (1-R0)(1-cosθ)^5
+      // R0 = 0.04 (유리 굴절률 n=1.5 기준 정면 반사율 4%)
+      // lightIntensity = 광원 세기 (태양=높음, 형광등=낮음). 프레넬 비율은 유지하면서 전체 밝기 조절
+      var R0 = 0.04;
+      var lightIntensity = 8;  // 밝은 조명 (1=약한 실내등, 5=일반, 8=스포트라이트, 15=태양급)
+      document.addEventListener('mousemove', function(e) {
+        var item = e.target.closest('.h_grid_list .grid_list_item');
+        if (!item) return;
+        var rect = item.getBoundingClientRect();
+
+        // 마우스 위치 (0~100%)
+        var x = (e.clientX - rect.left) / rect.width * 100;
+        var y = (e.clientY - rect.top) / rect.height * 100;
+
+        // 중심으로부터 정규화된 거리 (0=중앙, 1=모서리)
+        var nx = (x - 50) / 50;
+        var ny = (y - 50) / 50;
+        var dist = Math.min(Math.sqrt(nx * nx + ny * ny), 1);
+
+        // cosθ: 중앙=1(정면), 가장자리=0(비스듬)
+        var cosTheta = 1 - dist;
+
+        // Schlick 프레넬 반사율 계산
+        var fresnel = R0 + (1 - R0) * Math.pow(1 - cosTheta, 5);
+
+        // 최종 반사 밝기 = 프레넬 반사율 × 광원 세기 (0~1로 clamp)
+        var reflected = Math.min(fresnel * lightIntensity, 1);
+
+        // 스페큘러 하이라이트 크기: 중앙일수록 작고 집중, 가장자리일수록 넓게 퍼짐
+        var specSize = 15 + dist * 35;
+
+        // 스페큘러 강도: 프레넬 × 광원 세기 기반
+        var specIntensity = Math.min(0.4 + reflected * 0.6, 1);
+
+        // 가장자리 반사 광택 (엣지 글로우) — 프레넬이 높을수록 강함
+        var edgeGlow = reflected * 0.7;
+
+        // 3D 틸트: 마우스 방향으로 유리판 기울이기
+        // nx, ny는 -1~1 범위 (중앙=0), 최대 기울기 8도
+        var maxTilt = 3;
+        var tiltY = nx * maxTilt;        // 마우스 오른쪽 → 오른쪽으로 회전
+        var tiltX = -ny * maxTilt;       // 마우스 아래쪽 → 위쪽 가장자리가 뒤로 (음수)
+
+        // 그림자 오프셋: 기울어진 반대 방향으로 그림자 이동 (빛은 위에서 온다고 가정)
+        var shadowX = -tiltY * 2.5;      // 기울기 반대
+        var shadowY = 10 + tiltX * 1.5;  // 기본 아래쪽 + 기울기 반대
+
+        // 색수차 (Chromatic Aberration): 분산에 의한 RGB 분리
+        // 비스듬할수록(프레넬 높을수록) 색수차가 강해짐
+        // Abbe수 기반: 분산량 ≈ (n_blue - n_red) / (n_green - 1) ≈ 0.031
+        var caIntensity = Math.pow(dist, 3) * 0.25;  // 가장자리에서만 미세하게
+        var lightAngle = Math.atan2(ny, nx) * (180 / Math.PI);  // 빛 입사 방향
+
+        // CSS 변수 세팅
+        item.style.setProperty('--light-x', x + '%');
+        item.style.setProperty('--light-y', y + '%');
+        item.style.setProperty('--fresnel', fresnel.toFixed(3));
+        item.style.setProperty('--spec-size', specSize + '%');
+        item.style.setProperty('--spec-intensity', specIntensity.toFixed(3));
+        item.style.setProperty('--edge-glow', edgeGlow.toFixed(3));
+        item.style.setProperty('--ca-intensity', caIntensity.toFixed(3));
+        item.style.setProperty('--light-angle', lightAngle.toFixed(1) + 'deg');
+
+        // 3D 틸트: 마우스 움직임에 즉각 반응 (빠른 transition)
+        item.style.transition = 'transform 0.08s ease-out';
+        item.style.transform =
+          'perspective(600px) rotateX(' + tiltX.toFixed(2) + 'deg) rotateY(' + tiltY.toFixed(2) + 'deg) scale(1.03)';
+
+      });
+
+      document.addEventListener('mouseleave', function(e) {
+        var item = e.target.closest('.h_grid_list .grid_list_item');
+        if (!item) return;
+        // 마우스가 카드 안의 자식으로 이동한 거면 무시
+        if (e.relatedTarget && item.contains(e.relatedTarget)) return;
+        if (item) {
+          // 틸트를 부드럽게 원위치로
+          item.style.transition = 'transform 0.4s ease-out';
+          item.style.transform = 'perspective(600px) rotateX(0deg) rotateY(0deg) scale(1)';
+
+          // 프레넬/색수차 변수 초기화 (CSS transition이 background를 부드럽게 처리)
+          item.style.setProperty('--spec-intensity', '0');
+          item.style.setProperty('--edge-glow', '0');
+          item.style.setProperty('--ca-intensity', '0');
+
+          // transition 끝나면 인라인 스타일 정리
+          var cleanup = function() {
+            item.style.removeProperty('--light-x');
+            item.style.removeProperty('--light-y');
+            item.style.removeProperty('--fresnel');
+            item.style.removeProperty('--spec-size');
+            item.style.removeProperty('--spec-intensity');
+            item.style.removeProperty('--edge-glow');
+            item.style.removeProperty('--ca-intensity');
+            item.style.removeProperty('--light-angle');
+            item.style.transform = '';
+            item.style.transition = '';
+            item.removeEventListener('transitionend', cleanup);
+          };
+          item.addEventListener('transitionend', cleanup);
+        }
+      }, true);
+
+      // 카드 순차 flipInX 효과
+      document.querySelectorAll('.h_grid_list .grid_list_item').forEach(function(item, i) {
+        item.classList.add('animate__animated');
+        item.style.opacity = '0';
+        setTimeout(function() {
+          item.style.opacity = '';
+          item.classList.add('animate__flipInX');
+        }, i * 100);
+        // 애니메이션 끝나면 클래스 제거 (animation-fill-mode: both가 transform을 잡고 있어서 3D 틸트 차단됨)
+        item.addEventListener('animationend', function() {
+          item.classList.remove('animate__animated', 'animate__flipInX');
+        });
+      });
+
+      // 카드 클릭 → 모달에 해당 내용 표시
+      document.querySelectorAll('.h_grid_list .grid_list_item').forEach(function(item) {
+        item.addEventListener('click', function() {
+          var modal = document.querySelector('#fmlChemDrawWin');
+          if (!modal) return;
+
+          var formula = item.querySelector('.tit').textContent;
+          var atoms = item.querySelector('.contInfo .col:first-child .val').textContent;
+          var bonds = item.querySelector('.contInfo .col:last-child .val').textContent;
+          var svgEl = item.querySelector('.chemImg svg');
+
+          modal.querySelector('.chemTit').textContent = formula;
+          modal.querySelector('.chemInfo').innerHTML =
+            '<span class="mr5">' + atoms + '</span>atoms / <span class="mr5">' + bonds + '</span>bonds';
+
+          // 에디터 영역에 SVG 복사
+          var editor = modal.querySelector('.editor');
+          if (editor && svgEl) {
+            editor.innerHTML = '';
+            var cloned = svgEl.cloneNode(true);
+            cloned.setAttribute('width', '100%');
+            cloned.setAttribute('height', '100%');
+            editor.appendChild(cloned);
+          }
+
+          openModal(modal);
+        });
+      });
+
+      // 첫 화면에서 모달 자동 오픈
+      var modal = document.querySelector('#fmlChemDrawWin');
+      if (modal) openModal(modal);
+    });
+
+    /* ── AI Drawing Loader ── */
+    function showDrawingLoader(msg) {
+      var loader = document.getElementById('aiDrawingLoader');
+      var textEl = document.getElementById('aiLoaderText');
+      var subEl  = document.getElementById('aiLoaderSub');
+      if (msg) textEl.textContent = msg;
+      else textEl.textContent = 'AI가 분자 구조를 그리고 있습니다...';
+      subEl.textContent = '잠시만 기다려주세요';
+      loader.classList.remove('done');
+      loader.classList.add('active');
+    }
+
+    function hideDrawingLoader(doneMsg) {
+      var loader = document.getElementById('aiDrawingLoader');
+      var textEl = document.getElementById('aiLoaderText');
+      var subEl  = document.getElementById('aiLoaderSub');
+      // 완료 표시 후 페이드아웃
+      loader.classList.add('done');
+      textEl.textContent = doneMsg || '분자 구조가 완성되었습니다!';
+      subEl.textContent = '';
+      setTimeout(function() {
+        loader.classList.remove('active', 'done');
+      }, 800);
+    }
+
+    function sendAiChat() {
+      var input = document.getElementById('aiChatInputField');
+      var msg = input.value.trim();
+      if (!msg) return;
+      var messages = document.getElementById('aiChatMessages');
+
+      // 사용자 메시지
+      var userDiv = document.createElement('div');
+      userDiv.className = 'aiMsg user';
+      userDiv.innerHTML = '<div class="aiMsgBubble">' + msg.replace(/</g,'&lt;') + '</div>';
+      messages.appendChild(userDiv);
+      input.value = '';
+
+      // 타이핑 인디케이터
+      var typingDiv = document.createElement('div');
+      typingDiv.className = 'aiMsg bot';
+      typingDiv.innerHTML = '<div class="aiMsgAvatar"><i class="material-icons">auto_awesome</i></div><div class="aiMsgBubble typing"><span></span><span></span><span></span></div>';
+      messages.appendChild(typingDiv);
+      messages.scrollTop = messages.scrollHeight;
+
+      // 에디터 영역에 로딩 표시
+      showDrawingLoader('"' + msg + '" 구조를 생성 중...');
+
+      // 데모: 1.5초 후 응답 (실제로는 백엔드 API 호출)
+      setTimeout(function() {
+        typingDiv.remove();
+        var botDiv = document.createElement('div');
+        botDiv.className = 'aiMsg bot';
+        botDiv.innerHTML = '<div class="aiMsgAvatar"><i class="material-icons">auto_awesome</i></div><div class="aiMsgBubble">네, 요청하신 구조를 캔버스에 그렸습니다.<br><span class="aiMsgHint">* 데모 모드 — 실제 동작은 백엔드 API 연동 후 가능합니다</span></div>';
+        messages.appendChild(botDiv);
+        messages.scrollTop = messages.scrollHeight;
+        // 로딩 완료
+        hideDrawingLoader('구조 생성 완료!');
+      }, 1500);
+    }
+
+    function openModal(modal) {
+      var overlay = document.querySelector('.modal-overlay');
+      if (!overlay) {
+        overlay = document.createElement('div');
+        overlay.className = 'modal-overlay';
+        document.body.appendChild(overlay);
+      }
+      overlay.style.display = 'block';
+      overlay.onclick = function() { closeModal(modal); };
+
+      modal.style.display = 'block';
+      modal.style.opacity = '1';
+      modal.style.top = '30px';
+
+      // Elements 버튼 순차 fadeInLeft 효과
+      modal.querySelectorAll('.btnArea .btnBox').forEach(function(btn, i) {
+        btn.classList.remove('animate__animated', 'animate__fadeInLeft');
+        btn.style.opacity = '0';
+        setTimeout(function() {
+          btn.style.opacity = '';
+          btn.classList.add('animate__animated', 'animate__fadeInLeft');
+        }, i * 40);
+      });
+    }
+
+    function closeModal(modal) {
+      modal.style.display = 'none';
+      modal.style.opacity = '0';
+      var overlay = document.querySelector('.modal-overlay');
+      if (overlay) overlay.style.display = 'none';
+    }
+  </script>
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <div class="headerTit">
+        <svg width="28" height="28" viewBox="0 0 34 34">
+          <defs>
+            <linearGradient id="hexGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+              <stop offset="0%" stop-color="#fff" stop-opacity="0.75"/>
+              <stop offset="45%" stop-color="#fff" stop-opacity="0.15"/>
+              <stop offset="100%" stop-color="#fff" stop-opacity="0.5"/>
+            </linearGradient>
+            <linearGradient id="hexShine" x1="20%" y1="0%" x2="60%" y2="60%">
+              <stop offset="0%" stop-color="#fff" stop-opacity="0.9"/>
+              <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <!-- hexagon fill -->
+          <polygon points="17,2 30,9.5 30,24.5 17,32 4,24.5 4,9.5" fill="url(#hexGrad)" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linejoin="round"/>
+          <!-- specular highlight -->
+          <polygon points="17,2 30,9.5 30,15 10,7" fill="url(#hexShine)" opacity="0.5"/>
+          <!-- inner aromatic circle -->
+          <circle cx="17" cy="17" r="7" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.3"/>
+        </svg>
+        <span class="headerTitText"><span style="font-family:'SUIT-Light';opacity:0.85;">Chem</span> <span style="font-family:'SUIT-Bold';">Studio</span></span>
+      </div>
+    </nav>
+  </header>
+  <article class="contArea">
+    <section class="contList">
+      <div class="headArea">
+        <div class="srchArea">
+          <input type="text" placeholder="Molecular Formula 검색">
+          <i class="material-icons">search</i>
+        </div>
+        <div>
+          <a class="waves-effect waves-light hBtn modal-trigger" href="#fmlChemDrawWin">
+            <i class="material-icons left">add</i>New Editer
+          </a>
+        </div>
+      </div>
+      <div class="h_grid_list hScroll" style="max-height: calc(100vh - 160px); overflow: auto;">
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg id="chemDrawSvg" width="100%" height="100%" viewBox="216.75 91.69 409.65 208.25" preserveAspectRatio="xMidYMid meet" style="display:block;"><g opacity="0.06"><line x1="0" y1="0" x2="0" y2="431" stroke="#000"></line><line x1="30" y1="0" x2="30" y2="431" stroke="#000"></line><line x1="60" y1="0" x2="60" y2="431" stroke="#000"></line><line x1="90" y1="0" x2="90" y2="431" stroke="#000"></line><line x1="120" y1="0" x2="120" y2="431" stroke="#000"></line><line x1="150" y1="0" x2="150" y2="431" stroke="#000"></line><line x1="180" y1="0" x2="180" y2="431" stroke="#000"></line><line x1="210" y1="0" x2="210" y2="431" stroke="#000"></line><line x1="240" y1="0" x2="240" y2="431" stroke="#000"></line><line x1="270" y1="0" x2="270" y2="431" stroke="#000"></line><line x1="300" y1="0" x2="300" y2="431" stroke="#000"></line><line x1="330" y1="0" x2="330" y2="431" stroke="#000"></line><line x1="360" y1="0" x2="360" y2="431" stroke="#000"></line><line x1="390" y1="0" x2="390" y2="431" stroke="#000"></line><line x1="420" y1="0" x2="420" y2="431" stroke="#000"></line><line x1="450" y1="0" x2="450" y2="431" stroke="#000"></line><line x1="480" y1="0" x2="480" y2="431" stroke="#000"></line><line x1="510" y1="0" x2="510" y2="431" stroke="#000"></line><line x1="540" y1="0" x2="540" y2="431" stroke="#000"></line><line x1="570" y1="0" x2="570" y2="431" stroke="#000"></line><line x1="600" y1="0" x2="600" y2="431" stroke="#000"></line><line x1="630" y1="0" x2="630" y2="431" stroke="#000"></line><line x1="660" y1="0" x2="660" y2="431" stroke="#000"></line><line x1="690" y1="0" x2="690" y2="431" stroke="#000"></line><line x1="720" y1="0" x2="720" y2="431" stroke="#000"></line><line x1="750" y1="0" x2="750" y2="431" stroke="#000"></line><line x1="780" y1="0" x2="780" y2="431" stroke="#000"></line><line x1="810" y1="0" x2="810" y2="431" stroke="#000"></line><line x1="840" y1="0" x2="840" y2="431" stroke="#000"></line><line x1="870" y1="0" x2="870" y2="431" stroke="#000"></line><line x1="900" y1="0" x2="900" y2="431" stroke="#000"></line><line x1="930" y1="0" x2="930" y2="431" stroke="#000"></line><line x1="960" y1="0" x2="960" y2="431" stroke="#000"></line><line x1="990" y1="0" x2="990" y2="431" stroke="#000"></line><line x1="1020" y1="0" x2="1020" y2="431" stroke="#000"></line><line x1="1050" y1="0" x2="1050" y2="431" stroke="#000"></line><line x1="1080" y1="0" x2="1080" y2="431" stroke="#000"></line><line x1="1110" y1="0" x2="1110" y2="431" stroke="#000"></line><line x1="1140" y1="0" x2="1140" y2="431" stroke="#000"></line><line x1="1170" y1="0" x2="1170" y2="431" stroke="#000"></line><line x1="0" y1="0" x2="1148" y2="0" stroke="#000"></line><line x1="0" y1="30" x2="1148" y2="30" stroke="#000"></line><line x1="0" y1="60" x2="1148" y2="60" stroke="#000"></line><line x1="0" y1="90" x2="1148" y2="90" stroke="#000"></line><line x1="0" y1="120" x2="1148" y2="120" stroke="#000"></line><line x1="0" y1="150" x2="1148" y2="150" stroke="#000"></line><line x1="0" y1="180" x2="1148" y2="180" stroke="#000"></line><line x1="0" y1="210" x2="1148" y2="210" stroke="#000"></line><line x1="0" y1="240" x2="1148" y2="240" stroke="#000"></line><line x1="0" y1="270" x2="1148" y2="270" stroke="#000"></line><line x1="0" y1="300" x2="1148" y2="300" stroke="#000"></line><line x1="0" y1="330" x2="1148" y2="330" stroke="#000"></line><line x1="0" y1="360" x2="1148" y2="360" stroke="#000"></line><line x1="0" y1="390" x2="1148" y2="390" stroke="#000"></line><line x1="0" y1="420" x2="1148" y2="420" stroke="#000"></line><line x1="0" y1="450" x2="1148" y2="450" stroke="#000"></line></g><line x1="271.6542965838437" y1="185.4713259691781" x2="349.1719183173991" y2="185.3251965498815" stroke="#444" stroke-width="2"></line><line x1="349.1719183173991" y1="185.3251965498815" x2="347.6051054025439" y2="115.34472286931182" stroke="#444" stroke-width="2"></line><line x1="349.1719183173991" y1="185.3251965498815" x2="350.4807830081068" y2="255.71424937903106" stroke="#444" stroke-width="2"></line><line x1="349.1719183173991" y1="185.3251965498815" x2="436.51967306675357" y2="184.96257492695293" stroke="#444" stroke-width="2"></line><line x1="436.51967306675357" y1="184.96257492695293" x2="514.5201831181598" y2="184.08212035500665" stroke="#444" stroke-width="2"></line><line x1="513.6818511532157" y1="114.75842495376223" x2="514.5201831181598" y2="184.08212035500665" stroke="#444" stroke-width="2"></line><line x1="514.5201831181598" y1="184.08212035500665" x2="589.8265271552267" y2="184.96257492695293" stroke="#444" stroke-width="2"></line><line x1="514.5201831181598" y1="184.08212035500665" x2="516.9669980265401" y2="258.45187177346804" stroke="#444" stroke-width="2"></line><circle cx="349.1719183173991" cy="185.3251965498815" r="8" fill="transparent" style="cursor:pointer"></circle><rect x="333.20510540254395" y="105.34472286931182" width="28.8" height="20" fill="none" style="cursor:pointer"></rect><text x="340.40510540254394" y="116.34472286931182" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333333" style="pointer-events:none">C</text><text x="348.8051054025439" y="116.34472286931182" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333333" style="pointer-events:none">H</text><text x="356.0051054025439" y="120.34472286931182" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="bold" font-family="monospace" fill="#333333" style="pointer-events:none">3</text><rect x="336.08078300810683" y="245.71424937903106" width="28.8" height="20" fill="none" style="cursor:pointer"></rect><text x="343.2807830081068" y="256.71424937903106" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333333" style="pointer-events:none">C</text><text x="351.6807830081068" y="256.71424937903106" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333333" style="pointer-events:none">H</text><text x="358.8807830081068" y="260.71424937903106" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="bold" font-family="monospace" fill="#333333" style="pointer-events:none">3</text><rect x="422.1196730667536" y="174.96257492695293" width="28.8" height="20" fill="none" style="cursor:pointer"></rect><text x="429.3196730667536" y="185.96257492695293" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333333" style="pointer-events:none">C</text><text x="437.71967306675356" y="185.96257492695293" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333333" style="pointer-events:none">H</text><text x="444.91967306675355" y="189.96257492695293" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="bold" font-family="monospace" fill="#333333" style="pointer-events:none">2</text><rect x="264.4542965838437" y="175.4713259691781" width="14.4" height="20" fill="none" style="cursor:pointer"></rect><text x="271.6542965838437" y="186.4713259691781" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333" style="pointer-events:none">H</text><rect x="507.32018311815983" y="174.08212035500665" width="14.4" height="20" fill="none" style="cursor:pointer"></rect><text x="514.5201831181598" y="185.08212035500665" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333" style="pointer-events:none">S</text><rect x="499.2818511532157" y="104.75842495376223" width="28.8" height="20" fill="none" style="cursor:pointer"></rect><text x="506.4818511532157" y="115.75842495376223" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333333" style="pointer-events:none">C</text><text x="514.8818511532157" y="115.75842495376223" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333333" style="pointer-events:none">H</text><text x="522.0818511532157" y="119.75842495376223" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="bold" font-family="monospace" fill="#333333" style="pointer-events:none">3</text><rect x="502.5669980265401" y="248.45187177346804" width="28.8" height="20" fill="none" style="cursor:pointer"></rect><text x="509.7669980265401" y="259.45187177346804" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333333" style="pointer-events:none">C</text><text x="518.1669980265401" y="259.45187177346804" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333333" style="pointer-events:none">H</text><text x="525.36699802654" y="263.45187177346804" text-anchor="middle" dominant-baseline="middle" font-size="10" font-weight="bold" font-family="monospace" fill="#333333" style="pointer-events:none">3</text><rect x="582.6265271552267" y="174.96257492695293" width="14.4" height="20" fill="none" style="cursor:pointer"></rect><text x="589.8265271552267" y="185.96257492695293" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333" style="pointer-events:none">H</text><polyline points="231,97.9375 223,97.9375 223,276.9375 231,276.9375" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></polyline><polyline points="601,97.9375 609,97.9375 609,276.9375 601,276.9375" fill="none" stroke="#333" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"></polyline><text x="613" y="280.9375" font-size="14" font-weight="bold" font-family="serif,Times New Roman" fill="#333" dominant-baseline="hanging">n</text></svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">C6H16S</div>
+            <div class="regInfo">
+              <div>이종호 책임</div>
+              <div>2026-03-09</div>
+            </div>
+          </div>
+          <!-- <div class="textCont">
+            <div class="tit">C6H16S</div>
+            <div class="contInfo row">
+              <div class="col s6">
+                  <span class="subTit">Atoms</span>
+                  <span class="val">9</span>
+              </div>
+              <div class="col s6">
+                  <span class="subTit">Bonds</span>
+                  <span class="val">8</span>
+              </div>
+            </div>
+            <div class="row mb0">
+              <div class="col s6">2026-03-09</div>
+              <div class="col s6">이종호 책임</div>
+            </div>
+          </div> -->
+        </div>
+
+        <!-- 샘플 카드 2: 벤젠 C6H6 -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <polygon points="100,30 170,65 170,135 100,170 30,135 30,65" fill="none" stroke="#444" stroke-width="2"/>
+              <polygon points="100,50 155,77 155,123 100,150 45,123 45,77" fill="none" stroke="#444" stroke-width="1.5" stroke-dasharray="6,3"/>
+              <text x="100" y="20" text-anchor="middle" font-size="12" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <text x="180" y="62" text-anchor="middle" font-size="12" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <text x="180" y="142" text-anchor="middle" font-size="12" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <text x="100" y="190" text-anchor="middle" font-size="12" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <text x="20" y="142" text-anchor="middle" font-size="12" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <text x="20" y="62" text-anchor="middle" font-size="12" font-weight="bold" font-family="monospace" fill="#333">H</text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">C6H6 (Benzene)</div>
+            <div class="regInfo">
+              <div>김민수 수석</div>
+              <div>2026-03-12</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 3: 에탄올 C2H5OH -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <line x1="40" y1="100" x2="90" y2="100" stroke="#444" stroke-width="2"/>
+              <line x1="90" y1="100" x2="140" y2="100" stroke="#444" stroke-width="2"/>
+              <line x1="140" y1="100" x2="170" y2="100" stroke="#444" stroke-width="2"/>
+              <line x1="90" y1="100" x2="90" y2="60" stroke="#444" stroke-width="2"/>
+              <line x1="90" y1="100" x2="90" y2="140" stroke="#444" stroke-width="2"/>
+              <rect x="25" y="90" width="28" height="20" fill="none"/><text x="39" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="4" font-size="10">3</tspan></text>
+              <rect x="125" y="90" width="28" height="20" fill="none"/><text x="139" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#c62828">O</text>
+              <rect x="158" y="90" width="14" height="20" fill="none"/><text x="165" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <rect x="78" y="46" width="24" height="20" fill="none"/><text x="90" y="60" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <rect x="78" y="134" width="24" height="20" fill="none"/><text x="90" y="148" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">C2H5OH (Ethanol)</div>
+            <div class="regInfo">
+              <div>박서연 책임</div>
+              <div>2026-03-11</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 4: 아세트산 CH3COOH -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <line x1="30" y1="100" x2="80" y2="100" stroke="#444" stroke-width="2"/>
+              <line x1="80" y1="100" x2="130" y2="100" stroke="#444" stroke-width="2"/>
+              <line x1="80" y1="100" x2="80" y2="55" stroke="#444" stroke-width="2"/>
+              <line x1="84" y1="100" x2="84" y2="55" stroke="#444" stroke-width="2"/>
+              <line x1="130" y1="100" x2="165" y2="100" stroke="#444" stroke-width="2"/>
+              <rect x="10" y="90" width="36" height="20" fill="none"/><text x="28" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="4" font-size="10">3</tspan></text>
+              <rect x="70" y="38" width="20" height="20" fill="none"/><text x="80" y="52" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#c62828">O</text>
+              <rect x="118" y="90" width="20" height="20" fill="none"/><text x="128" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#c62828">O</text>
+              <rect x="158" y="90" width="14" height="20" fill="none"/><text x="165" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">CH3COOH (Acetic acid)</div>
+            <div class="regInfo">
+              <div>최영진 선임</div>
+              <div>2026-03-10</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 5: 메탄 CH4 -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <line x1="100" y1="100" x2="100" y2="45" stroke="#444" stroke-width="2"/>
+              <line x1="100" y1="100" x2="155" y2="100" stroke="#444" stroke-width="2"/>
+              <line x1="100" y1="100" x2="100" y2="155" stroke="#444" stroke-width="2"/>
+              <line x1="100" y1="100" x2="45" y2="100" stroke="#444" stroke-width="2"/>
+              <rect x="92" y="90" width="16" height="20" fill="none"/><text x="100" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">C</text>
+              <rect x="92" y="30" width="16" height="20" fill="none"/><text x="100" y="44" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <rect x="150" y="90" width="16" height="20" fill="none"/><text x="158" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <rect x="92" y="150" width="16" height="20" fill="none"/><text x="100" y="164" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <rect x="34" y="90" width="16" height="20" fill="none"/><text x="42" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">CH4 (Methane)</div>
+            <div class="regInfo">
+              <div>정하윤 선임</div>
+              <div>2026-03-08</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 6: 톨루엔 C7H8 -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <polygon points="100,35 160,67 160,132 100,165 40,132 40,67" fill="none" stroke="#444" stroke-width="2"/>
+              <polygon points="100,50 150,75 150,125 100,150 50,125 50,75" fill="none" stroke="#444" stroke-width="1.5" stroke-dasharray="6,3"/>
+              <line x1="100" y1="35" x2="100" y2="10" stroke="#444" stroke-width="2"/>
+              <rect x="82" y="2" width="36" height="16" fill="none"/><text x="100" y="14" text-anchor="middle" font-size="12" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="3" font-size="9">3</tspan></text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">C7H8 (Toluene)</div>
+            <div class="regInfo">
+              <div>이종호 책임</div>
+              <div>2026-03-07</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 7: 포름알데히드 CH2O -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <line x1="100" y1="100" x2="100" y2="50" stroke="#444" stroke-width="2"/>
+              <line x1="104" y1="100" x2="104" y2="50" stroke="#444" stroke-width="2"/>
+              <line x1="100" y1="100" x2="50" y2="140" stroke="#444" stroke-width="2"/>
+              <line x1="100" y1="100" x2="150" y2="140" stroke="#444" stroke-width="2"/>
+              <rect x="88" y="90" width="24" height="20" fill="none"/><text x="100" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">C</text>
+              <rect x="88" y="32" width="24" height="20" fill="none"/><text x="100" y="46" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#c62828">O</text>
+              <rect x="38" y="134" width="24" height="20" fill="none"/><text x="50" y="148" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <rect x="138" y="134" width="24" height="20" fill="none"/><text x="150" y="148" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">CH2O (Formaldehyde)</div>
+            <div class="regInfo">
+              <div>김민수 수석</div>
+              <div>2026-03-06</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 8: 프로판 C3H8 -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <line x1="30" y1="100" x2="80" y2="100" stroke="#444" stroke-width="2"/>
+              <line x1="80" y1="100" x2="130" y2="100" stroke="#444" stroke-width="2"/>
+              <line x1="130" y1="100" x2="180" y2="100" stroke="#444" stroke-width="2"/>
+              <line x1="80" y1="100" x2="80" y2="60" stroke="#444" stroke-width="2"/>
+              <line x1="80" y1="100" x2="80" y2="140" stroke="#444" stroke-width="2"/>
+              <line x1="130" y1="100" x2="130" y2="60" stroke="#444" stroke-width="2"/>
+              <line x1="130" y1="100" x2="130" y2="140" stroke="#444" stroke-width="2"/>
+              <rect x="8" y="90" width="36" height="20" fill="none"/><text x="26" y="104" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="4" font-size="9">3</tspan></text>
+              <rect x="160" y="90" width="36" height="20" fill="none"/><text x="178" y="104" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="4" font-size="9">3</tspan></text>
+              <rect x="70" y="44" width="20" height="20" fill="none"/><text x="80" y="58" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <rect x="70" y="134" width="20" height="20" fill="none"/><text x="80" y="148" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <rect x="120" y="44" width="20" height="20" fill="none"/><text x="130" y="58" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <rect x="120" y="134" width="20" height="20" fill="none"/><text x="130" y="148" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">C3H8 (Propane)</div>
+            <div class="regInfo">
+              <div>박서연 책임</div>
+              <div>2026-03-05</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 9: 아세톤 C3H6O -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <line x1="30" y1="110" x2="80" y2="110" stroke="#444" stroke-width="2"/>
+              <line x1="80" y1="110" x2="130" y2="110" stroke="#444" stroke-width="2"/>
+              <line x1="130" y1="110" x2="180" y2="110" stroke="#444" stroke-width="2"/>
+              <line x1="80" y1="110" x2="80" y2="60" stroke="#444" stroke-width="2"/>
+              <line x1="84" y1="110" x2="84" y2="60" stroke="#444" stroke-width="2"/>
+              <rect x="8" y="100" width="36" height="20" fill="none"/><text x="26" y="114" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="4" font-size="9">3</tspan></text>
+              <rect x="160" y="100" width="36" height="20" fill="none"/><text x="178" y="114" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="4" font-size="9">3</tspan></text>
+              <rect x="70" y="42" width="24" height="20" fill="none"/><text x="82" y="56" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#c62828">O</text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">C3H6O (Acetone)</div>
+            <div class="regInfo">
+              <div>최영진 선임</div>
+              <div>2026-03-04</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 10: 글리신 C2H5NO2 -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <line x1="40" y1="100" x2="90" y2="100" stroke="#444" stroke-width="2"/>
+              <line x1="90" y1="100" x2="140" y2="100" stroke="#444" stroke-width="2"/>
+              <line x1="140" y1="100" x2="170" y2="130" stroke="#444" stroke-width="2"/>
+              <line x1="140" y1="100" x2="140" y2="55" stroke="#444" stroke-width="2"/>
+              <line x1="144" y1="100" x2="144" y2="55" stroke="#444" stroke-width="2"/>
+              <rect x="12" y="90" width="40" height="20" fill="none"/><text x="32" y="104" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#1565c0">NH<tspan dy="4" font-size="9">2</tspan></text>
+              <rect x="128" y="38" width="24" height="20" fill="none"/><text x="140" y="52" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#c62828">O</text>
+              <rect x="158" y="124" width="28" height="20" fill="none"/><text x="172" y="138" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#c62828">OH</text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">C2H5NO2 (Glycine)</div>
+            <div class="regInfo">
+              <div>정하윤 선임</div>
+              <div>2026-03-03</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 11: 에틸렌 C2H4 -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <line x1="60" y1="100" x2="140" y2="100" stroke="#444" stroke-width="2"/>
+              <line x1="60" y1="96" x2="140" y2="96" stroke="#444" stroke-width="2"/>
+              <line x1="60" y1="100" x2="30" y2="65" stroke="#444" stroke-width="2"/>
+              <line x1="60" y1="100" x2="30" y2="135" stroke="#444" stroke-width="2"/>
+              <line x1="140" y1="100" x2="170" y2="65" stroke="#444" stroke-width="2"/>
+              <line x1="140" y1="100" x2="170" y2="135" stroke="#444" stroke-width="2"/>
+              <rect x="20" y="50" width="16" height="20" fill="none"/><text x="28" y="64" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <rect x="20" y="130" width="16" height="20" fill="none"/><text x="28" y="144" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <rect x="162" y="50" width="16" height="20" fill="none"/><text x="170" y="64" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <rect x="162" y="130" width="16" height="20" fill="none"/><text x="170" y="144" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <rect x="50" y="90" width="16" height="20" fill="none"/><text x="58" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">C</text>
+              <rect x="132" y="90" width="16" height="20" fill="none"/><text x="140" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">C</text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">C2H4 (Ethylene)</div>
+            <div class="regInfo">
+              <div>이종호 책임</div>
+              <div>2026-03-02</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 12: 아세틸렌 C2H2 -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <line x1="60" y1="100" x2="140" y2="100" stroke="#444" stroke-width="2"/>
+              <line x1="60" y1="96" x2="140" y2="96" stroke="#444" stroke-width="2"/>
+              <line x1="60" y1="104" x2="140" y2="104" stroke="#444" stroke-width="2"/>
+              <line x1="60" y1="100" x2="25" y2="100" stroke="#444" stroke-width="2"/>
+              <line x1="140" y1="100" x2="175" y2="100" stroke="#444" stroke-width="2"/>
+              <rect x="50" y="90" width="16" height="20" fill="none"/><text x="58" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">C</text>
+              <rect x="132" y="90" width="16" height="20" fill="none"/><text x="140" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">C</text>
+              <rect x="14" y="90" width="16" height="20" fill="none"/><text x="22" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+              <rect x="168" y="90" width="16" height="20" fill="none"/><text x="176" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">C2H2 (Acetylene)</div>
+            <div class="regInfo">
+              <div>김민수 수석</div>
+              <div>2026-03-01</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 13: 나프탈렌 C10H8 -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 240 180" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <polygon points="60,30 110,30 135,73 110,116 60,116 35,73" fill="none" stroke="#444" stroke-width="2"/>
+              <polygon points="110,30 160,30 185,73 160,116 110,116 135,73" fill="none" stroke="#444" stroke-width="2"/>
+              <polygon points="68,42 102,42 120,73 102,104 68,104 50,73" fill="none" stroke="#444" stroke-width="1.5" stroke-dasharray="5,3"/>
+              <polygon points="118,42 152,42 170,73 152,104 118,104 135,73" fill="none" stroke="#444" stroke-width="1.5" stroke-dasharray="5,3"/>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">C10H8 (Naphthalene)</div>
+            <div class="regInfo">
+              <div>박서연 책임</div>
+              <div>2026-02-28</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 14: DMSO C2H6OS -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <line x1="50" y1="100" x2="100" y2="100" stroke="#444" stroke-width="2"/>
+              <line x1="100" y1="100" x2="150" y2="100" stroke="#444" stroke-width="2"/>
+              <line x1="100" y1="100" x2="100" y2="55" stroke="#444" stroke-width="2"/>
+              <line x1="104" y1="100" x2="104" y2="55" stroke="#444" stroke-width="2"/>
+              <rect x="26" y="90" width="36" height="20" fill="none"/><text x="44" y="104" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="4" font-size="9">3</tspan></text>
+              <rect x="140" y="90" width="36" height="20" fill="none"/><text x="158" y="104" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="4" font-size="9">3</tspan></text>
+              <rect x="88" y="90" width="24" height="20" fill="none"/><text x="100" y="104" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#e65100">S</text>
+              <rect x="88" y="38" width="24" height="20" fill="none"/><text x="100" y="52" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#c62828">O</text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">C2H6OS (DMSO)</div>
+            <div class="regInfo">
+              <div>최영진 선임</div>
+              <div>2026-02-25</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 15: 사이클로헥산 C6H12 -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <polygon points="100,30 165,60 165,130 100,160 35,130 35,60" fill="none" stroke="#444" stroke-width="2"/>
+              <text x="100" y="22" text-anchor="middle" font-size="11" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="3" font-size="8">2</tspan></text>
+              <text x="175" y="58" text-anchor="middle" font-size="11" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="3" font-size="8">2</tspan></text>
+              <text x="175" y="138" text-anchor="middle" font-size="11" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="3" font-size="8">2</tspan></text>
+              <text x="100" y="178" text-anchor="middle" font-size="11" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="3" font-size="8">2</tspan></text>
+              <text x="24" y="138" text-anchor="middle" font-size="11" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="3" font-size="8">2</tspan></text>
+              <text x="24" y="58" text-anchor="middle" font-size="11" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="3" font-size="8">2</tspan></text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">C6H12 (Cyclohexane)</div>
+            <div class="regInfo">
+              <div>정하윤 선임</div>
+              <div>2026-02-22</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 16: 페놀 C6H5OH -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <polygon points="100,40 158,70 158,130 100,160 42,130 42,70" fill="none" stroke="#444" stroke-width="2"/>
+              <polygon points="100,55 148,78 148,122 100,145 52,122 52,78" fill="none" stroke="#444" stroke-width="1.5" stroke-dasharray="6,3"/>
+              <line x1="100" y1="40" x2="100" y2="12" stroke="#444" stroke-width="2"/>
+              <rect x="86" y="2" width="28" height="16" fill="none"/><text x="100" y="14" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#c62828">OH</text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">C6H5OH (Phenol)</div>
+            <div class="regInfo">
+              <div>이종호 책임</div>
+              <div>2026-02-20</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 17: 아닐린 C6H5NH2 -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <polygon points="100,40 158,70 158,130 100,160 42,130 42,70" fill="none" stroke="#444" stroke-width="2"/>
+              <polygon points="100,55 148,78 148,122 100,145 52,122 52,78" fill="none" stroke="#444" stroke-width="1.5" stroke-dasharray="6,3"/>
+              <line x1="100" y1="40" x2="100" y2="12" stroke="#444" stroke-width="2"/>
+              <rect x="80" y="2" width="40" height="16" fill="none"/><text x="100" y="14" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#1565c0">NH<tspan dy="3" font-size="9">2</tspan></text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">C6H5NH2 (Aniline)</div>
+            <div class="regInfo">
+              <div>김민수 수석</div>
+              <div>2026-02-18</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 18: 디메틸아민 C2H7N -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <line x1="40" y1="110" x2="100" y2="80" stroke="#444" stroke-width="2"/>
+              <line x1="100" y1="80" x2="160" y2="110" stroke="#444" stroke-width="2"/>
+              <line x1="100" y1="80" x2="100" y2="140" stroke="#444" stroke-width="2"/>
+              <rect x="16" y="100" width="36" height="20" fill="none"/><text x="34" y="114" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="4" font-size="9">3</tspan></text>
+              <rect x="140" y="100" width="36" height="20" fill="none"/><text x="158" y="114" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="4" font-size="9">3</tspan></text>
+              <rect x="88" y="68" width="24" height="20" fill="none"/><text x="100" y="82" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#1565c0">N</text>
+              <rect x="92" y="136" width="16" height="20" fill="none"/><text x="100" y="150" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">H</text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">C2H7N (Dimethylamine)</div>
+            <div class="regInfo">
+              <div>박서연 책임</div>
+              <div>2026-02-15</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 19: 이소프로판올 C3H8O -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <line x1="40" y1="110" x2="100" y2="110" stroke="#444" stroke-width="2"/>
+              <line x1="100" y1="110" x2="160" y2="110" stroke="#444" stroke-width="2"/>
+              <line x1="100" y1="110" x2="100" y2="60" stroke="#444" stroke-width="2"/>
+              <rect x="16" y="100" width="36" height="20" fill="none"/><text x="34" y="114" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="4" font-size="9">3</tspan></text>
+              <rect x="140" y="100" width="36" height="20" fill="none"/><text x="158" y="114" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#333">CH<tspan dy="4" font-size="9">3</tspan></text>
+              <rect x="86" y="42" width="28" height="20" fill="none"/><text x="100" y="56" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#c62828">OH</text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">C3H8O (Isopropanol)</div>
+            <div class="regInfo">
+              <div>최영진 선임</div>
+              <div>2026-02-12</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 샘플 카드 20: 요소 CH4N2O -->
+        <div class="grid_list_item waves-effect waves-hColor">
+          <div class="chemImg">
+            <svg width="100%" height="100%" viewBox="0 0 200 200" preserveAspectRatio="xMidYMid meet" style="display:block;">
+              <line x1="100" y1="90" x2="50" y2="130" stroke="#444" stroke-width="2"/>
+              <line x1="100" y1="90" x2="150" y2="130" stroke="#444" stroke-width="2"/>
+              <line x1="100" y1="90" x2="100" y2="42" stroke="#444" stroke-width="2"/>
+              <line x1="104" y1="90" x2="104" y2="42" stroke="#444" stroke-width="2"/>
+              <rect x="88" y="80" width="24" height="20" fill="none"/><text x="100" y="94" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#333">C</text>
+              <rect x="88" y="26" width="24" height="20" fill="none"/><text x="100" y="40" text-anchor="middle" font-size="14" font-weight="bold" font-family="monospace" fill="#c62828">O</text>
+              <rect x="24" y="124" width="40" height="20" fill="none"/><text x="44" y="138" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#1565c0">NH<tspan dy="4" font-size="9">2</tspan></text>
+              <rect x="132" y="124" width="40" height="20" fill="none"/><text x="152" y="138" text-anchor="middle" font-size="13" font-weight="bold" font-family="monospace" fill="#1565c0">NH<tspan dy="4" font-size="9">2</tspan></text>
+            </svg>
+          </div>
+          <div class="infoArea">
+            <div class="tit">CH4N2O (Urea)</div>
+            <div class="regInfo">
+              <div>정하윤 선임</div>
+              <div>2026-02-10</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </section>
+  </article>
+
+  <article id="fmlChemDrawWin" class="modal glassBox" style="width: 95%; height: 100vh; max-height: calc(100vh - 60px);">
+    <div class="modal-content">
+      <div class="infoModeArea">
+        <div class="chemInfoArea">
+          <div class="chemTit">C6H16S</div>
+          <div class="chemInfo">
+            <span class="mr5">2</span>atoms /
+            <span class="mr5">0</span>bonds
+          </div>
+        </div>
+        <div class="newAppleTab">
+          <ul>
+            <li class="waves-effect waves-hColor on">2D Editor</li>
+            <li class="waves-effect waves-hColor">2D View</li>
+            <li class="waves-effect waves-hColor">3D View</li>
+            <div class="tabBg" style="left: 0px;"></div>
+          </ul>
+        </div>
+      </div>
+      <div class="editorModeArea">
+        <div class="toolsArea">
+          <div class="toolsCont">
+            <div class="btnArea">
+              <div class="boxTit">Elements</div>
+              <div id="cdElementSlots" style="display:flex; align-items:center;">
+                <div class="btnBox" data-element="C">C</div>
+                <div class="btnBox" data-element="H">H</div>
+                <div class="btnBox" data-element="O">O</div>
+                <div class="btnBox" data-element="N">N</div>
+                <div class="btnBox" data-element="S">S</div>
+                <div class="btnBox" data-element="P">P</div>
+                <div class="btnBox" data-element="F">F</div>
+                <div class="btnBox" data-element="Cl">Cl</div>
+                <div class="btnBox" data-element="Br">Br</div>
+                <div class="btnBox" data-element="I">I</div>
+              </div>
+              <div class="btnBox" id="cdAddElementBtn" title="주기율표에서 원소 추가">+</div>
+              <div class="boxTit">H</div>
+              <div class="btnBox on">Auto</div>
+              <div class="btnBox">0</div>
+              <div class="btnBox">1</div>
+              <div class="btnBox">2</div>
+              <div class="btnBox">3</div>
+            </div>
+            <div class="btnArea">
+              <div class="boxTit">Bond</div>
+              <div class="btnBox" data-bond="single">
+                <svg width="18" height="18" viewBox="0 0 18 18"><line x1="3" y1="9" x2="15" y2="9" stroke="currentColor" stroke-width="2"/></svg>
+              </div>
+              <div class="btnBox" data-bond="double">
+                <svg width="18" height="18" viewBox="0 0 18 18"><line x1="3" y1="7" x2="15" y2="7" stroke="currentColor" stroke-width="2"/><line x1="3" y1="11" x2="15" y2="11" stroke="currentColor" stroke-width="2"/></svg>
+              </div>
+              <div class="btnBox" data-bond="triple">
+                <svg width="18" height="18" viewBox="0 0 18 18"><line x1="3" y1="5" x2="15" y2="5" stroke="currentColor" stroke-width="1.5"/><line x1="3" y1="9" x2="15" y2="9" stroke="currentColor" stroke-width="1.5"/><line x1="3" y1="13" x2="15" y2="13" stroke="currentColor" stroke-width="1.5"/></svg>
+              </div>
+            </div>
+            <div class="btnArea">
+              <div class="boxTit">Font</div>
+              <div class="btnBox on" data-font="Arial">Arial</div>
+              <div class="btnBox" data-font="Tahoma">Tahoma</div>
+            </div>
+            <div class="btnArea">
+              <div class="boxTit">Radical</div>
+              <div class="btnBox" data-radical="pentagon">
+                <svg width="18" height="18" viewBox="0 0 18 18"><polygon points="9,2 16,7 14,15 4,15 2,7" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+              </div>
+              <div class="btnBox" data-radical="hexagon">
+                <svg width="18" height="18" viewBox="0 0 18 18"><polygon points="9,1 16,5 16,13 9,17 2,13 2,5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+              </div>
+              <div class="btnBox" data-radical="benzene">
+                <svg width="18" height="18" viewBox="0 0 18 18"><polygon points="9,1 16,5 16,13 9,17 2,13 2,5" fill="none" stroke="currentColor" stroke-width="1.5"/><circle cx="9" cy="9" r="4" fill="none" stroke="currentColor" stroke-width="1.2"/></svg>
+              </div>
+              <div class="btnBox" data-radical="ring">
+                <svg width="18" height="18" viewBox="0 0 18 18"><circle cx="9" cy="9" r="6.5" fill="none" stroke="currentColor" stroke-width="1.5"/></svg>
+              </div>
+            </div>
+          </div>
+          <div class="btnArea">
+            <div class="btnBox"><i class="material-icons">undo</i></div>
+            <div class="btnBox mr10"><i class="material-icons">redo</i></div>
+            <div class="btnBox on"><i class="material-icons">grid_on</i></div>
+          </div>
+        </div>
+        <div class="editorArea" id="chemDrawEditorArea">
+          <div class="editor">
+            <div class="editorPlaceholder">
+              <i class="material-icons">science</i>
+              <p class="placeholderTit">Draw molecular structure here</p>
+              <p class="placeholderSub">Use Atom tool to place atoms, Bond tool to connect</p>
+            </div>
+            <!-- AI Drawing Loader — Aurora Glass -->
+            <div class="aiDrawingLoader" id="aiDrawingLoader">
+              <div class="auroraLayer"></div>
+              <div class="auroraLayer2"></div>
+              <div class="glassCard">
+                <div class="molAnim">
+                  <svg viewBox="0 0 120 120">
+                    <defs>
+                      <linearGradient id="aiAuroraGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                        <stop offset="0%" stop-color="#8364ff"/>
+                        <stop offset="35%" stop-color="#50c8ff"/>
+                        <stop offset="65%" stop-color="#64ffda"/>
+                        <stop offset="100%" stop-color="#ff80c8"/>
+                      </linearGradient>
+                      <radialGradient id="aiAtomGrad">
+                        <stop offset="0%" stop-color="#a78bfa"/>
+                        <stop offset="50%" stop-color="#60a5fa"/>
+                        <stop offset="100%" stop-color="#34d399"/>
+                      </radialGradient>
+                    </defs>
+                    <!-- bonds (hexagon) -->
+                    <line class="bond" x1="60" y1="20" x2="93" y2="39"/>
+                    <line class="bond" x1="93" y1="39" x2="93" y2="77"/>
+                    <line class="bond" x1="93" y1="77" x2="60" y2="96"/>
+                    <line class="bond" x1="60" y1="96" x2="27" y2="77"/>
+                    <line class="bond" x1="27" y1="77" x2="27" y2="39"/>
+                    <line class="bond" x1="27" y1="39" x2="60" y2="20"/>
+                    <!-- atoms (nodes) -->
+                    <circle class="atom" cx="60" cy="20" r="5"/>
+                    <circle class="atom" cx="93" cy="39" r="5"/>
+                    <circle class="atom" cx="93" cy="77" r="5"/>
+                    <circle class="atom" cx="60" cy="96" r="5"/>
+                    <circle class="atom" cx="27" cy="77" r="5"/>
+                    <circle class="atom" cx="27" cy="39" r="5"/>
+                  </svg>
+                </div>
+                <div class="loaderText" id="aiLoaderText">AI가 분자 구조를 그리고 있습니다...</div>
+                <div class="loaderSub" id="aiLoaderSub">잠시만 기다려주세요</div>
+                <div class="loaderBar"><div class="loaderBarFill"></div></div>
+              </div>
+            </div>
+          </div>
+          <div class="aiChatPanel">
+            <div class="aiChatHeader">
+              <div class="aiChatLogo">
+                <i class="material-icons">auto_awesome</i>
+                <span>AI Assistant</span>
+              </div>
+              <button class="aiChatToggle" onclick="this.closest('.aiChatPanel').classList.toggle('collapsed')">
+                <i class="material-icons">chevron_right</i>
+              </button>
+            </div>
+            <div class="aiChatMessages" id="aiChatMessages">
+              <div class="aiMsg bot">
+                <div class="aiMsgAvatar"><i class="material-icons">auto_awesome</i></div>
+                <div class="aiMsgBubble">안녕하세요! 분자 구조를 그려드릴게요. 원하는 분자를 말씀해주세요.<br><span class="aiMsgHint">예: "벤젠 그려줘", "OH기 추가해줘"</span></div>
+              </div>
+            </div>
+            <div class="aiChatInput">
+              <input type="text" id="aiChatInputField" placeholder="분자 구조를 설명해주세요..." onkeydown="if(event.key==='Enter')sendAiChat()">
+              <button onclick="sendAiChat()"><i class="material-icons">send</i></button>
+            </div>
+          </div>
+          <div class="srchArea">
+            <input type="text" placeholder="Formula / 명칭 / CAS-NO 통합검색">
+          </div>
+          <button class="aiChatOpenBtn" onclick="this.closest('.editorArea').querySelector('.aiChatPanel').classList.remove('collapsed')">
+            <i class="material-icons">auto_awesome</i>
+          </button>
+        </div>
+        <div class="editorStatusBar">
+          <span class="sbKey">드래그</span> 이동 <span class="sbDiv">|</span> <span class="sbKey">더블클릭</span> 속성변경 <span class="sbDiv">|</span> <span class="sbKey">Del</span> 삭제 <span class="sbDiv">|</span> <span class="sbKey">Ctrl+클릭</span> 개별선택 <span class="sbDiv">|</span> <span class="sbKey">Shift+클릭</span> 그룹선택 <span class="sbDiv">|</span> <span class="sbKey">Ctrl+A</span> 전체선택 <span class="sbDiv">|</span> <span class="sbKey">Ctrl+C/V</span> 복사/붙여넣기 <span class="sbDiv">|</span> <span class="sbKey">Ctrl+Z/Y</span> 실행취소/재실행 <span class="sbDiv">|</span> <span class="sbKey">Ctrl+휠</span> 확대축소 <span class="sbDiv">|</span> <span class="sbKey">우클릭</span> 메뉴
+        </div>
+      </div>
+      <div class="modalBtnArea">
+        <div class="dpFlex">
+          <div><a class="waves-effect waves-light hBtn color" href="#"><i class="material-icons left">border_clear</i>Clear</a></div>
+        </div>
+        <div class="dpFlex">
+          <div><a class="waves-effect waves-light hBtn mr10" href="#"><i class="material-icons left">save</i>Save</a></div>
+          <div><a class="waves-effect waves-light hBtn hGrey" href="#"><i class="material-icons left">close</i>Close</a></div>
+        </div>
+      </div>
+
+      <!-- Periodic Table Overlay -->
+      <div id="cdPeriodicTableOverlay">
+        <div id="cdPeriodicTableModal">
+          <div class="pt-header">
+            <span class="pt-title">Periodic Table of Elements</span>
+            <span class="pt-info" id="cdPTInfo">원소를 클릭하면 도구 모음에 추가됩니다</span>
+            <span class="pt-close" id="cdPTClose"><i class="material-icons">close</i></span>
+          </div>
+          <div class="pt-grid" id="cdPTGrid"></div>
+          <div class="pt-legend" id="cdPTLegend"></div>
+        </div>
+      </div>
+
+    </div>
+  </article>
+
+</body>
+</html>

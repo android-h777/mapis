@@ -1,0 +1,1511 @@
+/* ══════════════════════════════════════
+   PA Formulation Tool — Material Design 3
+   ══════════════════════════════════════ */
+
+/* ── Reset ── */
+html,body,div,span,applet,object,iframe,h1,h2,h3,h4,h5,h6,p,blockquote,pre,
+a,button,abbr,acronym,address,big,cite,code,del,dfn,em,img,ins,kbd,q,s,samp,
+small,strike,strong,sub,sup,tt,var,b,u,i,center,dl,dt,dd,ol,ul,li,fieldset,
+form,label,legend,table,caption,tbody,tfoot,thead,tr,th,td,article,aside,
+canvas,details,embed,figure,figcaption,footer,header,hgroup,menu,nav,output,
+ruby,section,summary,time,mark,audio,video {
+	margin: 0; padding: 0; border: 0;
+}
+article,aside,details,figcaption,figure,footer,header,hgroup,menu,nav,section { display: block; }
+ol, ul { list-style: none; }
+table { border-collapse: collapse; border-spacing: 0; }
+a { color: inherit; text-decoration: none; }
+img { display: inline-block; line-height: 0; vertical-align: top; }
+h1,h2,h3,h4,h5,h6 { font-weight: normal; }
+input,textarea,select,button { font: inherit; vertical-align: middle; margin: 0; padding: 0; }
+button { color: inherit; cursor: pointer; letter-spacing: inherit; }
+button[disabled] { cursor: default; }
+em { font-style: normal; }
+* { box-sizing: border-box; }
+
+/* ── Fonts ── */
+@font-face { font-family: 'SUIT-Light'; src: url('../fonts/SUIT-Light.otf') format('truetype'); }
+@font-face { font-family: 'SUIT-Regular'; src: url('../fonts/SUIT-Regular.otf') format('truetype'); }
+@font-face { font-family: 'SUIT-Medium'; src: url('../fonts/SUIT-Medium.otf') format('truetype'); }
+@font-face { font-family: 'SUIT-Bold'; src: url('../fonts/SUIT-Bold.otf') format('truetype'); }
+
+/* ── PANTONE Palette Tokens ── */
+:root {
+	/* Palette */
+	--cloud-dancer: #F0EDE5;
+	--veiled-vista: #A8C8B4;
+	--baltic-sea: #8BA8C4;
+	--golden-mist: #D4CC82;
+	--quiet-violet: #9B8EBE;
+	--cloud-cover: #B0A096;
+	--hematite: #6B6E65;
+	--blue-fusion: #667082;
+
+	/* Primary — Quiet Violet */
+	--md-primary: var(--quiet-violet);
+	--md-on-primary: var(--cloud-dancer);
+	--md-primary-container: rgba(155, 142, 190, 0.18);
+	--md-on-primary-container: var(--hematite);
+
+	/* Secondary — Baltic Sea */
+	--md-secondary: var(--baltic-sea);
+	--md-on-secondary: var(--cloud-dancer);
+	--md-secondary-container: rgba(155, 142, 190, 0.2);
+	--md-on-secondary-container: var(--blue-fusion);
+
+	/* Tertiary — Veiled Vista */
+	--md-tertiary: var(--veiled-vista);
+	--md-on-tertiary: var(--cloud-dancer);
+	--md-tertiary-container: rgba(155, 142, 190, 0.2);
+	--md-on-tertiary-container: var(--hematite);
+
+	/* Error — muted red from Hematite */
+	--md-error: #9B6E65;
+	--md-error-container: rgba(155, 110, 101, 0.12);
+
+	/* Surface — Cloud Dancer base */
+	--md-surface: var(--cloud-dancer);
+	--md-surface-dim: #E2DED6;
+	--md-surface-bright: var(--cloud-dancer);
+	--md-surface-container-lowest: #FAFAF7;
+	--md-surface-container-low: #F5F2EC;
+	--md-surface-container: var(--cloud-dancer);
+	--md-surface-container-high: #E8E4DC;
+	--md-surface-container-highest: #E0DCD4;
+	--md-on-surface: #4A4D46;
+	--md-on-surface-variant: #555A6B;
+	--md-outline: var(--cloud-cover);
+	--md-outline-variant: rgba(160, 148, 138, 0.5);
+
+	/* Elevation — softer shadows */
+	--md-elevation-1: 0 1px 3px rgba(107, 110, 101, 0.12), 0 1px 2px rgba(107, 110, 101, 0.08);
+	--md-elevation-2: 0 2px 6px rgba(107, 110, 101, 0.14), 0 1px 3px rgba(107, 110, 101, 0.1);
+	--md-elevation-3: 0 4px 12px rgba(107, 110, 101, 0.12), 0 1px 4px rgba(107, 110, 101, 0.08);
+
+	/* Shape */
+	--md-shape-xs: 4px;
+	--md-shape-sm: 8px;
+	--md-shape-md: 12px;
+	--md-shape-lg: 16px;
+	--md-shape-xl: 28px;
+	--md-shape-full: 9999px;
+
+	/* Yellow input → Golden Mist */
+	--yellow-bg: rgba(176, 160, 150, 0.18);
+	--yellow-border: var(--golden-mist);
+	--yellow-focus: #BFB86A;
+}
+
+body {
+	color: var(--md-on-surface); font-size: 14px;
+	font-family: 'SUIT-Regular', 'Roboto', -apple-system, sans-serif;
+	line-height: 1.5;
+	background-color: var(--md-surface);
+	-webkit-font-smoothing: antialiased;
+}
+td { font-family: 'SUIT-Regular', 'Roboto', sans-serif; }
+
+/* ── Utilities ── */
+.font11 { font-size: 13px !important; }
+
+/* ══════════════════════════════════════
+   Layout
+   ══════════════════════════════════════ */
+.pageWrap {
+	max-width: 1800px; margin: 0 auto; padding: 16px 24px;
+}
+
+/* ── Top App Bar (M3) ── */
+.headerBar {
+	display: flex; align-items: center; justify-content: space-between;
+	margin-bottom: 16px;
+	padding: 12px 16px 12px 20px;
+	background: rgba(240, 237, 229, 0.85);
+	backdrop-filter: blur(20px) saturate(1.4);
+	-webkit-backdrop-filter: blur(20px) saturate(1.4);
+	border-radius: var(--md-shape-md);
+	border: 1px solid rgba(255, 255, 255, 0.6);
+	border-top: 1px solid rgba(255, 255, 255, 0.9);
+	box-shadow:
+		0 4px 16px rgba(107, 110, 101, 0.14),
+		inset 0 1px 0 rgba(255,255,255,0.6),
+		inset 0 -1px 0 rgba(255,255,255,0.15);
+	position: sticky; top: 8px; z-index: 50;
+	overflow: hidden;
+}
+.headerBar::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background:
+		radial-gradient(
+			ellipse 300px 200px at var(--gx, 50%) var(--gy, 50%),
+			rgba(255,255,255,0.3) 0%,
+			rgba(255,255,255,0.06) 40%,
+			transparent 70%
+		),
+		conic-gradient(
+			from var(--g-angle, 0deg) at var(--gx, 50%) var(--gy, 50%),
+			rgba(255,0,0,0) 0%,
+			rgba(255,0,0,0.03) 8%,
+			rgba(255,165,0,0.03) 16%,
+			rgba(255,255,0,0.03) 24%,
+			rgba(0,255,0,0.03) 33%,
+			rgba(0,200,255,0.03) 42%,
+			rgba(0,100,255,0.03) 50%,
+			rgba(130,0,255,0.03) 58%,
+			rgba(255,0,200,0.03) 66%,
+			rgba(255,0,0,0.03) 75%,
+			rgba(255,0,0,0) 83%,
+			transparent 100%
+		);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	pointer-events: none;
+}
+.headerBar:hover::after {
+	opacity: 1;
+}
+.headerBar .titleArea {
+	display: flex; align-items: center; gap: 12px;
+}
+.headerBar .titleArea .titleIcon {
+	width: 40px; height: 40px; border-radius: var(--md-shape-md);
+	background: var(--md-primary);
+	display: flex; align-items: center; justify-content: center;
+	color: var(--md-on-primary);
+}
+.headerBar .titleArea .titleIcon i { font-size: 22px; }
+.headerBar .titleArea h1 {
+	font-family: 'SUIT-Bold'; font-size: 22px; color: #3A3D36;
+	letter-spacing: 0;
+}
+.headerBar .titleArea .titleSub {
+	font-size: 13px; color: var(--md-on-surface-variant); margin-top: 1px;
+}
+.headerBar .actArea {
+	display: flex; align-items: center; gap: 8px;
+}
+
+/* ══════════════════════════════════════
+   M3 Buttons
+   ══════════════════════════════════════ */
+.sfBtn {
+	display: inline-flex; align-items: center; gap: 8px;
+	padding: 6px 20px; border-radius: var(--md-shape-full);
+	font-family: 'SUIT-Medium'; font-size: 13px;
+	cursor: pointer; border: none;
+	transition: box-shadow 0.2s ease, background 0.2s ease;
+	position: relative; overflow: hidden;
+	letter-spacing: 0.1px;
+}
+.sfBtn i { font-size: 18px; }
+button.glassLight::before {
+	content: '';
+	position: absolute; inset: 0;
+	border-radius: inherit;
+	background:
+		radial-gradient(
+			ellipse 70% 70% at var(--light-x, 50%) var(--light-y, 50%),
+			transparent 0%,
+			rgba(255,255,255, var(--glass-frost-mid, 0.15)) 30%,
+			rgba(255,255,255, var(--glass-frost-edge, 0.3)) 100%
+		);
+	opacity: 0;
+	transition: opacity 0.25s ease;
+	pointer-events: none;
+	z-index: 1;
+}
+button.glassLight:hover::before {
+	opacity: 1;
+}
+button.glassLight:active {
+	transform: perspective(300px) rotateX(calc((var(--ly, 50) - 50) * 0.08deg)) rotateY(calc((50 - var(--lx, 50)) * 0.08deg)) scale(0.97);
+	transform-origin: var(--light-x, 50%) var(--light-y, 50%);
+	transition: all 0.08s ease;
+}
+
+/* Filled Button — Glass Engine (specular only) */
+.sfBtn.primary {
+	background: var(--md-primary); color: var(--md-on-primary);
+	box-shadow:
+		var(--md-elevation-1),
+		inset 0 1px 0 rgba(255,255,255,0.25),
+		inset 0 -1px 0 rgba(0,0,0,0.1);
+}
+.sfBtn.primary:hover {
+	box-shadow:
+		var(--md-elevation-2),
+		inset 0 1px 0 rgba(255,255,255,0.35),
+		inset 0 -1px 0 rgba(0,0,0,0.1);
+}
+.sfBtn.primary:active {
+	box-shadow: var(--md-elevation-1);
+}
+
+/* Tonal Button — Glass Engine */
+.sfBtn.secondary {
+	background:
+		linear-gradient(135deg, rgba(255,255,255,0.5) 0%, rgba(255,255,255,0.2) 40%, rgba(255,255,255,0.35) 100%),
+		var(--md-secondary-container);
+	color: var(--md-on-secondary-container);
+	box-shadow:
+		0 2px 6px rgba(107, 110, 101, 0.1),
+		0 0 0 1px rgba(255, 255, 255, 0.5),
+		inset 0 1px 0 rgba(255,255,255,0.7),
+		inset 0 -1px 0 rgba(255,255,255,0.2);
+	border: none;
+	backdrop-filter: blur(12px) saturate(1.6);
+	-webkit-backdrop-filter: blur(12px) saturate(1.6);
+	--glass-frost-mid: 0.2;
+	--glass-frost-edge: 0.4;
+}
+.sfBtn.secondary:hover {
+	color: #000;
+	box-shadow:
+		0 6px 16px rgba(107, 110, 101, 0.18),
+		0 3px 6px rgba(107, 110, 101, 0.1),
+		inset 0 1px 0 rgba(255,255,255,0.9),
+		inset 0 -1px 0 rgba(255,255,255,0.3);
+}
+.sfBtn.secondary:active {
+	box-shadow:
+		0 2px 6px rgba(107, 110, 101, 0.1),
+		0 0 0 1px rgba(255, 255, 255, 0.5),
+		inset 0 1px 0 rgba(255,255,255,0.7),
+		inset 0 -1px 0 rgba(255,255,255,0.2);
+}
+
+/* Outlined Button */
+.sfBtn.outlined {
+	background: transparent; color: var(--md-primary);
+	border: 1px solid var(--md-outline);
+}
+.sfBtn.outlined:hover {
+	background: var(--md-primary-container);
+}
+
+/* Excel Button — Glass Engine (specular only) */
+.sfBtn.excel {
+	background: var(--veiled-vista); color: #fff;
+	box-shadow:
+		var(--md-elevation-1),
+		inset 0 1px 0 rgba(255,255,255,0.25),
+		inset 0 -1px 0 rgba(0,0,0,0.1);
+}
+.sfBtn.excel:hover {
+	box-shadow:
+		var(--md-elevation-2),
+		inset 0 1px 0 rgba(255,255,255,0.35),
+		inset 0 -1px 0 rgba(0,0,0,0.1);
+}
+.sfBtn.excel:active {
+	box-shadow: var(--md-elevation-1);
+}
+
+/* Glass Engine — 색수차 (secondary only) */
+.sfBtn.secondary::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background:
+		conic-gradient(
+			from var(--light-angle, 0deg) at var(--light-x, 50%) var(--light-y, 50%),
+			rgba(255,0,0,0) 0%,
+			rgba(255,0,0,0.06) 8%,
+			rgba(255,165,0,0.06) 16%,
+			rgba(255,255,0,0.06) 24%,
+			rgba(0,255,0,0.06) 33%,
+			rgba(0,200,255,0.06) 42%,
+			rgba(0,100,255,0.06) 50%,
+			rgba(130,0,255,0.06) 58%,
+			rgba(255,0,200,0.06) 66%,
+			rgba(255,0,0,0.06) 75%,
+			rgba(255,0,0,0) 83%,
+			transparent 100%
+		);
+	mask: radial-gradient(ellipse at var(--light-x, 50%) var(--light-y, 50%), transparent 10%, black 60%);
+	-webkit-mask: radial-gradient(ellipse at var(--light-x, 50%) var(--light-y, 50%), transparent 10%, black 60%);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	pointer-events: none;
+	z-index: 2;
+}
+.sfBtn.secondary:hover::after {
+	opacity: 1;
+}
+
+/* ══════════════════════════════════════
+   Icon-Only Button (헤더 보조 액션)
+   - 솔리드 베이스 + 글래스 inset shadow (그라데이션 미사용)
+   - 정사각 36×36, 라벨 없음
+   ══════════════════════════════════════ */
+.sfBtn.iconOnly {
+	width: 36px; height: 36px;
+	padding: 0;
+	gap: 0;
+	justify-content: center;
+	overflow: visible;
+	background: var(--md-secondary-container);
+	color: var(--md-on-secondary-container);
+	box-shadow:
+		0 1px 3px rgba(107, 110, 101, 0.1),
+		0 0 0 1px rgba(255, 255, 255, 0.45),
+		inset 0 1px 0 rgba(255,255,255,0.55),
+		inset 0 -1px 0 rgba(255,255,255,0.15);
+	backdrop-filter: blur(12px) saturate(1.4);
+	-webkit-backdrop-filter: blur(12px) saturate(1.4);
+	--glass-frost-mid: 0.2;
+	--glass-frost-edge: 0.4;
+}
+.sfBtn.iconOnly:hover {
+	color: #2A2D26;
+	box-shadow:
+		0 4px 12px rgba(107, 110, 101, 0.16),
+		0 0 0 1px rgba(255, 255, 255, 0.6),
+		inset 0 1px 0 rgba(255,255,255,0.75),
+		inset 0 -1px 0 rgba(255,255,255,0.2);
+}
+.sfBtn.iconOnly i { font-size: 18px; }
+
+/* Excel 변형: iconOnly + excel 클래스 — 세이지 그린 톤 유지 */
+.sfBtn.iconOnly.excel {
+	background: var(--veiled-vista);
+	color: #fff;
+	box-shadow:
+		var(--md-elevation-1),
+		inset 0 1px 0 rgba(255,255,255,0.25),
+		inset 0 -1px 0 rgba(0,0,0,0.1);
+}
+.sfBtn.iconOnly.excel:hover {
+	color: #fff;
+	box-shadow:
+		var(--md-elevation-2),
+		inset 0 1px 0 rgba(255,255,255,0.35),
+		inset 0 -1px 0 rgba(0,0,0,0.1);
+}
+
+/* 그룹 구분선 — 보조 액션과 메인 액션 사이 */
+.actDivider {
+	width: 1px; height: 22px;
+	margin: 0 4px;
+	background: rgba(107, 110, 101, 0.22);
+	border-radius: 1px;
+}
+
+/* 커스텀 툴팁 — data-tip 속성 기반
+   ::after 사용. iconOnly 는 secondary 가 아니므로 색수차와 충돌 X */
+.sfBtn.iconOnly[data-tip]::after {
+	content: attr(data-tip);
+	position: absolute;
+	top: calc(100% + 8px);
+	left: 50%;
+	transform: translateX(-50%) translateY(-4px);
+	padding: 5px 10px;
+	background: rgba(58, 61, 54, 0.94);
+	color: #F5F3EF;
+	font-family: 'SUIT-Regular';
+	font-size: 13px;
+	line-height: 1;
+	border-radius: 6px;
+	white-space: nowrap;
+	opacity: 0;
+	pointer-events: none;
+	transition: opacity 0.18s ease, transform 0.18s ease;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+	z-index: 1000;
+}
+.sfBtn.iconOnly[data-tip]:hover::after {
+	opacity: 1;
+	transform: translateX(-50%) translateY(0);
+}
+
+/* ══════════════════════════════════════
+   FAB — 실험 전체 종료 (우측 하단 고정)
+   - 솔리드 골드미스트 + halo on hover (그라데이션 미사용)
+   ══════════════════════════════════════ */
+.fabFinish {
+	position: fixed;
+	right: 32px; bottom: 32px;
+	width: 56px; height: 56px;
+	border-radius: var(--md-shape-full);
+	border: none;
+	background: var(--golden-mist);
+	color: #3A3D36;
+	cursor: pointer;
+	display: flex; align-items: center; justify-content: center;
+	box-shadow:
+		0 6px 18px rgba(107, 110, 101, 0.22),
+		0 2px 6px rgba(107, 110, 101, 0.14),
+		inset 0 1px 0 rgba(255,255,255,0.45),
+		inset 0 -1px 0 rgba(0,0,0,0.08);
+	transition: transform 0.18s ease, box-shadow 0.25s ease, opacity 0.25s ease;
+	z-index: 4500;
+}
+.fabFinish i { font-size: 26px; }
+.fabFinish:hover {
+	transform: translateY(-2px);
+	color: #2A2D26;
+	box-shadow:
+		0 12px 28px rgba(107, 110, 101, 0.28),
+		0 4px 10px rgba(107, 110, 101, 0.18),
+		0 0 0 8px rgba(212, 204, 130, 0.22),
+		inset 0 1px 0 rgba(255,255,255,0.6),
+		inset 0 -1px 0 rgba(0,0,0,0.08);
+}
+.fabFinish:active {
+	transform: translateY(0);
+}
+.fabFinish.hidden {
+	opacity: 0;
+	pointer-events: none;
+	transform: translateY(8px);
+}
+
+/* FAB 툴팁 — 왼쪽으로 펼침 */
+.fabFinish[data-tip]::after {
+	content: attr(data-tip);
+	position: absolute;
+	right: calc(100% + 12px);
+	top: 50%;
+	transform: translateY(-50%) translateX(4px);
+	padding: 6px 12px;
+	background: rgba(58, 61, 54, 0.94);
+	color: #F5F3EF;
+	font-family: 'SUIT-Regular'; font-size: 13px; line-height: 1;
+	border-radius: 8px;
+	white-space: nowrap;
+	opacity: 0; pointer-events: none;
+	transition: opacity 0.18s ease, transform 0.18s ease;
+	box-shadow: 0 4px 12px rgba(0,0,0,0.18);
+}
+.fabFinish:hover[data-tip]::after {
+	opacity: 1;
+	transform: translateY(-50%) translateX(0);
+}
+
+/* Confirm Modal — 좁은 폭 (sfModal 베이스 + override) */
+.sfModal.confirmModal {
+	min-width: 380px;
+	max-width: 440px;
+}
+.sfModal.confirmModal .confirmText {
+	font-family: 'SUIT-Regular'; font-size: 14px;
+	color: var(--md-on-surface);
+	line-height: 1.6;
+	margin: 0;
+	padding: 4px 0 8px;
+}
+
+/* ══════════════════════════════════════
+   M3 Card — Table Container
+   ══════════════════════════════════════ */
+.tableWrap {
+	position: relative;
+	background: rgba(255, 255, 255, 0.85);
+	backdrop-filter: blur(20px) saturate(1.4);
+	-webkit-backdrop-filter: blur(20px) saturate(1.4);
+	border-radius: var(--md-shape-lg);
+	box-shadow:
+		0 8px 32px rgba(0, 0, 0, 0.1),
+		0 2px 8px rgba(0, 0, 0, 0.06),
+		inset 0 1px 0 rgba(255,255,255,0.7),
+		inset 0 -1px 0 rgba(255,255,255,0.2);
+	overflow: hidden;
+	border: 1px solid rgba(255, 255, 255, 0.5);
+	border-top: 1.5px solid rgba(255, 255, 255, 0.7);
+}
+.tableWrap .tableTitle {
+	display: flex; align-items: center; justify-content: space-between;
+	padding: 14px 20px 8px;
+}
+.tableWrap .tableTitle h3 {
+	font-family: 'SUIT-Bold'; font-size: 15px; color: var(--md-on-surface);
+	display: flex; align-items: center; gap: 8px;
+}
+.tableWrap .tableTitle h3 i {
+	font-size: 20px; color: var(--md-primary);
+}
+.tableScroll {
+	position: relative;
+	overflow-x: auto; overflow-y: visible;
+}
+
+/* ── M3 Data Table ── */
+.fmlTable {
+	width: 100%; min-width: 700px;
+	border-collapse: collapse;
+}
+.fmlTable thead th {
+	padding: 8px 12px;
+	font-family: 'SUIT-Medium'; font-size: 13px;
+	color: #4A4D46;
+	background: #F5F3EF;
+	border-bottom: 1px solid rgba(160, 148, 138, 0.5);
+	white-space: nowrap;
+	position: sticky; top: 0; z-index: 15;
+	letter-spacing: 0.3px;
+}
+.fmlTable tbody td {
+	padding: 5px 12px; font-size: 13px;
+	border-bottom: 1px solid rgba(160, 148, 138, 0.35);
+	color: #4A4D46;
+	background: #FFFFFF;
+}
+.fmlTable.expFocusMode tbody tr:hover td.expActive {
+	color: #000;
+	font-family: 'SUIT-Medium';
+}
+.fmlTable.expFocusMode tbody tr:hover td.expActive input {
+	color: #000;
+	font-family: 'SUIT-Medium';
+}
+
+.fmlTable:not(.expFocusMode) tbody tr:hover td {
+	color: #000;
+	font-family: 'SUIT-Medium';
+}
+.fmlTable:not(.expFocusMode) tbody tr:hover td input {
+	color: #000;
+	font-family: 'SUIT-Medium';
+}
+
+/* Glass Row Overlay (JS 생성) */
+.glassRowOverlay {
+	position: absolute;
+	border-radius: 6px;
+	background:
+		radial-gradient(
+			ellipse 250px 250px at var(--olx, 50%) var(--oly, 50%),
+			transparent 0%,
+			transparent 40%,
+			rgba(255,255,255,0.25) 70%,
+			rgba(255,255,255,0.4) 100%
+		),
+		conic-gradient(
+			from var(--ol-angle, 0deg) at var(--olx, 50%) var(--oly, 50%),
+			rgba(255,0,0,0) 0%,
+			rgba(255,0,0,0.05) 8%,
+			rgba(255,165,0,0.05) 16%,
+			rgba(255,255,0,0.05) 24%,
+			rgba(0,255,0,0.05) 33%,
+			rgba(0,200,255,0.05) 42%,
+			rgba(0,100,255,0.05) 50%,
+			rgba(130,0,255,0.05) 58%,
+			rgba(255,0,200,0.05) 66%,
+			rgba(255,0,0,0.05) 75%,
+			rgba(255,0,0,0) 83%,
+			transparent 100%
+		);
+	box-shadow:
+		inset 0 2px 0 rgba(255,255,255,0.9),
+		inset 0 -2px 3px rgba(0,0,0,0.06),
+		inset 1px 0 0 rgba(255,255,255,0.5),
+		inset -1px 0 0 rgba(255,255,255,0.5),
+		0 3px 10px rgba(0,0,0,0.08),
+		0 1px 3px rgba(0,0,0,0.05);
+	pointer-events: none;
+	z-index: 11;
+	opacity: 0;
+	transition: opacity 0.15s ease, top 0.1s ease;
+	transform: perspective(800px)
+		rotateY(calc((var(--ox, 50) - 50) * 0.07deg))
+		rotateX(calc((15 - var(--oy, 15)) * 0.5deg));
+	transform-origin: var(--olx, 50%) 50%;
+}
+.glassRowOverlay::before,
+.glassRowOverlay::after {
+	content: '';
+	position: absolute;
+	left: 0; right: 0;
+	height: 2px;
+	background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+	opacity: 0.7;
+}
+.glassRowOverlay::before {
+	top: 0;
+}
+.glassRowOverlay::after {
+	bottom: 0;
+}
+.glassCaustic {
+	position: absolute;
+	width: 80px; height: 6px;
+	background:
+		radial-gradient(
+			ellipse 100% 100% at 50% 0%,
+			rgba(255,255,255,0.5) 0%,
+			rgba(200,195,220,0.2) 40%,
+			transparent 100%
+		);
+	border-radius: 50%;
+	filter: blur(2px);
+	pointer-events: none;
+}
+.glassRowOverlay.active {
+	opacity: 1;
+}
+
+/* ── 좌측 고정 열 (sticky) ── */
+.fmlTable .colStage,
+.fmlTable .colType,
+.fmlTable .colName,
+.fmlTable .colCode,
+.fmlTable .colFunc {
+	position: sticky;
+	z-index: 10;
+	background: #FFFFFF;
+}
+.fmlTable thead .colStage,
+.fmlTable thead .colType,
+.fmlTable thead .colName,
+.fmlTable thead .colCode,
+.fmlTable thead .colFunc {
+	z-index: 20;
+	background: #DDD8E8;
+	color: #3D3A4A;
+	font-family: 'SUIT-Medium';
+	border-bottom: none;
+	box-shadow: inset 0 -2px 0 var(--md-outline-variant);
+}
+.fmlTable thead .colFunc {
+	text-align: center;
+	box-shadow: inset 0 -2px 0 var(--md-outline-variant), inset -2px 0 0 var(--md-outline-variant);
+}
+.fmlTable .colStage {
+	left: 0; width: 64px; min-width: 64px; max-width: 64px;
+	font-family: 'SUIT-Medium'; font-size: 13px;
+	color: #7B6FA8;
+	background: #F4F2EE;
+	text-align: center; vertical-align: middle;
+	border-right: none;
+	box-shadow: inset -1px 0 0 var(--md-outline-variant);
+	white-space: nowrap; letter-spacing: 0.5px;
+}
+.fmlTable .colType {
+	left: 64px; width: 90px; min-width: 90px; max-width: 90px;
+	color: #000;
+	font-family: 'SUIT-Medium';
+	font-size: 13px;
+	vertical-align: middle;
+	text-align: center;
+	white-space: nowrap;
+}
+.fmlTable .colName {
+	left: 154px; width: 160px; min-width: 160px; max-width: 160px;
+	font-family: 'SUIT-Medium'; color: var(--md-on-surface);
+}
+.fmlTable .colCode {
+	left: 314px; width: 90px; min-width: 90px; max-width: 90px;
+	color: var(--md-on-surface-variant); font-size: 13px;
+	padding: 5px 4px;
+}
+.fmlTable .colCode input { padding: 4px 2px; }
+.fmlTable .colFunc {
+	left: 404px; width: 72px; min-width: 72px; max-width: 72px;
+	text-align: right; color: #7AA18A;
+	font-family: 'SUIT-Medium'; font-size: 13px;
+	border-right: none;
+	box-shadow: inset -2px 0 0 var(--md-outline-variant);
+	padding: 5px 4px 5px 0;
+}
+.fmlTable .colFunc input {
+	padding-right: 0;
+	-moz-appearance: textfield;
+}
+.fmlTable .colFunc input::-webkit-outer-spin-button,
+.fmlTable .colFunc input::-webkit-inner-spin-button {
+	-webkit-appearance: none;
+	margin: 0;
+}
+/* rowTotal, rowSubtotal 에서도 고정 배경 유지 */
+.fmlTable .rowTotal .colStage,
+.fmlTable .rowTotal .colType,
+.fmlTable .rowSubtotal .colStage,
+.fmlTable .rowSubtotal .colType {
+	background: #F0EDE6;
+}
+
+.fmlTable .colExp {
+	text-align: right; min-width: 92px;
+	font-variant-numeric: tabular-nums;
+}
+/* 실험번호 헤더 (colspan row) */
+.fmlTable .colExpHeader {
+	text-align: center;
+	background: rgba(221, 216, 232, 0.85);
+	padding: 6px 8px;
+	white-space: nowrap;
+	border-bottom: 1px solid var(--md-outline-variant);
+	overflow: hidden;
+}
+.colExpHeader .expHeaderInner {
+	display: flex; align-items: center; justify-content: space-between; gap: 6px;
+}
+/* 실험 타이틀 입력 */
+.expTitleInput {
+	border: none !important;
+	border-radius: 0 !important;
+	color: var(--hematite); font-family: 'SUIT-Medium';
+	font-size: 13px; text-align: left;
+	padding: 2px 4px; outline: none;
+	width: 80px; min-width: 40px;
+	background-color: transparent !important;
+	background-image:
+		linear-gradient(var(--md-outline-variant), var(--md-outline-variant)),
+		linear-gradient(var(--md-primary), var(--md-primary)) !important;
+	background-size: 100% 1px, 0% 2px !important;
+	background-position: bottom, bottom !important;
+	background-repeat: no-repeat !important;
+	transition: background-size 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.expTitleInput:hover {
+	background-image:
+		linear-gradient(var(--cloud-cover), var(--cloud-cover)),
+		linear-gradient(var(--md-primary), var(--md-primary)) !important;
+}
+.expTitleInput:focus {
+	background-size: 100% 1px, 100% 2px !important;
+}
+.expTitleInput::placeholder { color: var(--cloud-cover); }
+/* 배합설계 열기 버튼 */
+.expDesignBtn {
+	position: relative;
+	display: inline-flex; align-items: center; gap: 3px;
+	padding: 3px 10px;
+	border-radius: var(--md-shape-full);
+	background:
+		linear-gradient(135deg, rgba(255,255,255,0.7) 0%, rgba(255,255,255,0.4) 40%, rgba(255,255,255,0.55) 100%);
+	backdrop-filter: blur(12px) saturate(1.6);
+	-webkit-backdrop-filter: blur(12px) saturate(1.6);
+	border: 0.5px solid rgba(255, 255, 255, 0.85);
+	color: var(--hematite); cursor: pointer;
+	font-family: 'SUIT-Medium'; font-size: 13px;
+	transition: all 0.25s ease;
+	flex-shrink: 0;
+	white-space: nowrap;
+	box-shadow:
+		0 2px 6px rgba(107, 110, 101, 0.12),
+		0 1px 2px rgba(107, 110, 101, 0.08),
+		inset 0 1px 0 rgba(255,255,255,0.9),
+		inset 0 -1px 0 rgba(255,255,255,0.3);
+	overflow: hidden;
+	--glass-frost-mid: 0.2;
+	--glass-frost-edge: 0.45;
+}
+.expDesignBtn::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background:
+		conic-gradient(
+			from var(--light-angle, 0deg) at var(--light-x, 50%) var(--light-y, 50%),
+			rgba(255,0,0,0) 0%,
+			rgba(255,0,0,0.06) 8%,
+			rgba(255,165,0,0.06) 16%,
+			rgba(255,255,0,0.06) 24%,
+			rgba(0,255,0,0.06) 33%,
+			rgba(0,200,255,0.06) 42%,
+			rgba(0,100,255,0.06) 50%,
+			rgba(130,0,255,0.06) 58%,
+			rgba(255,0,200,0.06) 66%,
+			rgba(255,0,0,0.06) 75%,
+			rgba(255,0,0,0) 83%,
+			transparent 100%
+		);
+	mask: radial-gradient(ellipse at var(--light-x, 50%) var(--light-y, 50%), transparent 10%, black 60%);
+	-webkit-mask: radial-gradient(ellipse at var(--light-x, 50%) var(--light-y, 50%), transparent 10%, black 60%);
+	opacity: 0;
+	transition: opacity 0.3s ease;
+	pointer-events: none;
+	z-index: 2;
+}
+.expDesignBtn:hover {
+	color: #000;
+	background:
+		linear-gradient(135deg, rgba(255,255,255,0.8) 0%, rgba(255,255,255,0.5) 40%, rgba(255,255,255,0.65) 100%);
+	box-shadow:
+		0 6px 16px rgba(107, 110, 101, 0.22),
+		0 3px 6px rgba(107, 110, 101, 0.12),
+		inset 0 1px 0 rgba(255,255,255,1),
+		inset 0 -1px 0 rgba(255,255,255,0.4);
+}
+.expDesignBtn:hover::after {
+	opacity: 1;
+}
+.expDesignBtn:active {
+	box-shadow:
+		0 1px 3px rgba(107, 110, 101, 0.1),
+		inset 0 1px 0 rgba(255,255,255,0.6),
+		inset 0 -1px 0 rgba(255,255,255,0.2);
+}
+.expDesignBtn i { font-size: 14px; position: relative; z-index: 3; }
+.expDesignBtn span { position: relative; z-index: 3; }
+/* 서브 헤더 (원배합/100배합/실투입/희석배합) */
+.fmlTable .colExpSub {
+	text-align: center; font-size: 13px; color: #3D3A4A;
+	font-family: 'SUIT-Medium';
+	background: rgba(221, 216, 232, 0.85);
+	padding: 6px 8px;
+	border-bottom: none;
+	box-shadow: inset 0 -2px 0 var(--md-outline-variant);
+}
+/* 2단 헤더 sticky */
+.fmlTable .headRow1 th { top: 0; }
+.fmlTable .headRow2 th { top: 29px; }
+/* 실험 간 구분선 */
+.fmlTable .expBorderL {
+	border-left: 2px solid rgba(138, 125, 176, 0.35);
+}
+
+/* ── 실험 포커스 (배합설계 열릴 때) ── */
+.fmlTable .expDimmed {
+	opacity: 1;
+	background: rgba(240,237,229,0.7);
+	backdrop-filter: blur(1px);
+	-webkit-backdrop-filter: blur(1px);
+	color: rgba(74,77,70,0.3);
+	transition: all 0.3s ease;
+}
+.fmlTable .expDimmed input {
+	color: rgba(74,77,70,0.3);
+}
+.fmlTable .expActive {
+	opacity: 1;
+	transition: all 0.3s ease;
+}
+
+.glassColOverlay {
+	position: fixed;
+	border-radius: 5px;
+	background:
+		linear-gradient(180deg, rgba(155,142,190,0.1) 0%, rgba(155,142,190,0.05) 50%, rgba(155,142,190,0.08) 100%);
+	border: 1.5px solid rgba(155,142,190,0.25);
+	box-shadow:
+		0 0 0 1px rgba(255,255,255,0.5),
+		0 20px 60px rgba(0,0,0,0.15),
+		0 8px 20px rgba(0,0,0,0.1),
+		inset 0 2px 0 rgba(255,255,255,0.8),
+		inset 0 -2px 6px rgba(0,0,0,0.05);
+	pointer-events: none;
+	z-index: 99;
+	opacity: 0;
+	transition: opacity 0.3s ease;
+}
+.glassColOverlay.active {
+	opacity: 1;
+}
+
+
+/* 소계 행 */
+.fmlTable .rowSubtotal td {
+	background: #F4F2EE;
+	font-family: 'SUIT-Medium';
+	border-top: 1px solid rgba(160, 148, 138, 0.5);
+	border-bottom: 2px solid rgba(160, 148, 138, 0.5);
+	color: #000;
+	font-size: 13px;
+	padding: 5px 12px;
+}
+/* Total 행 */
+.fmlTable .rowTotal td {
+	background: #EDEAE4;
+	font-family: 'SUIT-Medium';
+	border-top: 2px solid var(--md-primary);
+	color: #000;
+}
+
+/* ── M3 TextField (Table) ── */
+.fmlTable input[type="text"],
+.fmlTable input[type="number"] {
+	width: 100%; padding: 4px 8px 5px;
+	border: none;
+	border-radius: 0;
+	font-size: 13px;
+	background-color: transparent;
+	background-image:
+		linear-gradient(var(--md-outline-variant), var(--md-outline-variant)),
+		linear-gradient(var(--md-primary), var(--md-primary));
+	background-size: 100% 1px, 0% 2px;
+	background-position: bottom, bottom;
+	background-repeat: no-repeat;
+	color: var(--md-on-surface);
+	transition: background-size 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+	outline: none;
+}
+.fmlTable input[type="text"] { text-align: left; }
+.fmlTable input[type="number"] { text-align: right; }
+.fmlTable input:focus {
+	background-size: 100% 1px, 100% 2px;
+}
+
+/* ══════════════════════════════════════
+   계산 결과 셀
+   ══════════════════════════════════════ */
+.calcCell {
+	color: var(--md-on-surface); font-family: 'SUIT-Regular';
+	font-size: 13px; text-align: right;
+	white-space: nowrap;
+	font-variant-numeric: tabular-nums;
+}
+
+/* 원료정보 Input (Yellow accent) */
+.cellInput.matInput {
+	background-color: transparent !important;
+	background-image:
+		linear-gradient(var(--md-outline-variant), var(--md-outline-variant)),
+		linear-gradient(var(--md-primary), var(--md-primary)) !important;
+	background-size: 100% 1px, 0% 2px !important;
+	background-position: bottom, bottom !important;
+	background-repeat: no-repeat !important;
+	border: none !important;
+	border-radius: 0 !important;
+	font-size: 13px; padding: 4px 0;
+}
+.cellInput.matInput:focus {
+	background-size: 100% 1px, 100% 2px !important;
+}
+
+/* 실투입 총량 */
+.batchSizeWrap {
+	display: inline-flex; align-items: center; gap: 3px;
+	font-family: 'SUIT-Medium'; font-size: 13px;
+	color: var(--md-on-surface-variant);
+	white-space: nowrap;
+}
+.batchSizeInput {
+	width: 36px !important;
+	padding: 4px 0 !important;
+	border: none !important;
+	border-radius: 0 !important;
+	font-size: 13px !important; font-family: 'SUIT-Medium' !important;
+	text-align: right !important;
+	background-color: transparent !important;
+	background-image:
+		linear-gradient(var(--md-outline-variant), var(--md-outline-variant)),
+		linear-gradient(var(--md-primary), var(--md-primary)) !important;
+	background-size: 100% 1px, 0% 2px !important;
+	background-position: bottom, bottom !important;
+	background-repeat: no-repeat !important;
+	color: var(--md-on-surface) !important;
+	outline: none;
+	transition: background-size 0.35s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+.batchSizeInput::-webkit-outer-spin-button,
+.batchSizeInput::-webkit-inner-spin-button {
+	-webkit-appearance: none; margin: 0;
+}
+.batchSizeInput { -moz-appearance: textfield; }
+.batchSizeInput:focus {
+	background-size: 100% 1px, 100% 2px !important;
+}
+.batchSizeInput::placeholder {
+	color: var(--md-on-surface-variant); font-size: 13px; font-family: 'SUIT-Regular' !important;
+}
+
+/* ── Form Label Sub ── */
+.fgLabelSub {
+	font-size: 13px; color: var(--md-on-surface-variant);
+	letter-spacing: -0.2px;
+}
+/* ── Polymer 체크박스 (filled-in) ── */
+.polyCheck {
+	display: inline-flex; align-items: center; gap: 6px;
+	margin-right: 14px;
+	font-size: 13px; font-family: 'SUIT-Medium';
+	color: var(--md-on-surface);
+	cursor: pointer; user-select: none;
+}
+.polyCheck .cbLabel {
+	min-width: 80px;
+}
+.polyCheck .cbBox {
+	display: inline-block;
+	width: 18px; height: 18px;
+	border: 2px solid var(--cloud-cover);
+	border-radius: 2px;
+	background: transparent;
+	flex-shrink: 0;
+	transition: all 0.15s ease;
+}
+.polyCheck.checked .cbBox {
+	border-color: var(--md-primary);
+	background: var(--md-primary);
+	background-image: url("data:image/svg+xml;charset=UTF-8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='18' viewBox='0 0 24 24' fill='none' stroke='white' stroke-width='3.5' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpolyline points='4 12 9 17 20 6'/%3E%3C/svg%3E");
+	background-repeat: no-repeat;
+	background-position: center;
+	background-size: 14px 14px;
+}
+
+/* ── Ratio 인풋 (라벨 + 인풋 묶음) ── */
+.ratioRow {
+	display: flex; gap: 8px; flex-wrap: wrap; margin-top: 4px;
+}
+.ratioInputWrap {
+	display: flex; flex-direction: column; align-items: center;
+	gap: 3px; min-width: 90px;
+}
+.ratioInputWrap .ratioLabel {
+	font-size: 13px; font-family: 'SUIT-Medium';
+	color: var(--md-on-surface-variant); letter-spacing: 0.3px;
+	white-space: nowrap;
+}
+.ratioInputWrap .ratioInput {
+	width: 80px; padding: 5px 4px; text-align: right;
+	border: none;
+	border-radius: 0;
+	font-size: 13px;
+	background-color: transparent;
+	background-image:
+		linear-gradient(var(--md-outline-variant), var(--md-outline-variant)),
+		linear-gradient(var(--md-primary), var(--md-primary));
+	background-size: 100% 1px, 0% 2px;
+	background-position: bottom, bottom;
+	background-repeat: no-repeat;
+	color: var(--md-on-surface); outline: none;
+	transition: background-size 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.ratioInputWrap .ratioInput:focus {
+	background-size: 100% 1px, 100% 2px;
+}
+.ratioInputWrap.auto .ratioInput {
+	background: transparent;
+	cursor: default;
+	text-align: right !important;
+	padding: 6px 10px;
+}
+
+/* 자동 계산 결과 */
+.calcResult {
+	font-family: 'SUIT-Medium';
+	font-size: 14px;
+	color: var(--md-on-surface);
+	flex: 1;
+	text-align: right;
+	min-width: 50px;
+	display: inline-block;
+}
+.calcResultGap {
+	margin-left: 8px;
+}
+
+/* ══════════════════════════════════════
+   M3 Dialog (Modal)
+   ══════════════════════════════════════ */
+.modal-overlay {
+	position: fixed; inset: 0; z-index: 5000;
+	background: rgba(0, 0, 0, 0.32);
+	opacity: 0; pointer-events: none;
+	transition: opacity 0.2s ease;
+}
+.modal-overlay.active { opacity: 1; pointer-events: auto; }
+
+.sfModal {
+	position: fixed; z-index: 5100;
+	top: 50%; left: 50%;
+	transform: translate(-50%, -50%);
+	background: rgba(210, 150, 110, 0.10);
+	backdrop-filter: blur(24px) saturate(1.6);
+	-webkit-backdrop-filter: blur(24px) saturate(1.6);
+	border-radius: var(--md-shape-xl);
+	box-shadow: 0 8px 40px rgba(102, 112, 130, 0.2), 0 2px 12px rgba(102, 112, 130, 0.1);
+	border: 1px solid rgba(255, 255, 255, 0.6);
+	border-top: 1px solid rgba(255, 255, 255, 0.8);
+	padding: 0; min-width: 560px; max-width: 90vw; max-height: 85vh;
+	opacity: 0; pointer-events: none;
+	transition: all 0.3s cubic-bezier(0.2, 0, 0, 1);
+	display: flex; flex-direction: column;
+}
+.sfModal.active {
+	opacity: 1; pointer-events: auto;
+}
+
+.sfModal .modalHeader {
+	display: flex; align-items: center; justify-content: space-between;
+	padding: 24px 24px 16px;
+}
+.sfModal .modalHeader h2 {
+	font-family: 'SUIT-Bold'; font-size: 24px; color: var(--md-on-surface);
+	display: flex; align-items: center; gap: 10px;
+	letter-spacing: 0;
+}
+.sfModal .modalHeader h2 i {
+	font-size: 24px; color: var(--md-on-surface-variant);
+}
+.sfModal .modalClose {
+	width: 40px; height: 40px; border-radius: var(--md-shape-full);
+	display: flex; align-items: center; justify-content: center;
+	background: transparent; border: none; color: var(--md-on-surface-variant);
+	transition: all 0.2s ease;
+}
+.sfModal .modalClose:hover {
+	background: rgba(107, 110, 101, 0.08);
+}
+.sfModal .modalBody {
+	padding: 0 24px 24px; overflow-y: auto; flex: 1;
+}
+.sfModal .modalFooter {
+	padding: 16px 24px 24px;
+	display: flex; justify-content: flex-end; gap: 8px;
+}
+
+/* 실험 선택 드롭다운 */
+.expSelect {
+	font-family: 'SUIT-Medium'; font-size: 16px;
+	color: var(--md-on-surface);
+	background: var(--md-surface-container);
+	border: 1px solid var(--md-outline-variant);
+	border-radius: var(--md-shape-sm);
+	padding: 4px 12px 4px 8px;
+	outline: none; cursor: pointer;
+	transition: all 0.15s ease;
+}
+.expSelect:hover {
+	border-color: var(--md-primary);
+}
+.expSelect:focus {
+	border-color: var(--md-primary);
+	box-shadow: 0 0 0 2px rgba(210, 150, 110, 0.18);
+}
+
+/* Dialog buttons */
+.sfModal .sfBtn.primary {
+	background: var(--md-primary); color: var(--md-on-primary);
+}
+.sfModal .sfBtn.secondary {
+	background: transparent; color: var(--md-primary);
+}
+.sfModal .sfBtn.secondary:hover {
+	background: rgba(210, 150, 110, 0.12);
+}
+
+/* ── M3 Form Grid ── */
+.formGridWrap {
+	position: relative;
+	border-radius: var(--md-shape-md);
+	overflow: hidden;
+	background: rgba(255, 255, 255, 0.45);
+}
+.formGrid {
+	width: 100%;
+	border-collapse: collapse;
+}
+.formGrid .fgLabel {
+	width: 230px;
+	padding: 8px 12px;
+	background: rgba(210, 150, 110, 0.08);
+	font-family: 'SUIT-Medium'; font-size: 13px; color: var(--md-on-surface-variant);
+	border-bottom: 1px solid rgba(210, 150, 110, 0.2);
+	vertical-align: middle;
+}
+.formGrid .fgValue {
+	padding: 6px 12px;
+	background: rgba(255, 255, 255, 0.35);
+	border-bottom: 1px solid rgba(210, 150, 110, 0.15);
+	vertical-align: middle;
+}
+/* M3 Filled TextField */
+.formGrid .fgValue input {
+	flex: 1; padding: 6px 10px;
+	border: none;
+	border-radius: 0;
+	font-size: 13px; outline: none;
+	background-color: transparent;
+	background-image:
+		linear-gradient(var(--md-outline-variant), var(--md-outline-variant)),
+		linear-gradient(var(--md-primary), var(--md-primary));
+	background-size: 100% 1px, 0% 2px;
+	background-position: bottom, bottom;
+	background-repeat: no-repeat;
+	color: var(--md-on-surface);
+	transition: background-size 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+	min-width: 60px;
+	caret-color: var(--md-primary);
+}
+.formGrid .fgValue input[type="text"] { text-align: left; }
+.formGrid .fgValue input[type="number"] { text-align: right; }
+.formGrid .fgValue input:focus {
+	background-size: 100% 1px, 100% 2px;
+}
+.formGrid .fgValue .unit {
+	font-size: 13px; color: var(--md-on-surface-variant); white-space: nowrap;
+}
+
+/* ══════════════════════════════════════
+   Floating Window (배합설계)
+   ══════════════════════════════════════ */
+.floatWin {
+	position: fixed; z-index: 6000;
+	top: 80px; left: calc(100vw - 760px);
+	width: 720px; min-width: 420px; min-height: 200px;
+	background: rgba(210, 150, 110, 0.18);
+	backdrop-filter: blur(48px) saturate(2.0);
+	-webkit-backdrop-filter: blur(48px) saturate(2.0);
+	border-radius: var(--md-shape-xl);
+	box-shadow:
+		0 32px 100px rgba(0, 0, 0, 0.25),
+		0 12px 40px rgba(80, 60, 40, 0.15),
+		0 0 0 1px rgba(0, 0, 0, 0.04),
+		inset 0 1px 0 rgba(255, 255, 255, 0.6),
+		inset 0 -1px 0 rgba(255, 255, 255, 0.1);
+	display: none; flex-direction: column;
+	overflow: hidden;
+	border: 1px solid rgba(255, 255, 255, 0.45);
+	border-top: 1.5px solid rgba(255, 255, 255, 0.7);
+}
+.floatWin::after {
+	content: '';
+	position: absolute;
+	inset: 0;
+	border-radius: inherit;
+	background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='3.5' numOctaves='3' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.12'/%3E%3C/svg%3E");
+	mask: radial-gradient(ellipse at 50% 50%, transparent 60%, black 100%);
+	-webkit-mask: radial-gradient(ellipse at 50% 50%, transparent 60%, black 100%);
+	pointer-events: none;
+	z-index: 0;
+}
+.floatWin.active {
+	display: flex;
+}
+.floatWin.minimized .fwBody,
+.floatWin.minimized .fwFooter {
+	display: none;
+}
+.floatWin.minimized {
+	min-height: 0;
+	height: auto !important;
+}
+
+/* Header — drag handle (glass) */
+.fwHeader {
+	display: flex; align-items: center; justify-content: space-between;
+	padding: 10px 12px 10px 20px;
+	background: rgba(210, 150, 110, 0.15);
+	border-bottom: 1px solid rgba(210, 150, 110, 0.20);
+	cursor: grab; user-select: none;
+	flex-shrink: 0;
+}
+.fwHeader:active { cursor: grabbing; }
+.fwHeader h2 {
+	font-family: 'SUIT-Bold'; font-size: 14px; color: #000;
+	display: flex; align-items: center; gap: 8px;
+	letter-spacing: 0;
+	white-space: nowrap;
+}
+.fwHeader h2 i { font-size: 18px; color: #000; }
+.fwHeader .expSelect {
+	background: rgba(210, 150, 110, 0.12); color: var(--hematite);
+	border: 1px solid rgba(210, 150, 110, 0.3);
+	font-size: 13px; padding: 2px 8px;
+	border-radius: var(--md-shape-sm);
+}
+.fwHeader .expSelect option { color: var(--md-on-surface); background: var(--md-surface); }
+.fwActions {
+	display: flex; gap: 2px;
+}
+.fwBtn {
+	width: 28px; height: 28px; border-radius: var(--md-shape-full);
+	display: flex; align-items: center; justify-content: center;
+	background: transparent; border: none;
+	color: var(--blue-fusion); cursor: pointer;
+	transition: all 0.15s ease;
+}
+.fwBtn:hover {
+	background: rgba(210, 150, 110, 0.18); color: var(--hematite);
+}
+.fwBtn i { font-size: 18px; }
+
+/* Body */
+.fwBody {
+	position: relative;
+	padding: 0; overflow-y: auto; overflow-x: hidden; flex: 1;
+	background: rgba(255, 255, 255, 0.3);
+	margin: 20px;
+	border-radius: var(--md-shape-md);
+	border: 1px solid rgba(255, 255, 255, 0.5);
+}
+
+/* Footer */
+.fwFooter {
+	padding: 10px 20px;
+	border-top: 1px solid rgba(210, 150, 110, 0.25);
+	display: flex; justify-content: flex-end; gap: 8px;
+	flex-shrink: 0;
+}
+
+/* ── Float Window: 일괄 입력 테이블 ── */
+.fwTable {
+	width: 100%; border-collapse: collapse;
+}
+.fwTable thead th {
+	padding: 8px 10px; font-family: 'SUIT-Medium'; font-size: 13px;
+	color: var(--md-on-surface); text-align: center;
+	background: rgba(210, 150, 110, 0.08);
+	border-bottom: 2px solid rgba(210, 150, 110, 0.2);
+	white-space: nowrap;
+}
+.fwTable thead th.fwTableLabel {
+	text-align: left; min-width: 100px;
+	color: var(--md-on-surface-variant);
+}
+.fwTable thead th.fwTableExp {
+	min-width: 110px;
+}
+.fwTable tbody td {
+	padding: 4px 6px;
+	border-bottom: 1px solid var(--md-outline-variant);
+	vertical-align: middle;
+}
+.fwTable tbody td.fwTableLabel {
+	font-family: 'SUIT-Medium'; font-size: 13px;
+	color: var(--md-on-surface-variant); padding: 8px 10px;
+	white-space: nowrap;
+}
+.fwTable tbody td.fwTableLabel .unit {
+	font-size: 13px; color: var(--md-outline);
+}
+.fwTableInput {
+	width: 100%; padding: 5px 8px;
+	border: none;
+	border-radius: 0;
+	font-size: 13px; text-align: center;
+	background-color: transparent;
+	background-image:
+		linear-gradient(var(--md-outline-variant), var(--md-outline-variant)),
+		linear-gradient(var(--md-primary), var(--md-primary));
+	background-size: 100% 1px, 0% 2px;
+	background-position: bottom, bottom;
+	background-repeat: no-repeat;
+	color: var(--md-on-surface); outline: none;
+	transition: all 0.15s ease;
+	font-family: 'SUIT-Regular';
+}
+.fwTableInput:focus {
+	background-size: 100% 1px, 100% 2px;
+	transition: background-size 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fwTableInput::placeholder {
+	color: var(--md-outline); font-size: 13px;
+}
+
+/* Resize handle */
+.fwTable tbody tr:hover td,
+.formGrid tbody tr:hover td {
+	color: #000;
+	font-family: 'SUIT-Medium';
+}
+.fwTable tbody tr:hover td .fwTableInput,
+.formGrid tbody tr:hover td input,
+.formGrid tbody tr:hover td .calcResult,
+.formGrid tbody tr:hover td .ratioInput {
+	color: #000;
+}
+
+.fwEdge { position: absolute; z-index: 10; }
+.fwEdge-n  { top: 0; left: 6px; right: 6px; height: 6px; cursor: ns-resize; }
+.fwEdge-s  { bottom: 0; left: 6px; right: 6px; height: 6px; cursor: ns-resize; }
+.fwEdge-e  { right: 0; top: 6px; bottom: 6px; width: 6px; cursor: ew-resize; }
+.fwEdge-w  { left: 0; top: 6px; bottom: 6px; width: 6px; cursor: ew-resize; }
+.fwEdge-ne { top: 0; right: 0; width: 12px; height: 12px; cursor: nesw-resize; }
+.fwEdge-nw { top: 0; left: 0; width: 12px; height: 12px; cursor: nwse-resize; }
+.fwEdge-se { bottom: 0; right: 0; width: 12px; height: 12px; cursor: nwse-resize; }
+.fwEdge-sw { bottom: 0; left: 0; width: 12px; height: 12px; cursor: nesw-resize; }
+
+/* ══════════════════════════════════════
+   Context Menu
+   ══════════════════════════════════════ */
+.ctxMenu {
+	position: fixed; z-index: 9000;
+	background:
+		radial-gradient(
+			ellipse 150px 120px at var(--gx, 50%) var(--gy, 50%),
+			rgba(255,255,255,0.15) 0%,
+			transparent 70%
+		),
+		rgba(255, 255, 255, 0.12);
+	backdrop-filter: blur(40px);
+	-webkit-backdrop-filter: blur(40px);
+	border-radius: 16px;
+	box-shadow:
+		0 8px 32px rgba(0, 0, 0, 0.15),
+		inset 0 1px 0 rgba(255, 255, 255, 0.35),
+		inset 0 -1px 0 rgba(255, 255, 255, 0.08);
+	border: 1px solid rgba(255, 255, 255, 0.25);
+	padding: 6px;
+	min-width: 160px;
+	display: none;
+}
+.ctxMenu.active { display: block; }
+.ctxItem {
+	display: flex; align-items: center; gap: 10px;
+	padding: 10px 14px;
+	font-size: 13px; font-family: 'SUIT-Medium';
+	color: var(--md-on-surface);
+	cursor: pointer;
+	border-radius: 10px;
+	transition: background 0.15s ease;
+}
+.ctxItem:hover {
+	background: rgba(140, 130, 170, 0.15);
+	box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.3);
+}
+.ctxItem i { font-size: 18px; color: var(--md-on-surface-variant); }
+.ctxItem.ctxRemove { color: var(--md-error); }
+.ctxItem.ctxRemove i { color: var(--md-error); }
+
+/* ══════════════════════════════════════
+   Quick Search Dropdown
+   ══════════════════════════════════════ */
+.qsDropdown {
+	position: fixed; z-index: 8000;
+	background: rgba(250, 250, 247, 0.85);
+	backdrop-filter: blur(16px) saturate(1.4);
+	-webkit-backdrop-filter: blur(16px) saturate(1.4);
+	border: 1px solid rgba(255, 255, 255, 0.5);
+	border-radius: var(--md-shape-sm);
+	box-shadow: 0 6px 24px rgba(102, 112, 130, 0.18), 0 2px 8px rgba(102, 112, 130, 0.1);
+	min-width: 260px; max-height: 240px;
+	overflow-y: auto;
+	display: none;
+}
+.qsDropdown.active { display: block; }
+.qsItem {
+	display: flex; align-items: center; justify-content: space-between;
+	padding: 8px 12px;
+	cursor: pointer;
+	transition: background 0.12s ease;
+}
+.qsItem:hover,
+.qsItem.qsSelected {
+	background: rgba(155, 142, 190, 0.1);
+}
+.qsItem .qsName {
+	font-family: 'SUIT-Medium'; font-size: 13px;
+	color: var(--hematite);
+}
+.qsItem .qsCode {
+	font-size: 13px; color: var(--cloud-cover);
+	margin-left: 12px;
+}
+.qsItem .qsType {
+	font-size: 13px; color: var(--quiet-violet);
+	margin-left: auto; padding-left: 12px;
+}
+.qsEmpty {
+	padding: 10px 12px;
+	font-size: 13px; color: var(--cloud-cover);
+	text-align: center;
+}
+
+/* ══════════════════════════════════════
+   Scrollbar
+   ══════════════════════════════════════ */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb {
+	background: var(--md-outline-variant); border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover { background: var(--md-outline); }

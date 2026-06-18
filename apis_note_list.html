@@ -1,0 +1,434 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM — Lab Note</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/glass_engine.js"></script>
+
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <article class="navTop">
+        <section class="leftSection">
+          <div class="menuIcon">
+            <div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
+          </div>
+          <div><a href="apis_main.html"><img src="img/MAPISLogo_h30.png" class="ml20 navLogo"></a></div>
+        </section>
+        <section class="centerSection">
+          <div class="srchArea">
+            <i class="material-icons prefix">search</i>
+            <input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput" autocomplete="off">
+          </div>
+        </section>
+        <section class="rightSection">
+          <div class="userInfo">
+            <div class="mr10"><span class="mocha25-text fontM">JONGHO LEE</span></div>
+            <i class="material-icons gardenia25 mocha25-text fLine vCenter hCenter mg0">person</i>
+            <div class="btnArea hiddenArea">
+              <a id="profileBtn" class="waves-effect waves-light hBtn"><span class="material-symbols-outlined left">account_circle</span><span class="label">View Profile</span></a>
+              <a id="logoutBtn" class="waves-effect waves-light hBtn hViva"><span class="material-symbols-outlined left">logout</span><span class="label">Sign Out</span></a>
+            </div>
+          </div>
+          <div class="langInfo ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">language</i>
+          </div>
+          <div class="notiArea ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">assignment_turned_in</i>
+            <div class="notiCnt pulse"><span class="font11">3</span></div>
+          </div>
+          <div class="notiArea ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">format_list_bulleted</i>
+            <div class="notiCnt pulse"><span class="font11">6</span></div>
+          </div>
+        </section>
+      </article>
+    </nav>
+  </header>
+
+  <aside class="menuAside">
+    <div id="slide-out" class="sidenav glassBox">
+      <div class="userInfoArea">
+        <div class="photo"><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+        <div class="userInfo">
+          <div class="fontB">JONGHO LEE</div>
+          <div>IT Procurement/HR/R&D Team</div>
+        </div>
+      </div>
+      <div class="menuList">
+        <ul>
+          <li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>Home</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_dash.html"><i class="material-icons left">analytics</i>Insight</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_proposal_list.html"><i class="material-icons left">assistant</i>Proposal</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_custom_list.html"><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npt_list.html"><i class="material-icons left">snippet_folder</i>NPT</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_tech_list.html"><i class="material-icons left">build</i>Tech Support</a></li>
+          <li class="waves-effect waves-hColor on"><a href="apis_note_list.html"><i class="material-icons left">science</i>Lab Note</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_fmea_list.html"><i class="material-icons left">playlist_add_check_circle</i>FMEA</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_coc.html"><i class="material-icons left">assignment_late</i>CoC</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_psa.html"><i class="material-icons left">health_and_safety</i>PSA</a></li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <article class="contArea typeList type2">
+    <!-- 좌: Project 리스트 -->
+    <div class="leftSection">
+      <section class="mainTitArea">
+        <div class="mainTit">Lab Note Project List</div>
+        <div class="btnArea">
+          <div class="newAppleTab mr10">
+            <ul>
+              <li class="waves-effect waves-hColor on" cd="all">All</li>
+              <li class="waves-effect waves-hColor" cd="my">My List</li>
+              <div class="tabBg"></div>
+            </ul>
+          </div>
+          <div><a href="javascript:;" id="noteSearchBtn" class="waves-effect waves-light hBtn viva"><i class="material-icons left">search</i><span class="label">Search</span></a></div>
+        </div>
+      </section>
+      <section class="mainList cardBox">
+        <ul class="hScroll" id="projListUl"><!-- JS 렌더 --></ul>
+      </section>
+    </div>
+
+    <!-- 우: Note 리스트 -->
+    <div class="rightSection">
+      <section class="mainTitArea">
+        <div class="mainTit">Note List</div>
+        <div class="btnArea noteListHead">
+          <span id="noteSrchClear" class="noteSrchClear"><i class="material-icons">arrow_back</i>Clear</span>
+          <select id="noteAuthorFilter"><!-- JS 렌더 (Materialize FormSelect) --></select>
+          <div><a href="javascript:;" id="newNoteBtn" class="waves-effect waves-light hBtn hBlue"><i class="material-icons left">note_add</i><span class="label">New Note</span></a></div>
+        </div>
+      </section>
+      <section class="mainList cardBox">
+        <ul class="hScroll" id="noteListUl"><!-- JS 렌더 --></ul>
+      </section>
+    </div>
+  </article>
+
+  <!-- 검색 모달 (materialize) -->
+  <article id="noteSearchModal" class="modal noteSrchModal">
+    <div class="modal-header mochaBg">
+      <h5>Search Notes</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div class="srchField"><label>Keyword</label><input type="text" id="srchKeyword" class="browser-default" placeholder="Title or code… (use * ?)" autocomplete="off"></div>
+      <div class="srchField"><label>Tag</label><input type="text" id="srchTags" class="browser-default" placeholder="e.g. #viscosity" autocomplete="off"></div>
+      <div class="srchField"><label>Status</label><select id="srchStatus" class="browser-default"></select></div>
+      <div class="srchField"><label>Project</label><select id="srchProject" class="browser-default"></select></div>
+      <div class="btnArea">
+        <a href="javascript:;" id="srchRunBtn" class="waves-effect waves-light hBtn hBlue wd100px mr10"><i class="material-icons left">search</i><span class="label">Search</span></a>
+        <a href="javascript:;" class="waves-effect waves-light hBtn hGrey wd100px modal-close"><i class="material-icons left">cancel</i><span class="label">Cancel</span></a>
+      </div>
+    </div>
+  </article>
+
+  <script>
+  /* ─────────────── 데이터 (원본 apis_eln_list_simple 에서 이식) ─────────────── */
+  var ST = [
+    {k:'ing',  cls:'stIng',  t:'In Progress'},
+    {k:'appr', cls:'stAppr', t:'In Approval'},
+    {k:'ok',   cls:'stOk',   t:'Approved'}
+  ];
+  function stByKey(k){ return ST.filter(function(s){return s.k===k;})[0] || ST[0]; }
+  var PST = [
+    {k:'active',   cls:'type1', t:'Active'},
+    {k:'complete', cls:'type2', t:'Complete'}
+  ];
+  function pstByKey(k){ return PST.filter(function(s){return s.k===k;})[0] || PST[0]; }
+
+  var PROJ_TYPE = {
+    snpi: { label:'Standard NPI', pop:'apis_npdi_pop.html'   },
+    cnpi: { label:'Custom NPI',   pop:'apis_custom_pop.html' },
+    npt:  { label:'NPT',          pop:'apis_npt_pop.html'    },
+    tech: { label:'Tech Support', pop:'apis_tech_pop.html'   }
+  };
+
+  var PROJECTS = [
+    { code:'CN-26-0064', type:'cnpi', name:'Flexible OLED Lamination',               status:'active',   customer:'Customer S', seg:'Flexible OLED', market:'Display',      stage:'Commercial Go' },
+    { code:'PT-26-0021', type:'npt',  name:'New preservative for Silsoft',           status:'active',   seg:'Personal Care', stage:'NPT Go', site:'Leverkusen → Yongin', sched:'On Time' },
+    { code:'SN-26-0031', type:'snpi', name:'RGBOLED Display Adhesive',               status:'active',   seg:'Display',       market:'Display',        stage:'Commercial Go', sched:'On Time' },
+    { code:'TS-26-0205', type:'tech', name:'Electro 242-2 Grey FC',                  status:'active',   seg:'Industrial',    market:'Transportation', stage:'Field Support', sched:'On Time' },
+    { code:'CN-26-0090', type:'cnpi', name:'Customer A OCR Program',                 status:'active',   customer:'Customer A', seg:'Optical',       market:'Display',      stage:'Development' },
+    { code:'PT-25-0182', type:'npt',  name:'Optical Clear Resin',                    status:'complete', seg:'Optical',       stage:'NPT Go', site:'Leverkusen → Ohta',   sched:'On Time' },
+    { code:'TS-26-0218', type:'tech', name:'High-Temp Silicone Encapsulant',         status:'complete', seg:'Electronics',   market:'Industrial',     stage:'Closed',        sched:'On Time' },
+    { code:'SN-26-0047', type:'snpi', name:'Low viscosity high vinyl polybutadiene', status:'active',   seg:'Industrial',    market:'Transportation', stage:'Development',   sched:'On Time' },
+    { code:'CN-26-0112', type:'cnpi', name:'UV-Curable Conformal Coating',           status:'active',   customer:'Customer K', seg:'Electronics',   market:'Industrial',   stage:'Sample' },
+    { code:'PT-26-0034', type:'npt',  name:'Low Viscosity Binder Gel T',             status:'active',   seg:'Industrial',    stage:'NPT Go', site:'Ohta → Yongin',       sched:'Delayed' }
+  ];
+  function projByCode(c){ return PROJECTS.filter(function(p){ return p.code === c; })[0] || null; }
+  function projPills(p){
+    function b(v, cls){ return v ? '<div class="roundBox' + (cls ? ' ' + cls : '') + '">' + esc(v) + '</div>' : ''; }
+    if(p.type === 'cnpi') return b(p.customer) + b(p.seg) + b(p.market) + b(p.stage) + b(p.sched, 'blue');
+    if(p.type === 'npt')  return b(p.seg) + b(p.stage) + b(p.site) + b(p.sched, 'blue');
+    return b(p.seg) + b(p.market) + b(p.stage) + b(p.sched, 'blue');
+  }
+
+  var NOTES = [
+    {code:'NT-2605-00142', title:'UV-Curable PSA Viscosity Improvement — RGBOLED', st:'ing', tags:['#viscosity','#RGBOLED'], author:'Jongho Lee', date:'2026-05-28', project:'SN-26-0031'},
+    {code:'NT-2605-00118', title:'Viscosity Modifier ratio tuning (v2)', st:'appr', tags:['#viscosity'], author:'Jongho Lee', date:'2026-05-27', project:'SN-26-0031'},
+    {code:'NT-2605-00097', title:'Cure rate vs UV dose — condition sweep', st:'ok', tags:['#UVcure'], author:'Jongho Lee', date:'2026-05-24', project:'SN-26-0031'},
+    {code:'NT-2605-00098', title:'Initial trial — spec not met', st:'ok', tags:['#viscosity'], author:'Jongho Lee', date:'2026-05-21', project:'SN-26-0031'},
+    {code:'NT-2605-00085', title:'Supplier sample evaluation — Silicone PSA base', st:'ok', tags:['#supplier'], author:'Jongho Lee', date:'2026-05-18', project:'SN-26-0031'},
+    {code:'NT-2605-00072', title:'Crosslinker screening for adhesion', st:'ing', tags:['#adhesion'], author:'Jongho Lee', date:'2026-05-15', project:'SN-26-0031'},
+    {code:'NT-2606-00007', title:'Quick idea — low-VOC solvent swap to try', st:'ing', tags:[], author:'Jongho Lee', date:'2026-06-02', project:'SN-26-0031'},
+    {code:'NT-2606-00004', title:'Lab meeting memo — June experiment planning', st:'ok', tags:[], author:'Jongho Lee', date:'2026-05-31', project:'SN-26-0031'},
+    {code:'NT-2606-00012', title:'Peel strength round-robin with Eng. team', st:'ing', tags:['#adhesion'], author:'J.P. Kim', date:'2026-06-03', project:'SN-26-0031'},
+    {code:'NT-2606-00010', title:'Pilot line coating trial — defect review', st:'ok', tags:['#pilot'], author:'J.P. Kim', date:'2026-06-01', project:'SN-26-0031'},
+    {code:'NT-2606-00011', title:'Rheology check before scale-up', st:'ing', tags:['#rheology'], author:'Changmoo Jeong', date:'2026-06-02', project:'SN-26-0031'},
+    {code:'NT-2605-00141', title:'DSC cure kinetics measurement', st:'ok', tags:['#analysis'], author:'Changmoo Jeong', date:'2026-05-25', project:'SN-26-0031'},
+    {code:'NT-2605-00160', title:'Vinyl content vs viscosity trade-off study', st:'ing', tags:['#viscosity','#polybutadiene'], author:'Jongho Lee', date:'2026-05-26', project:'SN-26-0047'},
+    {code:'NT-2605-00150', title:'Catalyst screening for high-vinyl route', st:'ok', tags:['#catalyst'], author:'K.S. Yoon', date:'2026-05-19', project:'SN-26-0047'},
+    {code:'NT-2605-00131', title:'GPC molecular weight distribution check', st:'ok', tags:['#analysis'], author:'K.S. Yoon', date:'2026-05-13', project:'SN-26-0047'},
+    {code:'NT-2604-00210', title:'Bendable adhesive — fatigue test', st:'ing', tags:['#bending'], author:'S.Y. Park', date:'2026-04-30', project:'CN-26-0064'},
+    {code:'NT-2604-00198', title:'Low-temperature cure exploration', st:'ok', tags:['#lowtemp'], author:'S.Y. Park', date:'2026-04-22', project:'CN-26-0064'},
+    {code:'NT-2604-00150', title:'Substrate compatibility memo', st:'ok', tags:['#substrate'], author:'S.Y. Park', date:'2026-04-10', project:'CN-26-0064'},
+    {code:'NT-2604-00215', title:'Bending radius spec alignment with customer', st:'ing', tags:['#bending'], author:'J.P. Kim', date:'2026-05-02', project:'CN-26-0064'},
+    {code:'NT-2604-00205', title:'Lamination void inspection (CT)', st:'ok', tags:['#inspection'], author:'Changmoo Jeong', date:'2026-04-26', project:'CN-26-0064'},
+    {code:'NT-2605-00301', title:'Customer A — OCR spec review', st:'ing', tags:['#customerA'], author:'Jongho Lee', date:'2026-05-30', project:'CN-26-0090'},
+    {code:'NT-2605-00288', title:'Adhesion to PET film', st:'ok', tags:['#adhesion'], author:'Jongho Lee', date:'2026-05-26', project:'CN-26-0090'},
+    {code:'NT-2605-00270', title:'Cost-down reformulation', st:'appr', tags:['#costdown'], author:'Jongho Lee', date:'2026-05-20', project:'CN-26-0090'},
+    {code:'NT-2605-00255', title:'Kickoff meeting notes', st:'ok', tags:['#kickoff'], author:'Jongho Lee', date:'2026-05-12', project:'CN-26-0090'},
+    {code:'NT-2605-00320', title:'Conformal coating — humidity resistance', st:'ing', tags:['#coating','#humidity'], author:'H.W. Cho', date:'2026-05-29', project:'CN-26-0112'},
+    {code:'NT-2605-00310', title:'Dispense viscosity window for spray', st:'ok', tags:['#viscosity'], author:'H.W. Cho', date:'2026-05-22', project:'CN-26-0112'},
+    {code:'NT-2603-00120', title:'Haze reduction — final formulation', st:'ok', tags:['#haze'], author:'M.J. Lee', date:'2026-03-28', project:'PT-25-0182'},
+    {code:'NT-2603-00088', title:'Yellowing aging test (85°C/85%RH)', st:'ing', tags:['#aging'], author:'M.J. Lee', date:'2026-03-12', project:'PT-25-0182'},
+    {code:'NT-2605-00400', title:'Preservative efficacy — challenge test', st:'ing', tags:['#preservative'], author:'E. Han', date:'2026-05-24', project:'PT-26-0021'},
+    {code:'NT-2605-00390', title:'Regulatory screen (EU/US) for candidates', st:'ok', tags:['#regulatory'], author:'E. Han', date:'2026-05-17', project:'PT-26-0021'},
+    {code:'NT-2605-00420', title:'Gel binder — scale-up trial (Ohta)', st:'appr', tags:['#scaleup'], author:'J.W. Seo', date:'2026-05-27', project:'PT-26-0034'},
+    {code:'NT-2605-00405', title:'Thixotropy tuning for low-viscosity gel', st:'ok', tags:['#rheology'], author:'J.W. Seo', date:'2026-05-18', project:'PT-26-0034'},
+    {code:'NT-2605-00500', title:'Field complaint — cure inconsistency analysis', st:'ing', tags:['#complaint'], author:'S.Y. Park', date:'2026-05-25', project:'TS-26-0205'},
+    {code:'NT-2605-00490', title:'Customer line trial support memo', st:'ok', tags:['#support'], author:'S.Y. Park', date:'2026-05-16', project:'TS-26-0205'},
+    {code:'NT-2604-00450', title:'Thermal aging failure root-cause', st:'ok', tags:['#failure','#thermal'], author:'K.S. Yoon', date:'2026-04-28', project:'TS-26-0218'},
+    {code:'NT-2604-00440', title:'Replacement grade recommendation', st:'ok', tags:['#support'], author:'K.S. Yoon', date:'2026-04-20', project:'TS-26-0218'}
+  ];
+
+  var CUR_USER = 'Jongho Lee';
+  var curProj = null, curScope = 'all', curAuthor = 'all', curNotes = [], curSearch = null;
+
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+  function toast(msg){ if(window.M && M.toast) M.toast({html: esc(msg)}); }
+
+  function openNote(opts){
+    opts = opts || {};
+    var q = [];
+    if(opts.code) q.push('code=' + encodeURIComponent(opts.code));
+    if(opts.project) q.push('project=' + encodeURIComponent(opts.project));
+    if(opts.tmpl) q.push('tmpl=' + encodeURIComponent(opts.tmpl));
+    window.open('apis_note_pop.html' + (q.length ? '?' + q.join('&') : ''), 'noteDetail', 'width=1480,height=900,scrollbars=yes,resizable=yes');
+  }
+
+  function getNotes(key){
+    var arr = (key === 'all') ? NOTES.slice() : NOTES.filter(function(n){ return n.project === key; });
+    return arr.sort(function(a, b){ return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0); });
+  }
+
+  /* ─────────────── 좌: Project 리스트 ─────────────── */
+  function renderProjectList(){
+    var ul = document.getElementById('projListUl');
+    ul.innerHTML = '';
+    PROJECTS.filter(function(p){
+      if(curScope === 'all') return true;
+      return NOTES.some(function(n){ return n.project === p.code && n.author === CUR_USER; });
+    }).forEach(function(p){
+      var s = pstByKey(p.status);
+      var cnt = NOTES.filter(function(n){ return n.project === p.code; }).length;
+      var t = PROJ_TYPE[p.type];
+      var li = document.createElement('li');
+      li.className = 'waves-effect waves-hColor animate__animated' + (p.code === curProj ? ' on' : '');
+      li.setAttribute('data-proj', p.code);
+      li.innerHTML =
+        '<section class="statusBox ' + s.cls + '">' + s.t + '</section>' +
+        '<section class="wd100p">' +
+          '<div class="pjTit"><span class="pjTitLink">[' + p.code + '] ' + esc(p.name) + '</span></div>' +
+          '<div class="subInfo"><div>' +
+            (t ? '<span class="noteType ' + p.type + '">' + esc(t.label) + '</span>' : '') +
+            projPills(p) +
+            '<span class="noteCount">' + cnt + ' note' + (cnt !== 1 ? 's' : '') + '</span>' +
+          '</div></div>' +
+        '</section>';
+      ul.appendChild(li);
+    });
+  }
+
+  /* ─────────────── 우: Note 리스트 ─────────────── */
+  function renderNoteList(notes){
+    var ul = document.getElementById('noteListUl');
+    ul.innerHTML = '';
+    if(!notes.length){
+      var empty = document.createElement('li');
+      empty.className = 'noteListEmpty';
+      empty.innerHTML = '<i class="material-icons">search_off</i>No notes match.';
+      ul.appendChild(empty);
+      return;
+    }
+    notes.forEach(function(n, i){
+      var s = stByKey(n.st);
+      var li = document.createElement('li');
+      li.className = 'waves-effect waves-hColor animate__animated';
+      li.setAttribute('data-idx', i);
+      li.setAttribute('data-author', n.author);
+      var tags = (n.tags && n.tags.length)
+        ? n.tags.map(function(t){ return '<a href="javascript:;" class="noteTagLink" data-tag="' + esc(t) + '">' + esc(t) + '</a>'; }).join('')
+        : '<span class="noteNoTag">No tag</span>';
+      var projChip = curSearch ? '<span class="noteProjChip">' + esc(n.project) + '</span>' : '';
+      li.innerHTML =
+        '<section class="statusBox ' + s.cls + '">' + s.t + '</section>' +
+        '<section class="wd100p">' +
+          '<div class="pjTit">' + projChip + '[' + n.code + '] ' + esc(n.title) + '</div>' +
+          '<div class="noteFoot">' +
+            '<div class="noteTags">' + tags + '</div>' +
+            '<div class="noteMeta"><span class="d">' + esc(n.date) + '</span><span class="dot">·</span><span class="a">' + esc(n.author) + '</span></div>' +
+          '</div>' +
+        '</section>';
+      ul.appendChild(li);
+    });
+    applyAuthorFilter();
+  }
+  function renderNotes(key){ curNotes = getNotes(key); renderNoteList(curNotes); }
+
+  function applyAuthorFilter(){
+    document.querySelectorAll('#noteListUl li[data-author]').forEach(function(li){
+      var au = li.getAttribute('data-author');
+      li.style.display = (curAuthor === 'all' || au === curAuthor) ? '' : 'none';
+    });
+  }
+  function fillAuthorSelect(notes){
+    var sel = document.getElementById('noteAuthorFilter');
+    if(!sel) return;
+    var authors = [];
+    notes.forEach(function(n){ if(authors.indexOf(n.author) < 0) authors.push(n.author); });
+    sel.innerHTML = '<option value="all">All authors</option>' +
+      authors.map(function(a){ return '<option value="' + esc(a) + '">' + esc(a) + '</option>'; }).join('');
+    curAuthor = 'all';
+    // 옵션이 동적 렌더되므로 FormSelect를 매번 destroy 후 재init (중복 wrapper 방지)
+    if(window.M && M.FormSelect){ var inst = M.FormSelect.getInstance(sel); if(inst) inst.destroy(); M.FormSelect.init(sel); }
+  }
+  function renderUserFilter(projCode){ fillAuthorSelect(NOTES.filter(function(n){ return n.project === projCode; })); }
+
+  /* ─────────────── 검색 ─────────────── */
+  function globRegex(term){
+    var e = String(term).replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\?/g, '.');
+    return new RegExp(e, 'i');
+  }
+  function noteMatches(n, c){
+    if(c.keyword && !globRegex(c.keyword).test('[' + n.code + '] ' + n.title)) return false;
+    if(c.tags){ var rx = globRegex(c.tags); if(!(n.tags || []).some(function(t){ return rx.test(t); })) return false; }
+    if(c.status !== 'all' && n.st !== c.status) return false;
+    if(c.project !== 'all' && n.project !== c.project) return false;
+    return true;
+  }
+  function runSearch(c){
+    curSearch = c;
+    curAuthor = 'all';
+    curNotes = NOTES.filter(function(n){ return noteMatches(n, c); }).sort(function(a, b){ return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0); });
+    document.getElementById('noteSrchClear').classList.add('shown');
+    fillAuthorSelect(curNotes);
+    renderNoteList(curNotes);
+    toast(curNotes.length ? ('Found ' + curNotes.length + ' note' + (curNotes.length > 1 ? 's' : '') + '.') : 'No notes match your search.');
+  }
+  function searchByTag(tag){ if(tag) runSearch({ keyword:'', tags:tag, status:'all', project:'all' }); }
+  function clearSearch(){
+    curSearch = null;
+    document.getElementById('noteSrchClear').classList.remove('shown');
+    curProj = curProj || PROJECTS[0].code;
+    document.querySelectorAll('#projListUl li').forEach(function(x){ x.classList.toggle('on', x.getAttribute('data-proj') === curProj); });
+    renderUserFilter(curProj);
+    renderNotes(curProj);
+  }
+
+  $(document).ready(function(){
+    $('.sidenav').sidenav();
+    $(document).on('click', '.sidenav-overlay, .closeBtns', function(){ $('.sidenav').sidenav('close'); });
+    $('.rightSection > div').on('mouseenter', function(){ $(this).find('.btnArea').stop().slideDown(200); });
+    $('.rightSection > div').on('mouseleave', function(){ $(this).find('.btnArea').stop().slideUp(200); });
+    if(window.M && M.Modal) M.Modal.init(document.querySelectorAll('.modal'));
+
+    var stSel = document.getElementById('srchStatus');
+    stSel.innerHTML = '<option value="all">Any status</option>' + ST.map(function(s){ return '<option value="' + s.k + '">' + s.t + '</option>'; }).join('');
+    var pjSel = document.getElementById('srchProject');
+    pjSel.innerHTML = '<option value="all">All projects</option>' + PROJECTS.map(function(p){ return '<option value="' + p.code + '">[' + p.code + '] ' + esc(p.name) + '</option>'; }).join('');
+
+    renderProjectList();
+    curProj = PROJECTS[0].code;
+    var p0 = document.querySelector('#projListUl li[data-proj="' + curProj + '"]'); if(p0) p0.classList.add('on');
+    renderUserFilter(curProj);
+    renderNotes(curProj);
+
+    // AppleTab 초기 위치(인라인 style 없이 JS로 — 동적 포지셔닝)
+    var onTab = document.querySelector('.newAppleTab li.on');
+    var tabBg = document.querySelector('.newAppleTab .tabBg');
+    if(onTab && tabBg) tabBg.style.left = (onTab.offsetLeft - 3) + 'px';
+
+    document.getElementById('projListUl').addEventListener('click', function(e){
+      var li = e.target.closest('li[data-proj]'); if(!li) return;
+      var code = li.getAttribute('data-proj');
+      if(e.target.closest('.pjTitLink')){
+        var p = projByCode(code), t = p && PROJ_TYPE[p.type];
+        if(t) window.open(t.pop, '', 'width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes');
+        return;
+      }
+      curProj = code; curSearch = null;
+      document.getElementById('noteSrchClear').classList.remove('shown');
+      document.querySelectorAll('#projListUl li').forEach(function(x){ x.classList.remove('on'); });
+      li.classList.add('on');
+      renderUserFilter(curProj);
+      renderNotes(curProj);
+    });
+
+    document.getElementById('noteListUl').addEventListener('click', function(e){
+      var li = e.target.closest('li'); if(!li || !li.hasAttribute('data-idx')) return;
+      var n = curNotes[+li.getAttribute('data-idx')];
+      var tagLink = e.target.closest('.noteTagLink');
+      if(tagLink){ e.stopPropagation(); searchByTag(tagLink.getAttribute('data-tag')); return; }
+      if(n) openNote({ code: n.code, project: n.project });
+    });
+
+    $(document).on('click', '.newAppleTab li', function(){
+      var $li = $(this);
+      var offset = $li.offset().left - $li.parent().offset().left;
+      $li.parents('.newAppleTab').find('li').removeClass('on');
+      $li.parents('.newAppleTab').find('.tabBg').stop().animate({ left: offset - 3 });
+      $li.addClass('on');
+      curScope = $li.attr('cd'); curSearch = null;
+      document.getElementById('noteSrchClear').classList.remove('shown');
+      renderProjectList();
+      var first = document.querySelector('#projListUl li[data-proj]');
+      if(first){ curProj = first.getAttribute('data-proj'); first.classList.add('on'); renderUserFilter(curProj); renderNotes(curProj); }
+      else { curProj = null; document.getElementById('noteListUl').innerHTML = ''; renderUserFilter(''); }
+    });
+
+    document.getElementById('noteAuthorFilter').addEventListener('change', function(){ curAuthor = this.value; applyAuthorFilter(); });
+    document.getElementById('newNoteBtn').addEventListener('click', function(){ openNote({ project: curProj || '' }); });
+    document.getElementById('noteSearchBtn').addEventListener('click', function(){ var m = M.Modal.getInstance(document.getElementById('noteSearchModal')); if(m) m.open(); });
+    document.getElementById('srchRunBtn').addEventListener('click', function(){
+      var c = {
+        keyword: document.getElementById('srchKeyword').value.trim(),
+        tags: document.getElementById('srchTags').value.trim(),
+        status: document.getElementById('srchStatus').value,
+        project: document.getElementById('srchProject').value
+      };
+      var m = M.Modal.getInstance(document.getElementById('noteSearchModal')); if(m) m.close();
+      runSearch(c);
+    });
+    document.getElementById('noteSrchClear').addEventListener('click', clearSearch);
+  });
+  </script>
+</body>
+</html>

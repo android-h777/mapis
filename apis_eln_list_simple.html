@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>MAPIS ELN</title>
+    <title>MAPIS Lab Note</title>
 	<link rel="preload" href="mapis_lib/font/material-symbols-outlined.woff2" as="font" type="font/woff2">
 	<link rel="preload" href="mapis_lib/font/material-symbols-rounded.woff2" as="font" type="font/woff2">
 	<link rel="preload" href="mapis_lib/font/material-symbols-sharp.woff2" as="font" type="font/woff2">
@@ -32,7 +32,7 @@
 					<div class="menuIcon">
 						<div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
 					</div>
-					<div><a href="apis_eln_list.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
+					<div><a href="apis_main.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
 				</section>
 				<section class="centerSection">
 					<div class="srchArea">
@@ -42,8 +42,30 @@
 				</section>
 				<section class="rightSection">
 					<div class="userInfo">
-						<div class="mr10"><span class="mocha25-text fontM">J.P. KIM</span></div>
-						<i class="material-icons mocha25-text fLine vCenter hCenter mg0">person</i>
+						<div class="mr10"><span class="mocha25-text fontM">JONGHO LEE</span></div>
+						<i class="material-icons gardenia25 mocha25-text fLine vCenter hCenter mg0">person</i>
+						<div class="btnArea" style="display: none;">
+							<a id="profileBtn" class="waves-effect waves-light hBtn"><span class="material-symbols-outlined left">account_circle</span><span class="label">View Profile</span></a>
+							<a id="adminBtn" class="waves-effect waves-light hBtn"><span class="material-symbols-outlined left">admin_panel_settings</span><span class="label">Administrator</span></a>
+							<a class="waves-effect waves-light hBtn"><span class="material-symbols-outlined left">volunteer_activism</span><span class="label">Service Now</span></a>
+							<a class="waves-effect waves-light hBtn"><span class="material-symbols-outlined left">directions</span><span class="label">Guidance</span></a>
+							<a class="waves-effect waves-light hBtn"><span class="material-symbols-outlined left">local_library</span><span class="label">Training</span></a>
+							<a id="logoutBtn" class="waves-effect waves-light hBtn hViva"><span class="material-symbols-outlined left">logout</span><span class="label">Sign Out</span></a>
+						</div>
+					</div>
+					<div class="langInfo">
+						<i class="material-icons mocha25-text fLine vCenter hCenter mg0">language</i>
+						<div class="btnArea" style="display: none;">
+							<a class="waves-effect waves-light hBtn jc hViva on" data-lang="en">English</a><a class="waves-effect waves-light hBtn jc" data-lang="de">German</a><a class="waves-effect waves-light hBtn jc" data-lang="ko">Korean</a><a class="waves-effect waves-light hBtn jc" data-lang="ja">Japanese</a><a class="waves-effect waves-light hBtn jc" data-lang="zh">Chinese</a><a class="waves-effect waves-light hBtn jc" data-lang="it">Italian</a><a class="waves-effect waves-light hBtn jc" data-lang="es">Spanish</a>
+						</div>
+					</div>
+					<div class="notiInfo">
+						<i class="material-icons mocha25-text fLine vCenter hCenter mg0">assignment_turned_in</i>
+						<div class="notiCnt pulse"><span class="font11">3</span></div>
+					</div>
+					<div class="notiInfo">
+						<i class="material-icons mocha25-text fLine vCenter hCenter mg0">format_list_bulleted</i>
+						<div class="notiCnt pulse"><span class="font11">6</span></div>
 					</div>
 				</section>
 			</article>
@@ -54,21 +76,29 @@
 	<aside class="menuAside">
 		<div id="slide-out" class="sidenav glassBox">
 			<div class="userInfoArea">
-				<div class="photo"><i class="material-icons" style="font-size:46px;color:#A47864;">account_circle</i></div>
+				<div class="photo"><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
 				<div class="userInfo">
-					<div class="fontB">J.P. Kim</div>
-					<div>R&amp;D · Adhesive Lab</div>
+					<div class="fontB">JONGHO LEE</div>
+					<div>IT Procurement/HR/R&D Team</div>
 				</div>
 			</div>
 			<div class="menuList">
-				<ul>
-					<li class="waves-effect waves-hColor on"><a href="apis_eln_list.html"><i class="material-icons left">science</i>ELN</a></li>
-					<li><a class="subheader" style="color:#9b8c7e;font-size:11px;letter-spacing:.04em;pointer-events:none;">MAPIS MODULES</a></li>
-					<li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>MAPIS Home</a></li>
-					<li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
-					<li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub</a></li>
-				</ul>
-			</div>
+					<ul>
+						<li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>Home</a></li>
+						<li class="waves-effect waves-hColor"><a href="apis_dash.html"><i class="material-icons left">analytics</i>Insight</a></li>
+						<li class="waves-effect waves-hColor"><a href="apis_proposal_list.html"><i class="material-icons left">assistant</i>Proposal</a></li>
+						<li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
+						<li class="waves-effect waves-hColor"><a href="apis_custom_list.html"><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
+						<li class="waves-effect waves-hColor"><a href="apis_npt_list.html"><i class="material-icons left">snippet_folder</i>NPT</a></li>
+						<li class="waves-effect waves-hColor"><a href="apis_tech_list.html"><i class="material-icons left">build</i>Tech Support</a></li>
+						<li class="waves-effect waves-hColor on"><a href="apis_eln_list_simple.html"><i class="material-icons left">science</i>Lab Note</a></li>
+						<li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub</a></li>
+						<li class="waves-effect waves-hColor"><a href="apis_rptlib_list.html"><i class="material-icons left">library_books</i>Technical Report Library</a></li>
+						<li class="waves-effect waves-hColor"><a href="apis_fmea_list.html"><i class="material-icons left">playlist_add_check_circle</i>FMEA</a></li>
+						<li class="waves-effect waves-hColor"><a href="apis_coc.html"><i class="material-icons left">assignment_late</i>CoC</a></li>
+						<li class="waves-effect waves-hColor"><a href="apis_psa.html"><i class="material-icons left">health_and_safety</i>PSA</a></li>
+					</ul>
+				</div>
 		</div>
 	</aside>
 
@@ -78,7 +108,7 @@
 			<!-- 좌: Project (타이틀 + AppleTab=Project분류 + Search/New 헤더 + cardBox list) -->
 			<div class="leftSection elnNotePanel elnProjPanel">
 				<div class="elnPaneHead mainTitArea">
-					<div class="mainTit elnWsTit">ELN List</div>
+					<div class="mainTit elnWsTit">Lab Note Project List</div>
 					<!-- 검색 결과 모드: 기준 표시 + Clear -->
 					<span id="elnSrchCrit" class="elnSrchCrit" style="display:none;"></span>
 					<a href="javascript:;" id="elnSrchClear" class="elnSrchClear" style="display:none;"><i class="material-symbols-outlined">arrow_back</i>Clear Note Filters</a>
@@ -95,7 +125,7 @@
 						</div>
 					</div>
 				</div>
-				<div class="elnProjBox cardBox2">
+				<div class="elnProjBox cardBox">
 					<div class="typeList type4">
 						<section class="leftSection"><section class="mainList"><ul class="hScroll" id="projListUl"><!-- JS 렌더 --></ul></section></section>
 					</div>
@@ -104,11 +134,11 @@
 			<!-- 우: Note (작성자 select 헤더 + cardBox list). select=선택 Project 소속 작성자 → note 필터 -->
 			<div class="rightSection elnNotePanel">
 				<div class="elnPaneHead elnNoteHead">
-					<label class="elnUserLabel"><i class="material-symbols-outlined">filter_alt</i></label>
-					<select id="elnUserFilter" class="browser-default elnUserSelect"><!-- JS 렌더 --></select>
+					<div class="mainTit">Note List</div>
+					<select id="elnUserFilter" class="elnUserSelect"><!-- JS 렌더 (Materialize FormSelect) --></select>
 					<a href="javascript:;" id="elnNewNote" class="waves-effect waves-light hBtn hViva"><i class="material-symbols-outlined left">note_add</i><span class="label">New Note</span></a>
 				</div>
-				<div class="elnNoteBox cardBox2">
+				<div class="elnNoteBox cardBox">
 					<div class="typeList type4">
 						<section class="leftSection"><section class="mainList"><ul class="hScroll" id="noteListUl"><!-- JS 렌더 --></ul></section></section>
 					</div>
@@ -229,41 +259,90 @@
 
 	// 노트(평탄 배열). project 코드로 종속. 계보(parent)·노트북 없음. 데모 목업.
 	var NOTES = [
-		// SN-26-0031 RGBOLED Display Adhesive
-		{code:'NT-2605-00142', title:'UV-Curable PSA Viscosity Improvement — RGBOLED', st:'ing', ver:'v3', fml:'FML-EM-2208', tags:['#viscosity','#RGBOLED'], author:'J.P. Kim', date:'2026-05-28', project:'SN-26-0031'},
-		{code:'NT-2605-00118', title:'Viscosity Modifier ratio tuning (v2)', st:'appr', ver:'v2', fml:'FML-EM-2207', tags:['#viscosity'], author:'J.P. Kim', date:'2026-05-27', project:'SN-26-0031'},
-		{code:'NT-2605-00097', title:'Cure rate vs UV dose — condition sweep', st:'ok', ver:'v1', fml:'', tags:['#UVcure'], author:'J.P. Kim', date:'2026-05-24', project:'SN-26-0031'},
-		{code:'NT-2605-00098', title:'Initial trial — spec not met', st:'ok', ver:'v1', fml:'FML-EM-2206', tags:['#viscosity'], author:'J.P. Kim', date:'2026-05-21', project:'SN-26-0031'},
-		{code:'NT-2605-00085', title:'Supplier sample evaluation — Silicone PSA base', st:'ok', ver:'', fml:'', tags:['#supplier'], author:'J.P. Kim', date:'2026-05-18', project:'SN-26-0031'},
-		{code:'NT-2605-00072', title:'Crosslinker screening for adhesion', st:'ing', ver:'', fml:'', tags:['#adhesion'], author:'J.P. Kim', date:'2026-05-15', project:'SN-26-0031'},
-		{code:'NT-2606-00007', title:'Quick idea — low-VOC solvent swap to try', st:'ing', ver:'', fml:'', tags:[], author:'J.P. Kim', date:'2026-06-02', project:'SN-26-0031'},
-		{code:'NT-2606-00004', title:'Lab meeting memo — June experiment planning', st:'ok', ver:'', fml:'', tags:[], author:'J.P. Kim', date:'2026-05-31', project:'SN-26-0031'},
-		// CN-26-0064 Flexible OLED Lamination
+		// SN-26-0031 RGBOLED Display Adhesive (SNPI)
+		{code:'NT-2605-00142', title:'UV-Curable PSA Viscosity Improvement — RGBOLED', st:'ing', ver:'v3', fml:'FML-EM-2208', tags:['#viscosity','#RGBOLED'], author:'Jongho Lee', date:'2026-05-28', project:'SN-26-0031'},
+		{code:'NT-2605-00118', title:'Viscosity Modifier ratio tuning (v2)', st:'appr', ver:'v2', fml:'FML-EM-2207', tags:['#viscosity'], author:'Jongho Lee', date:'2026-05-27', project:'SN-26-0031'},
+		{code:'NT-2605-00097', title:'Cure rate vs UV dose — condition sweep', st:'ok', ver:'v1', fml:'', tags:['#UVcure'], author:'Jongho Lee', date:'2026-05-24', project:'SN-26-0031'},
+		{code:'NT-2605-00098', title:'Initial trial — spec not met', st:'ok', ver:'v1', fml:'FML-EM-2206', tags:['#viscosity'], author:'Jongho Lee', date:'2026-05-21', project:'SN-26-0031'},
+		{code:'NT-2605-00085', title:'Supplier sample evaluation — Silicone PSA base', st:'ok', ver:'', fml:'', tags:['#supplier'], author:'Jongho Lee', date:'2026-05-18', project:'SN-26-0031'},
+		{code:'NT-2605-00072', title:'Crosslinker screening for adhesion', st:'ing', ver:'', fml:'', tags:['#adhesion'], author:'Jongho Lee', date:'2026-05-15', project:'SN-26-0031'},
+		{code:'NT-2606-00007', title:'Quick idea — low-VOC solvent swap to try', st:'ing', ver:'', fml:'', tags:[], author:'Jongho Lee', date:'2026-06-02', project:'SN-26-0031'},
+		{code:'NT-2606-00004', title:'Lab meeting memo — June experiment planning', st:'ok', ver:'', fml:'', tags:[], author:'Jongho Lee', date:'2026-05-31', project:'SN-26-0031'},
+		{code:'NT-2606-00012', title:'Peel strength round-robin with Eng. team', st:'ing', ver:'', fml:'', tags:['#adhesion'], author:'J.P. Kim', date:'2026-06-03', project:'SN-26-0031'},
+		{code:'NT-2606-00010', title:'Pilot line coating trial — defect review', st:'ok', ver:'', fml:'', tags:['#pilot'], author:'J.P. Kim', date:'2026-06-01', project:'SN-26-0031'},
+		{code:'NT-2606-00011', title:'Rheology check before scale-up', st:'ing', ver:'', fml:'', tags:['#rheology'], author:'Changmoo Jeong', date:'2026-06-02', project:'SN-26-0031'},
+		{code:'NT-2605-00141', title:'DSC cure kinetics measurement', st:'ok', ver:'v1', fml:'', tags:['#analysis'], author:'Changmoo Jeong', date:'2026-05-25', project:'SN-26-0031'},
+		// SN-26-0047 Low viscosity high vinyl polybutadiene (SNPI)
+		{code:'NT-2605-00160', title:'Vinyl content vs viscosity trade-off study', st:'ing', ver:'v2', fml:'FML-PB-0210', tags:['#viscosity','#polybutadiene'], author:'Jongho Lee', date:'2026-05-26', project:'SN-26-0047'},
+		{code:'NT-2605-00150', title:'Catalyst screening for high-vinyl route', st:'ok', ver:'v1', fml:'FML-PB-0208', tags:['#catalyst'], author:'K.S. Yoon', date:'2026-05-19', project:'SN-26-0047'},
+		{code:'NT-2605-00131', title:'GPC molecular weight distribution check', st:'ok', ver:'', fml:'', tags:['#analysis'], author:'K.S. Yoon', date:'2026-05-13', project:'SN-26-0047'},
+		// CN-26-0064 Flexible OLED Lamination (CNPI)
 		{code:'NT-2604-00210', title:'Bendable adhesive — fatigue test', st:'ing', ver:'v2', fml:'FML-FX-1120', tags:['#bending'], author:'S.Y. Park', date:'2026-04-30', project:'CN-26-0064'},
 		{code:'NT-2604-00198', title:'Low-temperature cure exploration', st:'ok', ver:'v1', fml:'FML-FX-1118', tags:['#lowtemp'], author:'S.Y. Park', date:'2026-04-22', project:'CN-26-0064'},
 		{code:'NT-2604-00150', title:'Substrate compatibility memo', st:'ok', ver:'', fml:'', tags:['#substrate'], author:'S.Y. Park', date:'2026-04-10', project:'CN-26-0064'},
-		// PT-25-0182 Optical Clear Resin
+		{code:'NT-2604-00215', title:'Bending radius spec alignment with customer', st:'ing', ver:'', fml:'', tags:['#bending'], author:'J.P. Kim', date:'2026-05-02', project:'CN-26-0064'},
+		{code:'NT-2604-00205', title:'Lamination void inspection (CT)', st:'ok', ver:'', fml:'', tags:['#inspection'], author:'Changmoo Jeong', date:'2026-04-26', project:'CN-26-0064'},
+		// CN-26-0090 Customer A OCR Program (CNPI)
+		{code:'NT-2605-00301', title:'Customer A — OCR spec review', st:'ing', ver:'', fml:'', tags:['#customerA'], author:'Jongho Lee', date:'2026-05-30', project:'CN-26-0090'},
+		{code:'NT-2605-00288', title:'Adhesion to PET film', st:'ok', ver:'v2', fml:'FML-CA-4410', tags:['#adhesion'], author:'Jongho Lee', date:'2026-05-26', project:'CN-26-0090'},
+		{code:'NT-2605-00270', title:'Cost-down reformulation', st:'appr', ver:'v1', fml:'FML-CA-4408', tags:['#costdown'], author:'Jongho Lee', date:'2026-05-20', project:'CN-26-0090'},
+		{code:'NT-2605-00255', title:'Kickoff meeting notes', st:'ok', ver:'', fml:'', tags:['#kickoff'], author:'Jongho Lee', date:'2026-05-12', project:'CN-26-0090'},
+		// CN-26-0112 UV-Curable Conformal Coating (CNPI)
+		{code:'NT-2605-00320', title:'Conformal coating — humidity resistance', st:'ing', ver:'v1', fml:'FML-CC-5510', tags:['#coating','#humidity'], author:'H.W. Cho', date:'2026-05-29', project:'CN-26-0112'},
+		{code:'NT-2605-00310', title:'Dispense viscosity window for spray', st:'ok', ver:'', fml:'', tags:['#viscosity'], author:'H.W. Cho', date:'2026-05-22', project:'CN-26-0112'},
+		// PT-25-0182 Optical Clear Resin (NPT)
 		{code:'NT-2603-00120', title:'Haze reduction — final formulation', st:'ok', ver:'v3', fml:'FML-OC-3310', tags:['#haze'], author:'M.J. Lee', date:'2026-03-28', project:'PT-25-0182'},
 		{code:'NT-2603-00088', title:'Yellowing aging test (85°C/85%RH)', st:'ing', ver:'v1', fml:'FML-OC-3308', tags:['#aging'], author:'M.J. Lee', date:'2026-03-12', project:'PT-25-0182'},
-		// SN-26-0090 Customer A OCR Program
-		{code:'NT-2605-00301', title:'Customer A — OCR spec review', st:'ing', ver:'', fml:'', tags:['#customerA'], author:'J.P. Kim', date:'2026-05-30', project:'SN-26-0090'},
-		{code:'NT-2605-00288', title:'Adhesion to PET film', st:'ok', ver:'v2', fml:'FML-CA-4410', tags:['#adhesion'], author:'J.P. Kim', date:'2026-05-26', project:'SN-26-0090'},
-		{code:'NT-2605-00270', title:'Cost-down reformulation', st:'appr', ver:'v1', fml:'FML-CA-4408', tags:['#costdown'], author:'J.P. Kim', date:'2026-05-20', project:'SN-26-0090'},
-		{code:'NT-2605-00255', title:'Kickoff meeting notes', st:'ok', ver:'', fml:'', tags:['#kickoff'], author:'J.P. Kim', date:'2026-05-12', project:'SN-26-0090'}
+		// PT-26-0021 New preservative for Silsoft (NPT)
+		{code:'NT-2605-00400', title:'Preservative efficacy — challenge test', st:'ing', ver:'v1', fml:'FML-PV-6610', tags:['#preservative'], author:'E. Han', date:'2026-05-24', project:'PT-26-0021'},
+		{code:'NT-2605-00390', title:'Regulatory screen (EU/US) for candidates', st:'ok', ver:'', fml:'', tags:['#regulatory'], author:'E. Han', date:'2026-05-17', project:'PT-26-0021'},
+		// PT-26-0034 Low Viscosity Binder Gel T (NPT)
+		{code:'NT-2605-00420', title:'Gel binder — scale-up trial (Ohta)', st:'appr', ver:'v2', fml:'FML-BG-7710', tags:['#scaleup'], author:'J.W. Seo', date:'2026-05-27', project:'PT-26-0034'},
+		{code:'NT-2605-00405', title:'Thixotropy tuning for low-viscosity gel', st:'ok', ver:'v1', fml:'FML-BG-7708', tags:['#rheology'], author:'J.W. Seo', date:'2026-05-18', project:'PT-26-0034'},
+		// TS-26-0205 Electro 242-2 Grey FC (Tech Support)
+		{code:'NT-2605-00500', title:'Field complaint — cure inconsistency analysis', st:'ing', ver:'', fml:'', tags:['#complaint'], author:'S.Y. Park', date:'2026-05-25', project:'TS-26-0205'},
+		{code:'NT-2605-00490', title:'Customer line trial support memo', st:'ok', ver:'', fml:'', tags:['#support'], author:'S.Y. Park', date:'2026-05-16', project:'TS-26-0205'},
+		// TS-26-0218 High-Temp Silicone Encapsulant (Tech Support)
+		{code:'NT-2604-00450', title:'Thermal aging failure root-cause', st:'ok', ver:'v1', fml:'', tags:['#failure','#thermal'], author:'K.S. Yoon', date:'2026-04-28', project:'TS-26-0218'},
+		{code:'NT-2604-00440', title:'Replacement grade recommendation', st:'ok', ver:'', fml:'', tags:['#support'], author:'K.S. Yoon', date:'2026-04-20', project:'TS-26-0218'}
 	];
 
-	// MAPIS 프로젝트(읽기전용 목록). status는 ST 키(ing/appr/ok). 코드 체계 SN/CN/PT-YY-NNNN.
-	// seg/mat/acct = 좌측 Project 행 pill(목업). npdi list 참고 — 세그먼트·소재타입·계정(blue)
+	// 프로젝트 타입 → 상세 pop + 라벨. 타이틀 클릭 시 해당 타입 상세 페이지 오픈.
+	var PROJ_TYPE = {
+		snpi: { label:'Standard NPI', pop:'apis_npdi_pop.html'   },
+		cnpi: { label:'Custom NPI',   pop:'apis_custom_pop.html' },
+		npt:  { label:'NPT',          pop:'apis_npt_pop.html'    },
+		tech: { label:'Tech Support', pop:'apis_tech_pop.html'   }
+	};
+	// MAPIS 프로젝트(읽기전용). type별 pill 구성은 각 리스트(npdi/custom/npt/tech) 참고.
 	var PROJECTS = [
-		{ code:'SN-26-0031', name:'RGBOLED Display Adhesive', status:'active',   seg:'Display', mat:'UV-PSA',      acct:'Internal'   },
-		{ code:'CN-26-0064', name:'Flexible OLED Lamination', status:'active',   seg:'Flexible OLED', mat:'Lamination', acct:'Internal'   },
-		{ code:'PT-25-0182', name:'Optical Clear Resin',      status:'complete', seg:'Optical', mat:'OCR Resin',    acct:'Internal'   },
-		{ code:'SN-26-0090', name:'Customer A OCR Program',   status:'active',   seg:'Optical', mat:'OCR',          acct:'Customer A' }
+		{ code:'CN-26-0064', type:'cnpi', name:'Flexible OLED Lamination',               status:'active',   customer:'Customer S', seg:'Flexible OLED', market:'Display',      stage:'Commercial Go' },
+		{ code:'PT-26-0021', type:'npt',  name:'New preservative for Silsoft',           status:'active',   seg:'Personal Care', stage:'NPT Go', site:'Leverkusen → Yongin', sched:'On Time' },
+		{ code:'SN-26-0031', type:'snpi', name:'RGBOLED Display Adhesive',               status:'active',   seg:'Display',       market:'Display',        stage:'Commercial Go', sched:'On Time' },
+		{ code:'TS-26-0205', type:'tech', name:'Electro 242-2 Grey FC',                  status:'active',   seg:'Industrial',    market:'Transportation', stage:'Field Support', sched:'On Time' },
+		{ code:'CN-26-0090', type:'cnpi', name:'Customer A OCR Program',                 status:'active',   customer:'Customer A', seg:'Optical',       market:'Display',      stage:'Development' },
+		{ code:'PT-25-0182', type:'npt',  name:'Optical Clear Resin',                    status:'complete', seg:'Optical',       stage:'NPT Go', site:'Leverkusen → Ohta',   sched:'On Time' },
+		{ code:'TS-26-0218', type:'tech', name:'High-Temp Silicone Encapsulant',         status:'complete', seg:'Electronics',   market:'Industrial',     stage:'Closed',        sched:'On Time' },
+		{ code:'SN-26-0047', type:'snpi', name:'Low viscosity high vinyl polybutadiene', status:'active',   seg:'Industrial',    market:'Transportation', stage:'Development',   sched:'On Time' },
+		{ code:'CN-26-0112', type:'cnpi', name:'UV-Curable Conformal Coating',           status:'active',   customer:'Customer K', seg:'Electronics',   market:'Industrial',   stage:'Sample' },
+		{ code:'PT-26-0034', type:'npt',  name:'Low Viscosity Binder Gel T',             status:'active',   seg:'Industrial',    stage:'NPT Go', site:'Ohta → Yongin',       sched:'Delayed' }
 	];
 	function projByCode(c){ return PROJECTS.filter(function(p){ return p.code === c; })[0] || null; }
+	// 타입 뱃지 — 4 타입(snpi/cnpi/npt/tech) 색 구분 pill. statusBox(상태)와 별개로 "어느 NPI 계열인지" 한눈에.
+	function projTypeBadge(p){
+		var t = PROJ_TYPE[p.type]; if(!t) return '';
+		return '<span class="elnProjType elnType-' + p.type + '">' + esc(t.label) + '</span>';
+	}
+	// 타입별 pill(roundBox) — snpi/tech: seg·market·stage·sched / cnpi: customer·seg·market·stage·sched / npt: seg·stage·site전환·sched
+	function projPills(p){
+		function b(v, cls){ return v ? '<div class="roundBox' + (cls ? ' ' + cls : '') + '">' + esc(v) + '</div>' : ''; }
+		if(p.type === 'cnpi') return b(p.customer) + b(p.seg) + b(p.market) + b(p.stage) + b(p.sched, 'blue');
+		if(p.type === 'npt')  return b(p.seg) + b(p.stage) + b(p.site) + b(p.sched, 'blue');
+		return b(p.seg) + b(p.market) + b(p.stage) + b(p.sched, 'blue');
+	}
 
-	// 현재 사용자(목업) — My List/Team List 필터 기준. navbar 'J.P. Kim'과 일치.
-	var CUR_USER = 'J.P. Kim';
+	// 현재 사용자(목업) — My List/Team List 필터 기준. navbar 'Jongho Lee'과 일치.
+	var CUR_USER = 'Jongho Lee';
 
 	// curScope = AppleTab(Project 분류 'all'|'my'|'team'), curAuthor = select(작성자 'all'|이름)
 	var curProj = null, curScope = 'all', curAuthor = 'all', curNotes = [], curSearch = null;
@@ -368,12 +447,10 @@
 			li.className = 'waves-effect waves-hColor' + (p.code === curProj ? ' on' : '');
 			li.setAttribute('data-proj', p.code);
 			// npdi식 pill(세그먼트·소재·계정) + 노트 개수는 우하단 텍스트(pill 아님)
-			var pills = '<div class="roundBox">' + esc(p.seg) + '</div>' +
-				'<div class="roundBox">' + esc(p.mat) + '</div>' +
-				'<div class="roundBox">' + esc(p.acct) + '</div>';
+			var pills = projPills(p);
 			li.innerHTML = '<section class="statusBox ' + s.cls + '">' + s.t + '</section>' +
 				'<section class="wd100p fLine" style="flex-direction: column;justify-content: space-between;">' +
-				'<div class="pjTit">[' + p.code + '] ' + esc(p.name) + '</div>' +
+				'<div class="pjTit">' + projTypeBadge(p) + '<span class="pjTitLink">[' + p.code + '] ' + esc(p.name) + '</span></div>' +
 				'<div class="elnNoteFoot"><div class="subInfo">' + pills + '</div>' +
 				'<div class="elnProjCount">' + cnt + ' note' + (cnt !== 1 ? 's' : '') + '</div></div></section>';
 			ul.appendChild(li);
@@ -397,6 +474,12 @@
 		sel.innerHTML = '<option value="all">All authors</option>' +
 			authors.map(function(a){ return '<option value="' + esc(a) + '">' + esc(a) + '</option>'; }).join('');
 		curAuthor = 'all'; sel.value = 'all';
+		// 옵션이 동적 렌더되므로 Materialize FormSelect를 매번 destroy 후 재init (중복 wrapper 방지)
+		if(window.M && M.FormSelect){
+			var inst = M.FormSelect.getInstance(sel);
+			if(inst) inst.destroy();
+			M.FormSelect.init(sel);
+		}
 	}
 	// 일반 모드: 선택 Project의 작성자. 검색 모드는 fillAuthorSelect(curNotes)를 직접 사용
 	function renderUserFilter(projCode){
@@ -549,6 +632,10 @@
 		$('.sidenav').sidenav();
 		$(document).on('click', '.sidenav-overlay, .closeBtns', function(){ $('.sidenav').sidenav('close'); });
 
+		// 헤더 우측 hover 드롭다운(프로필·언어) — 공통 헤더 패턴
+		$('.rightSection > div').on('mouseenter', function(){ $(this).find('.btnArea').stop().slideDown(200); });
+		$('.rightSection > div').on('mouseleave', function(){ $(this).find('.btnArea').stop().slideUp(200); });
+
 		// Project 목록 렌더 + 첫 Project 자동 선택
 		renderProjectList();
 		curProj = PROJECTS[0].code;
@@ -559,12 +646,20 @@
 		// 좌측 Project 클릭 → 노트목록 교체 (검색 결과 모드 해제)
 		document.getElementById('projListUl').addEventListener('click', function(e){
 			var li = e.target.closest('li[data-proj]'); if(!li) return;
-			curProj = li.getAttribute('data-proj'); curSearch = null;
+			var code = li.getAttribute('data-proj');
+			// 타이틀 클릭 → 해당 프로젝트 타입의 상세 페이지(pop)
+			if(e.target.closest('.pjTitLink')){
+				var p = projByCode(code), t = p && PROJ_TYPE[p.type];
+				if(t) window.open(t.pop, '', 'width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes');
+				return;
+			}
+			// li 영역 클릭 → 해당 과제의 노트 리스트 (검색 모드 해제)
+			curProj = code; curSearch = null;
 			var _clr = document.getElementById('elnSrchClear'); if(_clr) _clr.style.display = 'none';
 			var _crit = document.getElementById('elnSrchCrit'); if(_crit) _crit.style.display = 'none';
 			document.querySelectorAll('#projListUl li').forEach(function(x){ x.classList.remove('on'); });
 			li.classList.add('on');
-			renderUserFilter(curProj);   // 그 Project 소속 작성자로 select 갱신
+			renderUserFilter(curProj);
 			renderNotes(curProj);
 		});
 
@@ -611,6 +706,12 @@
 		// 우측 작성자 select → note 필터
 		var userSel = document.getElementById('elnUserFilter');
 		if(userSel) userSel.addEventListener('change', function(){ curAuthor = this.value; applyFilter(); });
+
+		// 작성자 select 글래스 효과 — hBtn과 동일한 마우스 추적(무지개 색수차). glassTrack/glassClear는 glass_engine.js 전역 함수
+		if(window.glassTrack){
+			$(document).on('mousemove', '.elnNoteHead .select-wrapper', glassTrack);
+			$(document).on('mouseleave', '.elnNoteHead .select-wrapper', function(){ glassClear(this); });
+		}
 
 		// New Note → 시작 템플릿 픽커 (현재 Project 컨텍스트로 시작)
 		var b = document.getElementById('elnNewNote');

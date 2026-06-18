@@ -1,0 +1,1674 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>APIS PA Formulation Tool</title>
+  <link rel="stylesheet" type="text/css" href="css/materialize.css">
+  <link rel="stylesheet" type="text/css" href="css/sf_common.css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <script src="https://cdn.sheetjs.com/xlsx-0.20.3/package/dist/xlsx.full.min.js"></script>
+</head>
+<body>
+
+<div class="pageWrap">
+
+  <!-- ── Header ── -->
+  <div class="headerBar">
+    <div class="titleArea">
+      <div class="titleIcon"><i class="material-icons">science</i></div>
+      <div>
+        <h1>PA Cross-Polymer 배합 ToolBox</h1>
+      </div>
+    </div>
+    <div class="actArea">
+      <button class="sfBtn excel glassLight" onclick="exportExcel()"><i class="material-icons">download</i>Excel</button>
+      <button class="sfBtn secondary glassLight" onclick="openFloatWin('processModal')"><i class="material-icons">settings</i>공정조건</button>
+      <button class="sfBtn secondary glassLight" onclick="openFloatWin('resultModal')"><i class="material-icons">assessment</i>제조결과</button>
+      <button class="sfBtn primary glassLight" onclick="addExperiment()"><i class="material-icons">add</i>실험 추가</button>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════════
+       배합 테이블 (가교반응 + 희석공정 통합)
+       ══════════════════════════════════════ -->
+  <div class="tableWrap">
+    <div class="tableScroll">
+      <table class="fmlTable" id="tblFormula">
+        <thead id="theadFormula"></thead>
+        <tbody id="tbodyFormula"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div><!-- /pageWrap -->
+
+
+<!-- ══════════════════════════════════════
+     Modal: 배합설계
+     ══════════════════════════════════════ -->
+<div class="floatWin glassLight" id="designModal">
+  <div class="fwHeader" id="designDragHandle">
+    <h2><i class="material-icons">tune</i><span id="designTitle">#1 배합설계</span></h2>
+    <div class="fwActions">
+      <button class="fwBtn" onclick="toggleMinimize('designModal')" title="최소화"><i class="material-icons">remove</i></button>
+      <button class="fwBtn" onclick="closeFloatWin('designModal')" title="닫기"><i class="material-icons">close</i></button>
+    </div>
+  </div>
+  <div class="fwBody" id="designBody">
+    <!-- 동적 생성 (buildDesignForm) -->
+  </div>
+  <div class="fwEdge fwEdge-n" data-win="designModal" data-dir="n"></div>
+  <div class="fwEdge fwEdge-s" data-win="designModal" data-dir="s"></div>
+  <div class="fwEdge fwEdge-e" data-win="designModal" data-dir="e"></div>
+  <div class="fwEdge fwEdge-w" data-win="designModal" data-dir="w"></div>
+  <div class="fwEdge fwEdge-ne" data-win="designModal" data-dir="ne"></div>
+  <div class="fwEdge fwEdge-nw" data-win="designModal" data-dir="nw"></div>
+  <div class="fwEdge fwEdge-se" data-win="designModal" data-dir="se"></div>
+  <div class="fwEdge fwEdge-sw" data-win="designModal" data-dir="sw"></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     Float Window: 공정조건 (전 실험 일괄)
+     ══════════════════════════════════════ -->
+<div class="floatWin glassLight" id="processModal" style="top:100px; left:calc(50vw - 320px); width:640px;">
+  <div class="fwHeader">
+    <h2><i class="material-icons">settings</i>공정조건</h2>
+    <div class="fwActions">
+      <button class="fwBtn" onclick="toggleMinimize('processModal')" title="최소화"><i class="material-icons">remove</i></button>
+      <button class="fwBtn" onclick="closeFloatWin('processModal')" title="닫기"><i class="material-icons">close</i></button>
+    </div>
+  </div>
+  <div class="fwBody" id="processBody"><!-- 동적 생성 --></div>
+  <div class="fwEdge fwEdge-n" data-win="processModal" data-dir="n"></div>
+  <div class="fwEdge fwEdge-s" data-win="processModal" data-dir="s"></div>
+  <div class="fwEdge fwEdge-e" data-win="processModal" data-dir="e"></div>
+  <div class="fwEdge fwEdge-w" data-win="processModal" data-dir="w"></div>
+  <div class="fwEdge fwEdge-ne" data-win="processModal" data-dir="ne"></div>
+  <div class="fwEdge fwEdge-nw" data-win="processModal" data-dir="nw"></div>
+  <div class="fwEdge fwEdge-se" data-win="processModal" data-dir="se"></div>
+  <div class="fwEdge fwEdge-sw" data-win="processModal" data-dir="sw"></div>
+</div>
+
+<!-- ══════════════════════════════════════
+     Float Window: 제조결과 (전 실험 일괄)
+     ══════════════════════════════════════ -->
+<div class="floatWin glassLight" id="resultModal" style="top:140px; left:calc(50vw - 340px); width:680px;">
+  <div class="fwHeader">
+    <h2><i class="material-icons">assessment</i>제조결과</h2>
+    <div class="fwActions">
+      <button class="fwBtn" onclick="toggleMinimize('resultModal')" title="최소화"><i class="material-icons">remove</i></button>
+      <button class="fwBtn" onclick="closeFloatWin('resultModal')" title="닫기"><i class="material-icons">close</i></button>
+    </div>
+  </div>
+  <div class="fwBody" id="resultBody"><!-- 동적 생성 --></div>
+  <div class="fwEdge fwEdge-n" data-win="resultModal" data-dir="n"></div>
+  <div class="fwEdge fwEdge-s" data-win="resultModal" data-dir="s"></div>
+  <div class="fwEdge fwEdge-e" data-win="resultModal" data-dir="e"></div>
+  <div class="fwEdge fwEdge-w" data-win="resultModal" data-dir="w"></div>
+  <div class="fwEdge fwEdge-ne" data-win="resultModal" data-dir="ne"></div>
+  <div class="fwEdge fwEdge-nw" data-win="resultModal" data-dir="nw"></div>
+  <div class="fwEdge fwEdge-se" data-win="resultModal" data-dir="se"></div>
+  <div class="fwEdge fwEdge-sw" data-win="resultModal" data-dir="sw"></div>
+</div>
+
+
+<!-- Context Menu -->
+<div class="ctxMenu" id="ctxMenu">
+  <div class="ctxItem ctxAdd" onclick="ctxAddRow()"><i class="material-icons">add</i>행 추가</div>
+  <div class="ctxItem ctxRemove" onclick="ctxRemoveRow()"><i class="material-icons">remove</i>행 삭제</div>
+</div>
+
+<!-- Quick Search Dropdown -->
+<div class="qsDropdown" id="qsDropdown"></div>
+
+<script>
+/* ══════════════════════════════════════
+   Data & State
+   ══════════════════════════════════════ */
+var expCount = 3;
+var activeExp = 1;
+
+// 원료 기본 정보 (노란색 = 편집 가능)
+var materials = {
+  H1: { name: 'MHF-68D',      code: 'CSF01489', func: 3.0292 },
+  H2: { name: 'HMS-064',      code: 'CSF01627', func: 0.8739 },
+  H3: { name: 'HMS-501',      code: 'CSF01234', func: 0.11   },
+  V1: { name: 'VDT-431',      code: 'CSF02180', func: 0.92   },
+  V2: { name: 'VQM-146',      code: 'CSF04376', func: 0.4    },
+  V3: { name: 'VMM-010',      code: 'CSF03892', func: 1.2    },
+  catalyst: { name: 'Pt VTSC 1.0PS', code: 'AEG02525' },
+  baseOil:  { name: 'KF-96-100cs', code: 'CSF00312' },
+  additive: { name: 'BY16-201',    code: 'CSF05541' },
+  retarder: { name: 'Vi-MM',       code: 'CSF06103' },
+};
+
+// 원료 마스터 DB (퀵서치용)
+var materialMaster = [
+  { name: 'MHF-68D',       code: 'CSF01489', func: 3.0292, type: 'H-Polymer' },
+  { name: 'HMS-064',       code: 'CSF01627', func: 0.8739, type: 'H-Polymer' },
+  { name: 'HMS-501',       code: 'CSF01234', func: 0.11,   type: 'H-Polymer' },
+  { name: 'HMS-301',       code: 'CSF01455', func: 0.55,   type: 'H-Polymer' },
+  { name: 'HMS-992',       code: 'CSF01780', func: 1.82,   type: 'H-Polymer' },
+  { name: 'MHF-22D',       code: 'CSF01102', func: 2.15,   type: 'H-Polymer' },
+  { name: 'VDT-431',       code: 'CSF02180', func: 0.92,   type: 'Vi-Polymer' },
+  { name: 'VQM-146',       code: 'CSF04376', func: 0.4,    type: 'Vi-Polymer' },
+  { name: 'VMM-010',       code: 'CSF03892', func: 1.2,    type: 'Vi-Polymer' },
+  { name: 'VDT-731',       code: 'CSF02344', func: 0.68,   type: 'Vi-Polymer' },
+  { name: 'VMS-T11',       code: 'CSF02590', func: 1.55,   type: 'Vi-Polymer' },
+  { name: 'VQM-235',       code: 'CSF04501', func: 0.32,   type: 'Vi-Polymer' },
+  { name: 'Pt VTSC 1.0PS', code: 'AEG02525', type: 'Catalyst' },
+  { name: 'Pt DVTMDS',     code: 'AEG02610', type: 'Catalyst' },
+  { name: 'Pt Karstedt',   code: 'AEG02701', type: 'Catalyst' },
+  { name: 'KF-96-100cs',   code: 'CSF00312', type: 'Base Oil' },
+  { name: 'KF-96-350cs',   code: 'CSF00315', type: 'Base Oil' },
+  { name: 'KF-96-50cs',    code: 'CSF00308', type: 'Base Oil' },
+  { name: 'PMX-200-100cs', code: 'CSF00420', type: 'Base Oil' },
+  { name: 'SH200-100cs',   code: 'CSF00510', type: 'Base Oil' },
+  { name: 'BY16-201',      code: 'CSF05541', type: '첨가제' },
+  { name: 'BY16-849',      code: 'CSF05623', type: '첨가제' },
+  { name: 'SF-8427',       code: 'CSF05710', type: '첨가제' },
+  { name: 'KP-360',        code: 'CSF05801', type: '첨가제' },
+  { name: 'Vi-MM',         code: 'CSF06103', type: '지연제' },
+  { name: 'ECH',           code: 'CSF06205', type: '지연제' },
+  { name: 'DVB',           code: 'CSF06310', type: '지연제' },
+];
+
+// 가교반응 행 정의 (group 기반)
+var crosslinkRowDefs = [
+  { group: 'H', nameKey: 'H1' },
+  { group: 'H', nameKey: 'H2' },
+  { group: 'H', nameKey: 'H3' },
+  { group: 'V', nameKey: 'V1' },
+  { group: 'V', nameKey: 'V2' },
+  { group: 'V', nameKey: 'V3' },
+  { group: 'cat', nameKey: 'catalyst' },
+  { group: 'oil', nameKey: 'baseOil' },
+  { group: 'add', nameKey: 'additive' },
+];
+
+// 희석공정 행 정의
+var dilutionRowDefs = [
+  { group: 'dilOil', nameKey: 'baseOil', label: 'KF-96-100cs' },
+  { group: 'dilOil', nameKey: 'baseOil', label: 'KF-96-100cs' },
+  { group: 'dilAdd', nameKey: 'additive', label: 'BY16-201' },
+  { group: 'dilRet', nameKey: 'retarder', label: 'Vi-MM' },
+];
+
+// 그룹 표시 레이블
+var groupLabels = {
+  'H': 'H-Polymer', 'V': 'Vi-Polymer',
+  'cat': 'Catalyst', 'oil': 'Base Oil', 'add': '첨가제',
+  'dilOil': 'Base Oil', 'dilAdd': '첨가제', 'dilRet': '지연제'
+};
+
+// 확장 가능 그룹 (모든 원료유형)
+var expandableGroups = { 'H': true, 'V': true, 'cat': true, 'oil': true, 'add': true, 'dilOil': true, 'dilAdd': true, 'dilRet': true };
+
+// typeSpan 재계산
+function rebuildTypeSpans(rowDefs) {
+  rowDefs.forEach(function(r) { delete r.typeSpan; delete r.typeLabel; });
+  var i = 0;
+  while (i < rowDefs.length) {
+    var grp = rowDefs[i].group;
+    var count = 0;
+    for (var j = i; j < rowDefs.length && rowDefs[j].group === grp; j++) count++;
+    rowDefs[i].typeSpan = count;
+    rowDefs[i].typeLabel = groupLabels[grp] || grp;
+    i += count;
+  }
+}
+rebuildTypeSpans(crosslinkRowDefs);
+rebuildTypeSpans(dilutionRowDefs);
+
+// ── 실험별 데이터 ──
+var expTitle = {};    // 실험 타이틀
+var expDesign = {};   // 배합설계
+var expProcess = {};  // 공정조건
+var expResult = {};   // 제조결과
+var expCalc = {};     // 계산 결과 캐시
+var expBatchSize = {}; // 실투입 총량 (g)
+
+function initExp(n) {
+  if (!expTitle[n]) {
+    expTitle[n] = '#' + n;
+  }
+  if (!expDesign[n]) {
+    var hLen = crosslinkRowDefs.filter(function(r) { return r.group === 'H'; }).length;
+    var vLen = crosslinkRowDefs.filter(function(r) { return r.group === 'V'; }).length;
+    expDesign[n] = {
+      viHRatio: 1.2,
+      hRatios: [0.2, 0.8, 0].slice(0, hLen),
+      hActive: Array(hLen).fill(true),
+      vRatios: [1, 0, 0].slice(0, vLen),
+      vActive: Array(vLen).fill(true),
+      catalyst: 800,
+      gels: [0.23, 0.172, 0.15],
+      adds: [0.187, 0.147],
+      retarder: 1000
+    };
+  }
+  if (!expProcess[n]) {
+    expProcess[n] = { rollCnt: '', gelTime: '', temp1: '' };
+  }
+  if (!expResult[n]) {
+    expResult[n] = { appear: '', viscosity: '', color: '', volatile: '', nonVolatile: '', texture: '', storage: '', note: '' };
+  }
+  if (!expBatchSize[n]) {
+    expBatchSize[n] = 100;
+  }
+}
+
+// #1 샘플 데이터
+initExp(1);
+expDesign[1] = { viHRatio: 1.2, hRatios: [0.2, 0.8, 0], hActive: [true, true, true], vRatios: [1, 0, 0], vActive: [true, true, true], catalyst: 800, gels: [0.23, 0.172, 0.15], adds: [0.187, 0.147], retarder: 1000 };
+expProcess[1] = { rollCnt: '1', gelTime: '30분', temp1: '90℃' };
+expResult[1] = { appear: '양호', viscosity: '130000', color: '연한노랑', volatile: '10.1', nonVolatile: '', texture: '매우 부드럽고 실키함', storage: '', note: '' };
+expBatchSize[1] = 50;
+
+initExp(2);
+expDesign[2] = { viHRatio: 1.1, hRatios: [0.4, 0.6, 0], hActive: [true, true, true], vRatios: [1, 0, 0], vActive: [true, true, true], catalyst: 800, gels: [0.23, 0.172, 0.15], adds: [0.187, 0.147], retarder: 1000 };
+expBatchSize[2] = 40;
+
+initExp(3);
+
+
+/* ══════════════════════════════════════
+   Calculation Engine (엑셀 수식 재현)
+   ══════════════════════════════════════ */
+function calculate(n) {
+  var d = expDesign[n];
+  if (!d) return null;
+
+  // ── H-Polymer (동적 + active 체크) ──
+  var hRows = crosslinkRowDefs.filter(function(r) { return r.group === 'H'; });
+  var hActive = d.hActive || hRows.map(function() { return true; });
+  var hRatiosIn = (d.hRatios || []).slice();
+  while (hRatiosIn.length < hRows.length) hRatiosIn.push(0);
+
+  // active 인덱스 & 마지막 active 찾기
+  var hActiveIdxs = [];
+  hActive.forEach(function(a, i) { if (a && i < hRows.length) hActiveIdxs.push(i); });
+  var hLastActiveIdx = hActiveIdxs.length > 0 ? hActiveIdxs[hActiveIdxs.length - 1] : -1;
+
+  // active 중 마지막 = remainder, 나머지 = 입력값, inactive = 0
+  var hRatioSum = 0;
+  var hAllRatios = [];
+  for (var hi = 0; hi < hRows.length; hi++) {
+    if (!hActive[hi]) { hAllRatios.push(0); }
+    else if (hi === hLastActiveIdx) { hAllRatios.push(0); /* placeholder */ }
+    else { var rv = hRatiosIn[hi] || 0; hAllRatios.push(rv); hRatioSum += rv; }
+  }
+  var hLastRatio = hLastActiveIdx >= 0 ? Math.max(0, 1 - hRatioSum) : 0;
+  if (hLastActiveIdx >= 0) hAllRatios[hLastActiveIdx] = hLastRatio;
+
+  var hRaws = hAllRatios.slice();
+  var hTotalMmol = 0;
+  hRows.forEach(function(row, i) {
+    var func = materials[row.nameKey] ? (materials[row.nameKey].func || 0) : 0;
+    hTotalMmol += func * (hRaws[i] || 0);
+  });
+
+  // ── Vi-Polymer (동적 + active 체크) ──
+  var viTotalMmol = hTotalMmol * (d.viHRatio || 0);
+  var vRows = crosslinkRowDefs.filter(function(r) { return r.group === 'V'; });
+  var vActive = d.vActive || vRows.map(function() { return true; });
+  var vRatiosIn = (d.vRatios || []).slice();
+  while (vRatiosIn.length < vRows.length) vRatiosIn.push(0);
+
+  var vActiveIdxs = [];
+  vActive.forEach(function(a, i) { if (a && i < vRows.length) vActiveIdxs.push(i); });
+  var vLastActiveIdx = vActiveIdxs.length > 0 ? vActiveIdxs[vActiveIdxs.length - 1] : -1;
+
+  var vRatioSum = 0;
+  var vAllRatios = [];
+  for (var vi = 0; vi < vRows.length; vi++) {
+    if (!vActive[vi]) { vAllRatios.push(0); }
+    else if (vi === vLastActiveIdx) { vAllRatios.push(0); }
+    else { var rv2 = vRatiosIn[vi] || 0; vAllRatios.push(rv2); vRatioSum += rv2; }
+  }
+  var vLastRatio = vLastActiveIdx >= 0 ? Math.max(0, 1 - vRatioSum) : 0;
+  if (vLastActiveIdx >= 0) vAllRatios[vLastActiveIdx] = vLastRatio;
+
+  var vRaws = vRows.map(function(row, i) {
+    var func = materials[row.nameKey] ? (materials[row.nameKey].func || 0) : 0;
+    var ratio = vAllRatios[i] || 0;
+    return func > 0 ? ratio * viTotalMmol / func : 0;
+  });
+
+  // ── Catalyst, Base Oil, 첨가제 ──
+  var sumPolymers = hRaws.reduce(function(a, b) { return a + b; }, 0) + vRaws.reduce(function(a, b) { return a + b; }, 0);
+  var rawCatalyst = sumPolymers * ((d.catalyst || 0) / 1000000);
+
+  var gels = d.gels || [];
+  var gel1 = gels[0] || 0;
+  var rawBaseOil = gel1 > 0 ? ((1 - gel1) * sumPolymers / gel1) : 0;
+
+  var adds = d.adds || [];
+  var add1 = adds[0] || 0;
+  var sumBeforeAdd = sumPolymers + rawCatalyst + rawBaseOil;
+  var rawAdditive = add1 < 1 ? sumBeforeAdd * add1 / (1 - add1) : 0;
+
+  // 가교반응 raws: H... + V... + catalyst + baseOil + additive
+  var crosslinkRaws = hRaws.concat(vRaws, [rawCatalyst, rawBaseOil, rawAdditive]);
+  var crosslinkTotal = crosslinkRaws.reduce(function(a, b) { return a + b; }, 0);
+
+  // ── 희석공정 (동적 dilOil 수) ──
+  var dilOilRows = dilutionRowDefs.filter(function(r) { return r.group === 'dilOil'; });
+  var dilOilRaws = [];
+  var prevOilSum = rawBaseOil;
+
+  for (var i = 0; i < dilOilRows.length; i++) {
+    var gelN = gels[i + 1] || 0;
+    var dilOil = gelN > 0 ? ((1 - gelN) * sumPolymers - gelN * prevOilSum) / gelN : 0;
+    dilOilRaws.push(dilOil);
+    prevOilSum += dilOil;
+  }
+
+  var add2 = adds[1] || 0;
+  var sumForDilAdd = sumPolymers + rawCatalyst + rawBaseOil + dilOilRaws.reduce(function(a, b) { return a + b; }, 0);
+  var dilAdditive = add2 < 1 ? sumForDilAdd * add2 / (1 - add2) - rawAdditive : 0;
+
+  var dilRetarder = (d.retarder || 0) * sumPolymers / 1000000;
+
+  // dilutionRaws: oils... + additive + retarder (1:1 매핑 with dilutionRowDefs)
+  var dilutionRaws = dilOilRaws.concat([dilAdditive, dilRetarder]);
+  var dilutionTotal = dilutionRaws.reduce(function(a, b) { return a + b; }, 0);
+  var grandTotal = crosslinkTotal + dilutionTotal;
+
+  var batchSize = parseFloat(expBatchSize[n]) || 0;
+  var crosslink100 = crosslinkRaws.map(function(v) { return grandTotal > 0 ? v / grandTotal * 100 : 0; });
+  var dilution100 = dilutionRaws.map(function(v) { return grandTotal > 0 ? v / grandTotal * 100 : 0; });
+  var crosslinkReal = crosslinkRaws.map(function(v) { return v * batchSize; });
+  var dilutionReal = dilutionRaws.map(function(v) { return v * batchSize; });
+
+  var finalGel = grandTotal > 0 ? sumPolymers / grandTotal : 0;
+  var finalAdd = grandTotal > 0 ? (rawAdditive + dilAdditive) / grandTotal : 0;
+  var finalDil = grandTotal > 0 ? (rawBaseOil + dilOilRaws.reduce(function(a,b){return a+b;},0)) / grandTotal : 0;
+
+  return {
+    hTotalMmol: hTotalMmol, viTotalMmol: viTotalMmol,
+    hLastRatio: hLastRatio, vLastRatio: vLastRatio,
+    crosslinkRaws: crosslinkRaws, crosslink100: crosslink100, crosslinkReal: crosslinkReal,
+    crosslinkTotalRaw: crosslinkTotal,
+    crosslinkTotal100: grandTotal > 0 ? crosslinkTotal / grandTotal * 100 : 0,
+    crosslinkTotalReal: crosslinkTotal * batchSize,
+    dilutionRaws: dilutionRaws, dilution100: dilution100, dilutionReal: dilutionReal,
+    dilutionTotalRaw: dilutionTotal,
+    dilutionTotal100: grandTotal > 0 ? dilutionTotal / grandTotal * 100 : 0,
+    dilutionTotalReal: dilutionTotal * batchSize,
+    grandTotalRaw: grandTotal, grandTotalReal: grandTotal * batchSize,
+    finalGel: finalGel, finalAdd: finalAdd, finalDil: finalDil
+  };
+}
+
+
+/* ══════════════════════════════════════
+   Number Formatting
+   ══════════════════════════════════════ */
+function fmt(v, decimals) {
+  if (v === 0) return '0';
+  if (typeof decimals === 'undefined') decimals = 4;
+  // 소수점 이하 유효숫자 기반 표기
+  var abs = Math.abs(v);
+  if (abs < 0.0001) return v.toExponential(2);
+  if (abs < 0.01) return v.toFixed(6);
+  if (abs < 1) return v.toFixed(4);
+  if (abs < 100) return v.toFixed(4);
+  return v.toFixed(2);
+}
+
+
+/* ══════════════════════════════════════
+   Render Tables (통합)
+   ══════════════════════════════════════ */
+function renderTables() {
+  for (var e = 1; e <= expCount; e++) {
+    initExp(e);
+    expCalc[e] = calculate(e);
+  }
+  renderFormulaTable();
+  // 배합설계 열려있으면 하이라이트 복원
+  if (document.getElementById('designModal').classList.contains('active')) {
+    highlightExp(activeExp);
+  }
+}
+
+function renderFormulaTable() {
+  var thead = document.getElementById('theadFormula');
+  var tbody = document.getElementById('tbodyFormula');
+
+  // ── Header Row 1: 실험번호 ──
+  var h1 = '<tr class="headRow1">' +
+    '<th class="colStage" rowspan="2">제조단계</th>' +
+    '<th class="colType" rowspan="2">원료유형</th>' +
+    '<th class="colName" rowspan="2">원료명</th>' +
+    '<th class="colCode" rowspan="2">코드</th>' +
+    '<th class="colFunc" rowspan="2">관능기함량<br><span class="font11">(mmol/g)</span></th>';
+
+  for (var e = 1; e <= expCount; e++) {
+    h1 += '<th class="colExpHeader' + (e > 1 ? ' expBorderL' : '') + '" colspan="4" data-exp="' + e + '">' +
+      '<span class="expHeaderInner">' +
+      '<input type="text" class="expTitleInput" value="' + (expTitle[e] || '#' + e) + '" data-exp="' + e + '" onchange="onExpTitleChange(this)" title="실험명 편집">' +
+      '<button class="expDesignBtn glassLight" onclick="openDesignForExp(' + e + ')" title="배합설계"><i class="material-icons">tune</i>배합설계</button>' +
+      '</span></th>';
+  }
+  h1 += '</tr>';
+
+  // ── Header Row 2: 원배합 / 100배합 / 실투입 / 희석배합 ──
+  var h2 = '<tr class="headRow2">';
+  for (var e = 1; e <= expCount; e++) {
+    h2 += '<th class="colExpSub' + (e > 1 ? ' expBorderL' : '') + '" data-exp="' + e + '">원배합</th>' +
+          '<th class="colExpSub" data-exp="' + e + '">100배합</th>' +
+          '<th class="colExpSub" data-exp="' + e + '"><span class="batchSizeWrap">실험배합 <input type="number" class="batchSizeInput" value="' + (expBatchSize[e] || '') + '" placeholder="g" data-exp="' + e + '" onchange="onBatchSizeChange(this)">배</span></th>' +
+          '<th class="colExpSub" data-exp="' + e + '">희석배합</th>';
+  }
+  h2 += '</tr>';
+
+  thead.innerHTML = h1 + h2;
+
+  // ── Body ──
+  var b = '';
+
+  // 가교반응 rows
+  for (var r = 0; r < crosslinkRowDefs.length; r++) {
+    var def = crosslinkRowDefs[r];
+    var mat = materials[def.nameKey] || {};
+    var matName = mat.name || def.nameKey;
+    var matCode = mat.code || '';
+    var matFunc = (mat.func !== undefined && mat.func !== '') ? mat.func : '';
+    var hasFunc = (def.group === 'H' || def.group === 'V');
+
+    b += '<tr data-section="crosslink" data-ridx="' + r + '" data-group="' + def.group + '">';
+    if (r === 0) {
+      b += '<td class="colStage" rowspan="' + crosslinkRowDefs.length + '">가교반응</td>';
+    }
+    // colType: rowspan 처리
+    if (def.typeSpan) {
+      b += '<td class="colType"' + (def.typeSpan > 1 ? ' rowspan="' + def.typeSpan + '"' : '') + '>' + (def.typeLabel || '') + '</td>';
+    }
+    b += '<td class="colName"><input type="text" class="cellInput matInput" value="' + matName + '" data-mat="' + def.nameKey + '" data-field="name" onchange="onMatChange(this)"></td>';
+    b += '<td class="colCode"><input type="text" class="cellInput matInput" value="' + matCode + '" data-mat="' + def.nameKey + '" data-field="code" onchange="onMatChange(this)"></td>';
+    if (hasFunc) {
+      b += '<td class="colFunc"><input type="number" step="any" class="cellInput matInput" value="' + matFunc + '" data-mat="' + def.nameKey + '" data-field="func" onchange="onMatFuncChange(this)"></td>';
+    } else {
+      b += '<td class="colFunc"></td>';
+    }
+
+    for (var e = 1; e <= expCount; e++) {
+      var c = expCalc[e];
+      b += '<td class="colExp calcCell' + (e > 1 ? ' expBorderL' : '') + '" data-exp="' + e + '">' + fmt(c ? c.crosslinkRaws[r] : 0) + '</td>';
+      b += '<td class="colExp calcCell" data-exp="' + e + '">' + fmt(c ? c.crosslink100[r] : 0) + '</td>';
+      b += '<td class="colExp calcCell" data-exp="' + e + '">' + (expBatchSize[e] ? fmt(c ? c.crosslinkReal[r] : 0) : '') + '</td>';
+      b += '<td class="colExp calcCell" data-exp="' + e + '"></td>';
+    }
+    b += '</tr>';
+  }
+
+  // 가교반응 소계
+  b += '<tr class="rowSubtotal">';
+  b += '<td class="colStage"></td><td class="colType">소계</td><td class="colName"></td><td class="colCode"></td><td class="colFunc"></td>';
+  for (var e = 1; e <= expCount; e++) {
+    var c = expCalc[e];
+    b += '<td class="colExp' + (e > 1 ? ' expBorderL' : '') + '" data-exp="' + e + '">' + (c ? fmt(c.crosslinkTotalRaw) : '') + '</td>';
+    b += '<td class="colExp" data-exp="' + e + '">' + (c ? fmt(c.crosslinkTotal100) : '') + '</td>';
+    b += '<td class="colExp" data-exp="' + e + '">' + (c && expBatchSize[e] ? fmt(c.crosslinkTotalReal) : '') + '</td>';
+    b += '<td class="colExp" data-exp="' + e + '">100</td>';
+  }
+  b += '</tr>';
+
+  // 희석공정 rows
+  for (var r = 0; r < dilutionRowDefs.length; r++) {
+    var def = dilutionRowDefs[r];
+    var mat = materials[def.nameKey];
+    var matName = def.label || mat.name || def.nameKey;
+    var matCode = mat.code || '';
+
+    b += '<tr data-section="dilution" data-ridx="' + r + '" data-group="' + def.group + '">';
+    if (r === 0) {
+      b += '<td class="colStage" rowspan="' + dilutionRowDefs.length + '">희석공정</td>';
+    }
+    // colType: rowspan 처리
+    if (def.typeSpan) {
+      b += '<td class="colType"' + (def.typeSpan > 1 ? ' rowspan="' + def.typeSpan + '"' : '') + '>' + (def.typeLabel || '') + '</td>';
+    }
+    b += '<td class="colName"><input type="text" class="cellInput matInput" value="' + matName + '" data-mat="' + def.nameKey + '" data-field="name" data-dilrow="' + r + '" onchange="onDilMatChange(this)"></td>';
+    b += '<td class="colCode"><input type="text" class="cellInput matInput" value="' + matCode + '" data-mat="' + def.nameKey + '" data-field="code" data-dilrow="' + r + '" onchange="onDilMatChange(this)"></td>';
+    b += '<td class="colFunc"></td>';
+
+    for (var e = 1; e <= expCount; e++) {
+      var c = expCalc[e];
+      var dilReal = c ? c.dilutionReal[r] : 0;
+      var crossTotalReal = c ? c.crosslinkTotalReal : 0;
+      var dilPct = (crossTotalReal > 0) ? dilReal / crossTotalReal * 100 : 0;
+
+      b += '<td class="colExp calcCell' + (e > 1 ? ' expBorderL' : '') + '" data-exp="' + e + '">' + fmt(c ? c.dilutionRaws[r] : 0) + '</td>';
+      b += '<td class="colExp calcCell" data-exp="' + e + '">' + fmt(c ? c.dilution100[r] : 0) + '</td>';
+      b += '<td class="colExp calcCell" data-exp="' + e + '">' + (expBatchSize[e] ? fmt(dilReal) : '') + '</td>';
+      b += '<td class="colExp calcCell" data-exp="' + e + '">' + (expBatchSize[e] && dilPct ? fmt(dilPct) : '') + '</td>';
+    }
+    b += '</tr>';
+  }
+
+  // 전체 Total
+  b += '<tr class="rowTotal">';
+  b += '<td class="colStage"></td><td class="colType"><strong>Total</strong></td><td class="colName"></td><td class="colCode"></td><td class="colFunc"></td>';
+  for (var e = 1; e <= expCount; e++) {
+    var c = expCalc[e];
+    b += '<td class="colExp' + (e > 1 ? ' expBorderL' : '') + '" data-exp="' + e + '"><strong>' + (c ? fmt(c.grandTotalRaw) : '') + '</strong></td>';
+    b += '<td class="colExp" data-exp="' + e + '"><strong>100</strong></td>';
+    b += '<td class="colExp" data-exp="' + e + '"><strong>' + (c && expBatchSize[e] ? fmt(c.grandTotalReal) : '') + '</strong></td>';
+    b += '<td class="colExp" data-exp="' + e + '"></td>';
+  }
+  b += '</tr>';
+
+  tbody.innerHTML = b;
+}
+
+
+/* ══════════════════════════════════════
+   Quick Search
+   ══════════════════════════════════════ */
+var qsDrop = document.getElementById('qsDropdown');
+var qsTarget = null; // 현재 포커스된 input
+var qsIdx = -1;      // 키보드 선택 인덱스
+var qsItems = [];    // 현재 필터된 결과
+
+function qsOpen(inputEl) {
+  qsTarget = inputEl;
+  qsIdx = -1;
+  qsFilter(inputEl.value);
+}
+
+function qsClose() {
+  qsDrop.classList.remove('active');
+  qsTarget = null;
+  qsIdx = -1;
+  qsItems = [];
+}
+
+function qsFilter(keyword) {
+  var kw = (keyword || '').toLowerCase();
+  var field = qsTarget.getAttribute('data-field');
+
+  qsItems = materialMaster.filter(function(m) {
+    if (!kw) return true;
+    if (field === 'name') return m.name.toLowerCase().indexOf(kw) >= 0;
+    if (field === 'code') return m.code.toLowerCase().indexOf(kw) >= 0;
+    return m.name.toLowerCase().indexOf(kw) >= 0 || m.code.toLowerCase().indexOf(kw) >= 0;
+  });
+
+  if (qsItems.length === 0) {
+    qsDrop.innerHTML = '<div class="qsEmpty">검색 결과 없음</div>';
+  } else {
+    var h = '';
+    qsItems.forEach(function(m, i) {
+      h += '<div class="qsItem" data-idx="' + i + '" onmousedown="qsSelect(' + i + ')">';
+      h += '<span class="qsName">' + m.name + '</span>';
+      h += '<span class="qsCode">' + m.code + '</span>';
+      h += '</div>';
+    });
+    qsDrop.innerHTML = h;
+  }
+
+  // 위치 계산
+  var rect = qsTarget.getBoundingClientRect();
+  qsDrop.style.left = rect.left + 'px';
+  qsDrop.style.top = (rect.bottom + 2) + 'px';
+  qsDrop.style.minWidth = Math.max(260, rect.width) + 'px';
+  qsDrop.classList.add('active');
+}
+
+function qsSelect(idx) {
+  if (!qsTarget || !qsItems[idx]) return;
+  var m = qsItems[idx];
+  var matKey = qsTarget.getAttribute('data-mat');
+  var isDil = qsTarget.hasAttribute('data-dilrow');
+
+  // 원료명과 코드 모두 업데이트
+  materials[matKey].name = m.name;
+  materials[matKey].code = m.code;
+  if (m.func !== undefined) materials[matKey].func = m.func;
+
+  // 희석공정 라벨도 업데이트
+  if (isDil) {
+    var dilIdx = parseInt(qsTarget.getAttribute('data-dilrow'));
+    dilutionRowDefs[dilIdx].label = m.name;
+  }
+
+  qsClose();
+  renderTables();
+}
+
+function qsKeydown(e) {
+  if (!qsDrop.classList.contains('active')) return;
+  var items = qsDrop.querySelectorAll('.qsItem');
+  if (e.key === 'ArrowDown') {
+    e.preventDefault();
+    qsIdx = Math.min(qsIdx + 1, items.length - 1);
+  } else if (e.key === 'ArrowUp') {
+    e.preventDefault();
+    qsIdx = Math.max(qsIdx - 1, 0);
+  } else if (e.key === 'Enter' && qsIdx >= 0) {
+    e.preventDefault();
+    qsSelect(qsIdx);
+    return;
+  } else if (e.key === 'Escape') {
+    qsClose();
+    return;
+  }
+  items.forEach(function(el, i) {
+    el.classList.toggle('qsSelected', i === qsIdx);
+  });
+  if (items[qsIdx]) items[qsIdx].scrollIntoView({ block: 'nearest' });
+}
+
+// 이벤트 위임: matInput의 name/code 필드에서 퀵서치 활성화
+document.addEventListener('input', function(e) {
+  var el = e.target;
+  if (!el.classList.contains('matInput')) return;
+  var field = el.getAttribute('data-field');
+  if (field !== 'name' && field !== 'code') return;
+  qsTarget = el;
+  qsFilter(el.value);
+});
+
+document.addEventListener('focusin', function(e) {
+  var el = e.target;
+  if (!el.classList.contains('matInput')) return;
+  var field = el.getAttribute('data-field');
+  if (field !== 'name' && field !== 'code') return;
+  qsOpen(el);
+});
+
+document.addEventListener('focusout', function(e) {
+  setTimeout(function() { qsClose(); }, 150);
+});
+
+document.addEventListener('keydown', function(e) {
+  qsKeydown(e);
+});
+
+/* ══════════════════════════════════════
+   Input Handlers
+   ══════════════════════════════════════ */
+function onExpTitleChange(el) {
+  var e = parseInt(el.getAttribute('data-exp'));
+  expTitle[e] = el.value || '#' + e;
+  if (e === activeExp) buildExpSelectOptions();
+}
+
+function onBatchSizeChange(el) {
+  var e = parseInt(el.getAttribute('data-exp'));
+  expBatchSize[e] = parseFloat(el.value) || '';
+  renderTables();
+}
+
+function onMatChange(el) {
+  var matKey = el.getAttribute('data-mat');
+  var field = el.getAttribute('data-field');
+  if (field === 'name') materials[matKey].name = el.value;
+  if (field === 'code') materials[matKey].code = el.value;
+}
+
+function onMatFuncChange(el) {
+  var matKey = el.getAttribute('data-mat');
+  materials[matKey].func = parseFloat(el.value) || 0;
+  renderTables();
+}
+
+function onModalFuncChange(el) {
+  var matKey = el.getAttribute('data-mat');
+  materials[matKey].func = parseFloat(el.value) || 0;
+  onDesignInput();
+}
+
+function onDilMatChange(el) {
+  var field = el.getAttribute('data-field');
+  var r = parseInt(el.getAttribute('data-dilrow'));
+  if (field === 'name') dilutionRowDefs[r].label = el.value;
+}
+
+
+/* ══════════════════════════════════════
+   Modal ↔ Data Sync
+   ══════════════════════════════════════ */
+/* ── 배합설계 동적 폼 생성 ── */
+function buildDesignForm() {
+  var hRows = crosslinkRowDefs.filter(function(r) { return r.group === 'H'; });
+  var vRows = crosslinkRowDefs.filter(function(r) { return r.group === 'V'; });
+  var dilOilCount = dilutionRowDefs.filter(function(r) { return r.group === 'dilOil'; }).length;
+
+  var d = expDesign[activeExp] || {};
+  // hActive/vActive 보장
+  if (!d.hActive) d.hActive = hRows.map(function() { return true; });
+  if (!d.vActive) d.vActive = vRows.map(function() { return true; });
+  while (d.hActive.length < hRows.length) d.hActive.push(false);
+  while (d.vActive.length < vRows.length) d.vActive.push(false);
+
+  // active 폴리머 이름 목록
+  var hActiveNames = [], hActiveIdxs = [];
+  hRows.forEach(function(r, i) { if (d.hActive[i]) { hActiveNames.push(materials[r.nameKey] ? (materials[r.nameKey].name || r.nameKey) : r.nameKey); hActiveIdxs.push(i); } });
+  var hLastActiveIdx = hActiveIdxs.length > 0 ? hActiveIdxs[hActiveIdxs.length - 1] : -1;
+
+  var vActiveNames = [], vActiveIdxs = [];
+  vRows.forEach(function(r, i) { if (d.vActive[i]) { vActiveNames.push(materials[r.nameKey] ? (materials[r.nameKey].name || r.nameKey) : r.nameKey); vActiveIdxs.push(i); } });
+  var vLastActiveIdx = vActiveIdxs.length > 0 ? vActiveIdxs[vActiveIdxs.length - 1] : -1;
+
+  var h = '<div class="formGridWrap"><table class="formGrid"><tbody>';
+  h += '<tr><td class="fgLabel">Vi / H ratio</td>';
+  h += '<td class="fgValue"><input type="number" step="0.1" id="dViHRatio" oninput="onDesignInput()"></td></tr>';
+
+  // H-Polymer 선택
+  h += '<tr><td class="fgLabel">H-Polymer 선택</td><td class="fgValue">';
+  for (var i = 0; i < hRows.length; i++) {
+    var name = materials[hRows[i].nameKey] ? (materials[hRows[i].nameKey].name || hRows[i].nameKey) : hRows[i].nameKey;
+    h += '<label class="polyCheck' + (d.hActive[i] ? ' checked' : '') + '" data-ptype="H" data-pidx="' + i + '" onclick="onPolyChipClick(this)"><span class="cbBox"></span><span class="cbLabel">' + name + '</span></label>';
+  }
+  h += '</td></tr>';
+
+  // H-Polymer weight ratio
+  h += '<tr><td class="fgLabel">H-Polymer weight ratio</td>';
+  h += '<td class="fgValue"><div class="ratioRow">';
+  for (var i = 0; i < hActiveIdxs.length; i++) {
+    var idx = hActiveIdxs[i];
+    var name = materials[hRows[idx].nameKey] ? (materials[hRows[idx].nameKey].name || hRows[idx].nameKey) : hRows[idx].nameKey;
+    if (idx === hLastActiveIdx) {
+      h += '<div class="ratioInputWrap auto"><span class="ratioLabel">' + name + '</span><input type="text" class="ratioInput" id="dHR_' + idx + '" readonly></div>';
+    } else {
+      h += '<div class="ratioInputWrap"><span class="ratioLabel">' + name + '</span><input type="number" step="0.1" class="ratioInput" id="dHR_' + idx + '" oninput="onDesignInput()"></div>';
+    }
+  }
+  if (hActiveIdxs.length === 0) h += '<span class="unit">선택된 원료 없음</span>';
+  h += '</div></td></tr>';
+
+  // H-Polymer 관능기함량
+  h += '<tr><td class="fgLabel">H-Polymer 관능기함량 <span class="fgLabelSub">(mmol/g)</span></td>';
+  h += '<td class="fgValue"><div class="ratioRow">';
+  for (var i = 0; i < hActiveIdxs.length; i++) {
+    var idx = hActiveIdxs[i];
+    var name = materials[hRows[idx].nameKey] ? (materials[hRows[idx].nameKey].name || hRows[idx].nameKey) : hRows[idx].nameKey;
+    var funcVal = materials[hRows[idx].nameKey] ? (materials[hRows[idx].nameKey].func || '') : '';
+    h += '<div class="ratioInputWrap"><span class="ratioLabel">' + name + '</span><input type="number" step="any" class="ratioInput" value="' + funcVal + '" data-mat="' + hRows[idx].nameKey + '" onchange="onModalFuncChange(this)"></div>';
+  }
+  if (hActiveIdxs.length === 0) h += '<span class="unit">선택된 원료 없음</span>';
+  h += '</div></td></tr>';
+
+  // H-Polymer total mmol
+  h += '<tr><td class="fgLabel">H-Polymer total mmol</td><td class="fgValue"><span id="dHTotal" class="calcResult">—</span></td></tr>';
+
+  // Vi-Polymer 선택
+  h += '<tr><td class="fgLabel">Vi-Polymer 선택</td><td class="fgValue">';
+  for (var i = 0; i < vRows.length; i++) {
+    var name = materials[vRows[i].nameKey] ? (materials[vRows[i].nameKey].name || vRows[i].nameKey) : vRows[i].nameKey;
+    h += '<label class="polyCheck' + (d.vActive[i] ? ' checked' : '') + '" data-ptype="V" data-pidx="' + i + '" onclick="onPolyChipClick(this)"><span class="cbBox"></span><span class="cbLabel">' + name + '</span></label>';
+  }
+  h += '</td></tr>';
+
+  // Vi-Polymer mol ratio
+  h += '<tr><td class="fgLabel">Vi-Polymer mol ratio</td>';
+  h += '<td class="fgValue"><div class="ratioRow">';
+  for (var i = 0; i < vActiveIdxs.length; i++) {
+    var idx = vActiveIdxs[i];
+    var name = materials[vRows[idx].nameKey] ? (materials[vRows[idx].nameKey].name || vRows[idx].nameKey) : vRows[idx].nameKey;
+    if (idx === vLastActiveIdx) {
+      h += '<div class="ratioInputWrap auto"><span class="ratioLabel">' + name + '</span><input type="text" class="ratioInput" id="dVR_' + idx + '" readonly></div>';
+    } else {
+      h += '<div class="ratioInputWrap"><span class="ratioLabel">' + name + '</span><input type="number" step="0.1" class="ratioInput" id="dVR_' + idx + '" oninput="onDesignInput()"></div>';
+    }
+  }
+  if (vActiveIdxs.length === 0) h += '<span class="unit">선택된 원료 없음</span>';
+  h += '</div></td></tr>';
+
+  // Vi-Polymer 관능기함량
+  h += '<tr><td class="fgLabel">Vi-Polymer 관능기함량 <span class="fgLabelSub">(mmol/g)</span></td>';
+  h += '<td class="fgValue"><div class="ratioRow">';
+  for (var i = 0; i < vActiveIdxs.length; i++) {
+    var idx = vActiveIdxs[i];
+    var name = materials[vRows[idx].nameKey] ? (materials[vRows[idx].nameKey].name || vRows[idx].nameKey) : vRows[idx].nameKey;
+    var funcVal = materials[vRows[idx].nameKey] ? (materials[vRows[idx].nameKey].func || '') : '';
+    h += '<div class="ratioInputWrap"><span class="ratioLabel">' + name + '</span><input type="number" step="any" class="ratioInput" value="' + funcVal + '" data-mat="' + vRows[idx].nameKey + '" onchange="onModalFuncChange(this)"></div>';
+  }
+  if (vActiveIdxs.length === 0) h += '<span class="unit">선택된 원료 없음</span>';
+  h += '</div></td></tr>';
+
+  // Vi-Polymer total mmol
+  h += '<tr><td class="fgLabel">Vi-Polymer total mmol</td><td class="fgValue"><span id="dViTotal" class="calcResult">—</span></td></tr>';
+
+  // Catalyst
+  h += '<tr><td class="fgLabel">Catalyst 함량</td>';
+  h += '<td class="fgValue"><input type="number" id="dCatalyst" oninput="onDesignInput()"><span class="unit">ppm</span></td></tr>';
+
+  // Gel %
+  h += '<tr><td class="fgLabel">차수별 겔함량</td><td class="fgValue">';
+  var gelLabels = ['1차(가교)'];
+  for (var i = 0; i < dilOilCount; i++) gelLabels.push((i+2) + '차');
+  for (var i = 0; i < gelLabels.length; i++) {
+    h += '<input type="number" step="0.001" placeholder="' + gelLabels[i] + '" id="dGel_' + i + '" style="width:70px" oninput="onDesignInput()"><span class="unit">%</span>';
+  }
+  h += '</td></tr>';
+
+  // Add %
+  h += '<tr><td class="fgLabel">차수별 첨가제 함량</td><td class="fgValue">';
+  h += '<input type="number" step="0.001" placeholder="1차" id="dAdd_0" style="width:70px" oninput="onDesignInput()"><span class="unit">%</span>';
+  h += '<input type="number" step="0.001" placeholder="2차" id="dAdd_1" style="width:70px" oninput="onDesignInput()"><span class="unit">%</span>';
+  h += '</td></tr>';
+
+  // Retarder
+  h += '<tr><td class="fgLabel">지연제 함량</td>';
+  h += '<td class="fgValue"><input type="number" id="dRetarder" oninput="onDesignInput()"><span class="unit">ppm</span></td></tr>';
+
+  // 최종 Gel / 첨가제 / 희석제
+  h += '<tr><td class="fgLabel">최종 Gel / 첨가제 / 희석제</td><td class="fgValue">';
+  h += '<span id="dFinalGel" class="calcResult">—</span><span class="unit">%</span>';
+  h += '<span id="dFinalAdd" class="calcResult calcResultGap">—</span><span class="unit">%</span>';
+  h += '<span id="dFinalDil" class="calcResult calcResultGap">—</span><span class="unit">%</span>';
+  h += '</td></tr></tbody></table></div>';
+
+  document.getElementById('designBody').innerHTML = h;
+}
+
+function onDesignInput() {
+  updateDesignCalcDisplay(activeExp);
+}
+
+function onPolyChipClick(el) {
+  var ptype = el.getAttribute('data-ptype');
+  var pidx = parseInt(el.getAttribute('data-pidx'));
+  var d = expDesign[activeExp];
+  if (!d) return;
+  var actives = ptype === 'H' ? d.hActive : d.vActive;
+  if (actives) actives[pidx] = !actives[pidx];
+  saveDesignFromModal(activeExp);
+  loadDesignToModal(activeExp);
+}
+
+function loadDesignToModal(n) {
+  buildDesignForm();
+  var d = expDesign[n];
+  document.getElementById('dViHRatio').value = d.viHRatio;
+
+  var hRows = crosslinkRowDefs.filter(function(r) { return r.group === 'H'; });
+  for (var i = 0; i < hRows.length; i++) {
+    var el = document.getElementById('dHR_' + i);
+    if (el) el.value = (d.hRatios && d.hRatios[i] !== undefined) ? d.hRatios[i] : '';
+  }
+  var vRows = crosslinkRowDefs.filter(function(r) { return r.group === 'V'; });
+  for (var i = 0; i < vRows.length; i++) {
+    var el = document.getElementById('dVR_' + i);
+    if (el) el.value = (d.vRatios && d.vRatios[i] !== undefined) ? d.vRatios[i] : '';
+  }
+  document.getElementById('dCatalyst').value = d.catalyst;
+
+  var gels = d.gels || [];
+  for (var i = 0; i < gels.length; i++) {
+    var el = document.getElementById('dGel_' + i);
+    if (el) el.value = gels[i];
+  }
+  var adds = d.adds || [];
+  for (var i = 0; i < adds.length; i++) {
+    var el = document.getElementById('dAdd_' + i);
+    if (el) el.value = adds[i];
+  }
+  document.getElementById('dRetarder').value = d.retarder;
+  updateDesignCalcDisplay(n);
+}
+
+function saveDesignFromModal(n) {
+  var d = expDesign[n];
+  // 배합설계 창이 열려있지 않으면 skip
+  if (!document.getElementById('dViHRatio')) return;
+
+  d.viHRatio = parseFloat(document.getElementById('dViHRatio').value) || 0;
+
+  var hRows = crosslinkRowDefs.filter(function(r) { return r.group === 'H'; });
+  var oldH = (d.hRatios || []).slice();
+  d.hRatios = [];
+  for (var i = 0; i < hRows.length; i++) {
+    var el = document.getElementById('dHR_' + i);
+    d.hRatios.push(el ? parseFloat(el.value) || 0 : (oldH[i] || 0));
+  }
+  var vRows = crosslinkRowDefs.filter(function(r) { return r.group === 'V'; });
+  var oldV = (d.vRatios || []).slice();
+  d.vRatios = [];
+  for (var i = 0; i < vRows.length; i++) {
+    var el = document.getElementById('dVR_' + i);
+    d.vRatios.push(el ? parseFloat(el.value) || 0 : (oldV[i] || 0));
+  }
+  d.catalyst = parseFloat(document.getElementById('dCatalyst').value) || 0;
+
+  var gelCount = 1 + dilutionRowDefs.filter(function(r) { return r.group === 'dilOil'; }).length;
+  var oldGels = (d.gels || []).slice();
+  d.gels = [];
+  for (var i = 0; i < gelCount; i++) {
+    var el = document.getElementById('dGel_' + i);
+    d.gels.push(el ? parseFloat(el.value) || 0 : (oldGels[i] || 0));
+  }
+  var oldAdds = (d.adds || []).slice();
+  d.adds = [];
+  for (var i = 0; i < 2; i++) {
+    var el = document.getElementById('dAdd_' + i);
+    d.adds.push(el ? parseFloat(el.value) || 0 : (oldAdds[i] || 0));
+  }
+  d.retarder = parseFloat(document.getElementById('dRetarder').value) || 0;
+}
+
+function updateDesignCalcDisplay(n) {
+  saveDesignFromModal(n);
+  var c = calculate(n);
+  if (!c) return;
+  var d = expDesign[n];
+
+  // H auto input
+  var hRows2 = crosslinkRowDefs.filter(function(r) { return r.group === 'H'; });
+  var hAI = []; (d.hActive || []).forEach(function(a, i) { if (a && i < hRows2.length) hAI.push(i); });
+  var hLast = hAI.length > 0 ? hAI[hAI.length - 1] : -1;
+  if (hLast >= 0) {
+    var elHA = document.getElementById('dHR_' + hLast);
+    if (elHA) elHA.value = c.hLastRatio.toFixed(4);
+  }
+  // V auto input
+  var vRows2 = crosslinkRowDefs.filter(function(r) { return r.group === 'V'; });
+  var vAI = []; (d.vActive || []).forEach(function(a, i) { if (a && i < vRows2.length) vAI.push(i); });
+  var vLast = vAI.length > 0 ? vAI[vAI.length - 1] : -1;
+  if (vLast >= 0) {
+    var elVA = document.getElementById('dVR_' + vLast);
+    if (elVA) elVA.value = c.vLastRatio.toFixed(4);
+  }
+  var el;
+  el = document.getElementById('dHTotal');  if (el) el.textContent = c.hTotalMmol.toFixed(4);
+  el = document.getElementById('dViTotal'); if (el) el.textContent = c.viTotalMmol.toFixed(4);
+  el = document.getElementById('dFinalGel'); if (el) el.textContent = (c.finalGel * 100).toFixed(4);
+  el = document.getElementById('dFinalAdd'); if (el) el.textContent = (c.finalAdd * 100).toFixed(4);
+  el = document.getElementById('dFinalDil'); if (el) el.textContent = (c.finalDil * 100).toFixed(4);
+
+  renderTables();
+}
+
+/* ── 공정조건: 전 실험 일괄 테이블 ── */
+var processFields = [
+  { key: 'rollCnt',  label: '3롤작업 횟수', type: 'number', unit: '회' },
+  { key: 'gelTime',  label: '겔도달시간',   type: 'text',   unit: '' },
+  { key: 'temp1',    label: '1차 반응온도',  type: 'text',   unit: '' }
+];
+
+function buildProcessTable() {
+  var h = '<table class="fwTable"><thead><tr><th class="fwTableLabel">항목</th>';
+  for (var e = 1; e <= expCount; e++) {
+    h += '<th class="fwTableExp">' + (expTitle[e] || '#' + e) + '</th>';
+  }
+  h += '</tr></thead><tbody>';
+  for (var f = 0; f < processFields.length; f++) {
+    var pf = processFields[f];
+    h += '<tr><td class="fwTableLabel">' + pf.label + (pf.unit ? ' <span class="unit">(' + pf.unit + ')</span>' : '') + '</td>';
+    for (var e = 1; e <= expCount; e++) {
+      var val = expProcess[e] ? (expProcess[e][pf.key] || '') : '';
+      h += '<td><input type="' + pf.type + '" class="fwTableInput" value="' + val + '" data-exp="' + e + '" data-field="' + pf.key + '" onchange="onProcessInput(this)"></td>';
+    }
+    h += '</tr>';
+  }
+  h += '</tbody></table>';
+  document.getElementById('processBody').innerHTML = h;
+}
+
+function onProcessInput(el) {
+  var e = parseInt(el.getAttribute('data-exp'));
+  var field = el.getAttribute('data-field');
+  if (!expProcess[e]) initExp(e);
+  expProcess[e][field] = el.value;
+}
+
+
+/* ── 제조결과: 전 실험 일괄 테이블 ── */
+var resultFields = [
+  { key: 'appear',      label: '외관',     type: 'text',   placeholder: '양호' },
+  { key: 'viscosity',   label: '점도',     type: 'number', unit: 'cps', placeholder: '130000' },
+  { key: 'color',       label: '색상',     type: 'text',   placeholder: '연한노랑' },
+  { key: 'volatile',    label: '휘발분',   type: 'number', unit: '%', placeholder: '10.1' },
+  { key: 'nonVolatile', label: '비휘발분', type: 'number', unit: '%' },
+  { key: 'texture',     label: '사용감',   type: 'text',   placeholder: '부드럽고 실키함' },
+  { key: 'storage',     label: '저장성',   type: 'text' },
+  { key: 'note',        label: '비고',     type: 'text' }
+];
+
+function buildResultTable() {
+  var h = '<table class="fwTable"><thead><tr><th class="fwTableLabel">항목</th>';
+  for (var e = 1; e <= expCount; e++) {
+    h += '<th class="fwTableExp">' + (expTitle[e] || '#' + e) + '</th>';
+  }
+  h += '</tr></thead><tbody>';
+  for (var f = 0; f < resultFields.length; f++) {
+    var rf = resultFields[f];
+    h += '<tr><td class="fwTableLabel">' + rf.label + (rf.unit ? ' <span class="unit">(' + rf.unit + ')</span>' : '') + '</td>';
+    for (var e = 1; e <= expCount; e++) {
+      var val = expResult[e] ? (expResult[e][rf.key] || '') : '';
+      h += '<td><input type="' + rf.type + '" class="fwTableInput" value="' + val + '"' +
+        (rf.placeholder ? ' placeholder="' + rf.placeholder + '"' : '') +
+        ' data-exp="' + e + '" data-field="' + rf.key + '" onchange="onResultInput(this)"></td>';
+    }
+    h += '</tr>';
+  }
+  h += '</tbody></table>';
+  document.getElementById('resultBody').innerHTML = h;
+}
+
+function onResultInput(el) {
+  var e = parseInt(el.getAttribute('data-exp'));
+  var field = el.getAttribute('data-field');
+  if (!expResult[e]) initExp(e);
+  expResult[e][field] = el.value;
+}
+
+
+
+/* (공정조건/제조결과는 플로팅 윈도우 닫을 때 자동 저장) */
+
+
+/* ══════════════════════════════════════
+   Experiment Management
+   ══════════════════════════════════════ */
+function exportExcel() {
+  // Row 1: 대분류 헤더
+  var row1 = [
+    '실험번호', '배합 설계', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+    '공정조건', '', '',
+    '기본 물성', '', '', '', '', '', '', '', ''
+  ];
+  // Row 2: 중분류 헤더
+  var row2 = [
+    '', 'Vi/ H ratio',
+    'H-Polymer', '', '', '',
+    'Vi-Polymer', '', '', '',
+    '촉매함량', '1차겔함량', '최종겔함량', '최종첨가제함량', '최종희석제함량', '지연제함량',
+    '3롤작업 횟수', '겔도달시간', '1차 반응온도',
+    '외관', '점도', '색상', '휘발분', '비휘발분', '사용감', '저장성', '비고', ''
+  ];
+  // Row 3: 소분류 헤더
+  var row3 = [
+    '', '',
+    'H1', 'H2', 'H3', 'total mmol',
+    'V1', 'V2', 'V3', 'total mmol',
+    '(ppm)', '(%)', '(%)', '(%)', '(%)', '(ppm)',
+    '', '', '',
+    '', '', '', '', '', '', '', '', ''
+  ];
+
+  var rows = [row1, row2, row3];
+
+  for (var e = 1; e <= expCount; e++) {
+    var d = expDesign[e] || {};
+    var c = calculate(e) || {};
+    var p = expProcess[e] || {};
+    var r = expResult[e] || {};
+
+    var hRatios = d.hRatios || [];
+    var vRatios = d.vRatios || [];
+    var gels = d.gels || [];
+
+    rows.push([
+      expTitle[e] || '#' + e,
+      d.viHRatio || '',
+      hRatios[0] || 0, hRatios[1] || 0, hRatios[2] || 0,
+      c.hTotalMmol ? +c.hTotalMmol.toFixed(4) : '',
+      vRatios[0] || 0, vRatios[1] || 0, vRatios[2] || 0,
+      c.viTotalMmol ? +c.viTotalMmol.toFixed(4) : '',
+      d.catalyst || '',
+      gels[0] || '',
+      c.finalGel ? +(c.finalGel * 100).toFixed(4) : '',
+      c.finalAdd ? +(c.finalAdd * 100).toFixed(4) : '',
+      c.finalDil ? +(c.finalDil * 100).toFixed(4) : '',
+      d.retarder || '',
+      p.rollCnt || '', p.gelTime || '', p.temp1 || '',
+      r.appear || '', r.viscosity || '', r.color || '',
+      r.volatile || '', r.nonVolatile || '',
+      r.texture || '', r.storage || '', r.note || ''
+    ]);
+  }
+
+  var wb = XLSX.utils.book_new();
+  var ws = XLSX.utils.aoa_to_sheet(rows);
+
+  // 셀 병합 (엑셀 원본과 동일)
+  ws['!merges'] = [
+    // Row 1: 실험번호 3행 병합
+    { s: { r: 0, c: 0 }, e: { r: 2, c: 0 } },
+    // Row 1: 배합 설계 (B~P)
+    { s: { r: 0, c: 1 }, e: { r: 0, c: 15 } },
+    // Row 1: 공정조건 (Q~S)
+    { s: { r: 0, c: 16 }, e: { r: 0, c: 18 } },
+    // Row 1: 기본 물성 (T~AB)
+    { s: { r: 0, c: 19 }, e: { r: 0, c: 27 } },
+    // Row 2: Vi/H ratio 2행 병합
+    { s: { r: 1, c: 1 }, e: { r: 2, c: 1 } },
+    // Row 2: H-Polymer
+    { s: { r: 1, c: 2 }, e: { r: 1, c: 5 } },
+    // Row 2: Vi-Polymer
+    { s: { r: 1, c: 6 }, e: { r: 1, c: 9 } },
+    // Row 2~3: 촉매함량~지연제함량 각각 2행 병합
+    { s: { r: 1, c: 10 }, e: { r: 2, c: 10 } },
+    { s: { r: 1, c: 11 }, e: { r: 2, c: 11 } },
+    { s: { r: 1, c: 12 }, e: { r: 2, c: 12 } },
+    { s: { r: 1, c: 13 }, e: { r: 2, c: 13 } },
+    { s: { r: 1, c: 14 }, e: { r: 2, c: 14 } },
+    { s: { r: 1, c: 15 }, e: { r: 2, c: 15 } },
+    // Row 2~3: 공정조건 각각 2행 병합
+    { s: { r: 1, c: 16 }, e: { r: 2, c: 16 } },
+    { s: { r: 1, c: 17 }, e: { r: 2, c: 17 } },
+    { s: { r: 1, c: 18 }, e: { r: 2, c: 18 } },
+    // Row 2~3: 기본물성 각각 2행 병합
+    { s: { r: 1, c: 19 }, e: { r: 2, c: 19 } },
+    { s: { r: 1, c: 20 }, e: { r: 2, c: 20 } },
+    { s: { r: 1, c: 21 }, e: { r: 2, c: 21 } },
+    { s: { r: 1, c: 22 }, e: { r: 2, c: 22 } },
+    { s: { r: 1, c: 23 }, e: { r: 2, c: 23 } },
+    { s: { r: 1, c: 24 }, e: { r: 2, c: 24 } },
+    { s: { r: 1, c: 25 }, e: { r: 2, c: 25 } },
+    { s: { r: 1, c: 26 }, e: { r: 2, c: 26 } },
+  ];
+
+  // 컬럼 너비
+  ws['!cols'] = [
+    { wch: 10 }, // 실험번호
+    { wch: 10 }, // Vi/H ratio
+    { wch: 6 }, { wch: 6 }, { wch: 6 }, { wch: 12 }, // H1~H3, total
+    { wch: 6 }, { wch: 6 }, { wch: 6 }, { wch: 12 }, // V1~V3, total
+    { wch: 10 }, // 촉매
+    { wch: 10 }, // 1차겔
+    { wch: 10 }, { wch: 12 }, { wch: 12 }, // 최종겔/첨가제/희석제
+    { wch: 10 }, // 지연제
+    { wch: 12 }, { wch: 10 }, { wch: 12 }, // 공정조건
+    { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 8 }, { wch: 8 }, // 물성
+    { wch: 14 }, { wch: 8 }, { wch: 14 }, // 사용감/저장성/비고
+  ];
+
+  XLSX.utils.book_append_sheet(wb, ws, '일반-물성탭');
+  XLSX.writeFile(wb, 'PA_CrossPolymer_' + new Date().toISOString().slice(0, 10) + '.xlsx');
+}
+
+function addExperiment() {
+  expCount++;
+  initExp(expCount);
+  renderTables();
+}
+
+function buildExpSelectOptions() {
+  var title = (expTitle[activeExp] || '#' + activeExp) + ' 배합설계';
+  document.getElementById('designTitle').textContent = title;
+}
+
+function onModalExpChange(expNum) {
+  activeExp = expNum;
+  buildExpSelectOptions();
+  if (document.getElementById('designModal').classList.contains('active')) {
+    loadDesignToModal(activeExp);
+    highlightExp(activeExp);
+    positionDesignWin(activeExp);
+  }
+}
+
+
+/* ══════════════════════════════════════
+   Modal / Float Window
+   ══════════════════════════════════════ */
+function openFloatWin(id) {
+  buildExpSelectOptions();
+  if (id === 'designModal') loadDesignToModal(activeExp);
+  if (id === 'processModal') buildProcessTable();
+  if (id === 'resultModal') buildResultTable();
+  var win = document.getElementById(id);
+  win.classList.add('active');
+  win.classList.remove('minimized');
+  initModalGlassOverlays(id);
+}
+
+function closeFloatWin(id) {
+  document.getElementById(id).classList.remove('active');
+  if (id === 'designModal') highlightExp(null);
+}
+
+function toggleMinimize(id) {
+  document.getElementById(id).classList.toggle('minimized');
+}
+
+function openDesignForExp(n) {
+  activeExp = n;
+  openFloatWin('designModal');
+  highlightExp(n);
+  positionDesignWin(n);
+}
+
+function positionDesignWin(n) {
+  var win = document.getElementById('designModal');
+  var winW = win.offsetWidth || 520;
+  var header = document.querySelector('.colExpHeader[data-exp="' + n + '"]');
+  if (!header) return;
+
+  var rect = header.getBoundingClientRect();
+  var expLeft = rect.left;
+  var expRight = rect.right;
+  var vw = window.innerWidth;
+
+  var x, y = 80;
+  // 실험 컬럼 오른쪽에 공간이 충분하면 오른쪽에
+  if (vw - expRight > winW + 20) {
+    x = expRight + 16;
+  // 왼쪽에 공간이 충분하면 왼쪽에
+  } else if (expLeft > winW + 20) {
+    x = expLeft - winW - 16;
+  // 공간 부족하면 화면 오른쪽 끝
+  } else {
+    x = Math.max(8, vw - winW - 16);
+  }
+
+  win.style.left = x + 'px';
+  win.style.top = y + 'px';
+}
+
+var glassColOverlay = null;
+
+function highlightExp(n) {
+  var tbl = document.getElementById('tblFormula');
+  var cells = tbl.querySelectorAll('[data-exp]');
+
+  if (!glassColOverlay) {
+    glassColOverlay = document.createElement('div');
+    glassColOverlay.className = 'glassColOverlay';
+    document.body.appendChild(glassColOverlay);
+  }
+
+  if (!n) {
+    tbl.classList.remove('expFocusMode');
+    cells.forEach(function(c) { c.classList.remove('expDimmed', 'expActive'); });
+    glassColOverlay.classList.remove('active');
+    return;
+  }
+
+  tbl.classList.add('expFocusMode');
+  cells.forEach(function(c) {
+    var ce = parseInt(c.getAttribute('data-exp'));
+    if (ce === n) {
+      c.classList.add('expActive');
+      c.classList.remove('expDimmed');
+    } else {
+      c.classList.add('expDimmed');
+      c.classList.remove('expActive');
+    }
+  });
+
+  var allCells = tbl.querySelectorAll('[data-exp="' + n + '"]');
+  if (allCells.length === 0) return;
+  var first = allCells[0].getBoundingClientRect();
+  var last = allCells[allCells.length - 1].getBoundingClientRect();
+  var left = first.left, right = first.right;
+  for (var i = 0; i < allCells.length; i++) {
+    var r = allCells[i].getBoundingClientRect();
+    if (r.left < left) left = r.left;
+    if (r.right > right) right = r.right;
+  }
+  glassColOverlay.style.top = first.top + 'px';
+  glassColOverlay.style.left = left + 'px';
+  glassColOverlay.style.width = (right - left) + 'px';
+  glassColOverlay.style.height = (last.bottom - first.top) + 'px';
+  glassColOverlay.classList.add('active');
+}
+
+
+/* ══════════════════════════════════════
+   Context Menu (우클릭 행 추가/삭제)
+   ══════════════════════════════════════ */
+var ctxState = { section: null, group: null, rowIdx: -1 };
+
+document.getElementById('tblFormula').addEventListener('contextmenu', function(e) {
+  var tr = e.target.closest('tr[data-section]');
+  if (!tr) return;
+  var section = tr.getAttribute('data-section');
+  var group = tr.getAttribute('data-group');
+  var ridx = parseInt(tr.getAttribute('data-ridx'));
+
+  var canExpand = expandableGroups[group] || false;
+  if (!canExpand) return;
+
+  e.preventDefault();
+  ctxState.section = section;
+  ctxState.group = group;
+  ctxState.rowIdx = ridx;
+
+  var rowDefs = section === 'crosslink' ? crosslinkRowDefs : dilutionRowDefs;
+  var groupCount = rowDefs.filter(function(r) { return r.group === group; }).length;
+
+  var menu = document.getElementById('ctxMenu');
+  menu.querySelector('.ctxAdd').style.display = '';
+  menu.querySelector('.ctxRemove').style.display = groupCount > 1 ? '' : 'none';
+  menu.style.left = e.clientX + 'px';
+  menu.style.top = e.clientY + 'px';
+  menu.classList.add('active');
+});
+
+document.addEventListener('click', function() {
+  document.getElementById('ctxMenu').classList.remove('active');
+});
+
+function ctxAddRow() {
+  var section = ctxState.section;
+  var group = ctxState.group;
+  var rowDefs = section === 'crosslink' ? crosslinkRowDefs : dilutionRowDefs;
+
+  // 그룹 마지막 인덱스 찾기
+  var lastIdx = -1;
+  for (var i = 0; i < rowDefs.length; i++) {
+    if (rowDefs[i].group === group) lastIdx = i;
+  }
+
+  if (group === 'H' || group === 'V') {
+    var prefix = group === 'H' ? 'H' : 'V';
+    var existing = rowDefs.filter(function(r) { return r.group === group; });
+    var newNum = existing.length + 1;
+    var newKey = prefix + newNum;
+
+    materials[newKey] = { code: '', func: 0 };
+    rowDefs.splice(lastIdx + 1, 0, { group: group, nameKey: newKey });
+
+    for (var e = 1; e <= expCount; e++) {
+      var d = expDesign[e];
+      if (!d) continue;
+      var ratios = group === 'H' ? d.hRatios : d.vRatios;
+      var actives = group === 'H' ? d.hActive : d.vActive;
+      if (ratios) ratios.push(0);
+      if (actives) actives.push(false);
+    }
+  } else if (group === 'dilOil') {
+    var existing = rowDefs.filter(function(r) { return r.group === group; });
+    var newLabel = 'B' + (existing.length + 1);
+    rowDefs.splice(lastIdx + 1, 0, { group: 'dilOil', nameKey: 'baseOil', label: newLabel });
+
+    for (var e = 1; e <= expCount; e++) {
+      var d = expDesign[e];
+      if (d && d.gels) d.gels.push(0);
+    }
+  } else {
+    // cat, oil, add, dilAdd, dilRet — 범용 행 추가
+    var existing = rowDefs.filter(function(r) { return r.group === group; });
+    var newNum = existing.length + 1;
+    var baseNameKey = existing[0].nameKey;
+    var baseMat = materials[baseNameKey] || {};
+    var newKey = baseNameKey + '_' + newNum;
+
+    materials[newKey] = { name: (baseMat.name || baseNameKey) + newNum, code: '', func: baseMat.func || '' };
+
+    var newRow = { group: group, nameKey: newKey };
+    // 희석공정 행은 label 유지
+    if (section === 'dilution') {
+      newRow.label = (baseMat.name || groupLabels[group] || '') + newNum;
+    }
+    rowDefs.splice(lastIdx + 1, 0, newRow);
+  }
+
+  rebuildTypeSpans(rowDefs);
+  renderTables();
+  // 배합설계 창이 열려 있으면 폼 갱신
+  if (document.getElementById('designModal').classList.contains('active')) {
+    loadDesignToModal(activeExp);
+  }
+  document.getElementById('ctxMenu').classList.remove('active');
+}
+
+function ctxRemoveRow() {
+  var section = ctxState.section;
+  var group = ctxState.group;
+  var ridx = ctxState.rowIdx;
+  var rowDefs = section === 'crosslink' ? crosslinkRowDefs : dilutionRowDefs;
+
+  // 그룹 내 행 인덱스 목록
+  var groupIndices = [];
+  for (var i = 0; i < rowDefs.length; i++) {
+    if (rowDefs[i].group === group) groupIndices.push(i);
+  }
+  if (groupIndices.length <= 1) return;
+
+  // 클릭한 행이 속한 그룹 내 순서
+  var posInGroup = groupIndices.indexOf(ridx);
+  if (posInGroup < 0) posInGroup = groupIndices.length - 1; // fallback: 마지막 삭제
+
+  var removeIdx = groupIndices[posInGroup];
+  var removedRow = rowDefs[removeIdx];
+
+  if (group === 'H' || group === 'V') {
+    delete materials[removedRow.nameKey];
+    for (var e = 1; e <= expCount; e++) {
+      var d = expDesign[e];
+      if (!d) continue;
+      var ratios = group === 'H' ? d.hRatios : d.vRatios;
+      var actives = group === 'H' ? d.hActive : d.vActive;
+      if (ratios) {
+        if (posInGroup < ratios.length) ratios.splice(posInGroup, 1);
+        else if (ratios.length > 0) ratios.pop();
+      }
+      if (actives) {
+        if (posInGroup < actives.length) actives.splice(posInGroup, 1);
+        else if (actives.length > 0) actives.pop();
+      }
+    }
+  } else if (group === 'dilOil') {
+    for (var e = 1; e <= expCount; e++) {
+      var d = expDesign[e];
+      if (d && d.gels && posInGroup + 1 < d.gels.length) {
+        d.gels.splice(posInGroup + 1, 1);
+      }
+    }
+  } else {
+    // cat, oil, add, dilAdd, dilRet — 범용 행 삭제
+    delete materials[removedRow.nameKey];
+  }
+
+  rowDefs.splice(removeIdx, 1);
+  rebuildTypeSpans(rowDefs);
+  renderTables();
+  if (document.getElementById('designModal').classList.contains('active')) {
+    loadDesignToModal(activeExp);
+  }
+  document.getElementById('ctxMenu').classList.remove('active');
+}
+
+
+/* ══════════════════════════════════════
+   Drag & Resize
+   ══════════════════════════════════════ */
+(function() {
+  // ── Drag ──
+  var dragWin = null, dragOffX = 0, dragOffY = 0;
+
+  document.querySelectorAll('.fwHeader').forEach(function(header) {
+    header.addEventListener('mousedown', function(e) {
+      if (e.target.closest('.fwActions') || e.target.closest('.expSelect')) return;
+      dragWin = header.closest('.floatWin');
+      var rect = dragWin.getBoundingClientRect();
+      dragOffX = e.clientX - rect.left;
+      dragOffY = e.clientY - rect.top;
+      dragWin.style.transition = 'none';
+      e.preventDefault();
+    });
+  });
+
+  document.addEventListener('mousemove', function(e) {
+    if (!dragWin) return;
+    var x = Math.max(0, Math.min(e.clientX - dragOffX, window.innerWidth - 100));
+    var y = Math.max(0, Math.min(e.clientY - dragOffY, window.innerHeight - 40));
+    dragWin.style.left = x + 'px';
+    dragWin.style.top = y + 'px';
+  });
+
+  document.addEventListener('mouseup', function() {
+    if (dragWin) {
+      dragWin.style.transition = '';
+      dragWin = null;
+    }
+  });
+
+  // ── Resize (8방향) ──
+  var resizeWin = null, resizeDir = '', resizeStartX = 0, resizeStartY = 0;
+  var resizeStartW = 0, resizeStartH = 0, resizeStartL = 0, resizeStartT = 0;
+
+  document.querySelectorAll('.fwEdge').forEach(function(handle) {
+    handle.addEventListener('mousedown', function(e) {
+      resizeWin = document.getElementById(handle.getAttribute('data-win'));
+      resizeDir = handle.getAttribute('data-dir');
+      var rect = resizeWin.getBoundingClientRect();
+      resizeStartX = e.clientX;
+      resizeStartY = e.clientY;
+      resizeStartW = rect.width;
+      resizeStartH = rect.height;
+      resizeStartL = rect.left;
+      resizeStartT = rect.top;
+      resizeWin.style.transition = 'none';
+      e.preventDefault();
+      e.stopPropagation();
+    });
+  });
+
+  document.addEventListener('mousemove', function(e) {
+    if (!resizeWin) return;
+    var dx = e.clientX - resizeStartX;
+    var dy = e.clientY - resizeStartY;
+    var d = resizeDir;
+    if (d.includes('e')) resizeWin.style.width = Math.max(380, resizeStartW + dx) + 'px';
+    if (d.includes('s')) resizeWin.style.height = Math.max(200, resizeStartH + dy) + 'px';
+    if (d.includes('w')) {
+      var newW = Math.max(380, resizeStartW - dx);
+      resizeWin.style.width = newW + 'px';
+      resizeWin.style.left = (resizeStartL + resizeStartW - newW) + 'px';
+    }
+    if (d.includes('n')) {
+      var newH = Math.max(200, resizeStartH - dy);
+      resizeWin.style.height = newH + 'px';
+      resizeWin.style.top = (resizeStartT + resizeStartH - newH) + 'px';
+    }
+  });
+
+  document.addEventListener('mouseup', function() {
+    if (resizeWin) {
+      resizeWin.style.transition = '';
+      resizeWin = null;
+    }
+  });
+})();
+
+
+/* ╔══════════════════════════════════════╗
+   ║  DESIGN ONLY — Glass Engine         ║
+   ║  아래는 디자인 전용 코드입니다         ║
+   ╚══════════════════════════════════════╝ */
+
+/* ── Glass Engine: 글로벌 조명 시스템 ── */
+(function() {
+  var root = document.documentElement;
+  var vw = window.innerWidth, vh = window.innerHeight;
+  window.addEventListener('resize', function() { vw = window.innerWidth; vh = window.innerHeight; });
+
+  document.addEventListener('mousemove', function(e) {
+    var mx = e.clientX, my = e.clientY;
+    var px = (mx / vw * 100), py = (my / vh * 100);
+    var angle = Math.atan2(my - vh/2, mx - vw/2) * 180 / Math.PI;
+    root.style.setProperty('--gx', px + '%');
+    root.style.setProperty('--gy', py + '%');
+    root.style.setProperty('--g-angle', angle + 'deg');
+
+    var hovered = document.querySelector('.glassLight:hover');
+    if (hovered) {
+      var rect = hovered.getBoundingClientRect();
+      var lx = ((mx - rect.left) / rect.width * 100);
+      var ly = ((my - rect.top) / rect.height * 100);
+      var la = Math.atan2(my - (rect.top + rect.height/2), mx - (rect.left + rect.width/2)) * 180 / Math.PI;
+      hovered.style.setProperty('--light-x', lx + '%');
+      hovered.style.setProperty('--light-y', ly + '%');
+      hovered.style.setProperty('--light-angle', la + 'deg');
+      hovered.style.setProperty('--lx', lx);
+      hovered.style.setProperty('--ly', ly);
+    }
+
+  });
+})();
+
+/* ── Glass Engine: Row Overlay (범용) ── */
+function initGlassOverlay(container, tbodyEl) {
+  var overlay = document.createElement('div');
+  overlay.className = 'glassRowOverlay';
+  var caustic = document.createElement('div');
+  caustic.className = 'glassCaustic';
+  overlay.appendChild(caustic);
+  container.appendChild(overlay);
+  var currentRow = null;
+
+  tbodyEl.addEventListener('mouseover', function(e) {
+    var tr = e.target.closest('tbody tr');
+    if (!tr || tr === currentRow) return;
+    currentRow = tr;
+    var containerRect = container.getBoundingClientRect();
+    var trRect = tr.getBoundingClientRect();
+
+    if (tr.closest('.expFocusMode')) {
+      var activeCells = tr.querySelectorAll('.expActive');
+      if (activeCells.length === 0) { overlay.classList.remove('active'); return; }
+      var firstCell = activeCells[0].getBoundingClientRect();
+      var lastCell = activeCells[activeCells.length - 1].getBoundingClientRect();
+      overlay.style.top = (trRect.top - containerRect.top + container.scrollTop - 1) + 'px';
+      overlay.style.left = (firstCell.left - containerRect.left + container.scrollLeft) + 'px';
+      overlay.style.width = (lastCell.right - firstCell.left) + 'px';
+      overlay.style.height = (trRect.height + 2) + 'px';
+    } else {
+      overlay.style.top = (trRect.top - containerRect.top + container.scrollTop - 1) + 'px';
+      overlay.style.left = (trRect.left - containerRect.left + container.scrollLeft) + 'px';
+      overlay.style.width = trRect.width + 'px';
+      overlay.style.height = (trRect.height + 2) + 'px';
+    }
+    overlay.classList.add('active');
+  });
+
+  container.addEventListener('mousemove', function(e) {
+    if (!currentRow) return;
+    var olRect = overlay.getBoundingClientRect();
+    var x = ((e.clientX - olRect.left) / olRect.width * 100);
+    var yPx = e.clientY - olRect.top;
+    var angle = Math.atan2(e.clientY - (olRect.top + olRect.height/2), e.clientX - (olRect.left + olRect.width/2)) * 180 / Math.PI;
+    overlay.style.setProperty('--olx', x + '%');
+    overlay.style.setProperty('--oly', yPx + 'px');
+    overlay.style.setProperty('--ol-angle', angle + 'deg');
+    overlay.style.setProperty('--ox', x);
+    overlay.style.setProperty('--oy', yPx);
+    caustic.style.left = (e.clientX - olRect.left - 40) + 'px';
+    caustic.style.bottom = '-8px';
+  });
+
+  tbodyEl.addEventListener('mouseleave', function() {
+    currentRow = null;
+    overlay.classList.remove('active');
+  });
+}
+
+initGlassOverlay(
+  document.querySelector('.tableScroll'),
+  document.getElementById('tbodyFormula')
+);
+
+/* ── Glass Engine: Modal Overlay 초기화 ── */
+function initModalGlassOverlays(id) {
+  var body = document.querySelector('#' + id + ' .fwBody');
+  if (!body) return;
+  var existing = body.querySelector('.glassRowOverlay');
+  if (existing) existing.remove();
+  var tbody = body.querySelector('tbody');
+  if (tbody) {
+    body.style.position = 'relative';
+    initGlassOverlay(body, tbody);
+  }
+}
+
+
+
+/* ══════════════════════════════════════
+   Init
+   ══════════════════════════════════════ */
+renderTables();
+</script>
+
+</body>
+</html>

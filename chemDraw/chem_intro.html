@@ -1,0 +1,601 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Chem Studio</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@48,400,0,0" />
+    <script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <style>
+        @font-face { font-family: 'Roboto-Light'; font-style: normal; src: url('fonts/Roboto-Light.ttf') format('truetype'); }
+        @font-face { font-family: 'Roboto-Regular'; font-style: normal; src: url('fonts/Roboto-Regular.ttf') format('truetype'); }
+        @font-face { font-family: 'Roboto-Medium'; font-style: normal; src: url('fonts/Roboto-Medium.ttf') format('truetype'); }
+        @font-face { font-family: 'Roboto-Bold'; font-style: normal; src: url('fonts/Roboto-Bold.ttf') format('truetype'); }
+        @font-face { font-family: 'Roboto-LOGO'; font-style: normal; src: url('fonts/Roboto-BoldItalic.ttf') format('truetype'); }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+
+        body {
+            background: #0b0b1a;
+            overflow: hidden;
+            font-family: 'Roboto-Regular', sans-serif;
+        }
+
+        /* ── Atmospheric Background ── */
+        body::before {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background:
+                radial-gradient(ellipse 80% 60% at 20% 80%, rgba(167,147,172,0.12) 0%, transparent 60%),
+                radial-gradient(ellipse 60% 50% at 75% 20%, rgba(74,98,117,0.15) 0%, transparent 55%),
+                radial-gradient(ellipse 40% 40% at 50% 50%, rgba(126,184,208,0.06) 0%, transparent 50%);
+            z-index: 0;
+            pointer-events: none;
+        }
+        body::after {
+            content: '';
+            position: fixed;
+            inset: 0;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 512 512' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.65' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.04'/%3E%3C/svg%3E");
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* ── Floating Particles ── */
+        .particleField { position: fixed; inset: 0; z-index: 0; pointer-events: none; overflow: hidden; }
+        .particle { position: absolute; border-radius: 50%; opacity: 0; animation: particleFloat linear infinite; }
+        @keyframes particleFloat {
+            0%   { opacity: 0; transform: translateY(100vh) scale(0); }
+            10%  { opacity: 1; }
+            90%  { opacity: 1; }
+            100% { opacity: 0; transform: translateY(-10vh) scale(1); }
+        }
+
+        /* ══════════════════════════════════════
+           CSS Grid — 4 cols × 3 rows, 균등 간격
+           ══════════════════════════════════════ */
+        .gridLayout {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr);
+            grid-template-rows: repeat(3, 1fr);
+            gap: 20px;
+            padding: 40px 60px;
+            height: 100vh;
+            position: relative;
+            z-index: 1;
+            grid-template-areas:
+                "editor   hero     hero    glass"
+                "periodic hero     hero    search"
+                "svg      ai       spring  micro";
+        }
+
+        .g-editor   { grid-area: editor; }
+        .g-hero     { grid-area: hero; }
+        .g-glass    { grid-area: glass; }
+        .g-periodic { grid-area: periodic; }
+        .g-search   { grid-area: search; }
+        .g-svg      { grid-area: svg; }
+        .g-ai       { grid-area: ai; }
+        .g-spring   { grid-area: spring; }
+        .g-micro    { grid-area: micro; }
+
+        /* ══════════════════════════════════
+           Glass Engine Card — Dark Theme
+           Schlick Fresnel + 색수차 + 3D Tilt
+           ══════════════════════════════════ */
+        .card {
+            position: relative;
+            border-radius: 20px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            align-items: center;
+            padding-bottom: 24px;
+            background:
+                linear-gradient(135deg,
+                    rgba(255,255,255,0.07) 0%,
+                    rgba(255,255,255,0.02) 40%,
+                    rgba(255,255,255,0.05) 100%);
+            backdrop-filter: blur(24px) saturate(150%);
+            -webkit-backdrop-filter: blur(24px) saturate(150%);
+            border: 0.5px solid rgba(255,255,255,0.10);
+            box-shadow:
+                0 4px 24px rgba(0,0,0,0.25),
+                0 1px 3px rgba(0,0,0,0.15),
+                inset 0 1px 0 rgba(255,255,255,0.12),
+                inset 0 -1px 0 rgba(255,255,255,0.04),
+                inset 1px 0 0 rgba(255,255,255,0.06),
+                inset -1px 0 0 rgba(255,255,255,0.06);
+            transition: transform 0.15s ease-out,
+                        box-shadow 0.4s cubic-bezier(0.4,0,0.2,1),
+                        background 0.4s cubic-bezier(0.4,0,0.2,1),
+                        border 0.4s cubic-bezier(0.4,0,0.2,1),
+                        backdrop-filter 0.4s cubic-bezier(0.4,0,0.2,1);
+            overflow: hidden;
+            cursor: default;
+            margin: 0;
+        }
+        /* Frosted noise texture */
+        .card::before {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)' opacity='0.03'/%3E%3C/svg%3E");
+            pointer-events: none;
+            z-index: 1;
+        }
+        /* 색수차 (Chromatic Aberration) Layer — conic-gradient RGB 분리 */
+        .card::after {
+            content: '';
+            position: absolute;
+            inset: 0;
+            border-radius: inherit;
+            background:
+                conic-gradient(
+                    from var(--light-angle, 0deg) at var(--light-x, 50%) var(--light-y, 50%),
+                    rgba(255, 0, 0, 0) 0%,
+                    rgba(255, 0, 0, var(--ca-intensity, 0)) 8%,
+                    rgba(255, 165, 0, var(--ca-intensity, 0)) 16%,
+                    rgba(255, 255, 0, var(--ca-intensity, 0)) 24%,
+                    rgba(0, 255, 0, var(--ca-intensity, 0)) 33%,
+                    rgba(0, 200, 255, var(--ca-intensity, 0)) 42%,
+                    rgba(0, 100, 255, var(--ca-intensity, 0)) 50%,
+                    rgba(130, 0, 255, var(--ca-intensity, 0)) 58%,
+                    rgba(255, 0, 200, var(--ca-intensity, 0)) 66%,
+                    rgba(255, 0, 0, var(--ca-intensity, 0)) 75%,
+                    rgba(255, 0, 0, 0) 83%,
+                    transparent 100%
+                );
+            mask: radial-gradient(ellipse at var(--light-x, 50%) var(--light-y, 50%), transparent 30%, black 80%);
+            -webkit-mask: radial-gradient(ellipse at var(--light-x, 50%) var(--light-y, 50%), transparent 30%, black 80%);
+            pointer-events: none;
+            z-index: 2;
+            opacity: 0;
+            transition: opacity 0.5s ease;
+        }
+        .card:hover::after { opacity: 0.7; }
+
+        /* Hover state: specular + fresnel edge glow (은은하게) */
+        .card:hover {
+            background:
+                /* 스페큘러 하이라이트 */
+                radial-gradient(
+                    ellipse var(--spec-size, 25%) var(--spec-size, 25%) at var(--light-x, 50%) var(--light-y, 40%),
+                    rgba(255,255,255, var(--spec-intensity, 0.1)) 0%,
+                    rgba(255,255,255, 0.02) 40%,
+                    transparent 70%
+                ),
+                /* 프레넬 엣지 글로우 */
+                radial-gradient(
+                    ellipse at 50% 50%,
+                    transparent 40%,
+                    rgba(255,255,255, var(--edge-glow, 0.03)) 80%,
+                    rgba(255,255,255, var(--edge-glow, 0.03)) 100%
+                ),
+                /* 기본 유리 */
+                linear-gradient(135deg, rgba(255,255,255,0.09) 0%, rgba(255,255,255,0.03) 40%, rgba(255,255,255,0.06) 100%);
+            box-shadow:
+                0 12px 40px rgba(0,0,0,0.3),
+                0 2px 8px rgba(0,0,0,0.15),
+                inset 0 1px 0 rgba(255,255,255,0.18),
+                inset 0 -1px 0 rgba(255,255,255,0.06),
+                inset 1px 0 0 rgba(255,255,255,0.08),
+                inset -1px 0 0 rgba(255,255,255,0.08);
+            border: 0.5px solid rgba(255,255,255,0.18);
+            backdrop-filter: blur(30px) saturate(170%);
+            -webkit-backdrop-filter: blur(30px) saturate(170%);
+        }
+
+        /* ── Typography ── */
+        .cardTitle { position: relative; font-family: 'Roboto-Medium'; font-size: 18px; color: #fff; z-index: 3; letter-spacing: 0.3px; }
+        .cardSub { position: relative; font-family: 'Roboto-Regular'; font-size: 12px; color: rgba(255,255,255,0.8); z-index: 3; margin-top: 4px; }
+        .cardIcon { position: relative; z-index: 3; flex: 1; display: flex; align-items: center; justify-content: center; }
+
+        /* ── Icon Gradients ── */
+        .gradPeriodic { background: linear-gradient(135deg, #84ffff, #448aff, #b388ff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .gradPhysics  { background: linear-gradient(135deg, #f0f0f0 30%, #a793ac); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .gradSearch   { background: linear-gradient(135deg, #80cbc4, #4a6275); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+        .gradAi       { background: linear-gradient(135deg, #ea80fc, #82b1ff, #84ffff); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+
+        /* ══ Hero Card ══ */
+        .g-hero {
+            overflow: visible;
+            cursor: pointer;
+            justify-content: center;
+            padding-bottom: 0;
+            border-color: transparent !important;
+        }
+        /* Aurora border — sits behind the card */
+        .g-hero::before {
+            content: '' !important;
+            position: absolute !important;
+            inset: -2px !important;
+            border-radius: inherit !important;
+            background: linear-gradient(90deg,
+                #ff8a80, #ff80ab, #ea80fc, #b388ff, #8c9eff, #82b1ff,
+                #80d8ff, #84ffff, #a7ffeb, #b9f6ca, #ccff90, #f4ff81,
+                #ffff8d, #ffe57f, #ffd180, #ff9e80, #ff8a80) !important;
+            background-size: 400% !important;
+            z-index: -2 !important;
+            animation: glowing 20s linear infinite !important;
+            opacity: 0.5 !important;
+            filter: blur(4px) !important;
+        }
+        .g-hero:hover::before { opacity: 0.8 !important; animation: glowing 4s linear infinite !important; filter: blur(6px) !important; }
+        /* Solid card face to cover the aurora background */
+        .g-hero::after {
+            content: '' !important;
+            position: absolute !important;
+            inset: 0 !important;
+            border-radius: inherit !important;
+            background: linear-gradient(135deg,
+                rgba(255,255,255,0.07) 0%,
+                rgba(255,255,255,0.02) 40%,
+                rgba(255,255,255,0.05) 100%),
+                #0b0b1a !important;
+            backdrop-filter: blur(24px) saturate(150%) !important;
+            z-index: -1 !important;
+            opacity: 1 !important;
+        }
+        @keyframes glowing {
+            0%   { background-position: 0 0; }
+            50%  { background-position: 400% 0; }
+            100% { background-position: 0 0; }
+        }
+        .heroLogo { font-family: 'Roboto-LOGO'; text-align: center; position: relative; z-index: 3; }
+        .heroLogo .logoText {
+            font-family: 'Roboto-Light', 'Roboto-Regular', sans-serif;
+            font-size: 64px;
+            background: linear-gradient(135deg, #a793ac, #fff, #7eb8d0, #a793ac);
+            background-size: 300% 300%;
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            animation: logoShimmer 6s ease-in-out infinite;
+            filter: drop-shadow(0 2px 8px rgba(167,147,172,0.3));
+            line-height: 1.2;
+            letter-spacing: -1px;
+        }
+        .heroLogo .logoSub { font-family: 'Roboto-Light'; font-size: 13px; color: rgba(255,255,255,0.45); letter-spacing: 6px; text-transform: uppercase; margin-top: 8px; }
+        .heroLogo .logoDesc { font-family: 'Roboto-Regular'; font-size: 14px; color: rgba(255,255,255,0.8); margin-top: 20px; letter-spacing: 0.5px; }
+        .heroLogo .logoDescKr { font-family: 'Roboto-Regular'; font-size: 11px; color: rgba(255,255,255,0.6); margin-top: 4px; }
+        @keyframes logoShimmer { 0%, 100% { background-position: 0% 50%; } 50% { background-position: 100% 50%; } }
+
+        /* ══ AI Card (Aurora) ══ */
+        .g-ai { overflow: hidden; }
+        .aiDemo {
+            position: relative; z-index: 3; margin-top: 8px;
+            font-family: 'Roboto-Regular'; font-size: 12px; color: rgba(255,255,255,0.35);
+            background: rgba(255,255,255,0.05); border-radius: 10px; padding: 8px 16px; border: 0.5px solid rgba(255,255,255,0.08);
+        }
+        .aiDemo span { color: rgba(132,255,255,0.6); }
+
+        /* ── SVG Molecule ── */
+        .moleculeSvg { position: relative; z-index: 3; }
+        .moleculeSvg svg { filter: drop-shadow(0 0 12px rgba(167,147,172,0.3)); }
+
+
+        /* ── Benzene ── */
+        .benzeneAnim { position: relative; z-index: 3; }
+        .benzeneAnim svg { animation: benzeneSpin 20s linear infinite; animation-play-state: paused; }
+        .g-svg:hover .benzeneAnim svg { animation-play-state: running; }
+        @keyframes benzeneSpin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
+        @keyframes mol3dSpin { from { transform: rotateY(0deg) rotateX(15deg); } to { transform: rotateY(360deg) rotateX(15deg); } }
+        .mol3d { animation: mol3dSpin 8s linear infinite; animation-play-state: paused; transform-style: preserve-3d; }
+        .g-spring:hover .mol3d { animation-play-state: running; }
+
+        /* ── Glass Orb ── */
+        .glassOrb {
+            width: 80px; height: 80px; border-radius: 50%; position: relative; z-index: 3;
+            background: radial-gradient(ellipse at 30% 30%, rgba(255,255,255,0.4) 0%, transparent 50%), radial-gradient(ellipse at 70% 70%, rgba(167,147,172,0.15) 0%, transparent 50%), linear-gradient(135deg, rgba(255,255,255,0.1), rgba(255,255,255,0.02));
+            border: 0.5px solid rgba(255,255,255,0.25); backdrop-filter: blur(20px);
+            box-shadow: 0 8px 32px rgba(0,0,0,0.3), inset 0 2px 4px rgba(255,255,255,0.2), inset 0 -2px 4px rgba(0,0,0,0.1), 0 0 60px rgba(167,147,172,0.1);
+            animation: orbFloat 5s ease-in-out infinite; animation-play-state: paused;
+        }
+        .glassOrb::after { content: ''; position: absolute; top: 12px; left: 16px; width: 18px; height: 10px; border-radius: 50%; background: rgba(255,255,255,0.35); filter: blur(4px); }
+        .g-glass:hover .glassOrb { animation-play-state: running; }
+        @keyframes orbFloat { 0%, 100% { transform: translateY(0) scale(1); } 50% { transform: translateY(-6px) scale(1.02); } }
+
+        /* ── Search ── */
+        .searchDemo {
+            position: relative; z-index: 3; display: flex; align-items: center; gap: 6px;
+            background: rgba(255,255,255,0.04); border: 0.5px solid rgba(255,255,255,0.1);
+            border-radius: 20px; padding: 8px 16px; margin-bottom: 14px; width: 80%;
+        }
+        .searchDemo .material-icons { font-size: 14px; color: rgba(255,255,255,0.25); }
+        .searchDemo span { font-size: 11px; color: rgba(255,255,255,0.3); font-family: 'Roboto-Regular'; }
+
+        /* ── Spring Bounce ── */
+        .springDemo { position: relative; z-index: 3; display: flex; align-items: center; justify-content: center; gap: 8px; margin-bottom: 12px; }
+        .springBall { border-radius: 50%; animation: springBounce 2s cubic-bezier(0.34, 1.56, 0.64, 1) infinite; }
+        .springBall:nth-child(1) { width: 16px; height: 16px; background: linear-gradient(135deg, #69f0ae, #40c4ff); animation-delay: 0s; }
+        .springBall:nth-child(2) { width: 12px; height: 12px; background: linear-gradient(135deg, #b388ff, #ea80fc); animation-delay: 0.15s; }
+        .springBall:nth-child(3) { width: 20px; height: 20px; background: linear-gradient(135deg, #ff8a80, #ffd180); animation-delay: 0.3s; }
+        .springBall:nth-child(4) { width: 10px; height: 10px; background: linear-gradient(135deg, #84ffff, #82b1ff); animation-delay: 0.45s; }
+        .springBall:nth-child(5) { width: 14px; height: 14px; background: linear-gradient(135deg, #a793ac, #7eb8d0); animation-delay: 0.6s; }
+        @keyframes springBounce {
+            0%, 100% { transform: translateY(0) scale(1); }
+            25%      { transform: translateY(-30px) scale(0.9, 1.1); }
+            50%      { transform: translateY(0) scale(1.1, 0.9); }
+            75%      { transform: translateY(-12px) scale(0.97, 1.03); }
+        }
+
+        /* ── Entrance ── */
+        .card { opacity: 0; }
+        .card.animate__animated { opacity: 1; }
+    </style>
+
+<script>
+    $(document).ready(function(){
+        // Staggered entrance
+        var cards = $(".gridLayout .card");
+        cards.each(function(i) {
+            var el = $(this);
+            setTimeout(function() {
+                el.addClass("animate__animated animate__zoomIn");
+            }, i * 80);
+        });
+
+        // Floating particles
+        var field = document.querySelector('.particleField');
+        var colors = ['rgba(167,147,172,0.3)', 'rgba(74,98,117,0.3)', 'rgba(126,184,208,0.25)', 'rgba(132,255,255,0.15)', 'rgba(179,136,255,0.15)'];
+        for (var i = 0; i < 30; i++) {
+            var p = document.createElement('div');
+            p.className = 'particle';
+            var size = Math.random() * 4 + 1;
+            p.style.width = size + 'px';
+            p.style.height = size + 'px';
+            p.style.left = Math.random() * 100 + '%';
+            p.style.background = colors[Math.floor(Math.random() * colors.length)];
+            p.style.animationDuration = (Math.random() * 15 + 10) + 's';
+            p.style.animationDelay = (Math.random() * 10) + 's';
+            field.appendChild(p);
+        }
+
+        // ══════════════════════════════════════════
+        // Glass Engine: Schlick Fresnel + 색수차 + 3D Tilt
+        // ══════════════════════════════════════════
+        var R0 = 0.04;           // 유리 굴절률 n=1.5 → 정면 반사율 4%
+        var lightIntensity = 4;  // 은은한 실내 조명
+
+        document.addEventListener('mousemove', function(e) {
+            var card = e.target.closest('.gridLayout .card');
+            if (!card || card.classList.contains('g-hero')) return; // hero는 별도 처리
+
+            var rect = card.getBoundingClientRect();
+            var x = (e.clientX - rect.left) / rect.width * 100;
+            var y = (e.clientY - rect.top) / rect.height * 100;
+
+            // 중심으로부터 정규화 거리 (0=중앙, 1=모서리)
+            var nx = (x - 50) / 50;
+            var ny = (y - 50) / 50;
+            var dist = Math.min(Math.sqrt(nx * nx + ny * ny), 1);
+
+            // cosθ: 중앙=1(정면), 가장자리=0(비스듬)
+            var cosTheta = 1 - dist;
+
+            // Schlick 프레넬 반사율
+            var fresnel = R0 + (1 - R0) * Math.pow(1 - cosTheta, 5);
+            var reflected = Math.min(fresnel * lightIntensity, 1);
+
+            // 스페큘러 크기/강도
+            var specSize = 20 + dist * 25;
+            var specIntensity = Math.min(0.1 + reflected * 0.3, 0.4);
+            var edgeGlow = reflected * 0.2;
+
+            // 3D 틸트
+            var maxTilt = 2.5;
+            var tiltY = nx * maxTilt;
+            var tiltX = -ny * maxTilt;
+
+            // 색수차 — 비스듬할수록 강해짐 (아주 미세하게)
+            var caIntensity = Math.pow(dist, 3) * 0.08;
+            var lightAngle = Math.atan2(ny, nx) * (180 / Math.PI);
+
+            // CSS 변수 세팅
+            card.style.setProperty('--light-x', x + '%');
+            card.style.setProperty('--light-y', y + '%');
+            card.style.setProperty('--fresnel', fresnel.toFixed(3));
+            card.style.setProperty('--spec-size', specSize + '%');
+            card.style.setProperty('--spec-intensity', specIntensity.toFixed(3));
+            card.style.setProperty('--edge-glow', edgeGlow.toFixed(3));
+            card.style.setProperty('--ca-intensity', caIntensity.toFixed(3));
+            card.style.setProperty('--light-angle', lightAngle.toFixed(1) + 'deg');
+
+            // 눌림 깊이 — 중앙일수록 깊게, 가장자리로 갈수록 얕게
+            var pressDepth = (1 - dist) * 8 + 2;
+
+            // 3D transform + press
+            card.style.transition = 'transform 0.08s ease-out';
+            card.style.transform =
+                'perspective(800px) rotateX(' + tiltX.toFixed(2) + 'deg) rotateY(' + tiltY.toFixed(2) + 'deg) translateZ(-' + pressDepth.toFixed(1) + 'px) scale(0.98)';
+        });
+
+        // 마우스 나갈 때 원복
+        document.addEventListener('mouseout', function(e) {
+            var card = e.target.closest('.gridLayout .card');
+            if (!card || card.classList.contains('g-hero')) return;
+            if (e.relatedTarget && card.contains(e.relatedTarget)) return;
+
+            card.style.transition = 'transform 0.4s ease-out, box-shadow 0.4s ease, background 0.4s ease, border 0.4s ease';
+            card.style.transform = 'perspective(800px) rotateX(0deg) rotateY(0deg) translateZ(0px) scale(1)';
+            card.style.setProperty('--spec-intensity', '0');
+            card.style.setProperty('--edge-glow', '0');
+            card.style.setProperty('--ca-intensity', '0');
+
+            var cleanup = function() {
+                card.style.removeProperty('--light-x');
+                card.style.removeProperty('--light-y');
+                card.style.removeProperty('--fresnel');
+                card.style.removeProperty('--spec-size');
+                card.style.removeProperty('--spec-intensity');
+                card.style.removeProperty('--edge-glow');
+                card.style.removeProperty('--ca-intensity');
+                card.style.removeProperty('--light-angle');
+                card.style.transform = '';
+                card.style.transition = '';
+                card.removeEventListener('transitionend', cleanup);
+            };
+            card.addEventListener('transitionend', cleanup);
+        });
+
+    });
+</script>
+
+</head>
+<body>
+    <div class="particleField"></div>
+
+    <div class="gridLayout">
+
+        <!-- ── Row 1, Col 1: 2D Molecular Editor ── -->
+        <div class="card g-editor">
+            <div class="cardIcon moleculeSvg">
+                <svg width="140" height="80" viewBox="0 0 180 110">
+                    <line x1="30" y1="70" x2="70" y2="45" stroke="rgba(167,147,172,0.6)" stroke-width="2"/>
+                    <line x1="70" y1="45" x2="120" y2="60" stroke="rgba(167,147,172,0.6)" stroke-width="2"/>
+                    <line x1="120" y1="60" x2="160" y2="35" stroke="rgba(126,184,208,0.6)" stroke-width="2"/>
+                    <circle cx="30" cy="70" r="16" fill="rgba(74,98,117,0.2)" stroke="rgba(167,147,172,0.4)" stroke-width="1"/>
+                    <text x="30" y="74" text-anchor="middle" fill="rgba(255,255,255,0.8)" font-size="12" font-family="Roboto-Medium">CH₃</text>
+                    <circle cx="70" cy="45" r="14" fill="rgba(74,98,117,0.15)" stroke="rgba(167,147,172,0.35)" stroke-width="1"/>
+                    <text x="70" y="49" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="11" font-family="Roboto-Medium">CH₂</text>
+                    <circle cx="120" cy="60" r="14" fill="rgba(255,80,80,0.12)" stroke="rgba(255,120,120,0.35)" stroke-width="1"/>
+                    <text x="120" y="64" text-anchor="middle" fill="rgba(255,150,150,0.9)" font-size="12" font-family="Roboto-Bold">O</text>
+                    <circle cx="160" cy="35" r="14" fill="rgba(200,200,200,0.08)" stroke="rgba(200,200,200,0.25)" stroke-width="1"/>
+                    <text x="160" y="39" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="12" font-family="Roboto-Medium">H</text>
+                    <circle cx="120" cy="60" r="20" fill="none" stroke="rgba(255,120,120,0.1)" stroke-width="8" filter="url(#glow)"/>
+                    <defs><filter id="glow"><feGaussianBlur stdDeviation="4" result="g"/><feMerge><feMergeNode in="g"/><feMergeNode in="SourceGraphic"/></feMerge></filter></defs>
+                </svg>
+            </div>
+            <div class="cardTitle">2D Molecular Editor</div>
+            <div class="cardSub">웹 기반 분자 구조 편집기</div>
+        </div>
+
+        <!-- ── Row 1-2, Col 2-3: Hero ── -->
+        <div class="card g-hero" onclick="window.open('https://s-apistest.kccworld.co.kr/admin/popup/chemDrawPopup','chemDraw','width=1520,height=880')">
+            <div class="heroLogo">
+                <svg width="60" height="60" viewBox="0 0 34 34" style="margin-bottom: 12px; filter: drop-shadow(0 4px 20px rgba(167,147,172,0.4));">
+                    <defs>
+                        <linearGradient id="hexGrad" x1="0%" y1="0%" x2="100%" y2="100%">
+                            <stop offset="0%" stop-color="#fff" stop-opacity="0.75"/>
+                            <stop offset="45%" stop-color="#fff" stop-opacity="0.15"/>
+                            <stop offset="100%" stop-color="#fff" stop-opacity="0.5"/>
+                        </linearGradient>
+                        <linearGradient id="hexShine" x1="20%" y1="0%" x2="60%" y2="60%">
+                            <stop offset="0%" stop-color="#fff" stop-opacity="0.9"/>
+                            <stop offset="100%" stop-color="#fff" stop-opacity="0"/>
+                        </linearGradient>
+                    </defs>
+                    <polygon points="17,2 30,9.5 30,24.5 17,32 4,24.5 4,9.5" fill="url(#hexGrad)" stroke="rgba(255,255,255,0.9)" stroke-width="1.5" stroke-linejoin="round"/>
+                    <polygon points="17,2 30,9.5 30,15 10,7" fill="url(#hexShine)" opacity="0.5"/>
+                    <circle cx="17" cy="17" r="7" fill="none" stroke="rgba(255,255,255,0.55)" stroke-width="1.3"/>
+                </svg>
+                <div class="logoText"><span style="font-weight:300;">Chem</span>&nbsp;<span style="font-weight:700;">Studio</span></div>
+                <div class="logoDesc">AI-Powered Chemical Structure Agent</div>
+                <div class="logoDescKr">AI 에이전트 기반 화학 구조식 플랫폼</div>
+            </div>
+        </div>
+
+        <!-- ── Row 1, Col 4: Glass Engine ── -->
+        <div class="card g-glass">
+            <div class="cardIcon">
+                <div class="glassOrb"></div>
+            </div>
+            <div class="cardTitle">Lumina Glass Engine</div>
+            <div class="cardSub">빛 물리 기반 글라스모피즘</div>
+        </div>
+
+        <!-- ── Row 2, Col 1: Periodic Table ── -->
+        <div class="card g-periodic">
+            <div class="cardIcon">
+                <span class="material-icons gradPeriodic" style="font-size: 80px;">grid_on</span>
+            </div>
+            <div class="cardTitle">Interactive Periodic Table</div>
+            <div class="cardSub">118개 원소 · 역제곱 법칙 글로우</div>
+        </div>
+
+        <!-- ── Row 2, Col 4: SMILES Search ── -->
+        <div class="card g-search">
+            <div class="cardIcon">
+                <span class="material-icons gradSearch" style="font-size: 80px;">manage_search</span>
+            </div>
+            <div class="cardTitle">SMILES / Formula Search</div>
+            <div class="cardSub">Formula · 화합물명 · CAS 번호</div>
+        </div>
+
+        <!-- ── Row 3, Col 1: SVG Rendering ── -->
+        <div class="card g-svg">
+            <div class="cardIcon benzeneAnim">
+                <svg width="80" height="80" viewBox="0 0 120 120">
+                    <polygon points="60,15 98,32 98,68 60,85 22,68 22,32" fill="none" stroke="rgba(167,147,172,0.5)" stroke-width="2"/>
+                    <circle cx="60" cy="50" r="18" fill="none" stroke="rgba(126,184,208,0.4)" stroke-width="1.5" stroke-dasharray="4,3"/>
+                    <circle cx="60" cy="15" r="5" fill="rgba(74,98,117,0.3)" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+                    <circle cx="98" cy="32" r="5" fill="rgba(74,98,117,0.3)" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+                    <circle cx="98" cy="68" r="5" fill="rgba(74,98,117,0.3)" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+                    <circle cx="60" cy="85" r="5" fill="rgba(74,98,117,0.3)" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+                    <circle cx="22" cy="68" r="5" fill="rgba(74,98,117,0.3)" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+                    <circle cx="22" cy="32" r="5" fill="rgba(74,98,117,0.3)" stroke="rgba(255,255,255,0.3)" stroke-width="0.5"/>
+                    <text x="60" y="19" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="7" font-family="Roboto-Medium">C</text>
+                    <text x="98" y="36" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="7" font-family="Roboto-Medium">C</text>
+                    <text x="98" y="72" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="7" font-family="Roboto-Medium">C</text>
+                    <text x="60" y="89" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="7" font-family="Roboto-Medium">C</text>
+                    <text x="22" y="72" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="7" font-family="Roboto-Medium">C</text>
+                    <text x="22" y="36" text-anchor="middle" fill="rgba(255,255,255,0.6)" font-size="7" font-family="Roboto-Medium">C</text>
+                    <text x="60" y="108" text-anchor="middle" fill="rgba(255,255,255,0.3)" font-size="9" font-family="Roboto-Regular">C₆H₆</text>
+                </svg>
+            </div>
+            <div class="cardTitle">SVG Molecular Rendering</div>
+            <div class="cardSub">순수 JavaScript SVG 렌더링</div>
+        </div>
+
+        <!-- ── Row 3, Col 2: AI Assistant ── -->
+        <div class="card g-ai">
+            <div class="cardIcon">
+                <span class="material-icons gradAi" style="font-size: 80px;">auto_awesome</span>
+            </div>
+            <div class="cardTitle">AI Assistant</div>
+            <div class="cardSub">자연어 분자 구조 제어</div>
+        </div>
+
+        <!-- ── Row 3, Col 3: 3D Molecule Viewer ── -->
+        <div class="card g-spring">
+            <div class="cardIcon" style="perspective: 400px;">
+                <div class="mol3d" style="position: relative; width: 80px; height: 80px;">
+                    <svg width="80" height="80" viewBox="0 0 70 70" style="position: absolute; inset: 0;">
+                        <circle cx="35" cy="15" r="8" fill="rgba(167,147,172,0.3)" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
+                        <circle cx="55" cy="35" r="8" fill="rgba(126,184,208,0.3)" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
+                        <circle cx="35" cy="55" r="8" fill="rgba(255,120,120,0.2)" stroke="rgba(255,150,150,0.4)" stroke-width="0.8"/>
+                        <circle cx="15" cy="35" r="8" fill="rgba(167,147,172,0.3)" stroke="rgba(255,255,255,0.4)" stroke-width="0.8"/>
+                        <line x1="35" y1="15" x2="55" y2="35" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+                        <line x1="55" y1="35" x2="35" y2="55" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+                        <line x1="35" y1="55" x2="15" y2="35" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+                        <line x1="15" y1="35" x2="35" y2="15" stroke="rgba(255,255,255,0.25)" stroke-width="1.5"/>
+                        <text x="35" y="19" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="7" font-family="Roboto-Medium">C</text>
+                        <text x="55" y="39" text-anchor="middle" fill="rgba(200,230,255,0.7)" font-size="7" font-family="Roboto-Medium">N</text>
+                        <text x="35" y="59" text-anchor="middle" fill="rgba(255,180,180,0.8)" font-size="7" font-family="Roboto-Medium">O</text>
+                        <text x="15" y="39" text-anchor="middle" fill="rgba(255,255,255,0.7)" font-size="7" font-family="Roboto-Medium">C</text>
+                    </svg>
+                </div>
+            </div>
+            <div class="cardTitle">3D Molecule Viewer</div>
+            <div class="cardSub">WebGL 3차원 분자 회전 뷰어</div>
+        </div>
+
+        <!-- ── Row 3, Col 4: Micro Interactions ── -->
+        <div class="card g-micro">
+            <div class="cardIcon">
+                <span class="material-symbols-outlined gradPhysics" style="font-size: 80px;">animation</span>
+            </div>
+            <div class="cardTitle">Micro Interactions</div>
+            <div class="cardSub">마이크로 인터랙션</div>
+        </div>
+
+    </div>
+</body>
+</html>
