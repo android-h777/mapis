@@ -40,6 +40,8 @@
 				<div id="elnHeadStatus" class="roundBox blue" data-status="ing">In Progress</div>
 				<div id="elnApprovalBadge" class="elnApprBadge" style="display:none;"></div>
 			</div>
+			<!-- 헤더 우측: 이 과제의 연구노트 리스트(스테이지별) 토글 -->
+			<a href="javascript:;" id="elnNoteListBtn" class="waves-effect waves-light hBtn elnHeadRight" title="Show research notes of this project"><i class="material-symbols-outlined left">description</i><span class="label">Note List</span></a>
 		</section>
 	</header>
 
@@ -247,6 +249,17 @@
 
 	<!-- 우측 패널 토글 손잡이 (패널과 분리된 독립 fixed 버튼 — 항상 화면에 노출) -->
 	<!-- 우측 패널 제거 — Tags·History는 Overview 카드 내부 collapsible로 이동 -->
+
+	<!-- Note List — 이 과제의 연구노트 리스트(스테이지별 그룹). 헤더 NoteList 버튼으로 우측에서 슬라이드 -->
+	<div id="elnNoteListScrim" class="elnNoteListScrim"></div>
+	<aside id="elnNoteListPanel" class="elnNoteList z-depth-2">
+		<div class="elnNoteListHead">
+			<div class="tit"><i class="material-symbols-outlined left">description</i>Note List</div>
+			<button type="button" class="x" id="elnNoteListClose" aria-label="Close"><i class="material-symbols-outlined">close</i></button>
+		</div>
+		<div class="elnNoteListProj" id="elnNoteListProj" title="Open project detail">[SN-26-0031] RGBOLED Display Adhesive</div>
+		<div class="elnNoteListBody" id="elnNoteListBody"><!-- renderNoteList(): 스테이지 그룹 + 노트 아이템 --></div>
+	</aside>
 
 	<!-- Add Module 모달 — 시스템 Materialize 모달(apis_npdi_pop ProcessMap과 동일 패턴).
 	     글래스/오버레이/뒤배경 blur는 기본 .modal 규칙 + glass_engine.js가 처리. 그리드는 JS 렌더 -->

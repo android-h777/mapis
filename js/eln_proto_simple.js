@@ -475,21 +475,11 @@
     if (!document.getElementById('card_fml')) return;
     renderFml(); // 초기 렌더(비교)
 
-    // Open in formulator — 연결된 배합 중 골라서 진입(여럿이면 팝오버, 하나면 바로)
+    // Open in formulator — 클릭 즉시 포뮬레이터 팝업. 연결 배합 있으면 첫 배합 코드로, 없으면 그냥 열기
     var btnOpen = document.getElementById('btnOpenFormulator');
     if (btnOpen) btnOpen.addEventListener('click', function () {
-      if (linkedFmls.length <= 1) { if (linkedFmls[0]) openInFormulator(linkedFmls[0]); return; }
-      var menu = document.createElement('div'); menu.className = 'elnNbPopList';
-      linkedFmls.forEach(function (key) {
-        var f = FORMULATIONS[key]; if (!f) return;
-        var it = document.createElement('div'); it.className = 'elnNbPopItem';
-        var ic = document.createElement('i'); ic.className = 'material-symbols-outlined fill'; ic.textContent = 'science';
-        var nm = document.createElement('span'); nm.innerHTML = f.code + ' <b>' + f.ver + '</b>';
-        it.appendChild(ic); it.appendChild(nm);
-        it.addEventListener('click', function () { ref.close(); openInFormulator(key); });
-        menu.appendChild(it);
-      });
-      var ref = ELN.popover({ anchor: btnOpen, content: menu });
+      if (linkedFmls[0]) openInFormulator(linkedFmls[0]);
+      else window.open('siliconeFormula/index.html', 'siliconeFormulator', 'width=1480,height=900,scrollbars=yes,resizable=yes');
     });
 
     // Select — 비교할 배합 다중 선택
@@ -505,6 +495,132 @@
     });
   }
   document.addEventListener('DOMContentLoaded', initFmlActions);
+
+  /* ── Note List — 이 과제의 연구노트(스테이지별 그룹). 헤더 NoteList 버튼 → 우측 슬라이드 패널 ── */
+  // 목업 데이터: 같은 과제(SN-26-0031)의 노트들. current = 지금 열려있는 노트
+  // modules: 이 노트가 보유한 '동적 모듈' 구성(basic·approval은 고정이라 제외).
+  //   'fml'=정적 Formulation 리치카드(show/hide로 보존), 나머지는 addNoteModule로 동적 재생성.
+  //   노트마다 모듈 종류·개수가 달라 카드 수와 좌측 목차가 실제로 바뀜.
+  var PROJECT_NOTES = [
+    { code: 'NT-2604-00098', title: 'PSA Base Polymer Screening',                         stage: 'LAB FORMULATION', date: '2026-04-12', status: 'done',   modules: ['fml','table','editor'] },
+    { code: 'NT-2604-00115', title: 'Tackifier Compatibility Study',                       stage: 'LAB FORMULATION', date: '2026-04-28', status: 'done',   modules: ['fml','table','chem','related'] },
+    { code: 'NT-2605-00131', title: 'Crosslinker Ratio Optimization',                      stage: 'LAB FORMULATION', date: '2026-05-06', status: 'review', modules: ['fml','table','editor','attach'] },
+    { code: 'NT-2605-00142', title: 'UV-Curable PSA Viscosity Improvement — RGBOLED',      stage: 'SCALE-UP',        date: '2026-05-15', status: 'ing', current: true, modules: ['fml','editor','table','chem','related','attach'] },
+    { code: 'NT-2605-00150', title: 'Pilot Coating Trial #1',                              stage: 'SCALE-UP',        date: '2026-05-22', status: 'ing',    modules: ['editor','attach'] },
+    { code: 'NT-2606-00171', title: 'Mass-Production Validation Plan',                     stage: 'COMMERCIAL GO',   date: '2026-06-03', status: 'draft',  modules: ['editor'] }
+  ];
+  var NOTE_STATUS_TXT = { done: 'Done', ing: 'In Progress', review: 'In Review', draft: 'Draft' };
+  // 노트 상태 → 헤더 알약(roundBox) 색. 헤더 워크플로우 어휘와 달라 전환 시 직접 매핑
+  var NOTE_STATUS_PILL = { done: 'green', ing: 'blue', review: 'viola25', draft: 'grey' };
+
+  function renderNoteList() {
+    var body = document.getElementById('elnNoteListBody'); if (!body) return;
+    // 스테이지 순서는 과제 스케줄(PROJ_SCHEDULE) 기준 — 노트 있는 스테이지만, 스케줄 밖 스테이지는 뒤에
+    var order = (typeof PROJ_SCHEDULE !== 'undefined') ? PROJ_SCHEDULE.map(function (s) { return s.stage; }) : [];
+    var stages = order.filter(function (st) { return PROJECT_NOTES.some(function (n) { return n.stage === st; }); });
+    PROJECT_NOTES.forEach(function (n) { if (stages.indexOf(n.stage) < 0) stages.push(n.stage); });
+    if (!stages.length) { body.innerHTML = '<div class="elnNlEmpty">No notes in this project.</div>'; return; }
+    var html = '';
+    stages.forEach(function (st) {
+      var items = PROJECT_NOTES.filter(function (n) { return n.stage === st; });
+      html += '<div class="elnNlGroup"><div class="elnNlGroupHead">' + esc(st) + '<span class="cnt">' + items.length + '</span></div>';
+      items.forEach(function (n) {
+        html += '<div class="elnNlItem' + (n.current ? ' current' : '') + '" data-code="' + esc(n.code) + '">'
+          + '<div class="elnNlTop"><span class="elnNlTit">' + esc(n.title) + '</span>'
+          + '<span class="elnNlStatus ' + n.status + '">' + (NOTE_STATUS_TXT[n.status] || n.status) + '</span></div>'
+          + '<div class="elnNlSub"><span class="code">' + esc(n.code) + '</span><span class="date">' + esc(n.date) + '</span></div>'
+          + '</div>';
+      });
+      html += '</div>';
+    });
+    body.innerHTML = html;
+  }
+
+  function initNoteList() {
+    var btn = document.getElementById('elnNoteListBtn');
+    var panel = document.getElementById('elnNoteListPanel');
+    if (!btn || !panel) return;   // 상세 팝업에서만
+    var scrim = document.getElementById('elnNoteListScrim');
+    var closeBtn = document.getElementById('elnNoteListClose');
+    renderNoteList();
+    function onKey(e) { if (e.key === 'Escape') closePanel(); }
+    function openPanel() { panel.classList.add('on'); if (scrim) scrim.classList.add('on'); document.addEventListener('keydown', onKey); }
+    function closePanel() { panel.classList.remove('on'); if (scrim) scrim.classList.remove('on'); document.removeEventListener('keydown', onKey); }
+    btn.addEventListener('click', function () { panel.classList.contains('on') ? closePanel() : openPanel(); });
+    if (closeBtn) closeBtn.addEventListener('click', closePanel);
+    if (scrim) scrim.addEventListener('click', closePanel);
+    var proj = document.getElementById('elnNoteListProj');
+    if (proj) proj.addEventListener('click', function () {
+      ELN.toast('Opening project detail — ' + proj.textContent.trim() + '.', 'info');
+    });
+    var body = document.getElementById('elnNoteListBody');
+    if (body) body.addEventListener('click', function (e) {
+      var it = e.target.closest('.elnNlItem'); if (!it) return;
+      if (it.classList.contains('current')) { closePanel(); return; }   // 현재 노트면 그냥 닫기
+      selectNote(it.getAttribute('data-code'));
+    });
+
+    // 프로토타입 노트 전환 — 헤더 제목·상태 알약·Note Title 교체 + 노트별 모듈 구성 재생성
+    //  + 리스트 current 이동 + 패널 닫고 상단으로 + 본문 페이드. 실제 모듈 시스템을 그대로 구동.
+    function selectNote(code) {
+      var n; for (var i = 0; i < PROJECT_NOTES.length; i++) if (PROJECT_NOTES[i].code === code) { n = PROJECT_NOTES[i]; break; }
+      if (!n) return;
+      // 헤더 제목
+      var tit = document.querySelector('.popup header .statusTit .tit');
+      if (tit) tit.textContent = '[' + n.code + '] ' + n.title;
+      // 본문 Basic Data의 'Note Title' 입력값도 동기화(헤더만 바뀌면 어색)
+      var titIn = document.querySelector('.elnBasicTitle input');
+      if (titIn) titIn.value = n.title;
+      // 헤더 상태 알약(노트 상태 어휘 → 색/라벨 직접 매핑)
+      var pill = document.getElementById('elnHeadStatus');
+      if (pill) { pill.className = 'roundBox ' + (NOTE_STATUS_PILL[n.status] || 'grey');
+        pill.setAttribute('data-status', n.status); pill.textContent = NOTE_STATUS_TXT[n.status] || n.status; }
+      // 노트별 모듈 구성 적용 — 기존 add/removeModule 메커니즘으로 카드·목차 재생성(개수가 달라져 드라마틱)
+      applyNoteModules(n.modules || []);
+      // current 플래그 이동 후 리스트 재렌더 → 좌측 바/하이라이트가 클릭한 노트로
+      PROJECT_NOTES.forEach(function (x) { x.current = (x.code === code); });
+      if (typeof CURRENT_CODE !== 'undefined') CURRENT_CODE = code;   // "지금 보는 노트" 체크들과 동기화
+      renderNoteList();
+      closePanel();
+      try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e2) { window.scrollTo(0, 0); }
+      // 본문 페이드 스왑(로딩된 듯). offsetWidth 리플로우로 연속 클릭 시 애니메이션 재시작
+      var cont = document.querySelector('.contArea');
+      if (cont) { cont.classList.remove('elnSwapping'); void cont.offsetWidth; cont.classList.add('elnSwapping');
+        cont.addEventListener('animationend', function h() { cont.classList.remove('elnSwapping'); cont.removeEventListener('animationend', h); }); }
+      ELN.toast('Switched to ' + n.code + ' — ' + n.title + '.', 'ok');
+    }
+
+    // 노트 모듈 구성 적용 — 실제 모듈 시스템(addNoteModule/removeSection) 재사용.
+    //  · basic(Overview)·approval: 고정 → 손대지 않음
+    //  · fml(Formulation): 정적 리치카드 → 제거 대신 show/hide(제거 시 세션 내 복구 불가)
+    //  · editor/table/chem/related/attach: 동적 → 전부 제거 후 타깃 순서대로 재생성(순서·구성 정확)
+    var DYN_MOD_KEYS = ['editor', 'table', 'chem', 'related', 'attach'];
+    function applyNoteModules(modules) {
+      var article = document.getElementById('tab_ov'); if (!article) return;
+      // 1) Formulation 정적 카드: 보유 여부에 따라 show/hide (카드+목차)
+      var onFml = modules.indexOf('fml') >= 0;
+      var fmlCard = document.getElementById('card_fml');
+      if (fmlCard) fmlCard.style.display = onFml ? '' : 'none';
+      var fmlLi = document.querySelector('.leftAside .menuUl .menu-item[data-target="card_fml"]');
+      if (fmlLi) fmlLi.style.display = onFml ? '' : 'none';
+      // 2) 기존 동적 모듈 전부 제거(카드+목차)
+      article.querySelectorAll('.cardBox[data-modtype]').forEach(function (card) {
+        if (DYN_MOD_KEYS.indexOf(card.getAttribute('data-modtype')) >= 0) removeSection(card.id);
+      });
+      // 3) 타깃 동적 모듈을 순서대로 재생성(조용히 — addNoteModule이 card+목차 함께 생성)
+      modules.forEach(function (key) {
+        if (DYN_MOD_KEYS.indexOf(key) < 0) return;
+        var mt = MODULE_TYPES.filter(function (m) { return m.key === key; })[0];
+        if (mt) addNoteModule(mt, null, true);
+      });
+      if (typeof refreshDividers === 'function') { try { refreshDividers(); } catch (e3) {} }
+      // 목차 active는 Basic Data로 리셋
+      var ul = document.querySelector('.leftAside .menuUl');
+      if (ul) { ul.querySelectorAll('.menu-item').forEach(function (m) { m.classList.remove('active'); });
+        var first = ul.querySelector('.menu-item[data-target="card_basic"]'); if (first) first.classList.add('active'); }
+    }
+  }
+  document.addEventListener('DOMContentLoaded', initNoteList);
 
   /* ── Task5: 카테고리 전환 + 자유태그 칩 ── */
   // 보안: 태그 텍스트는 사용자 입력이므로 innerHTML 조립 금지. textContent + createElement.
@@ -2264,7 +2380,7 @@
   // ChemStudio = mapis 하위로 가져온 chemDraw 프로젝트(apis_chemDraw_list.html). 새 구조/편집 모두 실제 에디터 새 창으로.
   function openChemDraw(data) {
     var q = (data && data.name) ? ('?name=' + encodeURIComponent(data.name) + (data.cas ? '&cas=' + encodeURIComponent(data.cas) : '')) : '';
-    window.open('chemDraw/apis_chemDraw_list.html' + q, 'apisChemStudio', 'width=1480,height=900,scrollbars=yes,resizable=yes');
+    window.open('chemDraw/apis_chemDraw_list.html' + q, 'apisChemStudio', 'width=1920,height=960,scrollbars=yes,resizable=yes');
   }
   function wireChemModule(body) {
     var box = body.querySelector('.elnChemBox'); if (!box) return;

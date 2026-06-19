@@ -43,10 +43,10 @@
 /* ── TaskA0: 액션 인프라(토스트·모달) ── */
 /* 토스트 — 우측 상단(헤더 50px 아래). 시스템 글래스엔진(.modal과 동일: 흰 글래스 + conic ::before + glassTrack) */
 .elnToastWrap{position:fixed;right:20px;top:60px;z-index:3000;display:flex;flex-direction:column;gap:10px;align-items:flex-end;}
-.elnToast{position:relative;overflow:hidden;min-width:220px;max-width:340px;padding:12px 16px;border-radius:12px;
+.elnToast{position:relative;overflow:hidden;min-width:220px;max-width:340px;padding:12px 18px;border-radius:999px;
   display:flex;align-items:center;gap:10px;font-size:13px;color:#3a2c24;
   background:rgba(255,255,255,.55);backdrop-filter:blur(12px) saturate(1.6);-webkit-backdrop-filter:blur(12px) saturate(1.6);
-  border:1px solid rgba(255,255,255,.5);border-left:3px solid var(--toastAccent,#2f80ed);
+  border:1px solid rgba(255,255,255,.5);
   box-shadow:0 8px 32px rgba(31,38,135,.22),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(0,0,0,.04);
   animation:elnToastIn .24s cubic-bezier(.2,.7,.3,1);}
 /* per-box 글래스엔진 오버레이 — .modal::before와 동일한 conic + 동일 변수(--olx/--oly/--ol-angle), glassTrack이 구동 */
@@ -341,6 +341,11 @@
 .statusTit .elnSub{font-size:12px;color:#9b8c7e;margin-top:2px;}
 /* mapis .titArea i{font-size:30px}보다 강한 특이도로 네비 아이콘 정상화 + 색 상속(active=흰색) */
 .popup header .titArea .elnNav a i{font-size:18px;color:inherit;}
+/* NoteList 헤더 버튼: .titArea i{30px}를 무시하고 다른 hBtn과 동일 아이콘 크기(24px)·색 상속 */
+.popup header .titArea .elnHeadRight i{font-size:24px;color:inherit;margin-right:5px;}
+/* .hBtn .label{width:100%}이 라벨을 버튼 폭만큼 늘려 가운데 정렬 → 아이콘과 간격 벌어짐.
+   이 버튼은 라벨을 텍스트 폭으로 줄여 아이콘 바로 옆에 붙임(간격 = .hBtn i margin 5px만) */
+.elnHeadRight .label{width:auto;}
 /* 새 화면 헤더: 제목+부제 세로 배치([3] statusTit는 row 유지) */
 .statusTit.elnHCol{flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;}
 
@@ -730,7 +735,7 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnViewToggle a.on{background:#fff;color:#A47864;font-weight:600;box-shadow:0 1px 3px rgba(58,44,36,.08);}
 
 /* 헤더 우측 그룹(status필터 + New Note) — 뷰 전환해도 토글/New Note 위치 고정 */
-.elnHeadRight{margin-left:auto;display:flex;align-items:center;gap:10px;}
+.elnHeadRight{margin-left:auto;display:flex;align-items:center;}
 
 /* 우측 요약 'Full view' → 계보 모달(별도 화면 대체) */
 .elnFullView{cursor:pointer;}
@@ -1281,3 +1286,62 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions{display:none;}
 .elnAddPickCard > i{font-size:44px;color:#A47864;position:relative;z-index:1;}
 .elnAddPickCard .t{font-size:15px;font-weight:600;color:#3a2c24;position:relative;z-index:1;}
 .elnAddPickCard .d{font-size:11.5px;line-height:1.35;color:#7a6f66;position:relative;z-index:1;}
+
+/* ════════════════════════════════════════════════════════════════════════
+   Note List — 이 과제의 연구노트 리스트(스테이지별 그룹). 헤더 NoteList 버튼 → 우측 슬라이드.
+   ════════════════════════════════════════════════════════════════════════ */
+.elnHeadRight{margin-left:auto;}                 /* .titArea(flex)에서 우측 정렬 */
+/* 클릭-아웃 닫기용 옅은 스크림 */
+.elnNoteListScrim{position:fixed;inset:0;z-index:1190;background:rgba(40,30,24,.10);
+  opacity:0;visibility:hidden;transition:opacity .22s ease,visibility .22s;}
+.elnNoteListScrim.on{opacity:1;visibility:visible;}
+/* 우측 패널 */
+.elnNoteList{position:fixed;top:0;right:0;z-index:1200;width:440px;max-width:90vw;height:100vh;
+  display:flex;flex-direction:column;background:#fbf8f4;border-left:1px solid #ece4d8;
+  transform:translateX(100%);transition:transform .26s cubic-bezier(.2,.7,.3,1);}
+.elnNoteList.on{transform:translateX(0);}
+.elnNoteListHead{flex:0 0 auto;display:flex;align-items:center;gap:8px;height:50px;padding:0 8px 0 18px;
+  background:linear-gradient(180deg,#8a6f60,#7d6253);color:#fff;}
+.elnNoteListHead .tit{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:700;}
+.elnNoteListHead .tit i{font-size:20px;}
+.elnNoteListHead .x{margin-left:auto;width:34px;height:34px;border:none;background:transparent;color:#fff;
+  border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;}
+.elnNoteListHead .x:hover{background:rgba(255,255,255,.18);}
+/* 과제 타이틀 — 박스 없이 심플하게, 폰트만 크게. hover 시 링크처럼(밑줄+색)·클릭=과제 상세 */
+.elnNoteListProj{flex:0 0 auto;padding:13px 18px;border-bottom:1px solid #ece4d8;cursor:pointer;
+  font-size:15px;font-weight:700;color:#3a2c24;transition:color .14s;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.elnNoteListProj:hover{color:#A47864;text-decoration:underline;}
+.elnNoteListBody{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:6px 0 24px;}
+/* 스테이지 그룹 */
+.elnNlGroup{margin-top:16px;}
+.elnNlGroup:first-child{margin-top:4px;}
+/* 스테이지 헤더 — 박스 대신 구분선 라벨(본문색+하단 보더). 액센트 바+진한 큰 폰트로 그룹 위계 강조 */
+.elnNlGroupHead{position:sticky;top:0;z-index:1;display:flex;align-items:center;gap:9px;
+  padding:10px 18px 7px;background:#fbf8f4;border-bottom:1px solid #e3d6c4;
+  font-size:12.5px;font-weight:800;letter-spacing:.04em;color:#7a5240;text-transform:uppercase;cursor:default;}
+.elnNlGroupHead::before{content:'';flex:0 0 auto;width:3px;height:13px;border-radius:2px;background:#A47864;}
+/* 카운트 칩 — '이 스테이지에 n개' 그룹 단위 느낌 */
+.elnNlGroupHead .cnt{margin-left:auto;font-size:10.5px;font-weight:700;letter-spacing:0;color:#a8917f;
+  background:#f1e9dd;border-radius:9px;padding:1px 8px;}
+/* 노트 아이템 */
+.elnNlItem{display:flex;flex-direction:column;gap:3px;padding:10px 18px;border-bottom:1px solid #f1e9dd;
+  cursor:pointer;transition:background .14s;}
+.elnNlItem:hover{background:rgba(164,120,100,.07);}
+/* current 노트 — 또렷한 따뜻한 채움 + 좌측 바 + 제목 강조로 '활성' 명확히(헤더와 확실히 구분) */
+.elnNlItem.current{background:#f7e7dc;box-shadow:inset 3px 0 0 #A47864;}
+.elnNlItem.current .elnNlTit{color:#8a4f37;}
+.elnNlTop{display:flex;align-items:center;gap:6px;}
+/* 제목은 한 줄 — 넘치면 …(current 표시는 왼쪽 바+배경 틴트로 충분, 배지 불필요) */
+.elnNlTit{flex:1 1 auto;min-width:0;font-size:13px;font-weight:600;color:#3a2c24;line-height:1.35;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.elnNlStatus{flex:0 0 auto;font-size:10px;font-weight:700;border-radius:9px;padding:2px 8px;line-height:1.4;}
+.elnNlStatus.done{color:#2f9e62;background:#e8f5ee;} .elnNlStatus.ing{color:#2f7fe0;background:#e9f1fc;}
+.elnNlStatus.review{color:#c9851f;background:#fbf1de;} .elnNlStatus.draft{color:#8a8178;background:#efeae3;}
+.elnNlSub{display:flex;align-items:center;gap:8px;font-size:11px;color:#9b8c7e;}
+.elnNlSub .code{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;color:#7a5240;}
+.elnNlSub .date{margin-left:auto;}
+.elnNlEmpty{padding:30px 18px;text-align:center;font-size:12px;color:#b6a89a;}
+/* 노트 전환 시 본문 페이드 스왑 — '다른 노트를 불러온' 느낌 */
+@keyframes elnNoteSwap{0%{opacity:1;}28%{opacity:.2;transform:translateY(5px);}100%{opacity:1;transform:none;}}
+.contArea.elnSwapping{animation:elnNoteSwap .42s ease;}
