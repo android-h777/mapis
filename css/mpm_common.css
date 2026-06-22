@@ -5951,3 +5951,25 @@ select.browser-default {
 	color: #ddd;
 	margin-bottom: 10px;
 }
+
+/* ── Composition 모듈: 제품 행의 Sub-type(INPUT/ITEM/LEGAL) 상태 표시 ── */
+/* roundBox 위에 얹어 색만 오버라이드. 색=상태 인코딩:
+   기본=미등록(회색) / .ing=진행중(주황) / .done=완료(녹). sub-type 구분은 글자(INPUT/ITEM/LEGAL) */
+.cmpSub {                                                             /* 미진행: 보더·채움 없음 (글자만) */
+	display: inline-flex; align-items: center; justify-content: center;
+	padding: 0 10px; text-align: center; box-sizing: border-box;
+	color: #999;
+	background: transparent;
+}
+.cmpSub .cmpIco {                                                     /* 상태 아이콘 (앞쪽) — 글자색 상속 */
+	font-size: 14px; line-height: 1; margin-right: 4px;
+	font-variation-settings: 'opsz' 20, 'wght' 500;
+}
+.cmpSub.done {                                                        /* 완료: 녹색 채움 + 흰 글자 (스테이지식) */
+	color: #fff; background: #899f6a;
+}
+.cmpSub.ing {                                                         /* 진행중: 파랑 채움 + 흰 글자 (스테이지식) */
+	color: #fff; background: #7391c9;
+}
+/* 메타 줄: flex 컨테이너로 모든 칩(배지+roundBox)을 서로 세로 중앙 정렬 */
+.cmpMeta { display: flex; align-items: center; flex-wrap: wrap; }

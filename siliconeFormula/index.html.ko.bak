@@ -18,20 +18,20 @@
     <div class="titleArea">
       <div class="titleIcon"><i class="material-icons">science</i></div>
       <div>
-        <h1>PA Cross-Polymer Formulation ToolBox</h1>
+        <h1>PA Cross-Polymer 배합 ToolBox</h1>
       </div>
     </div>
     <div class="actArea">
-      <button class="sfBtn iconOnly excel glassLight" data-tip="Export to Excel" aria-label="Export to Excel" onclick="exportExcel()"><i class="material-icons">download</i></button>
-      <button class="sfBtn iconOnly glassLight" data-tip="Process Conditions" aria-label="Process Conditions" onclick="openFloatWin('processModal')"><i class="material-icons">settings</i></button>
-      <button class="sfBtn iconOnly glassLight" data-tip="Manufacturing Results" aria-label="Manufacturing Results" onclick="openFloatWin('resultModal')"><i class="material-icons">assessment</i></button>
+      <button class="sfBtn iconOnly excel glassLight" data-tip="Excel 내보내기" aria-label="Excel 내보내기" onclick="exportExcel()"><i class="material-icons">download</i></button>
+      <button class="sfBtn iconOnly glassLight" data-tip="공정조건" aria-label="공정조건" onclick="openFloatWin('processModal')"><i class="material-icons">settings</i></button>
+      <button class="sfBtn iconOnly glassLight" data-tip="제조결과" aria-label="제조결과" onclick="openFloatWin('resultModal')"><i class="material-icons">assessment</i></button>
       <div class="actDivider" aria-hidden="true"></div>
-      <button class="sfBtn primary glassLight" onclick="addExperiment()"><i class="material-icons">add</i>Add Experiment</button>
+      <button class="sfBtn primary glassLight" onclick="addExperiment()"><i class="material-icons">add</i>실험 추가</button>
     </div>
   </div>
 
   <!-- ══════════════════════════════════════
-       배합 테이블 (Crosslinking + Dilution 통합)
+       배합 테이블 (가교반응 + 희석공정 통합)
        ══════════════════════════════════════ -->
   <div class="tableWrap">
     <div class="tableScroll">
@@ -46,14 +46,14 @@
 
 
 <!-- ══════════════════════════════════════
-     Modal: Formulation Design
+     Modal: 배합설계
      ══════════════════════════════════════ -->
 <div class="floatWin glassLight" id="designModal">
   <div class="fwHeader" id="designDragHandle">
-    <h2><i class="material-icons">tune</i><span id="designTitle">#1 Formulation Design</span></h2>
+    <h2><i class="material-icons">tune</i><span id="designTitle">#1 배합설계</span></h2>
     <div class="fwActions">
-      <button class="fwBtn" onclick="toggleMinimize('designModal')" title="Minimize"><i class="material-icons">remove</i></button>
-      <button class="fwBtn" onclick="closeFloatWin('designModal')" title="Close"><i class="material-icons">close</i></button>
+      <button class="fwBtn" onclick="toggleMinimize('designModal')" title="최소화"><i class="material-icons">remove</i></button>
+      <button class="fwBtn" onclick="closeFloatWin('designModal')" title="닫기"><i class="material-icons">close</i></button>
     </div>
   </div>
   <div class="fwBody" id="designBody">
@@ -70,14 +70,14 @@
 </div>
 
 <!-- ══════════════════════════════════════
-     Float Window: Process Conditions (전 실험 일괄)
+     Float Window: 공정조건 (전 실험 일괄)
      ══════════════════════════════════════ -->
 <div class="floatWin glassLight" id="processModal" style="top:100px; left:calc(50vw - 320px); width:640px;">
   <div class="fwHeader">
-    <h2><i class="material-icons">settings</i>Process Conditions</h2>
+    <h2><i class="material-icons">settings</i>공정조건</h2>
     <div class="fwActions">
-      <button class="fwBtn" onclick="toggleMinimize('processModal')" title="Minimize"><i class="material-icons">remove</i></button>
-      <button class="fwBtn" onclick="closeFloatWin('processModal')" title="Close"><i class="material-icons">close</i></button>
+      <button class="fwBtn" onclick="toggleMinimize('processModal')" title="최소화"><i class="material-icons">remove</i></button>
+      <button class="fwBtn" onclick="closeFloatWin('processModal')" title="닫기"><i class="material-icons">close</i></button>
     </div>
   </div>
   <div class="fwBody" id="processBody"><!-- 동적 생성 --></div>
@@ -92,14 +92,14 @@
 </div>
 
 <!-- ══════════════════════════════════════
-     Float Window: Manufacturing Results (전 실험 일괄)
+     Float Window: 제조결과 (전 실험 일괄)
      ══════════════════════════════════════ -->
 <div class="floatWin glassLight" id="resultModal" style="top:140px; left:calc(50vw - 340px); width:680px;">
   <div class="fwHeader">
-    <h2><i class="material-icons">assessment</i>Manufacturing Results</h2>
+    <h2><i class="material-icons">assessment</i>제조결과</h2>
     <div class="fwActions">
-      <button class="fwBtn" onclick="toggleMinimize('resultModal')" title="Minimize"><i class="material-icons">remove</i></button>
-      <button class="fwBtn" onclick="closeFloatWin('resultModal')" title="Close"><i class="material-icons">close</i></button>
+      <button class="fwBtn" onclick="toggleMinimize('resultModal')" title="최소화"><i class="material-icons">remove</i></button>
+      <button class="fwBtn" onclick="closeFloatWin('resultModal')" title="닫기"><i class="material-icons">close</i></button>
     </div>
   </div>
   <div class="fwBody" id="resultBody"><!-- 동적 생성 --></div>
@@ -116,35 +116,35 @@
 
 <!-- Context Menu -->
 <div class="ctxMenu" id="ctxMenu">
-  <div class="ctxItem ctxAdd" onclick="ctxAddRow()"><i class="material-icons">add</i>Add Row</div>
-  <div class="ctxItem ctxRemove" onclick="ctxRemoveRow()"><i class="material-icons">remove</i>Delete Row</div>
+  <div class="ctxItem ctxAdd" onclick="ctxAddRow()"><i class="material-icons">add</i>행 추가</div>
+  <div class="ctxItem ctxRemove" onclick="ctxRemoveRow()"><i class="material-icons">remove</i>행 삭제</div>
 </div>
 
 <!-- Quick Search Dropdown -->
 <div class="qsDropdown" id="qsDropdown"></div>
 
 <!-- ══════════════════════════════════════
-     FAB: Finish All Experiments (우측 하단)
+     FAB: 실험 전체 종료 (우측 하단)
      ══════════════════════════════════════ -->
-<button class="fabFinish glassLight" id="fabFinish" data-tip="Finish Experiment" aria-label="Finish All Experiments" onclick="confirmFinishSession()">
+<button class="fabFinish glassLight" id="fabFinish" data-tip="실험 종료" aria-label="실험 전체 종료" onclick="confirmFinishSession()">
   <i class="material-icons">task_alt</i>
 </button>
 
 <!-- ══════════════════════════════════════
-     Modal: Finish Experiment 확인
+     Modal: 실험 종료 확인
      ══════════════════════════════════════ -->
 <div class="modal-overlay" id="confirmFinishOverlay" onclick="closeConfirmFinish()"></div>
 <div class="sfModal confirmModal" id="confirmFinishModal" role="dialog" aria-modal="true" aria-labelledby="confirmFinishTitle">
   <div class="modalHeader">
-    <h2 id="confirmFinishTitle"><i class="material-icons">task_alt</i>Finish Experiment</h2>
-    <button class="modalClose" onclick="closeConfirmFinish()" aria-label="Close"><i class="material-icons">close</i></button>
+    <h2 id="confirmFinishTitle"><i class="material-icons">task_alt</i>실험 종료</h2>
+    <button class="modalClose" onclick="closeConfirmFinish()" aria-label="닫기"><i class="material-icons">close</i></button>
   </div>
   <div class="modalBody">
-    <p class="confirmText">Finish all experiments?<br>After finishing, the formulation, process, and results cannot be edited.</p>
+    <p class="confirmText">전체 실험을 종료하시겠습니까?<br>종료 후에는 배합·공정·결과를 수정할 수 없습니다.</p>
   </div>
   <div class="modalFooter">
-    <button class="sfBtn secondary" onclick="closeConfirmFinish()">Cancel</button>
-    <button class="sfBtn primary glassLight" onclick="finishSession()"><i class="material-icons">check</i>Finish</button>
+    <button class="sfBtn secondary" onclick="closeConfirmFinish()">취소</button>
+    <button class="sfBtn primary glassLight" onclick="finishSession()"><i class="material-icons">check</i>종료</button>
   </div>
 </div>
 
@@ -191,16 +191,16 @@ var materialMaster = [
   { name: 'KF-96-50cs',    code: 'CSF00308', type: 'Base Oil' },
   { name: 'PMX-200-100cs', code: 'CSF00420', type: 'Base Oil' },
   { name: 'SH200-100cs',   code: 'CSF00510', type: 'Base Oil' },
-  { name: 'BY16-201',      code: 'CSF05541', type: 'Additive' },
-  { name: 'BY16-849',      code: 'CSF05623', type: 'Additive' },
-  { name: 'SF-8427',       code: 'CSF05710', type: 'Additive' },
-  { name: 'KP-360',        code: 'CSF05801', type: 'Additive' },
-  { name: 'Vi-MM',         code: 'CSF06103', type: 'Retarder' },
-  { name: 'ECH',           code: 'CSF06205', type: 'Retarder' },
-  { name: 'DVB',           code: 'CSF06310', type: 'Retarder' },
+  { name: 'BY16-201',      code: 'CSF05541', type: '첨가제' },
+  { name: 'BY16-849',      code: 'CSF05623', type: '첨가제' },
+  { name: 'SF-8427',       code: 'CSF05710', type: '첨가제' },
+  { name: 'KP-360',        code: 'CSF05801', type: '첨가제' },
+  { name: 'Vi-MM',         code: 'CSF06103', type: '지연제' },
+  { name: 'ECH',           code: 'CSF06205', type: '지연제' },
+  { name: 'DVB',           code: 'CSF06310', type: '지연제' },
 ];
 
-// Crosslinking 행 정의 (group 기반)
+// 가교반응 행 정의 (group 기반)
 var crosslinkRowDefs = [
   { group: 'H', nameKey: 'H1' },
   { group: 'H', nameKey: 'H2' },
@@ -213,7 +213,7 @@ var crosslinkRowDefs = [
   { group: 'add', nameKey: 'additive' },
 ];
 
-// Dilution 행 정의
+// 희석공정 행 정의
 var dilutionRowDefs = [
   { group: 'dilOil', nameKey: 'baseOil', label: 'KF-96-100cs' },
   { group: 'dilOil', nameKey: 'baseOil', label: 'KF-96-100cs' },
@@ -224,11 +224,11 @@ var dilutionRowDefs = [
 // 그룹 표시 레이블
 var groupLabels = {
   'H': 'H-Polymer', 'V': 'Vi-Polymer',
-  'cat': 'Catalyst', 'oil': 'Base Oil', 'add': 'Additive',
-  'dilOil': 'Base Oil', 'dilAdd': 'Additive', 'dilRet': 'Retarder'
+  'cat': 'Catalyst', 'oil': 'Base Oil', 'add': '첨가제',
+  'dilOil': 'Base Oil', 'dilAdd': '첨가제', 'dilRet': '지연제'
 };
 
-// 확장 가능 그룹 (모든 Material Type)
+// 확장 가능 그룹 (모든 원료유형)
 var expandableGroups = { 'H': true, 'V': true, 'cat': true, 'oil': true, 'add': true, 'dilOil': true, 'dilAdd': true, 'dilRet': true };
 
 // typeSpan 재계산
@@ -249,9 +249,9 @@ rebuildTypeSpans(dilutionRowDefs);
 
 // ── 실험별 데이터 ──
 var expTitle = {};    // 실험 타이틀
-var expDesign = {};   // Formulation Design
-var expProcess = {};  // Process Conditions
-var expResult = {};   // Manufacturing Results
+var expDesign = {};   // 배합설계
+var expProcess = {};  // 공정조건
+var expResult = {};   // 제조결과
 var expCalc = {};     // 계산 결과 캐시
 var expBatchSize = {}; // 실투입 총량 (g)
 
@@ -288,8 +288,8 @@ function initExp(n) {
 // #1 샘플 데이터
 initExp(1);
 expDesign[1] = { viHRatio: 1.2, hRatios: [0.2, 0.8, 0], hActive: [true, true, true], vRatios: [1, 0, 0], vActive: [true, true, true], catalyst: 800, gels: [0.23, 0.172, 0.15], adds: [0.187, 0.147], retarder: 1000 };
-expProcess[1] = { rollCnt: '1', gelTime: '30 min', temp1: '90℃' };
-expResult[1] = { appear: 'Good', viscosity: '130000', color: 'Light Yellow', volatile: '10.1', nonVolatile: '', texture: 'Very soft & silky', storage: '', note: '' };
+expProcess[1] = { rollCnt: '1', gelTime: '30분', temp1: '90℃' };
+expResult[1] = { appear: '양호', viscosity: '130000', color: '연한노랑', volatile: '10.1', nonVolatile: '', texture: '매우 부드럽고 실키함', storage: '', note: '' };
 expBatchSize[1] = 50;
 
 initExp(2);
@@ -362,7 +362,7 @@ function calculate(n) {
     return func > 0 ? ratio * viTotalMmol / func : 0;
   });
 
-  // ── Catalyst, Base Oil, Additive ──
+  // ── Catalyst, Base Oil, 첨가제 ──
   var sumPolymers = hRaws.reduce(function(a, b) { return a + b; }, 0) + vRaws.reduce(function(a, b) { return a + b; }, 0);
   var rawCatalyst = sumPolymers * ((d.catalyst || 0) / 1000000);
 
@@ -375,11 +375,11 @@ function calculate(n) {
   var sumBeforeAdd = sumPolymers + rawCatalyst + rawBaseOil;
   var rawAdditive = add1 < 1 ? sumBeforeAdd * add1 / (1 - add1) : 0;
 
-  // Crosslinking raws: H... + V... + catalyst + baseOil + additive
+  // 가교반응 raws: H... + V... + catalyst + baseOil + additive
   var crosslinkRaws = hRaws.concat(vRaws, [rawCatalyst, rawBaseOil, rawAdditive]);
   var crosslinkTotal = crosslinkRaws.reduce(function(a, b) { return a + b; }, 0);
 
-  // ── Dilution (동적 dilOil 수) ──
+  // ── 희석공정 (동적 dilOil 수) ──
   var dilOilRows = dilutionRowDefs.filter(function(r) { return r.group === 'dilOil'; });
   var dilOilRaws = [];
   var prevOilSum = rawBaseOil;
@@ -454,7 +454,7 @@ function renderTables() {
     expCalc[e] = calculate(e);
   }
   renderFormulaTable();
-  // Formulation Design 열려있으면 하이라이트 복원
+  // 배합설계 열려있으면 하이라이트 복원
   if (document.getElementById('designModal').classList.contains('active')) {
     highlightExp(activeExp);
   }
@@ -464,30 +464,30 @@ function renderFormulaTable() {
   var thead = document.getElementById('theadFormula');
   var tbody = document.getElementById('tbodyFormula');
 
-  // ── Header Row 1: Exp. No. ──
+  // ── Header Row 1: 실험번호 ──
   var h1 = '<tr class="headRow1">' +
-    '<th class="colStage" rowspan="2">Process Step</th>' +
-    '<th class="colType" rowspan="2">Material Type</th>' +
-    '<th class="colName" rowspan="2">Material Name</th>' +
-    '<th class="colCode" rowspan="2">Code</th>' +
-    '<th class="colFunc" rowspan="2">Functionality<br><span class="font11">(mmol/g)</span></th>';
+    '<th class="colStage" rowspan="2">제조단계</th>' +
+    '<th class="colType" rowspan="2">원료유형</th>' +
+    '<th class="colName" rowspan="2">원료명</th>' +
+    '<th class="colCode" rowspan="2">코드</th>' +
+    '<th class="colFunc" rowspan="2">관능기함량<br><span class="font11">(mmol/g)</span></th>';
 
   for (var e = 1; e <= expCount; e++) {
     h1 += '<th class="colExpHeader' + (e > 1 ? ' expBorderL' : '') + '" colspan="4" data-exp="' + e + '">' +
       '<span class="expHeaderInner">' +
-      '<input type="text" class="expTitleInput" value="' + (expTitle[e] || '#' + e) + '" data-exp="' + e + '" onchange="onExpTitleChange(this)" title="Edit experiment name">' +
-      '<button class="expDesignBtn glassLight" onclick="openDesignForExp(' + e + ')" title="Formulation Design"><i class="material-icons">tune</i>Formulation Design</button>' +
+      '<input type="text" class="expTitleInput" value="' + (expTitle[e] || '#' + e) + '" data-exp="' + e + '" onchange="onExpTitleChange(this)" title="실험명 편집">' +
+      '<button class="expDesignBtn glassLight" onclick="openDesignForExp(' + e + ')" title="배합설계"><i class="material-icons">tune</i>배합설계</button>' +
       '</span></th>';
   }
   h1 += '</tr>';
 
-  // ── Header Row 2: Raw Mix / 100-Mix / 실투입 / Dilution Mix ──
+  // ── Header Row 2: 원배합 / 100배합 / 실투입 / 희석배합 ──
   var h2 = '<tr class="headRow2">';
   for (var e = 1; e <= expCount; e++) {
-    h2 += '<th class="colExpSub' + (e > 1 ? ' expBorderL' : '') + '" data-exp="' + e + '">Raw Mix</th>' +
-          '<th class="colExpSub" data-exp="' + e + '">100-Mix</th>' +
-          '<th class="colExpSub" data-exp="' + e + '"><span class="batchSizeWrap">Exp. Batch <input type="number" class="batchSizeInput" value="' + (expBatchSize[e] || '') + '" placeholder="g" data-exp="' + e + '" onchange="onBatchSizeChange(this)">&times;</span></th>' +
-          '<th class="colExpSub" data-exp="' + e + '">Dilution Mix</th>';
+    h2 += '<th class="colExpSub' + (e > 1 ? ' expBorderL' : '') + '" data-exp="' + e + '">원배합</th>' +
+          '<th class="colExpSub" data-exp="' + e + '">100배합</th>' +
+          '<th class="colExpSub" data-exp="' + e + '"><span class="batchSizeWrap">실험배합 <input type="number" class="batchSizeInput" value="' + (expBatchSize[e] || '') + '" placeholder="g" data-exp="' + e + '" onchange="onBatchSizeChange(this)">배</span></th>' +
+          '<th class="colExpSub" data-exp="' + e + '">희석배합</th>';
   }
   h2 += '</tr>';
 
@@ -496,7 +496,7 @@ function renderFormulaTable() {
   // ── Body ──
   var b = '';
 
-  // Crosslinking rows
+  // 가교반응 rows
   for (var r = 0; r < crosslinkRowDefs.length; r++) {
     var def = crosslinkRowDefs[r];
     var mat = materials[def.nameKey] || {};
@@ -507,7 +507,7 @@ function renderFormulaTable() {
 
     b += '<tr data-section="crosslink" data-ridx="' + r + '" data-group="' + def.group + '">';
     if (r === 0) {
-      b += '<td class="colStage" rowspan="' + crosslinkRowDefs.length + '">Crosslinking</td>';
+      b += '<td class="colStage" rowspan="' + crosslinkRowDefs.length + '">가교반응</td>';
     }
     // colType: rowspan 처리
     if (def.typeSpan) {
@@ -531,9 +531,9 @@ function renderFormulaTable() {
     b += '</tr>';
   }
 
-  // Crosslinking Subtotal
+  // 가교반응 소계
   b += '<tr class="rowSubtotal">';
-  b += '<td class="colStage"></td><td class="colType">Subtotal</td><td class="colName"></td><td class="colCode"></td><td class="colFunc"></td>';
+  b += '<td class="colStage"></td><td class="colType">소계</td><td class="colName"></td><td class="colCode"></td><td class="colFunc"></td>';
   for (var e = 1; e <= expCount; e++) {
     var c = expCalc[e];
     b += '<td class="colExp' + (e > 1 ? ' expBorderL' : '') + '" data-exp="' + e + '">' + (c ? fmt(c.crosslinkTotalRaw) : '') + '</td>';
@@ -543,7 +543,7 @@ function renderFormulaTable() {
   }
   b += '</tr>';
 
-  // Dilution rows
+  // 희석공정 rows
   for (var r = 0; r < dilutionRowDefs.length; r++) {
     var def = dilutionRowDefs[r];
     var mat = materials[def.nameKey];
@@ -552,7 +552,7 @@ function renderFormulaTable() {
 
     b += '<tr data-section="dilution" data-ridx="' + r + '" data-group="' + def.group + '">';
     if (r === 0) {
-      b += '<td class="colStage" rowspan="' + dilutionRowDefs.length + '">Dilution</td>';
+      b += '<td class="colStage" rowspan="' + dilutionRowDefs.length + '">희석공정</td>';
     }
     // colType: rowspan 처리
     if (def.typeSpan) {
@@ -625,7 +625,7 @@ function qsFilter(keyword) {
   });
 
   if (qsItems.length === 0) {
-    qsDrop.innerHTML = '<div class="qsEmpty">No results</div>';
+    qsDrop.innerHTML = '<div class="qsEmpty">검색 결과 없음</div>';
   } else {
     var h = '';
     qsItems.forEach(function(m, i) {
@@ -651,12 +651,12 @@ function qsSelect(idx) {
   var matKey = qsTarget.getAttribute('data-mat');
   var isDil = qsTarget.hasAttribute('data-dilrow');
 
-  // 원료명과 Code 모두 업데이트
+  // 원료명과 코드 모두 업데이트
   materials[matKey].name = m.name;
   materials[matKey].code = m.code;
   if (m.func !== undefined) materials[matKey].func = m.func;
 
-  // Dilution 라벨도 업데이트
+  // 희석공정 라벨도 업데이트
   if (isDil) {
     var dilIdx = parseInt(qsTarget.getAttribute('data-dilrow'));
     dilutionRowDefs[dilIdx].label = m.name;
@@ -759,7 +759,7 @@ function onDilMatChange(el) {
 /* ══════════════════════════════════════
    Modal ↔ Data Sync
    ══════════════════════════════════════ */
-/* ── Formulation Design 동적 폼 생성 ── */
+/* ── 배합설계 동적 폼 생성 ── */
 function buildDesignForm() {
   var hRows = crosslinkRowDefs.filter(function(r) { return r.group === 'H'; });
   var vRows = crosslinkRowDefs.filter(function(r) { return r.group === 'V'; });
@@ -785,8 +785,8 @@ function buildDesignForm() {
   h += '<tr><td class="fgLabel">Vi / H ratio</td>';
   h += '<td class="fgValue"><input type="number" step="0.1" id="dViHRatio" oninput="onDesignInput()"></td></tr>';
 
-  // H-Polymer Selection
-  h += '<tr><td class="fgLabel">H-Polymer Selection</td><td class="fgValue">';
+  // H-Polymer 선택
+  h += '<tr><td class="fgLabel">H-Polymer 선택</td><td class="fgValue">';
   for (var i = 0; i < hRows.length; i++) {
     var name = materials[hRows[i].nameKey] ? (materials[hRows[i].nameKey].name || hRows[i].nameKey) : hRows[i].nameKey;
     h += '<label class="polyCheck' + (d.hActive[i] ? ' checked' : '') + '" data-ptype="H" data-pidx="' + i + '" onclick="onPolyChipClick(this)"><span class="cbBox"></span><span class="cbLabel">' + name + '</span></label>';
@@ -805,11 +805,11 @@ function buildDesignForm() {
       h += '<div class="ratioInputWrap"><span class="ratioLabel">' + name + '</span><input type="number" step="0.1" class="ratioInput" id="dHR_' + idx + '" oninput="onDesignInput()"></div>';
     }
   }
-  if (hActiveIdxs.length === 0) h += '<span class="unit">No material selected</span>';
+  if (hActiveIdxs.length === 0) h += '<span class="unit">선택된 원료 없음</span>';
   h += '</div></td></tr>';
 
-  // H-Polymer Functionality
-  h += '<tr><td class="fgLabel">H-Polymer Functionality <span class="fgLabelSub">(mmol/g)</span></td>';
+  // H-Polymer 관능기함량
+  h += '<tr><td class="fgLabel">H-Polymer 관능기함량 <span class="fgLabelSub">(mmol/g)</span></td>';
   h += '<td class="fgValue"><div class="ratioRow">';
   for (var i = 0; i < hActiveIdxs.length; i++) {
     var idx = hActiveIdxs[i];
@@ -817,14 +817,14 @@ function buildDesignForm() {
     var funcVal = materials[hRows[idx].nameKey] ? (materials[hRows[idx].nameKey].func || '') : '';
     h += '<div class="ratioInputWrap"><span class="ratioLabel">' + name + '</span><input type="number" step="any" class="ratioInput" value="' + funcVal + '" data-mat="' + hRows[idx].nameKey + '" onchange="onModalFuncChange(this)"></div>';
   }
-  if (hActiveIdxs.length === 0) h += '<span class="unit">No material selected</span>';
+  if (hActiveIdxs.length === 0) h += '<span class="unit">선택된 원료 없음</span>';
   h += '</div></td></tr>';
 
   // H-Polymer total mmol
   h += '<tr><td class="fgLabel">H-Polymer total mmol</td><td class="fgValue"><span id="dHTotal" class="calcResult">—</span></td></tr>';
 
-  // Vi-Polymer Selection
-  h += '<tr><td class="fgLabel">Vi-Polymer Selection</td><td class="fgValue">';
+  // Vi-Polymer 선택
+  h += '<tr><td class="fgLabel">Vi-Polymer 선택</td><td class="fgValue">';
   for (var i = 0; i < vRows.length; i++) {
     var name = materials[vRows[i].nameKey] ? (materials[vRows[i].nameKey].name || vRows[i].nameKey) : vRows[i].nameKey;
     h += '<label class="polyCheck' + (d.vActive[i] ? ' checked' : '') + '" data-ptype="V" data-pidx="' + i + '" onclick="onPolyChipClick(this)"><span class="cbBox"></span><span class="cbLabel">' + name + '</span></label>';
@@ -843,11 +843,11 @@ function buildDesignForm() {
       h += '<div class="ratioInputWrap"><span class="ratioLabel">' + name + '</span><input type="number" step="0.1" class="ratioInput" id="dVR_' + idx + '" oninput="onDesignInput()"></div>';
     }
   }
-  if (vActiveIdxs.length === 0) h += '<span class="unit">No material selected</span>';
+  if (vActiveIdxs.length === 0) h += '<span class="unit">선택된 원료 없음</span>';
   h += '</div></td></tr>';
 
-  // Vi-Polymer Functionality
-  h += '<tr><td class="fgLabel">Vi-Polymer Functionality <span class="fgLabelSub">(mmol/g)</span></td>';
+  // Vi-Polymer 관능기함량
+  h += '<tr><td class="fgLabel">Vi-Polymer 관능기함량 <span class="fgLabelSub">(mmol/g)</span></td>';
   h += '<td class="fgValue"><div class="ratioRow">';
   for (var i = 0; i < vActiveIdxs.length; i++) {
     var idx = vActiveIdxs[i];
@@ -855,37 +855,37 @@ function buildDesignForm() {
     var funcVal = materials[vRows[idx].nameKey] ? (materials[vRows[idx].nameKey].func || '') : '';
     h += '<div class="ratioInputWrap"><span class="ratioLabel">' + name + '</span><input type="number" step="any" class="ratioInput" value="' + funcVal + '" data-mat="' + vRows[idx].nameKey + '" onchange="onModalFuncChange(this)"></div>';
   }
-  if (vActiveIdxs.length === 0) h += '<span class="unit">No material selected</span>';
+  if (vActiveIdxs.length === 0) h += '<span class="unit">선택된 원료 없음</span>';
   h += '</div></td></tr>';
 
   // Vi-Polymer total mmol
   h += '<tr><td class="fgLabel">Vi-Polymer total mmol</td><td class="fgValue"><span id="dViTotal" class="calcResult">—</span></td></tr>';
 
   // Catalyst
-  h += '<tr><td class="fgLabel">Catalyst Content</td>';
+  h += '<tr><td class="fgLabel">Catalyst 함량</td>';
   h += '<td class="fgValue"><input type="number" id="dCatalyst" oninput="onDesignInput()"><span class="unit">ppm</span></td></tr>';
 
   // Gel %
-  h += '<tr><td class="fgLabel">Gel Content by Stage</td><td class="fgValue">';
-  var gelLabels = ['Stage 1 (Crosslink)'];
-  for (var i = 0; i < dilOilCount; i++) gelLabels.push('Stage ' + (i+2));
+  h += '<tr><td class="fgLabel">차수별 겔함량</td><td class="fgValue">';
+  var gelLabels = ['1차(가교)'];
+  for (var i = 0; i < dilOilCount; i++) gelLabels.push((i+2) + '차');
   for (var i = 0; i < gelLabels.length; i++) {
     h += '<input type="number" step="0.001" placeholder="' + gelLabels[i] + '" id="dGel_' + i + '" style="width:70px" oninput="onDesignInput()"><span class="unit">%</span>';
   }
   h += '</td></tr>';
 
   // Add %
-  h += '<tr><td class="fgLabel">Additive Content by Stage</td><td class="fgValue">';
-  h += '<input type="number" step="0.001" placeholder="Stage 1" id="dAdd_0" style="width:70px" oninput="onDesignInput()"><span class="unit">%</span>';
-  h += '<input type="number" step="0.001" placeholder="Stage 2" id="dAdd_1" style="width:70px" oninput="onDesignInput()"><span class="unit">%</span>';
+  h += '<tr><td class="fgLabel">차수별 첨가제 함량</td><td class="fgValue">';
+  h += '<input type="number" step="0.001" placeholder="1차" id="dAdd_0" style="width:70px" oninput="onDesignInput()"><span class="unit">%</span>';
+  h += '<input type="number" step="0.001" placeholder="2차" id="dAdd_1" style="width:70px" oninput="onDesignInput()"><span class="unit">%</span>';
   h += '</td></tr>';
 
   // Retarder
-  h += '<tr><td class="fgLabel">Retarder Content</td>';
+  h += '<tr><td class="fgLabel">지연제 함량</td>';
   h += '<td class="fgValue"><input type="number" id="dRetarder" oninput="onDesignInput()"><span class="unit">ppm</span></td></tr>';
 
-  // Final Gel / Additive / Diluent
-  h += '<tr><td class="fgLabel">Final Gel / Additive / Diluent</td><td class="fgValue">';
+  // 최종 Gel / 첨가제 / 희석제
+  h += '<tr><td class="fgLabel">최종 Gel / 첨가제 / 희석제</td><td class="fgValue">';
   h += '<span id="dFinalGel" class="calcResult">—</span><span class="unit">%</span>';
   h += '<span id="dFinalAdd" class="calcResult calcResultGap">—</span><span class="unit">%</span>';
   h += '<span id="dFinalDil" class="calcResult calcResultGap">—</span><span class="unit">%</span>';
@@ -942,7 +942,7 @@ function loadDesignToModal(n) {
 
 function saveDesignFromModal(n) {
   var d = expDesign[n];
-  // Formulation Design 창이 열려있지 않으면 skip
+  // 배합설계 창이 열려있지 않으면 skip
   if (!document.getElementById('dViHRatio')) return;
 
   d.viHRatio = parseFloat(document.getElementById('dViHRatio').value) || 0;
@@ -1011,15 +1011,15 @@ function updateDesignCalcDisplay(n) {
   renderTables();
 }
 
-/* ── Process Conditions: 전 실험 일괄 테이블 ── */
+/* ── 공정조건: 전 실험 일괄 테이블 ── */
 var processFields = [
-  { key: 'rollCnt',  label: '3-Roll Count', type: 'number', unit: 'times' },
-  { key: 'gelTime',  label: 'Gel Time',   type: 'text',   unit: '' },
-  { key: 'temp1',    label: '1st Reaction Temp',  type: 'text',   unit: '' }
+  { key: 'rollCnt',  label: '3롤작업 횟수', type: 'number', unit: '회' },
+  { key: 'gelTime',  label: '겔도달시간',   type: 'text',   unit: '' },
+  { key: 'temp1',    label: '1차 반응온도',  type: 'text',   unit: '' }
 ];
 
 function buildProcessTable() {
-  var h = '<table class="fwTable"><thead><tr><th class="fwTableLabel">Item</th>';
+  var h = '<table class="fwTable"><thead><tr><th class="fwTableLabel">항목</th>';
   for (var e = 1; e <= expCount; e++) {
     h += '<th class="fwTableExp">' + (expTitle[e] || '#' + e) + '</th>';
   }
@@ -1045,20 +1045,20 @@ function onProcessInput(el) {
 }
 
 
-/* ── Manufacturing Results: 전 실험 일괄 테이블 ── */
+/* ── 제조결과: 전 실험 일괄 테이블 ── */
 var resultFields = [
-  { key: 'appear',      label: 'Appearance',     type: 'text',   placeholder: 'Good' },
-  { key: 'viscosity',   label: 'Viscosity',     type: 'number', unit: 'cps', placeholder: '130000' },
-  { key: 'color',       label: 'Color',     type: 'text',   placeholder: 'Light Yellow' },
-  { key: 'volatile',    label: 'Volatiles',   type: 'number', unit: '%', placeholder: '10.1' },
-  { key: 'nonVolatile', label: 'Non-Volatiles', type: 'number', unit: '%' },
-  { key: 'texture',     label: 'Texture',   type: 'text',   placeholder: 'Soft & silky' },
-  { key: 'storage',     label: 'Storage',   type: 'text' },
-  { key: 'note',        label: 'Remarks',     type: 'text' }
+  { key: 'appear',      label: '외관',     type: 'text',   placeholder: '양호' },
+  { key: 'viscosity',   label: '점도',     type: 'number', unit: 'cps', placeholder: '130000' },
+  { key: 'color',       label: '색상',     type: 'text',   placeholder: '연한노랑' },
+  { key: 'volatile',    label: '휘발분',   type: 'number', unit: '%', placeholder: '10.1' },
+  { key: 'nonVolatile', label: '비휘발분', type: 'number', unit: '%' },
+  { key: 'texture',     label: '사용감',   type: 'text',   placeholder: '부드럽고 실키함' },
+  { key: 'storage',     label: '저장성',   type: 'text' },
+  { key: 'note',        label: '비고',     type: 'text' }
 ];
 
 function buildResultTable() {
-  var h = '<table class="fwTable"><thead><tr><th class="fwTableLabel">Item</th>';
+  var h = '<table class="fwTable"><thead><tr><th class="fwTableLabel">항목</th>';
   for (var e = 1; e <= expCount; e++) {
     h += '<th class="fwTableExp">' + (expTitle[e] || '#' + e) + '</th>';
   }
@@ -1087,7 +1087,7 @@ function onResultInput(el) {
 
 
 
-/* (Process Conditions/제조결과는 플로팅 윈도우 닫을 때 자동 저장) */
+/* (공정조건/제조결과는 플로팅 윈도우 닫을 때 자동 저장) */
 
 
 /* ══════════════════════════════════════
@@ -1096,18 +1096,18 @@ function onResultInput(el) {
 function exportExcel() {
   // Row 1: 대분류 헤더
   var row1 = [
-    'Exp. No.', 'Formulation Design', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
-    'Process Conditions', '', '',
-    'Basic Properties', '', '', '', '', '', '', '', ''
+    '실험번호', '배합 설계', '', '', '', '', '', '', '', '', '', '', '', '', '', '',
+    '공정조건', '', '',
+    '기본 물성', '', '', '', '', '', '', '', ''
   ];
   // Row 2: 중분류 헤더
   var row2 = [
     '', 'Vi/ H ratio',
     'H-Polymer', '', '', '',
     'Vi-Polymer', '', '', '',
-    'Catalyst Content', '1st Gel Content', 'Final Gel Content', 'Final Additive Content', 'Final Diluent Content', 'Retarder Content',
-    '3-Roll Count', 'Gel Time', '1st Reaction Temp',
-    'Appearance', 'Viscosity', 'Color', 'Volatiles', 'Non-Volatiles', 'Texture', 'Storage', 'Remarks', ''
+    '촉매함량', '1차겔함량', '최종겔함량', '최종첨가제함량', '최종희석제함량', '지연제함량',
+    '3롤작업 횟수', '겔도달시간', '1차 반응온도',
+    '외관', '점도', '색상', '휘발분', '비휘발분', '사용감', '저장성', '비고', ''
   ];
   // Row 3: 소분류 헤더
   var row3 = [
@@ -1156,13 +1156,13 @@ function exportExcel() {
 
   // 셀 병합 (엑셀 원본과 동일)
   ws['!merges'] = [
-    // Row 1: Exp. No. 3행 병합
+    // Row 1: 실험번호 3행 병합
     { s: { r: 0, c: 0 }, e: { r: 2, c: 0 } },
-    // Row 1: Formulation Design (B~P)
+    // Row 1: 배합 설계 (B~P)
     { s: { r: 0, c: 1 }, e: { r: 0, c: 15 } },
-    // Row 1: Process Conditions (Q~S)
+    // Row 1: 공정조건 (Q~S)
     { s: { r: 0, c: 16 }, e: { r: 0, c: 18 } },
-    // Row 1: Basic Properties (T~AB)
+    // Row 1: 기본 물성 (T~AB)
     { s: { r: 0, c: 19 }, e: { r: 0, c: 27 } },
     // Row 2: Vi/H ratio 2행 병합
     { s: { r: 1, c: 1 }, e: { r: 2, c: 1 } },
@@ -1170,14 +1170,14 @@ function exportExcel() {
     { s: { r: 1, c: 2 }, e: { r: 1, c: 5 } },
     // Row 2: Vi-Polymer
     { s: { r: 1, c: 6 }, e: { r: 1, c: 9 } },
-    // Row 2~3: Catalyst Content~Retarder Content 각각 2행 병합
+    // Row 2~3: 촉매함량~지연제함량 각각 2행 병합
     { s: { r: 1, c: 10 }, e: { r: 2, c: 10 } },
     { s: { r: 1, c: 11 }, e: { r: 2, c: 11 } },
     { s: { r: 1, c: 12 }, e: { r: 2, c: 12 } },
     { s: { r: 1, c: 13 }, e: { r: 2, c: 13 } },
     { s: { r: 1, c: 14 }, e: { r: 2, c: 14 } },
     { s: { r: 1, c: 15 }, e: { r: 2, c: 15 } },
-    // Row 2~3: Process Conditions 각각 2행 병합
+    // Row 2~3: 공정조건 각각 2행 병합
     { s: { r: 1, c: 16 }, e: { r: 2, c: 16 } },
     { s: { r: 1, c: 17 }, e: { r: 2, c: 17 } },
     { s: { r: 1, c: 18 }, e: { r: 2, c: 18 } },
@@ -1194,20 +1194,20 @@ function exportExcel() {
 
   // 컬럼 너비
   ws['!cols'] = [
-    { wch: 10 }, // Exp. No.
+    { wch: 10 }, // 실험번호
     { wch: 10 }, // Vi/H ratio
     { wch: 6 }, { wch: 6 }, { wch: 6 }, { wch: 12 }, // H1~H3, total
     { wch: 6 }, { wch: 6 }, { wch: 6 }, { wch: 12 }, // V1~V3, total
     { wch: 10 }, // 촉매
     { wch: 10 }, // 1차겔
-    { wch: 10 }, { wch: 12 }, { wch: 12 }, // 최종겔/Additive/Diluent
-    { wch: 10 }, // Retarder
-    { wch: 12 }, { wch: 10 }, { wch: 12 }, // Process Conditions
+    { wch: 10 }, { wch: 12 }, { wch: 12 }, // 최종겔/첨가제/희석제
+    { wch: 10 }, // 지연제
+    { wch: 12 }, { wch: 10 }, { wch: 12 }, // 공정조건
     { wch: 10 }, { wch: 10 }, { wch: 10 }, { wch: 8 }, { wch: 8 }, // 물성
-    { wch: 14 }, { wch: 8 }, { wch: 14 }, // Texture/Storage/Remarks
+    { wch: 14 }, { wch: 8 }, { wch: 14 }, // 사용감/저장성/비고
   ];
 
-  XLSX.utils.book_append_sheet(wb, ws, 'General-Properties Tab');
+  XLSX.utils.book_append_sheet(wb, ws, '일반-물성탭');
   XLSX.writeFile(wb, 'PA_CrossPolymer_' + new Date().toISOString().slice(0, 10) + '.xlsx');
 }
 
@@ -1217,7 +1217,7 @@ function addExperiment() {
   renderTables();
 }
 
-/* Finish All Experiments — 확인 → 세션 Finish */
+/* 실험 전체 종료 — 확인 → 세션 종료 */
 var sessionFinished = false;
 function confirmFinishSession() {
   if (sessionFinished) return;
@@ -1236,7 +1236,7 @@ function finishSession() {
 }
 
 function buildExpSelectOptions() {
-  var title = (expTitle[activeExp] || '#' + activeExp) + ' Formulation Design';
+  var title = (expTitle[activeExp] || '#' + activeExp) + ' 배합설계';
   document.getElementById('designTitle').textContent = title;
 }
 
@@ -1358,7 +1358,7 @@ function highlightExp(n) {
 
 
 /* ══════════════════════════════════════
-   Context Menu (우클릭 Add Row/삭제)
+   Context Menu (우클릭 행 추가/삭제)
    ══════════════════════════════════════ */
 var ctxState = { section: null, group: null, rowIdx: -1 };
 
@@ -1430,7 +1430,7 @@ function ctxAddRow() {
       if (d && d.gels) d.gels.push(0);
     }
   } else {
-    // cat, oil, add, dilAdd, dilRet — 범용 Add Row
+    // cat, oil, add, dilAdd, dilRet — 범용 행 추가
     var existing = rowDefs.filter(function(r) { return r.group === group; });
     var newNum = existing.length + 1;
     var baseNameKey = existing[0].nameKey;
@@ -1440,7 +1440,7 @@ function ctxAddRow() {
     materials[newKey] = { name: (baseMat.name || baseNameKey) + newNum, code: '', func: baseMat.func || '' };
 
     var newRow = { group: group, nameKey: newKey };
-    // Dilution 행은 label 유지
+    // 희석공정 행은 label 유지
     if (section === 'dilution') {
       newRow.label = (baseMat.name || groupLabels[group] || '') + newNum;
     }
@@ -1449,7 +1449,7 @@ function ctxAddRow() {
 
   rebuildTypeSpans(rowDefs);
   renderTables();
-  // Formulation Design 창이 열려 있으면 폼 갱신
+  // 배합설계 창이 열려 있으면 폼 갱신
   if (document.getElementById('designModal').classList.contains('active')) {
     loadDesignToModal(activeExp);
   }
@@ -1500,7 +1500,7 @@ function ctxRemoveRow() {
       }
     }
   } else {
-    // cat, oil, add, dilAdd, dilRet — 범용 Delete Row
+    // cat, oil, add, dilAdd, dilRet — 범용 행 삭제
     delete materials[removedRow.nameKey];
   }
 

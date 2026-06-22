@@ -1,0 +1,268 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="css/animate.min.css">
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/glass_engine.js"></script>
+    <script>
+        // ── Composition 목록 데이터 (원본 목업 PRODUCTS 기반) ──
+        // status/rc/pc/rg = 전체/INPUT/ITEM/LEGAL 상태 코드
+        var COMPOSITIONS = [
+          {id:'SE9187', merp:'10000425', name:'SE9187 – Silicone Sealant',      type:'WITH_REACTION', bu:'Adv. Sealants', plant:'1200 (Leverkusen)',     owner:'R. Wijnands', rev:'Rev.04', status:'act', rc:'act',  pc:'dra',  rg:'pend'},
+          {id:'LSR2725',merp:'10000511', name:'LSR 2725/40B – Liquid Silicone', type:'WITH_REACTION', bu:'HPE',           plant:'1100 (Waterford)',      owner:'M. Becker',   rev:'Rev.02', status:'act', rc:'act',  pc:'act',  rg:'act'},
+          {id:'TC5026', merp:'10000622', name:'TC5026 – Thermal Compound',      type:'Blend',         bu:'Specialty',     plant:'2100 (Bergen op Zoom)', owner:'J. Park',     rev:'Rev.01', status:'act', rc:'dra',  pc:'pend', rg:''},
+          {id:'RTV615', merp:'10000310', name:'RTV 615 – Encapsulant',          type:'WITH_REACTION', bu:'Consumer',      plant:'1200 (Leverkusen)',     owner:'A. Mueller',  rev:'Rev.03', status:'rev', rc:'act',  pc:'rev',  rg:'pend'},
+          {id:'SE6200', merp:'10000840', name:'SE6200 – Dielectric Gel',        type:'Blend',         bu:'Specialty',     plant:'1100 (Waterford)',      owner:'R. Wijnands', rev:'Rev.05', status:'act', rc:'act',  pc:'act',  rg:'act'},
+          {id:'SL5101', merp:'10001200', name:'SL5101 – Adhesive Sealant',      type:'WITH_REACTION', bu:'Adv. Sealants', plant:'1200 (Leverkusen)',     owner:'S. Kim',      rev:'Rev.01', status:'dra', rc:'dra',  pc:'',     rg:''},
+          {id:'HV496',  merp:'10000912', name:'HV496 – High Volt Insul.',       type:'Blend',         bu:'HPE',           plant:'2100 (Bergen op Zoom)', owner:'M. Becker',   rev:'Rev.02', status:'act', rc:'act',  pc:'act',  rg:'pend'},
+          {id:'SE1952', merp:'10001104', name:'SE1952 – Silicone Foam',         type:'WITH_REACTION', bu:'Consumer',      plant:'1200 (Leverkusen)',     owner:'A. Mueller',  rev:'Rev.04', status:'act', rc:'act',  pc:'act',  rg:'act'}
+        ];
+
+        // 상태 코드 → 라벨
+        var ST_LABEL = {act:'Active', appr:'Approved', dra:'Draft', pend:'Pending', rev:'Under Review', '':'—'};
+        // 상태 코드 → statusBox 클래스 (type2=완료/녹, type1=진행/주황)
+        function stBoxClass(st){ return st==='act' ? 'type2' : 'type1'; }
+
+        // 제품 행의 Sub-type 상태 배지 — NPI 스테이지 아이콘 체계 (색=상태, 아이콘 앞쪽)
+        //  완료=녹 check_circle (Active) / 진행중=주황 play_circle (Draft·Pending·Review) / 미진행=회색 circle(빈 원)
+        function subBadge(type, code, label){
+          var state, ico;
+          if(!code){ state=''; ico='circle'; }
+          else if(code==='act' || code==='appr'){ state='done'; ico='check_circle'; }
+          else { state='ing'; ico='play_circle'; }
+          var stTxt = code ? ST_LABEL[code] : '미등록';
+          return '<span class="roundBox cmpSub'+(state?' '+state:'')+'" title="'+label+' '+stTxt+'">'
+               +    '<i class="material-symbols-outlined cmpIco">'+ico+'</i>'+label
+               + '</span>';
+        }
+
+        $(document).ready(function(){
+          $('.sidenav').sidenav();
+          $(document).on('click', '.sidenav-overlay, .closeBtns', function() {
+              $('.sidenav').sidenav('close');
+          });
+
+          // ALL / My List 탭 (SNPI newAppleTab 패턴)
+          $(document).on("click", ".newAppleTab li", function(){
+              var offset = $(this).offset().left.toFixed(0) - $(this).parent().offset().left.toFixed(0);
+              $(this).parents(".newAppleTab").find("li").removeClass("on");
+              $(this).parents(".newAppleTab").find(".tabBg").animate({left: offset-3});
+              $(this).addClass("on");
+              fnSetPrjList();
+          });
+
+          // 상세 팝업 열기 (pjTit / 우측 타이틀 / Create)
+          $(document).on("click", ".pjTit, .rightSection .cardTit, #newPjBtn", function(){
+            window.open("apis_composition_pop.html", "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes" );
+          });
+
+          // 목록 행 선택 → 우측 서머리 갱신
+          $(document).on("click", ".mainList li", function(){
+            $(".mainList li").removeClass("on");
+            $(this).addClass("on");
+            fnSetSummary($(this).attr("data-id"));
+          });
+
+          // 검색 오버레이 (SNPI 동일)
+          $("#mainSrchInput").focus(function(){
+            $(".bgLayer").show();
+            $(".contArea").addClass("blur");
+          });
+          $(".bgLayer").click(function(){
+            $(".bgLayer").hide();
+            $(".contArea").removeClass("blur");
+          });
+
+          fnRenderList();
+          // 첫 행 자동 선택
+          var first = $(".mainList li").first();
+          first.addClass("on");
+          fnSetSummary(first.attr("data-id"));
+        });
+
+        // 좌측 목록 렌더
+        function fnRenderList(){
+          var html = '';
+          COMPOSITIONS.forEach(function(c){
+            html += '<li class="waves-effect waves-hColor animate__animated" data-id="'+c.id+'">'
+                 +    '<section class="statusBox '+stBoxClass(c.status)+'">'+ST_LABEL[c.status]+'</section>'
+                 +    '<section class="wd100p">'
+                 +      '<div class="pjTit">['+c.merp+'] '+c.name+'</div>'
+                 +      '<div class="subInfo"><div class="cmpMeta">'
+                 +        subBadge('input', c.rc, 'INPUT')
+                 +        subBadge('item',  c.pc, 'ITEM')
+                 +        subBadge('legal', c.rg, 'LEGAL')
+                 +        '<div class="roundBox contVal1">'+c.type+'</div>'
+                 +        '<div class="roundBox contVal2">'+c.bu+'</div>'
+                 +        '<div class="roundBox contVal3">'+c.rev+'</div>'
+                 +      '</div></div>'
+                 +    '</section>'
+                 +  '</li>';
+          });
+          $(".mainList ul").html(html);
+          fnSetPrjList();
+        }
+
+        // 행 진입 애니메이션 (SNPI 패턴)
+        function fnSetPrjList(){
+          document.querySelectorAll('.mainList ul li').forEach((li, index) => {
+            li.classList.remove('animate__flipInX');
+            setTimeout(() => { li.classList.add('animate__flipInX'); }, index * 80);
+          });
+        }
+
+        // 우측 서머리 (러프 — 내용은 추후 확정)
+        function fnSetSummary(id){
+          var c = COMPOSITIONS.find(function(x){ return x.id===id; });
+          if(!c) return;
+          $("#dtTit").text('['+c.merp+'] '+c.name);
+          $("#smMerp").text(c.merp);
+          $("#smType").text(c.type);
+          $("#smBu").text(c.bu);
+          $("#smPlant").text(c.plant);
+          $("#smOwner").text(c.owner);
+          $("#smStatus").text(ST_LABEL[c.status]);
+          // 조성 Sub-type 상태 칩
+          $("#smInput").text('INPUT: '+ST_LABEL[c.rc]);
+          $("#smItem").text('ITEM: '+ST_LABEL[c.pc]);
+          $("#smLegal").text('LEGAL: '+ST_LABEL[c.rg]);
+        }
+  </script>
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <article class="navTop">
+        <section class="leftSection">
+          <div class="menuIcon">
+            <div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
+          </div>
+          <div><a href="apis_main.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
+        </section>
+        <section class="centerSection">
+          <div class="srchArea">
+            <i class="material-icons prefix">search</i>
+            <input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput" autocomplete="off">
+          </div>
+        </section>
+        <section class="rightSection">
+          <div class="userInfo">
+            <div class="mr10">
+              <span class="mocha25-text fontM">JONGHO LEE</span>
+            </div>
+            <i class="material-icons gardenia25 mocha25-text fLine vCenter hCenter mg0">person</i>
+          </div>
+          <div class="langInfo ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">language</i>
+          </div>
+          <div class="notiArea ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">assignment_turned_in</i>
+            <div class="notiCnt pulse"><span class="font11">3</span></div>
+          </div>
+          <div class="notiArea ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">format_list_bulleted</i>
+            <div class="notiCnt pulse"><span class="font11">6</span></div>
+          </div>
+        </section>
+      </article>
+    </nav>
+  </header>
+
+  <aside class="menuAside">
+    <div id="slide-out" class="sidenav glassBox">
+      <div class="userInfoArea">
+        <div class="photo"><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+        <div class="userInfo">
+          <div class="fontB">JONGHO LEE</div>
+          <div>IT Procurement/HR/R&D Team</div>
+        </div>
+      </div>
+      <div class="menuList">
+        <ul>
+          <li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>Home</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_dash.html"><i class="material-icons left">analytics</i>Insight</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_proposal_list.html"><i class="material-icons left">assistant</i>Proposal</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_custom_list.html"><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npt_list.html"><i class="material-icons left">snippet_folder</i>NPT</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_tech_list.html"><i class="material-icons left">build</i>Tech Support</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_eln_list_simple.html"><i class="material-icons left">science</i>Lab Note</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub​</a></li>
+          <li class="waves-effect waves-hColor on"><a href="apis_composition_list.html"><i class="material-icons left">blender</i>Composition</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_fmea_list.html"><i class="material-icons left">playlist_add_check_circle</i>FMEA​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_coc.html"><i class="material-icons left">assignment_late</i>CoC​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_psa.html"><i class="material-icons left">health_and_safety</i>PSA</a></li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <article class="contArea typeList type2">
+    <div class="leftSection">
+      <section class="mainTitArea">
+        <div class="mainTit">Composition List</div>
+        <div class="btnArea">
+          <div class="newAppleTab mr10">
+            <ul>
+              <li class="waves-effect waves-hColor on" cd="ALLW">ALL</li>
+              <li class="waves-effect waves-hColor" cd="PART">My List</li>
+              <div class="tabBg" style="left: 0px;"></div>
+            </ul>
+          </div>
+          <div><a href="javascript:;" class="waves-effect waves-light hBtn viva wd160px"><i class="material-icons left">search</i><span class="label">Custom Filter</span></a></div>
+        </div>
+      </section>
+
+      <section class="mainList cardBox">
+        <ul class="hScroll"></ul>
+      </section>
+    </div>
+    <div class="rightSection">
+      <div class="cardBox">
+        <div class="cardTit"><span class="link" id="dtTit">—</span></div>
+        <div class="row subPjInfo">
+          <div class="col s6">MERP Code</div>
+          <div class="col s6 val" id="smMerp">—</div>
+          <div class="col s6">Process Type</div>
+          <div class="col s6 val" id="smType">—</div>
+          <div class="col s6">Business Unit</div>
+          <div class="col s6 val" id="smBu">—</div>
+          <div class="col s6">ERP Plant</div>
+          <div class="col s6 val" id="smPlant">—</div>
+          <div class="col s6">PS Owner</div>
+          <div class="col s6 val" id="smOwner">—</div>
+          <div class="col s6">Status</div>
+          <div class="col s6 val" id="smStatus">—</div>
+        </div>
+        <div class="subTit mt20 ml10">Composition Sub-types</div>
+        <div class="row">
+          <div class="col s12" style="display:flex; gap:10px; flex-wrap:wrap;">
+            <span class="roundBox" id="smInput">INPUT: —</span>
+            <span class="roundBox" id="smItem">ITEM: —</span>
+            <span class="roundBox" id="smLegal">LEGAL: —</span>
+          </div>
+        </div>
+        <div class="subTit mt20 ml10">Summary</div>
+        <div class="row">
+          <div class="col s12">
+            <div style="height:120px; border:1px solid #d0d0d0; border-radius:5px; display:flex; align-items:center; justify-content:center; color:#999;">
+              상세 서머리 영역 (내용 추후 확정)
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <article class="bgLayer"></article>
+</body>
+</html>

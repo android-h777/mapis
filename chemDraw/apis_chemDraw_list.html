@@ -710,8 +710,8 @@
       var textEl = document.getElementById('aiLoaderText');
       var subEl  = document.getElementById('aiLoaderSub');
       if (msg) textEl.textContent = msg;
-      else textEl.textContent = 'AI가 분자 구조를 그리고 있습니다...';
-      subEl.textContent = '잠시만 기다려주세요';
+      else textEl.textContent = 'AI is drawing the structure...';
+      subEl.textContent = 'Please wait a moment';
       loader.classList.remove('done');
       loader.classList.add('active');
     }
@@ -722,7 +722,7 @@
       var subEl  = document.getElementById('aiLoaderSub');
       // 완료 표시 후 페이드아웃
       loader.classList.add('done');
-      textEl.textContent = doneMsg || '분자 구조가 완성되었습니다!';
+      textEl.textContent = doneMsg || 'Molecular structure complete!';
       subEl.textContent = '';
       setTimeout(function() {
         loader.classList.remove('active', 'done');
@@ -750,18 +750,18 @@
       messages.scrollTop = messages.scrollHeight;
 
       // 에디터 영역에 로딩 표시
-      showDrawingLoader('"' + msg + '" 구조를 생성 중...');
+      showDrawingLoader('Generating "' + msg + '" structure...');
 
       // 데모: 1.5초 후 응답 (실제로는 백엔드 API 호출)
       setTimeout(function() {
         typingDiv.remove();
         var botDiv = document.createElement('div');
         botDiv.className = 'aiMsg bot';
-        botDiv.innerHTML = '<div class="aiMsgAvatar"><i class="material-icons">auto_awesome</i></div><div class="aiMsgBubble">네, 요청하신 구조를 캔버스에 그렸습니다.<br><span class="aiMsgHint">* 데모 모드 — 실제 동작은 백엔드 API 연동 후 가능합니다</span></div>';
+        botDiv.innerHTML = '<div class="aiMsgAvatar"><i class="material-icons">auto_awesome</i></div><div class="aiMsgBubble">Done. I have drawn the requested structure on the canvas.<br><span class="aiMsgHint">* Demo mode — full functionality available once the backend API is connected</span></div>';
         messages.appendChild(botDiv);
         messages.scrollTop = messages.scrollHeight;
         // 로딩 완료
-        hideDrawingLoader('구조 생성 완료!');
+        hideDrawingLoader('Structure generated!');
       }, 1500);
     }
 
@@ -829,7 +829,7 @@
     <section class="contList">
       <div class="headArea">
         <div class="srchArea">
-          <input type="text" placeholder="Molecular Formula 검색">
+          <input type="text" placeholder="Search molecular formula">
           <i class="material-icons">search</i>
         </div>
         <div>
@@ -846,7 +846,7 @@
           <div class="infoArea">
             <div class="tit">C6H16S</div>
             <div class="regInfo">
-              <div>이종호 책임</div>
+              <div>Jongho Lee · Principal</div>
               <div>2026-03-09</div>
             </div>
           </div>
@@ -886,7 +886,7 @@
           <div class="infoArea">
             <div class="tit">C6H6 (Benzene)</div>
             <div class="regInfo">
-              <div>김민수 수석</div>
+              <div>Minsu Kim · Chief</div>
               <div>2026-03-12</div>
             </div>
           </div>
@@ -911,7 +911,7 @@
           <div class="infoArea">
             <div class="tit">C2H5OH (Ethanol)</div>
             <div class="regInfo">
-              <div>박서연 책임</div>
+              <div>Seoyeon Park · Principal</div>
               <div>2026-03-11</div>
             </div>
           </div>
@@ -935,7 +935,7 @@
           <div class="infoArea">
             <div class="tit">CH3COOH (Acetic acid)</div>
             <div class="regInfo">
-              <div>최영진 선임</div>
+              <div>Youngjin Choi · Senior</div>
               <div>2026-03-10</div>
             </div>
           </div>
@@ -959,7 +959,7 @@
           <div class="infoArea">
             <div class="tit">CH4 (Methane)</div>
             <div class="regInfo">
-              <div>정하윤 선임</div>
+              <div>Hayoon Jung · Senior</div>
               <div>2026-03-08</div>
             </div>
           </div>
@@ -978,7 +978,7 @@
           <div class="infoArea">
             <div class="tit">C7H8 (Toluene)</div>
             <div class="regInfo">
-              <div>이종호 책임</div>
+              <div>Jongho Lee · Principal</div>
               <div>2026-03-07</div>
             </div>
           </div>
@@ -1001,7 +1001,7 @@
           <div class="infoArea">
             <div class="tit">CH2O (Formaldehyde)</div>
             <div class="regInfo">
-              <div>김민수 수석</div>
+              <div>Minsu Kim · Chief</div>
               <div>2026-03-06</div>
             </div>
           </div>
@@ -1029,7 +1029,7 @@
           <div class="infoArea">
             <div class="tit">C3H8 (Propane)</div>
             <div class="regInfo">
-              <div>박서연 책임</div>
+              <div>Seoyeon Park · Principal</div>
               <div>2026-03-05</div>
             </div>
           </div>
@@ -1052,7 +1052,7 @@
           <div class="infoArea">
             <div class="tit">C3H6O (Acetone)</div>
             <div class="regInfo">
-              <div>최영진 선임</div>
+              <div>Youngjin Choi · Senior</div>
               <div>2026-03-04</div>
             </div>
           </div>
@@ -1075,7 +1075,7 @@
           <div class="infoArea">
             <div class="tit">C2H5NO2 (Glycine)</div>
             <div class="regInfo">
-              <div>정하윤 선임</div>
+              <div>Hayoon Jung · Senior</div>
               <div>2026-03-03</div>
             </div>
           </div>
@@ -1102,7 +1102,7 @@
           <div class="infoArea">
             <div class="tit">C2H4 (Ethylene)</div>
             <div class="regInfo">
-              <div>이종호 책임</div>
+              <div>Jongho Lee · Principal</div>
               <div>2026-03-02</div>
             </div>
           </div>
@@ -1126,7 +1126,7 @@
           <div class="infoArea">
             <div class="tit">C2H2 (Acetylene)</div>
             <div class="regInfo">
-              <div>김민수 수석</div>
+              <div>Minsu Kim · Chief</div>
               <div>2026-03-01</div>
             </div>
           </div>
@@ -1145,7 +1145,7 @@
           <div class="infoArea">
             <div class="tit">C10H8 (Naphthalene)</div>
             <div class="regInfo">
-              <div>박서연 책임</div>
+              <div>Seoyeon Park · Principal</div>
               <div>2026-02-28</div>
             </div>
           </div>
@@ -1168,7 +1168,7 @@
           <div class="infoArea">
             <div class="tit">C2H6OS (DMSO)</div>
             <div class="regInfo">
-              <div>최영진 선임</div>
+              <div>Youngjin Choi · Senior</div>
               <div>2026-02-25</div>
             </div>
           </div>
@@ -1190,7 +1190,7 @@
           <div class="infoArea">
             <div class="tit">C6H12 (Cyclohexane)</div>
             <div class="regInfo">
-              <div>정하윤 선임</div>
+              <div>Hayoon Jung · Senior</div>
               <div>2026-02-22</div>
             </div>
           </div>
@@ -1209,7 +1209,7 @@
           <div class="infoArea">
             <div class="tit">C6H5OH (Phenol)</div>
             <div class="regInfo">
-              <div>이종호 책임</div>
+              <div>Jongho Lee · Principal</div>
               <div>2026-02-20</div>
             </div>
           </div>
@@ -1228,7 +1228,7 @@
           <div class="infoArea">
             <div class="tit">C6H5NH2 (Aniline)</div>
             <div class="regInfo">
-              <div>김민수 수석</div>
+              <div>Minsu Kim · Chief</div>
               <div>2026-02-18</div>
             </div>
           </div>
@@ -1250,7 +1250,7 @@
           <div class="infoArea">
             <div class="tit">C2H7N (Dimethylamine)</div>
             <div class="regInfo">
-              <div>박서연 책임</div>
+              <div>Seoyeon Park · Principal</div>
               <div>2026-02-15</div>
             </div>
           </div>
@@ -1271,7 +1271,7 @@
           <div class="infoArea">
             <div class="tit">C3H8O (Isopropanol)</div>
             <div class="regInfo">
-              <div>최영진 선임</div>
+              <div>Youngjin Choi · Senior</div>
               <div>2026-02-12</div>
             </div>
           </div>
@@ -1294,7 +1294,7 @@
           <div class="infoArea">
             <div class="tit">CH4N2O (Urea)</div>
             <div class="regInfo">
-              <div>정하윤 선임</div>
+              <div>Hayoon Jung · Senior</div>
               <div>2026-02-10</div>
             </div>
           </div>
@@ -1340,7 +1340,7 @@
                 <div class="btnBox" data-element="Br">Br</div>
                 <div class="btnBox" data-element="I">I</div>
               </div>
-              <div class="btnBox" id="cdAddElementBtn" title="주기율표에서 원소 추가">+</div>
+              <div class="btnBox" id="cdAddElementBtn" title="Add element from periodic table">+</div>
               <div class="boxTit">H</div>
               <div class="btnBox on">Auto</div>
               <div class="btnBox">0</div>
@@ -1430,8 +1430,8 @@
                     <circle class="atom" cx="27" cy="39" r="5"/>
                   </svg>
                 </div>
-                <div class="loaderText" id="aiLoaderText">AI가 분자 구조를 그리고 있습니다...</div>
-                <div class="loaderSub" id="aiLoaderSub">잠시만 기다려주세요</div>
+                <div class="loaderText" id="aiLoaderText">AI is drawing the structure...</div>
+                <div class="loaderSub" id="aiLoaderSub">Please wait a moment</div>
                 <div class="loaderBar"><div class="loaderBarFill"></div></div>
               </div>
             </div>
@@ -1449,23 +1449,23 @@
             <div class="aiChatMessages" id="aiChatMessages">
               <div class="aiMsg bot">
                 <div class="aiMsgAvatar"><i class="material-icons">auto_awesome</i></div>
-                <div class="aiMsgBubble">안녕하세요! 분자 구조를 그려드릴게요. 원하는 분자를 말씀해주세요.<br><span class="aiMsgHint">예: "벤젠 그려줘", "OH기 추가해줘"</span></div>
+                <div class="aiMsgBubble">Hello! I can draw molecular structures for you. Just tell me which molecule you'd like.<br><span class="aiMsgHint">e.g. "Draw benzene", "Add an OH group"</span></div>
               </div>
             </div>
             <div class="aiChatInput">
-              <input type="text" id="aiChatInputField" placeholder="분자 구조를 설명해주세요..." onkeydown="if(event.key==='Enter')sendAiChat()">
+              <input type="text" id="aiChatInputField" placeholder="Describe the molecular structure..." onkeydown="if(event.key==='Enter')sendAiChat()">
               <button onclick="sendAiChat()"><i class="material-icons">send</i></button>
             </div>
           </div>
           <div class="srchArea">
-            <input type="text" placeholder="Formula / 명칭 / CAS-NO 통합검색">
+            <input type="text" placeholder="Search Formula / Name / CAS-No">
           </div>
           <button class="aiChatOpenBtn" onclick="this.closest('.editorArea').querySelector('.aiChatPanel').classList.remove('collapsed')">
             <i class="material-icons">auto_awesome</i>
           </button>
         </div>
         <div class="editorStatusBar">
-          <span class="sbKey">드래그</span> 이동 <span class="sbDiv">|</span> <span class="sbKey">더블클릭</span> 속성변경 <span class="sbDiv">|</span> <span class="sbKey">Del</span> 삭제 <span class="sbDiv">|</span> <span class="sbKey">Ctrl+클릭</span> 개별선택 <span class="sbDiv">|</span> <span class="sbKey">Shift+클릭</span> 그룹선택 <span class="sbDiv">|</span> <span class="sbKey">Ctrl+A</span> 전체선택 <span class="sbDiv">|</span> <span class="sbKey">Ctrl+C/V</span> 복사/붙여넣기 <span class="sbDiv">|</span> <span class="sbKey">Ctrl+Z/Y</span> 실행취소/재실행 <span class="sbDiv">|</span> <span class="sbKey">Ctrl+휠</span> 확대축소 <span class="sbDiv">|</span> <span class="sbKey">우클릭</span> 메뉴
+          <span class="sbKey">Drag</span> Move <span class="sbDiv">|</span> <span class="sbKey">Double-click</span> Edit properties <span class="sbDiv">|</span> <span class="sbKey">Del</span> Delete <span class="sbDiv">|</span> <span class="sbKey">Ctrl+Click</span> Select one <span class="sbDiv">|</span> <span class="sbKey">Shift+Click</span> Group select <span class="sbDiv">|</span> <span class="sbKey">Ctrl+A</span> Select all <span class="sbDiv">|</span> <span class="sbKey">Ctrl+C/V</span> Copy/Paste <span class="sbDiv">|</span> <span class="sbKey">Ctrl+Z/Y</span> Undo/Redo <span class="sbDiv">|</span> <span class="sbKey">Ctrl+Wheel</span> Zoom <span class="sbDiv">|</span> <span class="sbKey">Right-click</span> Menu
         </div>
       </div>
       <div class="modalBtnArea">
@@ -1483,7 +1483,7 @@
         <div id="cdPeriodicTableModal">
           <div class="pt-header">
             <span class="pt-title">Periodic Table of Elements</span>
-            <span class="pt-info" id="cdPTInfo">원소를 클릭하면 도구 모음에 추가됩니다</span>
+            <span class="pt-info" id="cdPTInfo">Click an element to add it to the toolbar</span>
             <span class="pt-close" id="cdPTClose"><i class="material-icons">close</i></span>
           </div>
           <div class="pt-grid" id="cdPTGrid"></div>
