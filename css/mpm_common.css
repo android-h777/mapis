@@ -2327,6 +2327,10 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 .fixedTable.hBorderTable [type="radio"]:not(:checked) + span, .fixedTable.hBorderTable [type="radio"]:checked + span {
 	padding-left: 15px;
 }
+/* 표 안 라디오에 텍스트 라벨이 붙는 경우: 원(0~20px)과 안 겹치게 + span의 25px 라인에서 텍스트·원 세로중앙 자동 정렬 */
+.fixedTable.hBorderTable [type="radio"]:not(:checked) + span.rdoLbl, .fixedTable.hBorderTable [type="radio"]:checked + span.rdoLbl {
+	padding-left: 24px;
+}
 
 /* ====================================================================
    Glass Row Overlay — hBorderTable 행 호버 무지개 효과
@@ -3820,6 +3824,21 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	background-color: #fff;
     border-color: #899f6a;
     color: #899f6a;
+}
+.roundBox.bdBlue {
+	background-color: #fff;
+    border-color: #7391c9;
+    color: #7391c9;
+}
+.roundBox.bdRed {
+	background-color: #fff;
+    border-color: #bb2649;
+    color: #bb2649;
+}
+.roundBox.bdGray {
+	background-color: #fff;
+    border-color: #a89a8f;
+    color: #a89a8f;
 }
 .srchOptBox {
 	line-height: 26px;
@@ -5973,3 +5992,16 @@ select.browser-default {
 }
 /* 메타 줄: flex 컨테이너로 모든 칩(배지+roundBox)을 서로 세로 중앙 정렬 */
 .cmpMeta { display: flex; align-items: center; flex-wrap: wrap; }
+
+/* Composition 물질 퀵서치(jQuery UI autocomplete) 드롭다운 — body에 append되며 cmpSubMenu로만 스코프 */
+.ui-autocomplete.cmpSubMenu {
+	position: absolute; z-index: 100000; list-style: none; margin: 0; padding: 4px 0;
+	background: #fff; border: 1px solid #d0c4b0; border-radius: 6px;
+	box-shadow: 0 6px 18px rgba(0,0,0,.16); max-height: 280px; overflow-y: auto; font-size: 13px;
+}
+.ui-autocomplete.cmpSubMenu li { list-style: none; }
+.ui-autocomplete.cmpSubMenu li > a {
+	display: block; padding: 6px 12px; color: #333; cursor: pointer; white-space: nowrap; text-decoration: none;
+}
+.ui-autocomplete.cmpSubMenu li > a:hover,
+.ui-autocomplete.cmpSubMenu li > a.ui-state-active { background: #f1e9df; }
