@@ -141,7 +141,7 @@
           var ec = withEc ? '<span class="ml5 mr5 font13">·</span><div class="aniInput"><input type="text" class="browser-default al font13 subEc jsSub" placeholder="EC No."><span class="focus-border"></span></div>' : '';
           return '<td class="al">'
             + '<div class="aniInput"><input type="text" class="browser-default al subName jsSub" placeholder="Substance name"><span class="focus-border"></span></div>'
-            + '<div class="fLine vCenter"><div class="aniInput"><input type="text" class="browser-default al font13 subCas jsSub" placeholder="CAS No."><span class="focus-border"></span></div>'+ec+'</div>'
+            + '<div class="fLine vCenter mt5"><div class="aniInput"><input type="text" class="browser-default al font13 subCas jsSub" placeholder="CAS No."><span class="focus-border"></span></div>'+ec+'</div>'
             + '</td>';
         }
 
@@ -596,14 +596,14 @@
 
 			<!-- ── Card 3 : INPUT (Section A → 반응 → Section B) ── -->
 			<section class="cardBox animate__animated animate__fadeInLeft mt10" id="pjContCard_3">
-				<div class="cardTit2 type2">
-					<span><i class="material-symbols-outlined left">science</i>INPUT Composition (Mfg / Input)</span>
-					<a href="javascript:;" class="waves-effect waves-light hBtn"><i class="material-symbols-outlined left">cached</i><span class="label">Recalc from BOM</span></a>
-				</div>
+				<div class="cardTit2"><i class="material-symbols-outlined left">science</i>INPUT Composition (Mfg / Input)</div>
 
 				<div class="cardSubTitArea mt30">
 					<div class="cardSubTit">SECTION A — Input / Starting Material Substances</div>
-					<div><a href="javascript:;" class="waves-effect waves-light hBtn" onclick="addRCRow()"><i class="material-symbols-outlined left">add</i>Add Row</a></div>
+					<div class="fLine vCenter">
+						<a href="javascript:;" class="waves-effect waves-light hBtn hSmall"><i class="material-symbols-outlined left">cached</i><span class="label">Recalc from BOM</span></a>
+						<a href="javascript:;" class="waves-effect waves-light hBtn hSmall ml10" onclick="addRCRow()"><i class="material-symbols-outlined left">add</i>Add Row</a>
+					</div>
 				</div>
 				<div class="fixedTable hBorderTable hScroll vMiddle mg10">
 					<table>
@@ -637,7 +637,7 @@
 
 				<div class="cardSubTitArea mt30">
 					<div class="cardSubTit">SECTION B — Output Substances Present in Final Product</div>
-					<div><a href="javascript:;" class="waves-effect waves-light hBtn" onclick="addPCRow()"><i class="material-symbols-outlined left">add</i>Add Row</a></div>
+					<div><a href="javascript:;" class="waves-effect waves-light hBtn hSmall" onclick="addPCRow()"><i class="material-symbols-outlined left">add</i>Add Row</a></div>
 				</div>
 				<div class="fixedTable hBorderTable hScroll vMiddle mg10">
 					<table>
