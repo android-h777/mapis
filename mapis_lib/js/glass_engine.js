@@ -54,20 +54,18 @@ $(document).on('mouseleave', '.modal', function() {
 $(document).on('mousemove', '.newAppleTab li.on', function(e) {
   var tabBg = $(this).parents('.newAppleTab').find('.tabBg')[0];
   if (!tabBg) return;
-  var rect = tabBg.getBoundingClientRect();
-  var x = ((e.clientX - rect.left) / rect.width * 100);
-  var yPx = e.clientY - rect.top;
-  var angle = Math.atan2(
-    e.clientY - (rect.top + rect.height / 2),
-    e.clientX - (rect.left + rect.width / 2)
-  ) * 180 / Math.PI;
-  tabBg.style.setProperty('--olx', x + '%');
-  tabBg.style.setProperty('--oly', yPx + 'px');
-  tabBg.style.setProperty('--ol-angle', angle + 'deg');
+  glassTrack.call(tabBg, e);
 });
 $(document).on('mouseleave', '.newAppleTab li.on', function() {
   var tabBg = $(this).parents('.newAppleTab').find('.tabBg')[0];
   if (tabBg) glassClear(tabBg);
+});
+
+$(document).on('mousemove', '.glassHover', function(e) {
+  glassTrack.call(this, e);
+});
+$(document).on('mouseleave', '.glassHover', function() {
+  glassClear(this);
 });
 
 /* ── [4] Glass Row Overlay — hBorderTable 행 호버 무지개 효과 ─────────────── *

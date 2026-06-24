@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>MAPIS Technical Report Library</title>
+    <title>MAPIS Technical Report Hub</title>
 	<link rel="preload" href="mapis_lib/font/material-symbols-outlined.woff2" as="font" type="font/woff2">
 	<link rel="preload" href="mapis_lib/font/material-symbols-rounded.woff2" as="font" type="font/woff2">
 	<link rel="preload" href="mapis_lib/font/material-symbols-sharp.woff2" as="font" type="font/woff2">
@@ -26,30 +26,67 @@
 	<!-- 공통 헤더(navbar-fixed) — 전 모듈 공통: 로고(좌)·srchArea global search(센터)·userInfo(우) -->
 	<header class="navbar-fixed">
 		<nav>
-			<article class="navTop">
-				<section class="leftSection">
-					<div class="menuIcon">
-						<div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
-					</div>
-					<div><a href="apis_rptlib_list.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
-				</section>
-				<section class="centerSection">
-					<div class="srchArea">
-						<i class="material-icons prefix">search</i>
-						<input type="text" class="browser-default" placeholder="Search across MAPIS" value="" id="mainSrchInput" autocomplete="off">
-					</div>
-				</section>
-				<section class="rightSection">
-					<div class="userInfo">
-						<div class="mr10"><span class="mocha25-text fontM">Global Technology</span></div>
-						<i class="material-icons mocha25-text fLine vCenter hCenter mg0">person</i>
-					</div>
-				</section>
-			</article>
+		  <article class="navTop">
+			<section class="leftSection">
+			  <div class="menuIcon">
+				<div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
+			  </div>
+			  <div><a href="apis_main.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
+			</section>
+			<section class="centerSection">
+			  <div class="srchArea">
+				<i class="material-icons prefix">search</i>
+				<input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput" autocomplete="off">
+			  </div>
+			</section>
+			<section class="rightSection">
+			  <div class="userInfo">
+				<div class="mr10">
+				  <span class="mocha25-text fontM">JONGHO LEE</span>
+				</div>
+				<i class="material-icons gardenia25 mocha25-text fLine vCenter hCenter mg0">person</i>
+				<div class="btnArea" style="padding-top: 20px; margin-top: 0px; padding-bottom: 20px; margin-bottom: 0px; display: none;">
+				  <a id="profileBtn" class="waves-effect waves-light hBtn">
+					<span class="material-symbols-outlined left">account_circle</span>
+					<span class="label">View Profile</span>
+				  </a>
+				  <a id="adminBtn" class="waves-effect waves-light hBtn">
+					<span class="material-symbols-outlined left">admin_panel_settings</span><span class="label">Administrator</span>
+				  </a>
+				  <a id="" class="waves-effect waves-light hBtn">
+					<span class="material-symbols-outlined left">volunteer_activism</span><span class="label">Service Now</span>
+				  </a>
+				  <a id="" class="waves-effect waves-light hBtn">
+					<span class="material-symbols-outlined left">directions</span><span class="label">Guidance</span>
+				  </a>
+				  <a id="" class="waves-effect waves-light hBtn">
+					<span class="material-symbols-outlined left">local_library</span><span class="label">Training</span>
+				  </a>
+				  <a id="logoutBtn" class="waves-effect waves-light hBtn hViva">
+					<span class="material-symbols-outlined left">logout</span><span class="label">Sign Out</span>
+				  </a>
+				</div>
+			  </div>
+			  <div class="langInfo">
+				<i class="material-icons mocha25-text fLine vCenter hCenter mg0">language</i>
+				<div class="btnArea" style="padding-top: 20px; margin-top: 0px; padding-bottom: 20px; margin-bottom: 0px; display: none;">
+				  <a class="waves-effect waves-light hBtn jc hViva on" data-lang="en">English</a><a class="waves-effect waves-light hBtn jc" data-lang="de">German</a><a class="waves-effect waves-light hBtn jc" data-lang="ko">Korean</a><a class="waves-effect waves-light hBtn jc" data-lang="ja">Japanese</a><a class="waves-effect waves-light hBtn jc" data-lang="zh">Chinese</a><a class="waves-effect waves-light hBtn jc" data-lang="it">Italian</a><a class="waves-effect waves-light hBtn jc" data-lang="es">Spanish</a>
+				</div>
+			  </div>
+			  <div class="notiArea">
+				<i class="material-icons mocha25-text fLine vCenter hCenter mg0">assignment_turned_in</i>
+				<div class="notiCnt pulse"><span class="font11" id="rlApprNoti">3</span></div>
+			  </div>
+			  <div class="notiArea">
+				<i class="material-icons mocha25-text fLine vCenter hCenter mg0">format_list_bulleted</i>
+				<div class="notiCnt pulse"><span class="font11">6</span></div>
+			  </div>
+			</section>
+		  </article>
 		</nav>
-	</header>
+	  </header>
 
-	<!-- 사이드 메뉴(sidenav) — Technical Report Library 활성 + MAPIS 모듈 -->
+	<!-- 사이드 메뉴(sidenav) — Technical Report Hub 활성 + MAPIS 모듈 -->
 	<aside class="menuAside">
 		<div id="slide-out" class="sidenav glassBox">
 			<div class="userInfoArea">
@@ -61,10 +98,10 @@
 			</div>
 			<div class="menuList">
 				<ul>
-					<li class="waves-effect waves-hColor on"><a href="apis_rptlib_list.html"><i class="material-icons left">database</i>Technical Report Library</a></li>
+					<li class="waves-effect waves-hColor on"><a href="apis_rptlib_list.html"><i class="material-icons left">database</i>Technical Report Hub</a></li>
 					<li><a class="subheader" style="color:#9b8c7e;font-size:11px;letter-spacing:.04em;pointer-events:none;">MAPIS MODULES</a></li>
 					<li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>MAPIS Home</a></li>
-					<li class="waves-effect waves-hColor"><a href="apis_eln_list_simple.html"><i class="material-icons left">science</i>Lab Note</a></li>
+					<li class="waves-effect waves-hColor"><a href="apis_eln_list.html"><i class="material-icons left">science</i>ELN</a></li>
 					<li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
 					<li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub</a></li>
 					<li class="waves-effect waves-hColor"><a href="apis_composition_list.html"><i class="material-icons left">blender</i>Composition</a></li>
@@ -73,458 +110,134 @@
 		</div>
 	</aside>
 
-	<!-- 본문: Technical Report Library — 상단 검색 히어로 + 가로 필터 칩 + 풀폭 결과 -->
+	<!-- 본문: Technical Report Hub — 상단 검색 히어로 + 가로 필터 칩 + 풀폭 결과 -->
 	<article class="contArea rlArea">
-		<section class="mainTitArea">
-			<div class="mainTit">Technical Report Library</div>
-			<a href="javascript:;" id="rlHome" class="rlHome" title="Back to Discovery home"><i class="material-symbols-outlined">home</i><span>Home</span></a>
-		</section>
+		<div class="rlBody">
+		<!-- 좌측 모듈 네비(접이식) — 상단에 모듈 브랜드, 그 아래 메뉴 -->
+		<aside class="rlNav" id="rlNav">
+			<div class="rlNavHead">
+				<div class="rlNavBrand"><span class="brFull"><span class="fontB font20">T</span>echnical<br><span class="fontB font20">R</span>eport<br><span class="fontB font20">H</span>ub</span><span class="brTRH fontB font20">TRH</span></div>
+				<a href="javascript:;" class="rlNavToggle" id="rlNavToggle" title="Collapse menu"><i class="material-symbols-outlined">chevron_left</i></a>
+			</div>
+			<div class="rlNavList">
+				<a href="javascript:;" class="rlNavItem on" data-nav="docs"><i class="material-symbols-outlined">article</i><span>Documents</span></a>
+				<!-- My Report = 내 전용 공간(둘 다 '나'). 뷰 안 세그먼트 탭으로 Reports(track)/Bookmarks(curate) 전환 -->
+				<a href="javascript:;" class="rlNavItem" data-nav="mine"><i class="material-symbols-outlined">assignment_ind</i><span>My Report</span></a>
+				<!-- Help = 독립 전체 페이지(SPA 뷰 아님). 헤더 우측 → 좌측 메뉴로 이동. 실제 href라 라우터 무간섭(핸들러가 preventDefault 안 함 → 브라우저 기본 네비게이션) -->
+				<a href="apis_rptlib_help.html" class="rlNavItem" data-nav="help"><i class="material-symbols-outlined">help</i><span>Help</span></a>
+				<!-- 재설계 가지치기: Summary(living-data·Thread C) · Submit · My Approval(→ pop 결재 모달) 보류 -->
+			</div>
+		</aside>
+		<div class="rlContent" id="rlViewBrowse">
 
 		<!-- 검색 히어로 — 모듈 검색(헤더 srchArea는 전 모듈 global) -->
 		<div class="rlSearchHero">
-			<div class="rlSearchField">
-				<i class="material-symbols-outlined">search</i>
-				<input type="text" id="rlSearchInput" placeholder="Search technical reports — title, code, author…" autocomplete="off">
-				<i class="material-symbols-outlined rlSearchClear" id="rlSearchClear" title="Clear">close</i>
+			<div class="rlSearchWrap">
+				<div class="rlSearchField">
+					<input type="text" id="rlSearchInput" placeholder="Search technical reports — title, code, author…" autocomplete="off">
+					<i class="material-symbols-outlined rlSearchClear" id="rlSearchClear" title="Clear">close</i>
+				</div>
+				<div class="rlSearchAuto" id="rlSearchAuto"><!-- JS: Recent + Saved --></div>
 			</div>
-			<a href="javascript:;" id="rlSearchBtn" class="waves-effect waves-light hBtn viva rlSearchBtn off"><i class="material-icons left">search</i><span class="label">Search</span></a>
+			<a href="javascript:;" id="rlSearchBtn" class="waves-effect waves-light hBtn rlSearchBtn off"><i class="material-icons left">search</i><span class="label">Search</span></a>
 		</div>
 
-		<!-- 필터 칩 바 + Saved searches -->
+		<!-- 필터 칩 바 + Saved filters -->
 		<div class="rlFilterBar" id="rlFilterBar">
 			<div class="rlChips" id="rlChips"><!-- JS --></div>
 			<span class="rlBarSep"></span>
 			<div class="rlBarActions">
-				<div class="rlSavedWrap" id="rlSavedWrap">
-					<a href="javascript:;" class="rlSavedBtn" id="rlSavedBtn"><i class="material-symbols-outlined">bookmark</i><span>Saved</span><i class="material-symbols-outlined ar">expand_more</i></a>
-					<div class="rlSavedMenu" id="rlSavedMenu"><!-- JS --></div>
-				</div>
 				<a href="javascript:;" class="rlReset" id="rlFacetClear"><i class="material-symbols-outlined">restart_alt</i>Reset</a>
 			</div>
 			<div class="rlPop" id="rlPop"><!-- JS 팝오버 --></div>
 		</div>
 
 		<!-- Discovery ↔ Results (풀폭) -->
-		<div class="rlMain hScroll" id="rlMain"><!-- JS 렌더 --></div>
+			<div class="rlMain hScroll" id="rlMain"><!-- JS 렌더 --></div>
+		</div>
+		<!-- ▼ Upload 뷰 (구 apis_rptlib_submit.html — SPA 인페이지 흡수) -->
+		<div class="rlContent upContent" id="rlViewUpload" style="display:none">
+			<!-- ── BOARD 모드: 내 제출물 파이프라인(진행 스테퍼) — upload.js renderMySubs가 채움 ── -->
+			<div id="subBoard"><!-- JS: My Submissions 보드(헤더 + New + 스테퍼 카드) --></div>
+			<!-- ── FORM 모드: 새 제출(메타·파일·선택적 리뷰어 힌트 — 분류는 담당자가 Approval에서) ── -->
+			<div id="subForm" style="display:none">
+				<div class="upHead">
+					<a href="javascript:;" class="upBack" id="upBackBtn"><i class="material-symbols-outlined">arrow_back</i>My Submissions</a>
+					<div class="upTit">New submission</div>
+					<div class="upSub">Describe it, attach the file, submit — <b>no self-classification</b>. The reviewer (Technology CoE) sets the final class; just flag anything sensitive below and MAPIS routes the approval in-app — no offline email chains.</div>
+				</div>
+				<div class="upBody hScroll">
+					<div class="upMain">
+					<!-- 1. 메타 입력 -->
+					<div class="cardBox upCard">
+						<div class="cardTit">1 · Details</div>
+						<div class="upGrid">
+							<div class="upField span2"><label>Title</label><div class="aniInput"><input type="text" class="browser-default" id="mTitle" placeholder="e.g., Low-Temperature Cure Silicone for Flexible Display"><span class="focus-border"></span></div></div>
+							<div class="upField"><label>Document Type</label><select class="rlSortSel browser-default" id="mType"><option>TIS Report</option><option>Tech / Market Review</option><option>Process Transfer Memo</option><option>Trip Report</option><option>Improvement Project</option></select></div>
+							<div class="upField"><label>Business Unit</label><select class="rlSortSel browser-default" id="mBu"><option>Coatings</option><option>Electronic Materials</option><option>Healthcare</option><option>Industrial</option><option>Personal Care</option><option>Specialty Additives</option><option>Tire &amp; Silanes</option><option>Urethane Additives</option></select></div>
+							<div class="upField"><label>Region / Site</label><select class="rlSortSel browser-default" id="mRegion"><option>DE — Leverkusen</option><option>KR — All Regions</option><option>US — All Regions</option><option>IN — Bangalore</option><option>IT — Termoli</option><option>JP — Ohta</option><option>CN — Shanghai</option><option>UK — Abingdon</option></select></div>
+							<div class="upField"><label>Author(s)</label><div class="aniInput"><input type="text" class="browser-default" id="mAuthor" placeholder="e.g., S.Y. Park"><span class="focus-border"></span></div></div>
+							<div class="upField span2"><label>Keywords</label><div class="aniInput"><input type="text" class="browser-default" id="mKw" placeholder="comma-separated — silicone, OLED, cure kinetics"><span class="focus-border"></span></div></div>
+							<div class="upField span2"><label>Abstract</label><div class="aniInput"><textarea class="materialize-textarea" id="mAbs" placeholder="One-paragraph summary…"></textarea><span class="focus-border"></span></div></div>
+							<div class="upField span2"><label>Heads-up for the reviewer (optional)</label><div class="aniInput"><textarea class="materialize-textarea" id="mHint" placeholder="Anything that affects access — e.g., &ldquo;Tied to an active JDA &mdash; please confirm scope.&rdquo; Leave blank for standard internal work."></textarea><span class="focus-border"></span></div></div>
+						</div>
+					</div>
+
+					<!-- 2. 파일 -->
+					<div class="cardBox upCard">
+						<div class="cardTit">2 · File</div>
+						<div class="upDrop" id="upDrop">
+							<i class="material-symbols-outlined">cloud_upload</i>
+							<div class="upDropT">Drag &amp; drop a PDF / Word file</div>
+							<div class="upDropS">or <a href="javascript:;" id="upBrowse">browse</a> · max 50 MB</div>
+						</div>
+						<div class="upFiles" id="upFiles"></div>
+					</div>
+					</div>
+					<aside class="upSide">
+						<div class="cardBox upCard">
+							<div class="cardTit">Submit for review</div>
+							<a href="javascript:;" class="waves-effect waves-light hBtn upSubmit" id="upSubmit"><span class="material-symbols-outlined left">send</span><span class="label">Submit for review</span></a>
+							<div class="upNote"><i class="material-symbols-outlined">bolt</i><span>On submit, MAPIS emails your approver and drops a To-Do in their queue — routing happens in-app, not by hand.</span></div>
+						</div>
+					</aside>
+				</div>
+			</div>
+		</div>
+		<div class="rlContent upContent" id="rlViewReview" style="display:none">
+			<div class="upHead">
+				<div class="upTit">My Approval</div>
+				<div class="upSub">Reports awaiting your review — answer the classification gates, then Approve &amp; publish or Reject (with a reason). Routed in-app via MAPIS To-Do.</div>
+			</div>
+			<div class="admBody hScroll" id="admBody"><!-- JS --></div>
+		</div>
+		<!-- ▼ My Report 뷰 — 내 전용 공간. 세그먼트: Reports(내가 만든 보고서·track) / Bookmarks(내가 모은 것·curate) -->
+		<div class="rlContent upContent" id="rlViewMine" style="display:none">
+			<div class="upHead upHeadRow">
+				<div>
+					<div class="upTit">My Report</div>
+					<div class="upSub">Your space — reports you authored, and the documents you’ve bookmarked.</div>
+				</div>
+				<div class="upToggle mineSeg" id="mineSeg">
+					<a href="javascript:;" class="on" data-seg="reports"><span class="material-symbols-outlined">assignment_ind</span>Reports</a>
+					<a href="javascript:;" data-seg="bookmarks"><span class="material-symbols-outlined">bookmark</span>Bookmarks</a>
+				</div>
+			</div>
+			<!-- 세그먼트 A: Reports(내 제출물 투영 — 발행/결재중/반려, 상세는 pop.html) — rptlib_mine.js -->
+			<div class="mineBody hScroll" id="mineReports"><!-- JS --></div>
+			<!-- 세그먼트 B: Bookmarks(폴더 트리 + 문서 참조, localStorage) — rptlib_collections.js -->
+			<div class="mineBody bmBody" id="mineBookmarks" style="display:none"><!-- JS --></div>
+		</div>
+		</div>
 	</article>
 
 	<div class="rlToastWrap" id="rlToastWrap"></div>
 
-	<script>
-	/* ════════════════════════════════════════════════════════════
-	   Technical Report Library — 목업(시각 우선, 규칙 비enforce).
-	   검색 = 상단 히어로(#rlSearchInput) + 가로 필터 칩(팝오버). 헤더 srchArea(#mainSrchInput) = global.
-	   상호작용 = staged(쌓기) → Search 버튼이 일괄 적용(deferred). Home = 첫 화면 복귀+리셋.
-	   ════════════════════════════════════════════════════════════ */
-
-	var INDEXES = [
-		{id:'CN', nm:'CN — Shanghai'}, {id:'DE', nm:'DE — Leverkusen'}, {id:'IN', nm:'IN — Bangalore'},
-		{id:'IT', nm:'IT — Termoli'}, {id:'JP', nm:'JP — Ohta'}, {id:'KR', nm:'KR — All Regions'},
-		{id:'TH', nm:'Thailand'}, {id:'UK', nm:'UK — Abingdon'}, {id:'US', nm:'US — All Regions'}
-	];
-	var CLASSES = [
-		{c:1, nm:'Class 1 · Public',            sc:'green',  dot:'rlc1', lock:false},
-		{c:2, nm:'Class 2 · Internal',          sc:'blue',   dot:'rlc2', lock:false},
-		{c:3, nm:'Class 3 · Confidential',      sc:'orange', dot:'rlc3', lock:true},
-		{c:4, nm:'Class 4 · Highly Restricted', sc:'red',    dot:'rlc4', lock:true}
-	];
-	var TYPES = [
-		{t:'TIS', nm:'TIS Report', ic:'article'}, {t:'TMR', nm:'Tech / Market Review', ic:'summarize'},
-		{t:'PTM', nm:'Process Transfer Memo', ic:'swap_horiz'}, {t:'Trip', nm:'Trip Report', ic:'flight'},
-		{t:'IP', nm:'Improvement Project', ic:'trending_up'}
-	];
-	function typeInfo(t){ return TYPES.filter(function(x){return x.t===t;})[0] || {t:t,nm:t,ic:'description'}; }
-	function classInfo(c){ return CLASSES.filter(function(x){return x.c===c;})[0] || CLASSES[1]; }
-	function idxName(id){ var x=INDEXES.filter(function(i){return i.id===id;})[0]; return x?x.nm:id; }
-
-	var REPORTS = [
-		{code:'LEV-24-02',  title:'Bio-based Silicone Feasibility Study (JDA)',         type:'TIS', site:'LEV', idx:'DE', author:'Dr. Stephan Boß',           bu:'Elastomers',   date:'2026-06-14', cls:4, hits:162},
-		{code:'KR-23-11',   title:'Low-Temperature Cure Silicone for Flexible Display', type:'TIS', site:'KR',  idx:'KR', author:'S.Y. Park',                bu:'Specialty',    date:'2026-06-12', cls:3, hits:274},
-		{code:'ITC-22-31',  title:'Antifoam Improvement Project — Phase 2',             type:'IP',  site:'ITC', idx:'IN', author:'Indumathi M.',             bu:'Fluids',       date:'2026-06-10', cls:2, hits:176},
-		{code:'LEV-23-07',  title:'Development of a Baking Paper Release Coating',      type:'TIS', site:'LEV', idx:'DE', author:'Markus Bley',              bu:'Coatings',     date:'2026-06-05', cls:2, hits:352},
-		{code:'TML-22-02',  title:'Resin Intermediate Process Transfer Memorandum',    type:'PTM', site:'TML', idx:'IT', author:'G. Rossi',                 bu:'Resins',       date:'2026-05-28', cls:2, hits:205},
-		{code:'KR-22-03',   title:'OLED Encapsulation Adhesive — Scale-up Request',     type:'PTM', site:'KR',  idx:'KR', author:'J.P. Kim',                 bu:'Specialty',    date:'2026-05-20', cls:2, hits:298},
-		{code:'BKK-21-19',  title:'Sealant Field Trial Report — SE Asia',              type:'Trip',site:'BKK', idx:'TH', author:'S. Phong',                 bu:'Sealants',     date:'2026-05-12', cls:2, hits:188},
-		{code:'SH-21-08',   title:'Defoamer Performance in Architectural Coatings',    type:'TIS', site:'SH',  idx:'CN', author:'Wei Zhang',                bu:'Coatings',     date:'2026-04-30', cls:2, hits:241},
-		{code:'ABD-20-15',  title:'Specialty Fluids for Personal Care Formulations',   type:'TMR', site:'ABD', idx:'UK', author:'J. Whitfield',             bu:'Personal Care',date:'2026-04-18', cls:1, hits:233},
-		{code:'TT-18-12',   title:'Water Phase Sensory Elastomer',                     type:'TIS', site:'TT',  idx:'US', author:'Mukesh Kumar',             bu:'Elastomers',   date:'2026-03-22', cls:2, hits:359},
-		{code:'SV-19-06',   title:'Urethane Additives Applications Guide',             type:'TMR', site:'SV',  idx:'US', author:'L. Heisler',               bu:'Additives',    date:'2026-02-15', cls:2, hits:432},
-		{code:'SV-19-10',   title:'Urethane Additives Technology Review',              type:'TMR', site:'SV',  idx:'US', author:'L. Heisler',               bu:'Additives',    date:'2026-02-10', cls:2, hits:388},
-		{code:'WTC-11-29',  title:'In-situ Functionalized Nano Ceria Dispersions',     type:'TIS', site:'WTC', idx:'IN', author:'Asha Jhonsi, Karthikeyan M.',bu:'Fluids',     date:'2026-01-20', cls:2, hits:554},
-		{code:'JPN-15-04',  title:'Patent Survey for UV Curable Frontsheet',           type:'TIS', site:'JPN', idx:'JP', author:'Kazuhisa Ono',             bu:'Specialty',    date:'2025-12-08', cls:3, hits:518},
-		{code:'TT-12-16',   title:'Silicone Fluids Technology Highlights — Annual',    type:'TMR', site:'TT',  idx:'US', author:'Global Silicone Fluids Tech',bu:'Fluids',     date:'2025-11-30', cls:3, hits:374},
-		{code:'2008-MPM-16',title:'SF1632 Part 1: Root Cause Analysis',                type:'TIS', site:'WF',  idx:'US', author:'Global Silicone Fluids Tech',bu:'Fluids',     date:'2025-11-12', cls:4, hits:379},
-		{code:'JPN-10-07',  title:'Effect of Crosslinkage and Reinforcement',          type:'TIS', site:'JPN', idx:'JP', author:'H. Sato',                  bu:'Elastomers',   date:'2025-10-05', cls:2, hits:572},
-		{code:'JPN-09-24',  title:'HCR New Portfolio; The Development Roadmap',         type:'TIS', site:'JPN', idx:'JP', author:'T. Nakamura',              bu:'Elastomers',   date:'2025-09-18', cls:3, hits:575},
-		{code:'ITC-12-13',  title:'Patentability Search: Acrylate Functional Silicones',type:'TIS',site:'ITC',idx:'IN', author:'Madhuri Raju, A. Dhanabalan',bu:'Specialty',  date:'2025-08-22', cls:1, hits:632},
-		{code:'WTC-11-45',  title:'Surface Modification of Ceria Using Silanes',       type:'TIS', site:'WTC', idx:'IN', author:'Karthikeyan Murugesan',    bu:'Fluids',       date:'2025-07-30', cls:2, hits:636},
-		{code:'TT-11-16',   title:'Hydrosilylation with Iron-Pyridine Catalysts',      type:'TIS', site:'TT',  idx:'US', author:'Kenrick M. Lewis',         bu:'Additives',    date:'2025-06-25', cls:2, hits:798},
-		{code:'LEV-20-27',  title:'Liquid Silicone Rubber — Handbook of Processing',   type:'TIS', site:'LEV', idx:'DE', author:'Enise Michalski',          bu:'Elastomers',   date:'2025-05-15', cls:2, hits:1441}
-	];
-	var MY_REGION = 'US';   // 데모상 접근 권역(잠금 시각 표현용 — enforce 아님)
-	var MAXHITS = Math.max.apply(null, REPORTS.map(function(r){return r.hits;}));
-	var DATE_LABELS = {all:'Any time','2024':'2023 – now','2018':'2018 – 2022','0':'Before 2018'};
-
-	function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-	function toast(msg, kind){
-		var ic={ok:'check_circle',info:'info',warn:'lock',mocha:'bolt'}[kind||'info']||'info';
-		var el=document.createElement('div'); el.className='rlToast '+(kind||'info');
-		el.innerHTML='<i class="material-symbols-outlined">'+ic+'</i><span>'+esc(msg)+'</span>';
-		document.getElementById('rlToastWrap').appendChild(el);
-		setTimeout(function(){ el.classList.add('fade'); setTimeout(function(){ el.remove(); },260); }, 2400);
-	}
-
-	/* ── staged 상태(좌 패널 대신 칩/검색창이 편집) ── */
-	var activeIdx={}; INDEXES.forEach(function(i){ activeIdx[i.id]=true; });
-	var activeCls={1:true,2:true,3:true,4:true};
-	var stType='all', stDate='all', stBu='all';
-	var applied=null;      // 적용 스냅샷(우측 렌더 기준). null = Discovery
-	var searchMode=false;  // 현재 뷰가 Results 인가
-	var dirty=false;       // staged 미적용 → Search 버튼 활성
-	var openPop=null;      // 현재 열린 칩 팝오버 key
-
-	function stagedQuery(){ return (document.getElementById('rlSearchInput').value||'').trim(); }
-	function snapshotApplied(){
-		applied={ q:stagedQuery(), idx:Object.assign({},activeIdx), cls:Object.assign({},activeCls), type:stType, date:stDate, bu:stBu };
-	}
-	function setDirty(v){ dirty=!!v; var b=document.getElementById('rlSearchBtn'); if(b) b.classList.toggle('off', !dirty); }
-
-	function openReport(code){
-		var r=REPORTS.filter(function(x){return x.code===code;})[0]; if(!r) return;
-		if(r.cls>=3 && r.idx!==MY_REGION){
-			toast('“'+r.code+'” is Class '+r.cls+' ('+idxName(r.idx)+'). Title & metadata only — full access is region-restricted.','warn'); return;
-		}
-		toast('Opening “'+r.code+'” — '+r.title,'mocha');
-		// 다음 단계: window.open('apis_rptlib_pop.html?code='+encodeURIComponent(code), 'rlReport', 'width=1280,height=900,...');
-	}
-
-	/* ── 인라인 등급 배지(카드·순위·결과행 공통) ── */
-	function classBadge(c){ return '<span class="rlClassBadge c'+c+'">'+(classInfo(c).lock?'<i class="material-symbols-outlined">lock</i>':'')+'C'+c+'</span>'; }
-
-	/* ════════════ 필터 칩 + 팝오버 ════════════ */
-	function busList(){ var bus=[]; REPORTS.forEach(function(r){ if(bus.indexOf(r.bu)<0) bus.push(r.bu); }); bus.sort(); return bus; }
-	function idxOnCount(){ return INDEXES.filter(function(i){return activeIdx[i.id];}).length; }
-	function clsOnList(){ return [1,2,3,4].filter(function(c){return activeCls[c];}); }
-	var CHIPS=[
-		{key:'type',   ic:'description', name:'Type'},
-		{key:'region', ic:'public',      name:'Region'},
-		{key:'class',  ic:'shield',      name:'Class'},
-		{key:'date',   ic:'event',       name:'Date'},
-		{key:'bu',     ic:'apartment',   name:'Unit'}
-	];
-	function chipState(key){
-		if(key==='type')   return {active:stType!=='all', text:stType==='all'?'Type':'Type · '+typeInfo(stType).t};
-		if(key==='region'){ var on=idxOnCount(); return {active:on!==INDEXES.length, text:on===INDEXES.length?'Region':'Region · '+on+' of '+INDEXES.length}; }
-		if(key==='class'){ var on=clsOnList(); return {active:on.length!==4, text:on.length===4?'Class':'Class · '+on.map(function(c){return 'C'+c;}).join(',')}; }
-		if(key==='date')   return {active:stDate!=='all', text:stDate==='all'?'Date':'Date · '+DATE_LABELS[stDate]};
-		if(key==='bu')     return {active:stBu!=='all', text:stBu==='all'?'Unit':'Unit · '+stBu};
-		return {active:false, text:key};
-	}
-	function renderChips(){
-		document.getElementById('rlChips').innerHTML=CHIPS.map(function(c){
-			var s=chipState(c.key);
-			return '<button class="rlChip'+(s.active?' on':'')+(openPop===c.key?' open':'')+'" data-chip="'+c.key+'">'+
-				'<i class="material-symbols-outlined ci">'+c.ic+'</i><span class="lab">'+esc(s.text)+'</span>'+
-				(s.active?'<i class="material-symbols-outlined cx" data-clear="'+c.key+'">close</i>':'<i class="material-symbols-outlined ar">expand_more</i>')+
-			'</button>';
-		}).join('');
-	}
-	function popContent(key){
-		if(key==='region'){
-			var on=idxOnCount();
-			var rows=INDEXES.map(function(i){
-				var cnt=REPORTS.filter(function(r){return r.idx===i.id;}).length;
-				return '<label class="rlChk"><input type="checkbox" class="filled-in" data-idx="'+i.id+'"'+(activeIdx[i.id]?' checked':'')+'/>'+
-					'<span class="nm">'+esc(i.nm)+'</span><span class="rc">'+cnt+'</span></label>';
-			}).join('');
-			return '<div class="popHead">Region Indexes<span class="lnk" data-idxtoggle>'+(on===INDEXES.length?'Deselect all':'Select all')+'</span></div><div class="popList">'+rows+'</div>';
-		}
-		if(key==='class'){
-			var rows=CLASSES.map(function(c){
-				var cnt=REPORTS.filter(function(r){return r.cls===c.c;}).length;
-				return '<label class="rlChk"><input type="checkbox" class="filled-in" data-cls="'+c.c+'"'+(activeCls[c.c]?' checked':'')+'/>'+
-					'<span class="nm"><span class="cdot '+c.dot+'"></span>'+esc(c.nm)+'</span>'+
-					(c.lock?'<i class="material-symbols-outlined">lock</i>':'')+'<span class="rc">'+cnt+'</span></label>';
-			}).join('');
-			return '<div class="popHead">Classification</div><div class="popList">'+rows+'</div>';
-		}
-		if(key==='type'){
-			var opts=[{v:'all',t:'All types'}].concat(TYPES.map(function(t){return {v:t.t,t:t.nm+' ('+REPORTS.filter(function(r){return r.type===t.t;}).length+')'};}));
-			return '<div class="popList opt">'+opts.map(function(o){return '<a href="javascript:;" class="popOpt'+(stType===o.v?' sel':'')+'" data-type="'+esc(o.v)+'">'+esc(o.t)+(stType===o.v?'<i class="material-symbols-outlined">check</i>':'')+'</a>';}).join('')+'</div>';
-		}
-		if(key==='date'){
-			var ds=[['all','Any time'],['2024','2023 – now'],['2018','2018 – 2022'],['0','Before 2018']];
-			return '<div class="popList opt">'+ds.map(function(d){return '<a href="javascript:;" class="popOpt'+(stDate===d[0]?' sel':'')+'" data-date="'+d[0]+'">'+esc(d[1])+(stDate===d[0]?'<i class="material-symbols-outlined">check</i>':'')+'</a>';}).join('')+'</div>';
-		}
-		if(key==='bu'){
-			var opts=[{v:'all',t:'All units'}].concat(busList().map(function(b){return {v:b,t:b};}));
-			return '<div class="popList opt">'+opts.map(function(o){return '<a href="javascript:;" class="popOpt'+(stBu===o.v?' sel':'')+'" data-bu="'+esc(o.v)+'">'+esc(o.t)+(stBu===o.v?'<i class="material-symbols-outlined">check</i>':'')+'</a>';}).join('')+'</div>';
-		}
-		return '';
-	}
-	function openPopover(key){
-		if(openPop===key){ closePopover(); return; }
-		closeSaved();
-		openPop=key;
-		var pop=document.getElementById('rlPop');
-		pop.innerHTML=popContent(key);
-		var chip=document.querySelector('.rlChip[data-chip="'+key+'"]');
-		if(chip){ var left=chip.offsetLeft; var bar=document.getElementById('rlFilterBar');
-			pop.style.left=Math.min(left, bar.clientWidth-Math.min(300,pop.offsetWidth||280)-2)+'px'; }
-		pop.classList.add('show');
-		renderChips();
-	}
-	function closePopover(){ if(openPop===null) return; openPop=null; var pop=document.getElementById('rlPop'); pop.classList.remove('show'); pop.innerHTML=''; renderChips(); }
-	function clearChip(key){
-		if(key==='type') stType='all';
-		else if(key==='region') INDEXES.forEach(function(i){ activeIdx[i.id]=true; });
-		else if(key==='class') activeCls={1:true,2:true,3:true,4:true};
-		else if(key==='date') stDate='all';
-		else if(key==='bu') stBu='all';
-		onStageChange();
-	}
-	function onStageChange(){ setDirty(true); renderChips(); }
-
-	/* ════════════ Saved searches ════════════ */
-	function idxAll(){ var o={}; INDEXES.forEach(function(i){ o[i.id]=true; }); return o; }
-	function clsAll(){ return {1:true,2:true,3:true,4:true}; }
-	var SAVED=[
-		{name:'My region · Class 1–2', q:'', idx:idxAll(), cls:{1:true,2:true,3:false,4:false}, type:'all', date:'all', bu:'all'},
-		{name:'Recent TIS reports',    q:'', idx:idxAll(), cls:clsAll(), type:'TIS', date:'2024', bu:'all'},
-		{name:'Elastomers — all sites',q:'', idx:idxAll(), cls:clsAll(), type:'all', date:'all', bu:'Elastomers'}
-	];
-	function renderSaved(){
-		var items=SAVED.map(function(s,i){
-			return '<a href="javascript:;" class="savedItem" data-saved="'+i+'"><i class="material-symbols-outlined">bookmark</i><span>'+esc(s.name)+'</span></a>';
-		}).join('');
-		document.getElementById('rlSavedMenu').innerHTML=(SAVED.length?items:'<div class="savedEmpty">No saved searches yet</div>')+
-			'<a href="javascript:;" class="savedItem add" id="rlSaveCur"><i class="material-symbols-outlined">add</i><span>Save current search…</span></a>';
-	}
-	function openSaved(){ closePopover(); document.getElementById('rlSavedWrap').classList.add('open'); }
-	function closeSaved(){ document.getElementById('rlSavedWrap').classList.remove('open'); }
-	function loadSaved(i){
-		var s=SAVED[i]; if(!s) return;
-		activeIdx=Object.assign({},s.idx); activeCls=Object.assign({},s.cls);
-		stType=s.type; stDate=s.date; stBu=s.bu; setQueryInput(s.q||'');
-		setDirty(true); renderChips(); closeSaved();
-		toast('Loaded “'+s.name+'” — press Search to run.','info');
-	}
-	function saveCurrent(){
-		var name=window.prompt('Name this search', stagedQuery()||'Untitled search');
-		if(!name || !name.trim()) return;
-		SAVED.push({ name:name.trim(), q:stagedQuery(), idx:Object.assign({},activeIdx), cls:Object.assign({},activeCls), type:stType, date:stDate, bu:stBu });
-		renderSaved(); closeSaved(); toast('Saved “'+name.trim()+'”.','ok');
-	}
-
-	/* ════════════ Discovery(빈 상태) ════════════ */
-	function repCard(r){
-		return '<div class="rlRepCard" data-code="'+esc(r.code)+'">'+
-			'<div class="rcTop"><span class="rcType">'+esc(r.type)+'</span>'+classBadge(r.cls)+'</div>'+
-			'<div class="rcTitle">'+esc(r.title)+'</div>'+
-			'<div class="rcMeta"><span class="code">'+esc(r.code)+'</span><span class="dot">·</span>'+esc(r.author)+'</div>'+
-			'<div class="rcFoot"><span class="rcSite"><i class="material-symbols-outlined">public</i>'+esc(idxName(r.idx))+'</span>'+
-			'<span style="margin-left:auto;font-size:11px;color:#bcae9d;">'+esc(r.date)+'</span></div>'+
-		'</div>';
-	}
-	function rankRow(r,i){
-		var pct=Math.max(6, Math.round(r.hits/MAXHITS*100));
-		return '<div class="rlRankRow" data-code="'+esc(r.code)+'"><span class="rlRankNo">'+(i+1)+'</span>'+
-			'<div class="rlRankMain"><div class="rlRankTit">'+esc(r.title)+'</div>'+
-			'<div class="rlRankSub"><span class="code">'+esc(r.code)+'</span>'+classBadge(r.cls)+
-			'<span>'+esc(idxName(r.idx))+'</span></div></div>'+
-			'<div class="rlRankBar"><span style="width:'+pct+'%"></span></div>'+
-			'<span class="rlRankHits"><i class="material-symbols-outlined">visibility</i>'+r.hits+'</span></div>';
-	}
-	function renderDiscovery(){
-		searchMode=false;
-		var recent=REPORTS.slice().sort(function(a,b){return a.date<b.date?1:-1;}).slice(0,8);
-		var ranked=REPORTS.slice().sort(function(a,b){return b.hits-a.hits;}).slice(0,8);
-		var html='<div class="rlDiscover">';
-		html+='<div class="rlIntro"><div class="rlIntroTxt">'+
-			'<h1><i class="material-symbols-outlined">database</i>Technical Report Hub</h1>'+
-			'<p>Momentive Global Technology — find, read, and contribute technical reports across all sites and regions.</p>'+
-			'</div><div class="rlIntroStats">'+
-			'<div class="rlStat"><b>12,480</b><span>Reports</span></div>'+
-			'<div class="rlStat"><b>9</b><span>Region indexes</span></div>'+
-			'<div class="rlStat"><b>37</b><span>Added this week</span></div></div></div>';
-		html+='<div class="rlSec"><div class="rlSecHead"><span class="st"><i class="material-symbols-outlined">schedule</i>Recently Added</span>'+
-			'<span class="more" data-browse="recent">View all<i class="material-symbols-outlined">chevron_right</i></span></div>'+
-			'<div class="rlCardGrid">'+recent.map(repCard).join('')+'</div></div>';
-		html+='<div class="rlSec"><div class="rlSecHead"><span class="st"><i class="material-symbols-outlined">local_fire_department</i>Most Referenced</span>'+
-			'<span class="more" data-browse="top">View all<i class="material-symbols-outlined">chevron_right</i></span></div>'+
-			'<div class="rlRankList">'+ranked.map(function(r,i){return rankRow(r,i);}).join('')+'</div></div>';
-		html+='<div class="rlSec"><div class="rlSecHead"><span class="st"><i class="material-symbols-outlined">category</i>Browse by Document Type</span></div>'+
-			'<div class="rlTypeTiles">'+TYPES.map(function(t){
-				return '<div class="rlTypeTile" data-type="'+t.t+'"><i class="material-symbols-outlined">'+t.ic+'</i>'+
-					'<div><div class="tt">'+esc(t.nm)+'</div><div class="tc">'+REPORTS.filter(function(r){return r.type===t.t;}).length+' reports</div></div></div>';
-			}).join('')+'</div></div>';
-		html+='<div class="rlSec"><div class="rlSecHead"><span class="st"><i class="material-symbols-outlined">travel_explore</i>Browse by Region</span></div>'+
-			'<div class="rlTypeTiles">'+INDEXES.map(function(i){
-				return '<div class="rlTypeTile" data-idx="'+i.id+'"><i class="material-symbols-outlined">public</i>'+
-					'<div><div class="tt">'+esc(i.nm)+'</div><div class="tc">'+REPORTS.filter(function(r){return r.idx===i.id;}).length+' reports</div></div></div>';
-			}).join('')+'</div></div>';
-		html+='</div>';
-		document.getElementById('rlMain').innerHTML=html;
-	}
-
-	/* ════════════ 검색 결과 ════════════ */
-	function currentMatches(){
-		var a=applied||{idx:activeIdx,cls:activeCls,type:'all',date:'all',bu:'all',q:''};
-		var idx=a.idx, cls=a.cls, ft=a.type, fd=a.date, fb=a.bu, q=(a.q||'').toLowerCase();
-		return REPORTS.filter(function(r){
-			if(!idx[r.idx]) return false;
-			if(!cls[r.cls]) return false;
-			if(ft!=='all' && r.type!==ft) return false;
-			if(fb!=='all' && r.bu!==fb) return false;
-			if(fd!=='all'){ var y=parseInt(r.date.slice(0,4),10);
-				if(fd==='2024' && y<2023) return false;
-				if(fd==='2018' && (y<2018||y>2022)) return false;
-				if(fd==='0' && y>=2018) return false; }
-			if(q && (r.title+' '+r.code+' '+r.author+' '+r.bu+' '+r.type).toLowerCase().indexOf(q)<0) return false;
-			return true;
-		}).sort(function(a,b){return b.hits-a.hits;});
-	}
-	function resultRow(r){
-		var locked=(r.cls>=3 && r.idx!==MY_REGION);
-		var lockHint=locked?'<span class="rlRowLockHint"><i class="material-symbols-outlined" style="font-size:13px;">lock</i>Metadata only · region-restricted</span>':'';
-		return '<div class="rlResultRow'+(locked?' locked':'')+'" data-code="'+esc(r.code)+'">'+
-			'<div class="rlRowIcon"><i class="material-symbols-outlined">'+(locked?'lock':typeInfo(r.type).ic)+'</i></div>'+
-			'<div class="rlRowBody"><div class="rlRowTitle"><span class="tt">'+esc(r.title)+'</span>'+classBadge(r.cls)+'</div>'+
-			'<div class="rlRowMeta"><span class="code">'+esc(r.code)+'</span><span class="dot">·</span>'+
-				'<span class="type">'+esc(r.type)+'</span><span class="dot">·</span>'+
-				'<span class="site"><i class="material-symbols-outlined">public</i>'+esc(idxName(r.idx))+'</span><span class="dot">·</span>'+
-				'<span>'+esc(r.author)+'</span>'+(lockHint?'<span class="dot">·</span>'+lockHint:'')+'</div></div>'+
-			'<div class="rlRowRight"><div class="rlRowRel"><span class="h">'+r.hits+'</span><span class="hl">refs</span></div>'+
-			'<div class="rlRowActs">'+
-				'<span class="rlRowAct rlBasket" data-code="'+esc(r.code)+'" title="Add to basket"><i class="material-symbols-outlined">add_shopping_cart</i></span>'+
-				'<span class="rlRowAct rlDl" data-code="'+esc(r.code)+'" title="'+(locked?'Restricted':'Download')+'"><i class="material-symbols-outlined">'+(locked?'lock':'download')+'</i></span>'+
-			'</div></div></div>';
-	}
-	function renderResults(){
-		searchMode=true;
-		var list=currentMatches();
-		var aq=applied&&applied.q;
-		var html='<div class="rlResults">';
-		html+='<div class="rlResultsHead"><div class="rlResultsCount">Documents <b>1–'+list.length+'</b> of <b>'+list.length+'</b>'+
-			(aq?' for <span class="q">“'+esc(aq)+'”</span>':'')+'</div>'+
-			'<div class="rlResultsTools"><select class="rlSortSel" id="rlSort">'+
-			'<option value="rel">Sort: Relevance</option><option value="date">Newest</option><option value="hits">Most referenced</option>'+
-			'</select></div></div>';
-		if(!list.length){
-			html+='<div class="rlEmpty"><i class="material-symbols-outlined">search_off</i>'+
-				'<div class="et">No reports match your search.</div>'+
-				'<div class="es">Try removing a filter or broadening your keywords.</div></div>';
-		} else {
-			html+='<div class="rlResultList">'+list.map(resultRow).join('')+'</div>';
-			html+='<div class="rlPager"><a class="nav">‹ Prev</a><a class="on">1</a><a>2</a><a>3</a><a>4</a><a class="nav">Next ›</a></div>';
-		}
-		html+='</div>';
-		document.getElementById('rlMain').innerHTML=html;
-		var ss=document.getElementById('rlSort'); if(ss) ss.addEventListener('change',function(){ applySort(this.value); });
-	}
-	function applySort(mode){
-		var list=currentMatches();
-		if(mode==='date') list.sort(function(a,b){return a.date<b.date?1:-1;});
-		else list.sort(function(a,b){return b.hits-a.hits;});
-		var wrap=document.querySelector('.rlResultList'); if(wrap) wrap.innerHTML=list.map(resultRow).join('');
-	}
-
-	/* ════════════ 적용 / 홈 ════════════ */
-	function setQueryInput(v){ var s=document.getElementById('rlSearchInput'); if(!s) return; s.value=v; var f=s.closest('.rlSearchField'); if(f) f.classList.toggle('has', !!v); }
-	function applySearch(){ snapshotApplied(); setDirty(false); closePopover(); renderResults(); }
-	function goHome(){
-		INDEXES.forEach(function(i){ activeIdx[i.id]=true; }); activeCls={1:true,2:true,3:true,4:true};
-		stType='all'; stDate='all'; stBu='all'; setQueryInput('');
-		applied=null; setDirty(false); closePopover(); renderChips(); renderDiscovery();
-	}
-
-	$(document).ready(function(){
-		$('.sidenav').sidenav();
-		$(document).on('click', '.sidenav-overlay, .closeBtns', function(){ $('.sidenav').sidenav('close'); });
-
-		renderChips(); renderSaved(); renderDiscovery(); setDirty(false);
-
-		// 타이틀 ⌂ 홈 — 첫 화면 복귀 + 리셋
-		document.getElementById('rlHome').addEventListener('click', goHome);
-
-		// 검색 히어로 — Enter / Search 버튼 = 일괄 적용. 입력은 staged만.
-		var sq=document.getElementById('rlSearchInput');
-		sq.addEventListener('input', function(){ var f=sq.closest('.rlSearchField'); if(f) f.classList.toggle('has', !!sq.value); setDirty(true); });
-		sq.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); applySearch(); } });
-		document.getElementById('rlSearchBtn').addEventListener('click', function(){ if(dirty) applySearch(); });
-		document.getElementById('rlSearchClear').addEventListener('click', function(){ setQueryInput(''); setDirty(true); sq.focus(); });
-
-		// 헤더 srchArea = global — 모듈 검색은 상단 검색바로 안내
-		var gq=document.getElementById('mainSrchInput');
-		if(gq) gq.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); toast('Global search spans all MAPIS modules. Use the search bar above the results to find reports.','info'); } });
-
-		// 필터 칩 바: 칩 클릭=팝오버 토글, X=클리어
-		document.getElementById('rlChips').addEventListener('click', function(e){
-			var cx=e.target.closest('[data-clear]');
-			if(cx){ e.stopPropagation(); clearChip(cx.getAttribute('data-clear')); return; }
-			var chip=e.target.closest('.rlChip');
-			if(chip){ e.stopPropagation(); openPopover(chip.getAttribute('data-chip')); }
-		});
-		// 팝오버 내부: 멀티(체크) = change, 단일(옵션)/전체토글 = click
-		document.getElementById('rlPop').addEventListener('click', function(e){
-			var tg=e.target.closest('[data-idxtoggle],[data-type],[data-date],[data-bu]'); if(!tg) return;
-			e.stopPropagation();
-			if(tg.hasAttribute('data-idxtoggle')){
-				var next=(idxOnCount()!==INDEXES.length); INDEXES.forEach(function(i){ activeIdx[i.id]=next; });
-				document.getElementById('rlPop').innerHTML=popContent('region'); onStageChange(); return;
-			}
-			if(tg.hasAttribute('data-type')){ stType=tg.getAttribute('data-type'); onStageChange(); closePopover(); return; }
-			if(tg.hasAttribute('data-date')){ stDate=tg.getAttribute('data-date'); onStageChange(); closePopover(); return; }
-			if(tg.hasAttribute('data-bu')){ stBu=tg.getAttribute('data-bu'); onStageChange(); closePopover(); return; }
-		});
-		document.getElementById('rlPop').addEventListener('change', function(e){
-			var ci=e.target.closest('input[data-idx]'); if(ci){ activeIdx[ci.getAttribute('data-idx')]=ci.checked; onStageChange(); return; }
-			var cc=e.target.closest('input[data-cls]'); if(cc){ activeCls[+cc.getAttribute('data-cls')]=cc.checked; onStageChange(); return; }
-		});
-
-		// Reset — 필터 staged 기본값으로(키워드 유지). Search 눌러야 반영.
-		document.getElementById('rlFacetClear').addEventListener('click', function(){
-			INDEXES.forEach(function(i){ activeIdx[i.id]=true; }); activeCls={1:true,2:true,3:true,4:true};
-			stType='all'; stDate='all'; stBu='all';
-			closePopover(); setDirty(true); renderChips(); toast('Filters reset — press Search to apply.','info');
-		});
-
-		// Saved 드롭다운
-		document.getElementById('rlSavedBtn').addEventListener('click', function(e){ e.stopPropagation(); document.getElementById('rlSavedWrap').classList.contains('open')?closeSaved():openSaved(); });
-		document.getElementById('rlSavedMenu').addEventListener('click', function(e){
-			var add=e.target.closest('#rlSaveCur'); if(add){ e.stopPropagation(); saveCurrent(); return; }
-			var it=e.target.closest('[data-saved]'); if(it){ e.stopPropagation(); loadSaved(+it.getAttribute('data-saved')); return; }
-		});
-
-		// 바깥 클릭 / Esc → 팝오버·Saved 닫기
-		document.addEventListener('click', function(e){
-			if(openPop!==null && !e.target.closest('#rlPop') && !e.target.closest('.rlChip')) closePopover();
-			if(!e.target.closest('#rlSavedWrap')) closeSaved();
-		});
-		document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closePopover(); closeSaved(); } });
-
-		// 본문 위임: basket / download / 타일(원클릭 검색) / more / 카드·행 클릭
-		document.getElementById('rlMain').addEventListener('click', function(e){
-			var basket=e.target.closest('.rlBasket');
-			if(basket){ e.stopPropagation(); basket.classList.toggle('on');
-				var on=basket.classList.contains('on'); var bi=basket.querySelector('i'); if(bi) bi.textContent= on?'shopping_cart':'add_shopping_cart';
-				toast(on?('Added '+basket.getAttribute('data-code')+' to basket.'):'Removed from basket.', on?'ok':'info'); return; }
-			var dl=e.target.closest('.rlDl');
-			if(dl){ e.stopPropagation(); var dcode=dl.getAttribute('data-code'); var dr=REPORTS.filter(function(x){return x.code===dcode;})[0];
-				if(dr && dr.cls>=3 && dr.idx!==MY_REGION) toast('Download blocked — Class '+dr.cls+' is region-restricted ('+idxName(dr.idx)+').','warn');
-				else toast('Downloading '+dcode+'… (mock)','mocha'); return; }
-			var tile=e.target.closest('.rlTypeTile');
-			if(tile){ setQueryInput('');
-				if(tile.hasAttribute('data-idx')){ var rid=tile.getAttribute('data-idx'); INDEXES.forEach(function(i){ activeIdx[i.id]=(i.id===rid); }); }
-				else { stType=tile.getAttribute('data-type'); }
-				renderChips(); applySearch(); return; }
-			var more=e.target.closest('.more[data-browse]');
-			if(more){ var b=more.getAttribute('data-browse'); setQueryInput(''); applySearch();
-				var ss=document.getElementById('rlSort'); if(ss){ ss.value=(b==='recent'?'date':'hits'); applySort(ss.value); } return; }
-			var card=e.target.closest('[data-code]');
-			if(card){ openReport(card.getAttribute('data-code')); return; }
-		});
-	});
-	</script>
+	<script src="js/rptlib_common.js"></script>
+	<script src="js/rptlib_docs.js"></script>
+	<script src="js/rptlib_upload.js"></script>
+	<script src="js/rptlib_review.js"></script>
+	<script src="js/rptlib_collections.js"></script>
+	<script src="js/rptlib_mine.js"></script>
 </body>
 </html>
