@@ -1776,18 +1776,18 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 	font-size: 13px;
 	border-width: 1px;
 }
-.cardBox .cardSubTitArea {
+.cardBox .cardSubTitArea, .modal .cardSubTitArea {
     display: flex;
     justify-content: space-between;
     align-items: center;
     margin-bottom: 5px;
 }
 
-.cardBox .cardSubTit {
+.cardBox .cardSubTit, .modal .cardSubTit {
 	font-size: 14px;
 	font-family: 'Roboto-Medium';
 }
-.cardBox .cardSubTit::before {
+.cardBox .cardSubTit::before, .modal .cardSubTit::before {
 	content: "\2BC0";
 	margin-right: 10px;
 	vertical-align: top;
@@ -2330,7 +2330,17 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 /* 표 안 라디오에 텍스트 라벨이 붙는 경우: 원(0~20px)과 안 겹치게 + span의 25px 라인에서 텍스트·원 세로중앙 자동 정렬 */
 .fixedTable.hBorderTable [type="radio"]:not(:checked) + span.rdoLbl, .fixedTable.hBorderTable [type="radio"]:checked + span.rdoLbl {
 	padding-left: 24px;
+	font-size: 14px;   /* materialize 라디오 라벨 13px 기본을 표 셀(14px)에 맞춤 */
 }
+
+/* 선택(active) 행 전체 Medium 시, 배지(roundBox)는 제외하고 Regular 유지 */
+.fixedTable tr.active .roundBox {
+	font-family: 'Roboto-Regular';
+}
+
+/* 표 셀 내 filled-in 체크박스 정중앙 정렬 — 기본 span padding(35px)이 20px 박스를 좌측에 그려 쏠리는 문제 해소 */
+.chkCenter { display: inline-block; }
+.chkCenter [type="checkbox"] + span:not(.lever) { padding-left: 20px; }
 
 /* ====================================================================
    Glass Row Overlay — hBorderTable 행 호버 무지개 효과
@@ -2903,6 +2913,7 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
     display: inline-block;
 	padding: 0px 20px;
 	line-height: 14px;
+	font-size: 13px;
 }
 
 .typeList .mainList li .subInfo {
@@ -3008,6 +3019,11 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
     font-family: 'Roboto-Medium';
 	margin-left: 20px;
 	border-width: 2px;
+}
+
+/* 헤더 상태배지는 base .roundBox 13px 기본값에서 제외 — 기존 상속 크기 유지 (statusTit 유무 모두) */
+.popup header .titArea .roundBox {
+	font-size: inherit;
 }
 
 .popup header .titArea .tit {

@@ -25,88 +25,99 @@
           {sel:false, lineage:'ALT_SUPPLIER_B', code:'COMP-500-SUP-B-v1.0',   vtype:'ALT_SUPPLIER', origin:'SUPPLIER · Supplier B materials',          ver:'v1.0', status:'rev',  def:false, plant:'1100 (Waterford)',  bomVer:'v1.0'}
         ];
 
-        // BOM Explosion (level 0~2) — Variant(lineage)별 데이터셋
+        // BOM Explosion (procurement 뷰 · v12 형식) — 자재 계층(L0~L2) + ERP 자재유형(MTART) + 수량. 입력 없는 출력 전용.
+        // cat = MTART: FERT(완제품) / HALB(반제품) / ROH(원자재) / VERP(포장재)
         var BOM_BY_LINEAGE = {
           'BASE': [
-            {lv:0, mat:'10000425', name:'SE9187 – Silicone Sealant (FINISHED PRODUCT)', itype:'',  qty:100,   pa:'',        cas:'',          role:'—',                        note:'Finished product'},
-            {lv:1, mat:'10040012', name:'Silicone Polymer SiH-500 (Ingredient 1)',      itype:'A', qty:72.50, pa:'Reagent', cas:'63148-57-2', role:'Reagent → residual excess', note:'Si-H functional PDMS'},
-            {lv:2, mat:'—',        name:'Polymethylhydrosiloxane (Si-H)',               itype:'A', qty:68.80, pa:'Reagent', cas:'63148-57-2', role:'Si-H bonds react (85%)',    note:'Primary reagent'},
-            {lv:2, mat:'—',        name:'Dimethylsiloxane cyclic oligomers (D4/D5)',    itype:'C', qty:3.70,  pa:'Blend',   cas:'541-02-6',  role:'Passes through',           note:'Residual cyclics'},
-            {lv:1, mat:'10041033', name:'Vinyl Crosslinker VC-20 (Ingredient 2)',       itype:'A', qty:12.00, pa:'Reagent', cas:'2768-02-7', role:'Reagent → reacts fully',   note:'Vinyl-functional silane'},
-            {lv:2, mat:'—',        name:'Vinyltrimethoxysilane',                        itype:'A', qty:10.50, pa:'Reagent', cas:'2768-02-7', role:'Vinyl reacts with Si-H',   note:'100% conversion'},
-            {lv:2, mat:'—',        name:'Methanol (by-product/trace)',                  itype:'D', qty:1.50,  pa:'Extract', cas:'67-56-1',   role:'Evaporates (cure)',        note:'Hydrolysis by-product'},
-            {lv:1, mat:'10038901', name:'Fumed Silica R972 (Ingredient 3)',             itype:'C', qty:12.00, pa:'Blend',   cas:'68611-44-9',role:'Filler – passes through',  note:'Hydrophobic silica'},
-            {lv:2, mat:'—',        name:'Fumed Silica (dimethylsilyl-treated)',         itype:'C', qty:12.00, pa:'Blend',   cas:'68611-44-9',role:'Blend',                    note:'Reinforcing filler'},
-            {lv:1, mat:'10039240', name:'Calcium Carbonate PCC (Ingredient 4)',         itype:'C', qty:3.00,  pa:'Blend',   cas:'471-34-1',  role:'Filler – passes through',  note:'Fine PCC extender'},
-            {lv:2, mat:'—',        name:'Calcium carbonate',                            itype:'C', qty:3.00,  pa:'Blend',   cas:'471-34-1',  role:'Blend',                    note:'Extender filler'},
-            {lv:1, mat:'10044501', name:'Pt Catalyst Solution (Ingredient 5)',          itype:'D', qty:0.85,  pa:'Extract', cas:'Various',   role:'Catalyst – extracted',     note:'Karstedt catalyst'},
-            {lv:2, mat:'—',        name:'Pt-divinyltetramethyldisiloxane complex',      itype:'D', qty:0.05,  pa:'Extract', cas:'68478-92-2',role:'Catalyst – trace residual',note:'SVHC check req.'},
-            {lv:2, mat:'—',        name:'Ethanol (solvent)',                            itype:'D', qty:0.80,  pa:'Extract', cas:'64-17-5',   role:'Evaporates during cure',   note:'Carrier solvent'},
-            {lv:1, mat:'RXN-01',   name:'[RXN PRODUCT] Crosslinked Si-C polymer network',itype:'B',qty:15.20, pa:'Product', cas:'—',         role:'Hydrosilylation product',  note:'Formed from Si-H + Vinyl rxn'},
-            {lv:1, mat:'RXN-02',   name:'[RXN PRODUCT] Pt residue (trace)',             itype:'B', qty:0.01,  pa:'Product', cas:'7440-06-4', role:'Catalyst residue',         note:'Precipitated Pt'}
+            {lv:0, mat:'10000425', name:'SE9187 – Silicone Sealant (FINISHED PRODUCT)', cat:'FERT', qty:100.00},
+            {lv:1, mat:'SB-200',   name:'Silicone Base Compound (semi-finished)',        cat:'HALB', qty:72.50},
+            {lv:2, mat:'10040012', name:'Silicone Polymer SiH-500',                      cat:'ROH',  qty:60.00},
+            {lv:2, mat:'10038901', name:'Fumed Silica R972',                             cat:'ROH',  qty:12.00},
+            {lv:2, mat:'10055120', name:'Process Aid PA-10',                             cat:'ROH',  qty:0.50},
+            {lv:1, mat:'CL-50',    name:'Crosslinker Pre-mix (semi-finished)',           cat:'HALB', qty:11.50},
+            {lv:2, mat:'10041033', name:'Vinyl Crosslinker VC-20',                       cat:'ROH',  qty:10.50},
+            {lv:2, mat:'10044501', name:'Pt Catalyst Solution',                          cat:'ROH',  qty:0.85},
+            {lv:2, mat:'10061077', name:'Cure Inhibitor IH-3',                           cat:'ROH',  qty:0.15},
+            {lv:1, mat:'10039240', name:'Calcium Carbonate PCC',                         cat:'ROH',  qty:11.00},
+            {lv:1, mat:'10071205', name:'Pigment Paste PW-2',                            cat:'ROH',  qty:3.00},
+            {lv:1, mat:'10038901', name:'Fumed Silica R972 (direct add)',                cat:'ROH',  qty:2.00},
+            {lv:1, mat:'10090300', name:'Cartridge 300 ml + Cap (packaging)',            cat:'VERP', qty:4.00}
           ],
           'ALT_BOM_2': [
-            {lv:0, mat:'10000425', name:'SE9187 – Silicone Sealant (FINISHED PRODUCT)', itype:'',  qty:100,   pa:'',        cas:'',          role:'—',                        note:'Alt BOM 2 (BV2)'},
-            {lv:1, mat:'10040012', name:'Silicone Polymer SiH-500 (Ingredient 1)',      itype:'A', qty:72.50, pa:'Reagent', cas:'63148-57-2', role:'Reagent → residual excess', note:'Si-H functional PDMS'},
-            {lv:2, mat:'—',        name:'Polymethylhydrosiloxane (Si-H)',               itype:'A', qty:68.80, pa:'Reagent', cas:'63148-57-2', role:'Si-H bonds react (85%)',    note:'Primary reagent'},
-            {lv:2, mat:'—',        name:'Dimethylsiloxane cyclic oligomers (D4/D5)',    itype:'C', qty:3.70,  pa:'Blend',   cas:'541-02-6',  role:'Passes through',           note:'Residual cyclics'},
-            {lv:1, mat:'10041033', name:'Vinyl Crosslinker VC-20 (Ingredient 2)',       itype:'A', qty:9.50,  pa:'Reagent', cas:'2768-02-7', role:'Reagent → reacts fully',   note:'Reduced crosslinker (Alt BOM)'},
-            {lv:2, mat:'—',        name:'Vinyltrimethoxysilane',                        itype:'A', qty:8.20,  pa:'Reagent', cas:'2768-02-7', role:'Vinyl reacts with Si-H',   note:'100% conversion'},
-            {lv:2, mat:'—',        name:'Methanol (by-product/trace)',                  itype:'D', qty:1.30,  pa:'Extract', cas:'67-56-1',   role:'Evaporates (cure)',        note:'Hydrolysis by-product'},
-            {lv:1, mat:'10038901', name:'Fumed Silica R972 (Ingredient 3)',             itype:'C', qty:14.00, pa:'Blend',   cas:'68611-44-9',role:'Filler – passes through',  note:'Higher loading (Alt BOM)'},
-            {lv:2, mat:'—',        name:'Fumed Silica (dimethylsilyl-treated)',         itype:'C', qty:14.00, pa:'Blend',   cas:'68611-44-9',role:'Blend',                    note:'Reinforcing filler'},
-            {lv:1, mat:'10042277', name:'Adhesion Promoter AP-30 (Ingredient 4)',       itype:'C', qty:1.50,  pa:'Blend',   cas:'919-30-2',  role:'Adhesion promoter',        note:'Added component (Alt BOM 2)'},
-            {lv:2, mat:'—',        name:'3-Aminopropyltriethoxysilane',                 itype:'C', qty:1.50,  pa:'Blend',   cas:'919-30-2',  role:'Blend',                    note:'Silane coupling agent'},
-            {lv:1, mat:'10044501', name:'Pt Catalyst Solution (Ingredient 5)',          itype:'D', qty:0.85,  pa:'Extract', cas:'Various',   role:'Catalyst – extracted',     note:'Karstedt catalyst'},
-            {lv:2, mat:'—',        name:'Pt-divinyltetramethyldisiloxane complex',      itype:'D', qty:0.05,  pa:'Extract', cas:'68478-92-2',role:'Catalyst – trace residual',note:'SVHC check req.'},
-            {lv:2, mat:'—',        name:'Ethanol (solvent)',                            itype:'D', qty:0.80,  pa:'Extract', cas:'64-17-5',   role:'Evaporates during cure',   note:'Carrier solvent'},
-            {lv:1, mat:'RXN-01',   name:'[RXN PRODUCT] Crosslinked Si-C polymer network',itype:'B',qty:13.80, pa:'Product', cas:'—',         role:'Hydrosilylation product',  note:'Lower xlink (reduced VC-20)'},
-            {lv:1, mat:'RXN-02',   name:'[RXN PRODUCT] Pt residue (trace)',             itype:'B', qty:0.01,  pa:'Product', cas:'7440-06-4', role:'Catalyst residue',         note:'Precipitated Pt'}
+            {lv:0, mat:'10000425', name:'SE9187 – Silicone Sealant (FINISHED PRODUCT)', cat:'FERT', qty:100.00},
+            {lv:1, mat:'SB-200',   name:'Silicone Base Compound (semi-finished)',        cat:'HALB', qty:72.50},
+            {lv:2, mat:'10040012', name:'Silicone Polymer SiH-500',                      cat:'ROH',  qty:60.00},
+            {lv:2, mat:'10038901', name:'Fumed Silica R972',                             cat:'ROH',  qty:13.50},
+            {lv:2, mat:'10042277', name:'Adhesion Promoter AP-30',                       cat:'ROH',  qty:1.50},
+            {lv:1, mat:'CL-50',    name:'Crosslinker Pre-mix (semi-finished)',           cat:'HALB', qty:9.50},
+            {lv:2, mat:'10041033', name:'Vinyl Crosslinker VC-20',                       cat:'ROH',  qty:8.50},
+            {lv:2, mat:'10044501', name:'Pt Catalyst Solution',                          cat:'ROH',  qty:0.85},
+            {lv:2, mat:'10061077', name:'Cure Inhibitor IH-3',                           cat:'ROH',  qty:0.15},
+            {lv:1, mat:'10039240', name:'Calcium Carbonate PCC',                         cat:'ROH',  qty:11.00},
+            {lv:1, mat:'10071205', name:'Pigment Paste PW-2',                            cat:'ROH',  qty:3.00},
+            {lv:1, mat:'10090300', name:'Cartridge 300 ml + Cap (packaging)',            cat:'VERP', qty:4.00}
           ],
           'ALT_SUPPLIER_B': [
-            {lv:0, mat:'10000425', name:'SE9187 – Silicone Sealant (FINISHED PRODUCT)', itype:'',  qty:100,   pa:'',        cas:'',          role:'—',                        note:'Supplier B materials (Plant 1100)'},
-            {lv:1, mat:'20040012', name:'Silicone Polymer SiH-500B (Supplier B)',       itype:'A', qty:72.00, pa:'Reagent', cas:'63148-57-2', role:'Reagent → residual excess', note:'Supplier B PDMS'},
-            {lv:2, mat:'—',        name:'Polymethylhydrosiloxane (Si-H)',               itype:'A', qty:68.00, pa:'Reagent', cas:'63148-57-2', role:'Si-H bonds react (84%)',    note:'Primary reagent'},
-            {lv:2, mat:'—',        name:'Dimethylsiloxane cyclic oligomers (D4/D5)',    itype:'C', qty:4.00,  pa:'Blend',   cas:'541-02-6',  role:'Passes through',           note:'Higher residual cyclics'},
-            {lv:1, mat:'20041033', name:'Vinyl Crosslinker VC-20B (Supplier B)',        itype:'A', qty:12.00, pa:'Reagent', cas:'2768-02-7', role:'Reagent → reacts fully',   note:'Supplier B silane'},
-            {lv:2, mat:'—',        name:'Vinyltrimethoxysilane',                        itype:'A', qty:10.50, pa:'Reagent', cas:'2768-02-7', role:'Vinyl reacts with Si-H',   note:'100% conversion'},
-            {lv:2, mat:'—',        name:'Methanol (by-product/trace)',                  itype:'D', qty:1.50,  pa:'Extract', cas:'67-56-1',   role:'Evaporates (cure)',        note:'Hydrolysis by-product'},
-            {lv:1, mat:'20038901', name:'Fumed Silica HS-5 (Supplier B)',               itype:'C', qty:12.00, pa:'Blend',   cas:'112945-52-5',role:'Filler – passes through', note:'Supplier B fumed silica'},
-            {lv:2, mat:'—',        name:'Fumed Silica',                                 itype:'C', qty:12.00, pa:'Blend',   cas:'112945-52-5',role:'Blend',                   note:'Reinforcing filler'},
-            {lv:1, mat:'20039240', name:'Calcium Carbonate PCC-B (Supplier B)',         itype:'C', qty:3.00,  pa:'Blend',   cas:'471-34-1',  role:'Filler – passes through',  note:'Supplier B PCC'},
-            {lv:2, mat:'—',        name:'Calcium carbonate',                            itype:'C', qty:3.00,  pa:'Blend',   cas:'471-34-1',  role:'Blend',                    note:'Extender filler'},
-            {lv:1, mat:'20044501', name:'Pt Catalyst Sol-B (Supplier B)',               itype:'D', qty:0.85,  pa:'Extract', cas:'Various',   role:'Catalyst – extracted',     note:'Supplier B catalyst'},
-            {lv:2, mat:'—',        name:'Pt-divinyltetramethyldisiloxane complex',      itype:'D', qty:0.05,  pa:'Extract', cas:'68478-92-2',role:'Catalyst – trace residual',note:'SVHC check req.'},
-            {lv:2, mat:'—',        name:'Ethanol (solvent)',                            itype:'D', qty:0.80,  pa:'Extract', cas:'64-17-5',   role:'Evaporates during cure',   note:'Carrier solvent'},
-            {lv:1, mat:'RXN-01',   name:'[RXN PRODUCT] Crosslinked Si-C polymer network',itype:'B',qty:15.00, pa:'Product', cas:'—',         role:'Hydrosilylation product',  note:'Formed from Si-H + Vinyl rxn'},
-            {lv:1, mat:'RXN-02',   name:'[RXN PRODUCT] Pt residue (trace)',             itype:'B', qty:0.01,  pa:'Product', cas:'7440-06-4', role:'Catalyst residue',         note:'Precipitated Pt'}
+            {lv:0, mat:'10000425', name:'SE9187 – Silicone Sealant (FINISHED PRODUCT)', cat:'FERT', qty:100.00},
+            {lv:1, mat:'SB-200B',  name:'Silicone Base Compound B (semi-finished)',      cat:'HALB', qty:72.00},
+            {lv:2, mat:'20040012', name:'Silicone Polymer SiH-500B (Supplier B)',        cat:'ROH',  qty:60.00},
+            {lv:2, mat:'20038901', name:'Fumed Silica HS-5 (Supplier B)',                cat:'ROH',  qty:12.00},
+            {lv:2, mat:'10055120', name:'Process Aid PA-10',                             cat:'ROH',  qty:0.50},
+            {lv:1, mat:'CL-50B',   name:'Crosslinker Pre-mix B (semi-finished)',         cat:'HALB', qty:11.50},
+            {lv:2, mat:'20041033', name:'Vinyl Crosslinker VC-20B (Supplier B)',         cat:'ROH',  qty:10.50},
+            {lv:2, mat:'20044501', name:'Pt Catalyst Sol-B (Supplier B)',                cat:'ROH',  qty:0.85},
+            {lv:2, mat:'10061077', name:'Cure Inhibitor IH-3',                           cat:'ROH',  qty:0.15},
+            {lv:1, mat:'20039240', name:'Calcium Carbonate PCC-B (Supplier B)',          cat:'ROH',  qty:11.00},
+            {lv:1, mat:'10071205', name:'Pigment Paste PW-2',                            cat:'ROH',  qty:3.00},
+            {lv:1, mat:'10090300', name:'Cartridge 300 ml + Cap (packaging)',            cat:'VERP', qty:4.00}
           ]
         };
 
         // INPUT – Section A (투입 원료)
+        // Section A 투입원료 — 각 물질의 출처 Material(BOM line · Material · sub-assembly) 포함 (v12)
         var RC_DATA = [
-          {ingr:'Ingr.1', name:'Polymethylhydrosiloxane',                cas:'63148-57-2', ec:'264-056-8', pa:'Reagent', conc:68.80, lo:65,  hi:75,  svhc:false},
-          {ingr:'Ingr.1', name:'Dimethylsiloxane cyclic oligomers (D4/D5)',cas:'541-02-6', ec:'208-762-8', pa:'Blend',   conc:3.70,  lo:2,   hi:5,   svhc:true },
-          {ingr:'Ingr.2', name:'Vinyltrimethoxysilane',                   cas:'2768-02-7',  ec:'220-449-8', pa:'Reagent', conc:10.50, lo:9,   hi:13,  svhc:false},
-          {ingr:'Ingr.2', name:'Methanol',                               cas:'67-56-1',    ec:'200-659-6', pa:'Extract', conc:1.50,  lo:1,   hi:2,   svhc:false},
-          {ingr:'Ingr.3', name:'Fumed silica, dimethylsilyl-treated',     cas:'68611-44-9', ec:'271-893-4', pa:'Blend',   conc:12.00, lo:10,  hi:15,  svhc:false},
-          {ingr:'Ingr.4', name:'Calcium carbonate',                       cas:'471-34-1',   ec:'207-439-9', pa:'Blend',   conc:3.00,  lo:1,   hi:5,   svhc:false},
-          {ingr:'Ingr.5', name:'Pt-divinyltetramethyldisiloxane complex', cas:'68478-92-2', ec:'271-612-5', pa:'Extract', conc:0.05,  lo:0.01,hi:0.1, svhc:false},
-          {ingr:'Ingr.5', name:'Ethanol',                                cas:'64-17-5',    ec:'200-578-6', pa:'Extract', conc:0.80,  lo:0.5, hi:1.5, svhc:false},
-          {ingr:'Ingr.1', name:'Hydroxyl-terminated polydimethylsiloxane',cas:'70131-67-8', ec:'274-408-4', pa:'Blend',   conc:0.65,  lo:0.3, hi:1,   svhc:false}
+          {srcId:'BL-021', src:'10040012 Silicone Polymer SiH-500 · SB-200', name:'Polymethylhydrosiloxane',                cas:'63148-57-2', ec:'264-056-8', role:'CONSTITUENT', pa:'Reagent', conc:56.40, lo:52,   hi:60,  svhc:false, flag:''},
+          {srcId:'BL-021', src:'10040012 Silicone Polymer SiH-500 · SB-200', name:'Dimethylsiloxane cyclic oligomers (D4/D5)',cas:'541-02-6',  ec:'208-762-8', role:'IMPURITY',    pa:'Blend',   conc:3.00,  lo:2,    hi:5,   svhc:true,  flag:'SVHC (SVHC List 2023)'},
+          {srcId:'BL-021', src:'10040012 Silicone Polymer SiH-500 · SB-200', name:'Hydroxyl-terminated polydimethylsiloxane',cas:'70131-67-8', ec:'274-408-4', role:'CONSTITUENT', pa:'Blend',   conc:0.60,  lo:0.3,  hi:1,   svhc:false, flag:''},
+          {srcId:'BL-024', src:'10038901 Fumed Silica R972 · SB-200',        name:'Fumed silica, dimethylsilyl-treated',     cas:'68611-44-9', ec:'271-893-4', role:'ADDITIVE',    pa:'Blend',   conc:12.00, lo:10,   hi:15,  svhc:false, flag:''},
+          {srcId:'BL-025', src:'10055120 Process Aid PA-10 · SB-200',        name:'Hexamethyldisilazane',                    cas:'999-97-3',   ec:'213-668-5', role:'ADDITIVE',    pa:'Extract', conc:0.50,  lo:0.2,  hi:0.8, svhc:false, flag:''},
+          {srcId:'BL-031', src:'10041033 Vinyl Crosslinker VC-20 · CL-50',   name:'Vinyltrimethoxysilane',                   cas:'2768-02-7',  ec:'220-449-8', role:'CONSTITUENT', pa:'Reagent', conc:9.80,  lo:8,    hi:12,  svhc:false, flag:''},
+          {srcId:'BL-031', src:'10041033 Vinyl Crosslinker VC-20 · CL-50',   name:'Methanol',                                cas:'67-56-1',    ec:'200-659-6', role:'IMPURITY',    pa:'Extract', conc:0.70,  lo:0.3,  hi:1,   svhc:false, flag:''},
+          {srcId:'BL-033', src:'10044501 Pt Catalyst Solution · CL-50',      name:'Pt-divinyltetramethyldisiloxane complex', cas:'68478-92-2', ec:'271-612-5', role:'ADDITIVE',    pa:'Extract', conc:0.05,  lo:0.01, hi:0.1, svhc:false, flag:''},
+          {srcId:'BL-033', src:'10044501 Pt Catalyst Solution · CL-50',      name:'Ethanol',                                 cas:'64-17-5',    ec:'200-578-6', role:'RESIDUAL',    pa:'Extract', conc:0.80,  lo:0.5,  hi:1.5, svhc:false, flag:''},
+          {srcId:'BL-034', src:'10061077 Cure Inhibitor IH-3 · CL-50',       name:'1-Ethynylcyclohexanol',                   cas:'78-27-3',    ec:'201-093-8', role:'ADDITIVE',    pa:'Blend',   conc:0.15,  lo:0.05, hi:0.3, svhc:false, flag:''},
+          {srcId:'BL-040', src:'10039240 Calcium Carbonate PCC · direct',    name:'Calcium carbonate',                       cas:'471-34-1',   ec:'207-439-9', role:'ADDITIVE',    pa:'Blend',   conc:11.00, lo:9,    hi:13,  svhc:false, flag:''},
+          {srcId:'BL-041', src:'10071205 Pigment Paste PW-2 · direct',       name:'Titanium dioxide',                        cas:'13463-67-7', ec:'236-675-5', role:'ADDITIVE',    pa:'Blend',   conc:3.00,  lo:2,    hi:4,   svhc:false, flag:''},
+          {srcId:'BL-042', src:'10038901 Fumed Silica R972 · direct',        name:'Fumed silica, dimethylsilyl-treated',     cas:'68611-44-9', ec:'271-893-4', role:'ADDITIVE',    pa:'Blend',   conc:2.00,  lo:1,    hi:3,   svhc:false, flag:''}
         ];
 
         // INPUT – Section B (반응 후 산출 = 제품 조성)
         var PC_DATA = [
-          {name:'Polymethylhydrosiloxane (residual, unreacted Si-H)', cas:'63148-57-2', origin:'Reactant (residual)', conc:10.32, ct:'Constituent', thr:1.0, inc:true,  sds:true,  svhc:false},
-          {name:'Dimethylsiloxane cyclic oligomers (D4/D5)',          cas:'541-02-6',   origin:'Blend (unchanged)',   conc:3.70,  ct:'Impurity',    thr:0.1, inc:true,  sds:true,  svhc:true },
-          {name:'Crosslinked Si-C polymer network',                   cas:'—',          origin:'Rxn Product',         conc:58.48, ct:'Rxn Product', thr:1.0, inc:true,  sds:false, svhc:false},
-          {name:'Hydroxyl-terminated PDMS (capped chains)',           cas:'70131-67-8', origin:'Blend (unchanged)',   conc:0.65,  ct:'Additive',    thr:1.0, inc:false, sds:false, svhc:false},
-          {name:'Fumed silica, dimethylsilyl-treated',                cas:'68611-44-9', origin:'Blend (unchanged)',   conc:12.00, ct:'Constituent', thr:1.0, inc:true,  sds:true,  svhc:false},
-          {name:'Calcium carbonate',                                  cas:'471-34-1',   origin:'Blend (unchanged)',   conc:3.00,  ct:'Constituent', thr:1.0, inc:true,  sds:false, svhc:false},
-          {name:'Vinyltrimethoxysilane (residual)',                   cas:'2768-02-7',  origin:'Reactant (residual)', conc:1.57,  ct:'Impurity',    thr:1.0, inc:true,  sds:true,  svhc:false},
-          {name:'Pt residue (trace)',                                 cas:'7440-06-4',  origin:'Rxn Product (trace)', conc:0.01,  ct:'Impurity',    thr:1.0, inc:false, sds:false, svhc:false},
-          {name:'Tetraethoxysilane (by-product)',                     cas:'78-10-4',    origin:'Rxn Product',         conc:0.27,  ct:'By-product',  thr:1.0, inc:false, sds:false, svhc:false}
+          {name:'Polymethylhydrosiloxane (residual, unreacted Si-H)', cas:'63148-57-2', ec:'264-056-8', origin:'Reactant (residual)', conc:10.32, ct:'Constituent', thr:1.0, inc:true,  sds:true,  svhc:false},
+          {name:'Dimethylsiloxane cyclic oligomers (D4/D5)',          cas:'541-02-6',   ec:'208-762-8', origin:'Blend (unchanged)',   conc:3.70,  ct:'Impurity',    thr:0.1, inc:true,  sds:true,  svhc:true },
+          {name:'Crosslinked Si-C polymer network',                   cas:'—',          ec:'—',         origin:'Rxn Product',         conc:58.48, ct:'Rxn Product', thr:1.0, inc:true,  sds:false, svhc:false},
+          {name:'Hydroxyl-terminated PDMS (capped chains)',           cas:'70131-67-8', ec:'274-408-4', origin:'Blend (unchanged)',   conc:0.65,  ct:'Additive',    thr:1.0, inc:false, sds:false, svhc:false},
+          {name:'Fumed silica, dimethylsilyl-treated',                cas:'68611-44-9', ec:'271-893-4', origin:'Blend (unchanged)',   conc:12.00, ct:'Constituent', thr:1.0, inc:true,  sds:true,  svhc:false},
+          {name:'Calcium carbonate',                                  cas:'471-34-1',   ec:'207-439-9', origin:'Blend (unchanged)',   conc:3.00,  ct:'Constituent', thr:1.0, inc:true,  sds:false, svhc:false},
+          {name:'Vinyltrimethoxysilane (residual)',                   cas:'2768-02-7',  ec:'220-449-8', origin:'Reactant (residual)', conc:1.57,  ct:'Impurity',    thr:1.0, inc:true,  sds:true,  svhc:false},
+          {name:'Pt residue (trace)',                                 cas:'7440-06-4',  ec:'231-116-1', origin:'Rxn Product (trace)', conc:0.01,  ct:'Impurity',    thr:1.0, inc:false, sds:false, svhc:false},
+          {name:'Tetraethoxysilane (by-product)',                     cas:'78-10-4',    ec:'201-083-8', origin:'Rxn Product',         conc:0.27,  ct:'By-product',  thr:1.0, inc:false, sds:false, svhc:false}
+        ];
+
+        // INPUT – Reaction Conditions (반응 조건 표: 각 투입원료의 반응 후 잔존 여부)
+        // resCls = Materialize 글자색(원본 색 코딩 대응), PA는 PACLS로 배지화
+        var RXN_COND = [
+          {srcId:'BL-021', src:'10040012 Silicone Polymer SiH-500', name:'Polymethylhydrosiloxane', cas:'63148-57-2', ec:'264-056-8', pa:'Reagent', conc:68.80, res:'Yes',   resTxt:'15% residual (unreacted Si-H)'},
+          {srcId:'BL-031', src:'10041033 Vinyl Crosslinker VC-20',   name:'Vinyltrimethoxysilane',   cas:'2768-02-7',  ec:'220-449-8', pa:'Reagent', conc:10.50, res:'Yes',   resTxt:'15% residual (slight excess)'},
+          {srcId:'BL-024', src:'10038901 Fumed Silica R972',         name:'Fumed Silica',            cas:'68611-44-9', ec:'271-893-4', pa:'Blend',   conc:12.00, res:'Yes',   resTxt:'100% passes through'},
+          {srcId:'BL-033', src:'10044501 Pt Catalyst Solution',      name:'Ethanol (carrier)',       cas:'64-17-5',    ec:'200-578-6', pa:'Extract', conc:0.80,  res:'No',    resTxt:'evaporates during cure'},
+          {srcId:'BL-033', src:'10044501 Pt Catalyst Solution',      name:'Pt catalyst complex',     cas:'68478-92-2', ec:'271-612-5', pa:'Extract', conc:0.05,  res:'Trace', resTxt:'&lt;0.01% precipitates'}
+        ];
+
+        // Edit Reaction Conditions 모달 — 반응 생성물(Reaction Products Formed)
+        var RXN_PROD = [
+          {name:'Crosslinked Si-C polymer network', cas:'–',         yld:'15.2',     note:'Hydrosilylation product'},
+          {name:'Pt residue (trace)',               cas:'7440-06-4', yld:'&lt;0.01', note:'Catalyst residue'}
         ];
 
         // ITEM (Product Composition · SDS/Label)
@@ -133,8 +144,23 @@
         function rb(cls, txt){ return '<span class="roundBox '+cls+' mr5">'+txt+'</span>'; }
         // ── 헬퍼: 표 셀 편집요소 (npdi 표 패턴 그대로) ──
         function inp(val, align, cls){ return '<div class="aniInput"><input type="text" class="browser-default '+(align||'ar')+(cls?' '+cls:'')+'" value="'+val+'"><span class="focus-border"></span></div>'; }
+        // 좁은 인풋: wrapper(aniInput)에 너비 클래스를 줘 input·focus-border가 함께 줄어들게 (Conc. Range lo/hi용)
+        function inpW(val, wcls, align){ return '<div class="aniInput '+wcls+'"><input type="text" class="browser-default '+(align||'ac')+'" value="'+val+'"><span class="focus-border"></span></div>'; }
         function sel(opts, cur){ return '<select class="browser-default ht25">'+opts.map(function(o){ return '<option'+(o===cur?' selected':'')+'>'+o+'</option>'; }).join('')+'</select>'; }
-        function chk(on){ return '<label><input type="checkbox" class="filled-in"'+(on?' checked':'')+'/><span>　</span></label>'; }
+        function chk(on){ return '<label class="chkCenter"><input type="checkbox" class="filled-in"'+(on?' checked':'')+'/><span></span></label>'; }
+        // Section B Origin 짧은 배지 (원본: RXN PRODUCT / RESIDUAL / BLEND)
+        function origBadge(origin){
+          var cls = /Rxn Product/i.test(origin) ? 'bdGreen' : (/residual/i.test(origin) ? 'bdOrange' : 'bdBlue');
+          var txt = /Rxn Product/i.test(origin) ? 'RXN PRODUCT' : (/residual/i.test(origin) ? 'RESIDUAL' : 'BLEND');
+          return '<span class="roundBox '+cls+'">'+txt+'</span>';   // 가운데 정렬 위해 mr5 없이
+        }
+        // Section B Threshold 배지 (SVHC=빨강, 그 외 녹/회색) — fontM로 가독성 확보
+        function thrBadge(conc, thr, svhc){
+          var abv = conc >= thr, cls, txt;
+          if(svhc){ cls = abv ? 'bdRed' : 'bdOrange'; txt = 'SVHC '+(abv?'≥':'&lt;')+thr+'%'+(abv?' ✓':' ⚠'); }
+          else    { cls = abv ? 'bdGreen' : 'bdGray'; txt = (abv?'≥':'&lt;')+thr+'%'+(abv?' ✓':' —'); }
+          return '<span class="roundBox '+cls+' fontM">'+txt+'</span>';
+        }
         function del(){ return '<a href="javascript:;" class="jsDel"><i class="material-symbols-outlined tiny">close</i></a>'; }
         // 물질 셀(추가행): Substance/CAS(/EC) 인풋 — 출력행 크기에 맞춰 컴팩트(이름=기본, CAS·EC=font13 인라인)
         function subCell(withEc){
@@ -217,6 +243,10 @@
         function stBadge(st){ var m=ST[st]; return m ? rb(m[0], m[1]) : rb('bdGray','—'); }
         var ITYPE = {A:'bdRed', C:'bdBlue', D:'bdOrange', B:'bdGray'};       // BOM 성분유형
         var VTCLS = {BASE:'bdBlue', ALT_BOM:'bdRed', ALT_SUPPLIER:'bdGreen', ALT_PROCESS:'bdOrange'};
+        var PACLS = {Reagent:'bdRed', Blend:'bdBlue', Extract:'bdOrange', Product:'bdGreen'};   // Process Action 배지색(행별 성분유형과 일치)
+        var MTART = {FERT:'bdBlue', HALB:'bdOrange', ROH:'bdGray', VERP:'bdGreen'};   // ERP 자재유형 배지 (완제품/반제품/원자재/포장재)
+        var ROLECLS = {CONSTITUENT:'bdGreen', IMPURITY:'bdRed', ADDITIVE:'bdBlue', RESIDUAL:'bdOrange', BYPRODUCT:'bdGray'};   // 물질 Role 배지색
+        var ROLE_OPT = ['CONSTITUENT','IMPURITY','ADDITIVE','RESIDUAL','BYPRODUCT'];
 
         $(document).ready(function(){
           // 스크롤스파이 + 좌측 메뉴 (tech_pop 동일)
@@ -247,9 +277,26 @@
 
           $('select').formSelect();
 
-          // Variant 행 클릭 → 하단 BOM 연동
+          // Edit Reaction Conditions 모달 (npdi 패턴 — modalBlur 배경)
+          $('#rxnEditModal').modal({
+            onOpenStart: function(){ $("header, aside, .contArea").addClass("modalBlur"); },
+            onCloseStart: function(){ $("header, aside, .contArea").removeClass("modalBlur"); }
+          });
+
+          // Variant 행 클릭 → 하단 BOM 연동 + BOM Explorer 카드 최상단으로 스크롤(좌측 메뉴 클릭과 동일)
           $('#variantTbody').on('click', 'tr', function(){
             selectVariant($(this).data('lineage'));
+            var $card = $('#pjContCard_2');
+            var scrollTop = $card.offset().top - parseFloat($(".contArea").css("margin-top"));
+            $('html, body').animate({ scrollTop: scrollTop }, { queue:false, duration:500, complete:function(){
+              $('.menu-item').removeClass('active');
+              $('.menu-item[data-target="pjContCard_2"]').addClass('active');
+            }});
+          });
+
+          // BOM Tree ↔ Summarized 스위치 → 현재 lineage로 뷰 재렌더
+          $('#bomSumToggle').on('change', function(){
+            renderBOM((VARIANTS.find(function(v){ return v.sel; }) || VARIANTS[0]).lineage);
           });
 
           // 농도(.jsConc) 변경 시 해당 표 TOTAL 자동 재계산 + 색 갱신 (공통)
@@ -275,6 +322,8 @@
           var initLineage = (VARIANTS.find(function(v){ return v.sel; }) || VARIANTS[0]).lineage;
           selectVariant(initLineage);   // renderVariants + renderBOM(초기 lineage)
           renderRC();
+          renderRxnCond();
+          renderRxnProd();
           renderPC();
           renderRF();
           renderRG();
@@ -284,13 +333,14 @@
         function renderVariants(){
           var html = '';
           VARIANTS.forEach(function(v){
+            var m = v.sel ? ' fontM' : '';   // 선택 행: 각 td에 직접 Medium(상속 의존 X) / 배지는 active 제외규칙으로 Regular
             html += '<tr data-lineage="'+v.lineage+'"'+(v.sel?' class="active"':'')+'>'
-                 +    '<td class="al"><label><input class="with-gap" name="variantSel" type="radio"'+(v.sel?' checked':'')+'/><span class="rdoLbl'+(v.sel?' black-text':'')+'">'+v.lineage+(v.def?'<span class="roundBox bdOrange ml5">Default</span>':'')+'</span></label></td>'
-                 +    '<td class="al">'+v.code+'</td>'
-                 +    '<td class="al">'+rb(VTCLS[v.vtype]||'bdGray', v.vtype)+'</td>'
-                 +    '<td class="al">'+v.origin+'</td>'
-                 +    '<td class="al">'+v.ver+'</td>'
-                 +    '<td class="al">'+stBadge(v.status)+'</td>'
+                 +    '<td class="al'+m+'"><label><input class="with-gap" name="variantSel" type="radio"'+(v.sel?' checked':'')+'/><span class="rdoLbl'+(v.sel?' black-text':'')+'">'+v.lineage+(v.def?'<span class="roundBox bdOrange ml5">Default</span>':'')+'</span></label></td>'
+                 +    '<td class="al'+m+'">'+v.code+'</td>'
+                 +    '<td class="al'+m+'">'+rb(VTCLS[v.vtype]||'bdGray', v.vtype)+'</td>'
+                 +    '<td class="al'+m+'">'+v.origin+'</td>'
+                 +    '<td class="al'+m+'">'+v.ver+'</td>'
+                 +    '<td class="al'+m+'">'+stBadge(v.status)+'</td>'
                  +  '</tr>';
           });
           $('#variantTbody').html(html);
@@ -305,42 +355,88 @@
           $('#bomSubTit').text('BOM Explosion Tree — '+v.lineage+' · MERP '+v.bomVer+' · Plant '+v.plant);
         }
 
-        // Card 2-B : BOM Explosion Tree (선택 lineage의 BOM)
+        // Card 2-B : BOM Explosion Tree / Summarized (출력 전용 · v12) — 스위치로 뷰 전환
+        var BOM_COLS_TREE = '<col style="width:42%;"><col style="width:18%;"><col style="width:16%;"><col style="width:16%;"><col style="width:8%;">';
+        var BOM_HEAD_TREE = '<th class="al font13 nowrap">Material / Component</th><th class="ac font13 nowrap">MERP Mat.No</th>'
+                          + '<th class="ac font13 nowrap">Material Type (MTART)</th><th class="ar font13 nowrap">Qty (kg/100kg)</th><th class="ac font13 nowrap">UoM</th>';
+        var BOM_COLS_SUM  = '<col style="width:24%;"><col style="width:11%;"><col style="width:10%;"><col style="width:9%;"><col style="width:6%;"><col style="width:40%;">';
+        var BOM_HEAD_SUM  = '<th class="al font13 nowrap">Material (lowest level)</th><th class="ac font13 nowrap">MERP Mat.No</th>'
+                          + '<th class="ac font13 nowrap">Material Type (MTART)</th><th class="ar font13 nowrap">Total Qty (kg/100kg)</th>'
+                          + '<th class="ac font13 nowrap">UoM</th><th class="al font13 nowrap">Used in (where-used)</th>';
+
         function renderBOM(lineage){
           var data = BOM_BY_LINEAGE[lineage] || BOM_BY_LINEAGE['BASE'];
+          if($('#bomSumToggle').is(':checked')) renderBOMSum(data);
+          else renderBOMTree(data);
+        }
+
+        // Tree 뷰 — 자재 계층(L0~L2) + MTART + Qty (fold·flip 유지)
+        function renderBOMTree(data){
+          $('#bomCols').html(BOM_COLS_TREE);
+          $('#bomHead').html(BOM_HEAD_TREE);
           var html = '';
           var gi = 0, curG = '';        // level-1 그룹 id (자식 level-2 연결용)
           data.forEach(function(r, idx){
-            var first, trAttr = '';
+            var first, trAttr = '', rowCls = '';
             if(r.lv === 0){
-              first = '<b>'+r.name+'</b>';
+              first = r.name;
+              rowCls = ' active';   // 트리 루트(완제품) 행 = 선택 효과 톤(tr.active #F1E9DF)
             } else if(r.lv === 1){
               gi++; curG = 'g'+gi;
               var hasChild = data[idx+1] && data[idx+1].lv === 2;
               first = (hasChild
                         ? '<span class="npdi-fold" data-fold="'+curG+'">▼</span>'
-                        : '<span class="npdi-fold npdi-fold-disabled"></span>') + r.name;
+                        : '<span class="npdi-fold npdi-fold-disabled"></span>') + '<span class="fontM">'+r.name+'</span>';
             } else {                      // level-2 (자식)
               trAttr = ' data-child="'+curG+'"';
-              first = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;├─ ' + r.name;
+              first = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ ' + r.name;
             }
-            html += '<tr'+trAttr+'>'
-                 +    '<td class="al font13 nowrap">'+first+'</td>'
-                 +    '<td class="ac font13 nowrap">'+(r.itype?rb(ITYPE[r.itype]||'bdGray', r.itype):'')+'</td>'
-                 +    '<td class="ac font13 nowrap">'+r.mat+'</td>'
-                 +    '<td class="ar font13 nowrap">'+(r.qty>0?r.qty.toFixed(2):'—')+'</td>'
-                 +    '<td class="ac font13 nowrap">'+(r.pa?sel(PA_BOM, r.pa):'')+'</td>'
-                 +    '<td class="ac font13 nowrap">'+(r.cas||'—')+'</td>'
-                 +    '<td class="al font13 nowrap">'+r.role+'</td>'
-                 +    '<td class="al font13 nowrap">'+r.note+'</td>'
+            // 행 단위 flip 등장: 인덱스별 stagger(최대 0.6s에서 cap)
+            var dly = Math.min(idx * 0.04, 0.6);
+            var cf = (r.lv === 0) ? ' fontM' : ' font13';   // 루트=14px Medium / 그 외=13px
+            html += '<tr'+trAttr+' class="animate__animated animate__flipInX animate__faster'+rowCls+'" style="animation-delay:'+dly.toFixed(2)+'s">'
+                 +    '<td class="al nowrap'+cf+'">'+first+'</td>'
+                 +    '<td class="ac nowrap'+cf+'">'+r.mat+'</td>'
+                 +    '<td class="ac nowrap'+cf+'"><span class="roundBox '+(MTART[r.cat]||'bdGray')+'">'+r.cat+'</span></td>'
+                 +    '<td class="ar nowrap'+cf+'">'+r.qty.toFixed(2)+'</td>'
+                 +    '<td class="ac nowrap'+cf+'">'+(r.cat==='VERP'?'PC':'KG')+'</td>'
+                 +  '</tr>';
+          });
+          $('#bomTbody').html(html);   // 행마다 flipInX stagger 순차 등장
+        }
+
+        // Summarized 뷰 — 최저 레벨 자재(ROH/VERP)를 matId로 합산 + where-used(여러 곳이면 ▲ N places)
+        function renderBOMSum(data){
+          $('#bomCols').html(BOM_COLS_SUM);
+          $('#bomHead').html(BOM_HEAD_SUM);
+          var agg = {}, order = [], curHalb = null;
+          data.forEach(function(r){
+            if(r.lv === 0) return;
+            if(r.lv === 1 && r.cat === 'HALB'){ curHalb = r.name.trim(); return; }
+            if(r.cat !== 'ROH' && r.cat !== 'VERP') return;
+            var place = (r.lv === 2) ? (curHalb || '(sub)') : '(direct)';
+            var k = r.mat;
+            if(!agg[k]){ agg[k] = {name:r.name, mid:r.mat, cat:r.cat, qty:0, places:[]}; order.push(k); }
+            agg[k].qty += r.qty;
+            agg[k].places.push(place + ': ' + r.qty.toFixed(2) + 'kg');
+          });
+          var html = '';
+          order.forEach(function(k, idx){
+            var a = agg[k];
+            var used = a.places.length > 1
+              ? '<span class="fontM">▲ '+a.places.length+' places</span> <span class="font13">· '+a.places.join(' + ')+'</span>'
+              : '<span class="font13">'+a.places[0].split(':')[0].trim()+'</span>';
+            var dly = Math.min(idx * 0.04, 0.6);
+            html += '<tr class="animate__animated animate__flipInX animate__faster" style="animation-delay:'+dly.toFixed(2)+'s">'
+                 +    '<td class="al font13 nowrap"><span class="fontM">'+a.name+'</span></td>'
+                 +    '<td class="ac font13 nowrap">'+a.mid+'</td>'
+                 +    '<td class="ac font13 nowrap"><span class="roundBox '+(MTART[a.cat]||'bdGray')+'">'+a.cat+'</span></td>'
+                 +    '<td class="ar font13 nowrap">'+a.qty.toFixed(2)+'</td>'
+                 +    '<td class="ac font13 nowrap">'+(a.cat==='VERP'?'PC':'KG')+'</td>'
+                 +    '<td class="al font13 nowrap">'+used+'</td>'
                  +  '</tr>';
           });
           $('#bomTbody').html(html);
-          // Variant 전환 시 "완전히 바뀐 테이블" 느낌 — fadeInLeft 재생 (reflow로 재시작)
-          var $wrap = $('#bomTbody').closest('.fixedTable');
-          $wrap.removeClass('animate__animated animate__fadeInLeft');
-          void $wrap[0].offsetWidth;
-          $wrap.addClass('animate__animated animate__fadeInLeft');
         }
 
         // BOM 자식행 부드럽게 접기/펼치기 — tr은 slide가 안 먹어서 td 내용을 .bomFold div로 감싸 slideUp/Down
@@ -361,15 +457,26 @@
         // Card 3-A : INPUT Section A
         function renderRC(){
           var html = '', total = 0;
-          RC_DATA.forEach(function(r){
+          RC_DATA.forEach(function(r, i){
             total += r.conc;
+            // src("10040012 Silicone Polymer SiH-500 · SB-200") 파싱: matNo(Code) + 자재 명칭
+            var matNo = (r.src.match(/^\d+/) || [''])[0];
+            var matName = r.src.replace(/^\d+\s+/, '').replace(/\s*·.*$/, '');
+            // 같은 srcId 연속 그룹의 첫 행에만 Material 셀을 rowspan으로 1번 출력
+            var matCell = '';
+            if(i === 0 || RC_DATA[i-1].srcId !== r.srcId){
+              var span = 1;
+              while(i+span < RC_DATA.length && RC_DATA[i+span].srcId === r.srcId) span++;
+              matCell = '<td class="al"'+(span>1?' rowspan="'+span+'"':'')+'><span class="fontM">'+matName+'</span><br><span class="font13">'+r.srcId+' · '+matNo+'</span></td>';
+            }
             html += '<tr>'
-                 +    '<td class="al">'+r.ingr+'</td>'
-                 +    '<td class="al">'+r.name+(r.svhc?' '+rb('bdRed','SVHC'):'')+'<br><span class="font13">'+r.cas+' · '+r.ec+'</span></td>'
+                 +    matCell
+                 +    '<td class="al"><span class="fontM">'+r.name+'</span>'+(r.svhc?' '+rb('bdRed','SVHC'):'')+'<br><span class="font13">'+r.cas+' · '+r.ec+'</span></td>'
+                 +    '<td class="ac">'+rb(ROLECLS[r.role]||'bdGray', r.role)+'</td>'
                  +    '<td class="ac">'+sel(PA_RC, r.pa)+'</td>'
                  +    '<td class="ar">'+inp(r.conc.toFixed(2), 'ar', 'jsConc')+'</td>'
-                 +    '<td class="ar"><div class="fLine vCenter">'+inp(r.lo)+'<span class="ml5 mr5">–</span>'+inp(r.hi)+'</div></td>'
-                 +    '<td class="al">'+(r.svhc?'SVHC (List 2023)':'—')+'</td>'
+                 +    '<td class="al"><div class="fLine vCenter">'+inpW(r.lo,'wd45px')+'<span class="ml5 mr5">–</span>'+inpW(r.hi,'wd45px')+'</div></td>'
+                 +    '<td class="al">'+(r.flag || '—')+'</td>'
                  +    '<td class="ac">'+del()+'</td>'
                  +  '</tr>';
           });
@@ -382,13 +489,12 @@
           var html = '', total = 0;
           PC_DATA.forEach(function(r){
             total += r.conc;
-            var thr = r.conc>=r.thr ? rb('bdGreen','≥'+r.thr+'% ✓') : rb('bdGray','&lt;'+r.thr+'%');
             html += '<tr>'
-                 +    '<td class="al">'+r.name+(r.svhc?' '+rb('bdRed','SVHC'):'')+'<br><span class="font13">'+r.cas+'</span></td>'
-                 +    '<td class="al">'+r.origin+'</td>'
+                 +    '<td class="al"><span class="fontM">'+r.name+'</span>'+(r.svhc?' '+rb('bdRed','SVHC'):'')+'<br><span class="font13">'+r.cas+' · '+r.ec+'</span></td>'
+                 +    '<td class="ac">'+origBadge(r.origin)+'</td>'
                  +    '<td class="ar">'+inp(r.conc.toFixed(2), 'ar', 'jsConc')+'</td>'
                  +    '<td class="ac">'+sel(CT_OPT, r.ct)+'</td>'
-                 +    '<td class="ac">'+thr+'</td>'
+                 +    '<td class="ac">'+thrBadge(r.conc, r.thr, r.svhc)+'</td>'
                  +    '<td class="ac">'+chk(r.inc)+'</td>'
                  +    '<td class="ac">'+chk(r.sds)+'</td>'
                  +    '<td class="ac">'+del()+'</td>'
@@ -398,15 +504,65 @@
           setTotal($('#pcTotal'), total);
         }
 
+        // Card 3 : Reaction Conditions 표 (투입원료별 반응 후 잔존 여부) — 읽기 전용 요약
+        function renderRxnCond(){
+          var html = '';
+          RXN_COND.forEach(function(r, i){
+            var matNo = (r.src.match(/^\d+/) || [''])[0];
+            var matName = r.src.replace(/^\d+\s+/, '').replace(/\s*·.*$/, '');
+            // 같은 srcId 연속 그룹의 첫 행에만 Material 셀(rowspan)
+            var matCell = '';
+            if(i === 0 || RXN_COND[i-1].srcId !== r.srcId){
+              var span = 1;
+              while(i+span < RXN_COND.length && RXN_COND[i+span].srcId === r.srcId) span++;
+              matCell = '<td class="al"'+(span>1?' rowspan="'+span+'"':'')+'><span class="fontM">'+matName+'</span><br><span class="font13">'+r.srcId+' · '+matNo+'</span></td>';
+            }
+            html += '<tr>'
+                 +    matCell
+                 +    '<td class="al"><span class="fontM">'+r.name+'</span><br><span class="font13">'+r.cas+' · '+r.ec+'</span></td>'
+                 +    '<td class="ac">'+rb(PACLS[r.pa]||'bdGray', r.pa)+'</td>'
+                 +    '<td class="ar">'+r.conc.toFixed(2)+'%</td>'
+                 +    '<td class="al">'+r.res+' – '+r.resTxt+'</td>'
+                 +  '</tr>';
+          });
+          $('#rxnCondTbody').html(html);
+        }
+
+        // Edit Reaction Conditions 모달 — 반응 생성물 표(편집형)
+        function renderRxnProd(){
+          var html = '';
+          RXN_PROD.forEach(function(r){
+            html += '<tr>'
+                 +    '<td class="al">'+inp(r.name, 'al')+'</td>'
+                 +    '<td class="al">'+inp(r.cas, 'al')+'</td>'
+                 +    '<td class="ar">'+inp(r.yld, 'ar')+'</td>'
+                 +    '<td class="al">'+inp(r.note, 'al')+'</td>'
+                 +    '<td class="ac">'+del()+'</td>'
+                 +  '</tr>';
+          });
+          $('#rxnProdTbody').html(html);
+        }
+        function addRxnProdRow(){
+          var $tr = $('<tr>'
+            + '<td class="al">'+inp('', 'al')+'</td>'
+            + '<td class="al">'+inp('', 'al')+'</td>'
+            + '<td class="ar">'+inp('', 'ar')+'</td>'
+            + '<td class="al">'+inp('', 'al')+'</td>'
+            + '<td class="ac">'+del()+'</td>'
+            + '</tr>');
+          $('#rxnProdTbody').append($tr);
+        }
+
         // Section A/B 빈 행 추가 (render 행과 동일 구조)
         function addRCRow(){
           var $tr = $('<tr>'
             + '<td class="al">'+inp('', 'al')+'</td>'
             + subCell(true)
+            + '<td class="ac">'+sel(ROLE_OPT, 'CONSTITUENT')+'</td>'
             + '<td class="ac">'+sel(PA_RC, 'Blend')+'</td>'
             + '<td class="ar">'+inp('0.00', 'ar', 'jsConc')+'</td>'
-            + '<td class="ar"><div class="fLine vCenter">'+inp('')+'<span class="ml5 mr5">–</span>'+inp('')+'</div></td>'
-            + '<td class="al">—</td>'
+            + '<td class="al"><div class="fLine vCenter">'+inpW('','wd45px')+'<span class="ml5 mr5">–</span>'+inpW('','wd45px')+'</div></td>'
+            + '<td class="al">'+inp('', 'al')+'</td>'
             + '<td class="ac">'+del()+'</td>'
             + '</tr>');
           $('#rcTbody').append($tr);
@@ -429,17 +585,48 @@
           recalcTableTotal($('#pcTbody').closest('table'));
         }
 
+        // ITEM 빈 행 추가 (Substance/CAS/EC + Conc/Range/GHS/Threshold)
+        function addRFRow(){
+          var $tr = $('<tr>'
+            + subCell(true)
+            + '<td class="ar">'+inp('0.00', 'ar', 'jsConc')+'</td>'
+            + '<td class="ar">'+inp('')+'</td>'
+            + '<td class="ar">'+inp('')+'</td>'
+            + '<td class="al">'+inp('', 'al')+'</td>'
+            + '<td class="ac">'+inp('', 'ac')+'</td>'
+            + '<td class="ac">'+del()+'</td>'
+            + '</tr>');
+          $('#rfTbody').append($tr);
+          initSubSearch($tr);
+        }
+
+        // Regulatory 빈 행 추가 (Substance/CAS/EC + Legal Conc/Range/REACH/SVT)
+        function addRGRow(){
+          var $tr = $('<tr>'
+            + subCell(true)
+            + '<td class="ar">'+inp('0.00', 'ar', 'jsConc')+'</td>'
+            + '<td class="ar">'+inp('')+'</td>'
+            + '<td class="ar">'+inp('')+'</td>'
+            + '<td class="al">'+inp('', 'al')+'</td>'
+            + '<td class="ac">'+sel(['Y','N'], 'Y')+'</td>'
+            + '<td class="ac">'+del()+'</td>'
+            + '</tr>');
+          $('#rgTbody').append($tr);
+          initSubSearch($tr);
+        }
+
         // Card 4 : ITEM
         function renderRF(){
           var html = '';
           RF_DATA.forEach(function(r){
             html += '<tr>'
-                 +    '<td class="al">'+r.name+'<br><span class="font13">'+r.cas+' · '+r.ec+'</span></td>'
+                 +    '<td class="al"><span class="fontM">'+r.name+'</span><br><span class="font13">'+r.cas+' · '+r.ec+'</span></td>'
                  +    '<td class="ar">'+inp(r.conc.toFixed(2), 'ar', 'jsConc')+'</td>'
                  +    '<td class="ar">'+inp(r.lo)+'</td>'
                  +    '<td class="ar">'+inp(r.hi)+'</td>'
                  +    '<td class="al">'+r.ghs+'</td>'
                  +    '<td class="ac">'+r.thr+'</td>'
+                 +    '<td class="ac">'+del()+'</td>'
                  +  '</tr>';
           });
           $('#rfTbody').html(html);
@@ -450,12 +637,13 @@
           var html = '';
           RG_DATA.forEach(function(r){
             html += '<tr>'
-                 +    '<td class="al">'+r.name+'<br><span class="font13">'+r.cas+' · '+r.ec+'</span></td>'
+                 +    '<td class="al"><span class="fontM">'+r.name+'</span><br><span class="font13">'+r.cas+' · '+r.ec+'</span></td>'
                  +    '<td class="ar">'+inp(r.conc.toFixed(2), 'ar', 'jsConc')+'</td>'
                  +    '<td class="ar">'+inp(r.lo)+'</td>'
                  +    '<td class="ar">'+inp(r.hi)+'</td>'
                  +    '<td class="al">'+r.reach+'</td>'
                  +    '<td class="ac">'+(r.svt==='Y'?rb('bdGreen','✓ SVT'):rb('bdGray','—'))+'</td>'
+                 +    '<td class="ac">'+del()+'</td>'
                  +  '</tr>';
           });
           $('#rgTbody').html(html);
@@ -490,11 +678,6 @@
 					<i class="material-symbols-outlined left">gavel</i><span>Regulatory</span>
 				</li>
 			</ul>
-		</section>
-		<section class="btnArea">
-			<div><a href="javascript:;" class="waves-effect waves-light hBtn hBlue mb10"><i class="material-symbols-outlined left">save</i><span class="label">Save</span></a></div>
-			<div><a href="javascript:;" class="waves-effect waves-light hBtn hGreen mb10"><i class="material-symbols-outlined left">assignment_turned_in</i><span class="label">Submit for Approval</span></a></div>
-			<div><a href="javascript:;" class="waves-effect waves-light hBtn"><i class="material-symbols-outlined left">publish</i><span class="label">Publish to ERP</span></a></div>
 		</section>
 	</aside>
 
@@ -554,10 +737,7 @@
 
 			<!-- ── Card 2 : BOM Explorer (Composition Variant + 선택 BOM) ── -->
 			<section class="cardBox animate__animated animate__fadeInLeft mt10" id="pjContCard_2">
-				<div class="cardTit2 type2">
-					<span><i class="material-symbols-outlined left">account_tree</i>BOM Explorer</span>
-					<a href="javascript:;" class="waves-effect waves-light hBtn hBlue"><i class="material-symbols-outlined left">sync_alt</i><span class="label">Sync ERP BOM</span></a>
-				</div>
+				<div class="cardTit2"><i class="material-symbols-outlined left">account_tree</i>BOM Explorer</div>
 
 				<div class="cardSubTit mt30">Composition Variant</div>
 				<div class="fixedTable hBorderTable hScroll vMiddle mg10">
@@ -576,18 +756,17 @@
 					</table>
 				</div>
 
-				<div class="cardSubTit mt30" id="bomSubTit">BOM Explosion Tree</div>
+				<div class="cardSubTitArea mt30">
+					<div class="cardSubTit" id="bomSubTit">BOM Explosion Tree</div>
+					<div class="switch">
+						<label><input type="checkbox" id="bomSumToggle"><span class="lever"></span><span class="fontM black-text">Σ Summarized</span></label>
+					</div>
+				</div>
 				<div class="fixedTable hBorderTable hScroll vMiddle mg10">
 					<table>
-						<colgroup>
-							<col style="width:26%;"><col style="width:6%;"><col style="width:11%;"><col style="width:9%;">
-							<col style="width:10%;"><col style="width:11%;"><col style="width:14%;"><col style="width:13%;">
-						</colgroup>
+						<colgroup id="bomCols"></colgroup>
 						<thead>
-							<tr>
-								<th class="al font13 nowrap">Material / Component</th><th class="ac font13 nowrap">Type</th><th class="ac font13 nowrap">MERP Mat.No</th><th class="ar font13 nowrap">Qty (/100kg)</th>
-								<th class="ac font13 nowrap">Process Action</th><th class="ac font13 nowrap">CAS / EC</th><th class="al font13 nowrap">Reaction Role</th><th class="al font13 nowrap">Remarks</th>
-							</tr>
+							<tr id="bomHead"></tr>
 						</thead>
 						<tbody id="bomTbody"></tbody>
 					</table>
@@ -601,38 +780,56 @@
 				<div class="cardSubTitArea mt30">
 					<div class="cardSubTit">SECTION A — Input / Starting Material Substances</div>
 					<div class="fLine vCenter">
-						<a href="javascript:;" class="waves-effect waves-light hBtn hSmall"><i class="material-symbols-outlined left">cached</i><span class="label">Recalc from BOM</span></a>
-						<a href="javascript:;" class="waves-effect waves-light hBtn hSmall ml10" onclick="addRCRow()"><i class="material-symbols-outlined left">add</i>Add Row</a>
+						<a href="javascript:;" class="waves-effect waves-light hBtn hSmall" onclick="addRCRow()"><i class="material-symbols-outlined left">add</i>Add Row</a>
 					</div>
 				</div>
 				<div class="fixedTable hBorderTable hScroll vMiddle mg10">
 					<table>
 						<colgroup>
-							<col style="width:7%;"><col style="width:35%;"><col style="width:13%;"><col style="width:8%;"><col style="width:16%;"><col style="width:16%;"><col style="width:5%;">
+							<col style="width:22%;"><col style="width:27%;"><col style="width:12%;"><col style="width:8%;"><col style="width:7%;"><col style="width:10%;"><col style="width:11%;"><col style="width:3%;">
 						</colgroup>
 						<thead>
 							<tr>
-								<th class="al">Ingr.</th><th class="al">Substance / CAS / EC</th><th class="ac">Process Action</th>
-								<th class="ar">Concentration %</th><th class="ar">Conc. Range</th><th class="al">SVHC / Flag</th><th class="ac"></th>
+								<th class="al nowrap">Material / BOM line / Code</th><th class="al nowrap">Substance / CAS / EC</th><th class="al nowrap">Role</th><th class="al nowrap">Process Action</th>
+								<th class="al nowrap">Conc. %</th><th class="al nowrap">Conc. Range</th><th class="al nowrap">SVHC / Flag</th><th class="al nowrap"></th>
 							</tr>
 						</thead>
 						<tbody id="rcTbody"></tbody>
 						<tfoot>
-							<tr><th class="ar" colspan="3"><b>TOTAL</b></th><th class="ar"><b id="rcTotal" class="jsTotal">—</b></th><th colspan="3"></th></tr>
+							<tr><th class="ar" colspan="4"><b>TOTAL</b></th><th class="ar"><b id="rcTotal" class="jsTotal">—</b></th><th colspan="3"></th></tr>
 						</tfoot>
 					</table>
 				</div>
 
-				<div class="cardSubTit mt30">Reaction Conditions — Hydrosilylation (Partial)</div>
-				<div class="inputArea">
-					<div class="row">
-						<div class="col s2 ar pl0">Reaction</div>
-						<div class="col s10 val">Si–H (Silicone polymer) + CH₂=CH– (Vinyl crosslinker) ⟶ –Si–CH₂–CH₂– (Crosslinked network) + Pt residue (trace)</div>
+				<div class="cardSubTitArea mt30">
+					<div class="cardSubTit">Reaction Conditions — Hydrosilylation (Partial)</div>
+					<div><a href="#rxnEditModal" class="waves-effect waves-light hBtn hSmall modal-trigger"><i class="material-symbols-outlined left">edit</i>Edit Conditions</a></div>
+				</div>
+				<div class="borderBox mg10">
+					<div class="inputArea">
+						<div class="row">
+							<div class="col s2 ar pl0">Reaction</div>
+							<div class="col s10 val">Si–H (Silicone polymer) + CH₂=CH– (Vinyl crosslinker) ⟶ –Si–CH₂–CH₂– (Crosslinked network) + Pt residue (trace)</div>
+						</div>
+						<div class="row">
+							<div class="col s2 ar pl0">Conditions</div>
+							<div class="col s10 val">Catalyst: Pt/ethanol complex (Type D – extracted) · Conversion ~85% · Temperature 120–150°C · Reaction time 15–25 min</div>
+						</div>
 					</div>
-					<div class="row">
-						<div class="col s2 ar pl0">Conditions</div>
-						<div class="col s10 val">Catalyst: Pt/ethanol complex (Type D – extracted) · Conversion ~85% · Temperature 120–150°C · Reaction time 15–25 min</div>
-					</div>
+				</div>
+				<div class="fixedTable hBorderTable hScroll vMiddle mg10">
+					<table>
+						<colgroup>
+							<col style="width:20%;"><col style="width:28%;"><col style="width:12%;"><col style="width:10%;"><col style="width:30%;">
+						</colgroup>
+						<thead>
+							<tr>
+								<th class="al">Material / BOM line / Code</th><th class="al">Substance / CAS / EC</th>
+								<th class="ac">Process Action</th><th class="ar">Input %</th><th class="al">Residual in Product?</th>
+							</tr>
+						</thead>
+						<tbody id="rxnCondTbody"></tbody>
+					</table>
 				</div>
 
 				<div class="cardSubTitArea mt30">
@@ -642,11 +839,11 @@
 				<div class="fixedTable hBorderTable hScroll vMiddle mg10">
 					<table>
 						<colgroup>
-							<col style="width:29%;"><col style="width:17%;"><col style="width:7%;"><col style="width:14%;"><col style="width:11%;"><col style="width:9%;"><col style="width:8%;"><col style="width:5%;">
+							<col style="width:37%;"><col style="width:12%;"><col style="width:8%;"><col style="width:11%;"><col style="width:13%;"><col style="width:8%;"><col style="width:8%;"><col style="width:3%;">
 						</colgroup>
 						<thead>
 							<tr>
-								<th class="al">Substance / CAS</th><th class="al">Origin</th><th class="ar">Conc. %</th>
+								<th class="al">Substance / CAS / EC</th><th class="ac">Origin</th><th class="ar">Conc. %</th>
 								<th class="ac">Comp. Type</th><th class="ac">Threshold</th><th class="ac">→ PC</th><th class="ac">SDS Vis.</th><th class="ac"></th>
 							</tr>
 						</thead>
@@ -660,19 +857,22 @@
 
 			<!-- ── Card 4 : ITEM (Product Composition · SDS/Label) ── -->
 			<section class="cardBox animate__animated animate__fadeInLeft mt10" id="pjContCard_4">
-				<div class="cardTit2 type2">
-					<span><i class="material-symbols-outlined left">description</i>ITEM (Product Composition · SDS/Label)</span>
-					<a href="javascript:;" class="waves-effect waves-light hBtn"><i class="material-symbols-outlined left">download</i><span class="label">Derive from INPUT</span></a>
+				<div class="cardTit2"><i class="material-symbols-outlined left">description</i>ITEM (Product Composition · SDS/Label)</div>
+				<div class="cardSubTitArea mt30">
+					<div class="cardSubTit">SDS / Label Reportable Components</div>
+					<div class="fLine vCenter">
+						<a href="javascript:;" class="waves-effect waves-light hBtn hSmall" onclick="addRFRow()"><i class="material-symbols-outlined left">add</i>Add Row</a>
+					</div>
 				</div>
 				<div class="fixedTable hBorderTable hScroll vMiddle mg10">
 					<table>
 						<colgroup>
-							<col style="width:34%;"><col style="width:15%;"><col style="width:11%;"><col style="width:11%;"><col style="width:19%;"><col style="width:10%;">
+							<col style="width:34%;"><col style="width:13%;"><col style="width:10%;"><col style="width:10%;"><col style="width:20%;"><col style="width:10%;"><col style="width:3%;">
 						</colgroup>
 						<thead>
 							<tr>
 								<th class="al">Substance / CAS / EC</th><th class="ar">Conc. % (typical)</th><th class="ar">Range Low %</th>
-								<th class="ar">Range High %</th><th class="al">GHS Reporting</th><th class="ac">Threshold</th>
+								<th class="ar">Range High %</th><th class="al">GHS Reporting</th><th class="ac">Threshold</th><th class="ac"></th>
 							</tr>
 						</thead>
 						<tbody id="rfTbody"></tbody>
@@ -682,19 +882,22 @@
 
 			<!-- ── Card 5 : Regulatory (LEGAL · REACH/SVT) ── -->
 			<section class="cardBox animate__animated animate__fadeInLeft mt10" id="pjContCard_5">
-				<div class="cardTit2 type2">
-					<span><i class="material-symbols-outlined left">gavel</i>Regulatory (LEGAL · Regulatory Composition)</span>
-					<a href="javascript:;" class="waves-effect waves-light hBtn"><i class="material-symbols-outlined left">download</i><span class="label">Derive from ITEM</span></a>
+				<div class="cardTit2"><i class="material-symbols-outlined left">gavel</i>Regulatory (LEGAL · Regulatory Composition)</div>
+				<div class="cardSubTitArea mt30">
+					<div class="cardSubTit">REACH / SVT Registration</div>
+					<div class="fLine vCenter">
+						<a href="javascript:;" class="waves-effect waves-light hBtn hSmall" onclick="addRGRow()"><i class="material-symbols-outlined left">add</i>Add Row</a>
+					</div>
 				</div>
 				<div class="fixedTable hBorderTable hScroll vMiddle mg10">
 					<table>
 						<colgroup>
-							<col style="width:34%;"><col style="width:12%;"><col style="width:12%;"><col style="width:12%;"><col style="width:18%;"><col style="width:12%;">
+							<col style="width:35%;"><col style="width:11%;"><col style="width:11%;"><col style="width:11%;"><col style="width:17%;"><col style="width:12%;"><col style="width:3%;">
 						</colgroup>
 						<thead>
 							<tr>
 								<th class="al">Substance / CAS / EC</th><th class="ar">Legal Conc. %</th><th class="ar">Range Low %</th>
-								<th class="ar">Range High %</th><th class="al">REACH Registration</th><th class="ac">SVT Applicable</th>
+								<th class="ar">Range High %</th><th class="al">REACH Registration</th><th class="ac">SVT Applicable</th><th class="ac"></th>
 							</tr>
 						</thead>
 						<tbody id="rgTbody"></tbody>
@@ -704,5 +907,54 @@
 
 		</article>
 	</div>
+
+	<!-- ── Edit Reaction Conditions Modal (Materialize · npdi 패턴) ── -->
+	<article id="rxnEditModal" class="modal" style="width:920px;max-width:94%;">
+		<div class="modal-header mochaBg">
+			<h5>Edit Reaction Conditions</h5>
+			<div class="closeBtns modal-close"><i class="material-symbols-outlined">close</i></div>
+		</div>
+		<div class="modal-content">
+			<div class="inputArea">
+				<div class="row">
+					<div class="col s2 ar pl0">Reaction Type</div>
+					<div class="col s4 val">
+						<select class="browser-default">
+							<option selected>WITH_REACTION (Hydrosilylation)</option>
+							<option>WITH_REACTION</option>
+							<option>No Reaction (Blend)</option>
+							<option>Separation</option>
+						</select>
+					</div>
+					<div class="col s2 ar pl0">Conversion Rate %</div>
+					<div class="col s4 val"><div class="aniInput"><input type="text" class="browser-default ar" value="85"><span class="focus-border"></span></div></div>
+				</div>
+				<div class="row">
+					<div class="col s2 ar pl0">Temperature Range</div>
+					<div class="col s4 val"><div class="aniInput"><input type="text" class="browser-default" value="120 – 150 °C"><span class="focus-border"></span></div></div>
+					<div class="col s2 ar pl0">Reaction Time</div>
+					<div class="col s4 val"><div class="aniInput"><input type="text" class="browser-default" value="15 – 25 min"><span class="focus-border"></span></div></div>
+				</div>
+			</div>
+
+			<div class="cardSubTitArea mt30">
+				<div class="cardSubTit">Reaction Products Formed</div>
+				<div><a href="javascript:;" class="waves-effect waves-light hBtn hSmall" onclick="addRxnProdRow()"><i class="material-symbols-outlined left">add</i>Add Row</a></div>
+			</div>
+			<div class="fixedTable hBorderTable hScroll vMiddle mg10">
+				<table>
+					<colgroup><col style="width:40%;"><col style="width:18%;"><col style="width:14%;"><col style="width:25%;"><col style="width:3%;"></colgroup>
+					<thead>
+						<tr><th class="al">Reaction Product</th><th class="al">CAS</th><th class="ar">Yield %</th><th class="al">Notes</th><th class="ac"></th></tr>
+					</thead>
+					<tbody id="rxnProdTbody"></tbody>
+				</table>
+			</div>
+
+			<div class="btnArea">
+				<a href="javascript:;" class="waves-effect waves-light hBtn hBlue modal-close"><i class="material-symbols-outlined left">save</i><span class="label">Save Conditions</span></a>
+			</div>
+		</div>
+	</article>
 </body>
 </html>
