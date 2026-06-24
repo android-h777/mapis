@@ -1829,6 +1829,7 @@ nav .rightSection > div {
 	align-items: center;
 	height: 50px;
 	cursor: default;
+	position: relative;
 }
 nav .rightSection > .userInfo:hover > div > span {
 	text-decoration: underline;

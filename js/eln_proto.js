@@ -97,13 +97,10 @@
     pop.appendChild(opts.content);
     document.body.appendChild(pop);
     var x, y, w = pop.offsetWidth, h = pop.offsetHeight, gap = 6;
-    if (opts.atPointer) {                              // 섹션 사이/하단 '+': 마우스 포인터 위치 추종
+    if (opts.atPointer) {                              // 컨텍스트 메뉴/픽커 — 포인터 기준 표준 위치(좌상단 코너=포인터, 우측·하단으로 펼침)
       var px = opts.atPointer.x, py = opts.atPointer.y;
-      x = Math.min(Math.max(8, px - w / 2), window.innerWidth - w - 8);
-      var upY = py - h - gap, downY = py + gap;
-      if (upY >= 8) y = upY;                            // 기본: 위로
-      else if (downY + h <= window.innerHeight - 8) y = downY;  // 위 공간 없으면 아래로
-      else y = 8;                                       // 둘 다 없으면 위(클램프)
+      x = (px + w <= window.innerWidth - 8) ? px : Math.max(8, px - w);     // 우측 방향 기본, 오른쪽 넘치면 좌측 플립
+      y = (py + h <= window.innerHeight - 8) ? py : Math.max(8, py - h);    // 하단 방향 기본, 아래 넘치면 상단 플립
     } else {                                            // 좌측 Add module 버튼: 앵커 기준(기존 위치 유지)
       var r = opts.anchor.getBoundingClientRect();
       x = Math.min(Math.max(8, r.left), window.innerWidth - w - 8);
@@ -1134,7 +1131,7 @@
       li.innerHTML = '<i class="material-symbols-outlined left">' + t.icon + '</i><span>' + t.title + '</span>';
       var refLi = after ? ul.querySelector('.menu-item[data-target="' + after.id + '"]') : null;
       if (refLi) ul.insertBefore(li, refLi.nextSibling);
-      else ul.appendChild(li);
+      else { var apprLi = ul.querySelector('.menu-item[data-target="card_approval"]'); ul.insertBefore(li, apprLi || null); }   // 모듈 목차는 Approval '위'에(Approval 최하단 고정)
       setupNavItem(li);   // 새 목차 항목도 드래그 핸들 적용
     }
     refreshDividers();
@@ -1791,6 +1788,8 @@
     function pinBasicFirst(ids) {
       var i = ids.indexOf('card_basic');
       if (i > 0) { ids.splice(i, 1); ids.unshift('card_basic'); }
+      var j = ids.indexOf('card_approval');
+      if (j >= 0 && j < ids.length - 1) { ids.splice(j, 1); ids.push('card_approval'); }   // Approval 목차 최하단 고정
       return ids;
     }
     // 카드 DOM 순서 → 좌측 목차를 같은 순서로 재배치

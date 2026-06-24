@@ -1,0 +1,170 @@
+<!DOCTYPE html lang="en">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MAPIS TRH · Help &amp; Guide</title>
+	<link rel="preload" href="mapis_lib/font/material-symbols-outlined.woff2" as="font" type="font/woff2">
+	<link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/mpm_materialize.css">
+    <link rel="stylesheet" type="text/css" href="mapis_lib/css/common.css">
+    <link type="text/css" rel="stylesheet" href="mapis_lib/css/lib/animate.min.css">
+    <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-3.7.1.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-ui-1.14.1.js"></script>
+    <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/mpm_materialize.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/apis_util.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/glass_engine.js"></script>
+    <link rel="stylesheet" type="text/css" href="css/rptlib_proto.css">
+</head>
+<body>
+	<header class="navbar-fixed"><nav><article class="navTop">
+		<section class="leftSection">
+			<div class="menuIcon"><div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div></div>
+			<div><a href="apis_main.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
+		</section>
+		<section class="centerSection"><div class="srchArea"><i class="material-icons prefix">search</i><input type="text" class="browser-default" placeholder="Search" id="mainSrchInput" autocomplete="off"></div></section>
+		<section class="rightSection">
+			<!-- Help는 좌측 모듈 네비로 이동(헤더 아이콘 폐기) — list.html과 헤더 일관 -->
+			<div class="userInfo ml10"><div class="mr10"><span class="mocha25-text fontM">JONGHO LEE</span></div><i class="material-icons gardenia25 mocha25-text fLine vCenter hCenter mg0">person</i></div>
+			<div class="notiArea ml10"><i class="material-icons mocha25-text fLine vCenter hCenter mg0">assignment_turned_in</i><div class="notiCnt pulse"><span class="font11">3</span></div></div>
+		</section>
+	</article></nav></header>
+
+	<aside class="menuAside"><div id="slide-out" class="sidenav glassBox">
+		<div class="userInfoArea"><div class="photo"><i class="material-icons" style="font-size:46px;color:#A47864;">account_circle</i></div><div class="userInfo"><div class="fontB">Global Technology</div><div>Technical Report Hub</div></div></div>
+		<div class="menuList"><ul>
+			<li class="waves-effect waves-hColor on"><a href="apis_rptlib_list.html"><i class="material-icons left">database</i>Technical Report Hub</a></li>
+			<li><a class="subheader" style="color:#9b8c7e;font-size:11px;pointer-events:none;">MAPIS MODULES</a></li>
+			<li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>MAPIS Home</a></li>
+		</ul></div>
+	</div></aside>
+
+	<article class="contArea rlArea">
+		<div class="rlBody">
+		<aside class="rlNav" id="rlNav">
+			<div class="rlNavHead">
+				<div class="rlNavBrand"><span class="brFull"><span class="fontB font20">T</span>echnical<br><span class="fontB font20">R</span>eport<br><span class="fontB font20">H</span>ub</span><span class="brTRH fontB font20">TRH</span></div>
+				<a href="javascript:;" class="rlNavToggle" id="rlNavToggle" title="Collapse menu"><i class="material-symbols-outlined">chevron_left</i></a>
+			</div>
+			<div class="rlNavList">
+				<!-- list.html 좌측 네비와 동일 구성으로 동기화(Documents · My Report · Help). 정적 링크라 수동 동기화 필요 -->
+				<a href="apis_rptlib_list.html" class="rlNavItem"><i class="material-symbols-outlined">article</i><span>Documents</span></a>
+				<a href="apis_rptlib_list.html?view=mine" class="rlNavItem"><i class="material-symbols-outlined">assignment_ind</i><span>My Report</span></a>
+				<a href="apis_rptlib_help.html" class="rlNavItem on"><i class="material-symbols-outlined">help</i><span>Help</span></a>
+			</div>
+		</aside>
+
+		<div class="rlContent upContent">
+			<div class="upHead">
+				<div class="upTit">Help &amp; Guide</div>
+				<div class="upSub">How submission, classification, and access work in MAPIS TRH — reference only, you rarely need it.</div>
+			</div>
+			<div class="admTabs" id="helpTabs">
+				<a href="javascript:;" class="admTab on" data-pane="flow"><i class="material-symbols-outlined">account_tree</i>Submission workflow</a>
+				<a href="javascript:;" class="admTab" data-pane="cls"><i class="material-symbols-outlined">labels</i>Classification</a>
+				<a href="javascript:;" class="admTab" data-pane="access"><i class="material-symbols-outlined">shield_person</i>Access control</a>
+			</div>
+			<div class="admBody hScroll" id="helpBody"><!-- JS --></div>
+		</div>
+		</div>
+	</article>
+
+	<script>
+	function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+	function classBadge(c){ var lock=(c>=3); return '<span class="rlClassBadge c'+c+'">'+(lock?'<i class="material-symbols-outlined">lock</i>':'')+'C'+c+'</span>'; }
+
+	// pop.html APPR.steps와 동일 모델: Step1 Manager(순차·ITAR) → Step2 GT&C · Tech CoE(병렬, 둘 다 필수) → 승인 후 자동 채번/발행
+	var WF=[
+		{n:1, role:'Author',   t:'Submit — standard cover page, state the facts'},
+		{n:2, role:'Manager',  t:'ITAR / export gate', note:'Step 1 · sequential', dec:true},
+		{n:3, role:'Reviewer', t:'GT&C · Technology CoE', note:'Step 2 · parallel — both required', dec:true},
+		{n:4, role:'System',   t:'Auto-number + stamp cover page', note:'on approval'},
+		{n:5, role:'System',   t:'Live — instant, access-governed', end:true}
+	];
+	var CLS=[
+		{c:1, nm:'Public', why:'All Momentive employees; non-sensitive / publicly available — may be shared outside Momentive (e.g., brochures, trade-show literature).'},
+		{c:2, nm:'Internal', why:'All Momentive employees; restricted for external sharing (only under contract, per Legal / Technology Leader). The vast majority of technical reports.'},
+		{c:3, nm:'Confidential', why:'Sensitive — classified by country/region of origin. Employees from other regions are restricted; exceptions need Technology CoE leader authorization.'},
+		{c:4, nm:'Highly Restricted', why:'Specific named individuals only (e.g., under a JDA). Other access needs Technology CoE leader and Legal approval.'}
+	];
+	var AC=[
+		{g:'GG-Any-ZyimageUsers-Class1&2', cls3:null},
+		{g:'GG-Any-ZyimageUsers-USClass3',  cls3:'US index'},
+		{g:'GG-Any-ZyimageUsers-EUClass3',  cls3:'EU indexes — Leverkusen, Italy'},
+		{g:'GG-Any-ZyimageUsers-INClass3',  cls3:'IN index'},
+		{g:'GG-Any-ZyimageUsers-CHNClass3', cls3:'CHN index'},
+		{g:'GG-Any-ZyimageUsers-KRClass3',  cls3:'KR index'},
+		{g:'GG-Any-ZyimageUsers-JPNClass3', cls3:'JP indexes'},
+		{g:'GG-Any-ZyimageUsers-THClass3',  cls3:'TH index'},
+		{g:'GG-Any-ZyimageUsers-UKClass3',  cls3:'UK index'}
+	];
+
+	function paneFlow(){
+		var roleKey={Author:'rAuthor',Manager:'rApprover',Reviewer:'rApprover',System:'rSystem'};
+		var steps=WF.map(function(s,i){
+			var html='<div class="wfStep'+(s.dec?' dec':'')+(s.end?' end':'')+'"><span class="wfNum">'+s.n+'</span>'+
+				'<span class="wfRole '+roleKey[s.role]+'">'+s.role+'</span>'+
+				'<div class="wfT">'+esc(s.t)+(s.note?'<span class="wfNote">'+esc(s.note)+'</span>':'')+'</div></div>';
+			if(i<WF.length-1) html+='<span class="wfArrow material-symbols-outlined">chevron_right</span>';
+			return html;
+		}).join('');
+		return '<div class="cardBox admCard"><div class="cardTit">Submission workflow <span class="admMuted">작성자 제출 → Manager → GT&amp;C · Tech CoE 병렬 · ZyLab 이메일 안무·수기 채번을 대체</span></div>'+
+			'<div class="wfFlow">'+steps+'</div>'+
+			'<div class="wfBranches">'+
+				'<div class="wfBranch reject"><i class="material-symbols-outlined">block</i><div><b>ITAR / export-restricted (not EAR 99)</b> — the Manager gate stops it. Out of scope: never stored here, route to the controlled repository.</div></div>'+
+				'<div class="wfBranch consult"><i class="material-symbols-outlined">help</i><div><b>One question per approver</b> — Manager = ITAR, GT&amp;C = external circulation (&rarr; Class 1 / 2), Technology CoE = JDA / confidentiality (&rarr; Class 3 / 4). Approving = answering your gate; the class falls out of the answers.</div></div>'+
+				'<div class="wfBranch class4"><i class="material-symbols-outlined">undo</i><div><b>Reject</b> — returned to the author with the reviewer&rsquo;s reason &rarr; revise &amp; resubmit.</div></div>'+
+				'<div class="wfBranch win"><i class="material-symbols-outlined">bolt</i><div><b>Every handoff</b> fires an in-app toast, an email, and a To-Do (surfaced in MAPIS My Approval). No offline email chains.</div></div>'+
+			'</div></div>';
+	}
+
+	function paneCls(){
+		var rows=CLS.map(function(x){
+			return '<div class="clsRow">'+classBadge(x.c)+'<div class="clsBody"><div class="clsNm">Class '+x.c+' · '+esc(x.nm)+'</div><div class="clsWhy">'+esc(x.why)+'</div></div></div>';
+		}).join('');
+		return '<div class="cardBox admCard"><div class="cardTit">Access Control Classification <span class="admMuted">자가신고 아님 — 3개 결재 게이트 답에서 도출</span></div>'+
+			'<div class="clsList">'+rows+'</div>'+
+			'<div class="wfBranches">'+
+				'<div class="wfBranch consult"><i class="material-symbols-outlined">account_tree</i><div><b>Decision tree = the three approval gates.</b> ① ITAR / Export-restricted? &rarr; <b>Manager</b> (예 = Out of scope, 저장 금지). ② JDA 등 특별 기밀계약? &rarr; <b>Technology CoE</b> (예 = Class 3 지역 / Class 4 명단). ③ 외부 회람 승인? &rarr; <b>GT&amp;C</b> (예 = Class 1 / 아니오 = Class 2).</div></div>'+
+			'</div></div>';
+	}
+
+	function paneAccess(){
+		var rows=AC.map(function(r){
+			var rdp='<span class="acChips">'+classBadge(1)+classBadge(2);
+			if(r.cls3) rdp+='<span class="acC3">'+classBadge(3)+'<span class="acIdx">'+esc(r.cls3)+'</span></span>';
+			rdp+='</span>';
+			return '<div class="acRow"><div class="acG"><i class="material-symbols-outlined">group</i>'+esc(r.g)+'</div>'+
+				'<div class="acV"><span class="acAll">All</span></div><div class="acR">'+rdp+'</div></div>';
+		}).join('');
+		return '<div class="cardBox admCard"><div class="cardTit">Access control — by AD group &amp; classification <span class="admMuted">mirrors the live AD security model</span></div>'+
+			'<div class="acTable">'+
+				'<div class="acRow acHead"><div class="acG">User group (AD)</div><div class="acV">View only</div><div class="acR">Read / Download / Print</div></div>'+rows+
+			'</div>'+
+			'<div class="acClass4"><span class="rlClassBadge c4"><i class="material-symbols-outlined">lock</i>C4</span><div><b>Class 4 — Highly Restricted.</b> Granted to specific named individuals only, on approval from the Technology CoE leader (and Legal).</div></div>'+
+			'<div class="acAdmin"><i class="material-symbols-outlined">shield_person</i><div><b>ZyIMAGE_Administrators</b> — create / delete / edit indexes · read / download / print / upload in all indexes · update metadata · view audit trail.</div></div>'+
+			'<div class="acLegend"><div><b>View only</b> = discover the record &amp; read its metadata (title, author, abstract). Cannot open, download, or print the document.</div>'+
+				'<div><b>Read / Download / Print</b> = open the full document, download, and print.</div>'+
+				'<div class="acLegHint"><i class="material-symbols-outlined">lightbulb</i>This is why restricted reports still surface in search — you can see they exist and request access (Tech CoE, case-by-case).</div></div>'+
+			'</div>';
+	}
+
+	function renderHelp(p){
+		document.getElementById('helpBody').innerHTML = p==='cls'?paneCls() : p==='access'?paneAccess() : paneFlow();
+	}
+
+	$(document).ready(function(){
+		$('.sidenav').sidenav();
+		$(document).on('click', '.sidenav-overlay', function(){ $('.sidenav').sidenav('close'); });
+		renderHelp('flow');
+		document.getElementById('rlNavToggle').addEventListener('click', function(){ var nv=document.getElementById('rlNav'); nv.classList.toggle('collapsed'); var i=this.querySelector('i'); i.textContent=nv.classList.contains('collapsed')?'chevron_right':'chevron_left'; });
+		document.getElementById('helpTabs').addEventListener('click', function(e){ var t=e.target.closest('.admTab'); if(!t) return;
+			document.querySelectorAll('.admTab').forEach(function(x){ x.classList.remove('on'); }); t.classList.add('on');
+			renderHelp(t.getAttribute('data-pane'));
+		});
+		var gq=document.getElementById('mainSrchInput'); if(gq) gq.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); location.href='apis_rptlib_list.html'; } });
+	});
+	</script>
+</body>
+</html>
