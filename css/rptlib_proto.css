@@ -38,7 +38,7 @@ nav .rightSection .notiArea .notiCnt {
 /* 타이틀 = 최상단 풀폭 헤더, 그 아래 [네비 | 콘텐츠] 행 */
 .rlBody{flex:1 1 auto;min-height:0;display:flex;flex-direction:row;}
 /* 좌측 모듈 네비(접이식) */
-.rlNav{flex:0 0 auto;width:188px;display:flex;flex-direction:column;padding:12px 10px;border-right:1px solid color-mix(in srgb, var(--gardenia25) 85%, var(--gray30));background:var(--gardenia25);transition:width .18s ease;box-sizing:border-box;}
+.rlNav{flex:0 0 auto;width:188px;display:flex;flex-direction:column;padding:12px 10px;border-right:1px solid var(--gray20);background:var(--cloud26);box-shadow:1px 0 6px rgba(0,0,0,.03);transition:width .18s ease;box-sizing:border-box;}
 .rlNav.collapsed{width:56px;}
 .rlNavToggle{align-self:flex-end;width:32px;height:32px;display:flex;align-items:center;justify-content:center;border-radius:8px;color:var(--rl-accent);cursor:pointer;flex:0 0 auto;}
 .rlNavToggle:hover{background:color-mix(in srgb, var(--mocha25) 10%, transparent);}
