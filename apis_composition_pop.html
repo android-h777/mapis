@@ -154,12 +154,11 @@
           var txt = /Rxn Product/i.test(origin) ? 'RXN PRODUCT' : (/residual/i.test(origin) ? 'RESIDUAL' : 'BLEND');
           return '<span class="roundBox '+cls+'">'+txt+'</span>';   // 가운데 정렬 위해 mr5 없이
         }
-        // Section B Threshold 배지 (SVHC=빨강, 그 외 녹/회색) — fontM로 가독성 확보
+        // Section B Threshold = 평문 텍스트 + SVHC만 빨간 roundBox 배지(물질 컬럼과 동일)
         function thrBadge(conc, thr, svhc){
-          var abv = conc >= thr, cls, txt;
-          if(svhc){ cls = abv ? 'bdRed' : 'bdOrange'; txt = 'SVHC '+(abv?'≥':'&lt;')+thr+'%'+(abv?' ✓':' ⚠'); }
-          else    { cls = abv ? 'bdGreen' : 'bdGray'; txt = (abv?'≥':'&lt;')+thr+'%'+(abv?' ✓':' —'); }
-          return '<span class="roundBox '+cls+' fontM">'+txt+'</span>';
+          var abv = conc >= thr;
+          var txt = (abv ? '≥' : '&lt;') + thr + '%';
+          return (svhc ? rb('bdRed','SVHC')+'<br>' : '') + txt;
         }
         function del(){ return '<a href="javascript:;" class="jsDel"><i class="material-symbols-outlined tiny">close</i></a>'; }
         // 물질 셀(추가행): Substance/CAS(/EC) 인풋 — 출력행 크기에 맞춰 컴팩트(이름=기본, CAS·EC=font13 인라인)
@@ -839,7 +838,7 @@
 				<div class="fixedTable hBorderTable hScroll vMiddle mg10">
 					<table>
 						<colgroup>
-							<col style="width:37%;"><col style="width:12%;"><col style="width:8%;"><col style="width:11%;"><col style="width:13%;"><col style="width:8%;"><col style="width:8%;"><col style="width:3%;">
+							<col style="width:41%;"><col style="width:12%;"><col style="width:8%;"><col style="width:11%;"><col style="width:9%;"><col style="width:8%;"><col style="width:8%;"><col style="width:3%;">
 						</colgroup>
 						<thead>
 							<tr>
