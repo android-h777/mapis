@@ -2350,6 +2350,7 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 .fixedTable.hBorderTable,
 .hFixedTable.hBorderTable {
 	position: relative;
+    overflow-x: hidden;
 }
 .glassRowOverlay {
 	position: absolute;
@@ -2761,7 +2762,7 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 }
 .typeList .mainList ul {
 	overflow-y: auto;
-	overflow-x: visible;
+	overflow-x: hidden;
 	height: calc(100vh - 150px);
 	padding: 8px 10px;
 }

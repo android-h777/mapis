@@ -38,10 +38,10 @@
 				<div class="tit">[NT-2605-00142] UV-Curable PSA Viscosity Improvement — RGBOLED</div>
 				<!-- status: 수동 드롭다운 제거 → 결재 흐름에 따라 갱신되는 읽기전용 알약(setHeadStatus) -->
 				<div id="elnHeadStatus" class="roundBox blue" data-status="ing">In Progress</div>
-				<div id="elnApprovalBadge" class="elnApprBadge" style="display:none;"></div>
+				<div id="elnApprovalBadge" class="elnApprBadge"></div>
 			</div>
 			<!-- 헤더 우측: 이 과제의 연구노트 리스트(스테이지별) 토글 -->
-			<a href="javascript:;" id="elnNoteListBtn" class="waves-effect waves-light hBtn elnHeadRight" title="Show research notes of this project"><i class="material-symbols-outlined left">description</i><span class="label">Note List</span></a>
+			<a href="javascript:;" id="elnNoteListBtn" class="waves-effect waves-light hBtn hViva elnHeadRight" title="Show research notes of this project"><i class="material-symbols-outlined left">edit_note</i><span class="label">Note List</span></a>
 		</section>
 	</header>
 
@@ -52,7 +52,7 @@
 					<i class="material-symbols-outlined left">inventory_2</i><span>Basic Data</span>
 				</li>
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_fml">
-					<i class="material-symbols-outlined left">blender</i><span>Formulation</span>
+					<i class="material-symbols-outlined left">science</i><span>Formulation</span>
 				</li>
 				<!-- Process·Results는 Formulation 모듈 내부로 병합 — 별도 목차 없음 -->
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_concl">
@@ -125,7 +125,7 @@
 
 			<!-- Formulation -->
 			<section class="cardBox animate__animated mt10" id="card_fml">
-				<div class="cardTit2"><i class="material-symbols-outlined left">blender</i>Formulation</div>
+				<div class="cardTit2"><i class="material-symbols-outlined left">science</i>Formulation</div>
 				<!-- 타이틀과 분리된 액션 툴바 — 제목 아래 줄로 분리 -->
 				<div class="elnFmlToolbar">
 					<a class="waves-effect waves-light hBtn" id="btnChangeFml" href="javascript:;"><i class="material-symbols-outlined left">checklist</i><span class="label">Select</span></a>
@@ -144,7 +144,7 @@
 					<!-- 분석 임베드 (formulator 분석을 노트 안에 그대로) · 배합별 나란히 비교 -->
 					<label class="elnBasicLabel">Analysis <span class="elnHint">— side-by-side metrics · read-only</span></label>
 					<div class="elnFmlAnalysis">
-						<div class="elnFmlChart"><div id="chartFmlAnalysis" style="height:240px;"></div></div>
+						<div class="elnFmlChart"><div id="chartFmlAnalysis"></div></div>
 						<div class="elnFmlMetrics">
 							<div class="fixedTable hBorderTable hScroll elnFmlCmp">
 								<table>
@@ -179,8 +179,8 @@
 					<div class="elnResults">
 						<div class="elnResultsTable">
 							<div class="fixedTable hBorderTable hScroll">
-								<table>
-									<colgroup><col style="width:28%"><col style="width:34%"><col style="width:20%"><col style="width:18%"></colgroup>
+								<table class="elnResultsTbl">
+									<colgroup><col><col><col><col></colgroup>
 									<thead><tr><th>Item</th><th>Spec</th><th>Measured</th><th>Result</th></tr></thead>
 									<tbody>
 										<tr><td>Viscosity</td><td class="ac">4,500 ± 300 cP</td><td class="ar">4,520</td><td class="ac"><span class="cGreen">Pass</span></td></tr>
@@ -191,7 +191,7 @@
 							</div>
 						</div>
 						<div class="elnResultsChart">
-							<div id="chartViscosity" style="height:240px;"></div>
+							<div id="chartViscosity"></div>
 						</div>
 					</div>
 				</div>
@@ -203,7 +203,8 @@
 				<div class="elnBasic">
 					<label class="elnBasicLabel">Conclusion · Summary</label>
 					<div class="elnConcl">
-						<textarea class="browser-default" placeholder="Write the conclusion of this note">v3 reached 4,520 cP viscosity, passing all 3 specs. Recommend transfer to mass-production validation (SN-26-0031). CoC issuance pending.</textarea>
+						<!-- Editor 모듈(wireEditorModule)과 동일 Summernote 패턴 — 미로드 시 contenteditable 폴백 -->
+						<div class="elnSummernote elnConclEditor">v3 reached 4,520 cP viscosity, passing all 3 specs. Recommend transfer to mass-production validation (SN-26-0031). CoC issuance pending.</div>
 					</div>
 				</div>
 			</section>
@@ -235,7 +236,7 @@
 										<td class="ac">Technology Leader</td>
 										<td class="ac">Charles Kim</td>
 										<td class="ac">-</td>
-										<td class="ac"></td>
+										<td class="ac"><span class="roundBox stone25">Pending</span></td>
 									</tr>
 								</tbody>
 							</table>
@@ -254,7 +255,7 @@
 	<div id="elnNoteListScrim" class="elnNoteListScrim"></div>
 	<aside id="elnNoteListPanel" class="elnNoteList z-depth-2">
 		<div class="elnNoteListHead">
-			<div class="tit"><i class="material-symbols-outlined left">description</i>Note List</div>
+			<div class="tit"><i class="material-symbols-outlined left">edit_note</i>Note List</div>
 			<button type="button" class="x" id="elnNoteListClose" aria-label="Close"><i class="material-symbols-outlined">close</i></button>
 		</div>
 		<div class="elnNoteListProj" id="elnNoteListProj" title="Open project detail">[SN-26-0031] RGBOLED Display Adhesive</div>
@@ -263,7 +264,7 @@
 
 	<!-- Add Module 모달 — 시스템 Materialize 모달(apis_npdi_pop ProcessMap과 동일 패턴).
 	     글래스/오버레이/뒤배경 blur는 기본 .modal 규칙 + glass_engine.js가 처리. 그리드는 JS 렌더 -->
-	<div id="addModuleModal" class="modal hooModal" style="width:520px;">
+	<div id="addModuleModal" class="modal hooModal">
 		<div class="modal-header mochaBg">
 			<h5><i class="material-symbols-outlined left">add_box</i>Add Module</h5>
 			<div class="closeBtns modal-close"><i class="material-symbols-outlined">close</i></div>
@@ -285,6 +286,29 @@
 		// (중복 제거) 메뉴 클릭→스크롤+활성은 eln_proto.js 위임 핸들러가 처리 → sortable 재정렬 후에도 현재 위치로 스크롤
 		// 글래스 행 오버레이
 		if(typeof initAllHBorderTableOverlays === 'function') initAllHBorderTableOverlays();
+		// Conclusion 리치 에디터 — Editor 모듈(wireEditorModule)과 동일 Summernote 설정. 미로드 시 contenteditable 폴백
+		(function(){
+			var el = document.querySelector('.elnConclEditor'); if(!el) return;
+			if(window.$ && $.fn && $.fn.summernote){
+				$(el).summernote({
+					placeholder:'Write the conclusion of this note',
+					height:160,
+					toolbar:[
+						['style', ['style']],
+						['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+						['color', ['color']],
+						['para', ['ul', 'ol', 'paragraph']],
+						['table', ['table']],
+						['insert', ['link', 'picture']],
+						['view', ['codeview']]
+					]
+				});
+			} else {
+				el.setAttribute('contenteditable','true');
+				el.classList.add('elnSummernoteFallback');
+				el.setAttribute('data-ph','Write the conclusion…');
+			}
+		})();
 		// 점도 차트 (Highcharts) — 템플릿이 Formulation 카드를 제거했으면 컨테이너가 없으므로 가드
 		if(window.Highcharts && document.getElementById('chartViscosity')){
 			Highcharts.chart('chartViscosity', {

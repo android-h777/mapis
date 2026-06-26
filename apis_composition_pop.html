@@ -247,6 +247,99 @@
         var ROLECLS = {CONSTITUENT:'bdGreen', IMPURITY:'bdRed', ADDITIVE:'bdBlue', RESIDUAL:'bdOrange', BYPRODUCT:'bdGray'};   // 물질 Role 배지색
         var ROLE_OPT = ['CONSTITUENT','IMPURITY','ADDITIVE','RESIDUAL','BYPRODUCT'];
 
+        // ── 카드 Sub-type 결재 (NPI Approval Status 패턴 재사용) ──
+        // status: draft(입력중) | inappr(결재 진행 중) | appr(승인 완료=Active) | none(미작성)
+        // line 행 st: drafted | pending(현재 차례) | approved | rejected | ''(미도달)
+        var APPR_TODAY = '2026-06-25';
+        var SUBTYPE_APPR = {
+          Input: { sub:'INPUT', status:'draft', line:[
+            {type:'Author (Drafter)',  name:'R. Wijnands', date:'2026-04-28', st:'drafted'},
+            {type:'Technology Leader', name:'Charles Kim', date:'-',          st:''},
+            {type:'EHS / Reg. Leader', name:'Jim Quan',    date:'-',          st:''}
+          ]},
+          Item: { sub:'ITEM', status:'inappr', line:[
+            {type:'Author (Drafter)',  name:'R. Wijnands', date:'2026-05-30', st:'drafted'},
+            {type:'Technology Leader', name:'Charles Kim', date:'2026-06-02', st:'approved'},
+            {type:'EHS / Reg. Leader', name:'Jim Quan',    date:'-',          st:'pending'}
+          ]},
+          Legal: { sub:'LEGAL', status:'none', line:[] }
+        };
+        // 카드 상태 배지 (제목 옆 + Card1 Sub-type 동기화)
+        var APPR_ST = { draft:['bdOrange','Draft'], inappr:['bdBlue','In Approval'], appr:['bdGreen','Active'], none:['bdGray','Not Started'] };
+        // 결재선 행 상태 배지
+        function apprRowBadge(st){
+          var m = {drafted:['bdBlue','Drafted'], pending:['bdOrange','Pending'], approved:['bdGreen','Approved'], rejected:['bdRed','Rejected']}[st];
+          return m ? '<span class="roundBox '+m[0]+'">'+m[1]+'</span>' : '<span class="font13">—</span>';
+        }
+        // 상태별 액션 버튼 (자동 분기)
+        function apprBtns(status, key){
+          function b(act, cls, icon, label){
+            return '<a href="javascript:;" class="waves-effect waves-light hBtn '+cls+' hSmall jsApprAct ml10" data-act="'+act+'" data-key="'+key+'"><i class="material-symbols-outlined left">'+icon+'</i><span class="label">'+label+'</span></a>';
+          }
+          // Save는 좌측 메뉴 하단 전역 버튼으로 이동 — 여기선 결재 워크플로 버튼만 노출
+          if(status==='draft')  return b('submit','hViva','send','Submit for Approval');
+          if(status==='inappr') return b('approve','hGreen','check','Approve') + b('reject','hGrey','close','Reject') + b('recall','hGrey','undo','Recall');
+          if(status==='appr')   return '';   // 승인 완료 — 카드 액션 없음
+          return b('start','hViva','edit_note','Start Drafting'); // none(미작성)
+        }
+        // 한 카드 렌더(상태 배지 + 버튼 + 결재선 + Card1 배지 동기화)
+        function renderAppr(key){
+          var c = SUBTYPE_APPR[key], stm = APPR_ST[c.status];
+          $('#st'+key).html('<span class="roundBox '+stm[0]+' ml5">'+stm[1]+'</span>');
+          $('#bar'+key).html(apprBtns(c.status, key));
+          if(c.status === 'none'){
+            $('#wrap'+key).hide(); $('#note'+key).show();
+          } else {
+            $('#note'+key).hide(); $('#wrap'+key).show();
+            var html = '';
+            c.line.forEach(function(r){
+              html += '<tr'+(r.st==='pending'?' class="active"':'')+'>'
+                   +    '<td class="al">'+r.type+'</td>'
+                   +    '<td class="al">'+r.name+'</td>'
+                   +    '<td class="ac">'+r.date+'</td>'
+                   +    '<td class="ac">'+apprRowBadge(r.st)+'</td>'
+                   +  '</tr>';
+            });
+            $('#line'+key).html(html);
+          }
+          $('#sub'+key).attr('class','roundBox '+stm[0]+' mr5').text(c.sub+' · '+stm[1]);
+        }
+        // 결재 전이 헬퍼
+        function apprMarkNextPending(c){ for(var i=0;i<c.line.length;i++){ if(c.line[i].st===''){ c.line[i].st='pending'; return; } } }
+        function apprClearPending(c){ c.line.forEach(function(r){ if(r.st==='pending') r.st=''; }); }
+        function apprFreshLine(){ return [
+          {type:'Author (Drafter)',  name:'R. Wijnands', date:APPR_TODAY, st:'drafted'},
+          {type:'Technology Leader', name:'Charles Kim', date:'-', st:''},
+          {type:'EHS / Reg. Leader', name:'Jim Quan',    date:'-', st:''}
+        ]; }
+        function doApprAct(key, act){
+          var c = SUBTYPE_APPR[key];
+          if(act==='save'){ M.toast({html:c.sub+' saved'}); return; }
+          if(act==='submit'){            // Draft → In Approval (상신)
+            c.line.forEach(function(r,i){ if(i>0){ r.st=''; r.date='-'; } });
+            c.line[0].st='drafted';
+            c.status='inappr'; apprMarkNextPending(c);
+            M.toast({html:c.sub+' submitted for approval'});
+          } else if(act==='approve'){    // 현재 차례 승인 → 다음 차례 / 마지막이면 Active
+            for(var i=0;i<c.line.length;i++){ if(c.line[i].st==='pending'){ c.line[i].st='approved'; c.line[i].date=APPR_TODAY; break; } }
+            var hasNext=false;
+            for(var j=0;j<c.line.length;j++){ if(c.line[j].st===''){ c.line[j].st='pending'; hasNext=true; break; } }
+            if(!hasNext){ c.status='appr'; M.toast({html:c.sub+' fully approved · Active'}); }
+            else M.toast({html:c.sub+' step approved'});
+          } else if(act==='reject'){     // 반려 → Draft
+            for(var k=0;k<c.line.length;k++){ if(c.line[k].st==='pending'){ c.line[k].st='rejected'; c.line[k].date=APPR_TODAY; break; } }
+            c.status='draft';
+            M.toast({html:c.sub+' rejected — returned to Draft'});
+          } else if(act==='recall'){     // 회수 → Draft
+            apprClearPending(c); c.status='draft';
+            M.toast({html:c.sub+' recalled — returned to Draft'});
+          } else if(act==='start'){      // 미작성 → Draft (작성 시작)
+            c.line = apprFreshLine(); c.status='draft';
+            M.toast({html:c.sub+' drafting started'});
+          }
+          renderAppr(key);
+        }
+
         $(document).ready(function(){
           // 스크롤스파이 + 좌측 메뉴 (tech_pop 동일)
           $(window).on('scroll', function() {
@@ -326,6 +419,16 @@
           renderPC();
           renderRF();
           renderRG();
+
+          // 카드 Sub-type 결재 렌더 + 액션 버튼(상태별 분기) 위임
+          renderAppr('Input');
+          renderAppr('Item');
+          renderAppr('Legal');
+          $(document).on('click', '.jsApprAct', function(){
+            doApprAct($(this).data('key'), $(this).data('act'));
+          });
+          // 좌측 메뉴 하단 전역 Save (다른 팝업과 동일 위치)
+          $('#cmpSaveBtn').on('click', function(){ M.toast({html:'Composition saved'}); });
         });
 
         // Card 2-A : Composition Variant (행 클릭 → 하단 BOM 연동)
@@ -671,12 +774,15 @@
 					<i class="material-symbols-outlined left">science</i><span>INPUT</span>
 				</li>
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_4">
-					<i class="material-symbols-outlined left">description</i><span>ITEM</span>
+					<i class="material-symbols-outlined left">widgets</i><span>ITEM</span>
 				</li>
 				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="pjContCard_5">
 					<i class="material-symbols-outlined left">gavel</i><span>Regulatory</span>
 				</li>
 			</ul>
+		</section>
+		<section class="btnArea">
+			<div><a href="javascript:;" id="cmpSaveBtn" class="waves-effect waves-light hBtn hBlue"><i class="material-symbols-outlined left">save</i><span class="label">Save</span></a></div>
 		</section>
 	</aside>
 
@@ -725,9 +831,9 @@
 						<div class="row">
 							<div class="col s2 ar pl0">Composition Sub-types</div>
 							<div class="col s10 val">
-								<span class="roundBox bdGreen mr5">INPUT · Active</span>
-								<span class="roundBox bdOrange mr5">ITEM · Draft</span>
-								<span class="roundBox bdGray mr5">LEGAL · Pending</span>
+								<span class="roundBox bdOrange mr5" id="subInput">INPUT · Draft</span>
+								<span class="roundBox bdBlue mr5" id="subItem">ITEM · In Approval</span>
+								<span class="roundBox bdGray mr5" id="subLegal">LEGAL · Not Started</span>
 							</div>
 						</div>
 					</div>
@@ -852,11 +958,25 @@
 						</tfoot>
 					</table>
 				</div>
-			</section>
+			
+					<!-- Approval (INPUT) · NPI Approval Status 패턴 · 상태별 액션바 + 결재선 -->
+					<div class="cardSubTitArea mt30">
+						<div class="cardSubTit">Approval <span id="stInput"></span></div>
+						<div class="fLine vCenter" id="barInput"></div>
+					</div>
+					<div class="borderBox mg10 ac font13" id="noteInput" style="display:none;padding:18px;">Approval line not configured. Click <b>Start Drafting</b> to begin.</div>
+					<div class="fixedTable hBorderTable hScroll vMiddle mg10" id="wrapInput">
+						<table>
+							<colgroup><col style="width:auto;"><col style="width:30%;"><col style="width:140px;"><col style="width:130px;"></colgroup>
+							<thead><tr><th class="al">Approval Type</th><th class="al">Name</th><th class="ac">Date</th><th class="ac">Status</th></tr></thead>
+							<tbody id="lineInput"></tbody>
+						</table>
+					</div>
+				</section>
 
 			<!-- ── Card 4 : ITEM (Product Composition · SDS/Label) ── -->
 			<section class="cardBox animate__animated animate__fadeInLeft mt10" id="pjContCard_4">
-				<div class="cardTit2"><i class="material-symbols-outlined left">description</i>ITEM (Product Composition · SDS/Label)</div>
+				<div class="cardTit2"><i class="material-symbols-outlined left">widgets</i>ITEM (Product Composition · SDS/Label)</div>
 				<div class="cardSubTitArea mt30">
 					<div class="cardSubTit">SDS / Label Reportable Components</div>
 					<div class="fLine vCenter">
@@ -877,7 +997,21 @@
 						<tbody id="rfTbody"></tbody>
 					</table>
 				</div>
-			</section>
+			
+					<!-- Approval (ITEM) · NPI Approval Status 패턴 · 상태별 액션바 + 결재선 -->
+					<div class="cardSubTitArea mt30">
+						<div class="cardSubTit">Approval <span id="stItem"></span></div>
+						<div class="fLine vCenter" id="barItem"></div>
+					</div>
+					<div class="borderBox mg10 ac font13" id="noteItem" style="display:none;padding:18px;">Approval line not configured. Click <b>Start Drafting</b> to begin.</div>
+					<div class="fixedTable hBorderTable hScroll vMiddle mg10" id="wrapItem">
+						<table>
+							<colgroup><col style="width:auto;"><col style="width:30%;"><col style="width:140px;"><col style="width:130px;"></colgroup>
+							<thead><tr><th class="al">Approval Type</th><th class="al">Name</th><th class="ac">Date</th><th class="ac">Status</th></tr></thead>
+							<tbody id="lineItem"></tbody>
+						</table>
+					</div>
+				</section>
 
 			<!-- ── Card 5 : Regulatory (LEGAL · REACH/SVT) ── -->
 			<section class="cardBox animate__animated animate__fadeInLeft mt10" id="pjContCard_5">
@@ -902,7 +1036,21 @@
 						<tbody id="rgTbody"></tbody>
 					</table>
 				</div>
-			</section>
+			
+					<!-- Approval (LEGAL) · NPI Approval Status 패턴 · 상태별 액션바 + 결재선 -->
+					<div class="cardSubTitArea mt30">
+						<div class="cardSubTit">Approval <span id="stLegal"></span></div>
+						<div class="fLine vCenter" id="barLegal"></div>
+					</div>
+					<div class="borderBox mg10 ac font13" id="noteLegal" style="display:none;padding:18px;">Approval line not configured. Click <b>Start Drafting</b> to begin.</div>
+					<div class="fixedTable hBorderTable hScroll vMiddle mg10" id="wrapLegal">
+						<table>
+							<colgroup><col style="width:auto;"><col style="width:30%;"><col style="width:140px;"><col style="width:130px;"></colgroup>
+							<thead><tr><th class="al">Approval Type</th><th class="al">Name</th><th class="ac">Date</th><th class="ac">Status</th></tr></thead>
+							<tbody id="lineLegal"></tbody>
+						</table>
+					</div>
+				</section>
 
 		</article>
 	</div>

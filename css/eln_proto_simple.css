@@ -69,14 +69,21 @@
   z-index:1500;display:flex;align-items:center;justify-content:center;animation:elnFadeIn .18s ease;}
 .elnModal{background:#fff;border-radius:14px;width:560px;max-width:92vw;max-height:84vh;overflow:hidden;
   box-shadow:0 20px 60px rgba(0,0,0,.28);display:flex;flex-direction:column;animation:elnPop .2s ease;}
-.elnModalHead{padding:16px 20px;border-bottom:1px solid #eee6da;display:flex;align-items:center;gap:8px;
-  font-weight:600;font-size:15px;}
-.elnModalHead i{color:#A47864;}
-.elnModalHead .x{margin-left:auto;cursor:pointer;border:0;background:transparent;color:#999;font-size:20px;line-height:1;}
+/* 헤더 — 시스템 Materialize 모달(.modal-header.mochaBg)과 완전 동일: mocha 바 + 흰 h5 타이틀(1.64rem) + 27px 아이콘 + close 아이콘 */
+.elnModalHead{padding:0 20px;height:50px;background:var(--mocha25);color:#fff;
+  font-family:var(--font-main-m);display:flex;align-items:center;}
+.elnModalHead h5{margin:0;display:flex;align-items:center;color:#fff;line-height:1;}
+.elnModalHead h5 i{font-size:27px;color:#fff;}
+.elnModalHead .x{margin-left:auto;cursor:pointer;border:0;background:transparent;padding:0;display:flex;align-items:center;opacity:.92;}
+.elnModalHead .x:hover{opacity:1;}
+.elnModalHead .x i{font-size:32px;color:#fff;}
 .elnModalBody{padding:18px 20px;overflow-y:auto;}
-/* 모달 input: materialize underline 스타일 무력화 → 깔끔한 박스 (browser-default 유무 무관) */
-.elnModalBody input[type=text],.elnModalBody input:not([type]){width:100%;box-sizing:border-box;height:auto;border:1px solid #e6ddd0;border-radius:10px;background:#fff;padding:10px 12px;font-size:14px;color:#3a2c24;box-shadow:none;margin:0;}
-.elnModalBody input[type=text]:focus,.elnModalBody input:not([type]):focus{outline:none;border-color:#A47864;box-shadow:0 0 0 1px #A47864;}
+/* 모달 안 aniInput — 컴포지션 모달과 동일한 밑줄 인풋. 박스 override(.elnModalBody input[type=text])보다 우선 */
+.elnModalBody .aniInput input.browser-default{border:0;border-radius:5px 5px 0 0;padding:0 5px;height:auto;line-height:25px;background:rgba(164,119,100,.05);box-shadow:none;}
+.elnModalBody .aniInput input.browser-default:focus{outline:none;box-shadow:none;background:rgba(164,119,100,.1);}
+/* 모달 plain input(aniInput 미사용 — 노트북 rename·ChemStudio 등): 깔끔한 박스 유지 */
+.elnModalBody input[type=text]:not(.aniInput input),.elnModalBody input:not([type]):not(.aniInput input){width:100%;box-sizing:border-box;height:auto;border:1px solid #e6ddd0;border-radius:10px;background:#fff;padding:10px 12px;font-size:14px;color:#3a2c24;box-shadow:none;margin:0;}
+.elnModalBody input[type=text]:not(.aniInput input):focus,.elnModalBody input:not([type]):not(.aniInput input):focus{outline:none;border-color:#A47864;box-shadow:0 0 0 1px #A47864;}
 /* Project quick-search 픽커 */
 .elnPickWrap{display:flex;flex-direction:column;}
 .elnPickSearch{width:100%;box-sizing:border-box;border:1px solid #e6ddd0;border-radius:8px;padding:8px 10px;font-size:13px;color:#3a2c24;margin-bottom:8px;}
@@ -88,7 +95,8 @@
 .elnPickEmpty{padding:12px;text-align:center;color:#b3a596;font-size:13px;}
 /* Project = 텍스트 + 링크(스타일은 .elnBasicRow .elnProjVal 영역 참조) */
 .elnPickNone{color:#9b8c7e;font-style:italic;}  /* 픽커의 No Project 행 */
-.elnModalFoot{padding:12px 20px;border-top:1px solid #eee6da;display:flex;justify-content:flex-end;gap:8px;}
+/* 풋터 — 시스템 모달 .modal .btnArea 와 동일: 구분선 없이 우측정렬 flex */
+.elnModalFoot{padding:0 20px 18px;display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px;}
 @keyframes elnFadeIn{from{opacity:0;}to{opacity:1;}}
 @keyframes elnPop{from{transform:scale(.96);opacity:0;}to{transform:scale(1);opacity:1;}}
 
@@ -379,7 +387,6 @@
 .elnFilterChip.on{background:#A47864;color:#fff;border-color:#A47864;}
 
 /* 노트 리스트 행 */
-.elnNoteList{display:flex;flex-direction:column;gap:8px;}
 .elnNoteRow{display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;border:1px solid #e6ddd0;
   background:#fff;cursor:pointer;transition:all .15s;}
 .elnNoteRow:hover{border-color:#A47864;box-shadow:0 4px 14px rgba(164,120,100,.10);}
@@ -534,9 +541,11 @@ body.elnApproved .elnTag{padding-right:11px;}   /* close 아이콘 자리 → �
 .elnApprDpTable th:nth-child(4),.elnApprDpTable td:nth-child(4){width:120px;}
 .hBtn.hSign{color:#2e8c5c;border:2px solid #2e8c5c;}
 .hBtn.hSign::before{background-color:#2e8c5c;}
-/* 헤더 결재 상태 배지 */
-.elnApprBadge{display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-size:13px;font-weight:600;
+/* 헤더 결재 상태 배지 — 기본 숨김, 상태 클래스(pending/approved/rejected) 부여 시 노출.
+   (HTML 인라인 style="display:none" 제거 대체 — 노출은 renderApprovalBadge가 상태 클래스로 제어) */
+.elnApprBadge{display:none;align-items:center;gap:5px;margin-top:6px;font-size:13px;font-weight:600;
   border-radius:9px;padding:3px 10px;width:fit-content;max-width:100%;border:1px solid;}
+.elnApprBadge.pending,.elnApprBadge.approved,.elnApprBadge.rejected{display:inline-flex;}
 .elnApprBadge > i{font-size:16px;flex:0 0 auto;}
 .elnApprBadge.pending{color:#c08a3e;background:rgba(224,168,62,.12);border-color:rgba(224,168,62,.35);}
 .elnApprBadge.approved{color:#2e8c5c;background:rgba(58,170,111,.12);border-color:rgba(58,170,111,.3);}
@@ -874,18 +883,35 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
   list-style:none;height:36px;visibility:visible !important;}
 /* 드래그 중인 요소(helper) — 살짝 떠 보이게 */
 .ui-sortable-helper{box-shadow:0 12px 32px rgba(58,44,36,.22);}
-/* 좌측 목차: 아이템 = 클릭(카드 이동)이라 pointer. hover 시 좌측 아이콘이 드래그 핸들(swap_vert ↑↓)로 바뀌고(JS),
-   그 아이콘만 sortable handle 역할 → 아이콘에만 grab(잡는 손). */
+/* 좌측 목차: 아이템 = 클릭(카드 이동)이라 pointer. 우측 6점 grip(drag_indicator)이 sortable handle 역할 → 그 아이콘에만 grab. */
 .leftAside .menuUl .menu-item{cursor:pointer;position:relative;}   /* 우측 드래그 핸들 absolute 기준 */
 /* 좌측 목차(TOC): 긴 섹션명은 최대 2줄 + ellipsis. min-width:0 없으면 flex에서 안 줄어들어 잘려 사라짐 */
 .leftAside .menuUl .menu-item span{flex:1 1 auto;min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3;word-break:break-word;}
-/* 드래그 핸들 — 좌측 아이콘/레이블 영향 없이 우측에 absolute, hover 시 노출(긴 레이블 위엔 칩 배경으로 가독) */
-.leftAside .menuUl .menu-item .elnNavHandle{position:absolute;right:5px;top:50%;transform:translateY(-50%);
-  color:#A47864;opacity:0;cursor:grab;border-radius:6px;padding:2px;
-  transition:opacity .12s,color .12s,background .12s;}
-.leftAside .menuUl .menu-item:hover .elnNavHandle{opacity:1;}
-.leftAside .menuUl .menu-item .elnNavHandle:hover{color:#bb2649;}
+/* 드래그 grip — flex 아이템. 평소 display:none(공간 안 먹음 → 라벨 최대폭 → 2줄 최소화), hover 시에만 등장 */
+.leftAside .menuUl .menu-item .elnNavHandle{display:none;flex:0 0 auto;align-items:center;margin:0 8px 0 4px;
+  font-size:20px;color:#A47864;cursor:grab;border-radius:6px;padding:2px;transition:color .12s,background .12s;}
+.leftAside .menuUl .menu-item:hover .elnNavHandle{display:inline-flex;animation:elnGripPulse 1s ease-in-out infinite;}   /* 행 hover → grip 등장(라벨이 자리 내줌) + 펄스로 시선 유도 */
+.leftAside .menuUl .menu-item.elnNavHint .elnNavHandle{display:inline-flex;animation:elnGripPulse 1s ease-in-out infinite;}   /* 모듈 추가 직후 — hover 없이도 grip 노출+펄스(5초, JS 토글) */
+.leftAside .menuUl .menu-item .elnNavHandle:hover{color:#bb2649;background:rgba(164,120,100,.14);animation:none;opacity:1;}   /* grip 직접 hover → 펄스 멈추고 또렷 */
 .leftAside .menuUl .menu-item .elnNavHandle:active{cursor:grabbing;}
+/* 행 hover 시 grip 펄스(scale·opacity 맥동, transform은 reflow 없음) — 우측 아이콘으로 시선 끌기 */
+@keyframes elnGripPulse{0%,100%{opacity:.5;transform:scale(1);}50%{opacity:1;transform:scale(1.22);}}
+/* grip 직접 hover 시 우측에 뜨는 안내 레이어(JS가 body에 fixed로 배치) — 미니 재정렬 애니메이션 + 라벨 */
+.elnNavTip{position:fixed;z-index:3000;display:flex;align-items:center;gap:8px;
+  background:var(--mocha25);color:#fff;padding:7px 11px;border-radius:9px;white-space:nowrap;
+  font-size:12px;font-family:var(--font-main-m);box-shadow:0 8px 22px rgba(58,44,36,.28);
+  opacity:0;pointer-events:none;transform:translateY(-50%) translateX(-6px);
+  transition:opacity .15s ease,transform .15s ease;}
+.elnNavTip.show{opacity:1;transform:translateY(-50%) translateX(0);}
+.elnNavTip::before{content:'';position:absolute;right:100%;top:50%;transform:translateY(-50%);
+  border:6px solid transparent;border-right-color:var(--mocha25);}
+.elnNavTipTxt{font-weight:600;}
+.elnNavTipAnim{position:relative;width:18px;height:18px;flex:0 0 auto;}
+.elnNavTipAnim .row{position:absolute;left:0;width:18px;height:4px;border-radius:2px;background:rgba(255,255,255,.45);margin:0;}
+.elnNavTipAnim .row.a{top:1px;}
+.elnNavTipAnim .row.c{top:13px;}
+.elnNavTipAnim .row.b{top:7px;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.35);animation:elnDragRow 1.7s ease-in-out infinite;}
+@keyframes elnDragRow{0%,100%{top:7px;}28%{top:0;}56%{top:14px;}}
 /* 좌측 목차 진입 = 순차 cascade. stagger 없이 동시에 fadeInLeft 하면 로드 타이밍과 겹쳐 일부 li만 보임 → nth-child 지연으로 차례 등장.
    animation-fill-mode:both(animate.css 기본)로 지연 동안 from 상태 유지 → 깜빡임 없음. 끝나면 JS(animationend)가 클래스 제거 */
 .leftAside .menuUl .menu-item.animate__fadeInLeft{animation-duration:.5s;}
@@ -1263,10 +1289,18 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions{display:none;}
 /* 모달 배경 — 시스템 기본 흰 글래스는 흰 타일과 대비가 약함. Master Data 'New Request'
    모달과 동일한 웜 탄(tan) 톤으로 덮어 타일이 떠 보이게. 글래스엔진(::before)·blur·오버레이는 유지 */
 #addModuleModal, #addModuleModal:hover{
+	width:520px;   /* HTML 인라인 style="width:520px" 대체 */
 	background:rgba(210,150,110,.20);
 	backdrop-filter:blur(40px) saturate(1.8);
 	-webkit-backdrop-filter:blur(40px) saturate(1.8);
 }
+/* 차트 컨테이너 높이 — HTML 인라인 style="height:240px" 대체 */
+#chartFmlAnalysis, #chartViscosity{height:240px;}
+/* Results 표 컬럼 너비 — HTML colgroup 인라인 style 대체 */
+.elnResultsTbl col:nth-child(1){width:28%;}
+.elnResultsTbl col:nth-child(2){width:34%;}
+.elnResultsTbl col:nth-child(3){width:20%;}
+.elnResultsTbl col:nth-child(4){width:18%;}
 .elnAddPickGrid{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
 .elnAddPickCard{position:relative;overflow:hidden;transform-style:preserve-3d;
 	display:flex;flex-direction:column;align-items:center;gap:8px;padding:28px 18px;
@@ -1308,18 +1342,18 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions{display:none;}
   border-radius:50%;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:background .15s;}
 .elnNoteListHead .x:hover{background:rgba(255,255,255,.18);}
 /* 과제 타이틀 — 박스 없이 심플하게, 폰트만 크게. hover 시 링크처럼(밑줄+색)·클릭=과제 상세 */
-.elnNoteListProj{flex:0 0 auto;padding:13px 18px;border-bottom:1px solid #ece4d8;cursor:pointer;
+.elnNoteListProj{flex:0 0 auto;padding:13px 18px;cursor:pointer;
   font-size:15px;font-weight:700;color:#3a2c24;transition:color .14s;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .elnNoteListProj:hover{color:#A47864;text-decoration:underline;}
 .elnNoteListBody{flex:1 1 auto;overflow-y:auto;overflow-x:hidden;padding:6px 0 24px;}
 /* 스테이지 그룹 */
 .elnNlGroup{margin-top:16px;}
-.elnNlGroup:first-child{margin-top:4px;}
+.elnNlGroup:first-child{margin-top:0px;}
 /* 스테이지 헤더 — 박스 대신 구분선 라벨(본문색+하단 보더). 액센트 바+진한 큰 폰트로 그룹 위계 강조 */
 .elnNlGroupHead{position:sticky;top:0;z-index:1;display:flex;align-items:center;gap:9px;
   padding:10px 18px 7px;background:#fbf8f4;border-bottom:1px solid #e3d6c4;
-  font-size:12.5px;font-weight:800;letter-spacing:.04em;color:#7a5240;text-transform:uppercase;cursor:default;}
+  font-size:14px;font-family:'Roboto-Medium';font-weight:800;letter-spacing:.04em;color:#7a5240;text-transform:uppercase;cursor:default;}
 .elnNlGroupHead::before{content:'';flex:0 0 auto;width:3px;height:13px;border-radius:2px;background:#A47864;}
 /* 카운트 칩 — '이 스테이지에 n개' 그룹 단위 느낌 */
 .elnNlGroupHead .cnt{margin-left:auto;font-size:10.5px;font-weight:700;letter-spacing:0;color:#a8917f;
@@ -1329,15 +1363,14 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions{display:none;}
   cursor:pointer;transition:background .14s;}
 .elnNlItem:hover{background:rgba(164,120,100,.07);}
 /* current 노트 — 또렷한 따뜻한 채움 + 좌측 바 + 제목 강조로 '활성' 명확히(헤더와 확실히 구분) */
-.elnNlItem.current{background:#f7e7dc;box-shadow:inset 3px 0 0 #A47864;}
+.elnNlItem.current{background:#f7e7dc;}
 .elnNlItem.current .elnNlTit{color:#8a4f37;}
 .elnNlTop{display:flex;align-items:center;gap:6px;}
+/* status 칩(roundBox) — 제목이 길어도 안 눌리고 한 줄 유지(찌부러져 'In/Progress' 줄바꿈 방지) */
+.elnNlTop .roundBox{flex:0 0 auto;white-space:nowrap;font-size:11px;padding:1px 10px;line-height:1.5;}
 /* 제목은 한 줄 — 넘치면 …(current 표시는 왼쪽 바+배경 틴트로 충분, 배지 불필요) */
 .elnNlTit{flex:1 1 auto;min-width:0;font-size:13px;font-weight:600;color:#3a2c24;line-height:1.35;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.elnNlStatus{flex:0 0 auto;font-size:10px;font-weight:700;border-radius:9px;padding:2px 8px;line-height:1.4;}
-.elnNlStatus.done{color:#2f9e62;background:#e8f5ee;} .elnNlStatus.ing{color:#2f7fe0;background:#e9f1fc;}
-.elnNlStatus.review{color:#c9851f;background:#fbf1de;} .elnNlStatus.draft{color:#8a8178;background:#efeae3;}
 .elnNlSub{display:flex;align-items:center;gap:8px;font-size:11px;color:#9b8c7e;}
 .elnNlSub .code{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;color:#7a5240;}
 .elnNlSub .date{margin-left:auto;}
