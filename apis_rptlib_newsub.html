@@ -1,0 +1,161 @@
+<!DOCTYPE html lang="en">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MAPIS · New Submission</title>
+	<link rel="preload" href="mapis_lib/font/material-symbols-outlined.woff2" as="font" type="font/woff2">
+	<link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/mpm_materialize.css">
+    <link rel="stylesheet" type="text/css" href="mapis_lib/css/common.css">
+    <link type="text/css" rel="stylesheet" href="mapis_lib/css/animapis.css">
+
+    <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-3.7.1.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/mpm_materialize.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/apis_util.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/glass_engine.js"></script>
+
+    <link rel="stylesheet" type="text/css" href="css/rptlib_proto.css">
+</head>
+<body class="popup type2">
+	<!-- New submission 팝업(window.open) — eln_pop 표준 골격: popup type2 · header + leftAside + contArea -->
+	<header class="z-depth-1">
+		<section class="titArea npi">
+			<div><img src="img/MAPISLogo-25.png"></div>
+			<div class="statusTit"><div class="tit">New Submission</div></div>
+			<i class="material-symbols-outlined rlSubX" id="subClose" title="Close">close</i>
+		</section>
+	</header>
+
+	<aside class="leftAside z-depth-1 blurArea">
+		<section class="hScroll">
+			<ul class="menuUl">
+				<li class="menu-item animapis__animated animapis__fadeInLeft waves-effect waves-hColor active" data-target="upcDetails">
+					<i class="material-symbols-outlined left">description</i><span>Report Info.</span>
+				</li>
+				<li class="menu-item animapis__animated animapis__fadeInLeft waves-effect waves-hColor" data-target="upcClass">
+					<i class="material-symbols-outlined left">account_tree</i><span>Classification</span>
+				</li>
+			</ul>
+		</section>
+		<section class="btnArea">
+			<div><a href="javascript:;" class="waves-effect waves-light hBtn hViva upSubmit" id="upSubmit"><i class="material-symbols-outlined left">send</i><span class="label">Submit</span></a></div>
+		</section>
+	</aside>
+
+	<div class="contArea">
+		<article class="contArticle">
+			<section class="cardBox animapis__animated mt10" id="upcDetails">
+				<div class="cardTit2"><i class="material-symbols-outlined left">description</i>Report Info.</div>
+				<div class="inputArea">
+					<div class="row"><div class="col s2 ar pl0">Title</div><div class="col s10"><div class="aniInput"><input type="text" class="browser-default" id="mTitle" placeholder="e.g., Low-Temperature Cure Silicone for Flexible Display"><span class="focus-border"></span></div></div></div>
+					<div class="row"><div class="col s2 ar pl0">Document Type</div><div class="col s4"><select class="rlSortSel browser-default" id="mType"><option>TIS Report</option><option>Tech / Market Review</option><option>Process Transfer Memo</option><option>Trip Report</option><option>Improvement Project</option></select></div><div class="col s2 ar pl0">Business Unit</div><div class="col s4"><select class="rlSortSel browser-default" id="mBu"><option>Coatings</option><option>Electronic Materials</option><option>Healthcare</option><option>Industrial</option><option>Personal Care</option><option>Specialty Additives</option><option>Tire &amp; Silanes</option><option>Urethane Additives</option></select></div></div>
+					<div class="row"><div class="col s2 ar pl0">Region / Site</div><div class="col s4"><select class="rlSortSel browser-default" id="mRegion"><option>DE — Leverkusen</option><option>KR — All Regions</option><option>US — All Regions</option><option>IN — Bangalore</option><option>IT — Termoli</option><option>JP — Ohta</option><option>CN — Shanghai</option><option>UK — Abingdon</option></select></div><div class="col s2 ar pl0">Author(s)</div><div class="col s4"><div class="aniInput"><input type="text" class="browser-default" id="mAuthor" placeholder="e.g., S.Y. Park"><span class="focus-border"></span></div></div></div>
+					<div class="row"><div class="col s2 ar pl0">Keywords</div><div class="col s10"><div class="aniInput"><input type="text" class="browser-default" id="mKw" placeholder="comma-separated — silicone, OLED, cure kinetics"><span class="focus-border"></span></div></div></div>
+					<div class="row"><div class="col s2 ar pl0">Abstract</div><div class="col s10"><div class="aniInput"><textarea class="materialize-textarea" id="mAbs" placeholder="One-paragraph summary…"></textarea><span class="focus-border"></span></div></div></div>
+					<div class="row"><div class="col s2 ar pl0">Heads-up <span class="grey-text">(optional)</span></div><div class="col s10"><div class="aniInput"><textarea class="materialize-textarea" id="mHint" placeholder="Anything that affects access — e.g., &ldquo;Tied to an active JDA &mdash; please confirm scope.&rdquo;"></textarea><span class="focus-border"></span></div></div></div>
+					<div class="row mt10 pt10 bdT1d_lgrey">
+						<div class="col s2 ar fontM mocha25-text">Report File</div>
+						<div class="col s10">
+							<div class="input-field file-field mt0">
+								<div class="btn"><span>File</span><input type="file" id="upFile" multiple></div>
+								<div class="file-path-wrapper"><input type="text" class="file-path validate" placeholder="No file chosen" autocomplete="off" spellcheck="false"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="cardBox animapis__animated mt10" id="upcClass">
+				<div class="cardTit2"><i class="material-symbols-outlined left">account_tree</i>Classification</div>
+				<div id="clsPanel"><!-- JS: decision-tree gates --></div>
+			</section>
+		</article>
+	</div>
+
+	<div class="rlToastWrap" id="rlToastWrap"></div>
+	<script>
+	(function(){
+		function $id(i){ return document.getElementById(i); }
+		function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+		function toast(m){ var w=$id('rlToastWrap'); if(!w) return; var t=document.createElement('div'); t.className='rlToast ok'; t.innerHTML='<i class="material-symbols-outlined">check_circle</i>'+m; w.appendChild(t); setTimeout(function(){ t.classList.add('out'); setTimeout(function(){ t.remove(); },300); },2400); }
+		/* 첨부 = materialize 표준 file-field(.file-field) — mpm_materialize.js가 파일명 표시 자동 처리(목업, 실제 업로드 없음) */
+
+		/* ── Classification Decision Tree (rptlib_review.js deriveClass/GATES 미러) — 자가선택 아님, 게이트 답에서 class 도출 ── */
+		function deriveClass(g){ if(g.itar) return 0; if(g.jda) return g.region?3:4; return g.external?1:2; }   /* JDA → region/국가 기반이면 C3, 아니면(case-by-case) C4 */
+		var CLS_NM={0:'',1:'Class 1 · Public',2:'Class 2 · Internal',3:'Class 3 · Confidential',4:'Class 4 · Highly Restricted'};
+		function gateClassBadge(c){ if(c===0) return '<span class="rlClassBadge oos"><i class="material-symbols-outlined">block</i>Out of Scope</span>'; return '<span class="rlClassBadge c'+c+'">'+(c>=3?'<i class="material-symbols-outlined">lock</i>':'')+'C'+c+'</span>'; }
+		var GATES=[
+			{k:'itar',     owner:'Manager',  q:'ITAR Restricted or Export Restricted (not EAR 99)?',          show:function(g){return true;}},
+			{k:'jda',      owner:'Tech CoE', q:'Is it subject to special confidentiality agreements (JDA, etc.)?',        show:function(g){return g.itar===0;}},
+			{k:'region',   owner:'Tech CoE', q:'Can access be granted on a region (or nationality) basis?',   show:function(g){return g.jda===1;}},
+			{k:'external', owner:'GT&C',     q:'Has it been approved for external circulation?',                 show:function(g){return g.jda===0;}}
+		];
+		var gates={itar:null,jda:null,region:null,external:null};   // null=미답 → 진보적 노출(직전 답해야 다음 질문 표시)
+		function gatesComplete(g){ if(g.itar===null) return false; if(g.itar) return true; if(g.jda===null) return false; if(g.jda) return g.region!==null; return g.external!==null; }
+		function renderCls(){
+			var c=deriveClass(gates), done=gatesComplete(gates);
+			var sb=$id('upSubmit'); if(sb) sb.classList.toggle('oosBlock', !done || c===0);   // 미완료 또는 OOS면 Submit 비활성(시각 강조 + block 커서). 클릭 시 핸들러가 사유 토스트.
+			var panel=$id('clsPanel'); if(!panel) return;
+			var result=done
+				? '<div class="gateResult'+(c===0?' oos':'')+'"><span class="gateResultEyebrow">Derived classification</span><span class="gateBadgePop animapis__animated animapis__zoomIn animapis__fast">'+gateClassBadge(c)+'</span><div class="gateResultNm">'+esc(CLS_NM[c])+(c===0?'<span class="gateOos ml5">※ Keep these out of the Technical Report Hub</span>':'')+'</div></div>'
+				: '<div class="gateResult pending"><span class="gateResultEyebrow">Derived classification</span><span class="gatePendBadge"><i class="material-symbols-outlined">help</i></span><div class="gateResultNm">Answer the gates to derive the class</div></div>';
+			var rows=GATES.filter(function(gt){return gt.show(gates);}).map(function(gt,i){
+				var v=gates[gt.k];
+				return '<div class="gateRow'+(v===null?' animapis__animated animapis__fadeInLeft animapis__fast':'')+'"><span class="gateNum">'+(i+1)+'</span>'+
+					'<span class="gateQ">'+esc(gt.q)+'</span>'+
+					'<span class="upToggle gateTog"><a href="javascript:;" class="'+(v===1?'on':'')+'" data-gate="'+gt.k+'" data-v="1">Yes</a>'+
+						'<a href="javascript:;" class="'+(v===0?'on':'')+'" data-gate="'+gt.k+'" data-v="0">No</a></span></div>';
+			}).join('');
+			panel.innerHTML='<div class="gatePanel">'+result+'<div class="gateHead">Classification <span class="admMuted">answer each gate — class is derived, not picked</span></div>'+rows+'</div>';
+		}
+		$id('clsPanel').addEventListener('click', function(e){ var a=e.target.closest('[data-gate]'); if(!a) return; var k=a.getAttribute('data-gate'); gates[k]=+a.getAttribute('data-v'); if(k==='itar'){ gates.jda=gates.region=gates.external=null; } else if(k==='jda'){ gates.region=gates.external=null; } renderCls(); });   // 상위 답 변경 시 하위 리셋
+		renderCls();
+
+		/* 좌측 섹션 메뉴 → 우측 카드 스크롤 + active */
+		var cont=document.querySelector('.contArea');
+		document.querySelectorAll('.leftAside .menu-item').forEach(function(mi){
+			mi.addEventListener('click', function(){
+				document.querySelectorAll('.leftAside .menu-item').forEach(function(x){ x.classList.remove('active'); });
+				mi.classList.add('active');
+				var t=$id(mi.getAttribute('data-target'));
+				if(t&&cont) cont.scrollTo({ top:Math.max(0,t.offsetTop-20), behavior:'smooth' });
+			});
+		});
+		/* 닫기 / 취소 */
+		function closeWin(){ try{ window.close(); }catch(e){} }
+		var x=$id('subClose'); if(x) x.addEventListener('click', closeWin);
+		/* 라벨 → 코드 매핑 */
+		var TYPE_MAP={'TIS Report':'TIS','Tech / Market Review':'TMR','Process Transfer Memo':'PTM','Trip Report':'Trip','Improvement Project':'IP'};
+		function siteIdx(v){ return (v||'US — All Regions').split(' ')[0]; }   // "DE — Leverkusen" → "DE"
+
+		/* 제출 → 부모 My Submissions 저장 후, 해당 문서 pop으로 이동(문서 + 결재 status 확인) */
+		$id('upSubmit').addEventListener('click', function(){
+			var title=(($id('mTitle').value||'').trim())||'Untitled report';
+			var cls=deriveClass(gates);
+			if(!gatesComplete(gates)){ toast('Answer all classification gates before submitting.'); return; }
+			if(cls===0){ toast('Out of scope — Keep these out of the Technical Report Hub'); return; }
+			var op=null, num='1';
+			try{ op=window.opener; if(op && op.RL_SUBS) num=String(op.RL_SUBS.length+1); }catch(e){}
+			var code='NEW-26-'+num.padStart(3,'0');
+			var type=TYPE_MAP[$id('mType').value]||'TIS', bu=$id('mBu').value||'—',
+			    idx=siteIdx($id('mRegion').value), author=($id('mAuthor').value||'').trim()||((op&&op.RL_ME)||'Me'),
+			    date=(new Date()).toISOString().slice(0,10);
+			try{
+				if(op && op.RL_SUBS){
+					op.RL_SUBS.unshift({ code:code, title:title, author:author, bu:bu, when:'just now', status:'pending',
+						hint:($id('mHint').value||''), gates:{itar:gates.itar?1:0,jda:gates.jda?1:0,region:gates.region?1:0,external:gates.external?1:0}, mine:true });
+					if(typeof op.renderMine==='function') op.renderMine();
+				}
+			}catch(e){}
+			/* 같은 창을 해당 문서 pop으로 — granted=1(기안자 본인=잠금 회피) + 새 문서 메타 파라미터 */
+			var qs='code='+encodeURIComponent(code)+'&granted=1&new=1&mode=owner'+   /* mode=owner → pop이 Approval 레이어 자동 오픈(Initiate Approval) */
+				'&title='+encodeURIComponent(title)+'&type='+encodeURIComponent(type)+'&bu='+encodeURIComponent(bu)+
+				'&idx='+encodeURIComponent(idx)+'&author='+encodeURIComponent(author)+'&cls='+cls+'&date='+encodeURIComponent(date);
+			location.href='apis_rptlib_pop.html?'+qs;
+		});
+	})();
+	</script>
+</body>
+</html>

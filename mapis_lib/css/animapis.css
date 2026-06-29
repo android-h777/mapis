@@ -1,0 +1,85 @@
+/*!
+ * animapis.css — MAPIS 애니메이션 유틸리티
+ */
+
+.animapis__animated{
+	animation-duration: var(--ap-dur, 1s);
+	animation-delay: var(--ap-delay, 0s);
+	animation-iteration-count: var(--ap-iter, 1);
+	animation-fill-mode: both;
+	animation-timing-function: var(--ap-ease, cubic-bezier(.22, 1, .36, 1));
+}
+
+@keyframes animapis-enter{
+	from{ opacity: var(--ap-op, 1); transform: var(--ap-from, none); filter: blur(var(--ap-blur, 0)); }
+	to  { opacity: 1; transform: none; filter: blur(0); }
+}
+.animapis__fadeIn,
+.animapis__fadeInLeft,
+.animapis__slideInLeft,
+.animapis__slideInRight,
+.animapis__zoomIn{ animation-name: animapis-enter; }
+
+.animapis__fadeIn      { --ap-op: 0; --ap-from: none;              --ap-blur: 2px; }
+.animapis__fadeInLeft  { --ap-op: 0; --ap-from: translateX(-100%); --ap-blur: 1.5px; }
+.animapis__slideInLeft { --ap-from: translateX(-100%); }
+.animapis__slideInRight{ --ap-from: translateX(100%); }
+.animapis__zoomIn      { --ap-op: 0; --ap-from: scale(.3);        --ap-blur: 3px; }
+
+@keyframes animapis-backInLeft{
+	0%  { opacity: .7; transform: translateX(-100%) scale(.72); }
+	80% { opacity: 1;  transform: translateX(0) scale(.72); }
+	100%{ opacity: 1;  transform: scale(1); }
+}
+.animapis__backInLeft{ animation-name: animapis-backInLeft; }
+
+@keyframes animapis-flipX{
+	0%  { opacity: 0; transform: perspective(420px) rotateX(90deg);  animation-timing-function: ease-in; }
+	40% {             transform: perspective(420px) rotateX(-18deg); animation-timing-function: ease-in; }
+	60% { opacity: 1; transform: perspective(420px) rotateX(12deg); }
+	80% {             transform: perspective(420px) rotateX(-6deg); }
+	100%{ opacity: 1; transform: perspective(420px) rotateX(0); }
+}
+.animapis__flipInX{ animation-name: animapis-flipX; backface-visibility: visible; }
+
+@keyframes animapis-flipY{
+	0%  { opacity: 0; transform: perspective(420px) rotateY(90deg);  animation-timing-function: ease-in; }
+	40% {             transform: perspective(420px) rotateY(-18deg); animation-timing-function: ease-in; }
+	60% { opacity: 1; transform: perspective(420px) rotateY(12deg); }
+	80% {             transform: perspective(420px) rotateY(-6deg); }
+	100%{ opacity: 1; transform: perspective(420px) rotateY(0); }
+}
+.animapis__flipInY{ animation-name: animapis-flipY; backface-visibility: visible; }
+
+@keyframes animapis-rubber{
+	0%  { transform: scale3d(1, 1, 1); }
+	30% { transform: scale3d(1.24, .76, 1); }
+	40% { transform: scale3d(.76, 1.24, 1); }
+	50% { transform: scale3d(1.14, .86, 1); }
+	65% { transform: scale3d(.96, 1.04, 1); }
+	75% { transform: scale3d(1.04, .96, 1); }
+	100%{ transform: scale3d(1, 1, 1); }
+}
+.animapis__rubberBand{ animation-name: animapis-rubber; animation-timing-function: ease-out; }
+
+@keyframes animapis-bounceUp{
+	0%  { opacity: 0; transform: translateY(100%); animation-timing-function: cubic-bezier(.215,.61,.355,1); }
+	60% { opacity: 1; transform: translateY(-22px); }
+	75% {             transform: translateY(11px); }
+	90% {             transform: translateY(-6px); }
+	100%{             transform: translateY(0); }
+}
+.animapis__bounceInUp{
+	animation-name: animapis-bounceUp;
+	animation-timing-function: cubic-bezier(.215, .61, .355, 1);
+}
+
+.animapis__fast { --ap-dur: .5s; }
+.animapis__slow { --ap-dur: 2s; }
+
+@media (prefers-reduced-motion: reduce){
+	.animapis__animated{
+		animation-duration: 1ms !important;
+		animation-iteration-count: 1 !important;
+	}
+}
