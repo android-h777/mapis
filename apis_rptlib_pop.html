@@ -9,7 +9,7 @@
 	<link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/mpm_materialize.css">
     <link rel="stylesheet" type="text/css" href="mapis_lib/css/common.css">
-    <link type="text/css" rel="stylesheet" href="mapis_lib/css/lib/animate.min.css">
+    <link type="text/css" rel="stylesheet" href="mapis_lib/css/animapis.css">
 
     <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-3.7.1.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-ui-1.14.1.js"></script>
@@ -25,10 +25,12 @@
 		<section class="titArea npi">
 			<div><img src="img/MAPISLogo-25.png"></div>
 			<div class="statusTit">
-				<div class="tit"><span class="rlPopCode" id="popCode"></span><span id="popTitle"></span></div>
+				<div class="tit"></span><span id="popTitle"></span></div>
 				<div class="roundBox" id="popApprState" style="display:none"></div>
-					<a class="waves-effect waves-light hBtn hViva rlApprBtn" data-act="approval"><i class="material-symbols-outlined left">local_library</i><span class="label">Approval</span></a>
 			</div>
+		</section>
+		<section class="statusBox">
+			<a class="rlApprBtn" data-act="approval"><span class="lbl">Approval</span><i class="material-symbols-outlined cv">expand_more</i></a>
 			<a class="rlInfoToggle on" data-act="info" title="Show / hide details panel"><span class="lbl">Details</span><i class="material-symbols-outlined cv">chevron_right</i></a>
 		</section>
 	</header>
@@ -41,10 +43,13 @@
 			<!-- Document pane -->
 			<section class="rlDocPane">
 				<div class="rlDocBar">
-					<div class="rlSeg" id="viewSeg">
-						<a class="on" data-view="doc"><i class="material-symbols-outlined">description</i>Document</a>
-						<a data-view="raw"><i class="material-symbols-outlined">picture_as_pdf</i>Original</a>
-						<a data-view="text"><i class="material-symbols-outlined">subject</i>Text</a>
+					<div class="newAppleTab" id="viewSeg">
+						<ul>
+							<li class="waves-effect waves-hColor on" data-view="doc">Document</li>
+							<li class="waves-effect waves-hColor" data-view="raw">Original</li>
+							<li class="waves-effect waves-hColor" data-view="text">Text</li>
+							<div class="tabBg"></div>
+						</ul>
 					</div>
 					<div class="rlDocActs" id="docActs"></div>
 						<div class="rlFind">
@@ -54,12 +59,12 @@
 							<i class="material-symbols-outlined" id="findNext" title="Next">keyboard_arrow_down</i></span>
 					</div>
 				</div>
-				<div class="rlDocScroll hScroll" id="docScroll"><!-- JS --></div>
+				<div class="rlDocScroll hScroll" id="docScroll"></div>
 			</section>
 
 		</div>
 		<!-- Information pane — 우측 슬라이드오버 패널(토글로 숨김/표시) -->
-		<aside class="rlInfoPane open" id="infoPane"><!-- JS --></aside>
+		<aside class="typeList cardBox open" id="infoPane"></aside>
 	</div>
 
 	<!-- 결재(Approval) 모달 — JS가 채움. window.open 팝업 내부 오버레이 -->
@@ -76,6 +81,8 @@
 	   ════════════════════════════════════════════════════════════ */
 	var INDEXES={CN:'CN — Shanghai',DE:'DE — Leverkusen',IN:'IN — Bangalore',IT:'IT — Termoli',JP:'JP — Ohta',KR:'KR — All Regions',TH:'Thailand',UK:'UK — Abingdon',US:'US — All Regions'};
 	function idxName(id){ return INDEXES[id]||id; }
+	/* 날짜 표시 포맷: 데이터는 ISO로 두고 화면 표시만 MM-DD-YYYY (list와 동일 규칙). */
+	function fmtDate(d){ d=String(d||''); var m=d.match(/^(\d{4})-(\d{2})-(\d{2})/); return m? m[2]+'-'+m[3]+'-'+m[1] : d; }
 	var TYPES={TIS:'TIS Report',TMR:'Tech / Market Review',PTM:'Process Transfer Memo',Trip:'Trip Report',IP:'Improvement Project'};
 	function typeName(t){ return TYPES[t]||t; }
 	var CLASSES={1:{nm:'Class 1 · Public',lock:false},2:{nm:'Class 2 · Internal',lock:false},3:{nm:'Class 3 · Confidential',lock:true},4:{nm:'Class 4 · Highly Restricted',lock:true}};
@@ -84,41 +91,43 @@
 	var MY_REGION='US';
 
 	var REPORTS=[
-		{code:'LEV-24-02',title:'Bio-based Silicone Feasibility Study (JDA)',type:'TIS',site:'LEV',idx:'DE',author:'Dr. Stephan Boß',bu:'Elastomers',date:'2026-06-14',cls:4,hits:162},
-		{code:'KR-23-11',title:'Low-Temperature Cure Silicone for Flexible Display',type:'TIS',site:'KR',idx:'KR',author:'S.Y. Park',bu:'Specialty',date:'2026-06-12',cls:3,hits:274},
-		{code:'ITC-22-31',title:'Antifoam Improvement Project — Phase 2',type:'IP',site:'ITC',idx:'IN',author:'Indumathi M.',bu:'Fluids',date:'2026-06-10',cls:2,hits:176},
-		{code:'LEV-23-07',title:'Development of a Baking Paper Release Coating',type:'TIS',site:'LEV',idx:'DE',author:'Markus Bley',bu:'Coatings',date:'2026-06-05',cls:2,hits:352},
-		{code:'TML-22-02',title:'Resin Intermediate Process Transfer Memorandum',type:'PTM',site:'TML',idx:'IT',author:'G. Rossi',bu:'Resins',date:'2026-05-28',cls:2,hits:205},
-		{code:'KR-22-03',title:'OLED Encapsulation Adhesive — Scale-up Request',type:'PTM',site:'KR',idx:'KR',author:'J.P. Kim',bu:'Specialty',date:'2026-05-20',cls:2,hits:298},
-		{code:'SH-21-08',title:'Defoamer Performance in Architectural Coatings',type:'TIS',site:'SH',idx:'CN',author:'Wei Zhang',bu:'Coatings',date:'2026-04-30',cls:2,hits:241},
-		{code:'ABD-20-15',title:'Specialty Fluids for Personal Care Formulations',type:'TMR',site:'ABD',idx:'UK',author:'J. Whitfield',bu:'Personal Care',date:'2026-04-18',cls:1,hits:233},
-		{code:'TT-18-12',title:'Water Phase Sensory Elastomer',type:'TIS',site:'TT',idx:'US',author:'Mukesh Kumar',bu:'Elastomers',date:'2026-03-22',cls:2,hits:359},
-		{code:'SV-19-06',title:'Urethane Additives Applications Guide',type:'TMR',site:'SV',idx:'US',author:'L. Heisler',bu:'Additives',date:'2026-02-15',cls:2,hits:432},
-		{code:'WTC-11-29',title:'In-situ Functionalized Nano Ceria Dispersions',type:'TIS',site:'WTC',idx:'IN',author:'Asha Jhonsi, Karthikeyan M.',bu:'Fluids',date:'2026-01-20',cls:2,hits:554},
-		{code:'JPN-15-04',title:'Patent Survey for UV Curable Frontsheet',type:'TIS',site:'JPN',idx:'JP',author:'Kazuhisa Ono',bu:'Specialty',date:'2025-12-08',cls:3,hits:518},
-		{code:'TT-12-16',title:'Silicone Fluids Technology Highlights — Annual',type:'TMR',site:'TT',idx:'US',author:'Global Silicone Fluids Tech',bu:'Fluids',date:'2025-11-30',cls:3,hits:374},
-		{code:'JPN-10-07',title:'Effect of Crosslinkage and Reinforcement',type:'TIS',site:'JPN',idx:'JP',author:'H. Sato',bu:'Elastomers',date:'2025-10-05',cls:2,hits:572},
-		{code:'TT-11-16',title:'Hydrosilylation with Iron-Pyridine Catalysts',type:'TIS',site:'TT',idx:'US',author:'Kenrick M. Lewis',bu:'Additives',date:'2025-06-25',cls:2,hits:798},
-		{code:'LEV-20-27',title:'Liquid Silicone Rubber — Handbook of Processing',type:'TIS',site:'LEV',idx:'DE',author:'Enise Michalski',bu:'Elastomers',date:'2025-05-15',cls:2,hits:1441}
+		{code:'LEV-24-002',title:'Bio-based Silicone Feasibility Study (JDA)',type:'TIS',site:'LEV',idx:'DE',author:'Dr. Stephan Boß',bu:'Elastomers',date:'2026-06-14',cls:4,hits:162},
+		{code:'KR-23-011',title:'Low-Temperature Cure Silicone for Flexible Display',type:'TIS',site:'KR',idx:'KR',author:'S.Y. Park',bu:'Specialty',date:'2026-06-12',cls:3,hits:274},
+		{code:'ITC-22-031',title:'Antifoam Improvement Project — Phase 2',type:'IP',site:'ITC',idx:'IN',author:'Indumathi M.',bu:'Fluids',date:'2026-06-10',cls:2,hits:176},
+		{code:'LEV-23-007',title:'Development of a Baking Paper Release Coating',type:'TIS',site:'LEV',idx:'DE',author:'Markus Bley',bu:'Coatings',date:'2026-06-05',cls:2,hits:352},
+		{code:'TML-22-002',title:'Resin Intermediate Process Transfer Memorandum',type:'PTM',site:'TML',idx:'IT',author:'G. Rossi',bu:'Resins',date:'2026-05-28',cls:2,hits:205},
+		{code:'KR-22-003',title:'OLED Encapsulation Adhesive — Scale-up Request',type:'PTM',site:'KR',idx:'KR',author:'J.P. Kim',bu:'Specialty',date:'2026-05-20',cls:2,hits:298},
+		{code:'SH-21-008',title:'Defoamer Performance in Architectural Coatings',type:'TIS',site:'SH',idx:'CN',author:'Wei Zhang',bu:'Coatings',date:'2026-04-30',cls:2,hits:241},
+		{code:'ABD-20-015',title:'Specialty Fluids for Personal Care Formulations',type:'TMR',site:'ABD',idx:'UK',author:'J. Whitfield',bu:'Personal Care',date:'2026-04-18',cls:1,hits:233},
+		{code:'TT-18-012',title:'Water Phase Sensory Elastomer',type:'TIS',site:'TT',idx:'US',author:'Mukesh Kumar',bu:'Elastomers',date:'2026-03-22',cls:2,hits:359},
+		{code:'SV-19-006',title:'Urethane Additives Applications Guide',type:'TMR',site:'SV',idx:'US',author:'L. Heisler',bu:'Additives',date:'2026-02-15',cls:2,hits:432},
+		{code:'WTC-11-029',title:'In-situ Functionalized Nano Ceria Dispersions',type:'TIS',site:'WTC',idx:'IN',author:'Asha Jhonsi, Karthikeyan M.',bu:'Fluids',date:'2026-01-20',cls:2,hits:554},
+		{code:'JPN-15-004',title:'Patent Survey for UV Curable Frontsheet',type:'TIS',site:'JPN',idx:'JP',author:'Kazuhisa Ono',bu:'Specialty',date:'2025-12-08',cls:3,hits:518},
+		{code:'TT-12-016',title:'Silicone Fluids Technology Highlights — Annual',type:'TMR',site:'TT',idx:'US',author:'Global Silicone Fluids Tech',bu:'Fluids',date:'2025-11-30',cls:3,hits:374},
+		{code:'JPN-10-007',title:'Effect of Crosslinkage and Reinforcement',type:'TIS',site:'JPN',idx:'JP',author:'H. Sato',bu:'Elastomers',date:'2025-10-05',cls:2,hits:572},
+		{code:'TT-11-016',title:'Hydrosilylation with Iron-Pyridine Catalysts',type:'TIS',site:'TT',idx:'US',author:'Kenrick M. Lewis',bu:'Additives',date:'2025-06-25',cls:2,hits:798},
+		{code:'LEV-20-027',title:'Liquid Silicone Rubber — Handbook of Processing',type:'TIS',site:'LEV',idx:'DE',author:'Enise Michalski',bu:'Elastomers',date:'2025-05-15',cls:2,hits:1441}
 	];
 	var SUMMARIES={
-		'LEV-24-02':'Joint development assessment of bio-based silicone backbones from renewable feedstock; evaluates cure behavior, mechanical properties and cost parity versus petroleum-based grades.',
-		'KR-23-11':'A low-temperature platinum-cure silicone for flexible OLED displays, characterizing cure kinetics below 100 °C and adhesion to polyimide substrates.',
-		'ITC-22-31':'Phase-2 antifoam improvement project optimizing siloxane polyether dispersions to reduce foam in pulp and paper processing; includes plant trial data.',
-		'LEV-23-07':'Development of a solvent-free silicone release coating for baking paper, balancing release force and anchorage on supercalendered kraft.',
-		'TML-22-02':'Process transfer memorandum for a resin intermediate, detailing reactor parameters, distillation cuts and quality limits for scale-up at Termoli.',
-		'KR-22-03':'Scale-up request for an OLED encapsulation adhesive, summarizing rheology, moisture-barrier performance and pot-life under production conditions.',
-		'SH-21-08':'Comparative study of silicone defoamer performance in architectural water-based coatings, ranking persistence and recoatability.',
-		'ABD-20-15':'Technology and market review of specialty fluids for personal-care formulations, covering sensory profiles and regulatory status in the EU and US.',
-		'TT-18-12':'Water-phase sensory elastomer study evaluating thickening efficiency and skin-feel in cosmetic emulsions.',
-		'SV-19-06':'Applications guide for urethane additive surfactants in flexible and rigid foam, with cell-structure and stability recommendations.',
-		'WTC-11-29':'In-situ functionalized nano ceria dispersions for chemical-mechanical planarization, describing particle-size control and abrasive selectivity.',
-		'JPN-15-04':'Patent landscape survey for UV-curable frontsheet materials in photovoltaic modules, identifying white-space and freedom-to-operate risks.',
-		'TT-12-16':'Annual technology highlights for the silicone fluids portfolio, summarizing new hydrosilylation catalysts and emulsion advances.',
-		'JPN-10-07':'Effect of crosslink density and silica reinforcement on the tensile and tear strength of high-consistency silicone rubber.',
-		'TT-11-16':'Hydrosilylation catalyzed by iron–pyridine diimine complexes as a platinum-free alternative; reports kinetics and selectivity at 80 °C.',
-		'LEV-20-27':'Handbook of liquid silicone rubber processing, covering injection molding, cure rheology and demolding for LSR parts.'
+		'LEV-24-002':'Joint development assessment of bio-based silicone backbones from renewable feedstock; evaluates cure behavior, mechanical properties and cost parity versus petroleum-based grades.',
+		'KR-23-011':'A low-temperature platinum-cure silicone for flexible OLED displays, characterizing cure kinetics below 100 °C and adhesion to polyimide substrates.',
+		'ITC-22-031':'Phase-2 antifoam improvement project optimizing siloxane polyether dispersions to reduce foam in pulp and paper processing; includes plant trial data.',
+		'LEV-23-007':'Development of a solvent-free silicone release coating for baking paper, balancing release force and anchorage on supercalendered kraft.',
+		'TML-22-002':'Process transfer memorandum for a resin intermediate, detailing reactor parameters, distillation cuts and quality limits for scale-up at Termoli.',
+		'KR-22-003':'Scale-up request for an OLED encapsulation adhesive, summarizing rheology, moisture-barrier performance and pot-life under production conditions.',
+		'SH-21-008':'Comparative study of silicone defoamer performance in architectural water-based coatings, ranking persistence and recoatability.',
+		'ABD-20-015':'Technology and market review of specialty fluids for personal-care formulations, covering sensory profiles and regulatory status in the EU and US.',
+		'TT-18-012':'Water-phase sensory elastomer study evaluating thickening efficiency and skin-feel in cosmetic emulsions.',
+		'SV-19-006':'Applications guide for urethane additive surfactants in flexible and rigid foam, with cell-structure and stability recommendations.',
+		'WTC-11-029':'In-situ functionalized nano ceria dispersions for chemical-mechanical planarization, describing particle-size control and abrasive selectivity.',
+		'JPN-15-004':'Patent landscape survey for UV-curable frontsheet materials in photovoltaic modules, identifying white-space and freedom-to-operate risks.',
+		'TT-12-016':'Annual technology highlights for the silicone fluids portfolio, summarizing new hydrosilylation catalysts and emulsion advances.',
+		'JPN-10-007':'Effect of crosslink density and silica reinforcement on the tensile and tear strength of high-consistency silicone rubber.',
+		'TT-11-016':'Hydrosilylation catalyzed by iron–pyridine diimine complexes as a platinum-free alternative; reports kinetics and selectivity at 80 °C.',
+		'LEV-20-027':'Handbook of liquid silicone rubber processing, covering injection molding, cure rheology and demolding for LSR parts.'
 	};
+	/* 단일 진실원본: 부모(list.html)의 REPORTS/SUMMARIES 우선 — pop 로컬 사본 staleness(누락 문서·drift) 회피. 딥링크면 로컬 폴백. */
+	try{ if(window.opener && !window.opener.closed){ if(window.opener.REPORTS && window.opener.REPORTS.length) REPORTS=window.opener.REPORTS; if(window.opener.SUMMARIES) SUMMARIES=window.opener.SUMMARIES; if(typeof window.opener.MY_REGION==="string") MY_REGION=window.opener.MY_REGION; } }catch(e){}
 	function repByCode(c){ return REPORTS.filter(function(r){return r.code===c;})[0]; }
 	function summaryOf(c){ return SUMMARIES[c]||''; }
 	function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
@@ -140,7 +149,7 @@
 		var sum=summaryOf(r.code), topic=r.title.replace(/\s*\(.*?\)\s*/g,'');
 		return [
 			{tag:'h1', text:r.title},
-			{tag:'meta', text:r.code+'  ·  '+typeName(r.type)+'  ·  '+r.author+'  ·  '+idxName(r.idx)+'  ·  '+r.date},
+			{tag:'meta', text:r.code+'  ·  '+typeName(r.type)+'  ·  '+r.author+'  ·  '+idxName(r.idx)+'  ·  '+fmtDate(r.date)},
 			{tag:'h2', text:'Abstract'},
 			{tag:'p', text:sum},
 			{tag:'h2', text:'1. Introduction'},
@@ -169,46 +178,55 @@
 	var CUR, BLOCKS, view='doc', matchTotal=0, curMatch=-1;
 
 	function renderInfo(r){
-		var locked=(r.cls>=3 && r.idx!==MY_REGION);
+		var locked=(r.cls>=3 && r.idx!==MY_REGION && getParam('granted')!=='1');
 		var rel=REPORTS.filter(function(x){return x.code!==r.code && (x.bu===r.bu||x.type===r.type);}).slice(0,4);
 		var kws=[r.bu, segOf(r.bu), typeName(r.type)].concat(r.title.split(/[\s,—-]+/).filter(function(w){return w.length>4;}).slice(0,4));
 		// 단일 흐름형 패널(cardBox 분리 → 헤더 + subTit 섹션). 슬라이드오버.
-		var html='<div class="rlInfoHead"><span><i class="material-symbols-outlined">info</i>Details</span><i class="material-symbols-outlined rlInfoClose" id="infoClose" title="Hide panel">close</i></div><div class="rlInfoBody">';
+		var html='<div class="rlInfoHead"><span class="cardTit mb0">Summary</span><i class="material-symbols-outlined rlInfoClose" id="infoClose" title="Hide panel">close</i></div>';
+		html+='<div class="rlInfoBody hScroll"><div class="row subPjInfo mt0">';
 		html+= infoRow('Document #', r.code)+infoRow('Type', typeName(r.type))+infoRow('Author', r.author)+
 			infoRow('Site / Region', r.site+' · '+idxName(r.idx))+infoRow('Business Unit', r.bu)+infoRow('Segment', segOf(r.bu))+
-			infoRow('Date', r.date);
+			infoRow('Date', fmtDate(r.date));
 		// Classification — 클릭 시 3개 게이트 질문/답(APPR.steps 재사용) 펼침
 		var clsNm=(CLASSES[r.cls]||{}).nm||('Class '+r.cls);
-		html+='<div class="rlInfoRow rlClsRow" id="clsRow"><span class="k">Classification</span><span class="v">'+esc(clsNm)+(locked?' <span class="rlLockTag">region-restricted</span>':'')+'<i class="material-symbols-outlined clsCaret">expand_more</i></span></div>';
-		if(APPR && APPR.steps){ var gOrder=[APPR.steps[0], APPR.steps[2], APPR.steps[1]]; html+='<div class="rlGateDetail" id="gateDetail" style="display:none">'+gOrder.map(function(g,i){ return '<div class="rlGateRow"><span class="gnum">'+(i+1)+'</span><span class="gbody"><span class="gq">'+esc(g.q)+'</span><span class="ga">'+esc(g.a)+'</span></span></div>'; }).join('')+'</div>'; }
-		html+='<div class="subTit">Abstract</div><div class="rlAbs">'+esc(summaryOf(r.code))+'</div>';
-		html+='<div class="subTit">Keywords</div><div class="rlKws">'+kws.map(function(k){return '<span>'+esc(k)+'</span>';}).join('')+'</div>';
-		html+='<div class="subTit">Related reports</div><div class="rlRel">'+
+		html+='<div class="col s6 k">Classification</div><div class="col s6 val v">'+esc(clsNm)+(locked?' <span class="rlLockTag">region-restricted</span>':'')+'</div>';
+		html+='</div>';
+		html+='<div class="subTit mt20 ml0">Abstract</div><div class="rlAbs pd10">'+esc(summaryOf(r.code))+'</div>';
+		html+='<div class="subTit mt20 ml0">Keywords</div><div class="rlKws pd10">'+kws.map(function(k){return '<span>'+esc(k)+'</span>';}).join('')+'</div>';
+		html+='<div class="subTit mt20 ml0">Related reports</div><div class="rlRel pt5">'+
 			(rel.length?rel.map(function(x){return '<a class="rlRelItem" href="apis_rptlib_pop.html?code='+encodeURIComponent(x.code)+'"><span class="t">'+esc(x.title)+'</span><span class="s"><span class="code">'+esc(x.code)+'</span> · '+esc(typeName(x.type))+'</span></a>';}).join(''):'<div class="rlRelEmpty">No related reports.</div>')+'</div>';
+		html+='</div>';
 		html+='</div>';
 		document.getElementById('infoPane').innerHTML=html;
 	}
 	/* 우측 정보 패널 토글(슬라이드오버 숨김/표시) */
-	function toggleInfo(){ var p=document.getElementById('infoPane'); if(!p) return; var on=p.classList.toggle('open'); var btn=document.querySelector('[data-act="info"]'); if(btn) btn.classList.toggle('on', on); }
+	function toggleInfo(){ var p=document.getElementById('infoPane'); 
+		if($(p).css("display") == "none") {
+			$(p).fadeIn(200);
+		} else {
+			$(p).fadeOut(200);
+		}
+		if(!p) return; var on=p.classList.toggle('open'); var btn=document.querySelector('[data-act="info"]'); if(btn) btn.classList.toggle('on', on); 
+	}
 	/* Classification 행 클릭 → 3개 게이트 질문/답 펼치기 */
-	function toggleGate(){ var d=document.getElementById('gateDetail'), r=document.getElementById('clsRow'); if(!d) return; var open=d.style.display==='none'; d.style.display=open?'block':'none'; if(r) r.classList.toggle('open', open); }
-	function infoRow(k,v){ return '<div class="rlInfoRow"><span class="k">'+esc(k)+'</span><span class="v">'+esc(v)+'</span></div>'; }
+	function infoRow(k,v){ return '<div class="col s6 k">'+esc(k)+'</div><div class="col s6 val v">'+esc(v)+'</div>'; }
 
 	function renderActs(r){
-		var locked=(r.cls>=3 && r.idx!==MY_REGION);
-		document.getElementById('popCode').textContent=r.code+' · '+typeName(r.type);
-		document.getElementById('popTitle').innerHTML=esc(r.title)+' '+classBadge(r.cls);
+		var locked=(r.cls>=3 && r.idx!==MY_REGION && getParam('granted')!=='1');
+		document.getElementById('popTitle').innerHTML='['+r.code+'] '+esc(r.title)+' '+classBadge(r.cls);
 		// 헤더 액션(Approval·Details)은 정적 마크업. 여기선 문서 툴바 액션만 렌더.
 		// 문서 툴바 = 문서 레벨 액션(라벨): Download · Print · Basket · Share
 		var da=document.getElementById('docActs');
 		if(da) da.innerHTML=
-			actBtn('download', locked?'lock':'download', locked?'Restricted':'Download')+
-			actBtn('print','print','Print')+
-			actBtn('basket','add_shopping_cart','Basket');
+			actBtn('download','download','Download',locked)+
+			actBtn('print','print','Print',locked)+
+			actBtn('basket','add_shopping_cart','Add to basket',locked)+
+			actBtn('bookmark','bookmark_add','Save to a bookmark folder',locked);   // 잠김: download 포함 전부 비활성(중복 Request access 버튼 없앰 — download 자리 복구)
+		var _bar=document.querySelector('.rlDocBar'); if(_bar) _bar.classList.toggle('locked', locked);   // 잠김: 뷰탭(viewSeg)·find 비활성
 		renderApprState();
 	}
 	/* 문서 레벨 액션(라벨 hBtn) — 문서 툴바(docActs)에 배치 */
-	function actBtn(act,ic,label){ return '<a class="waves-effect waves-light hBtn" data-act="'+act+'" title="'+label+'"><i class="material-symbols-outlined left">'+ic+'</i><span class="label">'+label+'</span></a>'; }
+	function actBtn(act,ic,label,dis){ return '<a class="waves-effect waves-light hBtn hIco'+(dis?' isDisabled':'')+'" data-act="'+act+'" title="'+label+'" aria-label="'+label+'"><i class="material-symbols-outlined">'+ic+'</i></a>'; }
 
 	/* ════════════════════════════════════════════════════════════
 	   결재(Approval) — 문서 팝업 내 결재 모달 (MAPIS 결재 패턴 미러).
@@ -217,18 +235,37 @@
 	   상태=목업(인메모리). N=3, X=승인수. 완료 시 채번/발행은 toast로 표현.
 	   ════════════════════════════════════════════════════════════ */
 	function notify(seq){ seq.forEach(function(n,i){ setTimeout(function(){ toast(n.msg, n.kind); }, i*340); }); }
-	var APPR=null, apprMode='view';
+	var APPR=null, apprMode='view', apprScenario='c2';
+	/* Class 4 열람권한 요청(access grant) — 발행 결재와 별개 레이어. apprView로 분기. */
+	var apprView='publish';          // 'publish'(발행) | 'access'(열람권한)
+	var ACC=null;                    // 열람요청 상태 {status,requester,reason,when,comment}
+	var accFormOpen=false;           // 잠금 카드 내 인라인 기안 폼 열림 여부(상단 Approval 레이어 안 씀)
+	var ACC_ME='Jongho Lee';         // 로그인 사용자(요청자)
+	var ACC_LEADER='Dr. Henrik Vogel';     // Technology CoE Leader (발행 결재 Step2 assignee와 동일)
+	// restricted(잠금: cls 3·4)면 일단 열람요청 흐름으로. (등급/지역 세부 분기는 추후)
+	function accessLocked(){ return !!CUR && CUR.cls>=3 && CUR.idx!==MY_REGION && getParam('granted')!=='1'; }
+	function cls4Locked(){ return accessLocked(); }   // 하위호환 별칭
+	function buildAcc(){
+		var st=getParam('accStatus');                 // 데모: requested|granted|denied 강제 가능
+		if(!st) st=(apprMode==='approve')?'requested':'draft';
+		ACC={ status:st, requester:ACC_ME,
+		      reason:(st==='draft'?'':'On the JDA project — need the original report to compare formulations.'),
+		      when:(st==='draft'?'-':'just now'), comment:'' };
+		return ACC;
+	}
+	function accBadge(){ return {granted:{t:'Granted',c:'green'},denied:{t:'Denied',c:'red'},requested:{t:'In Approval · 0/1',c:'blue'},draft:{t:'Not requested',c:'grey'}}[ACC.status]||{t:'Not requested',c:'grey'}; }
+	function accStBox(state){ var m={granted:['green','Granted'],pending:['blue','In Progress'],denied:['red','Denied'],sub:['green','Submitted'],idle:['grey','Not started']}[state]||['grey','Not started']; return '<span class="roundBox '+m[0]+'">'+m[1]+'</span>'; }
 	function buildAppr(r){
 		var m=getParam('mode'); apprMode=(m==='approve'||m==='owner')?m:'view';
 		// 분류 게이트 답 = 업로더가 입력(클래스에서 역산). 승인자는 자기 게이트만 검토.
-		var jda = r.cls>=3 ? ('Yes → Class '+r.cls) : 'No';
-		var ext = r.cls>=3 ? 'n/a (JDA applies)' : (r.cls===1 ? 'Yes → Class 1' : 'No → Class 2');
+		var jda = r.cls>=3 ? 'Yes' : 'No';
+		var ext = (r.cls===1) ? 'Yes' : 'No';
 		var steps=[
-			{fn:'Manager',               who:'Line Manager (auto)', step:1, state:'approved', q:'Export-controlled / ITAR?',             a:'No — EAR99'},
-			{fn:'GT&C Leader',           who:'D. Hartmann',         step:2, state:'pending',  q:'Approved for external circulation?',     a:ext},
-			{fn:'Technology CoE Leader', who:'A. Raghuram',         step:2, state:'pending',  q:'Under JDA / confidentiality agreement?', a:jda}
+			{fn:'Manager',               who:'David Cho', step:1, state:'approved', q:'ITAR Restricted or Export Restricted (not EAR 99)?', a:'No'},
+			{fn:'GT&C Leader',           who:'Sarah Klein', step:2, state:'pending',  q:'Has it been approved for external circulation?', a:ext},
+			{fn:'Technology CoE Leader', who:'Dr. Henrik Vogel', step:2, state:'pending',  q:'Is it subject to special confidentiality agreements (JDA, etc.)?', a:jda}
 		];
-		if(apprMode==='owner'){ steps.forEach(function(s){ s.state='idle'; }); }
+		if(apprMode==='owner'){ var _fresh=(getParam('new')==='1'); steps.forEach(function(s){ s.state=_fresh?'pending':'idle'; }); }   // 신규 제출=즉시 기안(전 단계 pending) / 기존 owner=Draft(Initiate 대기)
 		APPR={status:'inApproval', steps:steps}; apprRecompute(); return APPR;
 	}
 	function apprDone(){ return APPR.steps.filter(function(s){return s.state==='approved';}).length; }
@@ -246,51 +283,110 @@
 		if(APPR.status==='draft')    return {ic:'edit_note',txt:'Draft — not submitted',cls:'draft'};
 		return {ic:'pending',txt:'In Approval · '+apprDone()+'/'+apprTotal(),cls:'ing'};
 	}
-	function renderApprState(){ var b=apprBadge(), el=document.getElementById('popApprState'); if(!el) return; var col={ing:'blue',ok:'green',rej:'red',draft:'grey'}[b.cls]||'blue'; var short={approved:'Approved',rejected:'Rejected',draft:'Draft',inApproval:'In Approval'}[APPR.status]||'In Approval'; el.className='roundBox '+col; el.textContent=short; el.style.display=''; }
+	function renderApprState(){
+		var el=document.getElementById('popApprState'); if(!el) return;
+		if(apprView==='access'){ var ab=accBadge(); el.className='roundBox '+ab.c; el.textContent=ab.t.replace(/ · .*/,''); el.style.display=''; return; }
+		var b=apprBadge(); var col={ing:'blue',ok:'green',rej:'red',draft:'grey'}[b.cls]||'blue'; var short={approved:'Approved',rejected:'Rejected',draft:'Draft',inApproval:'In Approval'}[APPR.status]||'In Approval'; el.className='roundBox '+col; el.textContent=short; el.style.display=''; }
 	function stepActionable(s){ if(s.state!=='pending') return false; if(s.step===2) return APPR.steps[0].state==='approved'; return true; }
 	function apprModalHtml(){
 		var b=apprBadge();
 		var clsNm=(CLASSES[CUR.cls]||{}).nm||('Class '+CUR.cls);
-		function stBox(state){ var m={approved:['green','Approved'],pending:['blue','In Progress'],rejected:['red','Rejected'],idle:['grey','Not started']}[state]||['grey','Not started']; return '<span class="roundBox '+m[0]+'">'+m[1]+'</span>'; }
-		function node(st,i){
+		function stBox(state){ var m={approved:['green','Approved'],submitted:['green','Submitted'],pending:['blue','In Progress'],rejected:['red','Rejected'],idle:['grey','Not started']}[state]||['grey','Not started']; return '<span class="roundBox '+m[0]+'">'+m[1]+'</span>'; }
+		function apprRow(st,i,stepCell){
 			var canAct=(apprMode==='approve' && stepActionable(st));
-			var waiting=(st.step===2 && APPR.steps[0].state!=='approved' && st.state==='pending');
-			var act = canAct
-				? '<div class="nodeAct"><a class="waves-effect waves-light hBtn hGreen apprDo" data-i="'+i+'" data-do="approve"><i class="material-symbols-outlined left">check</i><span class="label">Approve</span></a><a class="waves-effect waves-light hBtn hViva apprDo" data-i="'+i+'" data-do="reject"><i class="material-symbols-outlined left">block</i><span class="label">Reject</span></a></div>'
-				: waiting ? '<div class="nodeAct"><span class="rlApprWait">waiting for Step 1</span></div>' : '';
-			return '<div class="rlApprNode '+st.state+'">'+
-				'<div class="nodeTop"><span class="fn">'+esc(st.fn)+'</span>'+stBox(st.state)+'</div>'+
-				'<div class="nodeWho"><i class="material-symbols-outlined">person</i>'+esc(st.who)+'</div>'+
-				'<div class="nodeGate"><div class="gq">'+esc(st.q)+'</div><div class="ga">'+esc(st.a)+'</div></div>'+act+'</div>';
+			var statusCell=canAct
+				? '<select class="rlSortSel apprSel" data-i="'+i+'"><option value="approve">Approved</option><option value="reject">Not Approved</option></select>'
+				: stBox(st.state);
+			var commentCell=canAct
+				? '<div class="aniInput"><textarea class="apprCmt materialize-textarea" data-i="'+i+'" maxlength="500" placeholder="(Optional)"></textarea><span class="focus-border"></div>'
+				: '<span class="apCmtTxt">'+esc(st.comment||'')+'</span>';
+			var submitCell=canAct
+				? '<a class="waves-effect waves-light hBtn hSmall apprSubmit" data-i="'+i+'"><i class="material-symbols-outlined left">check_small</i><span class="label">Submit</span></a>'
+				: '';
+			return '<tr class="'+(canAct?'apActive ':'')+st.state+'">'+stepCell+
+				'<td class="apTy"><span class="apTypeTag">Approval</span></td>'+
+				'<td class="apFnCell"><div class="apFn">'+esc(st.fn)+'</div></td>'+
+				'<td class="apWho">'+esc(st.who)+'</td>'+
+				'<td class="apStatus">'+statusCell+'</td>'+
+				'<td class="apCmt">'+commentCell+'</td>'+
+				'<td class="apDate">-</td>'+
+				'<td class="apSub">'+submitCell+'</td></tr>';
 		}
-		var flow='<div class="rlApprCol"><div class="rlApprColHd">Step 1</div>'+node(APPR.steps[0],0)+'</div>'+
-			'<div class="rlApprArrow"><i class="material-symbols-outlined">chevron_right</i></div>'+
-			'<div class="rlApprCol"><div class="rlApprColHd">Step 2 <span class="par">parallel · both required</span></div><div class="rlApprColNodes">'+node(APPR.steps[1],1)+node(APPR.steps[2],2)+'</div></div>';
+		// 시나리오 — 게이트 답이 필요한 결재자를 결정(JDA Yes→External n/a→GT&C 불필요, ITAR Yes→중단)
+		var _s=APPR.steps;
+		var _Q={itar:'ITAR Restricted or Export Restricted (not EAR 99)?',jda:'Is it subject to special confidentiality agreements (JDA, etc.)?',external:'Has it been approved for external circulation?',region:'Can access be granted on a region (or nationality) basis?'};
+		var _SC={
+			c1:{r:1,nm:'Public',            path:[['itar','No'],['jda','No'],['external','Yes']]},
+			c2:{r:2,nm:'Internal',          path:[['itar','No'],['jda','No'],['external','No']]},
+			c3:{r:3,nm:'Confidential',      path:[['itar','No'],['jda','Yes'],['region','Yes']]},
+			c4:{r:4,nm:'Highly Restricted', path:[['itar','No'],['jda','Yes'],['region','No']]}
+		};
+		var _sc=_SC[apprScenario]||_SC.c2;
+		var _oos=(_sc.r===0);
+		var _gtcNeeded=_sc.path.some(function(g){ return g[0]==='external'; });   // GT&C(외부회람)는 C1/C2 경로에만
+		// 제출(Request) 행 — access 흐름과 동일하게 결재선 맨 위에 제출자 표시
+		var reqRow='<tr class="approved"><td class="apStep" rowspan="1">STEP 1</td><td class="apTy"><span class="apTypeTag">Request</span></td><td class="apFnCell"><div class="apFn">Submitter</div></td><td class="apWho">'+esc(CUR.author||'—')+'</td><td class="apStatus">'+stBox('submitted')+'</td><td class="apCmt"><span class="apCmtTxt"></span></td><td class="apDate">-</td><td class="apSub"></td></tr>';
+		var rows=reqRow+apprRow(_s[0],0,'<td class="apStep" rowspan="1">STEP 2</td>');
+		if(!_oos){
+			var _s2c=1+(_gtcNeeded?1:0);
+			rows+=apprRow(_s[2],2,'<td class="apStep" rowspan="'+_s2c+'">STEP 3'+(_s2c>1?'<span class="par">parallel · both</span>':'')+'</td>');
+			if(_gtcNeeded) rows+=apprRow(_s[1],1,'');
+		}
+		var flow='<div class="fixedTable hBorderTable vMiddle smallFont mg0"><table class="rlApprTbl">'+
+			'<colgroup><col style="width:100px;"><col style="width:80px;"><col style="width:160px;"><col style="width:130px;"><col style="width:140px;"><col><col style="width:120px;"><col style="width:100px;"></colgroup>'+
+			'<thead><tr><th>Step</th><th>Type</th><th class="al">Function</th><th class="al">Assignee</th><th>Status</th><th class="al">Comments</th><th>Date</th><th></th></tr></thead>'+
+			'<tbody>'+rows+'</tbody></table></div>';
+		// 분류 결정 트리 — 위 시나리오(_sc)로 lit path 렌더(우측 필로 경우의 수 테스트)
+		var _pills='';
+		[['c1','Class 1'],['c2','Class 2'],['c3','Class 3'],['c4','Class 4']].forEach(function(p){
+			_pills+='<a class="dfPill'+(apprScenario===p[0]?' on':'')+'" data-sc="'+p[0]+'">'+p[1]+'</a>';
+		});
+		var _tw='';   /* 'enters classification' 시작 노드 제거 — 게이트부터 시작 */
+		_sc.path.forEach(function(g,_gi){
+			var _k=g[0], _a=g[1], _yes=(_a==='Yes'), _no=(_a==='No');
+			var _ico=_yes?'check':'close';   // 아이콘=답 그대로(Yes ✓ / No ✕). 색은 CSS가 Yes·No 모두 mocha로 통일
+			if(_gi>0) _tw+='<div class="dfConn lit"></div>';
+			_tw+='<div class="dfGate'+(_no?' passed':'')+(_yes?' yes':'')+'">'+
+				'<span class="dfNum">'+(_gi+1)+'</span>'+
+				'<div class="dfBody"><div class="dfQ">'+esc(_Q[_k])+'</div>'+
+					'<div class="dfA"><i class="material-symbols-outlined">'+_ico+'</i><span>'+_a+'</span></div></div>'+
+			'</div>';
+		});
+		_tw+='<div class="dfConn lit'+''+' dfConnEnd"></div>';
+		_tw+='<div class="dfResult">'+classBadge(_sc.r)+'<div class="dfResultTx"><span class="dfResultK">Classified as</span><span class="dfResultNm">'+esc(_sc.nm)+'</span></div></div>';
+		var tree='<div class="rlDecisionTree"><div class="dfHd"><i class="material-symbols-outlined">account_tree</i><span class="dfHdTtl">Classification</span><span class="dfPills">'+_pills+'</span></div><div class="dfPath">'+_tw+'</div></div>';
 		var foot='';
 		if(apprMode==='owner' && APPR.status==='draft')
 			foot='<div class="rlApprFootBar"><span class="note"><i class="material-symbols-outlined">bolt</i>Initiate &rarr; To-Do to your manager (Step 1), then GT&amp;C &amp; Technology CoE in parallel.</span><a class="waves-effect waves-light hBtn apprInit" id="apprInit"><i class="material-symbols-outlined left">send</i><span class="label">Initiate Approval</span></a></div>';
 		else if(apprMode==='approve')
 			foot='<div class="rlApprFootBar"><span class="note"><i class="material-symbols-outlined">info</i>You verify the uploader&rsquo;s classification answer for your gate. Reject returns it to the author.</span></div>';
 		return '<div class="rlApprCard">'+
-			'<div class="rlApprBar"><div class="rlApprBarL"><i class="material-symbols-outlined">how_to_reg</i><span class="ttl">Approval</span><span class="code">'+esc(CUR.code)+'</span><span class="roundBox '+({ing:'blue',ok:'green',rej:'red',draft:'grey'}[b.cls]||'blue')+'">'+esc(b.txt)+'</span><span class="rlApprCls">'+esc(clsNm)+'</span></div><i class="material-symbols-outlined rlApprX" id="apprClose">close</i></div>'+
-			'<div class="rlApprFlow">'+flow+'</div>'+foot+'</div>';
+			'<div class="rlApprBar"><div class="rlApprBarL"><i class="material-symbols-outlined">assignment_turned_in</i><span class="ttl">Approval</span></div><i class="material-symbols-outlined rlApprX" id="apprClose">close</i></div>'+
+			tree+'<div class="rlApprFlow">'+flow+'</div>'+foot+'</div>';
 	}
 	/* Approval = 상단 슬라이드다운 레이어(모달 아님, 비차단). 토글로 상시 켜둘 수 있음 */
-	function renderApprLayer(){ var w=document.getElementById('rlApprModal'); if(w) w.innerHTML=apprModalHtml(); }
+	function renderApprLayer(){ var w=document.getElementById('rlApprModal'); if(w) w.innerHTML=(apprView==='access')?accessApprHtml():apprModalHtml(); }
 	function apprBtnOn(on){ var b=document.querySelector('[data-act="approval"]'); if(b) b.classList.toggle('on', on); }
 	function openApprModal(){ var w=document.getElementById('rlApprModal'); renderApprLayer(); void w.offsetWidth; w.classList.add('show'); apprBtnOn(true); }
 	function closeApprModal(){ var w=document.getElementById('rlApprModal'); w.classList.remove('show'); apprBtnOn(false); }
 	function toggleApprLayer(){ var w=document.getElementById('rlApprModal'); if(w.classList.contains('show')) closeApprModal(); else openApprModal(); }
-	function apprAct(i,verb){
+	function apprSubmit(i){
 		var st=APPR.steps[i]; if(!st) return;
+		var modal=document.getElementById('rlApprModal');
+		var sel=modal.querySelector('.apprSel[data-i="'+i+'"]');
+		var cmt=modal.querySelector('.apprCmt[data-i="'+i+'"]');
+		var verb=sel ? sel.value : 'approve';
+		var why=cmt ? cmt.value.trim() : '';
+		if(verb==='reject' && !why){
+			if(cmt){ cmt.classList.add('rlInErr'); cmt.focus(); }
+			toast('A reason is required to reject.','warn'); return;
+		}
+		st.comment=why;
 		if(verb==='approve'){
 			st.state='approved'; apprRecompute(); renderApprState(); renderApprLayer();
 			if(APPR.status==='approved') notify([{msg:'All approvals complete — '+CUR.code+' published.',kind:'ok'},{msg:'Report number stamped on the cover page.',kind:'mocha'}]);
 			else toast('Approved as '+st.fn+'. '+apprDone()+'/'+apprTotal()+' done.','ok');
 		} else {
-			var why=prompt('Reason for rejection (required) — returned to the author:');
-			if(why===null) return;
-			if(!why.trim()){ toast('A reason is required to reject.','warn'); return; }
 			st.state='rejected'; apprRecompute(); renderApprState(); renderApprLayer();
 			toast('Rejected — returned to author with your reason.','warn');
 		}
@@ -298,6 +394,113 @@
 	function apprInitiate(){
 		APPR.steps.forEach(function(s){ s.state='pending'; }); apprMode='view'; apprRecompute(); renderApprState(); renderApprLayer();
 		notify([{msg:'Approval initiated for '+CUR.code+'.',kind:'ok'},{msg:'To-Do sent to your manager — Step 1.',kind:'mocha'},{msg:'GT&C · Technology CoE queued — Step 2 (parallel).',kind:'info'}]);
+	}
+
+	/* ════════════════════════════════════════════════════════════
+	   열람권한 요청(Access grant) — Class 4 전용. 발행 결재 레이어 미러(rlApprTbl).
+	   체인: STEP 1 Request(요청자) → STEP 2 Access grant(Technology CoE Leader).
+	   모드: 기본=요청자(조회/요청) · ?mode=approve=결재자(Grant/Deny). 진행현황=MAPIS 결재함.
+	   ════════════════════════════════════════════════════════════ */
+	function accessApprHtml(){
+		var b=accBadge();
+		var clsNm=(CLASSES[CUR.cls]||{}).nm||('Class '+CUR.cls);
+		var canAct=(apprMode==='approve' && ACC.status==='requested');
+		// STEP 1 — Request (읽기)
+		var row1='<tr class="'+(ACC.status==='draft'?'idle':'approved')+'">'+
+			'<td class="apStep" rowspan="1">STEP 1</td>'+
+			'<td class="apTy"><span class="apTypeTag">Request</span></td>'+
+			'<td class="apFnCell"><div class="apFn">Requester</div></td>'+
+			'<td class="apWho">'+esc(ACC.requester)+'</td>'+
+			'<td class="apStatus">'+accStBox(ACC.status==='draft'?'idle':'sub')+'</td>'+
+			'<td class="apCmt"><span class="apCmtTxt">'+esc(ACC.reason||'')+'</span></td>'+
+			'<td class="apDate">'+esc(ACC.when||'-')+'</td>'+
+			'<td class="apSub"></td></tr>';
+		// STEP 2 — Access grant (결재)
+		var st2=(ACC.status==='granted'?'granted':(ACC.status==='denied'?'denied':(ACC.status==='requested'?'pending':'idle')));
+		var statusCell=canAct
+			? '<select class="rlSortSel accSel" data-i="1"><option value="approve">Grant</option><option value="reject">Deny</option></select>'
+			: accStBox(st2);
+		var commentCell=canAct
+			? '<div class="aniInput"><textarea class="accCmt materialize-textarea" data-i="1" maxlength="500" placeholder="(Optional)"></textarea><span class="focus-border"></div>'
+			: '<span class="apCmtTxt">'+esc(ACC.comment||'')+'</span>';
+		var submitCell=canAct
+			? '<a class="waves-effect waves-light hBtn hSmall accSubmit" data-i="1"><i class="material-symbols-outlined left">check_small</i><span class="label">Submit</span></a>'
+			: '';
+		var row2='<tr class="'+(canAct?'apActive ':'')+(ACC.status==='granted'?'approved':(ACC.status==='denied'?'rejected':'pending'))+'">'+
+			'<td class="apStep" rowspan="1">STEP 2</td>'+
+			'<td class="apTy"><span class="apTypeTag">Approval</span></td>'+
+			'<td class="apFnCell"><div class="apFn">Technology CoE Leader</div></td>'+
+			'<td class="apWho">'+esc(ACC_LEADER)+'</td>'+
+			'<td class="apStatus">'+statusCell+'</td>'+
+			'<td class="apCmt">'+commentCell+'</td>'+
+			'<td class="apDate">-</td>'+
+			'<td class="apSub">'+submitCell+'</td></tr>';
+		var table='<div class="fixedTable hBorderTable vMiddle smallFont mg0"><table class="rlApprTbl">'+
+			'<colgroup><col style="width:100px;"><col style="width:90px;"><col style="width:170px;"><col style="width:130px;"><col style="width:150px;"><col><col style="width:90px;"><col style="width:100px;"></colgroup>'+
+			'<thead><tr><th>Step</th><th>Type</th><th class="al">Function</th><th class="al">Assignee</th><th>Status</th><th class="al">Comments</th><th>Date</th><th></th></tr></thead>'+
+			'<tbody>'+row1+row2+'</tbody></table></div>';
+		// 요청(기안)은 본문 잠금 카드의 인라인 폼에서만 — 상단 레이어는 상태/결재 뷰 전용. draft면 힌트만.
+		var reqForm='';
+		if(apprMode!=='approve' && ACC.status==='draft'){
+			reqForm='<div class="accReqForm"><div class="accReqLab"><i class="material-symbols-outlined">key</i>To request access, use <b>Request access</b> on the report and enter your note there.</div></div>';
+		}
+		var foot='';
+		if(apprMode==='approve' && ACC.status==='requested')
+			foot='<div class="rlApprFootBar"><span class="note"><i class="material-symbols-outlined">info</i>Grant or deny the requester&rsquo;s access. A reason is required to deny.</span></div>';
+		else if(ACC.status==='requested')
+			foot='<div class="rlApprFootBar"><span class="note"><i class="material-symbols-outlined">pending</i>Request submitted — awaiting Technology CoE Leader approval. Track progress in MAPIS Approval.</span></div>';
+		else if(ACC.status==='granted')
+			foot='<div class="rlApprFootBar"><span class="note"><i class="material-symbols-outlined">verified</i>Access granted. You can now view and download this report.</span></div>';
+		else if(ACC.status==='denied')
+			foot='<div class="rlApprFootBar"><span class="note"><i class="material-symbols-outlined">block</i>Request denied. Review the reason, revise and request again.</span></div>';
+		return '<div class="rlApprCard accCard">'+
+			'<div class="rlApprBar"><div class="rlApprBarL"><i class="material-symbols-outlined">key</i><span class="ttl">Access request</span><span class="code">'+esc(CUR.code)+'</span><span class="roundBox '+b.c+'">'+esc(b.t)+'</span><span class="rlApprCls">'+esc(clsNm)+'</span></div><i class="material-symbols-outlined rlApprX" id="apprClose">close</i></div>'+
+			reqForm+'<div class="rlApprFlow">'+table+'</div>'+foot+'</div>';
+	}
+	function focusReason(){ setTimeout(function(){ var t=document.querySelector('.accReason'); if(t){ t.focus(); } }, 60); }
+	function accRequest(){
+		var ta=document.querySelector('.accReason');
+		ACC.reason=ta?ta.value.trim():''; ACC.status='requested'; ACC.when='just now'; accFormOpen=false;
+		renderApprState(); renderDoc(); if(apprView==='access') renderApprLayer();
+		notify([{msg:'Access request submitted — '+CUR.code,kind:'ok'},{msg:'To-Do sent to the Technology CoE Leader.',kind:'mocha'},{msg:'Track progress in MAPIS Approval.',kind:'info'}]);
+	}
+	function accSubmit(i){
+		var modal=document.getElementById('rlApprModal');
+		var sel=modal.querySelector('.accSel[data-i="'+i+'"]');
+		var cmt=modal.querySelector('.accCmt[data-i="'+i+'"]');
+		var verb=sel?sel.value:'approve';
+		var why=cmt?cmt.value.trim():'';
+		if(verb==='reject' && !why){ if(cmt){ cmt.classList.add('rlInErr'); cmt.focus(); } toast('A reason is required to deny.','warn'); return; }
+		ACC.comment=why;
+		if(verb==='approve'){ ACC.status='granted'; renderApprState(); renderApprLayer(); notify([{msg:'Access granted — '+ACC.requester,kind:'ok'},{msg:'Added to the '+CUR.code+' access list.',kind:'mocha'},{msg:'Requester notified.',kind:'info'}]); }
+		else { ACC.status='denied'; renderApprState(); renderApprLayer(); toast('Denied — returned to the requester with your reason.','warn'); }
+	}
+	function lockedHtml(){
+		var mid;
+		if(ACC.status==='requested'){
+			mid='<div class="rlLockReqDone"><i class="material-symbols-outlined">pending</i><div class="t"><b>Request submitted</b><span>Awaiting Technology CoE Leader approval — track it in MAPIS Approval.</span></div></div>';
+		} else if(ACC.status==='denied'){
+			mid='<div class="rlLockReqDone rej"><i class="material-symbols-outlined">block</i><div class="t"><b>Request denied</b><span>'+(ACC.comment?esc(ACC.comment)+' — ':'')+'revise and request again.</span></div></div>'+
+				'<div class="btnArea ac"><a class="waves-effect waves-light hBtn hViva rlLockBtn wd200px" data-act="reqaccess"><i class="material-symbols-outlined left">key</i><span class="label">Request again</span></a></div>';
+		} else if(accFormOpen){
+			mid='<div class="rlLockReqForm">'+
+					'<label class="rlLockReqLab">Add a note for the approver — why you need access</label>'+
+					'<div class="aniInput"><textarea class="accReason materialize-textarea" maxlength="500"></textarea><span class="focus-border"></div>'+
+					'<div class="btnArea ac"><a class="waves-effect waves-light hBtn hViva" data-act="reqsubmit"><i class="material-symbols-outlined left">send</i><span class="label">Submit request</span></a>'+
+						'<a class="rlLockReqCancel" data-act="reqcancel">Cancel</a></div>'+
+				'</div>';
+		} else {
+			mid='<div class="btnArea ac"><a class="waves-effect waves-light hBtn hViva rlLockBtn wd200px" data-act="reqaccess"><i class="material-symbols-outlined left">key</i><span class="label">Request access</span></a></div>';
+		}
+		return '<div class="rlLockPage">'+
+			'<div class="rlLockBlur" aria-hidden="true"><div class="rlDocPage">'+bodyHtml('')+docFoot()+'</div></div>'+
+			'<div class="rlLockCard">'+
+				'<div class="rlLockIco"><i class="material-symbols-outlined">'+(ACC.status==='denied'?'block':'lock')+'</i></div>'+
+				'<div class="rlLockBadge">'+classBadge(CUR.cls)+'</div>'+
+				'<h2 class="rlLockTtl">Access required to view this report</h2>'+
+				'<p class="rlLockTx">This report is <b>'+esc((CLASSES[CUR.cls]||{}).nm||('Class '+CUR.cls))+'</b> — restricted access. The full text and download are available after the <b>Technology CoE Leader</b> grants access.</p>'+
+				'<div class="rlLockMid animapis__animated animapis__fadeIn animapis__fast">'+mid+'</div>'+
+			'</div></div>';
 	}
 
 	/* 문서 본문 HTML — doc/raw 뷰가 공유(q='' 이면 하이라이트 마크 없음 → _mid 불변) */
@@ -335,6 +538,7 @@
 		_mid=0;
 		var q=(document.getElementById('findInput').value||'').trim();
 		var scroll=document.getElementById('docScroll');
+		if(cls4Locked()){ scroll.innerHTML=lockedHtml(); matchTotal=0; curMatch=-1; updateFind(); return; }
 		if(view==='raw'){ renderRaw(scroll); matchTotal=0; curMatch=-1; updateFind(); return; }
 		if(view==='doc'){
 			scroll.innerHTML='<div class="rlDocPage">'+bodyHtml(q)+docFoot()+'</div>';
@@ -359,23 +563,32 @@
 	function stepMatch(d){ if(!matchTotal) return; curMatch=(curMatch+d+matchTotal)%matchTotal; gotoMatch(curMatch, true); }
 
 	function setView(v){ view=v; curMatch=matchTotal?0:-1;
-		document.querySelectorAll('#viewSeg a').forEach(function(a){ a.classList.toggle('on', a.getAttribute('data-view')===v); });
+		document.querySelectorAll('#viewSeg li').forEach(function(a){ a.classList.toggle('on', a.getAttribute('data-view')===v); }); var _aL=document.querySelector('#viewSeg li.on'), _bg=document.querySelector('#viewSeg .tabBg'); if(_aL&&_bg) _bg.style.left=(_aL.offsetLeft-3)+'px';
 		var find=document.querySelector('.rlFind'); if(find) find.style.display=(v==='raw')?'none':'';   // 원본 스냅샷은 본문 검색 불가
 		renderDoc();
 	}
 
 	function load(){
-		var code=getParam('code')||'LEV-20-27';
-		CUR=repByCode(code)||REPORTS[REPORTS.length-1];
+		var code=getParam('code')||'LEV-20-027';
+		CUR=repByCode(code);
+		if(!CUR){   // REPORTS에 없는 코드 = newsub 등에서 넘어온 새 문서 → URL 파라미터로 CUR 구성
+			if(getParam('title')) CUR={ code:code, title:getParam('title'), type:getParam('type')||'TIS',
+				site:getParam('site')||getParam('idx')||'—', idx:getParam('idx')||MY_REGION, author:getParam('author')||'',
+				bu:getParam('bu')||'—', date:getParam('date')||'', cls:+(getParam('cls')||2), hits:0 };
+			else CUR=REPORTS[REPORTS.length-1];
+		}
+		if(CUR.cls>=1 && CUR.cls<=4) apprScenario='c'+CUR.cls;   // 결재 모달 결정트리 lit-path = 이 문서의 실제 등급
 		rlPushRecent(CUR.code);   // 실제로 연 문서를 최근 본 목록에 기록(이어보기용)
 		BLOCKS=buildDoc(CUR);
 		buildAppr(CUR);
+		if(accessLocked()){ apprView='access'; buildAcc(); }   // 잠긴 문서(C4 또는 C3 타지역) = 열람권한 요청 레이어
 		renderActs(CUR); renderInfo(CUR);
 		var q=getParam('q'); document.getElementById('findInput').value=q||'';
 		curMatch=q?0:-1;
 		renderDoc();
 		if(q) toast(matchTotal+' match'+(matchTotal!==1?'es':'')+' for “'+q+'” in this report.','mocha');
-		if(apprMode==='approve'||apprMode==='owner') setTimeout(openApprModal, 240);
+		if(getParam('new')==='1') notify([{msg:'Submitted — '+CUR.code+'. Approval initiated.',kind:'ok'},{msg:'To-Do sent to your manager — Step 1.',kind:'mocha'},{msg:'GT&C · Technology CoE queued — Step 2 (parallel).',kind:'info'}]);   // 신규 제출 = 즉시 기안
+		if(apprMode==='approve'||apprMode==='owner') setTimeout(openApprModal, 240);   // 열람요청(accStatus)은 인라인 잠금카드로 표시 → 상단 레이어 자동오픈 안 함
 	}
 
 	$(document).ready(function(){
@@ -384,7 +597,7 @@
 		load();
 
 		// 보기 토글
-		document.getElementById('viewSeg').addEventListener('click', function(e){ var a=e.target.closest('a[data-view]'); if(a) setView(a.getAttribute('data-view')); });
+		document.getElementById('viewSeg').addEventListener('click', function(e){ var a=e.target.closest('li[data-view]'); if(a) setView(a.getAttribute('data-view')); });
 
 		// 문서 내 검색
 		var fi=document.getElementById('findInput');
@@ -396,12 +609,14 @@
 		// 액션(목업)
 		document.addEventListener('click', function(e){
 			if(e.target.closest('#infoClose')){ toggleInfo(); return; }
-			if(e.target.closest('#clsRow')){ toggleGate(); return; }
 			var b=e.target.closest('[data-act]'); if(!b) return; var act=b.getAttribute('data-act');
 			if(act==='info'){ toggleInfo(); return; }
 			if(act==='approval'){ toggleApprLayer(); return; }
-			var locked=(CUR.cls>=3 && CUR.idx!==MY_REGION);
-			if(act==='download'){ if(locked) toast('Download blocked — Class '+CUR.cls+' is region-restricted ('+idxName(CUR.idx)+').','warn'); else toast('Downloading '+CUR.code+'… (mock)','mocha'); return; }
+			if(act==='reqaccess'){ accFormOpen=true; renderDoc(); focusReason(); return; }   // 인라인 기안 폼(상단 Approval 레이어 안 띄움)
+			if(act==='reqcancel'){ accFormOpen=false; renderDoc(); return; }
+			if(act==='reqsubmit'){ accRequest(); openApprModal(); return; }
+			if(accessLocked() && act==='download'){ accFormOpen=true; renderDoc(); focusReason(); return; }   // 잠긴 문서 다운로드 = 인라인 열람요청
+			if(act==='download'){ toast('Downloading '+CUR.code+'… (mock)','mocha'); return; }
 			if(act==='print') toast('Preparing print view… (mock)','info');
 			else if(act==='basket') toast('Added '+CUR.code+' to basket.','ok');
 			else if(act==='share') toast('Share link copied — '+location.origin+location.pathname+'?code='+CUR.code,'mocha');
@@ -412,11 +627,28 @@
 		if(gq) gq.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); location.href='apis_rptlib_list.html'; } });
 
 		// 결재 모달 위임(백드롭·닫기·Approve/Reject·Initiate)
-		document.getElementById('rlApprModal').addEventListener('click', function(e){
+		var apprModalEl=document.getElementById('rlApprModal');
+		apprModalEl.addEventListener('click', function(e){
 			if(e.target.id==='rlApprModal'){ closeApprModal(); return; }
 			if(e.target.closest('#apprClose')){ closeApprModal(); return; }
-			var d=e.target.closest('.apprDo'); if(d){ apprAct(+d.getAttribute('data-i'), d.getAttribute('data-do')); return; }
+			var pp=e.target.closest('.dfPill'); if(pp){ apprScenario=pp.getAttribute('data-sc'); renderApprLayer(); return; }
+			var d=e.target.closest('.apprSubmit'); if(d){ apprSubmit(+d.getAttribute('data-i')); return; }
+			var as=e.target.closest('.accSubmit'); if(as){ accSubmit(+as.getAttribute('data-i')); return; }
 			if(e.target.closest('#apprInit')){ apprInitiate(); return; }
+		});
+		// Decision 변경 → comment placeholder 토글(Not Approved=사유 필수, Approved=선택)
+		apprModalEl.addEventListener('change', function(e){
+			var as=e.target.closest('.accSel');
+			if(as){ var ac=this.querySelector('.accCmt[data-i="'+as.getAttribute('data-i')+'"]'); if(ac){ if(as.value==='reject'){ ac.placeholder='(Required — reason to deny)'; } else { ac.placeholder='(Optional)'; ac.classList.remove('rlInErr'); } } return; }
+			var s=e.target.closest('.apprSel'); if(!s) return;
+			var cmt=this.querySelector('.apprCmt[data-i="'+s.getAttribute('data-i')+'"]');
+			if(!cmt) return;
+			if(s.value==='reject'){ cmt.placeholder='(Required — please provide a reason)'; }
+			else { cmt.placeholder='(Optional)'; cmt.classList.remove('rlInErr'); }
+		});
+		// 사유 입력 시작하면 검증 에러 강조 해제
+		apprModalEl.addEventListener('input', function(e){
+			var c=e.target.closest('.apprCmt'); if(c && c.value.trim()) c.classList.remove('rlInErr');
 		});
 		document.addEventListener('keydown', function(e){ if(e.key==='Escape'){ closeApprModal(); } });
 

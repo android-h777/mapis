@@ -5,18 +5,20 @@
 	   문서 카드 = docs.js repCard 양식(.rlRepCard) 재사용 · 열기 = 공통 rlOpenPop(Documents와 동일 창 재사용).
 	   공개 진입점 = renderBookmarks()(전역) — rptlib_mine.js 세그먼트 토글이 호출.
 	   ════════════════════════════════════════════════════════════ */
-	var BM_KEY='rlBookmarks';
-	function bmDefault(){   // 첫 로드 시드 — 하이브리드 시연(KR-22-03이 두 폴더에 참조됨)
+	var BM_KEY='rlBookmarks2';
+	var BM_MAXDEPTH=5;   // 서브폴더 최대 깊이(레벨). depth 0=1레벨 → depth 4(5레벨)에선 하위폴더 생성 차단.
+	function bmDepth(id){ var d=0, f=bmFolder(id); while(f && f.parent){ d++; f=bmFolder(f.parent); } return d; }
+	function bmDefault(){   // 첫 로드 시드 — 하이브리드 시연(KR-22-003이 두 폴더에 참조됨)
 		return { folders:[
 			{id:'f1', name:'Active Projects',         parent:null},
 			{id:'f2', name:'OLED Encapsulation',      parent:'f1'},
 			{id:'f3', name:'Competitor & Reference',  parent:null},
 			{id:'f4', name:'Read later',              parent:null}
 		], items:[
-			{fid:'f2',code:'KR-23-11'},{fid:'f2',code:'KR-22-03'},{fid:'f2',code:'JPN-15-04'},
-			{fid:'f1',code:'KR-22-03'},{fid:'f1',code:'LEV-24-02'},
-			{fid:'f3',code:'ITC-12-13'},{fid:'f3',code:'SV-19-10'},
-			{fid:'f4',code:'TT-12-16'},{fid:'f4',code:'WTC-11-29'}
+			{fid:'f2',code:'KR-23-011'},{fid:'f2',code:'KR-22-003'},{fid:'f2',code:'JPN-15-004'},
+			{fid:'f1',code:'KR-22-003'},{fid:'f1',code:'LEV-24-002'},
+			{fid:'f3',code:'ITC-12-013'},{fid:'f3',code:'SV-19-010'},
+			{fid:'f4',code:'TT-12-016'},{fid:'f4',code:'WTC-11-029'}
 		] };
 	}
 	var bmState=null, bmCur='__all', bmOpen={}, bmRenaming=null, bmAdding=false;
@@ -34,6 +36,8 @@
 	function bmFolder(id){ return bmState.folders.filter(function(f){return f.id===id;})[0]; }
 	function bmChildren(pid){ return bmState.folders.filter(function(f){return f.parent===pid;}); }
 	function bmItems(fid){ return bmState.items.filter(function(it){return it.fid===fid;}).map(function(it){return it.code;}); }
+	/* 폴더 + 모든 하위 폴더의 report(중복 제거) — 상위 폴더 클릭 시 subfolder 항목까지 표시(bmCount와 동일 재귀 기준) */
+	function bmItemsDeep(fid){ var seen={}, out=[]; (function walk(id){ bmItems(id).forEach(function(c){ if(!seen[c]){ seen[c]=1; out.push(c); } }); bmChildren(id).forEach(function(ch){ walk(ch.id); }); })(fid); return out; }
 	function bmAllCodes(){ var seen={},out=[]; bmState.items.forEach(function(it){ if(!seen[it.code]){ seen[it.code]=1; out.push(it.code); } }); return out; }
 	function bmCount(fid){ var n=bmItems(fid).length; bmChildren(fid).forEach(function(c){ n+=bmCount(c.id); }); return n; }   // 하위 폴더 포함
 	function bmHasItem(fid,code){ return bmState.items.some(function(it){return it.fid===fid&&it.code===code;}); }
@@ -66,27 +70,25 @@
 	function bmTreeRow(f,depth){
 		var kids=bmChildren(f.id), open=bmOpen[f.id]!==false, sel=(bmCur===f.id);
 		var caret = kids.length ? '<i class="bmCaret material-symbols-outlined" data-caret="'+f.id+'">'+(open?'expand_more':'chevron_right')+'</i>' : '<i class="bmCaret empty"></i>';
-		var nameHtml = (bmRenaming===f.id)
-			? '<input class="bmRenameIn" data-renamein="'+f.id+'" value="'+esc(f.name)+'" autocomplete="off"/>'
-			: '<span class="bmFName">'+esc(f.name)+'</span>';
+		var nameHtml = '<span class="bmFName" title="'+esc(f.name)+'">'+esc(f.name)+'</span>';   // 폴더명 수정은 콘텐츠 헤더 연필(in-place)로 이관 — 트리는 항상 텍스트
 		var row='<div class="bmFolder'+(sel?' on':'')+'" data-fid="'+f.id+'" draggable="true" style="padding-left:'+(8+depth*15)+'px">'+
 			caret+'<i class="bmFIcon material-symbols-outlined">'+(sel?'folder_open':'folder')+'</i>'+nameHtml+
 			'<span class="bmFCount">'+bmCount(f.id)+'</span>'+
 			'<span class="bmFActs">'+
-				'<a class="bmAct" data-newsub="'+f.id+'" title="New subfolder"><i class="material-symbols-outlined">create_new_folder</i></a>'+
-				'<a class="bmAct" data-rename="'+f.id+'" title="Rename"><i class="material-symbols-outlined">edit</i></a>'+
-				'<a class="bmAct" data-del="'+f.id+'" title="Delete"><i class="material-symbols-outlined">delete</i></a>'+
+				(depth < BM_MAXDEPTH-1 ? '<a class="bmAct" data-newsub="'+f.id+'" title="Create a subfolder"><i class="material-symbols-outlined">create_new_folder</i></a>' : '')+
+				'<a class="bmAct" data-del="'+f.id+'" title="Delete"><i class="material-symbols-outlined viva-text">delete</i></a>'+
 			'</span></div>';
 		if(kids.length && open) row+=kids.map(function(k){return bmTreeRow(k,depth+1);}).join('');
 		return row;
 	}
 	function bmTreeHtml(){
-		var all='<div class="bmFolder bmAll'+(bmCur==='__all'?' on':'')+'" data-fid="__all"><i class="bmCaret empty"></i>'+
-			'<i class="bmFIcon material-symbols-outlined">bookmarks</i><span class="bmFName">All bookmarks</span>'+
+		var all='<div class="bmFolder bmAll'+(bmCur==='__all'?' on':'')+'" data-fid="__all">'+
+			'<i class="bmFIcon material-symbols-outlined'+(bmCur==='__all'?' fill':'')+'">bookmarks</i><span class="bmFName">All Bookmarks</span>'+
 			'<span class="bmFCount">'+bmAllCodes().length+'</span></div>';
 		var tree=bmChildren(null).map(function(f){return bmTreeRow(f,0);}).join('');
-		var adding=bmAdding ? '<div class="bmFolder bmNewRow" style="padding-left:8px"><i class="bmCaret empty"></i><i class="bmFIcon material-symbols-outlined">create_new_folder</i><input class="bmRenameIn" id="bmNewIn" placeholder="Folder name…" autocomplete="off"/></div>' : '';
-		return all+tree+adding;
+		var adding=bmAdding ? '<div class="bmFolder bmNewRow" style="padding-left:8px"><i class="bmCaret empty"></i><i class="bmFIcon material-symbols-outlined">folder</i><input class="bmRenameIn" id="bmNewIn" placeholder="Folder name…" value="New folder" autocomplete="off"/></div>' : '';
+		var addRow='<div class="bmFolder bmAddRow" data-newroot="1" title="New folder"><i class="bmCaret empty"></i><i class="bmFIcon material-symbols-outlined">add</i><span class="bmFName">Create a folder</span></div>';
+		return all+'<div class="bmTreeSep"></div>'+tree+adding+addRow;
 	}
 
 	/* ── 문서 카드(참조) — repCard 양식 재사용 + 제거 버튼 + 다중소속 표시 ── */
@@ -96,13 +98,12 @@
 		var rm = (fid&&fid!=='__all')
 			? '<a class="bmRm" data-rm="'+esc(code)+'" data-rmfid="'+esc(fid)+'" title="Remove from this folder"><i class="material-symbols-outlined">close</i></a>'
 			: '<a class="bmRm" data-rmall="'+esc(code)+'" title="Remove from all bookmarks"><i class="material-symbols-outlined">close</i></a>';
-		var n=bmInCount(code), multi = n>1 ? '<span class="bmMulti" title="Filed in '+n+' folders"><i class="material-symbols-outlined">collections_bookmark</i>'+n+'</span>' : '';
 		return '<div class="rlRepCard glassHover bmCard" data-open="'+esc(code)+'" data-code="'+esc(code)+'" draggable="true">'+rm+
 			'<div class="rcTop"><span class="rcType">'+esc(r.type)+'</span>'+(typeof classBadge==='function'?classBadge(r.cls):'')+'</div>'+
 			'<div class="rcTitle">'+esc(r.title)+'</div>'+
 			'<div class="rcMeta"><span class="code">'+esc(r.code)+'</span><span class="dot">·</span>'+esc(r.author)+'</div>'+
-			'<div class="rcFoot"><span class="rcSite"><i class="material-symbols-outlined">public</i>'+esc(idxName(r.idx))+'</span>'+multi+
-				'<span style="margin-left:auto;font-size:11px;color:#bcae9d;">'+esc(r.date)+'</span></div>'+
+			'<div class="rcFoot"><span class="rcSite"><i class="material-symbols-outlined">public</i>'+esc(idxName(r.idx))+'</span>'+
+				'<span style="margin-left:auto;font-size:11px;color:#bcae9d;">'+esc(fmtDate(r.date))+'</span></div>'+
 		'</div>';
 	}
 
@@ -126,7 +127,7 @@
 			'<div class="bmPickSearch"><i class="material-symbols-outlined">search</i><input type="text" id="bmPickInput" placeholder="Search title, code, author, BU…" value="'+esc(bmPickQ)+'" autocomplete="off"></div>'+
 			'<div class="bmPickList hScroll">'+(rows||'<div class="rvEmpty"><i class="material-symbols-outlined">search_off</i>No matches.</div>')+'</div>'+
 			'<div class="bmPickFoot"><span class="bmPickCnt"><b>'+nsel+'</b> selected</span>'+
-				'<a href="javascript:;" class="waves-effect waves-light hBtn hViva bmPickAdd'+(nsel?'':' disabled')+'" data-pickadd="1"><span class="material-symbols-outlined left">add</span><span class="label">Add '+nsel+' to folder</span></a></div>'+
+				'<a href="javascript:;" class="waves-effect waves-light hBtn hViva bmPickAdd'+(nsel?'':' disabled')+'" data-pickadd="1"><i class="material-symbols-outlined left">add</i><span class="label">Add '+nsel+' to folder</span></a></div>'+
 		'</div></div>';
 	}
 
@@ -136,26 +137,28 @@
 		var el=document.getElementById('mineBookmarks'); if(!el) return;
 		var isAll=(bmCur==='__all'), f=isAll?null:bmFolder(bmCur);
 		if(!isAll && !f){ bmCur='__all'; isAll=true; }
-		var codes=isAll?bmAllCodes():bmItems(bmCur);
-		var headName=isAll?'All bookmarks':esc(f.name);
-		var acts=isAll ? '' :
-			'<a href="javascript:;" class="waves-effect waves-light hBtn hViva bmAddBtn" data-add="1"><span class="material-symbols-outlined left">add</span><span class="label">Add documents</span></a>';
-		var cards=codes.length ? codes.map(function(c){return bmCardHtml(c,bmCur);}).join('')
-			: '<div class="rvEmpty"><i class="material-symbols-outlined">'+(isAll?'bookmark_border':'folder_open')+'</i>'+
-				(isAll?'No bookmarks yet — open a report and bookmark it, or create a folder and add documents.':'This folder is empty — use “Add documents”, or drag a report here.')+'</div>';
+		var codes=isAll?bmAllCodes():bmItemsDeep(bmCur);   // 하위 폴더 report까지 포함
+		var renamingCur=(!isAll && bmRenaming===bmCur);   // 현재 선택 폴더 = 헤더에서 in-place 수정 중
+		var titName=isAll ? '<span class="bmContName">All Bookmarks</span>'
+			: renamingCur ? '<input class="bmRenameIn bmContRenameIn" data-renamein="'+esc(bmCur)+'" value="'+esc(f.name)+'" autocomplete="off"/>'
+			: '<span class="bmContName" title="'+esc(f.name)+'">'+esc(f.name)+'</span><a href="javascript:;" class="bmContEdit" data-renamehdr="'+esc(bmCur)+'" title="Rename folder"><i class="material-symbols-outlined">edit</i></a>';
+		var acts='';
+		var addCard=isAll ? '' : '<a href="javascript:;" class="rlRepCard bmCard bmAddCard" data-add="1"><i class="material-symbols-outlined">add</i><span>Add Documents</span></a>';
+		var cards=codes.length ? codes.map(function(c){return bmCardHtml(c,bmCur);}).join('')+addCard
+			: (isAll ? '<div class="rvEmpty"><i class="material-symbols-outlined">bookmark_border</i>No bookmarks yet — open a report and bookmark it, or create a folder and add documents.</div>'
+				: addCard);   // 빈 폴더 = Add documents 카드만(쓸데없는 안내문구 대신)
 		el.innerHTML='<div class="bmWrap">'+
 			'<aside class="bmTree">'+
-				'<div class="bmTreeHead"><span>Folders</span><a href="javascript:;" class="bmTextBtn" data-newroot="1"><i class="material-symbols-outlined">add</i>Folder</a></div>'+
-				'<div class="bmTreeList">'+bmTreeHtml()+'</div>'+
+								'<div class="bmTreeList hScroll">'+bmTreeHtml()+'</div>'+
 				'<div class="bmTreeHint"><i class="material-symbols-outlined">drag_indicator</i>Drag a report onto a folder to file it — one report can live in several folders.</div>'+
 			'</aside>'+
 			'<section class="bmContent">'+
-				'<div class="bmContHead"><div class="bmContTit"><i class="material-symbols-outlined">'+(isAll?'bookmarks':'folder_open')+'</i>'+headName+'<span class="bmContN">'+codes.length+'</span></div>'+
+				'<div class="bmContHead"><div class="bmContTit"><i class="material-symbols-outlined'+(isAll?' fill':'')+'">'+(isAll?'bookmarks':'folder_open')+'</i>'+titName+'<span class="bmContN">'+codes.length+'</span></div>'+
 					'<div class="bmContActs">'+acts+'</div></div>'+
 				'<div class="bmCards hScroll">'+cards+'</div>'+
 			'</section>'+
 		'</div>'+bmPickerHtml();
-		if(bmAdding){ var ni=document.getElementById('bmNewIn'); if(ni){ ni.focus(); } }
+		if(bmAdding){ var ni=document.getElementById('bmNewIn'); if(ni){ ni.focus(); ni.select(); } }
 		if(bmRenaming){ var ri=el.querySelector('[data-renamein="'+bmRenaming+'"]'); if(ri){ ri.focus(); ri.select(); } }
 		if(bmPickOpen){ var pi=document.getElementById('bmPickInput'); if(pi){ var v=pi.value; pi.focus(); pi.value=''; pi.value=v; } }
 	}
@@ -167,7 +170,7 @@
 
 		root.addEventListener('click', function(e){
 			// 제거 버튼(카드 열기보다 먼저)
-			var rm=e.target.closest('[data-rm]'); if(rm){ e.stopPropagation(); bmRemoveItem(rm.getAttribute('data-rm'), rm.getAttribute('data-rmfid')); renderBookmarks(); return; }
+			var rm=e.target.closest('[data-rm]'); if(rm){ e.stopPropagation(); bmRemoveItem(rm.getAttribute('data-rmfid'), rm.getAttribute('data-rm')); renderBookmarks(); return; }   // bmRemoveItem(fid,code) — 인자 순서 주의
 			var rmall=e.target.closest('[data-rmall]'); if(rmall){ e.stopPropagation(); if(window.confirm('Remove this report from all your bookmark folders?')){ bmRemoveAll(rmall.getAttribute('data-rmall')); renderBookmarks(); } return; }
 			// 피커
 			if(e.target.closest('[data-pickclose]')){ bmPickOpen=false; bmPickSel={}; renderBookmarks(); return; }
@@ -178,20 +181,25 @@
 			if(e.target.closest('.bmPicker')) return;                                   // 피커 내부 클릭은 통과(닫지 않음)
 			if(e.target.closest('[data-pickwrap]')){ bmPickOpen=false; bmPickSel={}; renderBookmarks(); return; }   // 바깥(오버레이) 클릭 → 닫기
 			if(e.target.closest('[data-add]')){ bmPickOpen=true; bmPickQ=''; bmPickSel={}; renderBookmarks(); return; }
+			// 폴더명 수정 — 콘텐츠 헤더 연필 → 헤더 in-place 입력 노출(현재 선택 폴더)
+			var rh=e.target.closest('[data-renamehdr]'); if(rh){ e.stopPropagation(); bmRenaming=rh.getAttribute('data-renamehdr'); renderBookmarks(); return; }
 			// 폴더 액션
 			var nr=e.target.closest('[data-newroot]'); if(nr){ bmAdding=true; renderBookmarks(); return; }
-			var ns=e.target.closest('[data-newsub]'); if(ns){ var pid=ns.getAttribute('data-newsub'); var nid=bmNewFolder('New folder',pid); bmOpen[pid]=true; bmCur=nid; bmRenaming=nid; renderBookmarks(); return; }
-			var rn=e.target.closest('[data-rename]'); if(rn){ e.stopPropagation(); bmRenaming=rn.getAttribute('data-rename'); renderBookmarks(); return; }
-			var dl=e.target.closest('[data-del]'); if(dl){ e.stopPropagation(); var did=dl.getAttribute('data-del'); var df=bmFolder(did);
-				if(window.confirm('Delete folder “'+(df?df.name:'')+'”? Documents stay bookmarked in any other folders.')){ bmDeleteFolder(did); if(bmCur===did) bmCur='__all'; renderBookmarks(); } return; }
+			var ns=e.target.closest('[data-newsub]'); if(ns){ var pid=ns.getAttribute('data-newsub'); if(bmDepth(pid)>=BM_MAXDEPTH-1){ toast('Max '+BM_MAXDEPTH+' folder levels.','info'); return; } var nid=bmNewFolder('New folder',pid); bmOpen[pid]=true; bmCur=nid; bmRenaming=nid; renderBookmarks(); return; }
+			var dl=e.target.closest('[data-del]'); if(dl){ e.stopPropagation(); var did=dl.getAttribute('data-del'); var df=bmFolder(did), dn=bmCount(did);   // dn=폴더(+하위) 리포트 수
+				var doDel=function(){ bmDeleteFolder(did); if(bmCur===did) bmCur='__all'; renderBookmarks(); };
+				if(!dn){ doDel(); return; }   // 리포트 0건 = 잃을 것 없음 → 확인 없이 바로 삭제
+				if(typeof Swal==='undefined'){ if(window.confirm('Delete folder “'+(df?df.name:'')+'”? Documents stay bookmarked in any other folders.')) doDel(); return; }
+				Swal.fire({ title:'Delete “'+(df?df.name:'')+'”?', text:dn+' report'+(dn!==1?'s':'')+' will be removed from this folder. They stay bookmarked in any other folders.', icon:'warning', showCancelButton:true, confirmButtonText:'Delete', cancelButtonText:'Cancel'}).then(function(r){ if(r.isConfirmed) doDel(); });
+				return; }
 			var ca=e.target.closest('[data-caret]'); if(ca){ e.stopPropagation(); var cid=ca.getAttribute('data-caret'); bmOpen[cid]=(bmOpen[cid]===false); renderBookmarks(); return; }
 			// 문서 카드 열기 = pop.html(Documents와 동일 창)
-			var card=e.target.closest('.bmCard[data-open]'); if(card){ rlOpenPop(card.getAttribute('data-open')); return; }
+			var card=e.target.closest('.bmCard[data-open]'); if(card && !e.target.closest('.bmRm')){ rlOpenPop(card.getAttribute('data-open')); return; }
 			// 폴더 선택
 			var fol=e.target.closest('.bmFolder[data-fid]'); if(fol){ if(e.target.closest('.bmRenameIn')) return; bmCur=fol.getAttribute('data-fid'); bmRenaming=null; bmAdding=false; renderBookmarks(); return; }
 		});
 
-		root.addEventListener('dblclick', function(e){ var nm=e.target.closest('.bmFName'); if(!nm) return; var fol=nm.closest('.bmFolder'); var fid=fol&&fol.getAttribute('data-fid'); if(fid&&fid!=='__all'){ bmRenaming=fid; renderBookmarks(); } });
+		/* 폴더명 더블클릭 수정 폐지 — 콘텐츠 헤더 연필(data-renamehdr)로 일원화 */
 
 		// 인라인 폴더명 입력: Enter 확정 / Esc 취소
 		root.addEventListener('keydown', function(e){

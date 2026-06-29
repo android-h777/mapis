@@ -5,9 +5,9 @@
 	   공유 저장소 RL_SUBS(js/rptlib_common.js) 투영 — 결정이 작성자 제출물에 자동 반영.
 	   ════════════════════════════════════════════════════════════ */
 	function deriveClass(g){
-		if(g.itar) return 0;                 // GT&C: ITAR/수출제한 → 저장 불가(OOS)
-		if(g.jda)  return g.named ? 4 : 3;   // Tech CoE: JDA → named면 C4, 아니면 C3
-		return g.external ? 1 : 2;           // Approver: 외부회람 승인 → C1, 아니면 C2
+		if(g.itar) return 0;                 // Manager: ITAR/수출제한 → 저장 불가(OOS)
+		if(g.jda)  return g.region ? 3 : 4;   // Tech CoE: JDA → region(국가/지역)이면 C3, 아니면 case-by-case C4
+		return g.external ? 1 : 2;           // GT&C: 외부회람 승인 → C1, 아니면 C2
 	}
 	var CLS_NM={0:'Out of scope',1:'Class 1 · Public',2:'Class 2 · Internal',3:'Class 3 · Confidential',4:'Class 4 · Highly Restricted'};
 	function gateClassBadge(c){
@@ -15,10 +15,10 @@
 		return '<span class="rlClassBadge c'+c+'">'+(c>=3?'<i class="material-symbols-outlined">lock</i>':'')+'C'+c+'</span>';
 	}
 	var GATES=[
-		{k:'itar',     owner:'GT&C',     q:'Export- or ITAR-restricted (not EAR 99)?',          show:function(g){return true;}},
-		{k:'jda',      owner:'Tech CoE', q:'Subject to a JDA / special confidentiality?',        show:function(g){return !g.itar;}},
-		{k:'named',    owner:'Tech CoE', q:'Access limited to named individuals (vs region)?',   show:function(g){return !g.itar && !!g.jda;}},
-		{k:'external', owner:'Approver', q:'Approved for external circulation?',                 show:function(g){return !g.itar && !g.jda;}}
+		{k:'itar',     owner:'Manager',  q:'ITAR Restricted or Export Restricted (not EAR 99)?',          show:function(g){return true;}},
+		{k:'jda',      owner:'Tech CoE', q:'Is it subject to special confidentiality agreements (JDA, etc.)?',        show:function(g){return !g.itar;}},
+		{k:'region',   owner:'Tech CoE', q:'Can access be granted on a region / nationality basis (vs. case-by-case)?',   show:function(g){return !g.itar && !!g.jda;}},
+		{k:'external', owner:'GT&C',     q:'Has it been approved for external circulation?',                 show:function(g){return !g.itar && !g.jda;}}
 	];
 	function ownerCls(o){ return o.replace(/[^A-Za-z]/g,''); }
 	function gatePanel(q,i){
@@ -36,24 +36,24 @@
 	}
 
 	/* status: pending | approved | rejected (Changes 폐지). 반려=사유 필수, 작성자 재제출 가능. */
-	var STATUSES=[{k:'pending',nm:'Pending'},{k:'approved',nm:'Approved'},{k:'rejected',nm:'Rejected'},{k:'all',nm:'All'}];
+	var STATUSES=[{k:'requested',nm:'Requested',f:function(q){return q.mine&&(q.status==='pending'||q.status==='rejected');}},{k:'pending',nm:'Pending',f:function(q){return !q.mine&&q.status==='pending';}},{k:'approved',nm:'Approved',f:function(q){return q.status==='approved';}}];
 	var curTab='pending';
 	var qSel={};            // 일괄승인 선택(code→true)
 	var rejectingIdx=-1;    // 반려 사유 입력 중인 항목 인덱스
 	function statusBadge(s){ var m={pending:['rev','Pending'],approved:['pub','Approved'],rejected:['rej','Rejected']},b=m[s]||['rev',s]; return '<span class="mineBadge '+b[0]+'">'+esc(b[1])+'</span>'; }
 
-	function qActs(i,c){ return '<div class="qActs"><a href="javascript:;" class="waves-effect waves-light hBtn qBtn ok'+(c===0?' disabled':'')+'" data-act="approve" data-i="'+i+'"><span class="material-symbols-outlined left">check</span><span class="label">Approve &amp; publish</span></a>'+
-		'<a href="javascript:;" class="waves-effect hBtn qBtn" data-act="reject" data-i="'+i+'"><span class="material-symbols-outlined left">close</span><span class="label">Reject</span></a></div>'; }
+	function qActs(i,c){ return '<div class="qActs"><a href="javascript:;" class="waves-effect waves-light hBtn qBtn ok'+(c===0?' disabled':'')+'" data-act="approve" data-i="'+i+'"><i class="material-symbols-outlined left">check</i><span class="label">Approve &amp; publish</span></a>'+
+		'<a href="javascript:;" class="waves-effect hBtn qBtn" data-act="reject" data-i="'+i+'"><i class="material-symbols-outlined left">close</i><span class="label">Reject</span></a></div>'; }
 	function rejectForm(i){ return '<div class="qReject"><div class="rjLab"><i class="material-symbols-outlined">error</i>Reason for rejection <b>(required)</b> — the submitter sees this and can revise &amp; resubmit.</div>'+
 		'<textarea class="rjNote" placeholder="e.g., Out of scope — ITAR-adjacent; route to the controlled repository."></textarea>'+
-		'<div class="rjActs"><a href="javascript:;" class="waves-effect hBtn qBtn warn" data-confirmreject="'+i+'"><span class="material-symbols-outlined left">close</span><span class="label">Confirm reject</span></a>'+
+		'<div class="rjActs"><a href="javascript:;" class="waves-effect hBtn qBtn warn" data-confirmreject="'+i+'"><i class="material-symbols-outlined left">close</i><span class="label">Confirm reject</span></a>'+
 			'<a href="javascript:;" class="waves-effect hBtn qBtn" data-cancelreject="1"><span class="label">Cancel</span></a></div></div>'; }
 
 	function renderQueue(){
 		var Q=rlSubsQueue();   // 공유 저장소(라이브) — My Submissions 제출분 포함
-		var counts={}; STATUSES.forEach(function(s){ counts[s.k]= s.k==='all'?Q.length:Q.filter(function(q){return q.status===s.k;}).length; });
+		var counts={}; STATUSES.forEach(function(s){ counts[s.k]=Q.filter(s.f).length; });
 		var tabs=STATUSES.map(function(s){ return '<a href="javascript:;" class="admTab'+(curTab===s.k?' on':'')+'" data-tab="'+s.k+'">'+esc(s.nm)+'<span class="tabN">'+counts[s.k]+'</span></a>'; }).join('');
-		var list=Q.map(function(q,i){return {q:q,i:i};}).filter(function(x){return curTab==='all'||x.q.status===curTab;});
+		var _cf=(STATUSES.filter(function(s){return s.k===curTab;})[0]||STATUSES[1]).f; var list=Q.map(function(q,i){return {q:q,i:i};}).filter(function(x){return _cf(x.q);});
 		var body=list.length? list.map(function(x){ var q=x.q,i=x.i,c=deriveClass(q.gates),pend=(q.status==='pending');
 			return '<div class="qItem'+(pend?'':' done')+'" data-i="'+i+'">'+
 				'<div class="qTop">'+(pend?'<label class="qSelBox" title="Select for bulk approve"><input type="checkbox" class="filled-in" data-qsel="'+esc(q.code)+'"'+(qSel[q.code]?' checked':'')+'/><span></span></label>':'')+'<div class="qMain"><div class="qT">'+esc(q.title)+'</div>'+

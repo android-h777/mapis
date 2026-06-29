@@ -311,7 +311,7 @@ legend,
 *:focus-visible {
 	outline: none !important;
 }
-[class^=material-].fill {
+[class*=material-].fill {
 	font-variation-settings: 'FILL' 1;
 }
 

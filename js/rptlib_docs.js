@@ -29,62 +29,64 @@
 	];
 	function typeInfo(t){ return TYPES.filter(function(x){return x.t===t;})[0] || {t:t,nm:t,ic:'description'}; }
 	function classInfo(c){ return CLASSES.filter(function(x){return x.c===c;})[0] || CLASSES[1]; }
-	function idxName(id){ var x=INDEXES.filter(function(i){return i.id===id;})[0]; return x?x.nm:id; }
+	function idxName(id){ if(id) {var x=INDEXES.filter(function(i){return i.id===id;})[0]; return x?x.nm:id;} else {return "Not Selected";} }
 
 	// ▼ 문서 레코드(핵심 "DB") — 백엔드: GET /rptlib/reports → th:inline ${reports}, 또는 검색 시 au.ajaxGet2 응답
 	var REPORTS = [
-		{code:'LEV-24-02',  title:'Bio-based Silicone Feasibility Study (JDA)',         type:'TIS', site:'LEV', idx:'DE', author:'Dr. Stephan Boß',           bu:'Industrial',           date:'2026-06-14', cls:4, hits:162},
-		{code:'KR-23-11',   title:'Low-Temperature Cure Silicone for Flexible Display', type:'TIS', site:'KR',  idx:'KR', author:'S.Y. Park',                bu:'Electronic Materials', date:'2026-06-12', cls:3, hits:274},
-		{code:'ITC-22-31',  title:'Antifoam Improvement Project — Phase 2',             type:'IP',  site:'ITC', idx:'IN', author:'Indumathi M.',             bu:'Industrial',           date:'2026-06-10', cls:2, hits:176},
-		{code:'LEV-23-07',  title:'Development of a Baking Paper Release Coating',      type:'TIS', site:'LEV', idx:'DE', author:'Markus Bley',              bu:'Coatings',             date:'2026-06-05', cls:2, hits:352},
-		{code:'TML-22-02',  title:'Resin Intermediate Process Transfer Memorandum',    type:'PTM', site:'TML', idx:'IT', author:'G. Rossi',                 bu:'Industrial',           date:'2026-05-28', cls:2, hits:205},
-		{code:'KR-22-03',   title:'OLED Encapsulation Adhesive — Scale-up Request',     type:'PTM', site:'KR',  idx:'KR', author:'J.P. Kim',                 bu:'Electronic Materials', date:'2026-05-20', cls:2, hits:298},
-		{code:'BKK-21-19',  title:'Sealant Field Trial Report — SE Asia',              type:'Trip',site:'BKK', idx:'TH', author:'S. Phong',                 bu:'Coatings',             date:'2026-05-12', cls:2, hits:188},
-		{code:'SH-21-08',   title:'Defoamer Performance in Architectural Coatings',    type:'TIS', site:'SH',  idx:'CN', author:'Wei Zhang',                bu:'Coatings',             date:'2026-04-30', cls:2, hits:241},
-		{code:'ABD-20-15',  title:'Specialty Fluids for Personal Care Formulations',   type:'TMR', site:'ABD', idx:'UK', author:'J. Whitfield',             bu:'Personal Care',        date:'2026-04-18', cls:1, hits:233},
-		{code:'TT-18-12',   title:'Water Phase Sensory Elastomer',                     type:'TIS', site:'TT',  idx:'US', author:'Mukesh Kumar',             bu:'Personal Care',        date:'2026-03-22', cls:2, hits:359},
-		{code:'SV-19-06',   title:'Urethane Additives Applications Guide',             type:'TMR', site:'SV',  idx:'US', author:'L. Heisler',               bu:'Urethane Additives',   date:'2026-02-15', cls:2, hits:432},
-		{code:'SV-19-10',   title:'Urethane Additives Technology Review',              type:'TMR', site:'SV',  idx:'US', author:'L. Heisler',               bu:'Urethane Additives',   date:'2026-02-10', cls:2, hits:388},
-		{code:'WTC-11-29',  title:'In-situ Functionalized Nano Ceria Dispersions',     type:'TIS', site:'WTC', idx:'IN', author:'Asha Jhonsi, Karthikeyan M.',bu:'Electronic Materials',date:'2026-01-20', cls:2, hits:554},
-		{code:'JPN-15-04',  title:'Patent Survey for UV Curable Frontsheet',           type:'TIS', site:'JPN', idx:'JP', author:'Kazuhisa Ono',             bu:'Electronic Materials', date:'2025-12-08', cls:3, hits:518},
-		{code:'TT-12-16',   title:'Silicone Fluids Technology Highlights — Annual',    type:'TMR', site:'TT',  idx:'US', author:'Global Silicone Fluids Tech',bu:'Specialty Additives', date:'2025-11-30', cls:3, hits:374},
-		{code:'2008-MPM-16',title:'SF1632 Part 1: Root Cause Analysis',                type:'TIS', site:'WF',  idx:'US', author:'Global Silicone Fluids Tech',bu:'Specialty Additives', date:'2025-11-12', cls:4, hits:379},
-		{code:'JPN-10-07',  title:'Effect of Crosslinkage and Reinforcement',          type:'TIS', site:'JPN', idx:'JP', author:'H. Sato',                  bu:'Industrial',           date:'2025-10-05', cls:2, hits:572},
-		{code:'JPN-09-24',  title:'HCR New Portfolio; The Development Roadmap',         type:'TIS', site:'JPN', idx:'JP', author:'T. Nakamura',              bu:'Industrial',           date:'2025-09-18', cls:3, hits:575},
-		{code:'ITC-12-13',  title:'Patentability Search: Acrylate Functional Silicones',type:'TIS',site:'ITC',idx:'IN', author:'Madhuri Raju, A. Dhanabalan',bu:'Specialty Additives',date:'2025-08-22', cls:1, hits:632},
-		{code:'WTC-11-45',  title:'Surface Modification of Ceria Using Silanes',       type:'TIS', site:'WTC', idx:'IN', author:'Karthikeyan Murugesan',    bu:'Tire & Silanes',       date:'2025-07-30', cls:2, hits:636},
-		{code:'TT-11-16',   title:'Hydrosilylation with Iron-Pyridine Catalysts',      type:'TIS', site:'TT',  idx:'US', author:'Kenrick M. Lewis',         bu:'Specialty Additives',  date:'2025-06-25', cls:2, hits:798},
-		{code:'LEV-20-27',  title:'Liquid Silicone Rubber — Handbook of Processing',   type:'TIS', site:'LEV', idx:'DE', author:'Enise Michalski',          bu:'Healthcare',           date:'2025-05-15', cls:2, hits:1441}
+		{code:'LEV-24-002',  title:'Bio-based Silicone Feasibility Study (JDA)',         type:'TIS', site:'LEV', idx:'DE', author:'Dr. Stephan Boß',           bu:'Industrial',           date:'2026-06-14', cls:4, hits:162},
+		{code:'KR-23-011',   title:'Low-Temperature Cure Silicone for Flexible Display', type:'TIS', site:'KR',  idx:'KR', author:'S.Y. Park',                bu:'Electronic Materials', date:'2026-06-12', cls:3, hits:274},
+		{code:'ITC-22-031',  title:'Antifoam Improvement Project — Phase 2',             type:'IP',  site:'ITC', idx:'IN', author:'Indumathi M.',             bu:'Industrial',           date:'2026-06-10', cls:2, hits:176},
+		{code:'LEV-23-007',  title:'Development of a Baking Paper Release Coating',      type:'TIS', site:'LEV', idx:'DE', author:'Markus Bley',              bu:'Coatings',             date:'2026-06-05', cls:2, hits:352},
+		{code:'TML-22-002',  title:'Resin Intermediate Process Transfer Memorandum',    type:'PTM', site:'TML', idx:'IT', author:'G. Rossi',                 bu:'Industrial',           date:'2026-05-28', cls:2, hits:205},
+		{code:'KR-22-003',   title:'OLED Encapsulation Adhesive — Scale-up Request',     type:'PTM', site:'KR',  idx:'KR', author:'J.P. Kim',                 bu:'Electronic Materials', date:'2026-05-20', cls:2, hits:298},
+		{code:'BKK-21-019',  title:'Sealant Field Trial Report — SE Asia',              type:'Trip',site:'BKK', idx:'TH', author:'S. Phong',                 bu:'Coatings',             date:'2026-05-12', cls:2, hits:188},
+		{code:'SH-21-008',   title:'Defoamer Performance in Architectural Coatings',    type:'TIS', site:'SH',  idx:'CN', author:'Wei Zhang',                bu:'Coatings',             date:'2026-04-30', cls:2, hits:241},
+		{code:'ABD-20-015',  title:'Specialty Fluids for Personal Care Formulations',   type:'TMR', site:'ABD', idx:'UK', author:'J. Whitfield',             bu:'Personal Care',        date:'2026-04-18', cls:1, hits:233},
+		{code:'TT-18-012',   title:'Water Phase Sensory Elastomer',                     type:'TIS', site:'TT',  idx:'US', author:'Mukesh Kumar',             bu:'Personal Care',        date:'2026-03-22', cls:2, hits:359},
+		{code:'SV-19-006',   title:'Urethane Additives Applications Guide',             type:'TMR', site:'SV',  idx:'US', author:'L. Heisler',               bu:'Urethane Additives',   date:'2026-02-15', cls:2, hits:432},
+		{code:'SV-19-010',   title:'Urethane Additives Technology Review',              type:'TMR', site:'SV',  idx:'US', author:'L. Heisler',               bu:'Urethane Additives',   date:'2026-02-10', cls:2, hits:388},
+		{code:'WTC-11-029',  title:'In-situ Functionalized Nano Ceria Dispersions',     type:'TIS', site:'WTC', idx:'IN', author:'Asha Jhonsi, Karthikeyan M.',bu:'Electronic Materials',date:'2026-01-20', cls:2, hits:554},
+		{code:'JPN-15-004',  title:'Patent Survey for UV Curable Frontsheet',           type:'TIS', site:'JPN', idx:'JP', author:'Kazuhisa Ono',             bu:'Electronic Materials', date:'2025-12-08', cls:3, hits:518},
+		{code:'TT-12-016',   title:'Silicone Fluids Technology Highlights — Annual',    type:'TMR', site:'TT',  idx:'US', author:'Global Silicone Fluids Tech',bu:'Specialty Additives', date:'2025-11-30', cls:3, hits:374},
+		{code:'2008-MPM-016',title:'SF1632 Part 1: Root Cause Analysis',                type:'TIS', site:'WF',  idx:'US', author:'Global Silicone Fluids Tech',bu:'Specialty Additives', date:'2025-11-12', cls:4, hits:379},
+		{code:'JPN-10-007',  title:'Effect of Crosslinkage and Reinforcement',          type:'TIS', site:'JPN', idx:'JP', author:'H. Sato',                  bu:'Industrial',           date:'2025-10-05', cls:2, hits:572},
+		{code:'JPN-09-024',  title:'HCR New Portfolio; The Development Roadmap',         type:'TIS', site:'JPN', idx:'JP', author:'T. Nakamura',              bu:'Industrial',           date:'2025-09-18', cls:3, hits:575},
+		{code:'ITC-12-013',  title:'Patentability Search: Acrylate Functional Silicones',type:'TIS',site:'ITC',idx:'IN', author:'Madhuri Raju, A. Dhanabalan',bu:'Specialty Additives',date:'2025-08-22', cls:1, hits:632},
+		{code:'WTC-11-045',  title:'Surface Modification of Ceria Using Silanes',       type:'TIS', site:'WTC', idx:'IN', author:'Karthikeyan Murugesan',    bu:'Tire & Silanes',       date:'2025-07-30', cls:2, hits:636},
+		{code:'TT-11-016',   title:'Hydrosilylation with Iron-Pyridine Catalysts',      type:'TIS', site:'TT',  idx:'US', author:'Kenrick M. Lewis',         bu:'Specialty Additives',  date:'2025-06-25', cls:2, hits:798},
+		{code:'LEV-20-027',  title:'Liquid Silicone Rubber — Handbook of Processing',   type:'TIS', site:'LEV', idx:'DE', author:'Enise Michalski',          bu:'Healthcare',           date:'2025-05-15', cls:2, hits:1441}
 	];
 	var MY_REGION = 'US';   // 데모상 접근 권역(잠금 시각 표현용 — enforce 아님)
+	/* 접근권한 없음(잠금) = Class 3·4 이면서 내 권역이 아닌 문서. 그리드 locked 표시·검색 본문제외·스니펫 차단 공통 기준. */
+	function isLocked(r){ return r.cls>=3 && r.idx!==MY_REGION; }
 	var MAXHITS = Math.max.apply(null, REPORTS.map(function(r){return r.hits;}));
 	var DATE_LABELS = {all:'Any time','2024':'2023 – now','2018':'2018 – 2022','0':'Before 2018'};
 
 	/* 본문 요약(목업) — 풀텍스트 검색 스니펫·하이라이트 재료(실제론 OCR·역색인 본문) */
 	// ▼ 백엔드 주입: 본문 풀텍스트(ES 인덱스) — 검색 응답에 포함되거나 th:inline ${summaries}
 	var SUMMARIES = {
-		'LEV-24-02':'Joint development assessment of bio-based silicone backbones from renewable feedstock; evaluates cure behavior, mechanical properties and cost parity versus petroleum-based grades.',
-		'KR-23-11':'A low-temperature platinum-cure silicone for flexible OLED displays, characterizing cure kinetics below 100 °C and adhesion to polyimide substrates.',
-		'ITC-22-31':'Phase-2 antifoam improvement project optimizing siloxane polyether dispersions to reduce foam in pulp and paper processing; includes plant trial data.',
-		'LEV-23-07':'Development of a solvent-free silicone release coating for baking paper, balancing release force and anchorage on supercalendered kraft.',
-		'TML-22-02':'Process transfer memorandum for a resin intermediate, detailing reactor parameters, distillation cuts and quality limits for scale-up at Termoli.',
-		'KR-22-03':'Scale-up request for an OLED encapsulation adhesive, summarizing rheology, moisture-barrier performance and pot-life under production conditions.',
-		'BKK-21-19':'Field trial of a one-part construction sealant across Southeast Asian climates, reporting weathering, adhesion and gunnability after twelve months.',
-		'SH-21-08':'Comparative study of silicone defoamer performance in architectural water-based coatings, ranking persistence and recoatability.',
-		'ABD-20-15':'Technology and market review of specialty fluids for personal-care formulations, covering sensory profiles and regulatory status in the EU and US.',
-		'TT-18-12':'Water-phase sensory elastomer study evaluating thickening efficiency and skin-feel in cosmetic emulsions.',
-		'SV-19-06':'Applications guide for urethane additive surfactants in flexible and rigid foam, with cell-structure and stability recommendations.',
-		'SV-19-10':'Technology review of urethane additive chemistries, mapping silicone surfactant structures to foam performance windows.',
-		'WTC-11-29':'In-situ functionalized nano ceria dispersions for chemical-mechanical planarization, describing particle-size control and abrasive selectivity.',
-		'JPN-15-04':'Patent landscape survey for UV-curable frontsheet materials in photovoltaic modules, identifying white-space and freedom-to-operate risks.',
-		'TT-12-16':'Annual technology highlights for the silicone fluids portfolio, summarizing new hydrosilylation catalysts and emulsion advances.',
-		'2008-MPM-16':'Root-cause analysis of SF1632 fluid discoloration, tracing the issue to trace iron contamination in the hydrosilylation step.',
-		'JPN-10-07':'Effect of crosslink density and silica reinforcement on the tensile and tear strength of high-consistency silicone rubber.',
-		'JPN-09-24':'Development roadmap for the high-consistency rubber portfolio, outlining new grades for automotive and electronics sealing.',
-		'ITC-12-13':'Patentability search for acrylate-functional silicones, reviewing prior art on photo-curable backbone modifications.',
-		'WTC-11-45':'Surface modification of ceria nanoparticles using organofunctional silanes to improve dispersion stability in polishing slurries.',
-		'TT-11-16':'Hydrosilylation catalyzed by iron–pyridine diimine complexes as a platinum-free alternative; reports kinetics and selectivity at 80 °C.',
-		'LEV-20-27':'Handbook of liquid silicone rubber processing, covering injection molding, cure rheology and demolding for LSR parts.'
+		'LEV-24-002':'Joint development assessment of bio-based silicone backbones from renewable feedstock; evaluates cure behavior, mechanical properties and cost parity versus petroleum-based grades.',
+		'KR-23-011':'A low-temperature platinum-cure silicone for flexible OLED displays, characterizing cure kinetics below 100 °C and adhesion to polyimide substrates.',
+		'ITC-22-031':'Phase-2 antifoam improvement project optimizing siloxane polyether dispersions to reduce foam in pulp and paper processing; includes plant trial data.',
+		'LEV-23-007':'Development of a solvent-free silicone release coating for baking paper, balancing release force and anchorage on supercalendered kraft.',
+		'TML-22-002':'Process transfer memorandum for a resin intermediate, detailing reactor parameters, distillation cuts and quality limits for scale-up at Termoli.',
+		'KR-22-003':'Scale-up request for an OLED encapsulation adhesive, summarizing rheology, moisture-barrier performance and pot-life under production conditions.',
+		'BKK-21-019':'Field trial of a one-part construction sealant across Southeast Asian climates, reporting weathering, adhesion and gunnability after twelve months.',
+		'SH-21-008':'Comparative study of silicone defoamer performance in architectural water-based coatings, ranking persistence and recoatability.',
+		'ABD-20-015':'Technology and market review of specialty fluids for personal-care formulations, covering sensory profiles and regulatory status in the EU and US.',
+		'TT-18-012':'Water-phase sensory elastomer study evaluating thickening efficiency and skin-feel in cosmetic emulsions.',
+		'SV-19-006':'Applications guide for urethane additive surfactants in flexible and rigid foam, with cell-structure and stability recommendations.',
+		'SV-19-010':'Technology review of urethane additive chemistries, mapping silicone surfactant structures to foam performance windows.',
+		'WTC-11-029':'In-situ functionalized nano ceria dispersions for chemical-mechanical planarization, describing particle-size control and abrasive selectivity.',
+		'JPN-15-004':'Patent landscape survey for UV-curable frontsheet materials in photovoltaic modules, identifying white-space and freedom-to-operate risks.',
+		'TT-12-016':'Annual technology highlights for the silicone fluids portfolio, summarizing new hydrosilylation catalysts and emulsion advances.',
+		'2008-MPM-016':'Root-cause analysis of SF1632 fluid discoloration, tracing the issue to trace iron contamination in the hydrosilylation step.',
+		'JPN-10-007':'Effect of crosslink density and silica reinforcement on the tensile and tear strength of high-consistency silicone rubber.',
+		'JPN-09-024':'Development roadmap for the high-consistency rubber portfolio, outlining new grades for automotive and electronics sealing.',
+		'ITC-12-013':'Patentability search for acrylate-functional silicones, reviewing prior art on photo-curable backbone modifications.',
+		'WTC-11-045':'Surface modification of ceria nanoparticles using organofunctional silanes to improve dispersion stability in polishing slurries.',
+		'TT-11-016':'Hydrosilylation catalyzed by iron–pyridine diimine complexes as a platinum-free alternative; reports kinetics and selectivity at 80 °C.',
+		'LEV-20-027':'Handbook of liquid silicone rubber processing, covering injection molding, cure rheology and demolding for LSR parts.'
 	};
 	function summaryOf(code){ return SUMMARIES[code] || ''; }
 	/* 결과 내 재검색(within) 대상 = 현재 보이는 컬럼만(Document 항상 포함). 메인 검색(q)은 본문까지 풀텍스트라 구분됨. */
@@ -97,7 +99,7 @@
 		if(k==='bu') return r.bu;
 		if(k==='seg') return segOf(r.bu);
 		if(k==='author') return r.author;
-		if(k==='date') return r.date;
+		if(k==='date') return fmtDate(r.date);
 		if(k==='pages') return ''+pagesOf(r);
 		if(k==='views') return r.hits+' views';
 		return '';
@@ -112,6 +114,7 @@
 	var stType='all', stDate='all', stBu='all';
 	var applied=null;      // 적용 스냅샷(우측 렌더 기준). null = Discovery
 	var searchMode=false;  // 현재 뷰가 Results 인가
+	var hasSearched=false; // 1회라도 실제 검색/필터를 적용했나 — 히어로 대형(home)↔얇게(검색후) 전환용
 	var dirty=false;       // staged 미적용 → Search 버튼 활성
 	var openPop=null;      // 현재 열린 칩 팝오버 key
 	var selected={};       // 결과 다중선택(코드 → true)
@@ -128,7 +131,7 @@
 	var dragColKey=null;   // 드래그 중 컬럼 key
 	var focusWithin=false; // 재검색 입력 재포커스 플래그(키 입력 중 re-render)
 	var _keepScroll=false; // true면 renderResults가 그리드 내부 scrollTop 유지(in-place 토글: expand·basket·전체선택·그룹접기 — 스크롤 맨위 점프 방지)
-	var sorts=[{key:'rel',dir:-1}];   // N단계 정렬(index0=1차). dir:1 오름/-1 내림. Sort 패널·헤더가 함께 편집.
+	var sorts=[];   // N단계 정렬(index0=1차). dir:1 오름/-1 내림. 빈 배열=정렬없음(기본순). Sort 패널·헤더가 함께 편집.
 	var sortOpen=false;               // Sort 패널(Excel식) 열림
 	var srtDrag=null;                 // Sort 레벨 드래그 인덱스
 	var groupBy='none';        // 결과 그룹핑: 'none' | 'region' | 'type' | 'cls'
@@ -139,7 +142,6 @@
 	var SEGMAP={Elastomers:'Performance Additives',Fluids:'Silicone Fluids',Coatings:'Coatings & Release',Resins:'Resins',Sealants:'Sealants & Adhesives',Specialty:'Specialty Fluids',Additives:'Urethane Additives','Personal Care':'Consumer Solutions'};
 	function segOf(bu){ return SEGMAP[bu]||bu; }
 	function pagesOf(r){ return (r.hits % 38) + 9; }
-	function textCol(k){ return ['title','type','region','site','author','bu','seg','code'].indexOf(k)>=0; }
 
 	/* ── 결과 컬럼 모델. cell(r,q): q 있으면 셀 값에도 키워드 하이라이트(제목·스니펫에 더해 컬럼까지) ── */
 	var COLS=[
@@ -151,9 +153,12 @@
 		{key:'bu',    label:'Business Unit', w:'118px',               sort:'bu',     on:false, cc:'auth', cell:function(r,q){return hlt(r.bu,q);}},
 		{key:'seg',   label:'Segment',       w:'138px',               sort:'seg',    on:false, cc:'auth', cell:function(r,q){return hlt(segOf(r.bu),q);}},
 		{key:'author',label:'Author',        w:'minmax(120px,160px)', sort:'author', on:true,  cc:'auth', cell:function(r,q){return hlt(r.author,q);}},
-		{key:'date',  label:'Date',          w:'98px',                sort:'date',   on:true,  cc:'dt', cell:function(r,q){return hlt(r.date,q);}},
+		{key:'date',  label:'Date',          w:'98px',                sort:'date',   on:true,  cc:'dt', cell:function(r,q){return hlt(fmtDate(r.date),q);}},
 		{key:'pages', label:'Pages',         w:'64px',                sort:'pages',  on:false, cc:'num', num:true, cell:function(r){return pagesOf(r);}},
-		{key:'views', label:'Views',         w:'80px',                sort:'hits',   on:true,  cc:'num', num:true, cell:function(r){return r.hits+'<span class="u">views</span>';}}
+		{key:'views', label:'Views',         w:'80px',                sort:'hits',   on:true,  cc:'num', num:true, cell:function(r){return r.hits+'<span class="u">views</span>';}},
+		{key:'score',   label:'Score',    w:'76px',  sort:'score',   on:true,  cc:'num rel', num:true, cell:function(r){ var q=(applied&&applied.q)||''; return q? '<b>'+qScore(r,q)+'</b><span class="u">%</span>' : '<span class="cDim">—</span>'; }},
+		{key:'khits',   label:'Hits',     w:'60px',  sort:'khits',   on:false, cc:'num rel', num:true, cell:function(r){ var q=(applied&&applied.q)||''; return q? qHits(r,q) : '<span class="cDim">—</span>'; }},
+		{key:'hitrate', label:'Hit rate', w:'82px',  sort:'hitrate', on:false, cc:'num rel', num:true, cell:function(r){ var q=(applied&&applied.q)||''; return q? qRate(r,q).toFixed(2)+'<span class="u">/pg</span>' : '<span class="cDim">—</span>'; }}
 	];
 	function visCols(){ return COLS.filter(function(c){return c.on;}); }
 	function colByKey(k){ return COLS.filter(function(c){return c.key===k;})[0]; }
@@ -169,7 +174,7 @@
 	function resetLayout(){
 		COLS.sort(function(a,b){ return DEFAULT_COL_ORDER.indexOf(a.key)-DEFAULT_COL_ORDER.indexOf(b.key); });
 		COLS.forEach(function(c){ c.on=DEFAULT_COL_ON[c.key]; });
-		sorts=[{key:'rel',dir:-1}];
+		sorts=[];
 		colFilter={}; showColFilter=false; groupBy='none'; pageSize=10; pageNum=1; colsOpen=false;
 		try{ localStorage.removeItem('rlLayout'); }catch(e){}
 		renderResults();
@@ -180,10 +185,21 @@
 		if(!q) return r.hits;
 		var ql=q.toLowerCase(), sc=0;
 		if(String(r.title).toLowerCase().indexOf(ql)>=0) sc=300;
-		else if(summaryOf(r.code).toLowerCase().indexOf(ql)>=0) sc=180;
+		else if(!isLocked(r) && summaryOf(r.code).toLowerCase().indexOf(ql)>=0) sc=180;   // 본문 매치 점수는 접근권한 있을 때만
 		else if((r.author+' '+r.code+' '+r.bu+' '+r.type).toLowerCase().indexOf(ql)>=0) sc=90;
 		return sc*1000 + r.hits;
 	}
+	/* ── 검색 결과 메트릭(목업) — 쿼리 있을 때만 의미. within/컬럼필터 제외(colText·colFiltType 케이스 미추가로 자동) ── */
+	function qHits(r,q){ q=String(q||'').toLowerCase(); if(!q) return 0;
+		var hay=(r.title+' '+(isLocked(r)?'':summaryOf(r.code))+' '+r.author+' '+r.code+' '+r.bu+' '+r.type).toLowerCase();
+		var n=0,i=hay.indexOf(q); while(i>=0){ n++; i=hay.indexOf(q,i+q.length); } return n; }
+	function qScore(r,q){ q=String(q||'').toLowerCase(); if(!q) return 0; var base=0;
+		if(r.title.toLowerCase().indexOf(q)>=0) base=85;
+		else if(!isLocked(r) && summaryOf(r.code).toLowerCase().indexOf(q)>=0) base=60;
+		else if((r.author+' '+r.code+' '+r.bu+' '+r.type).toLowerCase().indexOf(q)>=0) base=35;
+		else return 0;
+		return Math.min(100, base + Math.min(15,(qHits(r,q)-1)*4)); }
+	function qRate(r,q){ return q? qHits(r,q)/pagesOf(r) : 0; }
 	/* 실제 파일 다운로드(목업 아님 — Blob) */
 	function downloadBlob(content, mime, fname){
 		var blob=new Blob([content],{type:mime});
@@ -194,7 +210,7 @@
 	function exportCsv(codes, fname){
 		var rows=[['Document #','Title','Type','Region','Class','Date','Author','Business Unit','Views']];
 		codes.forEach(function(code){ var r=REPORTS.filter(function(x){return x.code===code;})[0]; if(!r) return;
-			rows.push([r.code,r.title,r.type,idxName(r.idx),'Class '+r.cls,r.date,r.author,r.bu,r.hits]); });
+			rows.push([r.code,r.title,r.type,idxName(r.idx),'Class '+r.cls,fmtDate(r.date),r.author,r.bu,r.hits]); });
 		var csv=rows.map(function(row){ return row.map(function(v){ var s=String(v).replace(/"/g,'""'); return /[",\n]/.test(s)?'"'+s+'"':s; }).join(','); }).join('\n');
 		downloadBlob('﻿'+csv, 'text/csv;charset=utf-8;', fname||'reports.csv');
 	}
@@ -212,9 +228,8 @@
 			if(L.colOrder && L.colOrder.length){ COLS.sort(function(a,b){ var ia=L.colOrder.indexOf(a.key), ib=L.colOrder.indexOf(b.key); if(ia<0)ia=99; if(ib<0)ib=99; return ia-ib; }); }
 			if(L.cols && L.cols.length){ COLS.forEach(function(c){ c.on = L.cols.indexOf(c.key)>=0; }); }
 			if(L.pageSize) pageSize=L.pageSize;
-			if(Array.isArray(L.sorts) && L.sorts.length){ sorts=L.sorts.filter(function(s){return s&&s.key;}).map(function(s){return {key:s.key,dir:s.dir<0?-1:1};}); }
+			if(Array.isArray(L.sorts)){ sorts=L.sorts.filter(function(s){return s&&s.key;}).map(function(s){return {key:s.key,dir:s.dir<0?-1:1};}); }   // 빈 배열(정렬없음)도 그대로 복원
 			else if(L.sortKey){ sorts=[{key:L.sortKey,dir:L.sortDir<0?-1:1}]; if(L.sort2Key) sorts.push({key:L.sort2Key,dir:L.sort2Dir<0?-1:1}); }   // 구 레이아웃 호환
-			if(!sorts.length) sorts=[{key:'rel',dir:-1}];
 			if(typeof L.groupBy==='string') groupBy=L.groupBy;
 		}catch(e){}
 	}
@@ -222,21 +237,31 @@
 	function stagedQuery(){ return (document.getElementById('rlSearchInput').value||'').trim(); }
 	function snapshotApplied(){
 		applied={ q:stagedQuery(), idx:Object.assign({},activeIdx), cls:Object.assign({},activeCls), type:stType, date:stDate, bu:stBu };
+		saveFilters();   // 최근 지정 필터 영속(다음 진입 초기 세팅) — 키워드(q)는 제외
+	}
+	/* 최근 지정 필터(패싯만) localStorage 저장/복원 — 키워드는 RECENT(rlRecent), 레이아웃은 rlLayout이 별도 담당 */
+	function saveFilters(){ try{ localStorage.setItem('rlFilters', JSON.stringify({ idx:activeIdx, cls:activeCls, type:stType, date:stDate, bu:stBu })); }catch(e){} }
+	function loadFilters(){
+		try{ var s=localStorage.getItem('rlFilters'); if(!s) return; var F=JSON.parse(s); if(!F||typeof F!=='object') return;
+			if(F.idx){ INDEXES.forEach(function(i){ activeIdx[i.id] = (F.idx[i.id]!==false); }); }   // 알려진 권역만 반영(누락=기본 on)
+			if(F.cls){ [1,2,3,4].forEach(function(c){ activeCls[c] = (F.cls[c]!==false); }); }
+			if(typeof F.type==='string') stType=F.type;
+			if(typeof F.date==='string') stDate=F.date;
+			if(typeof F.bu==='string') stBu=F.bu;
+		}catch(e){}
 	}
 	function setDirty(v){ dirty=!!v; var b=document.getElementById('rlSearchBtn'); if(b) b.classList.toggle('off', !dirty); }
 
 	var rlPops={};   // 열린 문서 팝업 레지스트리(코드별 window) — 중복창 방지/재포커스
 	function openReport(code){
 		var r=REPORTS.filter(function(x){return x.code===code;})[0]; if(!r) return;
-		if(r.cls>=3 && r.idx!==MY_REGION){
-			toast('“'+r.code+'” is Class '+r.cls+' ('+idxName(r.idx)+'). Title & metadata only — full access is region-restricted.','warn'); return;
-		}
+		// restricted(cls≥3)도 일단 연다 — pop이 잠금 화면 + 열람요청 CTA를 띄움(세부 게이트는 추후)
 		var q=(applied&&applied.q)?('&q='+encodeURIComponent(applied.q)):'';
 		var url='apis_rptlib_pop.html?code='+encodeURIComponent(code)+q;
 		var name=('rptpop_'+code).replace(/[^A-Za-z0-9_]/g,'_');   // window name=코드 기반 → 같은 문서는 한 창
 		var w=rlPops[name];
 		if(w && !w.closed){ w.focus(); return; }                   // 이미 열림 → reload 없이 앞으로(입력상태 보존)
-		var W=Math.min(1420, screen.availWidth-40), H=Math.min(920, screen.availHeight-60);
+		var W=1520, H=880;
 		var L=Math.max(0,((screen.availWidth-W)/2)|0), T=Math.max(0,((screen.availHeight-H)/2)|0);
 		w=window.open(url, name, 'width='+W+',height='+H+',left='+L+',top='+T+',scrollbars=yes,resizable=yes');
 		if(w){ rlPops[name]=w; w.focus(); } else { location.href=url; }   // 팝업 차단 시 폴백(네비게이션)
@@ -327,64 +352,27 @@
 		else if(key==='bu') stBu='all';
 		onStageChange();
 	}
-	/* 패싯 변경 = 즉시 적용(staged 폐지 — 칩 고르면 결과 바로 반영). applySearch와 동일하되 closePopover 제외:
-	   region/class 다중선택 팝오버는 열린 채 라이브 갱신, 단일선택(type/date/bu)은 각 핸들러가 직후 닫음.
-	   자유텍스트(검색어)는 별도 input 핸들러(setDirty)라 Enter/Search 유지 — 패싯만 즉시. */
-	function onStageChange(){ snapshotApplied(); selected={}; withinQuery=''; pageNum=1; setDirty(false); renderChips(); renderResults(); }   // 정렬은 유지(패싯 변경에 안 건드림)
+	/* 패싯 변경 = 스테이징만(검색에 종속). 칩 표시 + Search 버튼만 갱신하고, 그리드 반영은 Search 클릭 때 일괄.
+	   region/class 다중선택 팝오버는 열린 채 staged 갱신, 단일선택(type/date/bu)은 각 핸들러가 직후 닫음.
+	   자유텍스트(검색어)도 동일하게 input=setDirty → Enter/Search로 함께 적용. */
+	function onStageChange(){ setDirty(true); renderChips(); }
 
-	/* ════════════ Saved filters ════════════ */
-	function idxAll(){ var o={}; INDEXES.forEach(function(i){ o[i.id]=true; }); return o; }
-	function clsAll(){ return {1:true,2:true,3:true,4:true}; }
-	var SAVED=[
-		{name:'My region · Class 1–2', q:'', idx:idxAll(), cls:{1:true,2:true,3:false,4:false}, type:'all', date:'all', bu:'all'},
-		{name:'Recent TIS reports',    q:'', idx:idxAll(), cls:clsAll(), type:'TIS', date:'2024', bu:'all'},
-		{name:'Coatings — all sites', q:'', idx:idxAll(), cls:clsAll(), type:'all', date:'all', bu:'Coatings'}
-	];
-	/* ════════════ 검색창 드롭다운: Recent + Saved (칩 형태, 포커스 시) ════════════ */
+	/* ════════════ 검색창 드롭다운: Recent(키워드만, 칩 형태, 포커스 시) ════════════ */
 	var RECENT=[];
 	function loadRecent(){ try{ var s=localStorage.getItem('rlRecent'); if(s) RECENT=JSON.parse(s)||[]; }catch(e){} }
 	/* 최근 본 문서(이어보기) — pop.html이 'rlRecentDocs'에 기록한 코드 목록. Summary 카드로 표시. ('rlRecent'=검색기록과 별개) */
 	function rlRecentDocs(){ try{ return JSON.parse(localStorage.getItem('rlRecentDocs'))||[]; }catch(e){ return []; } }
 	function pushRecent(q){ q=(q||'').trim(); if(!q) return; RECENT=RECENT.filter(function(x){return x!==q;}); RECENT.unshift(q); RECENT=RECENT.slice(0,8); try{ localStorage.setItem('rlRecent', JSON.stringify(RECENT)); }catch(e){} }
+	function deleteRecent(q){ RECENT=RECENT.filter(function(x){return x!==q;}); try{ localStorage.setItem('rlRecent', JSON.stringify(RECENT)); }catch(e){} renderSearchAuto(); }   // pill의 X — 단건 삭제 후 드롭다운 유지
 	function openAuto(){ renderSearchAuto(); var a=document.getElementById('rlSearchAuto'); if(a) a.classList.add('show'); }
 	function closeAuto(){ var a=document.getElementById('rlSearchAuto'); if(a) a.classList.remove('show'); }
-	/* 저장필터 구성 미리보기(칩) — 클릭 전에 뭘 거르는지 보이게 */
-	function saMini(ic,txt){ return '<span class="saChip"><i class="material-symbols-outlined">'+ic+'</i>'+esc(txt)+'</span>'; }
-	function savedChips(s){
-		var ch=[];
-		if(s.q) ch.push(saMini('search','“'+s.q+'”'));
-		if(s.type!=='all') ch.push(saMini('description','Doc.Type · '+typeInfo(s.type).t));
-		var onIdx=INDEXES.filter(function(i){return s.idx[i.id];});
-		if(onIdx.length!==INDEXES.length) ch.push(saMini('public','Region · '+onIdx.map(function(i){return i.id;}).join(', ')));
-		var onCls=[1,2,3,4].filter(function(c){return s.cls[c];});
-		if(onCls.length!==4) ch.push(saMini('shield','Class · '+onCls.map(function(c){return 'C'+c;}).join(',')));
-		if(s.date!=='all') ch.push(saMini('event',DATE_LABELS[s.date]));
-		if(s.bu!=='all') ch.push(saMini('apartment','BU · '+s.bu));
-		return '<div class="saItemChips">'+(ch.length?ch.join(''):'<span class="saNone">All documents · no filters</span>')+'</div>';
-	}
 	function renderSearchAuto(){
 		var qv=(document.getElementById('rlSearchInput').value||'').trim().toLowerCase();
 		var rec=RECENT.filter(function(r){ return !qv || r.toLowerCase().indexOf(qv)>=0; });
 		var h='<div class="saSec"><div class="saHead">Recent</div>';
-		h+= rec.length? '<div class="saChips">'+rec.map(function(r){ return '<a href="javascript:;" class="saRecent" data-rec="'+esc(r)+'"><i class="material-symbols-outlined">history</i>'+esc(r)+'</a>'; }).join('')+'</div>' : '<div class="saNone">No recent searches</div>';
-		h+='</div><div class="saSec"><div class="saHead">Saved filters<a href="javascript:;" class="saSaveCur" id="saSaveCur"><i class="material-symbols-outlined">add</i>Save current</a></div>';
-		h+= SAVED.length? SAVED.map(function(s,i){ return '<div class="saSaved" data-saved="'+i+'"><div class="saSavedTop"><span class="saSavedName"><i class="material-symbols-outlined">bookmark</i>'+esc(s.name)+'</span><i class="material-symbols-outlined saDel" data-del="'+i+'" title="Delete">delete</i></div>'+savedChips(s)+'</div>'; }).join('') : '<div class="saNone">No saved filters yet</div>';
+		h+= rec.length? '<div class="saChips">'+rec.map(function(r){ return '<a href="javascript:;" class="saRecent" data-rec="'+esc(r)+'"><i class="material-symbols-outlined">history</i>'+esc(r)+'<i class="material-symbols-outlined saRecentDel" data-recdel="'+esc(r)+'" title="Remove from recent">close</i></a>'; }).join('')+'</div>' : '<div class="saNone">No recent searches</div>';
 		h+='</div>';
 		var el=document.getElementById('rlSearchAuto'); if(el) el.innerHTML=h;
-	}
-	function loadSaved(i){
-		var s=SAVED[i]; if(!s) return;
-		activeIdx=Object.assign({},s.idx); activeCls=Object.assign({},s.cls);
-		stType=s.type; stDate=s.date; stBu=s.bu; setQueryInput(s.q||'');
-		renderChips(); closeAuto(); runSearch();
-		toast('Applied “'+s.name+'”.','ok');
-	}
-	function deleteSaved(i){ var s=SAVED[i]; if(!s) return; SAVED.splice(i,1); renderSearchAuto(); toast('Deleted “'+s.name+'”.','info'); }
-	function saveCurrent(){
-		var name=window.prompt('Name these filters', stagedQuery()||'Untitled filter');
-		if(!name || !name.trim()) return;
-		SAVED.push({ name:name.trim(), q:stagedQuery(), idx:Object.assign({},activeIdx), cls:Object.assign({},activeCls), type:stType, date:stDate, bu:stBu });
-		renderSearchAuto(); toast('Saved “'+name.trim()+'”.','ok');
 	}
 
 	/* ════════════ Discovery(빈 상태) ════════════ */
@@ -394,7 +382,7 @@
 			'<div class="rcTitle">'+esc(r.title)+'</div>'+
 			'<div class="rcMeta"><span class="code">'+esc(r.code)+'</span><span class="dot">·</span>'+esc(r.author)+'</div>'+
 			'<div class="rcFoot"><span class="rcSite"><i class="material-symbols-outlined">public</i>'+esc(idxName(r.idx))+'</span>'+
-			'<span style="margin-left:auto;font-size:11px;color:#bcae9d;">'+esc(r.date)+'</span></div>'+
+			'<span style="margin-left:auto;font-size:11px;color:#bcae9d;">'+esc(fmtDate(r.date))+'</span></div>'+
 		'</div>';
 	}
 	function rankRow(r,i){
@@ -458,7 +446,7 @@
 				if(fd==='2024' && y<2023) return false;
 				if(fd==='2018' && (y<2018||y>2022)) return false;
 				if(fd==='0' && y>=2018) return false; }
-			if(q.length>=2 && (r.title+' '+r.code+' '+r.author+' '+r.bu+' '+r.type+' '+summaryOf(r.code)).toLowerCase().indexOf(q)<0) return false;   // 필터도 2글자부터(하이라이트 termsOf와 동일 기준) → 1글자=무동작, 일관
+			if(q.length>=2){ var hay=(r.title+' '+r.code+' '+r.author+' '+r.bu+' '+r.type+(isLocked(r)?'':' '+summaryOf(r.code))).toLowerCase(); if(hay.indexOf(q)<0) return false; }   // 2글자부터(하이라이트 termsOf와 동일). 잠금 문서는 본문(summary) 제외 → 제목/메타로만 매칭
 			if(w.length>=2 && withinText(r).indexOf(w)<0) return false;
 			if(!passColFilter(r)) return false;
 			return true;
@@ -500,18 +488,17 @@
 	}
 	/* 그리드 셀·제목 공통: 메인 검색=bold, within 검색=mark (둘 다 활성 시 한 패스로 동시 처리) */
 	function hlt(text){ return hlMix(text, termsOf((applied&&applied.q)||''), termsOf(withinQuery)); }
-	function fakePage(r){ return (r.hits % 11) + 3; }
 	function snippetOf(r, q){
+		if(isLocked(r)) return { html:'<span class="snipLocked"><i class="material-symbols-outlined">lock</i>Restricted — request access to view contents</span>' };   // 잠금: 본문 발췌 비노출(유출 차단)
 		var sum=summaryOf(r.code);
-		if(!q) return { html:esc(sum.slice(0,150))+(sum.length>150?'…':''), src:'' };
+		if(!q) return { html:esc(sum.slice(0,150))+(sum.length>150?'…':'') };
 		var ql=q.toLowerCase(), sp=sum.toLowerCase().indexOf(ql);
 		if(sp>=0){
 			var s=Math.max(0,sp-58), e=Math.min(sum.length, sp+ql.length+92);
 			var ex=(s>0?'…':'')+sum.slice(s,e)+(e<sum.length?'…':'');
-			return { html:hlMix(ex, termsOf(q), termsOf(withinQuery)), src:'<span class="src body"><i class="material-symbols-outlined">find_in_page</i>matched in body · p.'+fakePage(r)+'</span>' };
+			return { html:hlMix(ex, termsOf(q), termsOf(withinQuery)) };
 		}
-		if(String(r.title).toLowerCase().indexOf(ql)>=0) return { html:esc(sum.slice(0,150))+(sum.length>150?'…':''), src:'<span class="src ttl"><i class="material-symbols-outlined">title</i>matched in title</span>' };
-		return { html:esc(sum.slice(0,150))+(sum.length>150?'…':''), src:'<span class="src mta"><i class="material-symbols-outlined">label</i>matched in metadata</span>' };
+		return { html:esc(sum.slice(0,150))+(sum.length>150?'…':'') };   // 제목/메타 매칭 — 출처 배지 없이 초록 미리보기만
 	}
 	/* ── 선택/일괄 ── */
 	function selCount(){ return Object.keys(selected).length; }
@@ -529,18 +516,20 @@
 		if(k==='date') return r.date;
 		if(k==='code') return r.code.toLowerCase();
 		if(k==='pages') return pagesOf(r);
+		if(k==='score') return qScore(r,q);
+		if(k==='khits') return qHits(r,q);
+		if(k==='hitrate') return qRate(r,q);
 		return r.hits;
 	}
 	function cmpBy(a,b,k,d,q){ var va=sortVal(a,k,q), vb=sortVal(b,k,q); return (va<vb?-1:va>vb?1:0)*d; }
 	/* ── N단계 정렬 모델 ── */
 	function sortFields(){ var seen={}, out=[{key:'rel',label:'Relevance'},{key:'title',label:'Document title'}];
 		out.forEach(function(o){seen[o.key]=1;}); COLS.forEach(function(c){ if(c.sort && !seen[c.sort]){ seen[c.sort]=1; out.push({key:c.sort,label:c.label}); } }); return out; }
-	function sortLabel(key){ var f=sortFields().filter(function(x){return x.key===key;})[0]; return f?f.label:key; }
 	function sortIndex(key){ for(var i=0;i<sorts.length;i++) if(sorts[i].key===key) return i; return -1; }
 	/* 헤더 클릭 = 단일정렬 순환(오름→내림→기본 relevance) */
-	function setSingleSort(key){ if(sorts.length===1 && sorts[0].key===key){ if(sorts[0].dir===1) sorts[0].dir=-1; else sorts=[{key:'rel',dir:-1}]; } else sorts=[{key:key,dir:1}]; }
+	function setSingleSort(key){ if(sorts.length===1 && sorts[0].key===key){ if(sorts[0].dir===1) sorts[0].dir=-1; else sorts=[]; } else sorts=[{key:key,dir:1}]; }   /* 오름→내림→정렬없음(빈) 순환 */
 	/* 헤더 Shift+클릭 = 레벨 추가/순환(추가→내림→제거) */
-	function toggleSortLevel(key){ var i=sortIndex(key); if(i<0) sorts.push({key:key,dir:1}); else if(sorts[i].dir===1) sorts[i].dir=-1; else sorts.splice(i,1); if(!sorts.length) sorts=[{key:'rel',dir:-1}]; }
+	function toggleSortLevel(key){ var i=sortIndex(key); if(i<0) sorts.push({key:key,dir:1}); else if(sorts[i].dir===1) sorts[i].dir=-1; else sorts.splice(i,1); }   /* 추가→내림→제거(레벨0이면 빈=정렬없음). 빈 상태에서 첫 추가=1차 */
 	function sortedList(){
 		var list=currentMatches(), q=(applied&&applied.q)||'';
 		return list.sort(function(a,b){
@@ -553,7 +542,7 @@
 		var ind = on
 			? '<i class="material-symbols-outlined ar">'+(sorts[si].dir<0?'arrow_downward':'arrow_upward')+'</i>'+(sorts.length>1?'<span class="so">'+(si+1)+'</span>':'')
 			: '<i class="material-symbols-outlined hint">swap_vert</i>';   // 미정렬 → hover 시 sortable 힌트
-		var canDrag=(colkey && colkey!=='title');
+		var canDrag=!!colkey;
 		var drag=canDrag?' draggable="true" data-colkey="'+colkey+'"':'';
 		var ttl=canDrag?'Click to sort · Shift+click = add sort level · Drag to reorder column':'Click to sort · Shift+click adds a sort level';
 		return '<div class="gh sortable'+(on?' on':'')+(extra||'')+'" data-sort="'+key+'"'+drag+' title="'+ttl+'">'+label+ind+'</div>';
@@ -566,23 +555,25 @@
 		if(all){ var list=(groupBy==='none'? pagedList() : sortedList()); var allSel=list.length>0 && list.every(function(r){return selected[r.code];}); all.checked=allSel; all.indeterminate=(n>0 && !allSel); }
 	}
 	function resultRow(r){
-		var locked=(r.cls>=3 && r.idx!==MY_REGION);
+		var locked=isLocked(r);
 		var q=applied&&applied.q;
 		var sel=!!selected[r.code];
 		var inB=!!basket[r.code];
 		var exp=!!expanded[r.code];
 		var sn=q?snippetOf(r,q):null;
-		var snip=(sn&&sn.src)?'<div class="gc snip"><span class="snipTxt">'+sn.html+'</span>'+sn.src+'</div>':'';
+		var snip=(sn&&sn.html)?'<div class="gc snip"><span class="snipTxt">'+sn.html+'</span></div>':'';
 		var cells=visCols().map(function(c){ return '<div class="gc'+(c.cc?' '+c.cc:'')+'">'+c.cell(r)+'</div>'; }).join('');
-		return '<div class="rlGridRow glassHover'+(locked?' locked':'')+(sel?' sel':'')+(exp?' exp':'')+'" data-code="'+esc(r.code)+'">'+
+		return '<div class="rlGridRow glassHover'+(sel?' sel':'')+(exp?' exp':'')+'" data-code="'+esc(r.code)+'">'+
 			'<div class="gc sel"><label class="rlRowSel" title="Select"><input type="checkbox" class="filled-in rlRowCheck" data-code="'+esc(r.code)+'"'+(sel?' checked':'')+'/><span></span></label></div>'+
 			'<div class="gc title">'+
-				'<div class="t1"><span class="tt">'+hlt(r.title)+'</span>'+
-					'<span class="rlRowActs">'+
-						'<span class="rlRowAct rlBasket'+(inB?' on':'')+'" data-code="'+esc(r.code)+'" title="'+(inB?'In basket — click to remove':'Add to basket')+'"><i class="material-symbols-outlined">'+(inB?'shopping_cart':'add_shopping_cart')+'</i></span>'+
-						'<span class="rlRowAct rlDl" data-code="'+esc(r.code)+'" title="'+(locked?'Restricted':'Download')+'"><i class="material-symbols-outlined">'+(locked?'lock':'download')+'</i></span>'+
-					'</span>'+
+				'<div class="t1">'+
 					'<span class="rlRowAct rlExpand'+(exp?' on':'')+'" data-code="'+esc(r.code)+'" title="Quick look"><i class="material-symbols-outlined">expand_more</i></span>'+
+					'<span class="tt">'+hlt(r.title)+'</span>'+
+					'<span class="rlRowActs">'+
+						'<span class="rlRowAct rlDl" data-code="'+esc(r.code)+'" title="'+(locked?'Restricted':'Download')+'"><i class="material-symbols-outlined">'+(locked?'':'download')+'</i></span>'+
+						'<span class="rlRowAct rlBasket'+(inB?' on':'')+'" data-code="'+esc(r.code)+'" title="'+(inB?'In basket — click to remove':'Add to basket')+'"><i class="material-symbols-outlined">'+(inB?'shopping_cart':'add_shopping_cart')+'</i></span>'+
+						'<span class="rlRowAct rlBmk" data-bmk="'+esc(r.code)+'" title="Save to a bookmark folder"><i class="material-symbols-outlined">bookmark_add</i></span>'+
+					'</span>'+
 				'</div>'+
 			'</div>'+
 			cells+
@@ -593,17 +584,17 @@
 	function metaPair(k,v){ return '<div class="exPair"><span class="k">'+esc(k)+'</span><span class="v">'+esc(v)+'</span></div>'; }
 	/* 행 인라인 확장 — abstract 미리보기 + 메타 + 빠른 액션(상세 화면 안 들어가고 훑기) */
 	function expandPanel(r){
-		var locked=(r.cls>=3 && r.idx!==MY_REGION);
+		var locked=isLocked(r);
 		return '<div class="rlExpandPanel">'+
-			'<div class="exAbstract"><i class="material-symbols-outlined">subject</i><span>'+esc(summaryOf(r.code)||'No abstract available.')+'</span></div>'+
+			'<div class="exAbstract"><i class="material-symbols-outlined">'+(locked?'lock':'subject')+'</i><span>'+(locked?'Restricted — request access to view contents':esc(summaryOf(r.code)||'No abstract available.'))+'</span></div>'+
 			'<div class="exMeta">'+
 				metaPair('Author', r.author)+metaPair('Site / Region', idxName(r.idx))+metaPair('Business Unit', r.bu)+
-				metaPair('Type', typeInfo(r.type).nm)+metaPair('Date', r.date)+metaPair('Classification','Class '+r.cls+(locked?' · region-restricted':''))+
+				metaPair('Type', typeInfo(r.type).nm)+metaPair('Date', fmtDate(r.date))+metaPair('Classification','Class '+r.cls+(locked?' · region-restricted':''))+
 			'</div>'+
 			'<div class="exActs">'+
-				'<a class="exBtn primary" data-open="'+esc(r.code)+'"><i class="material-symbols-outlined">open_in_new</i>Open report</a>'+
-				'<a class="exBtn" data-basket="'+esc(r.code)+'"><i class="material-symbols-outlined">add_shopping_cart</i>Add to basket</a>'+
-				'<a class="exBtn" data-dl="'+esc(r.code)+'"><i class="material-symbols-outlined">'+(locked?'lock':'download')+'</i>'+(locked?'Restricted':'Download')+'</a>'+
+				'<a class="exBtn primary" data-open="'+esc(r.code)+'" title="Open report"><i class="material-symbols-outlined">open_in_new</i></a>'+
+				'<a class="exBtn" data-basket="'+esc(r.code)+'" title="Add to basket"><i class="material-symbols-outlined">add_shopping_cart</i></a>'+
+				'<a class="exBtn" data-dl="'+esc(r.code)+'" title="'+(locked?'Restricted':'Download')+'"><i class="material-symbols-outlined">'+(locked?'lock':'download')+'</i></a>'+
 			'</div>'+
 		'</div>';
 	}
@@ -645,7 +636,7 @@
 		if(onCls.length!==4) ch.push(critChip('class','shield','Class · '+onCls.map(function(c){return 'C'+c;}).join(',')));
 		if(applied.date!=='all') ch.push(critChip('date','event',DATE_LABELS[applied.date]));
 		if(applied.bu!=='all') ch.push(critChip('bu','apartment',applied.bu));
-		if(withinQuery) ch.push(critChip('within','filter_alt','within · “'+withinQuery+'”'));
+		if(withinQuery.length>=2) ch.push(critChip('within','filter_alt','within · “'+withinQuery+'”'));   // within은 2글자부터 실제 필터 → 칩도 2글자부터(1글자엔 미생성)
 		Object.keys(colFilter).forEach(function(k){ var v=colFilter[k]; if(v==null||v==='') return;
 			ch.push(critChip('cf:'+k,'filter_list',colName(k)+' · '+(colFiltType(k)==='text'?('“'+v+'”'):cfLabel(k,v)))); });
 		if(!ch.length) return '';
@@ -674,6 +665,7 @@
 				(sorts.length>1?'<a href="javascript:;" class="srtRm" data-srtrm="'+i+'" title="Remove level"><i class="material-symbols-outlined">close</i></a>':'<span class="srtRm ph"></span>')+
 			'</div>';
 		}).join('');
+		if(!sorts.length) rows='<div class="srtEmpty" style="padding:7px 4px;font-size:12px;color:var(--main-hint-color);">No sorting applied — results in default order.</div>';
 		var canAdd=(sorts.length < fields.length);
 		return '<div class="rlSortPop'+(sortOpen?' show':'')+'" id="rlSortPop">'+
 			'<div class="popHead">Sort<span class="srtHint">drag ⠿ to reorder levels</span></div>'+
@@ -692,12 +684,12 @@
 			return '<div class="bkItem" data-code="'+esc(code)+'"><div class="bkMain"><div class="bkTit">'+esc(r.title)+'</div>'+
 				'<div class="bkSub"><span class="code">'+esc(r.code)+'</span> · '+esc(r.type)+' · '+esc(idxName(r.idx))+'</div></div>'+
 				'<i class="material-symbols-outlined bkRm" data-rm="'+esc(code)+'" title="Remove">close</i></div>';
-		}).join('') : '<div class="bkEmpty"><i class="material-symbols-outlined">shopping_cart</i><div>Your basket is empty.</div><div class="s">Add reports with the cart icon on any row.</div></div>';
+		}).join('') : '<div class="bkEmpty"><i class="material-symbols-outlined">shopping_cart</i><div>Your basket is empty.</div><div class="s">Add documents with the cart icon on any row.</div></div>';
 		return '<div class="rlBasketDrawer'+(basketOpen?' open':'')+'" id="rlBasketDrawer">'+
 			'<div class="bkHead"><span><i class="material-symbols-outlined">shopping_cart</i>Document Basket <b>'+codes.length+'</b></span>'+
 				'<i class="material-symbols-outlined bkClose" id="rlBasketClose">close</i></div>'+
 			'<div class="bkList">'+items+'</div>'+
-			'<div class="bkFoot"><a class="ba" id="rlBkExport"><i class="material-symbols-outlined">file_download</i>CSV</a>'+
+			'<div class="bkFoot">'+
 				'<a class="ba" id="rlBkDownload"><i class="material-symbols-outlined">download</i>Download</a>'+
 				'<a class="ba clr" id="rlBkClear"><i class="material-symbols-outlined">delete_sweep</i>Clear</a></div>'+
 		'</div>';
@@ -753,6 +745,7 @@
 	}
 	function renderResults(){
 		searchMode=true;
+		var _vb=document.getElementById('rlViewBrowse'); if(_vb) _vb.classList.toggle('searched', hasSearched);   // 검색 후 = 히어로 얇게(좌상단)
 		var list=sortedList();
 		var aq=applied&&applied.q;
 		var grouped=(groupBy!=='none');
@@ -769,24 +762,27 @@
 				'<div class="rlSortWrap"><a class="rlTool'+(sorts.length>1?' on':'')+'" id="rlSortBtn" title="Sort"><i class="material-symbols-outlined">swap_vert</i>'+(sorts.length>1?'<span class="bdg">'+sorts.length+'</span>':'')+'</a>'+sortPopHtml()+'</div>'+
 				'<a class="rlTool'+(showColFilter?' on':'')+'" id="rlColFilterBtn" title="Filter columns"><i class="material-symbols-outlined">filter_list</i></a>'+
 				'<div class="rlColsWrap"><a class="rlTool" id="rlColsBtn" title="Choose columns"><i class="material-symbols-outlined">view_column</i></a>'+colsPopHtml()+'</div>'+
-				'<a class="rlTool basket'+(basketCount()?' has':'')+'" id="rlBasketBtn" title="Document basket"><i class="material-symbols-outlined">shopping_cart</i><span class="bdg"'+(basketCount()?'':' style="display:none"')+'>'+basketCount()+'</span></a>'+
 				'<select class="rlSortSel browser-default" id="rlGroupBy"><option value="none">No grouping</option><option value="region">Group: Region</option><option value="type">Group: Type</option><option value="cls">Group: Class</option></select>'+
 				'<select class="rlSortSel browser-default" id="rlPageSize"><option value="10">10 / page</option><option value="25">25 / page</option><option value="50">50 / page</option></select>'+
+				'<a class="rlTool basket'+(basketCount()?' has':'')+' ml20" id="rlBasketBtn" title="Document basket"><i class="material-symbols-outlined">shopping_cart</i><span class="bdg"'+(basketCount()?'':' style="display:none"')+'>'+basketCount()+'</span></a>'+
 			'</div></div>';
 		html+=filterChipsHtml();
 		html+='<div class="rlBulkBar" id="rlBulkBar"><span class="cnt"><b id="rlSelCnt">0</b> selected</span><div class="acts">'+
-			'<a class="ba" data-bulk="export"><i class="material-symbols-outlined">file_download</i>Export CSV</a>'+
+			''+
 			'<a class="ba" data-bulk="download"><i class="material-symbols-outlined">download</i>Download</a>'+
 			'<a class="ba" data-bulk="basket"><i class="material-symbols-outlined">add_shopping_cart</i>Add to Basket</a>'+
 			'<a class="ba clr" data-bulk="clear"><i class="material-symbols-outlined">close</i>Clear</a></div></div>';
 		if(!pi.n){
-			html+='<div class="rlEmpty"><i class="material-symbols-outlined">search_off</i>'+
+			html+='<div class="rlGrid hScroll compact" style="--rlcols:'+tmpl+'"><div class="rlGridHead">'+
+				'<div class="gh sel"><label class="rlSelAll"><input type="checkbox" class="filled-in" disabled/><span></span></label></div>'+
+				ghCell('title','Document','','title')+visCols().map(function(c){ return ghCell(c.sort,c.label,(c.num?' num':'')+(c.cc&&c.cc.indexOf('rel')>=0?' rel':''),c.key); }).join('')+
+				'</div><div class="rlEmpty"><i class="material-symbols-outlined">search_off</i>'+
 				'<div class="et">No reports match your search.</div>'+
-				'<div class="es">Try removing a filter or broadening your keywords.</div></div>';
+				'<div class="es">Try removing a filter or broadening your keywords.</div></div></div>';
 		} else {
 			html+='<div class="rlGrid hScroll compact'+(grouped?' grouped':'')+'" style="--rlcols:'+tmpl+'"><div class="rlGridHead">'+
 				'<div class="gh sel"><label class="rlSelAll" title="Select all"><input type="checkbox" class="filled-in" id="rlSelAll"/><span></span></label></div>'+
-				ghCell('title','Document','','title')+visCols().map(function(c){ return ghCell(c.sort,c.label,c.num?' num':'',c.key); }).join('')+
+				ghCell('title','Document','','title')+visCols().map(function(c){ return ghCell(c.sort,c.label,(c.num?' num':'')+(c.cc&&c.cc.indexOf('rel')>=0?' rel':''),c.key); }).join('')+
 				'</div>'+(showColFilter?cfRowHtml():'')+(grouped? groupedRowsHtml(list) : list.slice(pi.s,pi.e).map(resultRow).join(''))+'</div>';
 			html+=(grouped? '<div class="rlPager"><span class="only">Grouped by '+groupLabel()+' · '+pi.n+' documents</span></div>' : pagerHtml(pi));
 		}
@@ -805,24 +801,24 @@
 
 	/* ════════════ 적용 / 홈 ════════════ */
 	function setQueryInput(v){ var s=document.getElementById('rlSearchInput'); if(!s) return; s.value=v; var f=s.closest('.rlSearchField'); if(f) f.classList.toggle('has', !!v); }
-	function applySearch(){ snapshotApplied(); selected={}; withinQuery=''; pageNum=1; setDirty(false); closePopover(); renderResults(); }
+	function applySearch(){ hasSearched=true; snapshotApplied(); selected={}; withinQuery=''; pageNum=1; setDirty(false); closePopover(); renderResults(); }   // 실제 검색/필터 = 히어로 축소
 	/* 키워드 검색 진입 — q 있으면 relevance, 없으면 views 기본정렬(디스커버리 browse는 자체 정렬 보존) */
 	function runSearch(){ var qq=stagedQuery(); if(qq) pushRecent(qq); sorts=[{key:(qq?'rel':'hits'),dir:-1}]; closeAuto(); applySearch(); }
 	/* 첫화면/Home = 전체 리포트 파워그리드(페이징, newest first). 필터는 색인 조회라 부하 X. */
 	function setSearchVisible(v){ var ct=document.getElementById('rlViewBrowse'); if(ct) ct.classList.toggle('hideSearch', !v); }
 	/* SPA 뷰 전환(인페이지): browse(검색)/upload/review 의 .rlContent display 토글.
 	   실구현 시 이 자리가 Thymeleaf 프래그먼트(th:replace) + 서버 라우팅으로 이관됨. */
-	function showView(v){ var ids={browse:'rlViewBrowse',upload:'rlViewUpload',review:'rlViewReview',mine:'rlViewMine'};
+	function showView(v){ var ids={browse:'rlViewBrowse',review:'rlViewReview',mine:'rlViewMine'};
 		for(var k in ids){ var el=document.getElementById(ids[k]); if(el) el.style.display=(k===v)?'':'none'; }
 		// 전환 시 공유 저장소(RL_SUBS) 최신 상태로 재렌더 — 결재 결정 ↔ 내 Submissions 반영(기존엔 display만 토글해 1회 렌더에 고정됐음).
-		if(v==='upload'){ if(typeof showBoard==='function') showBoard(); if(typeof renderMySubs==='function') renderMySubs(); }
 		if(v==='review' && typeof renderQueue==='function') renderQueue();
 		if(v==='mine' && typeof renderMine==='function') renderMine(); }   // My Report(Reports/Bookmarks) — rptlib_mine.js
-	function goHome(){
+	function goHome(keepFilters){
+		hasSearched=false;   // Home 복귀 = 히어로 대형 복원
 		setSearchVisible(true);   // 검색바·필터바 = Documents 전용
-		INDEXES.forEach(function(i){ activeIdx[i.id]=true; }); activeCls={1:true,2:true,3:true,4:true};
-		stType='all'; stDate='all'; stBu='all'; setQueryInput(''); withinQuery=''; colFilter={};
-		sorts=[{key:'date',dir:-1}]; pageNum=1; selected={};
+		if(!keepFilters){ INDEXES.forEach(function(i){ activeIdx[i.id]=true; }); activeCls={1:true,2:true,3:true,4:true}; stType='all'; stDate='all'; stBu='all'; }   // keepFilters=첫 진입: 복원된 최근 필터 유지
+		setQueryInput(''); withinQuery=''; colFilter={};
+		pageNum=1; selected={};   // 정렬은 건드리지 않음 — loadLayout이 복원한 "최근 정렬"(없으면 rel=정렬없음) 유지. Home/첫진입이 date로 덮어쓰지 않게.
 		snapshotApplied(); setDirty(false); closePopover(); renderChips(); renderResults();
 	}
 	/* Summary = 큐레이션 Discovery(Recently Added·Most Viewed·Browse) — 검색바 숨김 */
@@ -845,32 +841,115 @@
 		snapshotApplied(); pageNum=1; setDirty(false); renderChips(); renderResults();
 	}
 
+	/* ════════════ Bookmark — "폴더에 담기" 모달(Documents 행의 rlBmk 버튼) ════════════
+	   브라우저 북마크 별표 멘탈모델: 문서 1건을 여러 폴더에 체크로 담는다(참조·즉시 저장).
+	   폴더 데이터/변형은 rptlib_collections.js 전역(bmState·bmAddItem·bmRemoveItem·bmNewFolder…) 재사용.
+	   docs.js가 collections.js보다 먼저 로드되지만, 클릭은 런타임이라 호출 시점엔 전부 정의됨. */
+	var bmkCode=null;       // 담기 모달 대상 문서코드(null=닫힘)
+	var bmkNewOpen=false;   // 인라인 '새 폴더' 입력 노출
+	function bmkReady(){ if(typeof bmState==='undefined' || typeof bmLoad!=='function') return false; if(!bmState) bmLoad(); return !!bmState; }
+	function bmkFolderRows(pid, depth){
+		return bmChildren(pid).map(function(f){
+			var on=bmHasItem(f.id, bmkCode);
+			return '<div class="bmkFRow'+(on?' on':'')+'" data-bmkfid="'+esc(f.id)+'" style="padding-left:'+(12+depth*18)+'px">'+
+				'<i class="material-symbols-outlined bmkFChk">'+(on?'check_box':'check_box_outline_blank')+'</i>'+
+				'<i class="material-symbols-outlined bmkFIco">folder</i>'+
+				'<span class="bmkFName">'+esc(f.name)+'</span>'+
+				'<span class="bmkFCount">'+bmCount(f.id)+'</span>'+
+			'</div>' + bmkFolderRows(f.id, depth+1);
+		}).join('');
+	}
+	function bmkModalHtml(){
+		if(!bmkCode || !bmkReady()) return '';
+		var r=REPORTS.filter(function(x){return x.code===bmkCode;})[0];
+		var inN=bmInCount(bmkCode);
+		var rows=bmkFolderRows(null,0) || '<div class="bmkEmpty"><i class="material-symbols-outlined">folder_off</i>No folders yet — create one below.</div>';
+		var doc = r ? '<div class="bmkDoc"><div class="bmkDocTop"><span class="rcType">'+esc(r.type)+'</span>'+classBadge(r.cls)+'</div>'+
+			'<div class="bmkDocTit">'+esc(r.title)+'</div>'+
+			'<div class="bmkDocMeta"><span class="code">'+esc(r.code)+'</span> · '+esc(r.author)+'</div></div>' : '';
+		var newRow = bmkNewOpen
+			? '<div class="bmkNewRow"><i class="material-symbols-outlined">folder_open</i><input type="text" id="bmkNewIn" class="browser-default" placeholder="Folder name…" autocomplete="off"/><a href="javascript:;" class="bmkNewGo" data-bmknewgo="1">Create</a></div>'
+			: '<a href="javascript:;" class="bmkAddFolder" data-bmknew="1"><i class="material-symbols-outlined">create_new_folder</i>New folder</a>';
+		return '<article class="modal bmkModal show">'+
+			'<div class="modal-header"><h5 class="fLine vCenter"><i class="material-icons left">bookmark_add</i>Save to bookmarks</h5>'+
+				'<div class="closeBtns modal-close" id="bmkClose"><i class="material-icons">close</i></div></div>'+
+			'<div class="modal-content bmkBody">'+doc+
+				'<div class="bmkPickHead">Choose folders<span class="bmkInCnt">'+(inN?('In '+inN+' folder'+(inN>1?'s':'')):'Not saved yet')+'</span></div>'+
+				'<div class="bmkFolders hScroll">'+rows+'</div>'+newRow+
+			'</div>'+
+			'<div class="bmkFoot">'+
+				'<a href="javascript:;" class="waves-effect waves-light hBtn hViva bmkDone" id="bmkDone">Done</a></div>'+
+		'</article>';
+	}
+	function renderBmkModal(){ var w=document.getElementById('rlBmkModal'); if(!w) return; w.innerHTML=bmkModalHtml();
+		if(bmkNewOpen){ var ni=document.getElementById('bmkNewIn'); if(ni) ni.select(); } }
+	function openBmkModal(code){
+		if(!bmkReady()){ toast('Bookmarks are not available right now.','info'); return; }
+		bmkCode=code; bmkNewOpen=false;
+		var w=document.getElementById('rlBmkModal'); if(!w) return;
+		renderBmkModal(); void w.offsetWidth; w.classList.add('show');
+	}
+	function closeBmkModal(){ var w=document.getElementById('rlBmkModal'); if(w) w.classList.remove('show'); bmkCode=null; bmkNewOpen=false; }
+	function bmkToggleFolder(fid){
+		if(!bmkCode) return; var fn=(bmFolder(fid)||{}).name;
+		if(bmHasItem(fid,bmkCode)){ bmRemoveItem(fid,bmkCode); toast('Removed from “'+fn+'”.','info'); }
+		else { bmAddItem(fid,bmkCode); toast('Saved to “'+fn+'”.','ok'); }
+		renderBmkModal();
+	}
+	function bmkCreateFolder(){
+		var ni=document.getElementById('bmkNewIn'); var nm=ni?ni.value.trim():'';
+		if(!nm){ if(ni) ni.focus(); return; }
+		var id=bmNewFolder(nm,null); bmAddItem(id,bmkCode); bmkNewOpen=false; renderBmkModal();
+		toast('Created “'+nm+'” and saved here.','ok');
+	}
+
 	$(document).ready(function(){
 		// sidenav 초기화 → js/rptlib_common.js (공통)
 		loadLayout();   // 개인 레이아웃(컬럼/정렬/페이지크기/그룹) 복원
 		loadRecent();
+		loadFilters();   // 최근 지정 필터(패싯) 복원 — 첫 진입 초기 세팅
 		// SPA 초기 뷰 = ?view= 파라미터(deep-link). 없으면 Documents(browse).
 		function activateNav(k){ document.querySelectorAll('.rlNavItem').forEach(function(a){ a.classList.toggle('on', a.getAttribute('data-nav')===k); }); }
+		/* Documents 탭 활성화 = 검색 히어로 포커스 + Recent 드롭다운(animapis fadeIn). 첫 진입·네비 클릭 공통(페이지 로드가 아니라 '탭 활성화'에 묶음). */
+		function focusSearchHero(){ var si=document.getElementById('rlSearchInput'); if(!si) return; si.focus();
+			// openAuto는 다음 프레임에 — 네비 클릭이 document까지 버블링되며 전역 핸들러의 closeAuto가 방금 연 드롭다운을 닫는 것 회피(첫 로드엔 클릭이 없어 무해).
+			requestAnimationFrame(function(){ openAuto(); if(window.animapis) animapis.play('#rlSearchAuto','fadeIn',{duration:220}); }); }
 		var mView=(location.search.match(/[?&]view=(\w+)/)||[])[1];
 		if(mView==='summary'){ activateNav('summary'); showView('browse'); goSummary(); }
-		else if(mView==='upload'){ activateNav('upload'); goHome(); showView('upload'); }
+		else if(mView==='upload'){ activateNav('mine'); showView('mine'); }   // 구 Submit 페이지(submit.html ?view=upload) → My Submissions로 흡수
 		else if(mView==='review'){ activateNav('admin'); goHome(); showView('review'); }
 		else if(mView==='mine'){ activateNav('mine'); showView('mine'); }   // My Report 딥링크(?view=mine)
-		else { activateNav('docs'); showView('browse'); goHome(); }   // 첫화면 = 전체 리포트 그리드
+		else { activateNav('docs'); showView('browse'); goHome(true); focusSearchHero(); }   // 첫화면 = 복원된 최근 필터 그리드(대형 히어로) + Documents 활성 → 검색 포커스
 
+		// Bookmark 담기 모달(Documents 행 rlBmk → 폴더 체크로 즉시 저장) — 이벤트 위임
+		var bmkModal=document.getElementById('rlBmkModal');
+		if(bmkModal){
+			bmkModal.addEventListener('click', function(e){
+				if(e.target.id==='rlBmkModal'){ closeBmkModal(); return; }                     // 백드롭(오버레이) 클릭
+				if(e.target.closest('#bmkClose') || e.target.closest('#bmkDone')){ closeBmkModal(); return; }
+				var go=e.target.closest('[data-bmknewgo]'); if(go){ bmkCreateFolder(); return; }
+				var nw=e.target.closest('[data-bmknew]'); if(nw){ bmkNewOpen=true; renderBmkModal(); return; }
+				var fr=e.target.closest('.bmkFRow[data-bmkfid]'); if(fr){ bmkToggleFolder(fr.getAttribute('data-bmkfid')); return; }
+			});
+			bmkModal.addEventListener('keydown', function(e){
+				if(!e.target.closest('#bmkNewIn')) return;
+				if(e.key==='Enter'){ e.preventDefault(); bmkCreateFolder(); }
+				else if(e.key==='Escape'){ bmkNewOpen=false; renderBmkModal(); }
+			});
+		}
 
 		// 좌측 네비 — Documents(검색 그리드=home) / Summary(Discovery) / Upload / Admin + 접기
 		document.getElementById('rlNav').addEventListener('click', function(e){
 			if(e.target.closest('#rlNavToggle')){ var nv=document.getElementById('rlNav'); nv.classList.toggle('collapsed');
 				var ic=nv.querySelector('#rlNavToggle i'); if(ic) ic.textContent=nv.classList.contains('collapsed')?'chevron_right':'chevron_left'; return; }
-			var it=e.target.closest('.rlNavItem'); if(!it) return;
+			var it=e.target.closest('.rlNavItem'); if(!it) return;   // TRH Approval(rlInboxBtn)은 .rlNavItem 아님 → 여기 안 걸림(access.js가 #rlInboxBtn 처리)
 			document.querySelectorAll('.rlNavItem').forEach(function(a){ a.classList.remove('on'); }); it.classList.add('on');
 			var nav=it.getAttribute('data-nav');
-			if(nav==='docs'){ showView('browse'); goHome(); }
+			if(nav==='docs'){ showView('browse'); goHome(); focusSearchHero(); }   // Documents 탭 활성화 → 검색 히어로 포커스
 			else if(nav==='summary'){ showView('browse'); goSummary(); }
-			else if(nav==='upload') showView('upload');
 			else if(nav==='admin') showView('review');
-			else if(nav==='mine') showView('mine');   // My Report(Reports/Bookmarks)
+			else if(nav==='mine'){ if(typeof mineSeg!=='undefined') mineSeg='reports'; showView('mine'); }   // My Reports
+			else if(nav==='bookmarks'){ if(typeof mineSeg!=='undefined') mineSeg='bookmarks'; showView('mine'); }   // Bookmarks
 		});
 
 		// 검색 히어로 — Enter / Search 버튼 = 일괄 적용. 입력은 staged만.
@@ -882,10 +961,8 @@
 		document.getElementById('rlSearchClear').addEventListener('click', function(){ setQueryInput(''); setDirty(true); sq.focus(); openAuto(); });
 		// 검색 드롭다운: Recent 클릭=재실행 / Saved 클릭=적용 / 삭제 / Save current
 		document.getElementById('rlSearchAuto').addEventListener('click', function(e){
-			var del=e.target.closest('.saDel'); if(del){ e.stopPropagation(); deleteSaved(+del.getAttribute('data-del')); return; }
-			var sv=e.target.closest('.saSaved'); if(sv){ loadSaved(+sv.getAttribute('data-saved')); return; }
+			var rd=e.target.closest('.saRecentDel'); if(rd){ e.stopPropagation(); e.preventDefault(); deleteRecent(rd.getAttribute('data-recdel')); return; }
 			var rc=e.target.closest('.saRecent'); if(rc){ setQueryInput(rc.getAttribute('data-rec')); runSearch(); return; }
-			if(e.target.closest('#saSaveCur')){ saveCurrent(); return; }
 		});
 
 		// 헤더 srchArea = global — 모듈 검색은 상단 검색바로 안내
@@ -918,9 +995,18 @@
 
 		// Reset — 필터 기본값으로(키워드 유지) + 즉시 반영(패싯 즉시적용과 일관).
 		document.getElementById('rlFacetClear').addEventListener('click', function(){
-			INDEXES.forEach(function(i){ activeIdx[i.id]=true; }); activeCls={1:true,2:true,3:true,4:true};
+			let isChanged = false;
+			if(!activeCls['1'] || !activeCls['2'] || !activeCls['3'] || !activeCls['4']) isChanged = true;
+			if(stType != 'all' || stDate != 'all' || stBu != 'all') isChanged = true;
+			INDEXES.forEach(function(i){ 
+				if(!activeIdx[i.id]) isChanged = true;
+				activeIdx[i.id]=true; 
+			}); 
+			activeCls={1:true,2:true,3:true,4:true};
 			stType='all'; stDate='all'; stBu='all';
-			closePopover(); onStageChange(); toast('Filters reset.','info');
+			closePopover(); 
+			if(isChanged) onStageChange(); 
+			toast('Filters reset.','info');
 		});
 
 		// 바깥 클릭 / Esc → 팝오버·검색드롭다운·컬럼선택기 닫기
@@ -965,9 +1051,9 @@
 			if(e.target.closest('#srtAdd') && !e.target.closest('.disabled')){ e.stopPropagation();
 				var used={}; sorts.forEach(function(s){ used[s.key]=1; }); var nf=sortFields().filter(function(f){ return !used[f.key]; })[0];
 				if(nf){ sorts.push({key:nf.key,dir:1}); pageNum=1; sortOpen=true; saveLayout(); renderResults(); } return; }
-			if(e.target.closest('#srtReset')){ e.stopPropagation(); sorts=[{key:'rel',dir:-1}]; pageNum=1; sortOpen=true; saveLayout(); renderResults(); return; }
+			if(e.target.closest('#srtReset')){ e.stopPropagation(); sorts=[]; pageNum=1; sortOpen=true; saveLayout(); renderResults(); return; }   /* Reset = 정렬 완전 비움(기본순) */
 			var sdir=e.target.closest('[data-srtdir]'); if(sdir){ e.stopPropagation(); var di=+sdir.getAttribute('data-srtdir'); if(sorts[di]){ sorts[di].dir=-sorts[di].dir; pageNum=1; sortOpen=true; saveLayout(); renderResults(); } return; }
-			var srm=e.target.closest('[data-srtrm]'); if(srm){ e.stopPropagation(); var ri=+srm.getAttribute('data-srtrm'); sorts.splice(ri,1); if(!sorts.length) sorts=[{key:'rel',dir:-1}]; pageNum=1; sortOpen=true; saveLayout(); renderResults(); return; }
+			var srm=e.target.closest('[data-srtrm]'); if(srm){ e.stopPropagation(); var ri=+srm.getAttribute('data-srtrm'); sorts.splice(ri,1); pageNum=1; sortOpen=true; saveLayout(); renderResults(); return; }
 			if(e.target.closest('#rlSortPop')){ e.stopPropagation(); return; }   // 패널 내부 기타 클릭은 닫힘 방지
 
 			// ── Document Basket 드로어
@@ -984,7 +1070,7 @@
 			// ── 행 확장 패널 액션(Open / Cite / Download)
 			var exo=e.target.closest('.exBtn[data-open]'); if(exo){ e.stopPropagation(); openReport(exo.getAttribute('data-open')); return; }
 			var exd=e.target.closest('.exBtn[data-dl]'); if(exd){ e.stopPropagation(); var edc=exd.getAttribute('data-dl'), edr=REPORTS.filter(function(x){return x.code===edc;})[0];
-				if(edr && edr.cls>=3 && edr.idx!==MY_REGION) toast('Download blocked — Class '+edr.cls+' is region-restricted ('+idxName(edr.idx)+').','warn');
+				if(edr && edr.cls>=3) openReport(edc);   // restricted → 잠금 pop(열람요청 흐름)
 				else toast('Downloading '+edc+'… (mock)','mocha'); return; }
 
 			// ── 그룹 헤더 접기/펴기
@@ -1023,8 +1109,12 @@
 			// ── 행 다운로드(잠금 시 차단)
 			var dl=e.target.closest('.rlDl');
 			if(dl){ e.stopPropagation(); var dcode=dl.getAttribute('data-code'); var dr=REPORTS.filter(function(x){return x.code===dcode;})[0];
-				if(dr && dr.cls>=3 && dr.idx!==MY_REGION) toast('Download blocked — Class '+dr.cls+' is region-restricted ('+idxName(dr.idx)+').','warn');
+				if(dr && dr.cls>=3) openReport(dcode);   // restricted → 잠금 pop(열람요청 흐름)
 				else toast('Downloading '+dcode+'… (mock)','mocha'); return; }
+
+			// ── 행 북마크: 폴더 담기 모달(rlBmk) — gridRow 선택 토글보다 먼저 가로채야 함
+			var bmk=e.target.closest('.rlBmk[data-bmk]');
+			if(bmk){ e.stopPropagation(); openBmkModal(bmk.getAttribute('data-bmk')); return; }
 
 			// ── 인라인 확장 토글
 			var rexp=e.target.closest('.rlExpand');

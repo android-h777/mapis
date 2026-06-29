@@ -11,14 +11,17 @@
 	<link rel="preload" href="mapis_lib/font/material-icons.woff2" as="font" type="font/woff2">
 	<link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/mpm_materialize.css">
+    <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/sweetalert2.min.css">
     <link rel="stylesheet" type="text/css" href="mapis_lib/css/common.css">
-    <link type="text/css" rel="stylesheet" href="mapis_lib/css/lib/animate.min.css">
+    <link type="text/css" rel="stylesheet" href="mapis_lib/css/animapis.css">
 
     <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-3.7.1.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-ui-1.14.1.js"></script>
     <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/mpm_materialize.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/sweetalert2.all.min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/apis_util.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/glass_engine.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/animapis.js"></script>
 
     <link rel="stylesheet" type="text/css" href="css/rptlib_proto.css">
 </head>
@@ -47,23 +50,23 @@
 				<i class="material-icons gardenia25 mocha25-text fLine vCenter hCenter mg0">person</i>
 				<div class="btnArea" style="padding-top: 20px; margin-top: 0px; padding-bottom: 20px; margin-bottom: 0px; display: none;">
 				  <a id="profileBtn" class="waves-effect waves-light hBtn">
-					<span class="material-symbols-outlined left">account_circle</span>
+					<i class="material-symbols-outlined left">account_circle</i>
 					<span class="label">View Profile</span>
 				  </a>
 				  <a id="adminBtn" class="waves-effect waves-light hBtn">
-					<span class="material-symbols-outlined left">admin_panel_settings</span><span class="label">Administrator</span>
+					<i class="material-symbols-outlined left">admin_panel_settings</i><span class="label">Administrator</span>
 				  </a>
 				  <a id="" class="waves-effect waves-light hBtn">
-					<span class="material-symbols-outlined left">volunteer_activism</span><span class="label">Service Now</span>
+					<i class="material-symbols-outlined left">volunteer_activism</i><span class="label">Service Now</span>
 				  </a>
 				  <a id="" class="waves-effect waves-light hBtn">
-					<span class="material-symbols-outlined left">directions</span><span class="label">Guidance</span>
+					<i class="material-symbols-outlined left">directions</i><span class="label">Guidance</span>
 				  </a>
 				  <a id="" class="waves-effect waves-light hBtn">
-					<span class="material-symbols-outlined left">local_library</span><span class="label">Training</span>
+					<i class="material-symbols-outlined left">local_library</i><span class="label">Training</span>
 				  </a>
 				  <a id="logoutBtn" class="waves-effect waves-light hBtn hViva">
-					<span class="material-symbols-outlined left">logout</span><span class="label">Sign Out</span>
+					<i class="material-symbols-outlined left">logout</i><span class="label">Sign Out</span>
 				  </a>
 				</div>
 			  </div>
@@ -120,29 +123,18 @@
 				<a href="javascript:;" class="rlNavToggle" id="rlNavToggle" title="Collapse menu"><i class="material-symbols-outlined">chevron_left</i></a>
 			</div>
 			<div class="rlNavList">
-				<a href="javascript:;" class="rlNavItem on" data-nav="docs"><i class="material-symbols-outlined">article</i><span>Documents</span></a>
-				<!-- My Report = 내 전용 공간(둘 다 '나'). 뷰 안 세그먼트 탭으로 Reports(track)/Bookmarks(curate) 전환 -->
-				<a href="javascript:;" class="rlNavItem" data-nav="mine"><i class="material-symbols-outlined">assignment_ind</i><span>My Report</span></a>
-				<!-- Help = 독립 전체 페이지(SPA 뷰 아님). 헤더 우측 → 좌측 메뉴로 이동. 실제 href라 라우터 무간섭(핸들러가 preventDefault 안 함 → 브라우저 기본 네비게이션) -->
-				<a href="apis_rptlib_help.html" class="rlNavItem" data-nav="help"><i class="material-symbols-outlined">help</i><span>Help</span></a>
-				<!-- 재설계 가지치기: Summary(living-data·Thread C) · Submit · My Approval(→ pop 결재 모달) 보류 -->
+				<a href="javascript:;" class="rlNavItem on" data-nav="docs"><i class="material-symbols-outlined">search</i><span>Search</span></a>
+				<a href="javascript:;" class="rlNavItem" data-nav="bookmarks"><i class="material-symbols-outlined">bookmark</i><span>My Bookmarks</span></a>
+				<a href="javascript:;" class="rlNavItem" data-nav="mine"><i class="material-symbols-outlined">article_person</i><span>My Reports</span></a>
+			</div>
+			<!-- 좌측하단 고정: TRH 결재함(내 기안 진행중/반려). 전체 현황·완료는 글로벌 MAPIS 결재 모듈 몫 -->
+			<div class="rlNavFoot">
+				<a href="javascript:;" class="waves-effect waves-light hBtn rlInboxBtn" id="rlInboxBtn" title="TRH Approval — my filings in progress / rejected"><i class="material-icons left mr0">assignment_turned_in</i><span class="label">TRH Approval</span></a>
 			</div>
 		</aside>
 		<div class="rlContent" id="rlViewBrowse">
 
-		<!-- 검색 히어로 — 모듈 검색(헤더 srchArea는 전 모듈 global) -->
-		<div class="rlSearchHero">
-			<div class="rlSearchWrap">
-				<div class="rlSearchField">
-					<input type="text" id="rlSearchInput" placeholder="Search technical reports — title, code, author…" autocomplete="off">
-					<i class="material-symbols-outlined rlSearchClear" id="rlSearchClear" title="Clear">close</i>
-				</div>
-				<div class="rlSearchAuto" id="rlSearchAuto"><!-- JS: Recent + Saved --></div>
-			</div>
-			<a href="javascript:;" id="rlSearchBtn" class="waves-effect waves-light hBtn rlSearchBtn off"><i class="material-icons left">search</i><span class="label">Search</span></a>
-		</div>
-
-		<!-- 필터 칩 바 + Saved filters -->
+		<!-- 필터 칩 바(검색 위 = 검색 구성요소: 칩 변경은 staged, Search 눌러야 반영) -->
 		<div class="rlFilterBar" id="rlFilterBar">
 			<div class="rlChips" id="rlChips"><!-- JS --></div>
 			<span class="rlBarSep"></span>
@@ -152,57 +144,20 @@
 			<div class="rlPop" id="rlPop"><!-- JS 팝오버 --></div>
 		</div>
 
+		<!-- 검색 히어로 — 모듈 검색(헤더 srchArea는 전 모듈 global). 필터 + 검색 = 상단 '검색존', 결과는 아래 -->
+		<div class="rlSearchHero">
+			<div class="rlSearchWrap">
+				<div class="rlSearchField">
+					<input type="text" id="rlSearchInput" placeholder="Search Documents" autocomplete="off">
+					<i class="material-symbols-outlined rlSearchClear" id="rlSearchClear" title="Clear">close</i>
+				</div>
+				<div class="rlSearchAuto" id="rlSearchAuto"><!-- JS: Recent + Saved --></div>
+			</div>
+			<a href="javascript:;" id="rlSearchBtn" class="waves-effect waves-light hBtn rlSearchBtn off"><i class="material-icons left">search</i><span class="label">Search</span></a>
+		</div>
+
 		<!-- Discovery ↔ Results (풀폭) -->
 			<div class="rlMain hScroll" id="rlMain"><!-- JS 렌더 --></div>
-		</div>
-		<!-- ▼ Upload 뷰 (구 apis_rptlib_submit.html — SPA 인페이지 흡수) -->
-		<div class="rlContent upContent" id="rlViewUpload" style="display:none">
-			<!-- ── BOARD 모드: 내 제출물 파이프라인(진행 스테퍼) — upload.js renderMySubs가 채움 ── -->
-			<div id="subBoard"><!-- JS: My Submissions 보드(헤더 + New + 스테퍼 카드) --></div>
-			<!-- ── FORM 모드: 새 제출(메타·파일·선택적 리뷰어 힌트 — 분류는 담당자가 Approval에서) ── -->
-			<div id="subForm" style="display:none">
-				<div class="upHead">
-					<a href="javascript:;" class="upBack" id="upBackBtn"><i class="material-symbols-outlined">arrow_back</i>My Submissions</a>
-					<div class="upTit">New submission</div>
-					<div class="upSub">Describe it, attach the file, submit — <b>no self-classification</b>. The reviewer (Technology CoE) sets the final class; just flag anything sensitive below and MAPIS routes the approval in-app — no offline email chains.</div>
-				</div>
-				<div class="upBody hScroll">
-					<div class="upMain">
-					<!-- 1. 메타 입력 -->
-					<div class="cardBox upCard">
-						<div class="cardTit">1 · Details</div>
-						<div class="upGrid">
-							<div class="upField span2"><label>Title</label><div class="aniInput"><input type="text" class="browser-default" id="mTitle" placeholder="e.g., Low-Temperature Cure Silicone for Flexible Display"><span class="focus-border"></span></div></div>
-							<div class="upField"><label>Document Type</label><select class="rlSortSel browser-default" id="mType"><option>TIS Report</option><option>Tech / Market Review</option><option>Process Transfer Memo</option><option>Trip Report</option><option>Improvement Project</option></select></div>
-							<div class="upField"><label>Business Unit</label><select class="rlSortSel browser-default" id="mBu"><option>Coatings</option><option>Electronic Materials</option><option>Healthcare</option><option>Industrial</option><option>Personal Care</option><option>Specialty Additives</option><option>Tire &amp; Silanes</option><option>Urethane Additives</option></select></div>
-							<div class="upField"><label>Region / Site</label><select class="rlSortSel browser-default" id="mRegion"><option>DE — Leverkusen</option><option>KR — All Regions</option><option>US — All Regions</option><option>IN — Bangalore</option><option>IT — Termoli</option><option>JP — Ohta</option><option>CN — Shanghai</option><option>UK — Abingdon</option></select></div>
-							<div class="upField"><label>Author(s)</label><div class="aniInput"><input type="text" class="browser-default" id="mAuthor" placeholder="e.g., S.Y. Park"><span class="focus-border"></span></div></div>
-							<div class="upField span2"><label>Keywords</label><div class="aniInput"><input type="text" class="browser-default" id="mKw" placeholder="comma-separated — silicone, OLED, cure kinetics"><span class="focus-border"></span></div></div>
-							<div class="upField span2"><label>Abstract</label><div class="aniInput"><textarea class="materialize-textarea" id="mAbs" placeholder="One-paragraph summary…"></textarea><span class="focus-border"></span></div></div>
-							<div class="upField span2"><label>Heads-up for the reviewer (optional)</label><div class="aniInput"><textarea class="materialize-textarea" id="mHint" placeholder="Anything that affects access — e.g., &ldquo;Tied to an active JDA &mdash; please confirm scope.&rdquo; Leave blank for standard internal work."></textarea><span class="focus-border"></span></div></div>
-						</div>
-					</div>
-
-					<!-- 2. 파일 -->
-					<div class="cardBox upCard">
-						<div class="cardTit">2 · File</div>
-						<div class="upDrop" id="upDrop">
-							<i class="material-symbols-outlined">cloud_upload</i>
-							<div class="upDropT">Drag &amp; drop a PDF / Word file</div>
-							<div class="upDropS">or <a href="javascript:;" id="upBrowse">browse</a> · max 50 MB</div>
-						</div>
-						<div class="upFiles" id="upFiles"></div>
-					</div>
-					</div>
-					<aside class="upSide">
-						<div class="cardBox upCard">
-							<div class="cardTit">Submit for review</div>
-							<a href="javascript:;" class="waves-effect waves-light hBtn upSubmit" id="upSubmit"><span class="material-symbols-outlined left">send</span><span class="label">Submit for review</span></a>
-							<div class="upNote"><i class="material-symbols-outlined">bolt</i><span>On submit, MAPIS emails your approver and drops a To-Do in their queue — routing happens in-app, not by hand.</span></div>
-						</div>
-					</aside>
-				</div>
-			</div>
 		</div>
 		<div class="rlContent upContent" id="rlViewReview" style="display:none">
 			<div class="upHead">
@@ -213,15 +168,9 @@
 		</div>
 		<!-- ▼ My Report 뷰 — 내 전용 공간. 세그먼트: Reports(내가 만든 보고서·track) / Bookmarks(내가 모은 것·curate) -->
 		<div class="rlContent upContent" id="rlViewMine" style="display:none">
-			<div class="upHead upHeadRow">
-				<div>
-					<div class="upTit">My Report</div>
-					<div class="upSub">Your space — reports you authored, and the documents you’ve bookmarked.</div>
-				</div>
-				<div class="upToggle mineSeg" id="mineSeg">
-					<a href="javascript:;" class="on" data-seg="reports"><span class="material-symbols-outlined">assignment_ind</span>Reports</a>
-					<a href="javascript:;" data-seg="bookmarks"><span class="material-symbols-outlined">bookmark</span>Bookmarks</a>
-				</div>
+			<div class="upHead">
+				<div class="upTit" id="mineTit">My Reports</div>
+				<div class="upSub" id="mineSub">Reports you authored — track status and submit new ones.</div>
 			</div>
 			<!-- 세그먼트 A: Reports(내 제출물 투영 — 발행/결재중/반려, 상세는 pop.html) — rptlib_mine.js -->
 			<div class="mineBody hScroll" id="mineReports"><!-- JS --></div>
@@ -233,11 +182,17 @@
 
 	<div class="rlToastWrap" id="rlToastWrap"></div>
 
+	<!-- TRH 결재함 모달(전체화면 오버레이 — MAPIS My Approval 스타일) -->
+	<div class="rlInboxOv" id="rlInboxModal"></div>
+	<!-- Bookmark 폴더 담기 모달 -->
+	<div class="rlInboxOv rlBmkOv" id="rlBmkModal"></div>
+
 	<script src="js/rptlib_common.js"></script>
 	<script src="js/rptlib_docs.js"></script>
 	<script src="js/rptlib_upload.js"></script>
 	<script src="js/rptlib_review.js"></script>
 	<script src="js/rptlib_collections.js"></script>
 	<script src="js/rptlib_mine.js"></script>
+	<script src="js/rptlib_access.js"></script>
 </body>
 </html>
