@@ -510,6 +510,13 @@
 /* 노트 전체 view(승인) 모드 — 값은 또렷하게: disabled/readonly 기본 흐림 제거(역설 방지) */
 body.elnApproved #tab_ov input,body.elnApproved #tab_ov textarea,body.elnApproved #tab_ov select,
 body.elnApproved #tab_ov select:disabled,body.elnApproved #tab_ov input:disabled{opacity:1;color:#3a2c24;-webkit-text-fill-color:#3a2c24;cursor:default;}
+/* View 모드 = plain 텍스트 출력 — readOnly 인풋 chrome 제거(보더·밑줄·배경·화살표) */
+body.elnApproved #tab_ov input,body.elnApproved #tab_ov textarea,body.elnApproved #tab_ov select{border:0 !important;background:transparent !important;box-shadow:none !important;padding-left:0 !important;}
+body.elnApproved #tab_ov .aniInput .focus-border{display:none !important;}
+body.elnApproved #tab_ov .cardTit2 input.elnModTitle{border-bottom:0 !important;padding-left:0 !important;}
+body.elnApproved #tab_ov .select-wrapper .caret{display:none !important;}
+/* View 모드 = Save 버튼 숨김 */
+body.elnApproved #elnSaveBtn{display:none !important;}
 /* 섹션 삭제(×) — 자물쇠 오른쪽 코너 끝. hover 시 빨강(삭제 affordance). (Local History E7sZ에서 복원) */
 .elnModDel{color:#c9bcae;cursor:pointer;flex:0 0 auto;transition:color .15s;}
 .elnModDel:hover{color:#d65a5a;}
@@ -838,7 +845,10 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnNoteFoot .elnNoteTags{margin-top:0;flex:1 1 auto;min-width:0;align-items:center;}
 .elnNoteFoot .elnTagLink{flex:0 0 auto;white-space:nowrap;}
 .elnNoTag{font-size:12px;line-height:1.3;color:#b3a596;}       /* 태그 없음 = 회색 안내. line-height를 .elnTagLink와 동일하게 → 행 높이 일치 */
-.elnNoteMetaRight{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;
+/* 포뮬라 보유 마커 — 플라스크 아이콘 + 라벨을 roundBox 칩으로(유무만 표시, 해시태그 앞) */
+.elnNoteTags .elnFmlMark{display:inline-flex;align-items:center;gap:3px;height:18px;line-height:16px;padding:0 8px;font-size:11px;letter-spacing:.01em;color:#8a5a44;background:transparent;border-color:#dcc8ba;cursor:default;}
+.elnNoteTags .elnFmlMark i{font-size:13px;}
+.elnNoteMetaRight{flex:0 0 auto;display:inline-flex;flex-direction:row-reverse;align-items:center;gap:5px;
   font-size:11.5px;color:#9b8c7e;white-space:nowrap;line-height:1.3;}
 .elnNoteMetaRight .a{color:#7a6a5c;font-weight:500;}
 .elnNoteMetaRight .dot{color:#cdbfae;}
@@ -1177,6 +1187,17 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions{display:none;}
 
 /* ════ apis_eln_list_simple 전용 — 좌·우 모두 원래 list 행(typeList type4). 좌측은 AppleTab/Search/New 헤더 포함 ════ */
 .elnListWrap .mainList li{ cursor:pointer; }
+/* 리스트 아이템 hover 색수차 글래스 sheen — base(common.css)는 선택(.on)에만 sheen이 있어 hover엔 없던 것 추가(좌·우 공통). glass_engine glassTrack의 --olx/--oly/--ol-angle 재사용 */
+.elnListWrap .mainList li:not([nodata]){ position:relative; }
+.elnListWrap .mainList li:not([nodata])::before{
+	content:''; position:absolute; inset:0; border-radius:10px; pointer-events:none; z-index:1; opacity:0; transition:opacity .25s ease;
+	background:conic-gradient(from var(--ol-angle,0deg) at var(--olx,50%) var(--oly,50%),
+		rgba(255,0,0,0) 0%, rgba(255,0,0,.04) 8%, rgba(255,165,0,.04) 16%, rgba(255,255,0,.07) 24%,
+		rgba(0,255,0,.07) 33%, rgba(0,200,255,.07) 42%, rgba(0,100,255,.07) 50%, rgba(130,0,255,.07) 58%,
+		rgba(255,0,200,.04) 66%, rgba(255,0,0,.04) 75%, rgba(255,0,0,0) 83%, transparent 100%);
+}
+.elnListWrap .mainList li:not([nodata]):hover::before,
+.elnListWrap .mainList li.on::before{ opacity:1; }
 /* 좌 Project 패널 헤더(AppleTab + Search/New + 검색결과칩) */
 .elnProjPanel .elnNotePanelHead{ gap:10px; flex-wrap:wrap; align-items:center; }
 .elnProjBtns{ display:flex; gap:8px; margin-left:auto; }
@@ -1194,8 +1215,8 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions{display:none;}
 
 /* ── 좌 leftSection / 우 rightSection (elnListWrap flex 5:5). common 단독 .rightSection(row·center·gap)을 column·stretch로 override ── */
 .elnListWrap > .leftSection, .elnListWrap > .rightSection{ flex:1 1 0; min-width:0; display:flex; flex-direction:column; justify-content:flex-start; align-items:stretch; gap:0; }
-.elnListWrap > .leftSection{ flex:6 1 0; padding:0 14px 0 0; }
-.elnListWrap > .rightSection{ flex:4 1 0; padding:0 0 0 18px; border-left:1px solid rgba(164,120,100,.15); }
+.elnListWrap > .leftSection{ flex:5 1 0; padding:0 14px 0 0; }
+.elnListWrap > .rightSection{ flex:5 1 0; padding:0 0 0 18px; border-left:1px solid rgba(164,120,100,.15); }
 
 /* 우 rightSection을 cardBox로 감싸 summary 패널 느낌 (좌 네비 리스트와 대비 → 계층) */
 .rightSection > .elnNoteBox{ flex:1 1 0; min-height:0; display:flex; flex-direction:column; overflow:hidden; }
@@ -1271,14 +1292,10 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions{display:none;}
 /* ── 타입 뱃지 — 4 타입(snpi/cnpi/npt/tech) 색 구분. 타이틀 앞에 고정폭 배치 → 타이틀 시작점 정렬 ── */
 #projListUl .pjTit{display:flex;align-items:center;}
 #projListUl .pjTit .pjTitLink{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-#projListUl .elnProjType{flex:0 0 auto;width:120px;box-sizing:border-box;margin-right:10px;display:inline-flex;align-items:center;justify-content:center;gap:5px;
-	padding:1px 9px;border-radius:10px;font-size:13px;font-weight:700;letter-spacing:.01em;line-height:16px;
-	border:1px solid transparent;white-space:nowrap;overflow:hidden;}
-#projListUl .elnProjType::before{content:'';width:6px;height:6px;border-radius:50%;background:currentColor;flex:0 0 auto;}
-#projListUl .elnType-snpi{color:#2f80ed;background:#eaf2fc;border-color:#cfe1f8;}   /* Standard NPI = 파랑 */
-#projListUl .elnType-cnpi{color:#7d6597;background:#f2eef6;border-color:#ddd0e8;}   /* Custom NPI = 보라 */
-#projListUl .elnType-npt {color:#3aaa6f;background:#e9f6ef;border-color:#cfe9db;}   /* NPT = 초록 */
-#projListUl .elnType-tech{color:#c46a2f;background:#fbeee0;border-color:#f0d8c0;}   /* Tech Support = 주황 */
+/* 타입 뱃지만 hover/선택 가짜볼드(text-shadow) 제외 — 제목(pjTitLink)은 볼드 유지 */
+#projListUl .elnProjType{ text-shadow:none !important; }
+/* 타입 뱃지 = 표준 roundBox 아웃라인(우리 컬러셋). 정렬용 고정폭 슬롯 안에 컴팩트 pill */
+#projListUl .elnProjType{flex:0 0 auto;width:104px;box-sizing:border-box;margin-right:10px;padding:0 6px;font-size:12.5px;text-align:center;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 
 /* ════════════════════════════════════════════════════════════════════════
    Add Module 모달 — 시스템 Materialize 모달(#addModuleModal.modal) 사용.
@@ -1353,10 +1370,10 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions{display:none;}
 /* 스테이지 헤더 — 박스 대신 구분선 라벨(본문색+하단 보더). 액센트 바+진한 큰 폰트로 그룹 위계 강조 */
 .elnNlGroupHead{position:sticky;top:0;z-index:1;display:flex;align-items:center;gap:9px;
   padding:10px 18px 7px;background:#fbf8f4;border-bottom:1px solid #e3d6c4;
-  font-size:14px;font-family:'Roboto-Medium';font-weight:800;letter-spacing:.04em;color:#7a5240;text-transform:uppercase;cursor:default;}
+  font-size:14px;letter-spacing:.04em;color:#7a5240;text-transform:uppercase;cursor:default;}
 .elnNlGroupHead::before{content:'';flex:0 0 auto;width:3px;height:13px;border-radius:2px;background:#A47864;}
 /* 카운트 칩 — '이 스테이지에 n개' 그룹 단위 느낌 */
-.elnNlGroupHead .cnt{margin-left:auto;font-size:10.5px;font-weight:700;letter-spacing:0;color:#a8917f;
+.elnNlGroupHead .cnt{margin-left:auto;font-size:10.5px;letter-spacing:0;color:#a8917f;
   background:#f1e9dd;border-radius:9px;padding:1px 8px;}
 /* 노트 아이템 */
 .elnNlItem{display:flex;flex-direction:column;gap:3px;padding:10px 18px;border-bottom:1px solid #f1e9dd;
@@ -1369,10 +1386,10 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions{display:none;}
 /* status 칩(roundBox) — 제목이 길어도 안 눌리고 한 줄 유지(찌부러져 'In/Progress' 줄바꿈 방지) */
 .elnNlTop .roundBox{flex:0 0 auto;white-space:nowrap;font-size:11px;padding:1px 10px;line-height:1.5;}
 /* 제목은 한 줄 — 넘치면 …(current 표시는 왼쪽 바+배경 틴트로 충분, 배지 불필요) */
-.elnNlTit{flex:1 1 auto;min-width:0;font-size:13px;font-weight:600;color:#3a2c24;line-height:1.35;
+.elnNlTit{flex:1 1 auto;min-width:0;font-size:13px;color:#3a2c24;line-height:1.35;
   white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .elnNlSub{display:flex;align-items:center;gap:8px;font-size:11px;color:#9b8c7e;}
-.elnNlSub .code{font-family:ui-monospace,Menlo,Consolas,monospace;font-weight:700;color:#7a5240;}
+.elnNlSub .code{font-family:ui-monospace,Menlo,Consolas,monospace;color:#7a5240;}
 .elnNlSub .date{margin-left:auto;}
 .elnNlEmpty{padding:30px 18px;text-align:center;font-size:12px;color:#b6a89a;}
 /* 노트 전환 시 본문 페이드 스왑 — '다른 노트를 불러온' 느낌 */

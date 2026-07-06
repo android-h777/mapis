@@ -91,7 +91,8 @@
 						<li class="waves-effect waves-hColor"><a href="apis_custom_list.html"><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
 						<li class="waves-effect waves-hColor"><a href="apis_npt_list.html"><i class="material-icons left">snippet_folder</i>NPT</a></li>
 						<li class="waves-effect waves-hColor"><a href="apis_tech_list.html"><i class="material-icons left">build</i>Tech Support</a></li>
-						<li class="waves-effect waves-hColor on"><a href="apis_eln_list_simple.html"><i class="material-icons left">edit_note</i>Lab Note</a></li>
+						<li class="waves-effect waves-hColor on"><a href="apis_note_list.html"><i class="material-icons left">edit_note</i>Lab Note</a></li>
+						<li class="waves-effect waves-hColor"><a href="apis_techlib_list.html"><i class="material-icons left">menu_book</i>Tech Library</a></li>
 						<li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub</a></li>
 						<li class="waves-effect waves-hColor"><a href="apis_composition_list.html"><i class="material-icons left">layers</i>Composition</a></li>
 						<li class="waves-effect waves-hColor"><a href="apis_rptlib_list.html"><i class="material-icons left">library_books</i>Technical Report Library</a></li>
@@ -171,6 +172,7 @@
 		if(opts.code) q.push('code=' + encodeURIComponent(opts.code));
 		if(opts.project) q.push('project=' + encodeURIComponent(opts.project));
 		if(opts.tmpl) q.push('tmpl=' + encodeURIComponent(opts.tmpl));
+		if(opts.st) q.push('st=' + encodeURIComponent(opts.st));   // 노트 상태(ing=작성중/appr=결재중/ok=완료) → 팝업 뷰모드·헤더 상태
 		window.open('apis_eln_pop_simple.html' + (q.length ? '?' + q.join('&') : ''), 'elnNoteDetail', 'width=1480,height=900,scrollbars=yes,resizable=yes');
 	}
 
@@ -261,51 +263,51 @@
 	// 노트(평탄 배열). project 코드로 종속. 계보(parent)·노트북 없음. 데모 목업.
 	var NOTES = [
 		// SN-26-0031 RGBOLED Display Adhesive (SNPI)
-		{code:'NT-2605-00142', title:'UV-Curable PSA Viscosity Improvement — RGBOLED', st:'ing', ver:'v3', fml:'FML-EM-2208', tags:['#viscosity','#RGBOLED'], author:'Jongho Lee', date:'2026-05-28', project:'SN-26-0031'},
-		{code:'NT-2605-00118', title:'Viscosity Modifier ratio tuning (v2)', st:'appr', ver:'v2', fml:'FML-EM-2207', tags:['#viscosity'], author:'Jongho Lee', date:'2026-05-27', project:'SN-26-0031'},
-		{code:'NT-2605-00097', title:'Cure rate vs UV dose — condition sweep', st:'ok', ver:'v1', fml:'', tags:['#UVcure'], author:'Jongho Lee', date:'2026-05-24', project:'SN-26-0031'},
-		{code:'NT-2605-00098', title:'Initial trial — spec not met', st:'ok', ver:'v1', fml:'FML-EM-2206', tags:['#viscosity'], author:'Jongho Lee', date:'2026-05-21', project:'SN-26-0031'},
-		{code:'NT-2605-00085', title:'Supplier sample evaluation — Silicone PSA base', st:'ok', ver:'', fml:'', tags:['#supplier'], author:'Jongho Lee', date:'2026-05-18', project:'SN-26-0031'},
-		{code:'NT-2605-00072', title:'Crosslinker screening for adhesion', st:'ing', ver:'', fml:'', tags:['#adhesion'], author:'Jongho Lee', date:'2026-05-15', project:'SN-26-0031'},
-		{code:'NT-2606-00007', title:'Quick idea — low-VOC solvent swap to try', st:'ing', ver:'', fml:'', tags:[], author:'Jongho Lee', date:'2026-06-02', project:'SN-26-0031'},
-		{code:'NT-2606-00004', title:'Lab meeting memo — June experiment planning', st:'ok', ver:'', fml:'', tags:[], author:'Jongho Lee', date:'2026-05-31', project:'SN-26-0031'},
-		{code:'NT-2606-00012', title:'Peel strength round-robin with Eng. team', st:'ing', ver:'', fml:'', tags:['#adhesion'], author:'J.P. Kim', date:'2026-06-03', project:'SN-26-0031'},
-		{code:'NT-2606-00010', title:'Pilot line coating trial — defect review', st:'ok', ver:'', fml:'', tags:['#pilot'], author:'J.P. Kim', date:'2026-06-01', project:'SN-26-0031'},
-		{code:'NT-2606-00011', title:'Rheology check before scale-up', st:'ing', ver:'', fml:'', tags:['#rheology'], author:'Changmoo Jeong', date:'2026-06-02', project:'SN-26-0031'},
-		{code:'NT-2605-00141', title:'DSC cure kinetics measurement', st:'ok', ver:'v1', fml:'', tags:['#analysis'], author:'Changmoo Jeong', date:'2026-05-25', project:'SN-26-0031'},
+		{code:'NT-2605-00142', title:'UV-Curable PSA Viscosity Improvement — RGBOLED', st:'ing', stage:'SCALE-UP', ver:'v3', fml:'FML-EM-2208', tags:['#viscosity','#RGBOLED','#UVcure','#PSA'], author:'Jongho Lee', date:'2026-05-28', project:'SN-26-0031'},
+		{code:'NT-2605-00118', title:'Viscosity Modifier ratio tuning (v2)', st:'appr', stage:'LAB FORMULATION', ver:'v2', fml:'FML-EM-2207', tags:['#viscosity','#formulation','#tuning'], author:'Jongho Lee', date:'2026-05-27', project:'SN-26-0031'},
+		{code:'NT-2605-00097', title:'Cure rate vs UV dose — condition sweep', st:'ok', stage:'LAB FORMULATION', ver:'v1', fml:'', tags:['#UVcure','#curerate','#DOE'], author:'Jongho Lee', date:'2026-05-24', project:'SN-26-0031'},
+		{code:'NT-2605-00098', title:'Initial trial — spec not met', st:'ok', stage:'LAB FORMULATION', ver:'v1', fml:'FML-EM-2206', tags:['#trial','#spec','#viscosity'], author:'Jongho Lee', date:'2026-05-21', project:'SN-26-0031'},
+		{code:'NT-2605-00085', title:'Supplier sample evaluation — Silicone PSA base', st:'ok', stage:'LAB FORMULATION', ver:'', fml:'', tags:['#supplier','#evaluation','#PSA'], author:'Jongho Lee', date:'2026-05-18', project:'SN-26-0031'},
+		{code:'NT-2605-00072', title:'Crosslinker screening for adhesion', st:'ing', stage:'LAB FORMULATION', ver:'', fml:'', tags:['#adhesion','#crosslinker','#screening'], author:'Jongho Lee', date:'2026-05-15', project:'SN-26-0031'},
+		{code:'NT-2606-00007', title:'Quick idea — low-VOC solvent swap to try', st:'ing', stage:'LAB FORMULATION', ver:'', fml:'', tags:['#idea','#lowVOC','#solvent'], author:'Jongho Lee', date:'2026-06-02', project:'SN-26-0031'},
+		{code:'NT-2606-00004', title:'Lab meeting memo — June experiment planning', st:'ok', stage:'NPI GO', ver:'', fml:'', tags:['#meeting','#planning','#memo'], author:'Jongho Lee', date:'2026-05-31', project:'SN-26-0031'},
+		{code:'NT-2606-00012', title:'Peel strength round-robin with Eng. team', st:'ing', stage:'SCALE-UP', ver:'', fml:'', tags:['#adhesion','#peel','#roundrobin'], author:'J.P. Kim', date:'2026-06-03', project:'SN-26-0031'},
+		{code:'NT-2606-00010', title:'Pilot line coating trial — defect review', st:'ok', stage:'SCALE-UP', ver:'', fml:'', tags:['#pilot','#coating','#defect'], author:'J.P. Kim', date:'2026-06-01', project:'SN-26-0031'},
+		{code:'NT-2606-00011', title:'Rheology check before scale-up', st:'ing', stage:'SCALE-UP', ver:'', fml:'', tags:['#rheology','#scaleup','#viscosity'], author:'Changmoo Jeong', date:'2026-06-02', project:'SN-26-0031'},
+		{code:'NT-2605-00141', title:'DSC cure kinetics measurement', st:'ok', stage:'LAB FORMULATION', ver:'v1', fml:'', tags:['#analysis','#DSC','#kinetics'], author:'Changmoo Jeong', date:'2026-05-25', project:'SN-26-0031'},
 		// SN-26-0047 Low viscosity high vinyl polybutadiene (SNPI)
-		{code:'NT-2605-00160', title:'Vinyl content vs viscosity trade-off study', st:'ing', ver:'v2', fml:'FML-PB-0210', tags:['#viscosity','#polybutadiene'], author:'Jongho Lee', date:'2026-05-26', project:'SN-26-0047'},
-		{code:'NT-2605-00150', title:'Catalyst screening for high-vinyl route', st:'ok', ver:'v1', fml:'FML-PB-0208', tags:['#catalyst'], author:'K.S. Yoon', date:'2026-05-19', project:'SN-26-0047'},
-		{code:'NT-2605-00131', title:'GPC molecular weight distribution check', st:'ok', ver:'', fml:'', tags:['#analysis'], author:'K.S. Yoon', date:'2026-05-13', project:'SN-26-0047'},
+		{code:'NT-2605-00160', title:'Vinyl content vs viscosity trade-off study', st:'ing', stage:'LAB FORMULATION', ver:'v2', fml:'FML-PB-0210', tags:['#viscosity','#polybutadiene','#tradeoff'], author:'Jongho Lee', date:'2026-05-26', project:'SN-26-0047'},
+		{code:'NT-2605-00150', title:'Catalyst screening for high-vinyl route', st:'ok', stage:'LAB FORMULATION', ver:'v1', fml:'FML-PB-0208', tags:['#catalyst','#screening','#highvinyl'], author:'K.S. Yoon', date:'2026-05-19', project:'SN-26-0047'},
+		{code:'NT-2605-00131', title:'GPC molecular weight distribution check', st:'ok', stage:'LAB FORMULATION', ver:'', fml:'', tags:['#analysis','#GPC','#MW'], author:'K.S. Yoon', date:'2026-05-13', project:'SN-26-0047'},
 		// CN-26-0064 Flexible OLED Lamination (CNPI)
-		{code:'NT-2604-00210', title:'Bendable adhesive — fatigue test', st:'ing', ver:'v2', fml:'FML-FX-1120', tags:['#bending'], author:'S.Y. Park', date:'2026-04-30', project:'CN-26-0064'},
-		{code:'NT-2604-00198', title:'Low-temperature cure exploration', st:'ok', ver:'v1', fml:'FML-FX-1118', tags:['#lowtemp'], author:'S.Y. Park', date:'2026-04-22', project:'CN-26-0064'},
-		{code:'NT-2604-00150', title:'Substrate compatibility memo', st:'ok', ver:'', fml:'', tags:['#substrate'], author:'S.Y. Park', date:'2026-04-10', project:'CN-26-0064'},
-		{code:'NT-2604-00215', title:'Bending radius spec alignment with customer', st:'ing', ver:'', fml:'', tags:['#bending'], author:'J.P. Kim', date:'2026-05-02', project:'CN-26-0064'},
-		{code:'NT-2604-00205', title:'Lamination void inspection (CT)', st:'ok', ver:'', fml:'', tags:['#inspection'], author:'Changmoo Jeong', date:'2026-04-26', project:'CN-26-0064'},
+		{code:'NT-2604-00210', title:'Bendable adhesive — fatigue test', st:'ing', stage:'SCALE-UP', ver:'v2', fml:'FML-FX-1120', tags:['#bending','#fatigue','#reliability'], author:'S.Y. Park', date:'2026-04-30', project:'CN-26-0064'},
+		{code:'NT-2604-00198', title:'Low-temperature cure exploration', st:'ok', stage:'LAB FORMULATION', ver:'v1', fml:'FML-FX-1118', tags:['#lowtemp','#cure','#process'], author:'S.Y. Park', date:'2026-04-22', project:'CN-26-0064'},
+		{code:'NT-2604-00150', title:'Substrate compatibility memo', st:'ok', stage:'LAB FORMULATION', ver:'', fml:'', tags:['#substrate','#compatibility','#memo'], author:'S.Y. Park', date:'2026-04-10', project:'CN-26-0064'},
+		{code:'NT-2604-00215', title:'Bending radius spec alignment with customer', st:'ing', stage:'COMMERCIAL GO', ver:'', fml:'', tags:['#bending','#spec','#customer'], author:'J.P. Kim', date:'2026-05-02', project:'CN-26-0064'},
+		{code:'NT-2604-00205', title:'Lamination void inspection (CT)', st:'ok', stage:'SCALE-UP', ver:'', fml:'', tags:['#inspection','#void','#CT'], author:'Changmoo Jeong', date:'2026-04-26', project:'CN-26-0064'},
 		// CN-26-0090 Customer A OCR Program (CNPI)
-		{code:'NT-2605-00301', title:'Customer A — OCR spec review', st:'ing', ver:'', fml:'', tags:['#customerA'], author:'Jongho Lee', date:'2026-05-30', project:'CN-26-0090'},
-		{code:'NT-2605-00288', title:'Adhesion to PET film', st:'ok', ver:'v2', fml:'FML-CA-4410', tags:['#adhesion'], author:'Jongho Lee', date:'2026-05-26', project:'CN-26-0090'},
-		{code:'NT-2605-00270', title:'Cost-down reformulation', st:'appr', ver:'v1', fml:'FML-CA-4408', tags:['#costdown'], author:'Jongho Lee', date:'2026-05-20', project:'CN-26-0090'},
-		{code:'NT-2605-00255', title:'Kickoff meeting notes', st:'ok', ver:'', fml:'', tags:['#kickoff'], author:'Jongho Lee', date:'2026-05-12', project:'CN-26-0090'},
+		{code:'NT-2605-00301', title:'Customer A — OCR spec review', st:'ing', stage:'NPI GO', ver:'', fml:'', tags:['#customerA','#spec','#OCR'], author:'Jongho Lee', date:'2026-05-30', project:'CN-26-0090'},
+		{code:'NT-2605-00288', title:'Adhesion to PET film', st:'ok', stage:'LAB FORMULATION', ver:'v2', fml:'FML-CA-4410', tags:['#adhesion','#PET','#film'], author:'Jongho Lee', date:'2026-05-26', project:'CN-26-0090'},
+		{code:'NT-2605-00270', title:'Cost-down reformulation', st:'appr', stage:'LAB FORMULATION', ver:'v1', fml:'FML-CA-4408', tags:['#costdown','#reformulation','#formulation'], author:'Jongho Lee', date:'2026-05-20', project:'CN-26-0090'},
+		{code:'NT-2605-00255', title:'Kickoff meeting notes', st:'ok', stage:'NPI GO', ver:'', fml:'', tags:['#kickoff','#meeting','#memo'], author:'Jongho Lee', date:'2026-05-12', project:'CN-26-0090'},
 		// CN-26-0112 UV-Curable Conformal Coating (CNPI)
-		{code:'NT-2605-00320', title:'Conformal coating — humidity resistance', st:'ing', ver:'v1', fml:'FML-CC-5510', tags:['#coating','#humidity'], author:'H.W. Cho', date:'2026-05-29', project:'CN-26-0112'},
-		{code:'NT-2605-00310', title:'Dispense viscosity window for spray', st:'ok', ver:'', fml:'', tags:['#viscosity'], author:'H.W. Cho', date:'2026-05-22', project:'CN-26-0112'},
+		{code:'NT-2605-00320', title:'Conformal coating — humidity resistance', st:'ing', stage:'LAB FORMULATION', ver:'v1', fml:'FML-CC-5510', tags:['#coating','#humidity','#reliability'], author:'H.W. Cho', date:'2026-05-29', project:'CN-26-0112'},
+		{code:'NT-2605-00310', title:'Dispense viscosity window for spray', st:'ok', stage:'LAB FORMULATION', ver:'', fml:'', tags:['#viscosity','#dispense','#spray'], author:'H.W. Cho', date:'2026-05-22', project:'CN-26-0112'},
 		// PT-25-0182 Optical Clear Resin (NPT)
-		{code:'NT-2603-00120', title:'Haze reduction — final formulation', st:'ok', ver:'v3', fml:'FML-OC-3310', tags:['#haze'], author:'M.J. Lee', date:'2026-03-28', project:'PT-25-0182'},
-		{code:'NT-2603-00088', title:'Yellowing aging test (85°C/85%RH)', st:'ing', ver:'v1', fml:'FML-OC-3308', tags:['#aging'], author:'M.J. Lee', date:'2026-03-12', project:'PT-25-0182'},
+		{code:'NT-2603-00120', title:'Haze reduction — final formulation', st:'ok', stage:'SCALE-UP', ver:'v3', fml:'FML-OC-3310', tags:['#haze','#optical','#formulation'], author:'M.J. Lee', date:'2026-03-28', project:'PT-25-0182'},
+		{code:'NT-2603-00088', title:'Yellowing aging test (85°C/85%RH)', st:'ing', stage:'LAB FORMULATION', ver:'v1', fml:'FML-OC-3308', tags:['#aging','#yellowing','#reliability'], author:'M.J. Lee', date:'2026-03-12', project:'PT-25-0182'},
 		// PT-26-0021 New preservative for Silsoft (NPT)
-		{code:'NT-2605-00400', title:'Preservative efficacy — challenge test', st:'ing', ver:'v1', fml:'FML-PV-6610', tags:['#preservative'], author:'E. Han', date:'2026-05-24', project:'PT-26-0021'},
-		{code:'NT-2605-00390', title:'Regulatory screen (EU/US) for candidates', st:'ok', ver:'', fml:'', tags:['#regulatory'], author:'E. Han', date:'2026-05-17', project:'PT-26-0021'},
+		{code:'NT-2605-00400', title:'Preservative efficacy — challenge test', st:'ing', stage:'LAB FORMULATION', ver:'v1', fml:'FML-PV-6610', tags:['#preservative','#efficacy','#challengetest'], author:'E. Han', date:'2026-05-24', project:'PT-26-0021'},
+		{code:'NT-2605-00390', title:'Regulatory screen (EU/US) for candidates', st:'ok', stage:'NPI GO', ver:'', fml:'', tags:['#regulatory','#EU','#US'], author:'E. Han', date:'2026-05-17', project:'PT-26-0021'},
 		// PT-26-0034 Low Viscosity Binder Gel T (NPT)
-		{code:'NT-2605-00420', title:'Gel binder — scale-up trial (Ohta)', st:'appr', ver:'v2', fml:'FML-BG-7710', tags:['#scaleup'], author:'J.W. Seo', date:'2026-05-27', project:'PT-26-0034'},
-		{code:'NT-2605-00405', title:'Thixotropy tuning for low-viscosity gel', st:'ok', ver:'v1', fml:'FML-BG-7708', tags:['#rheology'], author:'J.W. Seo', date:'2026-05-18', project:'PT-26-0034'},
+		{code:'NT-2605-00420', title:'Gel binder — scale-up trial (Ohta)', st:'appr', stage:'SCALE-UP', ver:'v2', fml:'FML-BG-7710', tags:['#scaleup','#trial','#Ohta'], author:'J.W. Seo', date:'2026-05-27', project:'PT-26-0034'},
+		{code:'NT-2605-00405', title:'Thixotropy tuning for low-viscosity gel', st:'ok', stage:'LAB FORMULATION', ver:'v1', fml:'FML-BG-7708', tags:['#rheology','#thixotropy','#viscosity'], author:'J.W. Seo', date:'2026-05-18', project:'PT-26-0034'},
 		// TS-26-0205 Electro 242-2 Grey FC (Tech Support)
-		{code:'NT-2605-00500', title:'Field complaint — cure inconsistency analysis', st:'ing', ver:'', fml:'', tags:['#complaint'], author:'S.Y. Park', date:'2026-05-25', project:'TS-26-0205'},
-		{code:'NT-2605-00490', title:'Customer line trial support memo', st:'ok', ver:'', fml:'', tags:['#support'], author:'S.Y. Park', date:'2026-05-16', project:'TS-26-0205'},
+		{code:'NT-2605-00500', title:'Field complaint — cure inconsistency analysis', st:'ing', stage:'POST LAUNCH REVIEW', ver:'', fml:'', tags:['#complaint','#cure','#fieldsupport'], author:'S.Y. Park', date:'2026-05-25', project:'TS-26-0205'},
+		{code:'NT-2605-00490', title:'Customer line trial support memo', st:'ok', stage:'POST LAUNCH REVIEW', ver:'', fml:'', tags:['#support','#customer','#trial'], author:'S.Y. Park', date:'2026-05-16', project:'TS-26-0205'},
 		// TS-26-0218 High-Temp Silicone Encapsulant (Tech Support)
-		{code:'NT-2604-00450', title:'Thermal aging failure root-cause', st:'ok', ver:'v1', fml:'', tags:['#failure','#thermal'], author:'K.S. Yoon', date:'2026-04-28', project:'TS-26-0218'},
-		{code:'NT-2604-00440', title:'Replacement grade recommendation', st:'ok', ver:'', fml:'', tags:['#support'], author:'K.S. Yoon', date:'2026-04-20', project:'TS-26-0218'}
+		{code:'NT-2604-00450', title:'Thermal aging failure root-cause', st:'ok', stage:'POST LAUNCH REVIEW', ver:'v1', fml:'', tags:['#failure','#thermal','#rootcause'], author:'K.S. Yoon', date:'2026-04-28', project:'TS-26-0218'},
+		{code:'NT-2604-00440', title:'Replacement grade recommendation', st:'ok', stage:'POST LAUNCH REVIEW', ver:'', fml:'', tags:['#support','#replacement','#recommendation'], author:'K.S. Yoon', date:'2026-04-20', project:'TS-26-0218'}
 	];
 
 	// 프로젝트 타입 → 상세 pop + 라벨. 타이틀 클릭 시 해당 타입 상세 페이지 오픈.
@@ -332,7 +334,8 @@
 	// 타입 뱃지 — 4 타입(snpi/cnpi/npt/tech) 색 구분 pill. statusBox(상태)와 별개로 "어느 NPI 계열인지" 한눈에.
 	function projTypeBadge(p){
 		var t = PROJ_TYPE[p.type]; if(!t) return '';
-		return '<span class="elnProjType elnType-' + p.type + '">' + esc(t.label) + '</span>';
+		var color = ({snpi:'blue', cnpi:'viva', npt:'green', tech:'orange'})[p.type] || 'grey';   // 표준 roundBox 컬러셋
+		return '<span class="elnProjType roundBox outline ' + color + ' h20">' + esc(t.label) + '</span>';
 	}
 	// 타입별 pill(roundBox) — snpi/tech: seg·market·stage·sched / cnpi: customer·seg·market·stage·sched / npt: seg·stage·site전환·sched
 	function projPills(p){
@@ -378,13 +381,14 @@
 			empty.innerHTML = '<i class="material-symbols-outlined">search_off</i>No notes match.';
 			ul.appendChild(empty);
 		}
-		notes.forEach(function(n, i){
+		// 노트 1건 li 생성(oi = 원본 notes 인덱스 → 클릭 시 curNotes[oi])
+		function noteLi(n, oi){
 			var s = stByKey(n.st);
 			var li = document.createElement('li');
 			li.className = 'waves-effect waves-hColor animate__animated';
 			li.setAttribute('data-st', n.st);
 			li.setAttribute('data-author', n.author);
-			li.setAttribute('data-idx', i);
+			li.setAttribute('data-idx', oi);
 			var box = document.createElement('section');
 			box.className = 'statusBox ' + s.cls;
 			box.textContent = s.t;
@@ -403,17 +407,17 @@
 				tit.textContent = '[' + n.code + '] ' + n.title;
 			}
 			main.appendChild(tit);
-
-			// footer: 태그(좌, 기존 pill 자리) + 날짜·작성자(우하단). pill(roundBox) 제거.
+			// footer: 태그(좌) + 날짜·작성자(우하단, CSS row-reverse로 날짜 우측)
 			var foot = document.createElement('div'); foot.className = 'elnNoteFoot';
 			var tagWrap = document.createElement('div'); tagWrap.className = 'elnNoteTags';
+			if(n.fml){ var fch = document.createElement('span'); fch.className = 'roundBox smallBox elnFmlMark'; fch.title = 'Has formula'; fch.innerHTML = '<i class="material-symbols-outlined">science</i>Formula'; tagWrap.appendChild(fch); }
 			if(n.tags && n.tags.length){
 				n.tags.forEach(function(t){
 					var a = document.createElement('a'); a.href = 'javascript:;'; a.className = 'elnTagLink';
 					a.textContent = t; a.title = 'Search this tag'; a.setAttribute('data-tag', t);
 					tagWrap.appendChild(a);
 				});
-			} else {
+			} else if(!n.fml){
 				var nt = document.createElement('span'); nt.className = 'elnNoTag'; nt.textContent = 'No tag';
 				tagWrap.appendChild(nt);
 			}
@@ -424,7 +428,14 @@
 			foot.appendChild(meta);
 			main.appendChild(foot);
 			li.appendChild(box); li.appendChild(main);
-			ul.appendChild(li);
+			return li;
+		}
+		// 리스트는 flat(그룹핑 없음). 스테이지는 상세팝업 노트리스트에서만 분류.
+		notes.forEach(function(n, i){ ul.appendChild(noteLi(n, i)); });
+		// 등장 시간차 플립 인
+		document.querySelectorAll('#noteListUl li').forEach(function(li, i){
+			li.classList.remove('animate__flipInX');
+			setTimeout(function(){ li.classList.add('animate__flipInX'); }, i * 55);
 		});
 		applyFilter();
 	}
@@ -685,8 +696,8 @@
 				if(window.ELN && ELN.toast) ELN.toast('Status → "'+nx.t+'"', 'info');
 				return;
 			}
-			// 그 외(제목·메타 등 행 전체) → 상세 팝업
-			if(n) openNote({ code: n.code, project: n.project });
+			// 그 외(제목·메타 등 행 전체) → 상세 팝업(노트 상태 st 전달)
+			if(n) openNote({ code: n.code, project: n.project, st: n.st });
 		});
 
 		// 우측 상단 scope 탭(All / My List / Team List) — author 기준 필터 + tabBg 슬라이드

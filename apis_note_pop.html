@@ -11,29 +11,32 @@
     <link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
     <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script src="js/highcharts/highcharts.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/glass_engine.js"></script>
-
 </head>
 <body class="popup type2">
+    <!-- 헤더 — 타이틀 + 읽기전용 상태 알약 + 결재 뱃지 + 우측 Note List 토글 -->
     <header class="z-depth-1">
         <section class="titArea npi">
             <div><img src="img/MAPISLogo-25.png"></div>
             <div class="statusTit">
-                <div class="tit" id="noteHeadTit">[NT-2605-00142] UV-Curable PSA Viscosity Improvement — RGBOLED</div>
-                <div class="roundBox blue" id="noteHeadStatus">In Progress</div>
+                <div class="tit" id="elnHeadTit">[NT-2605-00142] UV-Curable PSA Viscosity Improvement — RGBOLED</div>
+                <div id="elnHeadStatus" class="roundBox blue" data-status="ing">In Progress</div>
+                <div id="elnApprovalBadge" class="elnApprBadge"></div>
             </div>
+            <a href="javascript:;" id="elnNoteListBtn" class="waves-effect waves-light hBtn hViva elnHeadRight" title="Show research notes of this project"><i class="material-symbols-outlined left">edit_note</i><span class="label">Note List</span></a>
         </section>
     </header>
 
+    <!-- 좌측 목차 + 액션 -->
     <aside class="leftAside z-depth-1 blurArea">
-        <div class="menuTit">Lab Note</div>
         <section class="hScroll">
             <ul class="menuUl">
                 <li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="card_basic">
                     <i class="material-symbols-outlined left">inventory_2</i><span>Basic Data</span>
                 </li>
                 <li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_fml">
-                    <i class="material-symbols-outlined left">blender</i><span>Formulation</span>
+                    <i class="material-symbols-outlined left">science</i><span>Formulation</span>
                 </li>
                 <li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_concl">
                     <i class="material-symbols-outlined left">summarize</i><span>Conclusion</span>
@@ -44,199 +47,740 @@
             </ul>
         </section>
         <section class="btnArea">
-            <div><a href="javascript:;" id="noteSaveBtn" class="waves-effect waves-light hBtn hBlue"><i class="material-symbols-outlined left">save</i><span class="label">Save</span></a></div>
+            <div><a href="javascript:;" id="elnSaveTemplate" class="waves-effect waves-light hBtn" title="Save this note's section structure as a reusable template"><i class="material-symbols-outlined left">bookmark_add</i><span class="label">Save template</span></a></div>
+            <div><a href="javascript:;" id="elnAddModule" class="waves-effect waves-light hBtn hViva mt10 modal-trigger" href="#addModuleModal"><i class="material-symbols-outlined left">add_box</i><span class="label">Add Module</span></a></div>
+            <div><a href="javascript:;" id="elnSaveBtn" class="waves-effect waves-light hBtn hBlue mt30"><i class="material-symbols-outlined left">save</i><span class="label">Save</span></a></div>
         </section>
     </aside>
 
     <div class="contArea">
-        <!-- Basic Data -->
-        <section class="cardBox mt10" id="card_basic">
-            <div class="cardTit2"><i class="material-symbols-outlined left">inventory_2</i>Basic Data</div>
-            <div class="inputArea">
-                <div class="row">
-                    <div class="col s2 ar pl0"><span class="essential">*</span>Note Title</div>
-                    <div class="col s10">
-                        <div class="aniInput">
-                            <input type="text" value="UV-Curable PSA Viscosity Improvement — RGBOLED" class="browser-default fontR font14" placeholder="Enter note title">
-                            <span class="focus-border"/>
+        <article id="tab_ov" class="contArticle">
+
+            <!-- Basic Data -->
+            <section class="cardBox animate__animated mt10" id="card_basic">
+                <div class="cardTit2"><i class="material-symbols-outlined left">inventory_2</i>Basic Data</div>
+                <div class="elnBasic">
+                    <div class="elnBasicRow">
+                        <label class="elnBasicLabel"><span class="essential">*</span>Note Title</label>
+                        <div class="elnBasicTitle">
+                            <div class="aniInput">
+                                <input type="text" value="UV-Curable PSA Viscosity Improvement — RGBOLED" class="browser-default fontR font14" placeholder="Enter note title">
+                                <span class="focus-border"></span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="elnBasicRow">
+                        <label class="elnBasicLabel">Project</label>
+                        <span class="elnProjVal" id="elnProjVal" data-proj="[SN-26-0031] RGBOLED Display Adhesive">
+                            <a class="link elnProjLink" href="javascript:;" title="Open project">[SN-26-0031] RGBOLED Display Adhesive</a>
+                        </span>
+                    </div>
+                    <div class="elnBasicRow">
+                        <label class="elnBasicLabel">Stage</label>
+                        <div class="elnSchedSel">
+                            <div class="elnSchedField stage"><select id="elnSchedStage"></select></div>
+                            <div class="elnSchedField task"><select id="elnSchedTask"></select></div>
+                        </div>
+                    </div>
+                    <div class="elnBasicRow alignTop">
+                        <label class="elnBasicLabel">Tags</label>
+                        <div class="elnTagBox">
+                            <div class="elnTags" id="elnTags">
+                                <span class="elnTag" data-tag="#viscosity">#viscosity<i class="material-symbols-outlined">close</i></span>
+                                <span class="elnTag" data-tag="#RGBOLED">#RGBOLED<i class="material-symbols-outlined">close</i></span>
+                            </div>
+                            <div class="elnTagAddRow">
+                                <div class="aniInput">
+                                    <input type="text" id="elnTagInput" class="browser-default fontR font14" placeholder="Add a tag, then Enter">
+                                    <span class="focus-border"></span>
+                                </div>
+                                <div class="elnRecTags" id="elnRecTags"><!-- JS 렌더 --></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col s2 ar pl0">Project</div>
-                    <div class="col s10">
-                        <div class="aniInput">
-                            <input type="text" id="noteProjInput" value="[SN-26-0031] RGBOLED Display Adhesive" class="browser-default fontR font14" placeholder="Search a project…" autocomplete="off">
-                            <span class="focus-border"/>
+            </section>
+
+            <!-- Formulation -->
+            <section class="cardBox animate__animated mt10" id="card_fml">
+                <div class="cardTit2"><i class="material-symbols-outlined left">science</i>Formulation</div>
+                <div class="elnFmlToolbar">
+                    <a class="waves-effect waves-light hBtn" id="btnChangeFml" href="javascript:;"><i class="material-symbols-outlined left">checklist</i><span class="label">Select</span></a>
+                    <a class="waves-effect waves-light hBtn hViva" id="btnOpenFormulator" href="javascript:;"><i class="material-symbols-outlined left">open_in_new</i><span class="label">Open in formulator</span></a>
+                </div>
+                <div class="elnBasic">
+                    <label class="elnBasicLabel">Composition <span class="elnHint">— wt% by formulation · click a material for Rawmathub</span></label>
+                    <div class="fixedTable hBorderTable hScroll elnFmlCmp">
+                        <table>
+                            <thead id="fmlCmpCompHead"></thead>
+                            <tbody id="fmlTableBody"></tbody>
+                        </table>
+                    </div>
+
+                    <label class="elnBasicLabel">Analysis <span class="elnHint">— side-by-side metrics · read-only</span></label>
+                    <div class="elnFmlAnalysis">
+                        <div class="elnFmlChart"><div id="chartFmlAnalysis"></div></div>
+                        <div class="elnFmlMetrics">
+                            <div class="fixedTable hBorderTable hScroll elnFmlCmp">
+                                <table>
+                                    <thead id="fmlCmpMetricHead"></thead>
+                                    <tbody id="fmlMetricBody"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+
+                    <label class="elnBasicLabel">Process</label>
+                    <div class="elnMeta">
+                        <div class="elnMetaItem metric">
+                            <i class="material-symbols-outlined">device_thermostat</i>
+                            <div class="elnMetaText"><span class="k">Mixing Temp</span><span class="v">25 <em>°C</em></span></div>
+                        </div>
+                        <div class="elnMetaItem metric">
+                            <i class="material-symbols-outlined">timer</i>
+                            <div class="elnMetaText"><span class="k">Mixing Time</span><span class="v">30 <em>min</em></span></div>
+                        </div>
+                        <div class="elnMetaItem metric">
+                            <i class="material-symbols-outlined">compress</i>
+                            <div class="elnMetaText"><span class="k">Degassing Vacuum</span><span class="v">-0.09 <em>MPa</em></span></div>
+                        </div>
+                        <div class="elnMetaItem metric">
+                            <i class="material-symbols-outlined">wb_sunny</i>
+                            <div class="elnMetaText"><span class="k">UV Dose</span><span class="v">1,200 <em>mJ/cm²</em></span></div>
+                        </div>
+                    </div>
+
+                    <label class="elnBasicLabel">Results</label>
+                    <div class="elnResults">
+                        <div class="elnResultsTable">
+                            <div class="fixedTable hBorderTable hScroll">
+                                <table class="elnResultsTbl">
+                                    <colgroup><col><col><col><col></colgroup>
+                                    <thead><tr><th>Item</th><th>Spec</th><th>Measured</th><th>Result</th></tr></thead>
+                                    <tbody>
+                                        <tr><td>Viscosity</td><td class="ac">4,500 ± 300 cP</td><td class="ar">4,520</td><td class="ac"><span class="cGreen">Pass</span></td></tr>
+                                        <tr><td>Cure Rate</td><td class="ac">≥ 95 %</td><td class="ar">96.0</td><td class="ac"><span class="cGreen">Pass</span></td></tr>
+                                        <tr><td>Haze</td><td class="ac">≤ 1.0 %</td><td class="ar">0.8</td><td class="ac"><span class="cGreen">Pass</span></td></tr>
+                                    </tbody>
+                                </table>
+                            </div>
+                        </div>
+                        <div class="elnResultsChart">
+                            <div id="chartViscosity"></div>
                         </div>
                     </div>
                 </div>
-                <div class="row">
-                    <div class="col s2 ar pl0">Tags</div>
-                    <div class="col s10">
-                        <div class="noteTagBox" id="noteTags">
-                            <span class="noteTag" data-tag="#viscosity">#viscosity<i class="material-icons">close</i></span>
-                            <span class="noteTag" data-tag="#RGBOLED">#RGBOLED<i class="material-icons">close</i></span>
-                            <input type="text" id="noteTagInput" class="noteTagInput browser-default" placeholder="Add a tag, then Enter">
-                        </div>
-                        <div class="noteRecTags" id="noteRecTags"><!-- JS 렌더 --></div>
+            </section>
+
+            <!-- Conclusion -->
+            <section class="cardBox animate__animated mt10" id="card_concl">
+                <div class="cardTit2"><i class="material-symbols-outlined left">summarize</i>Conclusion</div>
+                <div class="elnBasic">
+                    <label class="elnBasicLabel">Conclusion · Summary</label>
+                    <div class="elnConclEditor" id="elnConclEditor">v3 reached 4,520 cP viscosity, passing all 3 specs. Recommend transfer to mass-production validation (SN-26-0031). CoC issuance pending.</div>
+                </div>
+            </section>
+
+            <!-- Approval -->
+            <section class="cardBox animate__animated mt10" id="card_approval">
+                <div class="cardTit2"><i class="material-symbols-outlined left">approval</i>Approval</div>
+                <div class="inputArea">
+                    <div class="cardSubTit mt30">Decision Point Approval Status</div>
+                    <div class="fixedTable hBorderTable hScroll mg10">
+                        <table class="elnApprDpTable">
+                            <thead>
+                                <tr><th>Approval Type</th><th>Name</th><th>Date</th><th>Status</th></tr>
+                            </thead>
+                            <tbody>
+                                <tr><td class="ac">Marketing Leader</td><td class="ac">Jim Quan</td><td class="ac">26.09.2025</td><td class="ac"><span class="roundBox tendril25">Approved</span></td></tr>
+                                <tr><td class="ac">Technology Leader</td><td class="ac">Charles Kim</td><td class="ac">-</td><td class="ac"><span class="roundBox stone25">Pending</span></td></tr>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
-            </div>
-        </section>
+            </section>
 
-        <!-- Formulation -->
-        <section class="cardBox mt10" id="card_fml">
-            <div class="cardTit2"><i class="material-symbols-outlined left">blender</i>Formulation
-                <a class="waves-effect waves-light hBtn hViva right" href="javascript:;"><i class="material-symbols-outlined left">open_in_new</i><span class="label">Open in formulator</span></a>
-            </div>
-            <div class="inputArea">
-                <label class="fontM fmlLabel">Composition <span class="cGray">— wt% · FML-EM-2208</span></label>
-                <div class="fixedTable hBorderTable hScroll mt10">
-                    <table class="fmlCompTable">
-                        <thead><tr><th>Material</th><th>Code</th><th class="ar">wt%</th></tr></thead>
-                        <tbody>
-                            <tr><td>Silicone PSA base</td><td>RM-1021</td><td class="ar">62.0</td></tr>
-                            <tr><td>UV initiator</td><td>RM-3308</td><td class="ar">2.5</td></tr>
-                            <tr><td>Viscosity modifier</td><td>RM-2207</td><td class="ar">5.5</td></tr>
-                            <tr><td>Solvent (low-VOC)</td><td>RM-0480</td><td class="ar">30.0</td></tr>
-                        </tbody>
-                    </table>
-                </div>
+        </article>
+    </div>
 
-                <label class="fontM fmlLabel gap">Process</label>
-                <div class="metricGrid">
-                    <div class="metricItem"><i class="material-symbols-outlined">device_thermostat</i><div><span class="k">Mixing Temp</span><span class="v">25<em>°C</em></span></div></div>
-                    <div class="metricItem"><i class="material-symbols-outlined">timer</i><div><span class="k">Mixing Time</span><span class="v">30<em>min</em></span></div></div>
-                    <div class="metricItem"><i class="material-symbols-outlined">compress</i><div><span class="k">Degassing</span><span class="v">-0.09<em>MPa</em></span></div></div>
-                    <div class="metricItem"><i class="material-symbols-outlined">wb_sunny</i><div><span class="k">UV Dose</span><span class="v">1,200<em>mJ/cm²</em></span></div></div>
-                </div>
+    <!-- Note List — 이 과제의 연구노트(스테이지별 그룹). 헤더 Note List 버튼으로 우측 슬라이드 -->
+    <div id="elnNoteListScrim" class="elnNoteListScrim"></div>
+    <aside id="elnNoteListPanel" class="elnNoteList z-depth-2">
+        <div class="elnNoteListHead">
+            <div class="tit"><i class="material-symbols-outlined left">edit_note</i>Note List</div>
+            <button type="button" class="x" id="elnNoteListClose" aria-label="Close"><i class="material-symbols-outlined">close</i></button>
+        </div>
+        <div class="elnNoteListProj" id="elnNoteListProj" title="Open project detail">[SN-26-0031] RGBOLED Display Adhesive</div>
+        <div class="elnNoteListBody" id="elnNoteListBody"><!-- renderNoteList() --></div>
+    </aside>
 
-                <label class="fontM fmlLabel gap">Results</label>
-                <div class="fixedTable hBorderTable hScroll mt10">
-                    <table class="fmlResTable">
-                        <thead><tr><th>Item</th><th>Spec</th><th class="ar">Measured</th><th class="ac">Result</th></tr></thead>
-                        <tbody>
-                            <tr><td>Viscosity</td><td class="ac">4,500 ± 300 cP</td><td class="ar">4,520</td><td class="ac"><span class="cGreen">Pass</span></td></tr>
-                            <tr><td>Cure Rate</td><td class="ac">≥ 95 %</td><td class="ar">96.0</td><td class="ac"><span class="cGreen">Pass</span></td></tr>
-                            <tr><td>Haze</td><td class="ac">≤ 1.0 %</td><td class="ar">0.8</td><td class="ac"><span class="cGreen">Pass</span></td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
-
-        <!-- Conclusion -->
-        <section class="cardBox mt10" id="card_concl">
-            <div class="cardTit2"><i class="material-symbols-outlined left">summarize</i>Conclusion</div>
-            <div class="inputArea">
-                <textarea class="materialize-textarea browser-default conclText">v3 reached 4,520 cP viscosity, passing all 3 specs. Recommend transfer to mass-production validation (SN-26-0031). CoC issuance pending.</textarea>
-            </div>
-        </section>
-
-        <!-- Approval -->
-        <section class="cardBox mt10" id="card_approval">
-            <div class="cardTit2"><i class="material-symbols-outlined left">approval</i>Approval</div>
-            <div class="inputArea">
-                <div class="fixedTable hBorderTable hScroll">
-                    <table class="apprTable">
-                        <thead><tr><th>Step</th><th>Assignee</th><th>Status</th><th>Date</th></tr></thead>
-                        <tbody>
-                            <tr><td>Author</td><td>Jongho Lee</td><td><span class="apprChip done">Submitted</span></td><td>2026-05-28</td></tr>
-                            <tr><td>Review</td><td>Changmoo Jeong</td><td><span class="apprChip done">Approved</span></td><td>2026-05-29</td></tr>
-                            <tr><td>Approve</td><td>K.S. Yoon</td><td><span class="apprChip wait">Pending</span></td><td>—</td></tr>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
-        </section>
+    <!-- Add Module 모달 -->
+    <div id="addModuleModal" class="modal">
+        <div class="modal-header mochaBg">
+            <h5><i class="material-symbols-outlined left">add_box</i>Add Module</h5>
+            <div class="closeBtns modal-close"><i class="material-symbols-outlined">close</i></div>
+        </div>
+        <div class="modal-content">
+            <div class="elnAddPickGrid" id="addModuleGrid"></div>
+        </div>
     </div>
 
     <script>
-    var TAG_VOCAB = ['#PSA', '#silicone', '#UVcure', '#adhesive', '#crosslinker', '#reliability', '#optical', '#coating'];
     function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-    function toast(m){ if(window.M && M.toast) M.toast({html: esc(m)}); }
+    function toast(m){ if(window.glassToast) glassToast(m, 'info'); }
 
-    function currentTags(){
-        return Array.prototype.map.call(document.querySelectorAll('#noteTags .noteTag'), function(c){ return c.getAttribute('data-tag'); });
+    /* ── 배합 데이터(formulator 결과를 읽기 임베드) ── */
+    var FORMULATIONS = {
+        'FML-EM-2208': { code:'FML-EM-2208', ver:'v3',
+            rows:[
+                { name:'Silicone PSA Base', code:'RM-S1042', wt:62.0 },
+                { name:'Solvent (Toluene)', code:'RM-T55', wt:30.0 },
+                { name:'Viscosity Modifier', code:'RM-V210', wt:4.0, note:'↑ +1.5 vs v2' },
+                { name:'Crosslinker', code:'RM-X07', wt:2.5 },
+                { name:'UV Photoinitiator', code:'RM-P318', wt:1.5 }
+            ],
+            metrics:[ {k:'NV (solids)',v:'38.5 %'}, {k:'VOC',v:'312 g/L'}, {k:'Viscosity',v:'4,520 cP'}, {k:'Cost',v:'$ 12.4 /kg'}, {k:'P/B ratio',v:'0.82'} ],
+            chart:{ cats:['NV %','VOC(×10)','Visc(×1k)','Cost'], data:[38.5,31.2,4.52,12.4] }
+        },
+        'FML-EM-2207': { code:'FML-EM-2207', ver:'v2',
+            rows:[
+                { name:'Silicone PSA Base', code:'RM-S1042', wt:63.5 },
+                { name:'Solvent (Toluene)', code:'RM-T55', wt:30.0 },
+                { name:'Viscosity Modifier', code:'RM-V210', wt:2.5 },
+                { name:'Crosslinker', code:'RM-X07', wt:2.5 },
+                { name:'UV Photoinitiator', code:'RM-P318', wt:1.5 }
+            ],
+            metrics:[ {k:'NV (solids)',v:'39.1 %'}, {k:'VOC',v:'318 g/L'}, {k:'Viscosity',v:'4,780 cP'}, {k:'Cost',v:'$ 12.1 /kg'}, {k:'P/B ratio',v:'0.80'} ],
+            chart:{ cats:['NV %','VOC(×10)','Visc(×1k)','Cost'], data:[39.1,31.8,4.78,12.1] }
+        }
+    };
+    var RM_INFO = {
+        'RM-S1042':'Silicone PSA Base · Viscosity 5,000cP · CAS 63148-62-9 · Supplier KCC',
+        'RM-T55':'Solvent (Toluene) · BP 110.6°C · CAS 108-88-3',
+        'RM-V210':'Viscosity Modifier · Non-volatile · Recommended 2~5wt%',
+        'RM-X07':'Crosslinker · Platinum-catalyzed · Store cool & dark',
+        'RM-P318':'UV Photoinitiator · λmax 320nm · Recommended 1~2wt%'
+    };
+    var linkedFmls = ['FML-EM-2208','FML-EM-2207'];
+    function fmlList(){ return linkedFmls.map(function(k){ return FORMULATIONS[k]; }).filter(Boolean); }
+
+    // 조성 비교표: 원료 union(행) × 배합(열) wt%. 값이 다르면 강조 + 합계 행
+    function renderFmlCompTable(){
+        var thead = document.getElementById('fmlCmpCompHead'), tbody = document.getElementById('fmlTableBody');
+        if(!thead || !tbody) return;
+        var fmls = fmlList(); thead.innerHTML = ''; tbody.innerHTML = '';
+        var htr = document.createElement('tr');
+        ['Material (Rawmathub)','Code'].forEach(function(h){ var th=document.createElement('th'); th.textContent=h; htr.appendChild(th); });
+        fmls.forEach(function(f){ var th=document.createElement('th'); th.className='ar'; th.innerHTML=f.code+' <b>'+f.ver+'</b>'; htr.appendChild(th); });
+        thead.appendChild(htr);
+        var order=[], map={};
+        fmls.forEach(function(f){ f.rows.forEach(function(r){ if(!map[r.code]){ map[r.code]=r.name; order.push(r.code); } }); });
+        var totals = fmls.map(function(){ return 0; });
+        order.forEach(function(code){
+            var tr=document.createElement('tr');
+            var nameTd=document.createElement('td'); nameTd.className='rmName'; nameTd.textContent=map[code]; nameTd.setAttribute('data-rm',code); tr.appendChild(nameTd);
+            var codeTd=document.createElement('td'); codeTd.className='ac'; codeTd.textContent=code; tr.appendChild(codeTd);
+            var vals = fmls.map(function(f){ var row=f.rows.filter(function(r){return r.code===code;})[0]; return row?row.wt:null; });
+            var present = vals.filter(function(v){ return v!=null; });
+            var diff = present.length>1 && Math.max.apply(null,present)!==Math.min.apply(null,present);
+            fmls.forEach(function(f,i){
+                var td=document.createElement('td'); td.className='ar';
+                if(vals[i]==null){ td.textContent='–'; td.classList.add('cGray'); }
+                else { td.textContent=vals[i].toFixed(1); totals[i]+=vals[i]; if(diff) td.classList.add('elnCmpDiff'); }
+                tr.appendChild(td);
+            });
+            tbody.appendChild(tr);
+        });
+        var sum=document.createElement('tr');
+        var l=document.createElement('td'); l.className='ar fontBold'; l.textContent='Total'; sum.appendChild(l);
+        sum.appendChild(document.createElement('td'));
+        totals.forEach(function(t){ var td=document.createElement('td'); td.className='ar fontBold'; td.textContent=t.toFixed(1); sum.appendChild(td); });
+        tbody.appendChild(sum);
     }
+    // 지표 비교표: 지표(행) × 배합(열)
+    function renderFmlMetricTable(){
+        var thead=document.getElementById('fmlCmpMetricHead'), tbody=document.getElementById('fmlMetricBody');
+        if(!thead || !tbody) return;
+        var fmls=fmlList(); thead.innerHTML=''; tbody.innerHTML='';
+        var htr=document.createElement('tr');
+        var th0=document.createElement('th'); th0.textContent='Metric'; htr.appendChild(th0);
+        fmls.forEach(function(f){ var th=document.createElement('th'); th.className='ar'; th.innerHTML=f.code+' <b>'+f.ver+'</b>'; htr.appendChild(th); });
+        thead.appendChild(htr);
+        var keys = fmls.length ? fmls[0].metrics.map(function(m){ return m.k; }) : [];
+        keys.forEach(function(k){
+            var tr=document.createElement('tr');
+            var kt=document.createElement('td'); kt.textContent=k; tr.appendChild(kt);
+            fmls.forEach(function(f){ var mm=f.metrics.filter(function(m){return m.k===k;})[0]; var td=document.createElement('td'); td.className='ar fontBold'; td.textContent=mm?mm.v:'–'; tr.appendChild(td); });
+            tbody.appendChild(tr);
+        });
+    }
+    // 그룹 컬럼 차트: 핵심 지표를 배합별 series로 비교
+    function renderFmlChart(){
+        if(!window.Highcharts || !document.getElementById('chartFmlAnalysis')) return;
+        var fmls=fmlList(); if(!fmls.length) return;
+        var palette=['#A47864','#8ca571','#5a7d9a','#c98a5a'];
+        var series=fmls.map(function(f,i){ return { name:f.code+' '+f.ver, data:f.chart.data, color:palette[i%palette.length], borderRadius:3 }; });
+        Highcharts.chart('chartFmlAnalysis',{
+            chart:{ type:'column', height:240, backgroundColor:'transparent' },
+            title:{ text:'Key Metrics — comparison', style:{ fontSize:'13px', color:'#5a3e30' } },
+            credits:{ enabled:false },
+            legend:{ enabled:fmls.length>1, itemStyle:{ fontSize:'10px', color:'#5a3e30' } },
+            xAxis:{ categories:fmls[0].chart.cats, lineColor:'#d9cfc2' },
+            yAxis:{ title:{ text:null }, gridLineColor:'#eee6da' },
+            tooltip:{ shared:true },
+            plotOptions:{ column:{ groupPadding:0.12, pointPadding:0.04 } },
+            series:series
+        });
+    }
+    // 점도 추이 차트
+    function renderViscosityChart(){
+        if(!window.Highcharts || !document.getElementById('chartViscosity')) return;
+        Highcharts.chart('chartViscosity',{
+            chart:{ type:'column', height:240, backgroundColor:'transparent' },
+            title:{ text:'Viscosity Trend (v1→v3)', style:{ fontSize:'13px', color:'#5a3e30' } },
+            credits:{ enabled:false }, legend:{ enabled:false },
+            xAxis:{ categories:['v1','v2','v3'], lineColor:'#d9cfc2' },
+            yAxis:{ title:{ text:'Viscosity (cP)' }, min:4000, max:5400,
+                plotBands:[{ from:4200, to:4800, color:'rgba(140,165,113,.18)', label:{ text:'Target', style:{ color:'#6f7d57', fontSize:'10px' } } }],
+                plotLines:[{ value:4500, color:'#8ca571', dashStyle:'Dash', width:1 }],
+                gridLineColor:'#eee6da' },
+            tooltip:{ valueSuffix:' cP' },
+            series:[{ name:'Viscosity', borderRadius:4, data:[ {y:5200,color:'#A47864'}, {y:4780,color:'#A47864'}, {y:4520,color:'#8ca571'} ] }]
+        });
+    }
+    function renderFml(){
+        renderFmlCompTable(); renderFmlMetricTable(); renderFmlChart(); renderViscosityChart();
+        if(typeof initAllHBorderTableOverlays==='function'){ try{ initAllHBorderTableOverlays(); }catch(e){} }
+    }
+
+    /* ── 과제 스케줄(스테이지 → 태스크) ── */
+    var PROJ_SCHEDULE = [
+        { stage:'NPC',                tasks:['Basic Data & Concept Overview','DFV Rating','NPC Review'] },
+        { stage:'NPI GO',             tasks:['Project Overview','Update Basic Data','Initial Project Schedule','NPI GO Review'] },
+        { stage:'LAB FORMULATION',    tasks:['Update Project Overview Section','Update Functional Deliverables','LAB FORM. Review'] },
+        { stage:'SCALE-UP',           tasks:['Update Project Overview Section','Update Functional Deliverables','SCALE-UP Review'] },
+        { stage:'COMMERCIAL GO',      tasks:['Update Project Overview Section','Update Functional Deliverables','COMM GO Review'] },
+        { stage:'POST LAUNCH REVIEW', tasks:['Performance Review','Quality & Capability Review','Project Learnings Capture'] }
+    ];
+    function schedStageByName(n){ return PROJ_SCHEDULE.filter(function(s){ return s.stage===n; })[0] || null; }
+    function fillSchedTasks(stageName, selectedTask){
+        var sel=document.getElementById('elnSchedTask'); if(!sel) return;
+        var st=schedStageByName(stageName), tasks=st?st.tasks:[];
+        sel.innerHTML = tasks.map(function(t){ return '<option value="'+esc(t)+'"'+(t===selectedTask?' selected':'')+'>'+esc(t)+'</option>'; }).join('');
+    }
+    function initSchedule(){
+        var stageSel=document.getElementById('elnSchedStage'); if(!stageSel) return;
+        stageSel.innerHTML = PROJ_SCHEDULE.map(function(s){ return '<option value="'+esc(s.stage)+'"'+(s.stage==='SCALE-UP'?' selected':'')+'>'+esc(s.stage)+'</option>'; }).join('');
+        fillSchedTasks('SCALE-UP', 'SCALE-UP Review');
+        function reinit(){ if(window.M && M.FormSelect) M.FormSelect.init(document.querySelectorAll('#elnSchedStage, #elnSchedTask')); }
+        reinit();
+        stageSel.addEventListener('change', function(){ fillSchedTasks(this.value); reinit(); });
+    }
+
+    /* ── Tags + 추천 ── */
+    var TAG_VOCAB = ['#PSA','#silicone','#UVcure','#adhesive','#crosslinker','#reliability','#optical','#coating'];
+    function currentTags(){ return Array.prototype.map.call(document.querySelectorAll('#elnTags .elnTag'), function(c){ return c.getAttribute('data-tag'); }); }
     function addTag(text){
-        text = text.trim(); if(!text) return;
-        if(text[0] !== '#') text = '#' + text;
-        if(currentTags().indexOf(text) >= 0){ toast('Tag already exists.'); return; }
-        var input = document.getElementById('noteTagInput');
-        var chip = document.createElement('span'); chip.className = 'noteTag'; chip.setAttribute('data-tag', text);
+        text=text.trim(); if(!text) return;
+        if(text[0]!=='#') text='#'+text;
+        if(currentTags().indexOf(text)>=0){ toast('Tag already exists.'); return; }
+        var box=document.getElementById('elnTags');
+        var chip=document.createElement('span'); chip.className='elnTag'; chip.setAttribute('data-tag',text);
         chip.appendChild(document.createTextNode(text));
-        var ic = document.createElement('i'); ic.className = 'material-icons'; ic.textContent = 'close';
-        chip.appendChild(ic);
-        input.parentNode.insertBefore(chip, input);
-        renderRecommended();
+        var ic=document.createElement('i'); ic.className='material-symbols-outlined'; ic.textContent='close'; chip.appendChild(ic);
+        box.appendChild(chip); renderRecommended();
     }
     function renderRecommended(){
-        var box = document.getElementById('noteRecTags'); if(!box) return;
-        box.innerHTML = '';
-        var lab = document.createElement('span'); lab.className = 'noteRecLabel';
-        lab.innerHTML = '<i class="material-symbols-outlined">auto_awesome</i>Recommended';
-        box.appendChild(lab);
-        var applied = currentTags();
-        var recs = TAG_VOCAB.filter(function(t){ return applied.indexOf(t) < 0; }).slice(0, 6);
-        if(!recs.length){ var none = document.createElement('span'); none.className = 'noteRecEmpty'; none.textContent = 'No more suggestions'; box.appendChild(none); return; }
+        var box=document.getElementById('elnRecTags'); if(!box) return; box.innerHTML='';
+        var lab=document.createElement('span'); lab.className='elnRecLabel';
+        lab.innerHTML='<i class="material-symbols-outlined">auto_awesome</i>Recommended'; box.appendChild(lab);
+        var applied=currentTags();
+        var recs=TAG_VOCAB.filter(function(t){ return applied.indexOf(t)<0; }).slice(0,6);
+        if(!recs.length){ var none=document.createElement('span'); none.className='elnRecEmpty'; none.textContent='No more suggestions'; box.appendChild(none); return; }
         recs.forEach(function(t){
-            var a = document.createElement('a'); a.href = 'javascript:;'; a.className = 'noteRecChip'; a.setAttribute('data-tag', t);
-            var ic = document.createElement('i'); ic.className = 'material-symbols-outlined'; ic.textContent = 'add';
-            a.appendChild(ic); a.appendChild(document.createTextNode(t));
-            box.appendChild(a);
+            var a=document.createElement('a'); a.href='javascript:;'; a.className='elnRecChip'; a.setAttribute('data-tag',t);
+            var ic=document.createElement('i'); ic.className='material-symbols-outlined'; ic.textContent='add';
+            a.appendChild(ic); a.appendChild(document.createTextNode(t)); box.appendChild(a);
         });
+    }
+
+    /* ── Note List 패널(스테이지 그룹) ── */
+    var PROJECT_NOTES = [
+        { code:'NT-2604-00098', title:'PSA Base Polymer Screening',                    stage:'LAB FORMULATION', date:'2026-04-12', status:'done' },
+        { code:'NT-2604-00115', title:'Tackifier Compatibility Study',                  stage:'LAB FORMULATION', date:'2026-04-28', status:'done' },
+        { code:'NT-2605-00131', title:'Crosslinker Ratio Optimization',                 stage:'LAB FORMULATION', date:'2026-05-06', status:'review' },
+        { code:'NT-2605-00142', title:'UV-Curable PSA Viscosity Improvement — RGBOLED', stage:'SCALE-UP',        date:'2026-05-15', status:'ing', current:true },
+        { code:'NT-2605-00150', title:'Pilot Coating Trial #1',                         stage:'SCALE-UP',        date:'2026-05-22', status:'ing' },
+        { code:'NT-2606-00171', title:'Mass-Production Validation Plan',                stage:'COMMERCIAL GO',   date:'2026-06-03', status:'draft' }
+    ];
+    var NOTE_STATUS_TXT = { done:'Done', ing:'In Progress', review:'In Review', draft:'Draft', appr:'In Approval', ok:'Approved' };
+    var NOTE_STATUS_PILL = { done:'green', ing:'blue', review:'viola25', draft:'grey', appr:'viola25', ok:'green' };
+    function renderNoteList(){
+        var body=document.getElementById('elnNoteListBody'); if(!body) return;
+        if(!PROJECT_NOTES.length){ body.innerHTML='<div class="elnNlEmpty">No notes in this project.</div>'; return; }
+        function itemHtml(n){
+            return '<div class="elnNlItem'+(n.current?' current':'')+'" data-code="'+esc(n.code)+'">'
+                + '<div class="elnNlTop"><span class="elnNlTit">'+esc(n.title)+'</span>'
+                + '<span class="roundBox outline '+(NOTE_STATUS_PILL[n.status]||'grey')+'">'+(NOTE_STATUS_TXT[n.status]||n.status)+'</span></div>'
+                + '<div class="elnNlSub"><span class="code">'+esc(n.code)+'</span><span class="date">'+esc(n.date)+'</span></div>'
+                + '</div>';
+        }
+        var order = PROJ_SCHEDULE.map(function(s){ return s.stage; });
+        var stages = order.filter(function(st){ return PROJECT_NOTES.some(function(n){ return n.stage===st; }); });
+        PROJECT_NOTES.forEach(function(n){ if(n.stage && stages.indexOf(n.stage)<0) stages.push(n.stage); });
+        var html='';
+        stages.forEach(function(st){
+            var items=PROJECT_NOTES.filter(function(n){ return n.stage===st; });
+            html += '<div class="elnNlGroup"><div class="elnNlGroupHead">'+esc(st)+'<span class="cnt">'+items.length+'</span></div>';
+            items.forEach(function(n){ html += itemHtml(n); });
+            html += '</div>';
+        });
+        body.innerHTML=html;
+    }
+    // opener(리스트)의 해당 프로젝트 노트로 패널을 맞춤(직접 URL이면 데모 유지)
+    function syncProjectNotesFromOpener(){
+        try {
+            var op=window.opener; if(!op || op.closed || !op.NOTES) return;
+            var p=new URLSearchParams(location.search);
+            var proj=p.get('project')||'', code=p.get('code')||'';
+            if(!proj) return;
+            var mine=op.NOTES.filter(function(n){ return n.project===proj; });
+            if(!mine.length) return;
+            mine.sort(function(a,b){ return String(b.date).localeCompare(String(a.date)); });
+            PROJECT_NOTES = mine.map(function(n){ return { code:n.code, title:n.title, date:n.date, status:n.st, stage:n.stage, current:(n.code===code) }; });
+            if(code && !PROJECT_NOTES.some(function(n){ return n.current; }) && PROJECT_NOTES[0]) PROJECT_NOTES[0].current=true;
+            var projEl=document.getElementById('elnNoteListProj'); if(projEl && proj) projEl.textContent=proj;
+        } catch(e){}
+    }
+
+    /* ── 동적 모듈 시스템 — 각 모듈 = 카드 + 좌측 목차. 원본 addNoteModule/moduleSampleBody 이식 ── */
+    var MODULE_TYPES = [
+        { key:'editor',  icon:'edit_note',    title:'Editor',             desc:'Rich text — text, tables, images' },
+        { key:'table',   icon:'insert_chart', title:'Data Visualization', desc:'Editable table + multi-series chart' },
+        { key:'chem',    icon:'hexagon',      title:'ChemStudio',         desc:'Sketch a chemical structure' },
+        { key:'fml',     icon:'science',      title:'Formulation',        desc:'Embed from formulator' },
+        { key:'related', icon:'hub',          title:'Related Items',      desc:'Link materials · projects · notes · URLs' },
+        { key:'attach',  icon:'attach_file',  title:'Attachments',        desc:'Files & documents' }
+    ];
+    function moduleSampleBody(key){
+        switch(key){
+            case 'editor': return '<div class="elnSummernote"></div>';
+            case 'table': {
+                var VIZ=[['table','table_chart','Table'],['column','bar_chart','Column'],['bar','bar_chart','Bar'],['line','show_chart','Line'],['area','area_chart','Area'],['pie','pie_chart','Pie'],['donut','donut_small','Donut'],['scatter','scatter_plot','Scatter'],['bubble','bubble_chart','Bubble']];
+                var tiles=VIZ.map(function(v){ return '<button type="button" class="elnVizOpt'+(v[0]==='bar'?' bar':'')+'" data-viz="'+v[0]+'"><i class="material-symbols-outlined">'+v[1]+'</i><span>'+v[2]+'</span></button>'; }).join('');
+                return '<div class="elnDataBox"><div class="elnVizLabel">Visualize as</div><div class="elnVizPick">'+tiles+'</div>'
+                    + '<div class="elnVizStage">'
+                    + '<div class="elnVizEmpty"><i class="material-symbols-outlined">insights</i>Pick a view above to see your data</div>'
+                    + '<div class="elnDataChart" style="display:none;"></div>'
+                    + '<div class="elnDataTableTools" style="display:none;"><span class="elnDataHint"><i class="material-symbols-outlined">content_paste</i>Click a cell, then Ctrl+V to paste from Excel</span></div>'
+                    + '<div class="fixedTable hBorderTable hScroll elnDataTableWrap" style="display:none;"><table class="elnDataTable">'
+                    + '<thead><tr><th contenteditable="true">Category</th><th contenteditable="true">Sample A</th><th contenteditable="true">Sample B</th></tr></thead>'
+                    + '<tbody>'
+                    + '<tr><td contenteditable="true">Item 1</td><td contenteditable="true">38</td><td contenteditable="true">31</td></tr>'
+                    + '<tr><td contenteditable="true">Item 2</td><td contenteditable="true">12</td><td contenteditable="true">18</td></tr>'
+                    + '<tr><td contenteditable="true">Item 3</td><td contenteditable="true">28</td><td contenteditable="true">24</td></tr>'
+                    + '<tr><td contenteditable="true">Item 4</td><td contenteditable="true">22</td><td contenteditable="true">27</td></tr>'
+                    + '</tbody></table></div></div></div>';
+            }
+            case 'fml': return '<div class="elnFmlHead"><i class="material-symbols-outlined">science</i><div class="elnFmlId">No formulation linked yet</div><a href="javascript:;" class="waves-effect waves-light hBtn elnFmlLink"><i class="material-symbols-outlined left">link</i>Link…</a></div>';
+            case 'attach': return '<div class="elnAttachBox"><label class="elnAttachDrop"><i class="material-symbols-outlined">upload_file</i><span>Drop files or <b>choose</b></span><input type="file" class="elnFileInput" multiple hidden></label><ul class="elnAttachList"></ul></div>';
+            case 'related': return '<div class="elnRelBox"><ul class="elnRelList">'
+                + '<li class="elnRelItem"><i class="material-symbols-outlined">science</i><span class="elnRelType">Material</span><a href="javascript:;" class="elnRelLink">[RM-0421] UV Photoinitiator</a><i class="material-symbols-outlined elnRelDel" title="Remove">close</i></li>'
+                + '<li class="elnRelItem"><i class="material-symbols-outlined">rocket_launch</i><span class="elnRelType">Project</span><a href="javascript:;" class="elnRelLink">[SN-26-0031] RGBOLED Display Adhesive</a><i class="material-symbols-outlined elnRelDel" title="Remove">close</i></li>'
+                + '</ul><a href="javascript:;" class="waves-effect waves-light hBtn elnRelAddBtn"><i class="material-symbols-outlined left">add</i>Add Item</a></div>';
+            case 'chem': return '<div class="elnChemBox"><ul class="elnChemList"></ul>'
+                + '<div class="elnChemEmptyLine"><i class="material-symbols-outlined">hexagon</i>No structures yet — add one or more from ChemStudio.</div>'
+                + '<div class="elnChemAdd"><a href="javascript:;" class="waves-effect waves-light hBtn elnChemOpen"><i class="material-symbols-outlined left">add</i>Add New</a>'
+                + '<a href="javascript:;" class="waves-effect waves-light hBtn elnChemLink"><i class="material-symbols-outlined left">library_add</i>Add Existing</a></div></div>';
+            default: return '';
+        }
+    }
+    // Data Visualization: 뷰 타일 클릭 → 표 + 차트(highcharts). 최소 배선
+    var _vizSeq=0;
+    function wireViz(scope){
+        var pick=scope.querySelector('.elnVizPick'); if(!pick) return;
+        var empty=scope.querySelector('.elnVizEmpty'), chartBox=scope.querySelector('.elnDataChart');
+        var tableWrap=scope.querySelector('.elnDataTableWrap'), tools=scope.querySelector('.elnDataTableTools');
+        var cid='elnVizChart'+(++_vizSeq);
+        function readData(){
+            var table=scope.querySelector('.elnDataTable');
+            var heads=[].map.call(table.querySelectorAll('thead th'), function(th){ return th.textContent.trim(); });
+            var cats=[], series=[]; for(var i=1;i<heads.length;i++) series.push({ name:heads[i], data:[] });
+            table.querySelectorAll('tbody tr').forEach(function(tr){
+                var tds=tr.querySelectorAll('td'); cats.push(tds[0].textContent.trim());
+                for(var i=1;i<tds.length;i++){ if(series[i-1]) series[i-1].data.push(parseFloat(tds[i].textContent)||0); }
+            });
+            return { cats:cats, series:series, heads:heads };
+        }
+        pick.addEventListener('click', function(e){
+            var opt=e.target.closest('.elnVizOpt'); if(!opt) return;
+            pick.querySelectorAll('.elnVizOpt').forEach(function(o){ o.classList.remove('on'); }); opt.classList.add('on');
+            var viz=opt.getAttribute('data-viz');
+            if(empty) empty.style.display='none';
+            if(tableWrap) tableWrap.style.display=''; if(tools) tools.style.display='';
+            if(viz==='table'){ if(chartBox) chartBox.style.display='none'; return; }
+            if(!window.Highcharts){ return; }
+            if(chartBox){ chartBox.style.display=''; chartBox.id=cid; }
+            var d=readData(), palette=['#A47864','#8ca571','#5a7d9a','#c98a5a'];
+            var typeMap={ column:'column', bar:'bar', line:'line', area:'area', scatter:'scatter', bubble:'scatter' };
+            if(viz==='pie'||viz==='donut'){
+                Highcharts.chart(cid,{ chart:{type:'pie',height:220,backgroundColor:'transparent'}, title:{text:null}, credits:{enabled:false}, colors:palette,
+                    plotOptions:{ pie:{ innerSize:(viz==='donut'?'55%':0), dataLabels:{ style:{fontSize:'11px'} } } },
+                    series:[{ name:d.heads[1], colorByPoint:true, data:d.cats.map(function(c,i){ return { name:c, y:d.series[0].data[i] }; }) }] });
+            } else {
+                Highcharts.chart(cid,{ chart:{type:typeMap[viz]||'column',height:220,backgroundColor:'transparent'}, title:{text:null}, credits:{enabled:false}, colors:palette,
+                    xAxis:{ categories:d.cats, lineColor:'#d9cfc2' }, yAxis:{ title:{text:null}, gridLineColor:'#eee6da' },
+                    series:d.series.map(function(s){ return { name:s.name, data:s.data, borderRadius:3 }; }) });
+            }
+        });
+    }
+    function wireModuleBody(key, body){
+        if(key==='editor'){ var ed=body.querySelector('.elnSummernote'); if(ed){ ed.classList.add('elnSummernoteFallback'); ed.setAttribute('contenteditable','true'); ed.setAttribute('data-ph','Write here — text, tables, images…'); } }
+        else if(key==='table'){ wireViz(body); }
+        else if(key==='attach'){
+            var drop=body.querySelector('.elnAttachDrop'), input=body.querySelector('.elnFileInput'), list=body.querySelector('.elnAttachList');
+            if(input && list){ input.addEventListener('change', function(){ [].forEach.call(input.files, function(f){
+                var li=document.createElement('li'); li.className='elnAttachItem';
+                li.innerHTML='<i class="material-symbols-outlined">description</i><span class="nm">'+esc(f.name)+'</span><em>'+Math.max(1,Math.round(f.size/1024))+' KB</em><i class="material-symbols-outlined x">close</i>';
+                li.querySelector('.x').addEventListener('click', function(){ li.remove(); }); list.appendChild(li);
+            }); input.value=''; }); }
+        }
+        else if(key==='related'){
+            body.addEventListener('click', function(e){ var d=e.target.closest('.elnRelDel'); if(d){ d.closest('.elnRelItem').remove(); return; } if(e.target.closest('.elnRelAddBtn')){ toast('Add related item (mockup).'); } });
+        }
+        else if(key==='chem'){ body.addEventListener('click', function(e){ if(e.target.closest('.elnChemOpen')) toast('Open ChemStudio (mockup).'); else if(e.target.closest('.elnChemLink')) toast('Link existing structure (mockup).'); }); }
+        else if(key==='fml'){ var lk=body.querySelector('.elnFmlLink'); if(lk) lk.addEventListener('click', function(){ toast('Link a formulation (mockup).'); }); }
+    }
+    var modSeq=0;
+    function removeModule(id){
+        var sec=document.getElementById(id); if(sec) sec.remove();
+        var li=document.querySelector('.leftAside .menuUl .menu-item[data-target="'+id+'"]'); if(li) li.remove();
+        toast('Module removed.');
+    }
+    // 정적 카드(card_fml/card_concl) 제거 — 템플릿 구성에 없을 때 (토스트 없이)
+    function removeStaticCard(id){
+        var card=document.getElementById(id); if(card) card.remove();
+        var li=document.querySelector('.leftAside .menuUl .menu-item[data-target="'+id+'"]'); if(li) li.remove();
+    }
+    // 모듈 카드 + 좌측 목차 생성. beforeCard/beforeMenu = 삽입 기준 카드 id(기본 Conclusion 앞)
+    function addNoteModule(t, opts){
+        opts=opts||{};
+        var article=document.getElementById('tab_ov'); if(!article) return;
+        var id='card_mod_'+(++modSeq);
+        var sec=document.createElement('section'); sec.className='cardBox mt10'+(opts.silent?'':' animate__animated animate__fadeIn'); sec.id=id; sec.setAttribute('data-modtype',t.key);
+        var tit=document.createElement('div'); tit.className='cardTit2';
+        var ic=document.createElement('i'); ic.className='material-symbols-outlined left'; ic.textContent=t.icon; tit.appendChild(ic);
+        tit.appendChild(document.createTextNode(t.title));
+        var del=document.createElement('a'); del.href='javascript:;'; del.className='elnModDel'; del.title='Remove module'; del.innerHTML='<i class="material-symbols-outlined">close</i>';
+        del.addEventListener('click', function(){ removeModule(id); }); tit.appendChild(del);
+        sec.appendChild(tit);
+        var body=document.createElement('div'); body.className='elnBasic'; body.innerHTML=moduleSampleBody(t.key);
+        var addCtl=body.querySelector('.elnChemAdd, .elnRelAddBtn, .elnFmlLink');
+        if(addCtl){ var tb=document.createElement('div'); tb.className='elnFmlToolbar'; tb.appendChild(addCtl); sec.appendChild(tb); }
+        sec.appendChild(body);
+        wireModuleBody(t.key, body);
+        var refCard=document.getElementById(opts.beforeCard||'card_concl') || document.getElementById('card_approval');
+        article.insertBefore(sec, refCard);
+        var ul=document.querySelector('.leftAside .menuUl');
+        var li=document.createElement('li'); li.className='menu-item waves-effect waves-hColor'; li.setAttribute('data-target',id);
+        li.innerHTML='<i class="material-symbols-outlined left">'+t.icon+'</i><span>'+t.title+'</span>';
+        var refLi=ul.querySelector('.menu-item[data-target="'+(opts.beforeMenu||'card_concl')+'"]') || ul.querySelector('.menu-item[data-target="card_approval"]');
+        ul.insertBefore(li, refLi||null);
+        setupNavHandle(li);
+        if(typeof initAllHBorderTableOverlays==='function'){ try{ initAllHBorderTableOverlays(); }catch(e){} }
+        return { sec:sec, li:li };
+    }
+    // 픽커 카드 — 마우스 추적 무지개 색수차(glassTrack) + 3D 틸트(고급 글래스 인터랙션)
+    function wirePickTilt(scope){
+        if(!scope) return;
+        scope.querySelectorAll('.elnAddPickCard').forEach(function(card){
+            if(card._tilt) return; card._tilt=true;
+            card.addEventListener('mousemove', function(e){
+                if(typeof glassTrack==='function') glassTrack.call(card, e);
+                var r=card.getBoundingClientRect();
+                var x=((e.clientX-r.left)/r.width)*100, y=((e.clientY-r.top)/r.height)*100;
+                card.style.transform='perspective(600px) rotateX('+((50-y)/50*8)+'deg) rotateY('+((x-50)/50*8)+'deg) scale(1.02)';
+            });
+            card.addEventListener('mouseleave', function(){
+                if(typeof glassClear==='function') glassClear(card);
+                card.style.transition='transform .3s ease'; card.style.transform='';
+                setTimeout(function(){ card.style.transition=''; }, 300);
+            });
+        });
+    }
+    // Add Module 모달 그리드
+    function renderModulePicker(){
+        var grid=document.getElementById('addModuleGrid'); if(!grid) return;
+        grid.innerHTML = MODULE_TYPES.map(function(m){
+            return '<div class="elnAddPickCard" data-mod="'+esc(m.key)+'"><i class="material-symbols-outlined">'+m.icon+'</i>'
+                + '<span class="nm">'+esc(m.title)+'</span><span class="ds">'+esc(m.desc)+'</span></div>';
+        }).join('');
+        wirePickTilt(grid);
+    }
+
+    /* ── 좌측 목차 드래그 재정렬(네이티브 DnD, 핸들에서만 시작). Basic 최상단 · Approval 최하단 고정 ── */
+    function fixedMenu(li){ var t=li.getAttribute('data-target'); return t==='card_basic'||t==='card_approval'; }
+    function setupNavHandle(li){
+        if(!li || fixedMenu(li) || li.querySelector('.elnNavHandle')) { return; }
+        var h=document.createElement('i'); h.className='material-symbols-outlined elnNavHandle'; h.textContent='drag_indicator';
+        li.appendChild(h); li.setAttribute('draggable','true');
+        h.addEventListener('mousedown', function(){ li._armed=true; });
+        li.addEventListener('mouseup', function(){ li._armed=false; });
+    }
+    function initReorder(){
+        var ul=document.querySelector('.leftAside .menuUl'); if(!ul) return;
+        ul.querySelectorAll('.menu-item').forEach(setupNavHandle);
+        var dragEl=null;
+        ul.addEventListener('dragstart', function(e){
+            var li=e.target.closest('.menu-item');
+            if(!li || fixedMenu(li) || !li._armed){ e.preventDefault(); return; }
+            dragEl=li; li.classList.add('elnDragging'); e.dataTransfer.effectAllowed='move'; try{ e.dataTransfer.setData('text/plain',''); }catch(x){}
+        });
+        ul.addEventListener('dragover', function(e){
+            if(!dragEl) return; e.preventDefault();
+            var over=e.target.closest('.menu-item'); if(!over || over===dragEl || fixedMenu(over)) return;
+            var r=over.getBoundingClientRect(); var after=(e.clientY-r.top)/r.height>0.5;
+            ul.insertBefore(dragEl, after?over.nextSibling:over);
+        });
+        ul.addEventListener('drop', function(e){ e.preventDefault(); });
+        ul.addEventListener('dragend', function(){
+            if(!dragEl) return; dragEl.classList.remove('elnDragging'); dragEl._armed=false; dragEl=null;
+            var basic=ul.querySelector('.menu-item[data-target="card_basic"]'); if(basic) ul.insertBefore(basic, ul.firstChild);
+            var appr=ul.querySelector('.menu-item[data-target="card_approval"]'); if(appr) ul.appendChild(appr);
+            syncCardsToMenu(); toast('Module order updated.');
+        });
+    }
+    // 좌측 목차 순서 → 카드 순서 동기(Approval 카드 앞에 순서대로 삽입)
+    function syncCardsToMenu(){
+        var article=document.getElementById('tab_ov'), end=document.getElementById('card_approval'); if(!article) return;
+        document.querySelectorAll('.leftAside .menuUl .menu-item').forEach(function(li){
+            var id=li.getAttribute('data-target'); if(id==='card_approval') return;
+            var card=document.getElementById(id); if(card) article.insertBefore(card, end);
+        });
+    }
+
+    /* ── 헤더 상태 알약 ── */
+    var HEAD_PILL = { ing:{c:'blue',t:'In Progress'}, appr:{c:'viola25',t:'In Approval'}, ok:{c:'green',t:'Approved'} };
+    function setHeadStatus(st){
+        var el=document.getElementById('elnHeadStatus'); if(!el) return;
+        var m=HEAD_PILL[st]||HEAD_PILL.ing;
+        el.className='roundBox '+m.c; el.setAttribute('data-status',st); el.textContent=m.t;
     }
 
     $(document).ready(function(){
         if(window.M){
-            if(M.textareaAutoResize) document.querySelectorAll('.materialize-textarea').forEach(function(t){ M.textareaAutoResize(t); });
+            if(M.FormSelect) M.FormSelect.init(document.querySelectorAll('select'));
+            $('.modal').modal({
+                onOpenStart:function(){ $('header, aside, .contArea').addClass('modalBlur'); },
+                onCloseStart:function(){ $('header, aside, .contArea').removeClass('modalBlur'); }
+            });
         }
 
+        // URL 파라미터 → 헤더 제목/프로젝트/상태
         try {
-            var qp = new URLSearchParams(location.search);
-            var code = qp.get('code'), project = qp.get('project');
-            if(code){
-                var titEl = document.getElementById('noteHeadTit');
-                titEl.textContent = '[' + code + '] ' + titEl.textContent.replace(/^\[[^\]]*\]\s*/, '');
+            var qp=new URLSearchParams(location.search);
+            var code=qp.get('code'), project=qp.get('project'), st=qp.get('st');
+            if(code){ var t=document.getElementById('elnHeadTit'); t.textContent='['+code+'] '+t.textContent.replace(/^\[[^\]]*\]\s*/,''); }
+            if(project){
+                var pv=document.getElementById('elnProjVal'); var lk=pv&&pv.querySelector('.elnProjLink');
+                if(lk) lk.textContent=project;
+                var pj=document.getElementById('elnNoteListProj'); if(pj) pj.textContent=project;
             }
-            if(project) document.getElementById('noteProjInput').value = project;
+            if(st) setHeadStatus(st);
         } catch(e){}
 
+        renderFml();
+        initSchedule();
+        renderRecommended();
+        renderModulePicker();
+        // 리스트에서 넘긴 템플릿 구성(module keys). 있으면 해당 카드만 구성, 없으면 전체 기본 모듈(기존 노트 열람)
+        var startMods=null;
+        try { var raw=localStorage.getItem('eln.startSections'); if(raw){ startMods=JSON.parse(raw); localStorage.removeItem('eln.startSections'); } } catch(e){}
+        var DYN=['editor','table','chem','related','attach'];
+        if(startMods){
+            // 템플릿 모드 — Formulation(정적)은 템플릿에 있을 때만, Conclusion(정적)은 템플릿에 없으므로 제거
+            if(startMods.indexOf('fml')<0) removeStaticCard('card_fml');
+            removeStaticCard('card_concl');
+            // 동적 모듈은 템플릿 순서대로 (fml은 정적 카드라 위에서 처리)
+            startMods.forEach(function(key){
+                if(DYN.indexOf(key)<0) return;
+                var t=MODULE_TYPES.filter(function(m){ return m.key===key; })[0];
+                if(t) addNoteModule(t, { silent:true, beforeCard:'card_approval', beforeMenu:'card_approval' });
+            });
+        } else {
+            // 기본: 원본과 동일 전체 모듈(Editor·Data Visualization·ChemStudio·Related·Attachments) — Formulation과 Conclusion 사이
+            DYN.forEach(function(key){
+                var t=MODULE_TYPES.filter(function(m){ return m.key===key; })[0];
+                if(t) addNoteModule(t, { silent:true, beforeCard:'card_concl', beforeMenu:'card_concl' });
+            });
+        }
+        initReorder();
+        setTimeout(function(){ syncProjectNotesFromOpener(); renderNoteList(); }, 60);
+
+        // 좌측 목차 → 카드 스크롤 + 스크롤스파이
         document.querySelectorAll('.menu-item').forEach(function(mi){
             mi.addEventListener('click', function(){
-                var card = document.getElementById(mi.getAttribute('data-target'));
+                var card=document.getElementById(mi.getAttribute('data-target'));
                 if(card) card.scrollIntoView({ behavior:'smooth', block:'start' });
                 document.querySelectorAll('.menu-item').forEach(function(x){ x.classList.remove('active'); });
                 mi.classList.add('active');
             });
         });
         $(window).on('scroll', function(){
-            var pos = $(window).scrollTop() + 120;
+            var pos=$(window).scrollTop()+120;
             $('.cardBox[id]').each(function(){
-                var top = $(this).offset().top, bottom = top + $(this).outerHeight();
-                if(pos >= top && pos < bottom){
-                    $('.menu-item').removeClass('active');
-                    $('.menu-item[data-target="' + this.id + '"]').addClass('active');
-                    return false;
-                }
+                var top=$(this).offset().top, bottom=top+$(this).outerHeight();
+                if(pos>=top && pos<bottom){ $('.menu-item').removeClass('active'); $('.menu-item[data-target="'+this.id+'"]').addClass('active'); return false; }
             });
         });
 
-        var tagInput = document.getElementById('noteTagInput');
-        if(tagInput) tagInput.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); addTag(tagInput.value); tagInput.value = ''; } });
-        document.getElementById('noteTags').addEventListener('click', function(e){
-            var x = e.target.closest('.noteTag i'); if(!x) return;
-            x.closest('.noteTag').remove(); renderRecommended();
-        });
-        document.getElementById('noteRecTags').addEventListener('click', function(e){
-            var chip = e.target.closest('.noteRecChip'); if(!chip) return;
-            addTag(chip.getAttribute('data-tag'));
-        });
-        renderRecommended();
+        // Tags 입력/삭제/추천
+        var tagInput=document.getElementById('elnTagInput');
+        if(tagInput) tagInput.addEventListener('keydown', function(e){ if(e.key==='Enter'){ e.preventDefault(); addTag(tagInput.value); tagInput.value=''; } });
+        document.getElementById('elnTags').addEventListener('click', function(e){ var x=e.target.closest('.elnTag i'); if(!x) return; x.closest('.elnTag').remove(); renderRecommended(); });
+        document.getElementById('elnRecTags').addEventListener('click', function(e){ var chip=e.target.closest('.elnRecChip'); if(!chip) return; addTag(chip.getAttribute('data-tag')); });
 
-        document.getElementById('noteSaveBtn').addEventListener('click', function(){ toast('Saved (mockup).'); });
+        // Composition 원료 클릭 → Rawmathub 안내
+        document.getElementById('fmlTableBody').addEventListener('click', function(e){
+            var rm=e.target.closest('.rmName'); if(!rm) return;
+            var code=rm.getAttribute('data-rm'); toast((RM_INFO[code]||code)+' — open in Rawmathub (mockup).');
+        });
+
+        // Conclusion contenteditable 폴백
+        (function(){ var el=document.getElementById('elnConclEditor'); if(el){ el.setAttribute('contenteditable','true'); el.classList.add('elnSummernoteFallback'); el.setAttribute('data-ph','Write the conclusion…'); } })();
+
+        // Note List 패널 토글
+        (function(){
+            var btn=document.getElementById('elnNoteListBtn'), panel=document.getElementById('elnNoteListPanel');
+            var scrim=document.getElementById('elnNoteListScrim'), closeBtn=document.getElementById('elnNoteListClose');
+            if(!btn || !panel) return;
+            function onKey(e){ if(e.key==='Escape') close(); }
+            function open(){ panel.classList.add('on'); if(scrim) scrim.classList.add('on'); document.addEventListener('keydown', onKey); }
+            function close(){ panel.classList.remove('on'); if(scrim) scrim.classList.remove('on'); document.removeEventListener('keydown', onKey); }
+            btn.addEventListener('click', function(){ panel.classList.contains('on')?close():open(); });
+            if(closeBtn) closeBtn.addEventListener('click', close);
+            if(scrim) scrim.addEventListener('click', close);
+            // 노트 아이템 클릭 → 그 노트로 이동(같은 창 재로딩)
+            document.getElementById('elnNoteListBody').addEventListener('click', function(e){
+                var it=e.target.closest('.elnNlItem'); if(!it) return;
+                var c=it.getAttribute('data-code'); if(!c) return;
+                var qp=new URLSearchParams(location.search); qp.set('code', c);
+                location.search='?'+qp.toString();
+            });
+        })();
+
+        // 액션 버튼(목업)
+        document.getElementById('elnSaveBtn').addEventListener('click', function(){ toast('Saved (mockup).'); });
+        var stpl=document.getElementById('elnSaveTemplate'); if(stpl) stpl.addEventListener('click', function(){ toast('Template saved (mockup).'); });
+        var bcf=document.getElementById('btnChangeFml'); if(bcf) bcf.addEventListener('click', function(){ toast('Select formulations to embed (mockup).'); });
+        var bof=document.getElementById('btnOpenFormulator'); if(bof) bof.addEventListener('click', function(){ toast('Opening in formulator (mockup).'); });
+        document.getElementById('addModuleGrid').addEventListener('click', function(e){
+            var card=e.target.closest('.elnAddPickCard'); if(!card) return;
+            var t=MODULE_TYPES.filter(function(m){ return m.key===card.getAttribute('data-mod'); })[0];
+            var inst=M.Modal.getInstance(document.getElementById('addModuleModal')); if(inst) inst.close();
+            if(t){ var r=addNoteModule(t, { beforeCard:'card_concl', beforeMenu:'card_concl' }); if(r && r.sec){ r.sec.scrollIntoView({ behavior:'smooth', block:'start' }); toast('Module "'+t.title+'" added.'); } }
+        });
+        var pl=document.querySelector('.elnProjLink'); if(pl) pl.addEventListener('click', function(){ toast('Open project detail (mockup).'); });
     });
     </script>
 </body>

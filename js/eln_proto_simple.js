@@ -513,31 +513,75 @@
     { code: 'NT-2605-00150', title: 'Pilot Coating Trial #1',                              stage: 'SCALE-UP',        date: '2026-05-22', status: 'ing',    modules: ['editor','attach'] },
     { code: 'NT-2606-00171', title: 'Mass-Production Validation Plan',                     stage: 'COMMERCIAL GO',   date: '2026-06-03', status: 'draft',  modules: ['editor'] }
   ];
-  var NOTE_STATUS_TXT = { done: 'Done', ing: 'In Progress', review: 'In Review', draft: 'Draft' };
-  // 노트 상태 → 헤더 알약(roundBox) 색. 헤더 워크플로우 어휘와 달라 전환 시 직접 매핑
-  var NOTE_STATUS_PILL = { done: 'green', ing: 'blue', review: 'viola25', draft: 'grey' };
+  var NOTE_STATUS_TXT = { done: 'Done', ing: 'In Progress', review: 'In Review', draft: 'Draft', appr: 'In Approval', ok: 'Approved' };
+  // 노트 상태 → 헤더 알약(roundBox) 색. 리스트 어휘(ing/appr/ok)도 지원(패널을 opener.NOTES로 소싱)
+  var NOTE_STATUS_PILL = { done: 'green', ing: 'blue', review: 'viola25', draft: 'grey', appr: 'viola25', ok: 'green' };
 
   function renderNoteList() {
     var body = document.getElementById('elnNoteListBody'); if (!body) return;
-    // 스테이지 순서는 과제 스케줄(PROJ_SCHEDULE) 기준 — 노트 있는 스테이지만, 스케줄 밖 스테이지는 뒤에
-    var order = (typeof PROJ_SCHEDULE !== 'undefined') ? PROJ_SCHEDULE.map(function (s) { return s.stage; }) : [];
-    var stages = order.filter(function (st) { return PROJECT_NOTES.some(function (n) { return n.stage === st; }); });
-    PROJECT_NOTES.forEach(function (n) { if (stages.indexOf(n.stage) < 0) stages.push(n.stage); });
-    if (!stages.length) { body.innerHTML = '<div class="elnNlEmpty">No notes in this project.</div>'; return; }
+    if (!PROJECT_NOTES.length) { body.innerHTML = '<div class="elnNlEmpty">No notes in this project.</div>'; return; }
+    function itemHtml(n) {
+      return '<div class="elnNlItem' + (n.current ? ' current' : '') + '" data-code="' + esc(n.code) + '">'
+        + '<div class="elnNlTop"><span class="elnNlTit">' + esc(n.title) + '</span>'
+        + '<span class="roundBox outline ' + (NOTE_STATUS_PILL[n.status] || 'grey') + '">' + (NOTE_STATUS_TXT[n.status] || n.status) + '</span></div>'
+        + '<div class="elnNlSub"><span class="code">' + esc(n.code) + '</span><span class="date">' + esc(n.date) + '</span></div>'
+        + '</div>';
+    }
     var html = '';
-    stages.forEach(function (st) {
-      var items = PROJECT_NOTES.filter(function (n) { return n.stage === st; });
-      html += '<div class="elnNlGroup"><div class="elnNlGroupHead">' + esc(st) + '<span class="cnt">' + items.length + '</span></div>';
-      items.forEach(function (n) {
-        html += '<div class="elnNlItem' + (n.current ? ' current' : '') + '" data-code="' + esc(n.code) + '">'
-          + '<div class="elnNlTop"><span class="elnNlTit">' + esc(n.title) + '</span>'
-          + '<span class="roundBox outline ' + (NOTE_STATUS_PILL[n.status] || 'grey') + '">' + (NOTE_STATUS_TXT[n.status] || n.status) + '</span></div>'
-          + '<div class="elnNlSub"><span class="code">' + esc(n.code) + '</span><span class="date">' + esc(n.date) + '</span></div>'
-          + '</div>';
+    var hasStage = PROJECT_NOTES.some(function (n) { return n.stage; });
+    if (hasStage) {
+      // 스테이지 순서는 과제 스케줄(PROJ_SCHEDULE) 기준 — 노트 있는 스테이지만, 스케줄 밖 스테이지는 뒤에
+      var order = (typeof PROJ_SCHEDULE !== 'undefined') ? PROJ_SCHEDULE.map(function (s) { return s.stage; }) : [];
+      var stages = order.filter(function (st) { return PROJECT_NOTES.some(function (n) { return n.stage === st; }); });
+      PROJECT_NOTES.forEach(function (n) { if (n.stage && stages.indexOf(n.stage) < 0) stages.push(n.stage); });
+      stages.forEach(function (st) {
+        var items = PROJECT_NOTES.filter(function (n) { return n.stage === st; });
+        html += '<div class="elnNlGroup"><div class="elnNlGroupHead">' + esc(st) + '<span class="cnt">' + items.length + '</span></div>';
+        items.forEach(function (n) { html += itemHtml(n); });
+        html += '</div>';
       });
+    } else {
+      // 리스트(opener)에서 소싱한 노트 = 스테이지 없음 → 평면 리스트(리스트 페이지와 동일 최신순)
+      html += '<div class="elnNlGroup">';
+      PROJECT_NOTES.forEach(function (n) { html += itemHtml(n); });
       html += '</div>';
-    });
+    }
     body.innerHTML = html;
+  }
+  // Formulation 정적 카드(+목차) show/hide — 리스트 포뮬라 마크(if(n.fml))와 동일 기준으로 상세를 맞춤
+  function setFmlVisible(show) {
+    var fmlCard = document.getElementById('card_fml');
+    if (fmlCard) fmlCard.style.display = show ? '' : 'none';
+    var fmlLi = document.querySelector('.leftAside .menuUl .menu-item[data-target="card_fml"]');
+    if (fmlLi) fmlLi.style.display = show ? '' : 'none';
+  }
+  // 초기 로드: 리스트에서 연 노트(code)의 실제 fml 유무로 Formulation 카드 동기화(마크 없으면 카드도 없게).
+  // 새 노트(tmpl)·직접 URL은 건드리지 않음 → realizeTemplate/정적 데모 흐름 보존.
+  function initNoteFmlFromOpener() {
+    try {
+      var p = new URLSearchParams(location.search), code = p.get('code') || '';
+      if (!code) return;
+      var op = window.opener;
+      var n = (op && !op.closed && op.NOTES) ? op.NOTES.filter(function (x) { return x.code === code; })[0] : null;
+      if (!n) return;   // opener 없거나(직접 URL) 목록에 없으면 정적 데모 유지
+      setFmlVisible(!!n.fml);
+    } catch (e) {}
+  }
+  window.addEventListener('load', function () { setTimeout(initNoteFmlFromOpener, 80); });
+
+  // 팝업 노트리스트 패널을 리스트(opener.NOTES)의 해당 프로젝트 노트로 맞춤. opener 없으면(직접 URL) 하드코딩 데모 유지.
+  function syncProjectNotesFromOpener() {
+    try {
+      var op = window.opener; if (!op || op.closed || !op.NOTES) return;
+      var p = new URLSearchParams(location.search);
+      var proj = p.get('project') || '', code = p.get('code') || '';
+      if (!proj) return;
+      var mine = op.NOTES.filter(function (n) { return n.project === proj; });
+      if (!mine.length) return;
+      mine.sort(function (a, b) { return String(b.date).localeCompare(String(a.date)); });   // 최신순(리스트와 동일)
+      PROJECT_NOTES = mine.map(function (n) { return { code: n.code, title: n.title, date: n.date, status: n.st, stage: n.stage, fml: n.fml, current: (n.code === code) }; });
+      if (code && !PROJECT_NOTES.some(function (n) { return n.current; }) && PROJECT_NOTES[0]) PROJECT_NOTES[0].current = true;
+    } catch (e) {}
   }
 
   function initNoteList() {
@@ -546,6 +590,7 @@
     if (!btn || !panel) return;   // 상세 팝업에서만
     var scrim = document.getElementById('elnNoteListScrim');
     var closeBtn = document.getElementById('elnNoteListClose');
+    syncProjectNotesFromOpener();   // 패널을 리스트(opener) 프로젝트 노트로 맞춤
     renderNoteList();
     function onKey(e) { if (e.key === 'Escape') closePanel(); }
     function openPanel() { panel.classList.add('on'); if (scrim) scrim.classList.add('on'); document.addEventListener('keydown', onKey); }
@@ -579,8 +624,12 @@
       var pill = document.getElementById('elnHeadStatus');
       if (pill) { pill.className = 'roundBox ' + (NOTE_STATUS_PILL[n.status] || 'grey');
         pill.setAttribute('data-status', n.status); pill.textContent = NOTE_STATUS_TXT[n.status] || n.status; }
-      // 노트별 모듈 구성 적용 — 기존 add/removeModule 메커니즘으로 카드·목차 재생성(개수가 달라져 드라마틱)
-      applyNoteModules(n.modules || []);
+      // 상태에 따라 view/edit 모드 동기화(작성중 ing=편집 / 결재중 appr·완료 ok=뷰)
+      if (n.status === 'appr' || n.status === 'ok') { apprView = true; setNoteApproved(true); }
+      else if (n.status === 'ing') { apprView = false; setNoteApproved(false); }
+      // 노트별 모듈 구성 적용(하드코딩 데모 노트만 — opener 노트는 modules 없음 → 콘텐츠 유지)
+      if (n.modules) applyNoteModules(n.modules);
+      else setFmlVisible(!!n.fml);   // opener 노트: 실제 fml 유무로 Formulation 카드만 동기화(리스트 마크와 일치)
       // current 플래그 이동 후 리스트 재렌더 → 좌측 바/하이라이트가 클릭한 노트로
       PROJECT_NOTES.forEach(function (x) { x.current = (x.code === code); });
       if (typeof CURRENT_CODE !== 'undefined') CURRENT_CODE = code;   // "지금 보는 노트" 체크들과 동기화
@@ -602,11 +651,7 @@
     function applyNoteModules(modules) {
       var article = document.getElementById('tab_ov'); if (!article) return;
       // 1) Formulation 정적 카드: 보유 여부에 따라 show/hide (카드+목차)
-      var onFml = modules.indexOf('fml') >= 0;
-      var fmlCard = document.getElementById('card_fml');
-      if (fmlCard) fmlCard.style.display = onFml ? '' : 'none';
-      var fmlLi = document.querySelector('.leftAside .menuUl .menu-item[data-target="card_fml"]');
-      if (fmlLi) fmlLi.style.display = onFml ? '' : 'none';
+      setFmlVisible(modules.indexOf('fml') >= 0);
       // 2) 기존 동적 모듈 전부 제거(카드+목차)
       article.querySelectorAll('.cardBox[data-modtype]').forEach(function (card) {
         if (DYN_MOD_KEYS.indexOf(card.getAttribute('data-modtype')) >= 0) removeSection(card.id);
@@ -1404,7 +1449,10 @@
   var PUBLIC_TEMPLATES = [
     { key: 'empty',       icon: 'description', name: 'Blank',       sections: [{ type: 'overview', label: 'Overview' }] },
     { key: 'general',     icon: 'note',        name: 'General',     sections: [{ type: 'overview', label: 'Overview' }, { type: 'editor', label: 'Notes' }] },
-    { key: 'formulation', icon: 'science',     name: 'Formulation', sections: [{ type: 'overview', label: 'Overview' }, { type: 'formulation', label: 'Formulation' }, { type: 'conclusion', label: 'Conclusion' }] }
+    { key: 'formulation', icon: 'science',     name: 'Formulation', sections: [{ type: 'overview', label: 'Overview' }, { type: 'formulation', label: 'Formulation' }] },
+    { key: 'experiment',  icon: 'labs',        name: 'Experiment',  sections: [{ type: 'overview', label: 'Overview' }, { type: 'table', label: 'Data Visualization' }] },
+    { key: 'analysis',    icon: 'analytics',   name: 'Analysis',    sections: [{ type: 'overview', label: 'Overview' }, { type: 'chem', label: 'ChemStudio' }, { type: 'related', label: 'Related Items' }] },
+    { key: 'report',      icon: 'summarize',   name: 'Full Report', sections: [{ type: 'overview', label: 'Overview' }, { type: 'formulation', label: 'Formulation' }, { type: 'table', label: 'Data Visualization' }, { type: 'chem', label: 'ChemStudio' }, { type: 'related', label: 'Related Items' }, { type: 'attach', label: 'Attachments' }] }
   ];
   function templateByKey(key) { return PUBLIC_TEMPLATES.concat(loadMyTemplates()).filter(function (t) { return t.key === key; })[0]; }
   function templateSections(key) { var t = templateByKey(key); return (t && t.sections) || []; }
@@ -1463,6 +1511,8 @@
   // 나머지 5개(editor/table/chem/related/attach)는 동적 추가. Conclusion은 없어진 모듈이라 제거.
   function initDefaultModules() {
     if (!document.getElementById('elnAddModule')) return;   // 상세 화면에서만
+    // 템플릿 진입(?tmpl=)이면 initTemplate(realizeTemplate)이 구성을 정하므로 기본모듈을 깔지 않음
+    try { if (new URLSearchParams(location.search).get('tmpl')) return; } catch (e) {}
     removeSection('card_concl');
     ['editor', 'table', 'chem', 'related', 'attach'].forEach(function (key) {
       if (document.querySelector('#tab_ov [data-modtype="' + key + '"]')) return;   // 이미 있으면 skip
@@ -1647,6 +1697,17 @@
   }
   // Approval 카드는 apis_npdi_pop 와 동일한 정적 내용(HTML)으로 대체 → JS 렌더(renderApprovalCard/Badge) 초기 호출 제거.
   // 워크플로 함수들은 트리거(버튼)가 없어 비활성 상태로 남음.
+
+  // 리스트에서 넘어온 노트 상태(st) 반영 — 헤더 상태 알약 + 작성중(ing) 외에는 View(읽기전용) 진입.
+  //  ing=작성중→편집 / appr=결재진행중·ok=완료→뷰. window.load 후 실행(모듈·Summernote init 완료 뒤 readOnly 적용).
+  function initNoteStatusMode() {
+    var st = '';
+    try { st = new URLSearchParams(location.search).get('st') || ''; } catch (e) {}
+    if (!st) return;
+    setHeadStatus(st);
+    if (st === 'appr' || st === 'ok') { apprView = true; setNoteApproved(true); }   // 결재중·완료 = 읽기전용
+  }
+  window.addEventListener('load', function () { setTimeout(initNoteStatusMode, 60); });
 
   /* ── 포스트잇 — 섹션에 우클릭으로 부착(섹션 상대좌표 → reflow에 강함). 드래그 이동·접기·삭제. 저장은 실구현에서(프로토타입 제외) ── */
   function addPostit(card, clientX, clientY) {

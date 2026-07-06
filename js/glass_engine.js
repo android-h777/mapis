@@ -123,6 +123,9 @@ $(document).on('mousemove', '.newAppleTab li.on', function(e) {
 /* mainSrchArea 검색박스 알약 — glassTrack 만 (tilt 없음, input 기울어지면 어색) */
 $(document).on('mousemove', '.mainSrchArea .srchArea', glassTrack);
 
+/* rlFind 문서내검색 박스 — glassTrack 만 (검색창이라 tilt 없이 색수차만) */
+$(document).on('mousemove', '.rlFind', glassTrack);
+
 /* myMenuArea menuIconBox — cardSpotlight 만 (transform 없음, narrow card jitter 회피) */
 $(document).on('mousemove', '.myMenuArea .myMenuList li .menuIconBox', cardSpotlight);
 
@@ -279,7 +282,75 @@ function initAllHBorderTableOverlays(root) {
 }
 
 
+/* ── 공용 글래스 툴팁 (data-tip 속성) ─────────────────────────────────────────
+   native title 대신 요소에 data-tip="텍스트". body에 fixed로 붙여 스크롤/fixed헤더 무관하게
+   getBoundingClientRect 기준으로 위치(Materialize 툴팁 스크롤 위치버그 회피). glassTip 스킨 재사용. */
+function glassTipInit() {
+  if (window._glassTipReady) return;
+  window._glassTipReady = true;
+  var tip = document.createElement('div');
+  tip.className = 'material-tooltip glassTip tlFixedTip';
+  var inner = document.createElement('div');
+  inner.className = 'tooltip-content';
+  tip.appendChild(inner);
+  document.body.appendChild(tip);
+  function place(el) {
+    var r = el.getBoundingClientRect(), tw = tip.offsetWidth, th = tip.offsetHeight;
+    var left = Math.min(Math.max(8, r.left + r.width / 2 - tw / 2), window.innerWidth - tw - 8);
+    var top;
+    if (el.getAttribute('data-tip-pos') === 'bottom') { top = r.bottom + 8; if (top + th > window.innerHeight - 8) top = r.top - th - 8; }   // 아래(공간 없으면 위)
+    else { top = r.top - th - 8; if (top < 8) top = r.bottom + 8; }   // 기본 위(공간 없으면 아래)
+    tip.style.left = left + 'px'; tip.style.top = top + 'px';
+  }
+  document.addEventListener('mouseover', function (e) {
+    var t = e.target && e.target.closest ? e.target.closest('[data-tip]') : null;
+    if (!t) return;
+    inner.textContent = t.getAttribute('data-tip');
+    tip.classList.add('show'); place(t);
+  });
+  document.addEventListener('mouseout', function (e) {
+    var t = e.target && e.target.closest ? e.target.closest('[data-tip]') : null;
+    if (!t) return;
+    if (e.relatedTarget && t.contains(e.relatedTarget)) return;   // 자식 요소 이동은 무시(깜빡임 방지)
+    tip.classList.remove('show');
+  });
+}
+
+
 /* ── 페이지 진입 시 init ──────────────────────────────────────────────────── */
 $(function() {
   initAllHBorderTableOverlays();
+  glassTipInit();
 });
+
+
+/* ── 글래스 토스트 (MAPIS 공통) ──────────────────────────────────────────────
+   eln_proto_simple 의 ELN.toast 를 공통화한 글래스모피즘 토스트.
+   glassToast('메시지', 'info'|'ok'|'warn'|'err'). 색추적(glassTrack)으로 ::before 시머. */
+function glassToast(msg, type) {
+  type = type || 'info';
+  var wrap = document.getElementById('glassToastWrap');
+  if (!wrap) {
+    wrap = document.createElement('div');
+    wrap.id = 'glassToastWrap';
+    wrap.className = 'glassToastWrap';
+    document.body.appendChild(wrap);
+  }
+  var icons = { info: 'info', ok: 'check_circle', warn: 'warning', err: 'error' };
+  var t = document.createElement('div');
+  t.className = 'glassToast ' + type;
+  var ic = document.createElement('i');
+  ic.className = 'material-symbols-outlined';
+  ic.textContent = icons[type] || 'info';
+  var sp = document.createElement('span');
+  sp.textContent = msg;
+  t.appendChild(ic); t.appendChild(sp);
+  wrap.appendChild(t);
+  // 글래스엔진 색추적 — 전역 glassTrack/glassClear 재사용(--olx/--oly/--ol-angle → ::before conic)
+  t.addEventListener('mousemove', function (e) { if (typeof glassTrack === 'function') glassTrack.call(t, e); });
+  t.addEventListener('mouseleave', function () { if (typeof glassClear === 'function') glassClear(t); });
+  setTimeout(function () {
+    t.classList.add('fade');
+    setTimeout(function () { t.remove(); }, 260);
+  }, 2400);
+}

@@ -24,13 +24,45 @@
           {id:'SE6200', merp:'10000840', name:'SE6200 – Dielectric Gel',        type:'Blend',         bu:'Specialty',     plant:'1100 (Waterford)',      owner:'R. Wijnands', rev:'Rev.05', status:'act', rc:'act',  pc:'act',  rg:'act'},
           {id:'SL5101', merp:'10001200', name:'SL5101 – Adhesive Sealant',      type:'WITH_REACTION', bu:'Adv. Sealants', plant:'1200 (Leverkusen)',     owner:'S. Kim',      rev:'Rev.01', status:'dra', rc:'dra',  pc:'',     rg:''},
           {id:'HV496',  merp:'10000912', name:'HV496 – High Volt Insul.',       type:'Blend',         bu:'HPE',           plant:'2100 (Bergen op Zoom)', owner:'M. Becker',   rev:'Rev.02', status:'act', rc:'act',  pc:'act',  rg:'pend'},
-          {id:'SE1952', merp:'10001104', name:'SE1952 – Silicone Foam',         type:'WITH_REACTION', bu:'Consumer',      plant:'1200 (Leverkusen)',     owner:'A. Mueller',  rev:'Rev.04', status:'act', rc:'act',  pc:'act',  rg:'act'}
+          {id:'SE1952', merp:'10001104', name:'SE1952 – Silicone Foam',         type:'WITH_REACTION', bu:'Consumer',      plant:'1200 (Leverkusen)',     owner:'A. Mueller',  rev:'Rev.04', status:'act', rc:'act',  pc:'act',  rg:'act'},
+          {id:'SF7788', merp:'10000733', name:'SF7788 – Structural Foam',       type:'WITH_REACTION', bu:'Adv. Sealants', plant:'1200 (Leverkusen)',     owner:'S. Kim',      rev:'Rev.02', status:'act', rc:'act',  pc:'',     rg:'act'},
+          {id:'OC3120', merp:'10000418', name:'OC3120 – Optical Coating',       type:'Blend',         bu:'Specialty',     plant:'1100 (Waterford)',      owner:'J. Park',     rev:'Rev.01', status:'dra', rc:'dra',  pc:'',     rg:''},
+          {id:'AD4055', merp:'10000961', name:'AD4055 – Anti-vibration Damper', type:'WITH_REACTION', bu:'HPE',           plant:'2100 (Bergen op Zoom)', owner:'M. Becker',   rev:'Rev.06', status:'act', rc:'act',  pc:'act',  rg:'act'},
+          {id:'MR9902', merp:'10001077', name:'MR9902 – Mold Release Agent',    type:'Blend',         bu:'Consumer',      plant:'1200 (Leverkusen)',     owner:'A. Mueller',  rev:'Rev.03', status:'act', rc:'act',  pc:'pend', rg:'dra'},
+          {id:'TB6300', merp:'10000502', name:'TB6300 – Thermal Barrier',       type:'WITH_REACTION', bu:'Specialty',     plant:'1100 (Waterford)',      owner:'R. Wijnands', rev:'Rev.02', status:'rev', rc:'rev',  pc:'dra',  rg:''},
+          {id:'CG2200', merp:'10000845', name:'CG2200 – Conductive Grease',     type:'Blend',         bu:'HPE',           plant:'2100 (Bergen op Zoom)', owner:'M. Becker',   rev:'Rev.04', status:'act', rc:'act',  pc:'act',  rg:'pend'},
+          {id:'EL8890', merp:'10001233', name:'EL8890 – Elastomer LSR',         type:'WITH_REACTION', bu:'Adv. Sealants', plant:'1200 (Leverkusen)',     owner:'S. Kim',      rev:'Rev.01', status:'dra', rc:'pend', pc:'',     rg:''},
+          {id:'PU1150', merp:'10000687', name:'PU1150 – Potting Compound',      type:'WITH_REACTION', bu:'Consumer',      plant:'1100 (Waterford)',      owner:'A. Mueller',  rev:'Rev.03', status:'rev', rc:'act',  pc:'rev',  rg:'appr'},
+          {id:'BC7040', merp:'10000559', name:'BC7040 – Bonding Compound',      type:'Blend',         bu:'HPE',           plant:'1100 (Waterford)',      owner:'M. Becker',   rev:'Rev.02', status:'act', rc:'',     pc:'act',  rg:'pend'}
         ];
 
-        // 상태 코드 → 라벨
+        // 상태 코드 → 라벨 (sub-type 배지·서머리 세부용)
         var ST_LABEL = {act:'Active', appr:'Approved', dra:'Draft', pend:'Pending', rev:'Under Review', '':'—'};
         // 상태 코드 → statusBox 클래스 (type2=완료/녹, type1=진행/주황)
-        function stBoxClass(st){ return st==='act' ? 'type2' : 'type1'; }
+        function stBoxClass(st){ return (st==='act'||st==='appr') ? 'type2' : 'type1'; }
+        // statusBox 라벨 = 표준 리스트(npdi/custom/npt) 용어 통일: 확정=Completed, 진행=On Going
+        function stBoxLabel(st){ return (st==='act'||st==='appr') ? 'Completed' : 'On Going'; }
+
+        // 섹션별 등록/동기 일자(목업) — BOM=ERP 동기일, INPUT/ITEM/LEGAL=각 작성·결재 등록일(미등록은 null)
+        var CSUM = {
+          SE9187:  {erp:'2026-06-18', input:'2026-06-14', item:'2026-06-16', legal:'2026-06-17'},
+          LSR2725: {erp:'2026-06-15', input:'2026-05-28', item:'2026-06-02', legal:'2026-06-05'},
+          TC5026:  {erp:'2026-06-10', input:'2026-06-08', item:'2026-06-09', legal:null},
+          RTV615:  {erp:'2026-06-12', input:'2026-06-05', item:'2026-06-10', legal:'2026-06-11'},
+          SE6200:  {erp:'2026-06-17', input:'2026-06-02', item:'2026-06-06', legal:'2026-06-09'},
+          SL5101:  {erp:'2026-06-08', input:'2026-06-07', item:null,         legal:null},
+          HV496:   {erp:'2026-06-14', input:'2026-06-03', item:'2026-06-07', legal:'2026-06-10'},
+          SE1952:  {erp:'2026-06-16', input:'2026-06-01', item:'2026-06-06', legal:'2026-06-11'},
+          SF7788:  {erp:'2026-06-11', input:'2026-06-13', item:null,         legal:'2026-06-09'},
+          OC3120:  {erp:'2026-06-05', input:'2026-06-06', item:null,         legal:null},
+          AD4055:  {erp:'2026-06-20', input:'2026-05-22', item:'2026-05-28', legal:'2026-06-02'},
+          MR9902:  {erp:'2026-06-13', input:'2026-06-04', item:'2026-06-15', legal:'2026-06-09'},
+          TB6300:  {erp:'2026-06-09', input:'2026-06-14', item:'2026-06-10', legal:null},
+          CG2200:  {erp:'2026-06-16', input:'2026-05-30', item:'2026-06-03', legal:'2026-06-12'},
+          EL8890:  {erp:'2026-06-07', input:'2026-06-08', item:null,         legal:null},
+          PU1150:  {erp:'2026-06-10', input:'2026-06-01', item:'2026-06-13', legal:'2026-06-05'},
+          BC7040:  {erp:'2026-06-09', input:null,         item:'2026-06-11', legal:'2026-06-14'}
+        };
 
         // 제품 행의 Sub-type 상태 배지 — NPI 스테이지 아이콘 체계 (색=상태, 아이콘 앞쪽)
         //  완료=녹 check_circle (Active) / 진행중=주황 play_circle (Draft·Pending·Review) / 미진행=회색 circle(빈 원)
@@ -72,6 +104,17 @@
             fnSetSummary($(this).attr("data-id"));
           });
 
+          // 서머리 섹션 카드 클릭 → 팝업 열고 해당 카드로 자동 스크롤(?card=)
+          $(document).on("click", ".cmpCard", function(){
+            var card = $(this).attr("data-card");
+            window.open("apis_composition_pop.html" + (card ? "?card="+card : ""), "", "width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes");
+          });
+          // 카드 hover 색수차 — glassTrack 커서 추적(--olx/--oly/--ol-angle → ::before conic). 리스트 카드와 동일
+          if(window.glassTrack){
+            $(document).on("mousemove", ".cmpCard", glassTrack);
+            $(document).on("mouseleave", ".cmpCard", function(){ if(typeof glassClear === "function") glassClear(this); });
+          }
+
           // 검색 오버레이 (SNPI 동일)
           $("#mainSrchInput").focus(function(){
             $(".bgLayer").show();
@@ -94,13 +137,14 @@
           var html = '';
           COMPOSITIONS.forEach(function(c){
             html += '<li class="waves-effect waves-hColor animate__animated" data-id="'+c.id+'">'
-                 +    '<section class="statusBox '+stBoxClass(c.status)+'">'+ST_LABEL[c.status]+'</section>'
+                 +    '<section class="statusBox '+stBoxClass(c.status)+'">'+stBoxLabel(c.status)+'</section>'
                  +    '<section class="wd100p">'
                  +      '<div class="pjTit">['+c.merp+'] '+c.name+'</div>'
                  +      '<div class="subInfo"><div class="cmpMeta">'
                  +        subBadge('input', c.rc, 'INPUT')
                  +        subBadge('item',  c.pc, 'ITEM')
                  +        subBadge('legal', c.rg, 'LEGAL')
+                 +        '<span class="cmpDiv"></span>'
                  +        '<div class="roundBox contVal1">'+c.type+'</div>'
                  +        '<div class="roundBox contVal2">'+c.bu+'</div>'
                  +        '<div class="roundBox contVal3">'+c.rev+'</div>'
@@ -120,7 +164,7 @@
           });
         }
 
-        // 우측 서머리 (러프 — 내용은 추후 확정)
+        // 우측 서머리 — 제품 메타 + 조성 Sub-type 상태 + 도메인 세부(BOM/INPUT/ITEM/LEGAL) + 주요 성분
         function fnSetSummary(id){
           var c = COMPOSITIONS.find(function(x){ return x.id===id; });
           if(!c) return;
@@ -130,11 +174,36 @@
           $("#smBu").text(c.bu);
           $("#smPlant").text(c.plant);
           $("#smOwner").text(c.owner);
-          $("#smStatus").text(ST_LABEL[c.status]);
-          // 조성 Sub-type 상태 칩
-          $("#smInput").text('INPUT: '+ST_LABEL[c.rc]);
-          $("#smItem").text('ITEM: '+ST_LABEL[c.pc]);
-          $("#smLegal").text('LEGAL: '+ST_LABEL[c.rg]);
+          $("#smStatus").text(stBoxLabel(c.status));
+          // 섹션 = 각각 독립 진행(연결 프로세스 아님) → 2×2 상태색 유리판 카드.
+          //   BOM(ERP 베이스) + INPUT/ITEM/LEGAL(각 작성·결재). 카드 색으로 진행 상태 구분.
+          var s = CSUM[id] || {};
+          $("#smSecs").html('<div class="cmpGrid">'
+            + secCard('BOM',   'From ERP',        'done', 'Synced',    s.erp,   'pjContCard_2')
+            + secCard('INPUT', 'Reaction Model',  st4(c.rc), lbl4(c.rc), s.input, 'pjContCard_3')
+            + secCard('ITEM',  'SDS / Label',     st4(c.pc), lbl4(c.pc), s.item,  'pjContCard_4')
+            + secCard('LEGAL', 'REACH',           st4(c.rg), lbl4(c.rg), s.legal, 'pjContCard_5')
+            + '</div>');
+        }
+        // 상태 코드 → 카드 상태 클래스 / 상태 라벨
+        function st4(code){ return !code ? 'none' : ((code==='act'||code==='appr') ? 'done' : 'ing'); }
+        function lbl4(code){
+          if(!code) return 'Not started';
+          if(code==='act' || code==='appr') return 'Approved';
+          if(code==='dra') return 'Draft';
+          if(code==='rev') return 'In Review';
+          return 'Submitted';   // pend
+        }
+        // 유리판 카드 한 장 — 이름 + 상태 pill + 서브(구성) + 날짜(or 미등록). data-card=팝업 스크롤 대상 카드
+        function secCard(name, sub, state, stLabel, date, cardId){
+          var when = date
+            ? '<div class="cmpCardWhen"><i class="material-symbols-outlined cmpCardCal">event</i>'+date+'</div>'
+            : '<div class="cmpCardWhen">Not registered</div>';
+          return '<div class="cmpCard '+state+'" data-card="'+cardId+'">'
+               +   '<div class="cmpCardTop"><span class="cmpCardName">'+name+'</span><span class="cmpCardSt">'+stLabel+'</span></div>'
+               +   '<div class="cmpCardSub">'+sub+'</div>'
+               +   when
+               + '</div>';
         }
   </script>
 </head>
@@ -195,7 +264,8 @@
           <li class="waves-effect waves-hColor"><a href="apis_custom_list.html"><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_npt_list.html"><i class="material-icons left">snippet_folder</i>NPT</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_tech_list.html"><i class="material-icons left">build</i>Tech Support</a></li>
-          <li class="waves-effect waves-hColor"><a href="apis_eln_list_simple.html"><i class="material-icons left">edit_note</i>Lab Note</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_note_list.html"><i class="material-icons left">edit_note</i>Lab Note</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_techlib_list.html"><i class="material-icons left">menu_book</i>Tech Library</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub​</a></li>
           <li class="waves-effect waves-hColor on"><a href="apis_composition_list.html"><i class="material-icons left">layers</i>Composition</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_fmea_list.html"><i class="material-icons left">playlist_add_check_circle</i>FMEA​</a></li>
@@ -218,7 +288,7 @@
               <div class="tabBg" style="left: 0px;"></div>
             </ul>
           </div>
-          <div><a href="javascript:;" class="waves-effect waves-light hBtn viva wd160px"><i class="material-icons left">search</i><span class="label">Custom Filter</span></a></div>
+          <div><a href="javascript:;" class="waves-effect waves-light hBtn viva wd160px"><i class="material-icons left">search</i><span class="label">Search</span></a></div>
         </div>
       </section>
 
@@ -243,22 +313,8 @@
           <div class="col s6">Status</div>
           <div class="col s6 val" id="smStatus">—</div>
         </div>
-        <div class="subTit mt20 ml10">Composition Sub-types</div>
-        <div class="row">
-          <div class="col s12" style="display:flex; gap:10px; flex-wrap:wrap;">
-            <span class="roundBox" id="smInput">INPUT: —</span>
-            <span class="roundBox" id="smItem">ITEM: —</span>
-            <span class="roundBox" id="smLegal">LEGAL: —</span>
-          </div>
-        </div>
-        <div class="subTit mt20 ml10">Summary</div>
-        <div class="row">
-          <div class="col s12">
-            <div style="height:120px; border:1px solid #d0d0d0; border-radius:5px; display:flex; align-items:center; justify-content:center; color:#999;">
-              상세 서머리 영역 (내용 추후 확정)
-            </div>
-          </div>
-        </div>
+        <div class="subTit mt20 ml10">Composition Sections</div>
+        <div class="ml10" id="smSecs"></div>
       </div>
     </div>
   </article>

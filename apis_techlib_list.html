@@ -1,0 +1,936 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="css/animate.min.css">
+    <link rel="preload" href="mapis_lib/font/material-icons.woff2" as="font" type="font/woff2" crossorigin>
+    <link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/glass_engine.js"></script>
+    <script>
+        // ── Tech Library 목록 데이터 (원본 TRH = apis_rptlib_list.html / rptlib_docs.js REPORTS 코퍼스 이식) ──
+        // 원본의 테이블식 결과그리드를 우리 표준 리스트 디자인(composition 패턴)으로 변환.
+        //   cls 1~4 = 분류 등급(1 Public · 2 Internal · 3 Confidential · 4 Highly Restricted; 3·4 잠금)
+        //   idx = 권역 인덱스 / type = 문서 유형 / hits = 조회수
+        // ▼ 백엔드 주입 seam: 실구현 시 au.ajaxGet2('/techlib/search', params, render) 또는 th:inline ${reports}
+        var REPORTS = [
+          {code:'DRAFT-26-003',title:'Antifoam Selection Guide for Waterborne Coatings — Draft',type:'TIS',site:'KR', idx:'KR', author:'Jongho Lee',              bu:'Specialty Additives',  date:'2026-06-20', cls:2, hits:0, draft:true, apprStep:2, apprReject:2, apprRejectReason:'Data appendix incomplete — attach the raw defoamer performance dataset and re-submit for publishing.'},
+          {code:'DRAFT-26-002',title:'Silanized Silica for Low-Rolling-Resistance Tires',  type:'TIS', site:'WTC', idx:'IN', author:'Jongho Lee',              bu:'Tire & Silanes',       date:'2026-07-01', cls:2, hits:0, draft:true, apprStep:2},
+          {code:'DRAFT-26-001',title:'UV-Cure Adhesive for RGBOLED — Draft',               type:'PTM', site:'KR',  idx:'KR', author:'Jongho Lee',              bu:'Electronic Materials', date:'2026-06-29', cls:2, hits:0, draft:true, apprStep:2},
+          {code:'KR-25-014',   title:'Adhesion Promoters for Flexible OLED Encapsulation',type:'PTM', site:'KR',  idx:'KR', author:'Jongho Lee',              bu:'Electronic Materials', date:'2026-05-20', cls:2, hits:143, apprStep:4},
+          {code:'LEV-24-002',  title:'Bio-based Silicone Feasibility Study (JDA)',         type:'TIS', site:'LEV', idx:'DE', author:'Dr. Stephan Boß',           bu:'Industrial',           date:'2026-06-14', cls:4, hits:162},
+          {code:'KR-23-011',   title:'Low-Temperature Cure Silicone for Flexible Display', type:'TIS', site:'KR',  idx:'KR', author:'S.Y. Park',                bu:'Electronic Materials', date:'2026-06-12', cls:3, hits:274, acc:'granted', grantFrom:'2026-06-15', grantTo:'2026-09-15'},
+          {code:'ITC-22-031',  title:'Antifoam Improvement Project — Phase 2',             type:'IP',  site:'ITC', idx:'IN', author:'Indumathi M.',             bu:'Industrial',           date:'2026-06-10', cls:2, hits:176},
+          {code:'LEV-23-007',  title:'Development of a Baking Paper Release Coating',      type:'TIS', site:'LEV', idx:'DE', author:'Markus Bley',              bu:'Coatings',             date:'2026-06-05', cls:2, hits:352},
+          {code:'TML-22-002',  title:'Resin Intermediate Process Transfer Memorandum',    type:'PTM', site:'TML', idx:'IT', author:'G. Rossi',                 bu:'Industrial',           date:'2026-05-28', cls:2, hits:205},
+          {code:'KR-22-003',   title:'OLED Encapsulation Adhesive — Scale-up Request',     type:'PTM', site:'KR',  idx:'KR', author:'J.P. Kim',                 bu:'Electronic Materials', date:'2026-05-20', cls:2, hits:298},
+          {code:'BKK-21-019',  title:'Sealant Field Trial Report — SE Asia',              type:'Trip',site:'BKK', idx:'TH', author:'S. Phong',                 bu:'Coatings',             date:'2026-05-12', cls:2, hits:188},
+          {code:'SH-21-008',   title:'Defoamer Performance in Architectural Coatings',    type:'TIS', site:'SH',  idx:'CN', author:'Wei Zhang',                bu:'Coatings',             date:'2026-04-30', cls:2, hits:241},
+          {code:'ABD-20-015',  title:'Specialty Fluids for Personal Care Formulations',   type:'TMR', site:'ABD', idx:'UK', author:'J. Whitfield',             bu:'Personal Care',        date:'2026-04-18', cls:1, hits:233},
+          {code:'TT-18-012',   title:'Water Phase Sensory Elastomer',                     type:'TIS', site:'TT',  idx:'US', author:'Mukesh Kumar',             bu:'Personal Care',        date:'2026-03-22', cls:2, hits:359},
+          {code:'SV-19-006',   title:'Urethane Additives Applications Guide',             type:'TMR', site:'SV',  idx:'US', author:'L. Heisler',               bu:'Urethane Additives',   date:'2026-02-15', cls:3, hits:432, acc:'granted', grantFrom:'2026-02-20', grantTo:'2026-05-20'},
+          {code:'SV-19-010',   title:'Urethane Additives Technology Review',              type:'TMR', site:'SV',  idx:'US', author:'L. Heisler',               bu:'Urethane Additives',   date:'2026-02-10', cls:2, hits:388},
+          {code:'WTC-11-029',  title:'In-situ Functionalized Nano Ceria Dispersions',     type:'TIS', site:'WTC', idx:'IN', author:'Asha Jhonsi, Karthikeyan M.',bu:'Electronic Materials',date:'2026-01-20', cls:2, hits:554},
+          {code:'JPN-15-004',  title:'Patent Survey for UV Curable Frontsheet',           type:'TIS', site:'JPN', idx:'JP', author:'Kazuhisa Ono',             bu:'Electronic Materials', date:'2025-12-08', cls:3, hits:518},
+          {code:'TT-12-016',   title:'Silicone Fluids Technology Highlights — Annual',    type:'TMR', site:'TT',  idx:'US', author:'Global Silicone Fluids Tech',bu:'Specialty Additives', date:'2025-11-30', cls:3, hits:374, acc:'requested', reqDate:'2026-06-24', apprStep:3},
+          {code:'2008-MPM-016',title:'SF1632 Part 1: Root Cause Analysis',                type:'TIS', site:'WF',  idx:'US', author:'Global Silicone Fluids Tech',bu:'Specialty Additives', date:'2025-11-12', cls:4, hits:379, acc:'granted', grantFrom:'2026-06-20', grantTo:'2026-09-20'},
+          {code:'JPN-10-007',  title:'Effect of Crosslinkage and Reinforcement',          type:'TIS', site:'JPN', idx:'JP', author:'H. Sato',                  bu:'Industrial',           date:'2025-10-05', cls:2, hits:572},
+          {code:'JPN-09-024',  title:'HCR New Portfolio; The Development Roadmap',         type:'TIS', site:'JPN', idx:'JP', author:'T. Nakamura',              bu:'Industrial',           date:'2025-09-18', cls:3, hits:575, acc:'requested', reqDate:'2026-06-28', apprStep:2, apprReject:2, apprRejectReason:'Business justification insufficient — please attach the project linkage and NDA reference before re-submitting.'},
+          {code:'ITC-12-013',  title:'Patentability Search: Acrylate Functional Silicones',type:'TIS',site:'ITC',idx:'IN', author:'Madhuri Raju, A. Dhanabalan',bu:'Specialty Additives',date:'2025-08-22', cls:1, hits:632},
+          {code:'WTC-11-045',  title:'Surface Modification of Ceria Using Silanes',       type:'TIS', site:'WTC', idx:'IN', author:'Karthikeyan Murugesan',    bu:'Tire & Silanes',       date:'2025-07-30', cls:2, hits:636},
+          {code:'TT-11-016',   title:'Hydrosilylation with Iron-Pyridine Catalysts',      type:'TIS', site:'TT',  idx:'US', author:'Kenrick M. Lewis',         bu:'Specialty Additives',  date:'2025-06-25', cls:2, hits:798},
+          {code:'LEV-20-027',  title:'Liquid Silicone Rubber — Handbook of Processing',   type:'TIS', site:'LEV', idx:'DE', author:'Enise Michalski',          bu:'Healthcare',           date:'2025-05-15', cls:2, hits:1441}
+        ];
+
+        // 본문 요약(목업) — 우측 서머리 Abstract용
+        var SUMMARIES = {
+          'LEV-24-002':'Joint development assessment of bio-based silicone backbones from renewable feedstock; evaluates cure behavior, mechanical properties and cost parity versus petroleum-based grades.',
+          'KR-23-011':'A low-temperature platinum-cure silicone for flexible OLED displays, characterizing cure kinetics below 100 °C and adhesion to polyimide substrates.',
+          'ITC-22-031':'Phase-2 antifoam improvement project optimizing siloxane polyether dispersions to reduce foam in pulp and paper processing; includes plant trial data.',
+          'LEV-23-007':'Development of a solvent-free silicone release coating for baking paper, balancing release force and anchorage on supercalendered kraft.',
+          'TML-22-002':'Process transfer memorandum for a resin intermediate, detailing reactor parameters, distillation cuts and quality limits for scale-up at Termoli.',
+          'KR-22-003':'Scale-up request for an OLED encapsulation adhesive, summarizing rheology, moisture-barrier performance and pot-life under production conditions.',
+          'BKK-21-019':'Field trial of a one-part construction sealant across Southeast Asian climates, reporting weathering, adhesion and gunnability after twelve months.',
+          'SH-21-008':'Comparative study of silicone defoamer performance in architectural water-based coatings, ranking persistence and recoatability.',
+          'ABD-20-015':'Technology and market review of specialty fluids for personal-care formulations, covering sensory profiles and regulatory status in the EU and US.',
+          'TT-18-012':'Water-phase sensory elastomer study evaluating thickening efficiency and skin-feel in cosmetic emulsions.',
+          'SV-19-006':'Applications guide for urethane additive surfactants in flexible and rigid foam, with cell-structure and stability recommendations.',
+          'SV-19-010':'Technology review of urethane additive chemistries, mapping silicone surfactant structures to foam performance windows.',
+          'WTC-11-029':'In-situ functionalized nano ceria dispersions for chemical-mechanical planarization, describing particle-size control and abrasive selectivity.',
+          'JPN-15-004':'Patent landscape survey for UV-curable frontsheet materials in photovoltaic modules, identifying white-space and freedom-to-operate risks.',
+          'TT-12-016':'Annual technology highlights for the silicone fluids portfolio, summarizing new hydrosilylation catalysts and emulsion advances.',
+          '2008-MPM-016':'Root-cause analysis of SF1632 fluid discoloration, tracing the issue to trace iron contamination in the hydrosilylation step.',
+          'JPN-10-007':'Effect of crosslink density and silica reinforcement on the tensile and tear strength of high-consistency silicone rubber.',
+          'JPN-09-024':'Development roadmap for the high-consistency rubber portfolio, outlining new grades for automotive and electronics sealing.',
+          'ITC-12-013':'Patentability search for acrylate-functional silicones, reviewing prior art on photo-curable backbone modifications.',
+          'WTC-11-045':'Surface modification of ceria nanoparticles using organofunctional silanes to improve dispersion stability in polishing slurries.',
+          'TT-11-016':'Hydrosilylation catalyzed by iron–pyridine diimine complexes as a platinum-free alternative; reports kinetics and selectivity at 80 °C.',
+          'LEV-20-027':'Handbook of liquid silicone rubber processing, covering injection molding, cure rheology and demolding for LSR parts.'
+        };
+
+        // 참조 테이블 (원본 INDEXES/TYPES/CLASSES 미러)
+        var INDEXES = {CN:'CN — Shanghai',DE:'DE — Leverkusen',IN:'IN — Bangalore',IT:'IT — Termoli',JP:'JP — Ohta',KR:'KR — All Regions',TH:'Thailand',UK:'UK — Abingdon',US:'US — All Regions'};
+        var TYPES   = {TIS:'TIS Report',TMR:'Tech / Market Review',PTM:'Process Transfer Memo',Trip:'Trip Report',IP:'Improvement Project'};
+        var CLS_NM  = {1:'Class 1 · Public',2:'Class 2 · Internal',3:'Class 3 · Confidential',4:'Class 4 · Highly Restricted'};
+        // BU → Segment 파생(원본 SEGMAP 미러). 매핑 없으면 BU 그대로
+        var SEGMAP  = {Elastomers:'Performance Additives',Fluids:'Silicone Fluids',Coatings:'Coatings & Release',Resins:'Resins',Sealants:'Sealants & Adhesives',Specialty:'Specialty Fluids',Additives:'Urethane Additives','Personal Care':'Consumer Solutions'};
+        var MY_REGION = 'US';   // 데모 접근 권역(region-restricted 표기용)
+        function idxName(id){ return INDEXES[id]||id; }
+        function typeName(t){ return TYPES[t]||t; }
+        function segOf(bu){ return SEGMAP[bu]||bu; }
+        function summaryOf(c){ return SUMMARIES[c]||''; }
+        // SUMMARIES에 없는 문서(결재 진행중 등)용 Abstract 자동 생성 — 메타 기반
+        function genAbstract(r){ return 'This '+String(typeName(r.type)).toLowerCase()+' from the '+(r.bu||'—')+' group at '+idxName(r.idx)+' summarizes '+String(r.title||'').replace(/\s*\(.*?\)\s*/g,'').toLowerCase()+', covering the methodology, key results, and recommendations for the '+(r.bu||'—')+' portfolio.'; }
+        // SME Notes 건수 — apis_techlib_pop의 pickNotes와 동일 로직(문서코드 해시 + 가중치). 목록엔 목록 대신 건수만.
+        function smeCount(code){ var s=String(code||''), h=0; for(var i=0;i<s.length;i++){ h=(h*31 + s.charCodeAt(i))>>>0; } var W=[0,0,1,1,1,2,2,3]; return W[h%W.length]; }
+        // 날짜: 데이터는 ISO(정렬용), 화면 표시만 MM-DD-YYYY (원본 fmtDate 규칙)
+        function fmtDate(d){ d=String(d||''); var m=d.match(/^(\d{4})-(\d{2})-(\d{2})/); return m? m[2]+'-'+m[3]+'-'+m[1] : d; }
+
+        // 문서 접근 상태(accState) — open / granted / requested / restricted
+        //   open: C1·C2 / granted: C3·C4 열람승인 / requested: 열람 신청중 / restricted: C3·C4 미신청
+        function accGranted(r){ return r.acc==='granted'; }
+        function accState(r){
+          if(r.draft) return 'draft';   // 작성중(내 제출 초안) — Drafts 탭에서만
+          if(r.cls<=2) return 'open';
+          if(r.acc==='granted') return 'granted';
+          if(r.acc==='requested') return 'requested';
+          return 'restricted';
+        }
+        // 상태 → statusBox 클래스 / 라벨 / roundBox 칩 색
+        var ACC_META = {
+          open:      {box:'type2',     label:'Open',       chip:'bdGreen'},
+          granted:   {box:'granted',   label:'Granted',    chip:'bdBlue'},
+          requested: {box:'requested', label:'Requested',  chip:'bdGray'},
+          restricted:{box:'type1',     label:'Restricted', chip:'bdOrange'},
+          draft:     {box:'draft',     label:'In Approval', chip:'bdGray'}
+        };
+        function stBoxClass(r){ return ACC_META[accState(r)].box; }
+        function stBoxLabel(r){ return ACC_META[accState(r)].label; }
+        // 리스트 행/서머리 statusBox — 탭 맥락별 상태(My Submissions=등록 결재 상태 / 그 외=조회 결재·접근 상태). 만료·반려 반영.
+        // 상태 색 규칙(요청·등록 탭 공통): 진행중=blue(stProgress) · 완료=green(stDone) · 반려=red(stReject) · 만료=gray(stExpired)
+        function rowStatus(r){
+          if(listMode==='subs'){                                          // 등록 결재
+            if(r.draft) return r.apprReject ? {box:'stReject', label:'Rejected'} : {box:'stProgress', label:'In Approval'};
+            return {box:'stDone', label:'Published'};                      // 발행 완료
+          }
+          if(listMode==='access'){                                        // 조회 결재 라이프사이클
+            if(isExpired(r))  return {box:'stExpired', label:'Expired'};   // 만료(비활성)
+            if(isRejected(r)) return {box:'stReject',  label:'Rejected'};  // 반려
+            if(accState(r)==='granted') return {box:'stDone', label:'Granted'};   // 열람승인 완료
+            return {box:'stProgress', label:'Requested'};                 // 신청 진행중
+          }
+          // All · Bookmarks = 조회 권한: 열람가능=green(Open·Granted 라벨로 구분) / 제한=orange
+          if(accState(r)==='open') return ACC_META.open;                              // 공개(C1·C2) → Open(green)
+          if(accState(r)==='granted' && !isExpired(r)) return {box:'type2', label:'Granted'};  // 열람승인 → green(라벨 Granted 유지)
+          return ACC_META.restricted;                                                 // 그 외(제한·신청중·반려·만료) = 아직 열람 불가(orange)
+        }
+        // 결재 이력(우측 서머리)을 보여줄 문서인지 — 조회신청/열람승인 이력 or 내 제출(결재중/반려)
+        function hasApprTrail(r){
+          if(isMine(r)) return true;                                    // 내 제출(결재중·반려·발행완료) = 등록 결재 이력
+          var s = accState(r); return s==='requested' || s==='granted'; // 조회신청·열람승인 이력
+        }
+        // 상태 roundBox 칩(Selected 탭용) — 만료된 granted는 Restricted로 표시(접근 만료 = 다시 제한)
+        function statusChip(r){
+          var m = isExpired(r) ? ACC_META.restricted : ACC_META[accState(r)];
+          return '<span class="roundBox '+m.chip+'">'+m.label+'</span>';
+        }
+        function repByCode(c){ return REPORTS.find(function(x){ return x.code===c; }); }
+        // Class 등급 메타칩 — 4색(roundBox bdGreen/bdBlue/bdOrange/bdRed) — 리스트 행용
+        function clsChip(cls){
+          var col={1:'bdGreen',2:'bdBlue',3:'bdOrange',4:'bdRed'}[cls]||'bdGray';
+          return '<span class="roundBox '+col+'">Class '+cls+'</span>';
+        }
+        // Class 등급 색 텍스트(테두리 없음) — 우측 서머리용(floated 그리드에서 칩 높이차로 행 밀림 방지)
+        function clsText(cls){ return '<span class="techlibClsTxt c'+cls+'">Class '+cls+'</span>'; }
+
+        // 글래스 토스트 — MAPIS 공통 glassToast(js/glass_engine.js) 사용. o={html, type}
+        function tlToast(o){ glassToast(o.html, o.type || 'info'); }
+
+        // ── Download + Document Basket ──
+        // 바구니 = 초기 빈 상태(사용자가 리스트에서 담음). 문서별 접근상태(acc/grant/reject)는 REPORTS에 유지 → 담으면 해당 탭(Requested/Completed 등)에 표시
+        var basket = {};
+        var bookmarks = {'ITC-22-031':true, 'LEV-24-002':true, 'SH-21-008':true};   // 북마크(code→true) — 단순 별표 토글(폴더 없음). 기본 시드 몇 건(저장 상태 데모)
+        var listMode = 'all';   // all | bmk(Bookmarks) | access(조회 결재 이력) | subs(My Submissions=등록 결재)
+        var MY_NAME  = 'Jongho Lee';   // 데모 사용자 — 내 등록 문서/제출 식별
+        var curCode = null;     // 현재 선택 문서(서머리 액션 대상)
+        // Basket 모달 = Selected(장바구니) 단일 뷰. Requested/Completed 이력은 리스트 Access Requests 탭으로 이관.
+        var bkSel = {};         // 모달 행 체크 선택(code→true) — 일괄 신청/다운로드/삭제 대상
+        var bkAppr = null;      // 열람신청 결재 모드 — 신청 대상 코드 배열(null=off). Selected 탭 Request access → 진입(테이블 접힘 + 아래 결재 모듈)
+        var aprOpen = {};       // Requested 탭 결재 라인 아코디언 펼침 상태(code→true)
+        function viewable(r){ return r.cls<=2 || accGranted(r); }   // 다운로드/열람 가능 여부(Restricted 제외)
+        function basketCount(){ return Object.keys(basket).length; }
+        // "뿅" — 추가 시 스케일 팝. 재트리거 위해 클래스 제거→reflow→추가
+        function tlPop(el){ if(!el) return; el.classList.remove('tlPopAnim'); void el.offsetWidth; el.classList.add('tlPopAnim'); }
+        // code 행 마크 팝(+바구니면 FAB 배지). 전역이라 pop(opener.tlPopAdd)에서도 호출
+        function tlPopAdd(code, kind){
+          tlPop(document.querySelector('.mainList li[data-id="'+code+'"] .'+(kind==='bmk'?'tlBmkMark':'tlBasketMark')));
+          if(kind!=='bmk') tlPop(document.getElementById('basketCount'));
+        }
+        // 제거 exit — 마크에 팝아웃 애니 후 done()(실제 삭제). animationend + 안전 타임아웃
+        function tlPopOut(el, done){
+          var fired=false, fin=function(){ if(fired) return; fired=true; if(el) el.classList.remove('tlPopOut'); if(done) done(); };
+          if(!el){ fin(); return; }
+          el.classList.remove('tlPopAnim'); void el.offsetWidth; el.classList.add('tlPopOut');
+          el.addEventListener('animationend', fin, {once:true});
+          setTimeout(fin, 420);
+        }
+        // 제거 시 마크 exit 애니 → 애니 후 동기화(마크 숨김/버튼/카운트). 데이터는 caller가 이미 삭제.
+        // 전역이라 pop(opener.tlAnimMarkOut)에서도 호출 → pop 제거도 리스트 마크 애니 연결
+        function tlAnimMarkOut(code, kind){
+          tlPopOut(document.querySelector('.mainList li[data-id="'+code+'"] .'+(kind==='bmk'?'tlBmkMark':'tlBasketMark')), function(){
+            if(kind==='bmk'){ syncBookmarkBtn(); syncBookmarkMarks(); if(listMode==='bmk') fnRenderList(); }
+            else { renderBasket(); tlPop(document.getElementById('basketCount')); }
+          });
+        }
+        function inBasket(code){ return !!basket[code]; }
+        // 리스트 li 담김 표시 동기화 — 담기/빼기 시 우상단 카트 아이콘 토글
+        function syncBasketMarks(){
+          $('.mainList li').each(function(){ $(this).toggleClass('tlInBk', inBasket($(this).attr('data-id'))); });
+        }
+        // ── 북마크(단순 별표) + 탭 소속 판정 ──
+        function isBookmarked(code){ return !!bookmarks[code]; }
+        // Access Requests(조회 결재) 탭 = 내가 낸 열람신청 이력(requested·granted). 반려도 accState==='requested'라 포함.
+        function isAccessReq(r){ var s=accState(r); return s==='requested' || s==='granted'; }
+        // My Submissions(등록 결재) 탭 = 내가 작성/제출한 문서(결재중 draft 포함)
+        function isMine(r){ return r.author === MY_NAME; }
+        function syncBookmarkMarks(){
+          $('.mainList li').each(function(){ $(this).toggleClass('tlBmk', isBookmarked($(this).attr('data-id'))); });
+        }
+        // 탭별 코드: Selected=바구니(사용자 장바구니) / Requested·Completed=접근 히스토리(REPORTS 접근상태 기반, 바구니와 무관)
+        function bkTabCodes(tab){
+          // 신청/승인 이력은 문서 접근상태(acc)에서 직접 — 바구니를 비워도 유지되는 히스토리
+          if(tab==='requested') return REPORTS.filter(function(r){ return accState(r)==='requested'; }).map(function(r){ return r.code; });
+          if(tab==='completed') return REPORTS.filter(function(r){ return accState(r)==='granted'; })   // 열람승인(granted) 이력
+                                        .sort(function(a,b){ return (b.grantFrom||'').localeCompare(a.grantFrom||''); })   // 조회기간(시작일) 최신순 → 만료 오래된 건은 아래로
+                                        .map(function(r){ return r.code; });
+          return Object.keys(basket);   // Selected = 장바구니(초기 빈 상태)
+        }
+        // 다운로드(목업) — Restricted(미승인 C3·C4)는 차단하고 권한 신청 안내
+        function doDownload(code){
+          var r = REPORTS.find(function(x){ return x.code===code; }); if(!r) return;
+          if(!viewable(r)){ tlToast({html:'Restricted — request access to download.', type:'warn'}); return; }
+          tlToast({html:'Downloading '+code+'… (mock)'});
+        }
+        // 상세 팝업 열기 — 권한(viewable) 있을 때만. 없으면 토스트로 안내
+        // 결재 진행중 제출물 = newsub 뷰모드(읽기전용, 결재 상태 표시). 문서 파라미터를 넘겨서 폼에 채움
+        function openDraftView(r){
+          var qs='mode=view&code='+encodeURIComponent(r.code)+'&title='+encodeURIComponent(r.title)+'&type='+encodeURIComponent(r.type)+'&bu='+encodeURIComponent(r.bu)+'&idx='+encodeURIComponent(r.idx)+'&author='+encodeURIComponent(r.author)+'&cls='+r.cls+'&date='+encodeURIComponent(r.date)+'&apprReject='+(r.apprReject||0)+'&reason='+encodeURIComponent(r.apprRejectReason||'');
+          window.open('apis_techlib_newsub.html?'+qs, 'techlibnewsub', 'width=1520,height=880,scrollbars=yes,resizable=yes');
+        }
+        function openDetail(code){
+          var r = repByCode(code); if(!r) return;
+          if(r.draft){ openDraftView(r); return; }   // 결재 진행중 → 뷰모드
+          if(isExpired(r)){
+            tlToast({html:'Access period expired ('+r.grantTo+') — please request access again.', type:'warn'});
+            return;
+          }
+          if(isRejected(r)){
+            tlToast({html:'Access request was rejected — please re-submit a request.', type:'warn'});
+            return;
+          }
+          if(!viewable(r)){
+            tlToast({html: accState(r)==='requested' ? 'Access request pending approval.' : 'Restricted — request access to view this document.', type:'warn'});
+            return;
+          }
+          // viewable(r)=true(Open·Granted)만 여기 도달 → 팝업이 권역(idx) 기반 lock을 걸지 않도록 granted=1 명시.
+          // (리스트 접근모델[acc: open/granted/restricted]과 팝업 접근모델[idx!==MY_REGION]을 일치시킴)
+          window.open('apis_techlib_pop.html?code='+encodeURIComponent(code)+'&granted=1', 'techlibpop_'+code.replace(/[^A-Za-z0-9_]/g,'_'), 'width=1520,height=880,scrollbars=yes,resizable=yes');
+        }
+        // 서머리 'Add to Basket' 버튼 라벨/상태를 현재 선택 문서 기준으로 동기화
+        function syncBasketBtn(){
+          if(!curCode) return;
+          var on = inBasket(curCode);
+          $("#bkBtn").toggleClass('on', on);
+          $("#bkBtn .label").text(on ? 'In Basket' : 'Add to Basket');
+          $("#bkBtn i").text(on ? 'check' : 'add');   // 담김=체크 / 미담김=플러스
+          $("#dlBtn").toggleClass('isDisabled', !viewable(REPORTS.find(function(x){ return x.code===curCode; })||{cls:1}));
+        }
+        // 서머리 'Bookmark' 버튼 동기화(별표 채움/빈)
+        function syncBookmarkBtn(){
+          if(!curCode) return;
+          var on = isBookmarked(curCode);
+          $("#bmkBtn").toggleClass('on', on);
+          $("#bmkBtn .label").text(on ? 'Bookmarked' : 'Bookmark');
+          $("#bmkBtn i").text(on ? 'star' : 'star_border');
+        }
+        // 열람신청 결재 라우팅(단일 출처) — reqApprHtml/apprCell 공용. 3단계: Line Manager → GT&C → Technology CoE
+        var APPR_ROUTE = [
+          {role:'Line Manager',           who:'J.P. Kim'},
+          {role:'GT&C Reviewer',          who:'R. Osborne'},
+          {role:'Technology CoE Leader',  who:'Charles Kim'}
+        ];
+        function todayStr(){ var d=new Date(); return d.getFullYear()+'-'+('0'+(d.getMonth()+1)).slice(-2)+'-'+('0'+d.getDate()).slice(-2); }
+        function fmtReqDate(r){ return r.reqDate || '—'; }
+        // 열람승인 만료 여부 — granted인데 grantTo가 오늘 이전
+        function isExpired(r){ return accState(r)==='granted' && !!r.grantTo && r.grantTo < todayStr(); }
+        // 열람권한 (재)신청 대상 — 미승인 Restricted 또는 만료된 열람승인(만료건은 다시 신청해서 열람 가능해야 함)
+        function needsAccess(r){ return accState(r)==='restricted' || isExpired(r); }
+        // 조회 기간(열람승인 유효기간) 셀 — 만료면 빨간 roundBox, 아니면 grantFrom ~ grantTo
+        function grantPeriodCell(r){
+          if(!(r.grantFrom && r.grantTo)) return '—';
+          if(isExpired(r)) return '<span class="roundBox viva">Expired</span>';
+          return r.grantFrom + ' ~ ' + r.grantTo;
+        }
+        // Type(Request/Approval) → 우리 roundBox 테두리형 색(캡쳐 매칭)
+        function apprTypeCls(type){ return type==='Request' ? 'bdGray' : 'bdGreen'; }
+        // Status → 색 채워진 roundBox(캡쳐처럼): 요청=grey · 승인=green · 진행=blue · 반려=viva(red) · 대기=grey
+        function apprStatusCls(status){
+          return {Requested:'bdGray', Submitted:'bdGray', Approved:'bdGreen', 'In Progress':'bdBlue', Rejected:'bdRed', Pending:'bdGray'}[status] || 'bdGray';
+        }
+        // 반려 여부 — requested인데 특정 결재 단계(apprReject)에서 반려됨
+        function isRejected(r){ return accState(r)==='requested' && !!r.apprReject; }
+        // 현재 결재 단계 — granted(열람승인)=전 단계 완료(route+1), 그 외=apprStep
+        function apprStepOf(r){ return accState(r)==='granted' ? (APPR_ROUTE.length + 1) : (r.apprStep || 1); }
+        // 문서 전체 진행 상태(collapsed 셀) — 채움형: 반려=Rejected(red) · 전단계승인=Approved(green) · 아니면 In Progress(blue)
+        function apprOverall(r){
+          if(isRejected(r)) return {label:'Rejected', cls:'viva'};
+          return apprStepOf(r) > APPR_ROUTE.length ? {label:'Approved', cls:'green'} : {label:'In Progress', cls:'blue'};
+        }
+        // Requested 탭 Approval 셀(접힘) — 현재상태 roundBox + 펼침 chevron
+        function apprCellCollapsed(r){
+          var ov = apprOverall(r);
+          return '<a class="tlAprToggle"><span class="roundBox '+ov.cls+'">'+ov.label+'</span>'
+               + '<i class="material-icons tlAprCaret">expand_more</i></a>';
+        }
+        // 문서별 전체 결재 라인 행 데이터 — Request(최초) + APPR_ROUTE 3단계(apprStep 기준 상태 파생)
+        function apprLineRows(r){
+          var step = apprStepOf(r), rej = r.apprReject || 0, out = [], baseDate = r.reqDate || r.grantFrom || '—';
+          var mine = isMine(r);   // 내 문서 = 등록 결재(제출) → Submit/Author 표기(조회신청과 구분)
+          out.push({type: mine?'Submit':'Request', fn:'—', who: mine?'Author (You)':'Requester (You)', status: mine?'Submitted':'Requested', date:baseDate});
+          APPR_ROUTE.forEach(function(a, i){
+            var idx = i+1, status;
+            if(rej) status = idx<rej ? 'Approved' : (idx===rej ? 'Rejected' : 'Pending');   // 반려: 반려단계 전=승인, 반려단계=Rejected, 이후=대기
+            else    status = idx<step ? 'Approved' : (idx===step ? 'In Progress' : 'Pending');
+            var dated = (status==='Approved' || status==='Rejected');
+            out.push({type:'Approval', fn:a.role, who:a.who, status:status, date:(dated ? baseDate : '—'), reason:(status==='Rejected' ? (r.apprRejectReason||'') : '')});
+          });
+          return out;
+        }
+        // 펼침 패널 — 전체 결재 라인 테이블(캡쳐 NPI Approval 카드 양식: Type/Function/Assignee/Status/Date)
+        function apprTableHtml(r){
+          var body = apprLineRows(r).map(function(s){
+            return '<tr><td class="ac"><span class="roundBox '+apprTypeCls(s.type)+'">'+s.type+'</span></td>'
+                 + '<td class="al">'+s.fn+'</td>'
+                 + '<td class="al">'+s.who+(s.reason ? ' <i class="material-icons tlAprCmt" data-tip="'+s.reason.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'">chat</i>' : '')+'</td>'
+                 + '<td class="ac"><span class="roundBox '+apprStatusCls(s.status)+'">'+s.status+'</span></td>'
+                 + '<td class="ac">'+s.date+'</td></tr>';
+          }).join('');
+          return '<div class="fixedTable hBorderTable vMiddle mg10"><table>'
+               + '<thead><tr><th class="ac">Type</th><th class="al">Function</th><th class="al">Assignee</th><th class="ac">Status</th><th class="ac">Date</th></tr></thead>'
+               + '<tbody>'+body+'</tbody></table></div>';
+        }
+        // (구 basket 아코디언용 래퍼 — 현재 미사용, 호환 유지). 서머리는 apprTableHtml 직접 사용.
+        function apprPanel(r){ return '<div class="tlAprPanel"><div class="tlAprPanelInner">'+apprTableHtml(r)+'</div></div>'; }
+        // 탭별 빈 상태 — 아이콘 + 제목 + 부제(안내)
+        function emptyState(tab){
+          var m = {
+            all:       {ic:'shopping_cart',   t:'Your basket is empty.',       s:'Add documents from the list to keep them here.'},
+            requested: {ic:'hourglass_top',   t:'No pending requests.',        s:'Access requests you submit will appear here.'},
+            completed: {ic:'verified',        t:'No approved documents yet.',  s:'Granted documents ready to download will appear here.'}
+          }[tab] || {ic:'shopping_cart', t:'No documents.', s:''};
+          return '<div class="tlBkEmpty"><i class="material-icons">'+m.ic+'</i>'
+               + '<div class="tlBkEmptyT">'+m.t+'</div>'+(m.s?'<div class="tlBkEmptyS">'+m.s+'</div>':'')+'</div>';
+        }
+        // 탭별 테이블 HTML — Document=[코드] 타이틀, Type·Region 분리, Status(또는 Approval)·Class
+        function tableHtml(tab, opts){
+          opts = opts || {};
+          var isReq = (tab === 'requested');
+          var isCmp = (tab === 'completed');         // 열람승인(granted) 탭 — 조회기간 컬럼 노출
+          var isAppr = isReq || isCmp;               // Approval 아코디언 컬럼(Requested·Completed 공통)
+          var showChk = !isReq && !opts.readOnly;   // Requested 탭·결재모드(readOnly)는 체크박스 없음(조회만)
+          var thead = '<tr>'
+            + (showChk ? '<th class="tlBkColChk"><label class="tlBkChkLab"><input type="checkbox" class="filled-in bkSelAll" data-tab="'+tab+'"/><span></span></label></th>' : '')
+            + (isAppr ? '<th class="tlBkColAppr ac">Approval</th>' : '<th class="tlBkColStat ac">Status</th>')
+            + '<th class="tlBkColDoc al">Document</th>'
+            + (isReq ? '<th class="tlBkColReq ac">Requested</th>' : '')
+            + (isCmp ? '<th class="tlBkColPeriod ac">Access Period</th>' : '')
+            + '<th class="tlBkColType">Type</th><th class="tlBkColRgn al">Region</th><th class="tlBkColCls">Class</th>'
+            + '</tr>';
+          var codes = opts.codes || bkTabCodes(tab);
+          var colspan = 5 + (showChk?1:0) + (isReq?1:0) + (isCmp?1:0);
+          var rows = codes.length ? codes.map(function(code){
+            var r = repByCode(code); if(!r) return '';
+            var expired = isCmp && isExpired(r);   // 만료 = 비활성화(다운로드 불가)
+            var rejected = isReq && isRejected(r); // 반려 = 종료 상태(재신청 안내)
+            var mainCls = ((isAppr ? 'tlAprMain'+(aprOpen[code]?' active':'') : '') + (expired ? ' tlExpired' : '') + (rejected ? ' tlRejected' : '')).trim();
+            var main = '<tr data-bk="'+code+'"'+(mainCls ? ' class="'+mainCls+'"' : '')+'>'
+                 + (showChk ? '<td class="ac"><label class="tlBkChkLab"><input type="checkbox" class="filled-in bkChk" data-bk="'+code+'"'+(bkSel[code]?' checked':'')+(expired?' disabled':'')+'/><span></span></label></td>' : '')
+                 + (isAppr ? '<td class="ac">'+apprCellCollapsed(r)+'</td>' : '<td class="ac">'+statusChip(r)+'</td>')
+                 + '<td class="tlBkColDoc al"><span class="tlBkTit" title="['+code+'] '+r.title+'">['+code+'] '+r.title+'</span></td>'
+                 + (isReq ? '<td class="ac tlBkReqDate">'+fmtReqDate(r)+'</td>' : '')
+                 + (isCmp ? '<td class="ac tlBkReqDate">'+grantPeriodCell(r)+'</td>' : '')
+                 + '<td class="ac">'+r.type+'</td>'
+                 + '<td class="al">'+idxName(r.idx)+'</td>'
+                 + '<td class="ac">'+clsText(r.cls)+'</td>'
+                 + '</tr>';
+            // Requested·Completed 탭 = 아코디언 상세행(전체 결재 라인). 펼침 상태 aprOpen 유지
+            var detail = isAppr ? '<tr class="tlAprDetailRow'+(aprOpen[code]?' open':'')+'" data-detail="'+code+'"><td colspan="'+colspan+'">'+apprPanel(r)+'</td></tr>' : '';
+            return main + detail;
+          }).join('') : '<tr><td colspan="'+colspan+'">'+emptyState(tab)+'</td></tr>';
+          var wrapCls = 'fixedTable hBorderTable vMiddle tlBkTableWrap' + (opts.readOnly ? ' tlCollapsed' : '');
+          return '<div class="'+wrapCls+'"><table class="tlBkTable"><thead>'+thead+'</thead><tbody>'+rows+'</tbody></table></div>';
+        }
+        // 열람신청 결재 모듈 — apis_npdi_pop Approval 카드(결재 상태 테이블) 참조. Selected 탭 접힘 아래 인라인.
+        // 라우팅 3단계(Line Manager → GT&C → Technology CoE), 신청 전 상태=Pending(bdGray). 제출/취소.
+        function reqApprHtml(codes){
+          var n = codes.length;
+          var rows = APPR_ROUTE.map(function(a){
+            return '<tr><td class="al">'+a.role+'</td><td class="al">'+a.who+'</td><td class="ac">—</td>'
+                 + '<td class="ac"><span class="roundBox bdGray">Pending</span></td></tr>';
+          }).join('');
+          return '<div class="tlReq">'
+               +   '<div class="cardSubTit mt20">Access Approval Routing<span class="tlReqCnt">'+n+' document'+(n>1?'s':'')+'</span></div>'
+               +   '<div class="fixedTable hBorderTable vMiddle tlReqWrap"><table class="tlReqTbl">'
+               +     '<thead><tr><th class="al">Approval Type</th><th class="al">Name</th><th class="tlReqCDate ac">Date</th><th class="tlReqCStat ac">Status</th></tr></thead>'
+               +     '<tbody>'+rows+'</tbody></table></div>'
+               +   '<div class="tlReqActs">'
+               +     '<a href="javascript:;" class="waves-effect hBtn tlReqCancel"><i class="material-icons left">close</i><span class="label">Cancel</span></a>'
+               +     '<a href="javascript:;" class="waves-effect waves-light hBtn hBlue tlReqSubmit"><i class="material-icons left">send</i><span class="label">Submit request ('+n+')</span></a>'
+               +   '</div>'
+               + '</div>';
+        }
+        // Basket 모달 렌더 — 3개 Materialize 탭 패널 + 카운트 + 일괄 버튼
+        function renderBasket(){
+          var n = basketCount();
+          $("#basketCount").text(n);                   // FAB 0도 항상 표시
+          $("#basketBtn").toggleClass('pulse', n>0);   // 1건 이상부터 FAB 펄스
+          // Selected(장바구니) 패널만 — 결재 모드면 접힌(선택항목·읽기전용) 테이블 + 아래 결재 모듈
+          $("#bkPaneAll").html(bkAppr ? (tableHtml('all', {codes:bkAppr, readOnly:true}) + reqApprHtml(bkAppr)) : tableHtml('all'));
+          // 동적 렌더된 테이블에 글래스 행 오버레이 재적용(glass_engine.js)
+          if(typeof initAllHBorderTableOverlays === 'function') initAllHBorderTableOverlays(document.getElementById('basketModal'));
+          // 전체선택 상태(장바구니)
+          (function(){
+            var tc = bkTabCodes('all');
+            var any = tc.some(function(c){ return bkSel[c]; });
+            var all = tc.length>0 && tc.every(function(c){ return bkSel[c]; });
+            $('#basketModal .bkSelAll[data-tab="all"]').prop('checked', all).prop('indeterminate', any && !all);
+          })();
+          // 일괄 버튼(장바구니 선택 기준)
+          var codes = bkTabCodes('all');
+          var checked = codes.filter(function(c){ return bkSel[c]; });
+          var reqN = checked.filter(function(c){ return needsAccess(repByCode(c)); }).length;
+          var dlN  = checked.filter(function(c){ return viewable(repByCode(c)) && !isExpired(repByCode(c)); }).length;
+          $("#bkReqCount").text(reqN); $("#bkDlCount").text(dlN); $("#bkRmCount").text(checked.length);
+          $("#basketRequest").toggleClass('tlPulse', reqN>0);
+          $("#basketRemove").toggleClass('tlPulse', checked.length>0);
+          $("#basketDownload").toggleClass('tlPulse', dlN>0);
+          // 결재 모드 중에는 하단 일괄버튼 숨김(결재 모듈이 자체 제출/취소 제공)
+          $("#basketModal .btnArea").toggleClass('tlHidden', !!bkAppr);
+          syncBasketBtn();
+          syncBasketMarks();   // 리스트 li 담김 표시 갱신(담기/빼기 반영)
+        }
+
+        $(document).ready(function(){
+          $('.sidenav').sidenav();
+          $('.tooltipped').tooltip();   // FAB 툴팁(Materialize)
+          $(document).on('click', '.sidenav-overlay, .closeBtns', function() {
+              $('.sidenav').sidenav('close');
+          });
+
+          // ALL / My List 탭 (SNPI newAppleTab 패턴)
+          $(document).on("click", ".newAppleTab li", function(){
+              var offset = $(this).offset().left.toFixed(0) - $(this).parent().offset().left.toFixed(0);
+              $(this).parents(".newAppleTab").find("li").removeClass("on");
+              $(this).parents(".newAppleTab").find(".tabBg").animate({left: offset-3});
+              $(this).addClass("on");
+              var _cd=$(this).attr('cd');
+              listMode = ({BMK:'bmk', ACC:'access', SUB:'subs'})[_cd] || 'all';   // Bookmarks / Access Requests(조회) / My Submissions(등록)
+              fnRenderList();
+              var f=$(".mainList li:not(.tlNoRes)").first();
+              $(".mainList li").removeClass('on');
+              if(f.length){ f.addClass('on'); fnSetSummary(f.attr('data-id')); }
+          });
+
+          // 상세 팝업 열기 — 리스트 제목/우측 타이틀 클릭. 권한 게이트(openDetail)
+          $(document).on("click", ".mainList .pjTit", function(){ openDetail($(this).closest('li').attr('data-id')); });
+          $(document).on("click", ".rightSection .cardTit", function(){ if(curCode) openDetail(curCode); });
+
+          // 목록 행 선택 → 우측 서머리 갱신
+          $(document).on("click", ".mainList li", function(){
+            $(".mainList li").removeClass("on");
+            $(this).addClass("on");
+            fnSetSummary($(this).attr("data-id"));
+          });
+
+
+          // ── 서머리 액션: Download / Add to Basket / Bookmark ──
+          $(document).on("click", "#dlBtn", function(){ doDownload(curCode); });
+          $(document).on("click", "#bkBtn", function(){
+            if(!curCode) return; var code=curCode;
+            if(!inBasket(code)){   // 추가 = 뿅 인
+              basket[code]=true; tlToast({html:'Added '+code+' to basket.', type:'ok'});
+              renderBasket(); tlPopAdd(code,'basket'); tlPop(document.querySelector('#bkBtn i'));
+            } else {   // 제거 = 데이터 삭제 후 마크 뿅 아웃
+              delete basket[code]; tlToast({html:'Removed '+code+' from basket.'}); tlAnimMarkOut(code,'basket');
+            }
+          });
+          $(document).on("click", "#bmkBtn", function(){
+            if(!curCode) return; var code=curCode;
+            if(!isBookmarked(code)){   // 추가 = 뿅 인
+              bookmarks[code]=true; tlToast({html:'Bookmarked '+code+'.', type:'ok'});
+              syncBookmarkBtn(); syncBookmarkMarks();
+              if(listMode==='bmk') fnRenderList();
+              tlPopAdd(code,'bmk'); tlPop(document.querySelector('#bmkBtn i'));
+            } else {   // 제거 = 데이터 삭제 후 마크 뿅 아웃
+              delete bookmarks[code]; tlToast({html:'Removed bookmark — '+code+'.'}); tlAnimMarkOut(code,'bmk');
+            }
+          });
+
+          // ── Basket 모달 (Materialize 글래스 모달, ProcessMap 패턴) ──
+          $('#basketModal').modal({
+            onOpenStart: function(){ bkAppr=null; renderBasket(); $("header, aside, .contArea").addClass("modalBlur"); },
+            onCloseStart: function(){ $("header, aside, .contArea").removeClass("modalBlur"); }
+          });
+          renderBasket();   // 초기 장바구니 패널 채움
+          // 전체선택(해당 탭)
+          $(document).on("change", "#basketModal .bkSelAll", function(){
+            var tab=$(this).attr('data-tab'), on=this.checked;
+            bkTabCodes(tab).forEach(function(c){ if(!on){ delete bkSel[c]; } else { bkSel[c]=true; } });
+            renderBasket();
+          });
+          // 행 체크박스
+          $(document).on("change", "#basketModal .bkChk", function(){
+            var c=$(this).attr('data-bk'); if(this.checked) bkSel[c]=true; else delete bkSel[c]; renderBasket();
+          });
+          // 선택한 Restricted 문서 열람권한 신청 → 결재 모드 진입(테이블 접힘 + 아래 결재 모듈). 실제 신청은 모듈 Submit에서.
+          $(document).on("click", "#basketRequest", function(){
+            var codes = bkTabCodes('all').filter(function(c){ return bkSel[c] && needsAccess(repByCode(c)); });
+            if(!codes.length){ tlToast({html:'Select restricted or expired documents to request.'}); return; }
+            bkAppr = codes;   // 결재 모드 진입
+            renderBasket();
+          });
+          // 결재 모듈 — 신청 제출: 대상 acc='requested' + 리스트 행 갱신 → Requested 탭으로 전환(진행상태 확인)
+          $(document).on("click", "#basketModal .tlReqSubmit", function(){
+            if(!bkAppr || !bkAppr.length) return;
+            var codes = bkAppr.slice();
+            codes.forEach(function(c){
+              var r = repByCode(c); if(!r) return; r.acc = 'requested'; r.reqDate = todayStr(); r.apprStep = 1;
+              delete bkSel[c]; delete basket[c];   // 신청 완료 → 장바구니에서 내림(Access Requests 탭에서 추적)
+              var st = rowStatus(r);
+              $('.mainList li[data-id="'+c+'"] .statusBox')
+                .removeClass('type1 type2 granted requested restricted draft rejected expired published stProgress stDone stReject stExpired').addClass(st.box).text(st.label);
+            });
+            bkAppr = null;
+            tlToast({html:'Access request submitted for '+codes.length+' document'+(codes.length>1?'s':'')+'. Track it under the “Access Requests” tab.', type:'ok'});
+            renderBasket();
+          });
+          // 결재 모듈 — 취소: 결재 모드 해제(선택 유지, 테이블 복원)
+          $(document).on("click", "#basketModal .tlReqCancel", function(){
+            bkAppr = null; renderBasket();
+          });
+          // 선택한 권한 있는 문서만 다운로드(목업)
+          $(document).on("click", "#basketDownload", function(){
+            var codes = bkTabCodes('all').filter(function(c){ return bkSel[c] && viewable(repByCode(c)) && !isExpired(repByCode(c)); });
+            if(!codes.length){ tlToast({html:'Select documents you have access to.'}); return; }
+            tlToast({html:'Downloading '+codes.length+' document'+(codes.length>1?'s':'')+'… (mock)', type:'ok'});
+          });
+          // 선택 삭제
+          $(document).on("click", "#basketRemove", function(){
+            var codes = bkTabCodes('all').filter(function(c){ return bkSel[c]; });
+            if(!codes.length){ tlToast({html:'Select documents to remove.'}); return; }
+            codes.forEach(function(c){ delete basket[c]; delete bkSel[c]; });
+            tlToast({html:'Removed '+codes.length+' document'+(codes.length>1?'s':'')+' from basket.'});
+            renderBasket();
+          });
+          // Document 제목 클릭 → 상세 팝업(권한 게이트)
+          $(document).on("click", "#basketModal .tlBkTit", function(){
+            openDetail($(this).closest('tr').attr('data-bk'));
+          });
+
+          // 검색 오버레이 (SNPI 동일)
+          $("#mainSrchInput").focus(function(){
+            $(".bgLayer").show();
+            $(".contArea").addClass("blur");
+          });
+          $(".bgLayer").click(function(){
+            $(".bgLayer").hide();
+            $(".contArea").removeClass("blur");
+          });
+
+          // ── 검색 모달 (apis_item_list bucketModal 패턴 — 패싯은 체크박스 그룹) ──
+          (function(){
+            var chk = function(list, fn){ return list.map(function(v){ return '<label class="tlChk"><input type="checkbox" class="filled-in" value="'+v+'"/><span>'+(fn?fn(v):v)+'</span></label>'; }).join(''); };
+            $("#scTypeChk").html(chk(uniq(REPORTS.map(function(r){return r.type;}))));
+            $("#scIdxChk").html(chk(uniq(REPORTS.map(function(r){return r.idx;})).sort(), idxName));
+            $("#scBuChk").html(chk(uniq(REPORTS.map(function(r){return r.bu;})).sort()));
+          })();
+          $('#techlibSrchModal').modal();
+          // 셀렉트 드롭다운을 body에 렌더 → 모달 overflow에 안 잘림
+          $('#techlibSrchModal select').formSelect({ dropdownOptions: { container: document.body } });
+          // Create → 신규제출 팝업(window.open)
+          $(document).on('click', '#techlibCreateBtn', function(){
+            window.open('apis_techlib_newsub.html', 'techlibnewsub', 'width=1520,height=880,scrollbars=yes,resizable=yes');
+          });
+          function scChecked(sel){ return $(sel+' input:checked').map(function(){ return this.value; }).get(); }
+          // 검색 실행 → 리스트 필터 + 첫 행 선택 + 모달 닫기
+          $(document).on('click', '#scSearch', function(){
+            srchCrit = { doc:$("#scDoc").val().trim(), author:$("#scAuthor").val().trim(),
+              type:scChecked('#scTypeChk'), idx:scChecked('#scIdxChk'), cls:scChecked('#scClsChk'), bu:scChecked('#scBuChk'),
+              date:$("#scDate").val(), sort:$("#scSort").val() };
+            fnRenderList();
+            var f=$(".mainList li:not(.tlNoRes)").first();
+            $(".mainList li").removeClass('on');
+            if(f.length){ f.addClass('on'); fnSetSummary(f.attr('data-id')); }
+            var inst=M.Modal.getInstance(document.getElementById('techlibSrchModal')); if(inst) inst.close();
+          });
+          // 초기화(폼 리셋)
+          $(document).on('click', '#scReset', function(){
+            $("#scDoc,#scAuthor").val('');
+            $('#techlibSrchModal input[type="checkbox"]').prop('checked', false);
+            $("#scSort,#scDate").each(function(){ this.selectedIndex=0; });
+            $('#techlibSrchModal select').formSelect({ dropdownOptions: { container: document.body } });
+          });
+
+          fnRenderList();
+          // 첫 행 자동 선택
+          var first = $(".mainList li").first();
+          first.addClass("on");
+          fnSetSummary(first.attr("data-id"));
+        });
+
+        // ── 검색 (apis_item_list bucketModal 패턴 — 모달 폼 Search로 리스트 필터) ──
+        var srchCrit = { doc:'', author:'', type:[], idx:[], cls:[], bu:[], date:'all', sort:'new' };
+        function uniq(arr){ var s={},o=[]; arr.forEach(function(v){ if(v!=null&&!s[v]){s[v]=1;o.push(v);} }); return o; }
+        function passDate(r,d){ if(d==='all')return true; var y=+(String(r.date||'').slice(0,4)); if(d==='y2')return y>=2024; if(d==='y1')return y>=2018&&y<=2023; if(d==='y0')return y<2018; return true; }
+        function inSel(arr,v){ return !arr || !arr.length || arr.indexOf(String(v))>=0; }   // 미선택=전체
+        function passSearch(r){
+          var c=srchCrit;
+          if(c.doc && (r.code+' '+r.title).toLowerCase().indexOf(c.doc.toLowerCase())<0) return false;
+          if(c.author && String(r.author).toLowerCase().indexOf(c.author.toLowerCase())<0) return false;
+          if(!inSel(c.type, r.type)) return false;
+          if(!inSel(c.idx, r.idx)) return false;
+          if(!inSel(c.cls, r.cls)) return false;
+          if(!inSel(c.bu, r.bu)) return false;
+          if(!passDate(r,c.date)) return false;
+          return true;
+        }
+        function sortReports(arr){
+          var k=srchCrit.sort;
+          return arr.slice().sort(function(a,b){
+            if(k==='hits') return (b.hits||0)-(a.hits||0);
+            if(k==='old')  return String(a.date||'').localeCompare(String(b.date||''));
+            if(k==='az')   return String(a.title).localeCompare(String(b.title));
+            return String(b.date||'').localeCompare(String(a.date||''));   // new(기본)
+          });
+        }
+        function filteredReports(){ return sortReports(REPORTS.filter(function(r){
+          if(listMode==='subs')   return isMine(r) && passSearch(r);            // My Submissions = 등록 결재(내 문서, draft 포함)
+          if(r.draft) return false;                                             // 드래프트(내 등록 결재 진행중)는 다른 탭에서 제외
+          if(listMode==='bmk')    return isBookmarked(r.code) && passSearch(r); // Bookmarks = 북마크만
+          if(listMode==='access') return isAccessReq(r) && passSearch(r);       // Access Requests = 조회 결재 이력
+          return passSearch(r);                                                 // All = 발행된 전체
+        })); }
+
+        // 탭별 빈 상태 행 — 기존 .tlNoRes 스타일 그대로 재사용(아이콘 + 한 줄 안내)
+        var TAB_EMPTY = {
+          all:    {ic:'search_off',      t:'No documents match your search.'},
+          bmk:    {ic:'bookmark_border', t:'No bookmarks yet — star a document to save it here.'},
+          access: {ic:'lock_open',       t:'No access requests — request access to a restricted document to see it here.'},
+          subs:   {ic:'description',     t:'No submissions yet — documents you submit for publishing appear here.'}
+        };
+        function tlEmptyRow(){
+          var e = TAB_EMPTY[listMode] || TAB_EMPTY.all;
+          return '<li class="tlNoRes"><i class="material-icons">'+e.ic+'</i><div>'+e.t+'</div></li>';
+        }
+
+        // 좌측 목록 렌더 — 원본 테이블 컬럼(Type·Region·Author·Date·Class·Views)을 메타칩으로 변환. 검색 결과 반영.
+        function fnRenderList(){
+          var html = '';
+          filteredReports().forEach(function(r){
+            html += '<li class="waves-effect waves-hColor animate__animated'+(inBasket(r.code)?' tlInBk':'')+(isBookmarked(r.code)?' tlBmk':'')+'" data-id="'+r.code+'">'
+                 +    '<section class="statusBox '+rowStatus(r).box+'">'+rowStatus(r).label+'</section>'
+                 +    '<div class="tlRowMarks"><i class="material-icons tlBasketMark" title="In Basket">shopping_cart</i><i class="material-icons tlBmkMark" title="Bookmarked">star</i></div>'
+                 +    '<section class="wd100p">'
+                 +      '<div class="pjTit tlLink">['+r.code+'] '+r.title+'</div>'
+                 +      '<div class="subInfo"><div class="cmpMeta">'
+                 +        clsChip(r.cls)
+                 +        '<div class="roundBox contVal1">'+r.type+'</div>'
+                 +        '<div class="roundBox contVal2">'+idxName(r.idx)+'</div>'
+                 +        '<div class="roundBox contVal3">'+r.author+'</div>'
+                 +      '</div><span class="techlibRowDate">'+fmtDate(r.date)+'</span></div>'
+                 +    '</section>'
+                 +  '</li>';
+          });
+          $(".mainList ul").html(html || tlEmptyRow());
+          fnSetPrjList();
+        }
+
+        // 행 진입 애니메이션 (SNPI 패턴)
+        function fnSetPrjList(){
+          document.querySelectorAll('.mainList ul li').forEach((li, index) => {
+            li.classList.remove('animate__flipInX');
+            setTimeout(() => { li.classList.add('animate__flipInX'); }, index * 80);
+          });
+        }
+
+        // 우측 서머리 — 원본 pop renderInfo() 컨텐츠 구성: 메타 + Abstract + Keywords
+        function fnSetSummary(id){
+          var r = REPORTS.find(function(x){ return x.code===id; });
+          if(!r) return;
+          curCode = id;   // 서머리 액션(Download/Basket) 대상
+          $("#dtTit").text('['+r.code+'] '+r.title);
+          $("#smDocId").text(r.code);
+          $("#smType").text(typeName(r.type));
+          $("#smAuthor").text(r.author);
+          $("#smRegion").text(r.site+' · '+idxName(r.idx));
+          $("#smBu").text(r.bu);
+          $("#smSeg").text(segOf(r.bu));
+          $("#smDate").text(fmtDate(r.date));
+          $("#smClass").html(clsText(r.cls));
+          $("#smAbstract").text(summaryOf(r.code) || genAbstract(r));
+
+          // Keywords (원본 renderInfo와 동일 산출: BU·Segment·Type + 제목 키워드) — 중복 제거
+          var raw = [r.bu, segOf(r.bu), typeName(r.type)]
+            .concat(r.title.split(/[\s,—-]+/).filter(function(w){ return w.length>4; }).slice(0,4));
+          var seen = {}, kws = [];
+          raw.forEach(function(k){ var key=String(k).toLowerCase(); if(k && !seen[key]){ seen[key]=1; kws.push(k); } });
+          $("#smKeywords").html(kws.map(function(k){ return '<span class="roundBox">'+k+'</span>'; }).join(''));
+
+          // SME Notes — 메타 행에 건수만(목록/링크 없이). pop(apis_techlib_pop) pickNotes와 동일 해시
+          var _sn = r.draft ? 0 : smeCount(r.code);
+          $("#smSmeVal").html(_sn>0 ? '<span class="roundBox">'+_sn+' note'+(_sn>1?'s':'')+'</span>' : 'None');
+
+          // 결재 이력 — Access Requests(요청)·My Submissions(등록) 탭에서만 노출(All·Bookmarks는 권한 뷰). 반려 사유는 글래스 툴팁.
+          if((listMode==='access' || listMode==='subs') && hasApprTrail(r)){
+            $("#smApprBox").removeClass('tlHidden');
+            $("#smApprTit").text(isMine(r) ? 'Publishing Approval' : 'Access Approval');
+            $("#smAppr").html(apprTableHtml(r));
+            if(typeof initAllHBorderTableOverlays === 'function') initAllHBorderTableOverlays(document.getElementById('smAppr'));   // 행 hover 글래스 오버레이(표준 hBorderTable)
+            // 반려사유 툴팁 = 공용 data-tip 글래스 툴팁(glass_engine glassTipInit이 자동 처리 — Materialize init 불필요)
+          } else {
+            $("#smApprBox").addClass('tlHidden');
+            $("#smAppr").empty();
+          }
+
+          syncBasketBtn();   // 선택 문서 기준 Download/Basket 버튼 상태
+          syncBookmarkBtn(); // Bookmark 버튼 상태
+          $(".techlibActs").toggleClass('tlHidden', !!r.draft);   // 드래프트는 다운로드/바구니/북마크 버튼 숨김(작성중이라 대상 아님)
+        }
+  </script>
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <article class="navTop">
+        <section class="leftSection">
+          <div class="menuIcon">
+            <div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
+          </div>
+          <div><a href="apis_main.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
+        </section>
+        <section class="centerSection">
+          <div class="srchArea">
+            <i class="material-icons prefix">search</i>
+            <input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput" autocomplete="off">
+          </div>
+        </section>
+        <section class="rightSection">
+          <div class="userInfo">
+            <div class="mr10">
+              <span class="mocha25-text fontM">JONGHO LEE</span>
+            </div>
+            <i class="material-icons gardenia25 mocha25-text fLine vCenter hCenter mg0">person</i>
+          </div>
+          <div class="langInfo ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">language</i>
+          </div>
+          <div class="notiArea ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">assignment_turned_in</i>
+            <div class="notiCnt pulse"><span class="font11">3</span></div>
+          </div>
+          <div class="notiArea ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">format_list_bulleted</i>
+            <div class="notiCnt pulse"><span class="font11">6</span></div>
+          </div>
+        </section>
+      </article>
+    </nav>
+  </header>
+
+  <aside class="menuAside">
+    <div id="slide-out" class="sidenav glassBox">
+      <div class="userInfoArea">
+        <div class="photo"><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+        <div class="userInfo">
+          <div class="fontB">JONGHO LEE</div>
+          <div>IT Procurement/HR/R&D Team</div>
+        </div>
+      </div>
+      <div class="menuList">
+        <ul>
+          <li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>Home</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_dash.html"><i class="material-icons left">analytics</i>Insight</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_proposal_list.html"><i class="material-icons left">assistant</i>Proposal</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_custom_list.html"><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npt_list.html"><i class="material-icons left">snippet_folder</i>NPT</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_tech_list.html"><i class="material-icons left">build</i>Tech Support</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_note_list.html"><i class="material-icons left">edit_note</i>Lab Note</a></li>
+          <li class="waves-effect waves-hColor on"><a href="apis_techlib_list.html"><i class="material-icons left">menu_book</i>Tech Library</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_composition_list.html"><i class="material-icons left">layers</i>Composition</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_fmea_list.html"><i class="material-icons left">playlist_add_check_circle</i>FMEA​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_coc.html"><i class="material-icons left">assignment_late</i>CoC​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_psa.html"><i class="material-icons left">health_and_safety</i>PSA</a></li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <article class="contArea typeList type2">
+    <div class="leftSection">
+      <section class="mainTitArea">
+        <div class="mainTit">Tech Library List</div>
+        <div class="btnArea">
+          <div class="newAppleTab mr10 wd140pxType">
+            <ul>
+              <li class="waves-effect waves-hColor on" cd="ALL">All</li>
+              <li class="waves-effect waves-hColor" cd="BMK">Bookmarks</li>
+              <li class="waves-effect waves-hColor" cd="ACC">Access Requests</li>
+              <li class="waves-effect waves-hColor" cd="SUB">My Submissions</li>
+              <div class="tabBg" style="left: 0px;"></div>
+            </ul>
+          </div>
+          <div><a href="javascript:;" id="techlibCreateBtn" class="waves-effect waves-light hBtn hBlue wd120px mr10"><i class="material-icons left">add</i><span class="label">Create</span></a></div>
+          <div><a href="javascript:;" id="techlibSrchBtn" class="waves-effect waves-light hBtn viva wd120px modal-trigger" data-target="techlibSrchModal"><i class="material-icons left">search</i><span class="label">Search</span></a></div>
+        </div>
+      </section>
+
+      <section class="mainList cardBox">
+        <ul class="hScroll"></ul>
+      </section>
+    </div>
+    <div class="rightSection">
+      <div class="cardBox">
+        <div class="cardTit"><span class="link" id="dtTit">—</span></div>
+        <div class="techlibActs">
+          <a href="javascript:;" id="dlBtn" class="waves-effect waves-light hBtn"><i class="material-icons left">download</i><span class="label">Download</span></a>
+          <a href="javascript:;" id="bkBtn" class="waves-effect waves-light hBtn"><i class="material-icons left">add</i><span class="label">Add to Basket</span></a>
+          <a href="javascript:;" id="bmkBtn" class="waves-effect waves-light hBtn"><i class="material-icons left">star_border</i><span class="label">Bookmark</span></a>
+        </div>
+        <div class="row subPjInfo">
+          <div class="col s6">Classification</div>
+          <div class="col s6 val" id="smClass">—</div>
+          <div class="col s6">Document #</div>
+          <div class="col s6 val" id="smDocId">—</div>
+          <div class="col s6">Type</div>
+          <div class="col s6 val" id="smType">—</div>
+          <div class="col s6">Author</div>
+          <div class="col s6 val" id="smAuthor">—</div>
+          <div class="col s6">Site / Region</div>
+          <div class="col s6 val" id="smRegion">—</div>
+          <div class="col s6">Business Unit</div>
+          <div class="col s6 val" id="smBu">—</div>
+          <div class="col s6">Segment</div>
+          <div class="col s6 val" id="smSeg">—</div>
+          <div class="col s6">Date</div>
+          <div class="col s6 val" id="smDate">—</div>
+          <div class="col s6">SME Notes</div>
+          <div class="col s6 val" id="smSmeVal">—</div>
+        </div>
+        <div class="subTit mt20 ml10">Abstract</div>
+        <div class="row">
+          <div class="col s12">
+            <div class="pd10 techlibAbs" id="smAbstract">—</div>
+          </div>
+        </div>
+        <div class="subTit mt20 ml10">Keywords</div>
+        <div class="row">
+          <div class="col s12">
+            <div class="techlibKws pd10" id="smKeywords"></div>
+          </div>
+        </div>
+        <div id="smApprBox" class="tlHidden">
+          <div class="subTit mt20 ml10" id="smApprTit">Approval</div>
+          <div class="row">
+            <div class="col s12">
+              <div id="smAppr"></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </article>
+
+  <!-- Document Basket FAB (우측 하단 — Materialize fixed-action-btn, apis_main 동일 패턴) -->
+  <div class="fixed-action-btn">
+    <a href="javascript:;" id="basketBtn" class="btn-floating btn-large mpmBg2 waves-effect waves-light tooltipped modal-trigger" data-target="basketModal" data-position="left" data-tooltip="Document Basket">
+      <i class="large material-icons">shopping_cart</i>
+    </a>
+    <span class="tlFabBadge" id="basketCount">0</span>
+  </div>
+
+  <!-- Document Basket 모달 (Materialize 글래스 모달 · MAPIS 표준 mochaBg 헤더) -->
+  <div id="basketModal" class="modal tlBasketModal">
+    <div class="modal-header mochaBg">
+      <h5><i class="material-icons left">shopping_cart</i>Document Basket</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div id="bkPaneAll" class="tlBkPane"></div>
+      <div class="btnArea">
+        <a href="javascript:;" id="basketRequest" class="waves-effect waves-light hBtn hBlue"><i class="material-icons left">key</i><span class="label">Request access (<span id="bkReqCount">0</span>)</span></a>
+        <a href="javascript:;" id="basketDownload" class="waves-effect waves-light hBtn ml10"><i class="material-icons left">download</i><span class="label">Download (<span id="bkDlCount">0</span>)</span></a>
+        <a href="javascript:;" id="basketRemove" class="waves-effect hBtn hGrey ml10"><i class="material-icons left">delete</i><span class="label">Remove (<span id="bkRmCount">0</span>)</span></a>
+      </div>
+    </div>
+  </div>
+
+  <!-- 검색 모달 (apis_item_list bucketModal 패턴) -->
+  <div id="techlibSrchModal" class="modal tlSrchModal">
+    <div class="modal-header mochaBg">
+      <h5><i class="material-icons left">search</i>Search</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div class="srchOptBox">
+        <div class="row">
+          <div class="col s2 tit">Document</div>
+          <div class="col s4"><div class="aniInput"><input type="text" class="browser-default" id="scDoc" placeholder="Code or title"><span class="focus-border"></span></div></div>
+          <div class="col s2 tit">Author</div>
+          <div class="col s4"><div class="aniInput"><input type="text" class="browser-default" id="scAuthor"><span class="focus-border"></span></div></div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Type</div>
+          <div class="col s10"><div class="tlChkGrp" id="scTypeChk"></div></div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Region</div>
+          <div class="col s10"><div class="tlChkGrp" id="scIdxChk"></div></div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Class</div>
+          <div class="col s10"><div class="tlChkGrp" id="scClsChk">
+            <label class="tlChk"><input type="checkbox" class="filled-in" value="1"/><span>Class 1 · Public</span></label>
+            <label class="tlChk"><input type="checkbox" class="filled-in" value="2"/><span>Class 2 · Internal</span></label>
+            <label class="tlChk"><input type="checkbox" class="filled-in" value="3"/><span>Class 3 · Confidential</span></label>
+            <label class="tlChk"><input type="checkbox" class="filled-in" value="4"/><span>Class 4 · Restricted</span></label>
+          </div></div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Business Unit</div>
+          <div class="col s10"><div class="tlChkGrp" id="scBuChk"></div></div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Sort</div>
+          <div class="col s4"><select id="scSort"><option value="new">Newest</option><option value="old">Oldest</option><option value="hits">Most viewed</option><option value="az">Title (A–Z)</option></select></div>
+          <div class="col s2 tit">Period</div>
+          <div class="col s4"><select id="scDate"><option value="all">Any time</option><option value="y2">2024 – now</option><option value="y1">2018 – 2022</option><option value="y0">Before 2018</option></select></div>
+        </div>
+      </div>
+      <div class="btnArea">
+        <a href="javascript:;" class="waves-effect hBtn hGrey wd100px" id="scReset"><i class="material-icons left">refresh</i><span class="label">Reset</span></a>
+        <a href="javascript:;" class="waves-effect waves-light hBtn hViva wd100px ml10" id="scSearch"><i class="material-icons left">search</i><span class="label">Search</span></a>
+      </div>
+    </div>
+  </div>
+
+  <article class="bgLayer"></article>
+</body>
+</html>

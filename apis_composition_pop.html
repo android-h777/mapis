@@ -314,31 +314,34 @@
         ]; }
         function doApprAct(key, act){
           var c = SUBTYPE_APPR[key];
-          if(act==='save'){ M.toast({html:c.sub+' saved'}); return; }
+          if(act==='save'){ tlToast({html:c.sub+' saved'}); return; }
           if(act==='submit'){            // Draft → In Approval (상신)
             c.line.forEach(function(r,i){ if(i>0){ r.st=''; r.date='-'; } });
             c.line[0].st='drafted';
             c.status='inappr'; apprMarkNextPending(c);
-            M.toast({html:c.sub+' submitted for approval'});
+            tlToast({html:c.sub+' submitted for approval'});
           } else if(act==='approve'){    // 현재 차례 승인 → 다음 차례 / 마지막이면 Active
             for(var i=0;i<c.line.length;i++){ if(c.line[i].st==='pending'){ c.line[i].st='approved'; c.line[i].date=APPR_TODAY; break; } }
             var hasNext=false;
             for(var j=0;j<c.line.length;j++){ if(c.line[j].st===''){ c.line[j].st='pending'; hasNext=true; break; } }
-            if(!hasNext){ c.status='appr'; M.toast({html:c.sub+' fully approved · Active'}); }
-            else M.toast({html:c.sub+' step approved'});
+            if(!hasNext){ c.status='appr'; tlToast({html:c.sub+' fully approved · Active'}); }
+            else tlToast({html:c.sub+' step approved'});
           } else if(act==='reject'){     // 반려 → Draft
             for(var k=0;k<c.line.length;k++){ if(c.line[k].st==='pending'){ c.line[k].st='rejected'; c.line[k].date=APPR_TODAY; break; } }
             c.status='draft';
-            M.toast({html:c.sub+' rejected — returned to Draft'});
+            tlToast({html:c.sub+' rejected — returned to Draft'});
           } else if(act==='recall'){     // 회수 → Draft
             apprClearPending(c); c.status='draft';
-            M.toast({html:c.sub+' recalled — returned to Draft'});
+            tlToast({html:c.sub+' recalled — returned to Draft'});
           } else if(act==='start'){      // 미작성 → Draft (작성 시작)
             c.line = apprFreshLine(); c.status='draft';
-            M.toast({html:c.sub+' drafting started'});
+            tlToast({html:c.sub+' drafting started'});
           }
           renderAppr(key);
         }
+
+        // 글래스 토스트 — MAPIS 공통 glassToast(js/glass_engine.js) 사용. o={html, type}
+        function tlToast(o){ glassToast(o.html, o.type || 'info'); }
 
         $(document).ready(function(){
           // 스크롤스파이 + 좌측 메뉴 (tech_pop 동일)
@@ -391,6 +394,20 @@
             renderBOM((VARIANTS.find(function(v){ return v.sel; }) || VARIANTS[0]).lineage);
           });
 
+          // 리스트 서머리 카드에서 진입(?card=pjContCard_N) → 해당 카드로 자동 스크롤 + 좌측 메뉴 활성
+          try {
+            var cardParam = new URLSearchParams(location.search).get('card');
+            if(cardParam && document.getElementById(cardParam)){
+              setTimeout(function(){
+                var $card = $('#'+cardParam);
+                var scrollTop = $card.offset().top - parseFloat($(".contArea").css("margin-top"));
+                $('html, body').animate({ scrollTop: scrollTop }, { queue:false, duration:500 });
+                $('.menu-item').removeClass('active');
+                $('.menu-item[data-target="'+cardParam+'"]').addClass('active');
+              }, 350);   // 카드 동적 렌더·애니메이션 이후 스크롤
+            }
+          } catch(e){}
+
           // 농도(.jsConc) 변경 시 해당 표 TOTAL 자동 재계산 + 색 갱신 (공통)
           $(document).on('input', '.jsConc', function(){
             recalcTableTotal($(this).closest('table'));
@@ -428,7 +445,7 @@
             doApprAct($(this).data('key'), $(this).data('act'));
           });
           // 좌측 메뉴 하단 전역 Save (다른 팝업과 동일 위치)
-          $('#cmpSaveBtn').on('click', function(){ M.toast({html:'Composition saved'}); });
+          $('#cmpSaveBtn').on('click', function(){ tlToast({html:'Composition saved'}); });
         });
 
         // Card 2-A : Composition Variant (행 클릭 → 하단 BOM 연동)

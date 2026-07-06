@@ -4,17 +4,18 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>APIS MPM — Lab Note</title>
+    <title>MAPIS Lab Note</title>
     <link rel="stylesheet" type="text/css" href="css/materialize.css">
     <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
     <link type="text/css" rel="stylesheet" href="css/animate.min.css">
+    <link rel="preload" href="mapis_lib/font/material-icons.woff2" as="font" type="font/woff2" crossorigin>
     <link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
     <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/glass_engine.js"></script>
-
 </head>
 <body>
+  <!-- 공통 헤더 — apis_techlib_list와 동일(표준 mpm 셸) -->
   <header class="navbar-fixed">
     <nav>
       <article class="navTop">
@@ -22,7 +23,7 @@
           <div class="menuIcon">
             <div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
           </div>
-          <div><a href="apis_main.html"><img src="img/MAPISLogo_h30.png" class="ml20 navLogo"></a></div>
+          <div><a href="apis_main.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
         </section>
         <section class="centerSection">
           <div class="srchArea">
@@ -32,12 +33,10 @@
         </section>
         <section class="rightSection">
           <div class="userInfo">
-            <div class="mr10"><span class="mocha25-text fontM">JONGHO LEE</span></div>
-            <i class="material-icons gardenia25 mocha25-text fLine vCenter hCenter mg0">person</i>
-            <div class="btnArea hiddenArea">
-              <a id="profileBtn" class="waves-effect waves-light hBtn"><span class="material-symbols-outlined left">account_circle</span><span class="label">View Profile</span></a>
-              <a id="logoutBtn" class="waves-effect waves-light hBtn hViva"><span class="material-symbols-outlined left">logout</span><span class="label">Sign Out</span></a>
+            <div class="mr10">
+              <span class="mocha25-text fontM">JONGHO LEE</span>
             </div>
+            <i class="material-icons gardenia25 mocha25-text fLine vCenter hCenter mg0">person</i>
           </div>
           <div class="langInfo ml10">
             <i class="material-icons mocha25-text fLine vCenter hCenter mg0">language</i>
@@ -74,8 +73,10 @@
           <li class="waves-effect waves-hColor"><a href="apis_npt_list.html"><i class="material-icons left">snippet_folder</i>NPT</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_tech_list.html"><i class="material-icons left">build</i>Tech Support</a></li>
           <li class="waves-effect waves-hColor on"><a href="apis_note_list.html"><i class="material-icons left">edit_note</i>Lab Note</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_techlib_list.html"><i class="material-icons left">menu_book</i>Tech Library</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_composition_list.html"><i class="material-icons left">layers</i>Composition</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_rptlib_list.html"><i class="material-icons left">library_books</i>Technical Report Library</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_fmea_list.html"><i class="material-icons left">playlist_add_check_circle</i>FMEA</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_coc.html"><i class="material-icons left">assignment_late</i>CoC</a></li>
           <li class="waves-effect waves-hColor"><a href="apis_psa.html"><i class="material-icons left">health_and_safety</i>PSA</a></li>
@@ -84,36 +85,37 @@
     </div>
   </aside>
 
-  <article class="contArea typeList type2">
-    <!-- 좌: Project 리스트 -->
-    <div class="leftSection">
+  <!-- 본문: Lab Note List — 좌 Project | 우 Note. NPI 리스트(apis_npdi_list) 레이아웃 그대로,
+       패널 비율만 5:5 = .type5 (NPI의 type2/3/4 네이밍 관례를 따른 단일 추가 클래스) -->
+  <article class="contArea typeList type5">
+    <!-- 좌: Project (타이틀 + AppleTab=Project분류 + Search 헤더 + cardBox list) -->
+    <div class="leftSection elnProjPanel">
       <section class="mainTitArea">
         <div class="mainTit">Lab Note Project List</div>
+        <!-- 검색 결과 모드: 기준 표시 + Clear -->
+        <span id="elnSrchCrit" class="elnSrchCrit dpNone"></span>
+        <a href="javascript:;" id="elnSrchClear" class="elnSrchClear dpNone"><i class="material-symbols-outlined">arrow_back</i>Clear Note Filters</a>
         <div class="btnArea">
-          <div class="newAppleTab mr10">
+          <div class="newAppleTab elnScopeTab mr10">
             <ul>
               <li class="waves-effect waves-hColor on" cd="all">All</li>
               <li class="waves-effect waves-hColor" cd="my">My List</li>
-              <div class="tabBg"></div>
+              <div class="tabBg" style="left: 0px;"></div>
             </ul>
           </div>
-          <div><a href="javascript:;" id="noteSearchBtn" class="waves-effect waves-light hBtn viva"><i class="material-icons left">search</i><span class="label">Search</span></a></div>
+          <a href="javascript:;" id="elnSearchBtn" class="waves-effect waves-light hBtn"><i class="material-symbols-outlined left">search</i><span class="label">Search</span></a>
         </div>
       </section>
       <section class="mainList cardBox">
         <ul class="hScroll" id="projListUl"><!-- JS 렌더 --></ul>
       </section>
     </div>
-
-    <!-- 우: Note 리스트 -->
+    <!-- 우: Note (작성자 select 헤더 + cardBox list). select=선택 Project 소속 작성자 → note 필터 -->
     <div class="rightSection">
-      <section class="mainTitArea">
+      <section class="mainTitArea elnNoteHead">
         <div class="mainTit">Note List</div>
-        <div class="btnArea noteListHead">
-          <span id="noteSrchClear" class="noteSrchClear"><i class="material-icons">arrow_back</i>Clear</span>
-          <select id="noteAuthorFilter"><!-- JS 렌더 (Materialize FormSelect) --></select>
-          <div><a href="javascript:;" id="newNoteBtn" class="waves-effect waves-light hBtn hBlue"><i class="material-icons left">note_add</i><span class="label">New Note</span></a></div>
-        </div>
+        <select id="elnUserFilter" class="elnUserSelect"><!-- JS 렌더 (Materialize FormSelect) --></select>
+        <a href="javascript:;" id="elnNewNote" class="waves-effect waves-light hBtn hViva ml10"><i class="material-symbols-outlined left">note_add</i><span class="label">New Note</span></a>
       </section>
       <section class="mainList cardBox">
         <ul class="hScroll" id="noteListUl"><!-- JS 렌더 --></ul>
@@ -121,45 +123,266 @@
     </div>
   </article>
 
-  <!-- 검색 모달 (materialize) -->
-  <article id="noteSearchModal" class="modal noteSrchModal">
+  <!-- 시작 템플릿 픽커 모달 — 표준 Materialize 글래스 모달 + fixedTable(기존양식). ELN.modal 대체 -->
+  <div id="elnTmplModal" class="modal elnTmplModal">
     <div class="modal-header mochaBg">
-      <h5>Search Notes</h5>
+      <h5><i class="material-icons left">note_add</i>Start a New Note</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content" id="elnTmplBody"><!-- JS 렌더 --></div>
+  </div>
+
+  <!-- 템플릿 공유 모달 — 동료 퀵서치(팝오버 → 표준 모달로 변환) -->
+  <div id="elnShareModal" class="modal elnShareModal">
+    <div class="modal-header mochaBg">
+      <h5><i class="material-icons left">share</i>Share Template</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content" id="elnShareBody"><!-- JS 렌더 --></div>
+  </div>
+
+  <!-- 노트 검색 모달 — apis_techlib_list #techlibSrchModal 패턴(srchOptBox) -->
+  <div id="elnSrchModal" class="modal elnSrchModal">
+    <div class="modal-header mochaBg">
+      <h5><i class="material-icons left">search</i>Search Notes</h5>
       <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
     </div>
     <div class="modal-content">
-      <div class="srchField"><label>Keyword</label><input type="text" id="srchKeyword" class="browser-default" placeholder="Title or code… (use * ?)" autocomplete="off"></div>
-      <div class="srchField"><label>Tag</label><input type="text" id="srchTags" class="browser-default" placeholder="e.g. #viscosity" autocomplete="off"></div>
-      <div class="srchField"><label>Status</label><select id="srchStatus" class="browser-default"></select></div>
-      <div class="srchField"><label>Project</label><select id="srchProject" class="browser-default"></select></div>
+      <div class="srchOptBox">
+        <div class="row">
+          <div class="col s2 tit">Keyword</div>
+          <div class="col s10"><div class="aniInput"><input type="text" class="browser-default" id="srchKeyword" placeholder="Title or code…  (use * ?)" autocomplete="off"><span class="focus-border"></span></div></div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Tags</div>
+          <div class="col s10"><div class="aniInput"><input type="text" class="browser-default" id="srchTags" list="srchTagList" placeholder="e.g. #viscosity  (type to autocomplete · * ?)" autocomplete="off"><span class="focus-border"></span></div>
+            <datalist id="srchTagList"></datalist></div>
+        </div>
+        <div class="row">
+          <div class="col s2 tit">Status</div>
+          <div class="col s4"><select id="srchStatus"></select></div>
+          <div class="col s2 tit">Project</div>
+          <div class="col s4"><select id="srchProject"></select></div>
+        </div>
+        <div class="row">
+          <div class="col s12"><div class="elnSrchHint"><i class="material-symbols-outlined">tips_and_updates</i><span><b>*</b> matches any characters, <b>?</b> matches a single one. Leave a field blank to ignore it.</span></div></div>
+        </div>
+      </div>
       <div class="btnArea">
-        <a href="javascript:;" id="srchRunBtn" class="waves-effect waves-light hBtn hBlue wd100px mr10"><i class="material-icons left">search</i><span class="label">Search</span></a>
-        <a href="javascript:;" class="waves-effect waves-light hBtn hGrey wd100px modal-close"><i class="material-icons left">cancel</i><span class="label">Cancel</span></a>
+        <a href="javascript:;" class="waves-effect hBtn hGrey wd100px" id="srchReset"><i class="material-icons left">refresh</i><span class="label">Reset</span></a>
+        <a href="javascript:;" class="waves-effect waves-light hBtn hViva wd100px ml10" id="srchGo"><i class="material-icons left">search</i><span class="label">Search</span></a>
       </div>
     </div>
-  </article>
+  </div>
+
+  <article class="bgLayer"></article>
 
   <script>
-  /* ─────────────── 데이터 (원본 apis_eln_list_simple 에서 이식) ─────────────── */
+  // ══ apis_eln_list_simple 이식 — 표준 mpm 스택(mpm_common.css + materialize.js + glass_engine.js) ══
+  // 변환 규칙: ELN.toast→glassToast / ELN.modal·popover→Materialize 글래스 모달(techlib 패턴) /
+  //            statusBox·roundBox 색=기존 mpm 클래스로 매핑(신규 색 정의 없음)
+
+  // status 코드 ↔ statusBox 색클래스 + 라벨 — 기존 mpm 시맨틱 클래스 재사용
+  // In Progress=stProgress(청, 진행중) / In Approval=requested(모카, 결재대기) / Approved=stDone(녹, 완료)
   var ST = [
-    {k:'ing',  cls:'stIng',  t:'In Progress'},
-    {k:'appr', cls:'stAppr', t:'In Approval'},
-    {k:'ok',   cls:'stOk',   t:'Approved'}
+    {k:'ing',  cls:'stProgress', t:'In Progress'},
+    {k:'appr', cls:'requested',  t:'In Approval'},
+    {k:'ok',   cls:'stDone',     t:'Approved'}
   ];
   function stByKey(k){ return ST.filter(function(s){return s.k===k;})[0] || ST[0]; }
+  // 프로젝트 상태 — 기존 type1(주황)/type2(녹) 재사용 (Active=주황, Complete=녹)
   var PST = [
     {k:'active',   cls:'type1', t:'Active'},
     {k:'complete', cls:'type2', t:'Complete'}
   ];
   function pstByKey(k){ return PST.filter(function(s){return s.k===k;})[0] || PST[0]; }
 
+  // 글래스 토스트 — MAPIS 공통 glassToast(js/glass_engine.js)
+  function toast(msg, type){ glassToast(msg, type || 'info'); }
+
+  // 노트 상세는 팝업(window.open) — apis_eln_pop_simple(원 ELN 스택). code=기존 노트, project=소속, tmpl=새 노트 템플릿.
+  function openNote(opts){
+    opts = opts || {};
+    var q = [];
+    if(opts.code) q.push('code=' + encodeURIComponent(opts.code));
+    if(opts.project) q.push('project=' + encodeURIComponent(opts.project));
+    if(opts.tmpl) q.push('tmpl=' + encodeURIComponent(opts.tmpl));
+    if(opts.st) q.push('st=' + encodeURIComponent(opts.st));   // 노트 상태(ing=작성중/appr=결재중/ok=완료) → 팝업 뷰모드·헤더 상태
+    // 상세 = 원본 ELN 팝업(apis_eln_pop_simple). ?tmpl= 로 템플릿 전달 → 팝업의 realizeTemplate이 해당 카드만 구성.
+    window.open('apis_eln_pop_simple.html' + (q.length ? '?' + q.join('&') : ''), 'elnNoteDetail', 'width=1480,height=900,scrollbars=yes,resizable=yes');
+  }
+
+  /* ── 시작 템플릿 — New Note 시 구조(섹션 구성)를 먼저 선택. Public(고정) + My Templates(localStorage 공유) ── */
+  var ELN_TEMPLATES = [
+    { key:'empty',       icon:'description', name:'Blank',       desc:'Start from scratch.',        sections:['Overview'] },
+    { key:'general',     icon:'note',        name:'General',     desc:'Free-form notes.',           sections:['Overview','Notes'] },
+    { key:'formulation', icon:'science',     name:'Formulation', desc:'Formulation & analysis.',    sections:['Overview','Formulation'] },
+    { key:'experiment',  icon:'labs',        name:'Experiment',  desc:'Data tables & charts.',      sections:['Overview','Data Visualization'] },
+    { key:'analysis',    icon:'analytics',   name:'Analysis',    desc:'Structures & linked items.', sections:['Overview','ChemStudio','Related Items'] },
+    { key:'report',      icon:'summarize',   name:'Full Report', desc:'The complete note.',         sections:['Overview','Formulation','Data Visualization','ChemStudio','Related Items','Attachments'] }
+  ];
+  // My Templates 저장소(목업) — list/pop 두 창이 같은 origin localStorage로 공유
+  // My Templates(목업) — localStorage에 저장된 게 있으면 그걸, 없으면 기본 세트를 노출
+  // sections는 팝업(eln_proto_simple)과 공유하는 {type,label} 형식 — pop의 realizeTemplate이 그대로 사용.
+  //   type: overview·formulation·table(Data Viz)·chem·related·attach·editor
+  var DEFAULT_MY_TEMPLATES = [
+    { key:'my_visc',    name:'Viscosity Study', sections:[{type:'overview',label:'Overview'},{type:'formulation',label:'Formulation'},{type:'table',label:'Data Visualization'}] },
+    { key:'my_scaleup', name:'Scale-up Report', sections:[{type:'overview',label:'Overview'},{type:'table',label:'Data Visualization'},{type:'attach',label:'Attachments'}] },
+    { key:'my_quick',   name:'Quick Memo',      sections:[{type:'overview',label:'Overview'},{type:'editor',label:'Editor'}] }
+  ];
+  // 팝업이 My 템플릿을 realize할 수 있게 localStorage(eln.myTemplates, pop과 공유)에 시드(비어있을 때만)
+  (function(){ try { if(!JSON.parse(localStorage.getItem('eln.myTemplates')||'null')) localStorage.setItem('eln.myTemplates', JSON.stringify(DEFAULT_MY_TEMPLATES)); } catch(e){} })();
+  function loadMyTemplates(){ try { var v = JSON.parse(localStorage.getItem('eln.myTemplates') || 'null'); return (v && v.length) ? v : DEFAULT_MY_TEMPLATES; } catch(e){ return DEFAULT_MY_TEMPLATES; } }
+  // 픽커 카드 — 마우스 추적 무지개 색수차(glassTrack) + 3D 틸트(고급 글래스 인터랙션). 팝업 Add Module과 동일
+  function wirePickTilt(scope){
+    if(!scope) return;
+    scope.querySelectorAll('.elnAddPickCard').forEach(function(card){
+      if(card._tilt) return; card._tilt = true;
+      card.addEventListener('mousemove', function(e){
+        if(typeof glassTrack === 'function') glassTrack.call(card, e);
+        var r = card.getBoundingClientRect();
+        var x = ((e.clientX - r.left) / r.width) * 100, y = ((e.clientY - r.top) / r.height) * 100;
+        card.style.transform = 'perspective(600px) rotateX(' + ((50 - y) / 50 * 8) + 'deg) rotateY(' + ((x - 50) / 50 * 8) + 'deg) scale(1.02)';
+      });
+      card.addEventListener('mouseleave', function(){
+        if(typeof glassClear === 'function') glassClear(card);
+        card.style.transition = 'transform .3s ease'; card.style.transform = '';
+        setTimeout(function(){ card.style.transition = ''; }, 300);
+      });
+    });
+  }
+
+  var tmplPickerNb = '';   // 픽커를 연 시점의 Project 컨텍스트
+  // 템플릿 카드 — 팝업 Add Module 모달과 동일한 카드 그리드(elnAddPickGrid/elnAddPickCard).
+  //   아이콘 + 이름 + 섹션 칩. Public만 설명 표시(My는 입력란이 없어 설명·공유 버튼 없음).
+  function tmplCardHtml(t, custom){
+    // 섹션 칩은 최대 3개까지만 노출, 나머지는 '+N'(전체는 title 툴팁) → 카드 세로 높이 균일 유지
+    var secs = (t.sections||[]).map(function(s){ return (typeof s === 'string') ? s : (s.label || s.type); });
+    var MAX = 3;
+    var chips = secs.slice(0, MAX).map(function(l){ return '<span class="roundBox">'+esc(l)+'</span>'; }).join('');
+    if(secs.length > MAX) chips += '<span class="roundBox elnMoreChip" data-tip="'+esc(secs.slice(MAX).join(' · '))+'">+'+(secs.length - MAX)+'</span>';
+    return '<div class="elnAddPickCard elnTmplPick'+(custom?' elnTmplMy':'')+'" role="button" tabindex="0" data-key="'+esc(t.key)+'"'+(custom?' data-custom="1"':'')+'>'
+      + (!custom ? '<i class="material-symbols-outlined">'+esc(t.icon||'description')+'</i>' : '')   // My는 아이콘 없음
+      + '<span class="nm">'+esc(t.name)+'</span>'
+      + ((!custom && t.desc) ? '<span class="ds">'+esc(t.desc)+'</span>' : '')                       // My는 설명 없음
+      + (chips ? '<div class="elnTmplChips">'+chips+'</div>' : '')
+      + '</div>';
+  }
+  // scroll=true → 가로 스크롤 한 줄(elnPickScroll). Public 템플릿(카드 다수)용
+  function tmplGridHtml(list, custom, emptyMsg, scroll){
+    if(!list.length) return '<div class="elnTblEmpty">'+emptyMsg+'</div>';
+    return '<div class="elnAddPickGrid'+(scroll?' elnPickScroll':'')+'">' + list.map(function(t){ return tmplCardHtml(t, custom); }).join('') + '</div>';
+  }
+  // 템플릿 픽커 모달 렌더 + 오픈 — 선택 시 그 구조로 새 노트 열기(?tmpl=)
+  function openTemplatePicker(nb){
+    tmplPickerNb = nb || '';
+    var mine = loadMyTemplates();
+    document.getElementById('elnTmplBody').innerHTML =
+      '<div class="cardSubTit">Public Templates</div>' + tmplGridHtml(ELN_TEMPLATES, false, '', true)
+      + '<div class="cardSubTit mt30">My Templates</div>' + tmplGridHtml(mine, true, 'No custom templates yet — save a note’s structure as a template from the note editor.');
+    wirePickTilt(document.getElementById('elnTmplBody'));   // 카드 색수차 + 틸트
+    // '+N' 툴팁 = 공용 glass 툴팁(data-tip). glass_engine glassTipInit이 위임으로 자동 처리 → 별도 init 불필요
+    M.Modal.getInstance(document.getElementById('elnTmplModal')).open();
+  }
+
+  // 공유 대상(목업 동료) + 템플릿 공유 — 팝오버 → 표준 모달 + fixedTable로 변환. 여러 명 연속 전송 가능(전송 시 체크)
+  var ELN_USERS = [
+    { id:'sypark', name:'S.Y. Park', team:'Flexible OLED' },
+    { id:'mjlee',  name:'M.J. Lee',  team:'Optical Clear Resin' },
+    { id:'hwcho',  name:'H.W. Cho',  team:'Adhesives R&D' },
+    { id:'ksyoon', name:'K.S. Yoon', team:'Analysis' },
+    { id:'jwseo',  name:'J.W. Seo',  team:'RGBOLED Adhesive' },
+    { id:'ehan',   name:'E. Han',    team:'Customer A Project' }
+  ];
+  var shareTmplName = '', shareSent = {};
+  function renderShareList(q){
+    var ql = (q||'').toLowerCase();
+    var matches = ELN_USERS.filter(function(u){ return (u.name+' '+u.team+' '+u.id).toLowerCase().indexOf(ql)>=0; });
+    var rows = matches.length ? matches.map(function(u){
+      var done = !!shareSent[u.id];
+      return '<tr><td class="al">'+esc(u.name)+'</td><td class="al">'+esc(u.team)+'</td>'
+        + '<td class="ac">'+(done
+          ? '<i class="material-symbols-outlined elnSentIco" title="Shared">check_circle</i>'
+          : '<a href="javascript:;" class="waves-effect waves-light hBtn hSmall elnShareSend" data-id="'+esc(u.id)+'"><i class="material-symbols-outlined left">send</i><span class="label">Send</span></a>')
+        + '</td></tr>';
+    }).join('') : '<tr><td colspan="3" class="al elnTblEmpty">No colleagues match.</td></tr>';
+    document.getElementById('elnShareList').innerHTML = rows;
+    if(typeof initAllHBorderTableOverlays === 'function') initAllHBorderTableOverlays(document.getElementById('elnShareBody'));
+  }
+  function openShareTemplate(tmplKey){
+    var tmpl = loadMyTemplates().filter(function(t){ return t.key===tmplKey; })[0];
+    shareTmplName = tmpl ? tmpl.name : 'template';
+    shareSent = {};
+    document.getElementById('elnShareBody').innerHTML =
+      '<div class="cardSubTit">Share “'+esc(shareTmplName)+'”</div>'
+      + '<div class="aniInput elnShareSrch"><input type="text" class="browser-default" id="elnShareSearch" placeholder="Search colleagues…" autocomplete="off"><span class="focus-border"></span></div>'
+      + '<div class="elnTblWrap"><table class="fixedTable hBorderTable vMiddle mg10">'
+      + '<thead><tr><th class="al">Colleague</th><th class="al">Team</th><th class="ac elnShareColAct">Send</th></tr></thead>'
+      + '<tbody id="elnShareList"></tbody></table></div>';
+    renderShareList('');
+    var tmplInst = M.Modal.getInstance(document.getElementById('elnTmplModal')); if(tmplInst) tmplInst.close();   // 모달 중첩 회피(픽커 닫고 공유 열기)
+    M.Modal.getInstance(document.getElementById('elnShareModal')).open();
+    setTimeout(function(){ try{ document.getElementById('elnShareSearch').focus(); }catch(e){} }, 120);
+  }
+
+  // 노트(평탄 배열). project 코드로 종속. 계보(parent)·노트북 없음. 데모 목업.
+  var NOTES = [
+    // SN-26-0031 RGBOLED Display Adhesive (SNPI)
+    {code:'NT-2605-00142', title:'UV-Curable PSA Viscosity Improvement — RGBOLED', st:'ing', stage:'SCALE-UP', ver:'v3', fml:'FML-EM-2208', tags:['#viscosity','#RGBOLED','#UVcure','#PSA'], author:'Jongho Lee', date:'2026-05-28', project:'SN-26-0031'},
+    {code:'NT-2605-00118', title:'Viscosity Modifier ratio tuning (v2)', st:'appr', stage:'LAB FORMULATION', ver:'v2', fml:'FML-EM-2207', tags:['#viscosity','#formulation','#tuning'], author:'Jongho Lee', date:'2026-05-27', project:'SN-26-0031'},
+    {code:'NT-2605-00097', title:'Cure rate vs UV dose — condition sweep', st:'ok', stage:'LAB FORMULATION', ver:'v1', fml:'', tags:['#UVcure','#curerate','#DOE'], author:'Jongho Lee', date:'2026-05-24', project:'SN-26-0031'},
+    {code:'NT-2605-00098', title:'Initial trial — spec not met', st:'ok', stage:'LAB FORMULATION', ver:'v1', fml:'FML-EM-2206', tags:['#trial','#spec','#viscosity'], author:'Jongho Lee', date:'2026-05-21', project:'SN-26-0031'},
+    {code:'NT-2605-00085', title:'Supplier sample evaluation — Silicone PSA base', st:'ok', stage:'LAB FORMULATION', ver:'', fml:'', tags:['#supplier','#evaluation','#PSA'], author:'Jongho Lee', date:'2026-05-18', project:'SN-26-0031'},
+    {code:'NT-2605-00072', title:'Crosslinker screening for adhesion', st:'ing', stage:'LAB FORMULATION', ver:'', fml:'', tags:['#adhesion','#crosslinker','#screening'], author:'Jongho Lee', date:'2026-05-15', project:'SN-26-0031'},
+    {code:'NT-2606-00007', title:'Quick idea — low-VOC solvent swap to try', st:'ing', stage:'LAB FORMULATION', ver:'', fml:'', tags:['#idea','#lowVOC','#solvent'], author:'Jongho Lee', date:'2026-06-02', project:'SN-26-0031'},
+    {code:'NT-2606-00004', title:'Lab meeting memo — June experiment planning', st:'ok', stage:'NPI GO', ver:'', fml:'', tags:['#meeting','#planning','#memo'], author:'Jongho Lee', date:'2026-05-31', project:'SN-26-0031'},
+    {code:'NT-2606-00012', title:'Peel strength round-robin with Eng. team', st:'ing', stage:'SCALE-UP', ver:'', fml:'', tags:['#adhesion','#peel','#roundrobin'], author:'J.P. Kim', date:'2026-06-03', project:'SN-26-0031'},
+    {code:'NT-2606-00010', title:'Pilot line coating trial — defect review', st:'ok', stage:'SCALE-UP', ver:'', fml:'', tags:['#pilot','#coating','#defect'], author:'J.P. Kim', date:'2026-06-01', project:'SN-26-0031'},
+    {code:'NT-2606-00011', title:'Rheology check before scale-up', st:'ing', stage:'SCALE-UP', ver:'', fml:'', tags:['#rheology','#scaleup','#viscosity'], author:'Changmoo Jeong', date:'2026-06-02', project:'SN-26-0031'},
+    {code:'NT-2605-00141', title:'DSC cure kinetics measurement', st:'ok', stage:'LAB FORMULATION', ver:'v1', fml:'', tags:['#analysis','#DSC','#kinetics'], author:'Changmoo Jeong', date:'2026-05-25', project:'SN-26-0031'},
+    // SN-26-0047 Low viscosity high vinyl polybutadiene (SNPI)
+    {code:'NT-2605-00160', title:'Vinyl content vs viscosity trade-off study', st:'ing', ver:'v2', fml:'FML-PB-0210', tags:['#viscosity','#polybutadiene','#tradeoff'], author:'Jongho Lee', date:'2026-05-26', project:'SN-26-0047'},
+    {code:'NT-2605-00150', title:'Catalyst screening for high-vinyl route', st:'ok', ver:'v1', fml:'FML-PB-0208', tags:['#catalyst','#screening','#highvinyl'], author:'K.S. Yoon', date:'2026-05-19', project:'SN-26-0047'},
+    {code:'NT-2605-00131', title:'GPC molecular weight distribution check', st:'ok', ver:'', fml:'', tags:['#analysis','#GPC','#MW'], author:'K.S. Yoon', date:'2026-05-13', project:'SN-26-0047'},
+    // CN-26-0064 Flexible OLED Lamination (CNPI)
+    {code:'NT-2604-00210', title:'Bendable adhesive — fatigue test', st:'ing', ver:'v2', fml:'FML-FX-1120', tags:['#bending','#fatigue','#reliability'], author:'S.Y. Park', date:'2026-04-30', project:'CN-26-0064'},
+    {code:'NT-2604-00198', title:'Low-temperature cure exploration', st:'ok', ver:'v1', fml:'FML-FX-1118', tags:['#lowtemp','#cure','#process'], author:'S.Y. Park', date:'2026-04-22', project:'CN-26-0064'},
+    {code:'NT-2604-00150', title:'Substrate compatibility memo', st:'ok', ver:'', fml:'', tags:['#substrate','#compatibility','#memo'], author:'S.Y. Park', date:'2026-04-10', project:'CN-26-0064'},
+    {code:'NT-2604-00215', title:'Bending radius spec alignment with customer', st:'ing', ver:'', fml:'', tags:['#bending','#spec','#customer'], author:'J.P. Kim', date:'2026-05-02', project:'CN-26-0064'},
+    {code:'NT-2604-00205', title:'Lamination void inspection (CT)', st:'ok', ver:'', fml:'', tags:['#inspection','#void','#CT'], author:'Changmoo Jeong', date:'2026-04-26', project:'CN-26-0064'},
+    // CN-26-0090 Customer A OCR Program (CNPI)
+    {code:'NT-2605-00301', title:'Customer A — OCR spec review', st:'ing', ver:'', fml:'', tags:['#customerA','#spec','#OCR'], author:'Jongho Lee', date:'2026-05-30', project:'CN-26-0090'},
+    {code:'NT-2605-00288', title:'Adhesion to PET film', st:'ok', ver:'v2', fml:'FML-CA-4410', tags:['#adhesion','#PET','#film'], author:'Jongho Lee', date:'2026-05-26', project:'CN-26-0090'},
+    {code:'NT-2605-00270', title:'Cost-down reformulation', st:'appr', ver:'v1', fml:'FML-CA-4408', tags:['#costdown','#reformulation','#formulation'], author:'Jongho Lee', date:'2026-05-20', project:'CN-26-0090'},
+    {code:'NT-2605-00255', title:'Kickoff meeting notes', st:'ok', ver:'', fml:'', tags:['#kickoff','#meeting','#memo'], author:'Jongho Lee', date:'2026-05-12', project:'CN-26-0090'},
+    // CN-26-0112 UV-Curable Conformal Coating (CNPI)
+    {code:'NT-2605-00320', title:'Conformal coating — humidity resistance', st:'ing', ver:'v1', fml:'FML-CC-5510', tags:['#coating','#humidity','#reliability'], author:'H.W. Cho', date:'2026-05-29', project:'CN-26-0112'},
+    {code:'NT-2605-00310', title:'Dispense viscosity window for spray', st:'ok', ver:'', fml:'', tags:['#viscosity','#dispense','#spray'], author:'H.W. Cho', date:'2026-05-22', project:'CN-26-0112'},
+    // PT-25-0182 Optical Clear Resin (NPT)
+    {code:'NT-2603-00120', title:'Haze reduction — final formulation', st:'ok', ver:'v3', fml:'FML-OC-3310', tags:['#haze','#optical','#formulation'], author:'M.J. Lee', date:'2026-03-28', project:'PT-25-0182'},
+    {code:'NT-2603-00088', title:'Yellowing aging test (85°C/85%RH)', st:'ing', ver:'v1', fml:'FML-OC-3308', tags:['#aging','#yellowing','#reliability'], author:'M.J. Lee', date:'2026-03-12', project:'PT-25-0182'},
+    // PT-26-0021 New preservative for Silsoft (NPT)
+    {code:'NT-2605-00400', title:'Preservative efficacy — challenge test', st:'ing', ver:'v1', fml:'FML-PV-6610', tags:['#preservative','#efficacy','#challengetest'], author:'E. Han', date:'2026-05-24', project:'PT-26-0021'},
+    {code:'NT-2605-00390', title:'Regulatory screen (EU/US) for candidates', st:'ok', ver:'', fml:'', tags:['#regulatory','#EU','#US'], author:'E. Han', date:'2026-05-17', project:'PT-26-0021'},
+    // PT-26-0034 Low Viscosity Binder Gel T (NPT)
+    {code:'NT-2605-00420', title:'Gel binder — scale-up trial (Ohta)', st:'appr', ver:'v2', fml:'FML-BG-7710', tags:['#scaleup','#trial','#Ohta'], author:'J.W. Seo', date:'2026-05-27', project:'PT-26-0034'},
+    {code:'NT-2605-00405', title:'Thixotropy tuning for low-viscosity gel', st:'ok', ver:'v1', fml:'FML-BG-7708', tags:['#rheology','#thixotropy','#viscosity'], author:'J.W. Seo', date:'2026-05-18', project:'PT-26-0034'},
+    // TS-26-0205 Electro 242-2 Grey FC (Tech Support)
+    {code:'NT-2605-00500', title:'Field complaint — cure inconsistency analysis', st:'ing', ver:'', fml:'', tags:['#complaint','#cure','#fieldsupport'], author:'S.Y. Park', date:'2026-05-25', project:'TS-26-0205'},
+    {code:'NT-2605-00490', title:'Customer line trial support memo', st:'ok', ver:'', fml:'', tags:['#support','#customer','#trial'], author:'S.Y. Park', date:'2026-05-16', project:'TS-26-0205'},
+    // TS-26-0218 High-Temp Silicone Encapsulant (Tech Support)
+    {code:'NT-2604-00450', title:'Thermal aging failure root-cause', st:'ok', ver:'v1', fml:'', tags:['#failure','#thermal','#rootcause'], author:'K.S. Yoon', date:'2026-04-28', project:'TS-26-0218'},
+    {code:'NT-2604-00440', title:'Replacement grade recommendation', st:'ok', ver:'', fml:'', tags:['#support','#replacement','#recommendation'], author:'K.S. Yoon', date:'2026-04-20', project:'TS-26-0218'}
+  ];
+
+  // 프로젝트 타입 → 상세 pop + 라벨. 타이틀 클릭 시 해당 타입 상세 페이지 오픈.
   var PROJ_TYPE = {
     snpi: { label:'Standard NPI', pop:'apis_npdi_pop.html'   },
     cnpi: { label:'Custom NPI',   pop:'apis_custom_pop.html' },
     npt:  { label:'NPT',          pop:'apis_npt_pop.html'    },
     tech: { label:'Tech Support', pop:'apis_tech_pop.html'   }
   };
-
+  // MAPIS 프로젝트(읽기전용). type별 pill 구성은 각 리스트(npdi/custom/npt/tech) 참고.
   var PROJECTS = [
     { code:'CN-26-0064', type:'cnpi', name:'Flexible OLED Lamination',               status:'active',   customer:'Customer S', seg:'Flexible OLED', market:'Display',      stage:'Commercial Go' },
     { code:'PT-26-0021', type:'npt',  name:'New preservative for Silsoft',           status:'active',   seg:'Personal Care', stage:'NPT Go', site:'Leverkusen → Yongin', sched:'On Time' },
@@ -173,261 +396,447 @@
     { code:'PT-26-0034', type:'npt',  name:'Low Viscosity Binder Gel T',             status:'active',   seg:'Industrial',    stage:'NPT Go', site:'Ohta → Yongin',       sched:'Delayed' }
   ];
   function projByCode(c){ return PROJECTS.filter(function(p){ return p.code === c; })[0] || null; }
+  // 타입 뱃지 — 표준 아웃라인 배지 bd*(bdBlue/bdRed/bdGreen/bdOrange)로 매핑(구 outline 변형 대체)
+  function projTypeBadge(p){
+    var t = PROJ_TYPE[p.type]; if(!t) return '';
+    var color = ({snpi:'bdBlue', cnpi:'bdRed', npt:'bdGreen', tech:'bdOrange'})[p.type] || 'bdGray';
+    return '<span class="elnProjType roundBox ' + color + '">' + esc(t.label) + '</span>';
+  }
+  // 타입별 pill(roundBox) — snpi/tech: seg·market·stage·sched / cnpi: customer·seg·market·stage·sched / npt: seg·stage·site전환·sched
   function projPills(p){
     function b(v, cls){ return v ? '<div class="roundBox' + (cls ? ' ' + cls : '') + '">' + esc(v) + '</div>' : ''; }
-    if(p.type === 'cnpi') return b(p.customer) + b(p.seg) + b(p.market) + b(p.stage) + b(p.sched, 'blue');
-    if(p.type === 'npt')  return b(p.seg) + b(p.stage) + b(p.site) + b(p.sched, 'blue');
-    return b(p.seg) + b(p.market) + b(p.stage) + b(p.sched, 'blue');
+    if(p.type === 'cnpi') return b(p.customer) + b(p.seg) + b(p.market) + b(p.stage) + b(p.sched, 'bdBlue');
+    if(p.type === 'npt')  return b(p.seg) + b(p.stage) + b(p.site) + b(p.sched, 'bdBlue');
+    return b(p.seg) + b(p.market) + b(p.stage) + b(p.sched, 'bdBlue');
   }
 
-  var NOTES = [
-    {code:'NT-2605-00142', title:'UV-Curable PSA Viscosity Improvement — RGBOLED', st:'ing', tags:['#viscosity','#RGBOLED'], author:'Jongho Lee', date:'2026-05-28', project:'SN-26-0031'},
-    {code:'NT-2605-00118', title:'Viscosity Modifier ratio tuning (v2)', st:'appr', tags:['#viscosity'], author:'Jongho Lee', date:'2026-05-27', project:'SN-26-0031'},
-    {code:'NT-2605-00097', title:'Cure rate vs UV dose — condition sweep', st:'ok', tags:['#UVcure'], author:'Jongho Lee', date:'2026-05-24', project:'SN-26-0031'},
-    {code:'NT-2605-00098', title:'Initial trial — spec not met', st:'ok', tags:['#viscosity'], author:'Jongho Lee', date:'2026-05-21', project:'SN-26-0031'},
-    {code:'NT-2605-00085', title:'Supplier sample evaluation — Silicone PSA base', st:'ok', tags:['#supplier'], author:'Jongho Lee', date:'2026-05-18', project:'SN-26-0031'},
-    {code:'NT-2605-00072', title:'Crosslinker screening for adhesion', st:'ing', tags:['#adhesion'], author:'Jongho Lee', date:'2026-05-15', project:'SN-26-0031'},
-    {code:'NT-2606-00007', title:'Quick idea — low-VOC solvent swap to try', st:'ing', tags:[], author:'Jongho Lee', date:'2026-06-02', project:'SN-26-0031'},
-    {code:'NT-2606-00004', title:'Lab meeting memo — June experiment planning', st:'ok', tags:[], author:'Jongho Lee', date:'2026-05-31', project:'SN-26-0031'},
-    {code:'NT-2606-00012', title:'Peel strength round-robin with Eng. team', st:'ing', tags:['#adhesion'], author:'J.P. Kim', date:'2026-06-03', project:'SN-26-0031'},
-    {code:'NT-2606-00010', title:'Pilot line coating trial — defect review', st:'ok', tags:['#pilot'], author:'J.P. Kim', date:'2026-06-01', project:'SN-26-0031'},
-    {code:'NT-2606-00011', title:'Rheology check before scale-up', st:'ing', tags:['#rheology'], author:'Changmoo Jeong', date:'2026-06-02', project:'SN-26-0031'},
-    {code:'NT-2605-00141', title:'DSC cure kinetics measurement', st:'ok', tags:['#analysis'], author:'Changmoo Jeong', date:'2026-05-25', project:'SN-26-0031'},
-    {code:'NT-2605-00160', title:'Vinyl content vs viscosity trade-off study', st:'ing', tags:['#viscosity','#polybutadiene'], author:'Jongho Lee', date:'2026-05-26', project:'SN-26-0047'},
-    {code:'NT-2605-00150', title:'Catalyst screening for high-vinyl route', st:'ok', tags:['#catalyst'], author:'K.S. Yoon', date:'2026-05-19', project:'SN-26-0047'},
-    {code:'NT-2605-00131', title:'GPC molecular weight distribution check', st:'ok', tags:['#analysis'], author:'K.S. Yoon', date:'2026-05-13', project:'SN-26-0047'},
-    {code:'NT-2604-00210', title:'Bendable adhesive — fatigue test', st:'ing', tags:['#bending'], author:'S.Y. Park', date:'2026-04-30', project:'CN-26-0064'},
-    {code:'NT-2604-00198', title:'Low-temperature cure exploration', st:'ok', tags:['#lowtemp'], author:'S.Y. Park', date:'2026-04-22', project:'CN-26-0064'},
-    {code:'NT-2604-00150', title:'Substrate compatibility memo', st:'ok', tags:['#substrate'], author:'S.Y. Park', date:'2026-04-10', project:'CN-26-0064'},
-    {code:'NT-2604-00215', title:'Bending radius spec alignment with customer', st:'ing', tags:['#bending'], author:'J.P. Kim', date:'2026-05-02', project:'CN-26-0064'},
-    {code:'NT-2604-00205', title:'Lamination void inspection (CT)', st:'ok', tags:['#inspection'], author:'Changmoo Jeong', date:'2026-04-26', project:'CN-26-0064'},
-    {code:'NT-2605-00301', title:'Customer A — OCR spec review', st:'ing', tags:['#customerA'], author:'Jongho Lee', date:'2026-05-30', project:'CN-26-0090'},
-    {code:'NT-2605-00288', title:'Adhesion to PET film', st:'ok', tags:['#adhesion'], author:'Jongho Lee', date:'2026-05-26', project:'CN-26-0090'},
-    {code:'NT-2605-00270', title:'Cost-down reformulation', st:'appr', tags:['#costdown'], author:'Jongho Lee', date:'2026-05-20', project:'CN-26-0090'},
-    {code:'NT-2605-00255', title:'Kickoff meeting notes', st:'ok', tags:['#kickoff'], author:'Jongho Lee', date:'2026-05-12', project:'CN-26-0090'},
-    {code:'NT-2605-00320', title:'Conformal coating — humidity resistance', st:'ing', tags:['#coating','#humidity'], author:'H.W. Cho', date:'2026-05-29', project:'CN-26-0112'},
-    {code:'NT-2605-00310', title:'Dispense viscosity window for spray', st:'ok', tags:['#viscosity'], author:'H.W. Cho', date:'2026-05-22', project:'CN-26-0112'},
-    {code:'NT-2603-00120', title:'Haze reduction — final formulation', st:'ok', tags:['#haze'], author:'M.J. Lee', date:'2026-03-28', project:'PT-25-0182'},
-    {code:'NT-2603-00088', title:'Yellowing aging test (85°C/85%RH)', st:'ing', tags:['#aging'], author:'M.J. Lee', date:'2026-03-12', project:'PT-25-0182'},
-    {code:'NT-2605-00400', title:'Preservative efficacy — challenge test', st:'ing', tags:['#preservative'], author:'E. Han', date:'2026-05-24', project:'PT-26-0021'},
-    {code:'NT-2605-00390', title:'Regulatory screen (EU/US) for candidates', st:'ok', tags:['#regulatory'], author:'E. Han', date:'2026-05-17', project:'PT-26-0021'},
-    {code:'NT-2605-00420', title:'Gel binder — scale-up trial (Ohta)', st:'appr', tags:['#scaleup'], author:'J.W. Seo', date:'2026-05-27', project:'PT-26-0034'},
-    {code:'NT-2605-00405', title:'Thixotropy tuning for low-viscosity gel', st:'ok', tags:['#rheology'], author:'J.W. Seo', date:'2026-05-18', project:'PT-26-0034'},
-    {code:'NT-2605-00500', title:'Field complaint — cure inconsistency analysis', st:'ing', tags:['#complaint'], author:'S.Y. Park', date:'2026-05-25', project:'TS-26-0205'},
-    {code:'NT-2605-00490', title:'Customer line trial support memo', st:'ok', tags:['#support'], author:'S.Y. Park', date:'2026-05-16', project:'TS-26-0205'},
-    {code:'NT-2604-00450', title:'Thermal aging failure root-cause', st:'ok', tags:['#failure','#thermal'], author:'K.S. Yoon', date:'2026-04-28', project:'TS-26-0218'},
-    {code:'NT-2604-00440', title:'Replacement grade recommendation', st:'ok', tags:['#support'], author:'K.S. Yoon', date:'2026-04-20', project:'TS-26-0218'}
-  ];
-
+  // 현재 사용자(목업) — My List 필터 기준. navbar 'Jongho Lee'과 일치.
   var CUR_USER = 'Jongho Lee';
+
+  // curScope = AppleTab(Project 분류 'all'|'my'), curAuthor = select(작성자 'all'|이름)
   var curProj = null, curScope = 'all', curAuthor = 'all', curNotes = [], curSearch = null;
 
-  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
-  function toast(msg){ if(window.M && M.toast) M.toast({html: esc(msg)}); }
-
-  function openNote(opts){
-    opts = opts || {};
-    var q = [];
-    if(opts.code) q.push('code=' + encodeURIComponent(opts.code));
-    if(opts.project) q.push('project=' + encodeURIComponent(opts.project));
-    if(opts.tmpl) q.push('tmpl=' + encodeURIComponent(opts.tmpl));
-    window.open('apis_note_pop.html' + (q.length ? '?' + q.join('&') : ''), 'noteDetail', 'width=1480,height=900,scrollbars=yes,resizable=yes');
-  }
-
+  // 노트셋 집계: 'all'=전체, 그 외=project 코드. 최근 수정순(date desc) 정렬.
   function getNotes(key){
     var arr = (key === 'all') ? NOTES.slice() : NOTES.filter(function(n){ return n.project === key; });
     return arr.sort(function(a, b){ return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0); });
   }
 
-  /* ─────────────── 좌: Project 리스트 ─────────────── */
-  function renderProjectList(){
-    var ul = document.getElementById('projListUl');
-    ul.innerHTML = '';
-    PROJECTS.filter(function(p){
-      if(curScope === 'all') return true;
-      return NOTES.some(function(n){ return n.project === p.code && n.author === CUR_USER; });
-    }).forEach(function(p){
-      var s = pstByKey(p.status);
-      var cnt = NOTES.filter(function(n){ return n.project === p.code; }).length;
-      var t = PROJ_TYPE[p.type];
-      var li = document.createElement('li');
-      li.className = 'waves-effect waves-hColor animate__animated' + (p.code === curProj ? ' on' : '');
-      li.setAttribute('data-proj', p.code);
-      li.innerHTML =
-        '<section class="statusBox ' + s.cls + '">' + s.t + '</section>' +
-        '<section class="wd100p">' +
-          '<div class="pjTit"><span class="pjTitLink">[' + p.code + '] ' + esc(p.name) + '</span></div>' +
-          '<div class="subInfo"><div>' +
-            (t ? '<span class="noteType ' + p.type + '">' + esc(t.label) + '</span>' : '') +
-            projPills(p) +
-            '<span class="noteCount">' + cnt + ' note' + (cnt !== 1 ? 's' : '') + '</span>' +
-          '</div></div>' +
-        '</section>';
-      ul.appendChild(li);
+  // 노트 배열을 노트 목록(우측)에 렌더. 행 클릭→상세, 태그 클릭→그 태그 검색.
+  // 과제 타입별 스테이지(게이트) — 노트가 작성된 과제 진행 단계. Tech Support(tech)는 스테이지 개념이 없어 제외.
+  var STAGE_BY_TYPE = {
+    snpi: ['NPC','NPI GO','LAB FORMULATION','SCALE-UP','COMMERCIAL GO'],
+    cnpi: ['NPC','NPI GO','LAB FORMULATION','SCALE-UP','COMMERCIAL GO'],
+    npt:  ['NPT GO','LAB TRIAL','SCALE-UP TRIAL','TRANSFER']
+  };
+  // 노트 스테이지 배정 — 스테이지는 시간순 진행이므로, 과제별 노트를 날짜 오름차순으로 놓고
+  //   타입 스테이지를 진행 순서대로 매핑(뒤 날짜 = 뒤 스테이지). 명시된 n.stage는 우선. tech는 없음.
+  //   → 리스트는 날짜 desc라 스테이지도 자연히 역순(최신 스테이지가 위)으로 정렬됨.
+  var NOTE_STAGE = {};
+  (function assignNoteStages(){
+    var byProj = {};
+    NOTES.forEach(function(n){ (byProj[n.project] = byProj[n.project] || []).push(n); });
+    Object.keys(byProj).forEach(function(pc){
+      var p = projByCode(pc); if(!p || p.type === 'tech') return;
+      var vocab = STAGE_BY_TYPE[p.type]; if(!vocab || !vocab.length) return;
+      var arr = byProj[pc].slice().sort(function(a, b){ return a.date < b.date ? -1 : (a.date > b.date ? 1 : 0); });
+      arr.forEach(function(n, i){
+        if(n.stage){ NOTE_STAGE[n.code] = n.stage; return; }
+        var idx = arr.length > 1 ? Math.round(i / (arr.length - 1) * (vocab.length - 1)) : 0;
+        NOTE_STAGE[n.code] = vocab[idx];
+      });
     });
-  }
-
-  /* ─────────────── 우: Note 리스트 ─────────────── */
+  })();
+  function getNoteStage(n){ return NOTE_STAGE[n.code] || ''; }
   function renderNoteList(notes){
     var ul = document.getElementById('noteListUl');
     ul.innerHTML = '';
     if(!notes.length){
       var empty = document.createElement('li');
-      empty.className = 'noteListEmpty';
-      empty.innerHTML = '<i class="material-icons">search_off</i>No notes match.';
+      empty.className = 'elnListEmpty';
+      empty.innerHTML = '<i class="material-symbols-outlined">search_off</i>No notes match.';
       ul.appendChild(empty);
-      return;
     }
     notes.forEach(function(n, i){
       var s = stByKey(n.st);
       var li = document.createElement('li');
       li.className = 'waves-effect waves-hColor animate__animated';
-      li.setAttribute('data-idx', i);
+      li.setAttribute('data-st', n.st);
       li.setAttribute('data-author', n.author);
-      var tags = (n.tags && n.tags.length)
-        ? n.tags.map(function(t){ return '<a href="javascript:;" class="noteTagLink" data-tag="' + esc(t) + '">' + esc(t) + '</a>'; }).join('')
-        : '<span class="noteNoTag">No tag</span>';
-      var projChip = curSearch ? '<span class="noteProjChip">' + esc(n.project) + '</span>' : '';
-      li.innerHTML =
-        '<section class="statusBox ' + s.cls + '">' + s.t + '</section>' +
-        '<section class="wd100p">' +
-          '<div class="pjTit">' + projChip + '[' + n.code + '] ' + esc(n.title) + '</div>' +
-          '<div class="noteFoot">' +
-            '<div class="noteTags">' + tags + '</div>' +
-            '<div class="noteMeta"><span class="d">' + esc(n.date) + '</span><span class="dot">·</span><span class="a">' + esc(n.author) + '</span></div>' +
-          '</div>' +
-        '</section>';
+      li.setAttribute('data-idx', i);
+      var box = document.createElement('section');
+      box.className = 'statusBox ' + s.cls;
+      box.textContent = s.t;
+      var main = document.createElement('section');
+      main.className = 'wd100p';   // NPI 행 본문 래퍼(statusBox 옆 콘텐츠)
+      var tit = document.createElement('div');
+      tit.className = 'pjTit';
+      var titText = document.createElement('span'); titText.className = 'elnNoteTit';
+      if(curSearch){   // 통합 검색 결과는 여러 프로젝트가 섞임 → 프로젝트 코드(길이 일정)로 출처 표기
+        var pchip = document.createElement('span'); pchip.className = 'elnNoteProj';
+        pchip.textContent = n.project;
+        titText.appendChild(pchip);
+        titText.appendChild(document.createTextNode('[' + n.code + '] ' + n.title));
+      } else {
+        titText.textContent = '[' + n.code + '] ' + n.title;
+      }
+      tit.appendChild(titText);
+      var stg = getNoteStage(n);   // 작성된 과제 스테이지 — 타이틀 라인 우측 끝
+      if(stg){ var sb = document.createElement('span'); sb.className = 'elnBadge'; sb.textContent = stg; tit.appendChild(sb); }
+      main.appendChild(tit);
+
+      // footer: 태그(좌) + 날짜·작성자(우하단)
+      var foot = document.createElement('div'); foot.className = 'subInfo';   // NPI 하단정보 줄(태그 좌 · 날짜/작성자 우)
+      var tagWrap = document.createElement('div'); tagWrap.className = 'elnNoteTags';
+      // 포뮬라 보유 노트 = 플라스크 마커(상세 코드 대신 유무만 표시)
+      if(n.fml){ var fch = document.createElement('span'); fch.className = 'roundBox elnFmlMark'; fch.title = 'Has formula'; fch.innerHTML = '<i class="material-symbols-outlined">science</i>Formula'; tagWrap.appendChild(fch); }
+      if(n.tags && n.tags.length){
+        n.tags.forEach(function(t){
+          var a = document.createElement('a'); a.href = 'javascript:;'; a.className = 'elnTagLink';
+          a.textContent = t; a.title = 'Search this tag'; a.setAttribute('data-tag', t);
+          tagWrap.appendChild(a);
+        });
+      } else if(!n.fml){
+        var nt = document.createElement('span'); nt.className = 'elnNoTag'; nt.textContent = 'No tag';
+        tagWrap.appendChild(nt);
+      }
+      foot.appendChild(tagWrap);
+      var meta = document.createElement('div'); meta.className = 'elnNoteMetaRight';
+      meta.innerHTML = '<span class="d">' + esc(n.date) + '</span>' +
+        '<span class="dot">·</span><span class="a">' + esc(n.author) + '</span>';
+      foot.appendChild(meta);
+      main.appendChild(foot);
+      li.appendChild(box); li.appendChild(main);
       ul.appendChild(li);
     });
-    applyAuthorFilter();
+    // 등장 시간차 플립 인(techlib fnSetPrjList 패턴)
+    document.querySelectorAll('#noteListUl li').forEach(function(li, i){
+      li.classList.remove('animate__flipInX');
+      setTimeout(function(){ li.classList.add('animate__flipInX'); }, i * 100);
+    });
+    applyFilter();
   }
-  function renderNotes(key){ curNotes = getNotes(key); renderNoteList(curNotes); }
+  function renderNotes(key){
+    curNotes = getNotes(key);
+    renderNoteList(curNotes);
+  }
 
-  function applyAuthorFilter(){
-    document.querySelectorAll('#noteListUl li[data-author]').forEach(function(li){
-      var au = li.getAttribute('data-author');
-      li.style.display = (curAuthor === 'all' || au === curAuthor) ? '' : 'none';
+  // 좌측 Project 목록 — statusBox(프로젝트 상태) + [코드] 이름 + 노트 수
+  function renderProjectList(){
+    var ul = document.getElementById('projListUl');
+    ul.innerHTML = '';
+    PROJECTS.filter(function(p){
+      if(curScope === 'all') return true;
+      var mine = NOTES.some(function(n){ return n.project === p.code && n.author === CUR_USER; });
+      return curScope === 'my' ? mine : !mine;   // my=내 노트가 있는 프로젝트
+    }).forEach(function(p){
+      var s = pstByKey(p.status);
+      var cnt = NOTES.filter(function(n){ return n.project === p.code; }).length;
+      var li = document.createElement('li');
+      li.className = 'waves-effect waves-hColor animate__animated' + (p.code === curProj ? ' on' : '');
+      li.setAttribute('data-proj', p.code);
+      // npdi식 pill(세그먼트·소재·계정) + 노트 개수는 우하단 텍스트(pill 아님)
+      var pills = projPills(p);
+      li.innerHTML = '<section class="statusBox ' + s.cls + '">' + s.t + '</section>' +
+        '<section class="wd100p">' +
+        '<div class="pjTit">' + projTypeBadge(p) + '<span class="pjTitLink">[' + p.code + '] ' + esc(p.name) + '</span></div>' +
+        '<div class="subInfo"><div class="rowPills">' + pills + '</div>' +
+        '<div class="elnBadge">' + cnt + ' note' + (cnt !== 1 ? 's' : '') + '</div></div></section>';
+      ul.appendChild(li);
+    });
+    // 등장 시간차 플립 인(npdi_list와 동일: index * 100ms)
+    document.querySelectorAll('#projListUl li').forEach(function(li, i){
+      li.classList.remove('animate__flipInX');
+      setTimeout(function(){ li.classList.add('animate__flipInX'); }, i * 100);
     });
   }
+
+  // 우측 note를 작성자(select=curAuthor)로 필터
+  function applyFilter(){
+    document.querySelectorAll('#noteListUl li').forEach(function(li){
+      var au = li.getAttribute('data-author');
+      li.classList.toggle('dpNone', !(curAuthor === 'all' || au === curAuthor));
+    });
+  }
+
+  // 우측 작성자 select — 주어진 노트셋의 작성자로 옵션 채움 + curAuthor 리셋
   function fillAuthorSelect(notes){
-    var sel = document.getElementById('noteAuthorFilter');
+    var sel = document.getElementById('elnUserFilter');
     if(!sel) return;
     var authors = [];
     notes.forEach(function(n){ if(authors.indexOf(n.author) < 0) authors.push(n.author); });
     sel.innerHTML = '<option value="all">All authors</option>' +
       authors.map(function(a){ return '<option value="' + esc(a) + '">' + esc(a) + '</option>'; }).join('');
-    curAuthor = 'all';
-    // 옵션이 동적 렌더되므로 FormSelect를 매번 destroy 후 재init (중복 wrapper 방지)
-    if(window.M && M.FormSelect){ var inst = M.FormSelect.getInstance(sel); if(inst) inst.destroy(); M.FormSelect.init(sel); }
+    curAuthor = 'all'; sel.value = 'all';
+    // 옵션이 동적 렌더되므로 Materialize FormSelect를 매번 destroy 후 재init (중복 wrapper 방지)
+    if(window.M && M.FormSelect){
+      var inst = M.FormSelect.getInstance(sel);
+      if(inst) inst.destroy();
+      M.FormSelect.init(sel);
+    }
   }
-  function renderUserFilter(projCode){ fillAuthorSelect(NOTES.filter(function(n){ return n.project === projCode; })); }
+  // 일반 모드: 선택 Project의 작성자. 검색 모드는 fillAuthorSelect(curNotes)를 직접 사용
+  function renderUserFilter(projCode){
+    fillAuthorSelect(NOTES.filter(function(n){ return n.project === projCode; }));
+  }
 
-  /* ─────────────── 검색 ─────────────── */
+  function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+
+
+  /* ── NPI식 필드 검색(모달) — 제목·태그·status·프로젝트 + 와일드카드(* ?). 결과는 우측 리스트 재사용 ── */
+  // glob(* ?) → 정규식. 일반 단어도 같은 경로(특수문자 이스케이프 후 부분일치)로 통합
   function globRegex(term){
     var e = String(term).replace(/[.+^${}()|[\]\\]/g, '\\$&').replace(/\*/g, '.*').replace(/\?/g, '.');
     return new RegExp(e, 'i');
   }
+  // 노트가 조건(c) 전부에 부합하는지(AND). 빈 필드는 무시
   function noteMatches(n, c){
     if(c.keyword && !globRegex(c.keyword).test('[' + n.code + '] ' + n.title)) return false;
-    if(c.tags){ var rx = globRegex(c.tags); if(!(n.tags || []).some(function(t){ return rx.test(t); })) return false; }
+    if(c.tags){
+      var rx = globRegex(c.tags);
+      if(!(n.tags || []).some(function(t){ return rx.test(t); })) return false;
+    }
     if(c.status !== 'all' && n.st !== c.status) return false;
     if(c.project !== 'all' && n.project !== c.project) return false;
     return true;
   }
+  // 검색 조건 → 필드별 칩 HTML(헤더에 "어떤 필드로 어떻게 검색했는지" 표시)
+  // 각 칩 = 아이콘 + 필드라벨(k) + 값(v). status는 색 점(dot, 상태색 클래스)으로 직관화.
+  function critChip(icon, label, value){
+    return '<span class="elnSrchCritChip"><i class="material-symbols-outlined">' + icon + '</i>' +
+      '<span class="k">' + label + '</span><span class="v">' + esc(value) + '</span></span>';
+  }
+  function describeCriteria(c){
+    var p = [];
+    if(c.keyword) p.push(critChip('search', 'Keyword', c.keyword));
+    if(c.tags) p.push(critChip('sell', 'Tag', c.tags));
+    if(c.status && c.status !== 'all'){
+      var s = stByKey(c.status);
+      p.push('<span class="elnSrchCritChip"><span class="dot ' + s.cls + '"></span>' +
+        '<span class="k">Status</span><span class="v">' + esc(s.t) + '</span></span>');
+    }
+    if(c.project && c.project !== 'all') p.push(critChip('folder_open', 'Project', (projByCode(c.project) && projByCode(c.project).name) || c.project));
+    if(!p.length) return '';
+    // 리딩 라벨 — 이 줄이 "적용된 검색 필터"임을 명시(검색 결과 요약과 혼동 방지)
+    return '<span class="lead"><i class="material-symbols-outlined">filter_alt</i>Filtered by</span>' + p.join('');
+  }
+  // 검색 모드 토글: 좌측 Project 패널을 통째로 숨겨 우측 노트 리스트를 전체폭으로.
+  // 좌측 헤더에 있던 기준칩·Clear는 우측 노트 헤더로 옮겨 검색 맥락·탈출구(Clear)를 유지.
+  function setSearchMode(on){
+    var wrap = document.querySelector('.contArea.type5');
+    var crit = document.getElementById('elnSrchCrit');
+    var clear = document.getElementById('elnSrchClear');
+    var noteHead = document.querySelector('.elnNoteHead');
+    if(wrap) wrap.classList.toggle('searching', !!on);
+    if(on){
+      // 순서: [← Clear(맨 앞, 강조)] [기준칩] [작성자 select] — 돌아가는 길을 시선 시작점에
+      if(noteHead && clear) noteHead.insertBefore(clear, noteHead.firstChild);
+      if(noteHead && crit) noteHead.insertBefore(crit, clear.nextSibling);
+    } else {
+      var projHead = document.querySelector('.elnProjPanel .mainTitArea');
+      if(projHead){
+        var btnArea = projHead.querySelector('.btnArea');
+        if(crit) projHead.insertBefore(crit, btnArea);
+        if(clear) projHead.insertBefore(clear, btnArea);
+      }
+    }
+  }
+  // 검색 실행: 전체에서 조건 필터 → 전체폭 노트 리스트(행마다 프로젝트 칩). 좌측 패널은 접힘(curProj·선택표시 보존 → Clear 시 복원).
   function runSearch(c){
     curSearch = c;
     curAuthor = 'all';
     curNotes = NOTES.filter(function(n){ return noteMatches(n, c); }).sort(function(a, b){ return a.date < b.date ? 1 : (a.date > b.date ? -1 : 0); });
-    document.getElementById('noteSrchClear').classList.add('shown');
+    setSearchMode(true);
+    var clr = document.getElementById('elnSrchClear'); if(clr) clr.classList.remove('dpNone');
+    var crit = document.getElementById('elnSrchCrit'); if(crit){ var d = describeCriteria(c); crit.innerHTML = d; crit.classList.toggle('dpNone', !d); }
     fillAuthorSelect(curNotes);
     renderNoteList(curNotes);
-    toast(curNotes.length ? ('Found ' + curNotes.length + ' note' + (curNotes.length > 1 ? 's' : '') + '.') : 'No notes match your search.');
+    toast(curNotes.length ? ('Found ' + curNotes.length + ' note' + (curNotes.length > 1 ? 's' : '') + '.') : 'No notes match your search.', curNotes.length ? 'ok' : 'warn');
   }
-  function searchByTag(tag){ if(tag) runSearch({ keyword:'', tags:tag, status:'all', project:'all' }); }
+  // 검색 해제 → 현재(또는 첫) Project로 복귀
   function clearSearch(){
     curSearch = null;
-    document.getElementById('noteSrchClear').classList.remove('shown');
-    curProj = curProj || PROJECTS[0].code;
+    var clr = document.getElementById('elnSrchClear'); if(clr) clr.classList.add('dpNone');
+    var crit = document.getElementById('elnSrchCrit'); if(crit) crit.classList.add('dpNone');
+    setSearchMode(false);
+    curProj = curProj || PROJECTS[0].code;   // curProj는 검색 중에도 보존됨 → 그대로 복귀
     document.querySelectorAll('#projListUl li').forEach(function(x){ x.classList.toggle('on', x.getAttribute('data-proj') === curProj); });
     renderUserFilter(curProj);
     renderNotes(curProj);
   }
+  // 태그 칩 클릭 → 그 태그만으로 즉시 검색(모달 없이 결과 렌더)
+  function searchByTag(tag){
+    if(!tag) return;
+    runSearch({ keyword: '', tags: tag, status: 'all', project: 'all' });
+  }
+  // 검색 모달(정적 마크업 #elnSrchModal) 오픈 — 옵션 채움은 최초 1회
+  var srchOptFilled = false;
+  function openSearchModal(prefill){
+    if(!srchOptFilled){
+      srchOptFilled = true;
+      function opt(sel, value, label){ var o = document.createElement('option'); o.value = value; o.textContent = label; sel.appendChild(o); }
+      var stSel = document.getElementById('srchStatus');
+      opt(stSel, 'all', 'Any status'); ST.forEach(function(s){ opt(stSel, s.k, s.t); });
+      var pjSel = document.getElementById('srchProject');
+      opt(pjSel, 'all', 'All projects');
+      PROJECTS.forEach(function(p){ opt(pjSel, p.code, '[' + p.code + '] ' + p.name); });
+      // 태그 자동완성 — 데이터에 존재하는 태그 전부를 datalist로(중복 제거)
+      var tagDL = document.getElementById('srchTagList'); var tseen = {};
+      getNotes('all').forEach(function(n){ (n.tags || []).forEach(function(t){ if(!tseen[t]){ tseen[t] = 1; var o = document.createElement('option'); o.value = t; tagDL.appendChild(o); } }); });
+      $('#elnSrchModal select').formSelect({ dropdownOptions: { container: document.body } });   // 모달 클리핑 회피(techlib 패턴)
+    }
+    if(prefill) document.getElementById('srchKeyword').value = prefill;
+    M.Modal.getInstance(document.getElementById('elnSrchModal')).open();
+    setTimeout(function(){ try{ document.getElementById('srchKeyword').focus(); }catch(e){} }, 120);
+  }
+  function gatherSearch(){
+    return {
+      keyword: document.getElementById('srchKeyword').value.trim(),
+      tags: document.getElementById('srchTags').value.trim(),
+      status: document.getElementById('srchStatus').value,
+      project: document.getElementById('srchProject').value
+    };
+  }
+
 
   $(document).ready(function(){
+    // 공통 헤더 sidenav 초기화 (표준 셸 패턴)
     $('.sidenav').sidenav();
     $(document).on('click', '.sidenav-overlay, .closeBtns', function(){ $('.sidenav').sidenav('close'); });
-    $('.rightSection > div').on('mouseenter', function(){ $(this).find('.btnArea').stop().slideDown(200); });
-    $('.rightSection > div').on('mouseleave', function(){ $(this).find('.btnArea').stop().slideUp(200); });
-    if(window.M && M.Modal) M.Modal.init(document.querySelectorAll('.modal'));
 
-    var stSel = document.getElementById('srchStatus');
-    stSel.innerHTML = '<option value="all">Any status</option>' + ST.map(function(s){ return '<option value="' + s.k + '">' + s.t + '</option>'; }).join('');
-    var pjSel = document.getElementById('srchProject');
-    pjSel.innerHTML = '<option value="all">All projects</option>' + PROJECTS.map(function(p){ return '<option value="' + p.code + '">[' + p.code + '] ' + esc(p.name) + '</option>'; }).join('');
+    // 모달 초기화 — techlib 패턴(오픈 시 배경 블러)
+    $('.modal').modal({
+      onOpenStart: function(){ $("header, aside, .contArea").addClass("modalBlur"); },
+      onCloseStart: function(){ $("header, aside, .contArea").removeClass("modalBlur"); }
+    });
 
+    // Project 목록 렌더 + 첫 Project 자동 선택
     renderProjectList();
     curProj = PROJECTS[0].code;
-    var p0 = document.querySelector('#projListUl li[data-proj="' + curProj + '"]'); if(p0) p0.classList.add('on');
+    var _p0li = document.querySelector('#projListUl li[data-proj="' + curProj + '"]'); if(_p0li) _p0li.classList.add('on');
     renderUserFilter(curProj);
     renderNotes(curProj);
 
-    // AppleTab 초기 위치(인라인 style 없이 JS로 — 동적 포지셔닝)
-    var onTab = document.querySelector('.newAppleTab li.on');
-    var tabBg = document.querySelector('.newAppleTab .tabBg');
-    if(onTab && tabBg) tabBg.style.left = (onTab.offsetLeft - 3) + 'px';
-
+    // 좌측 Project 클릭 → 노트목록 교체 (검색 결과 모드 해제)
     document.getElementById('projListUl').addEventListener('click', function(e){
       var li = e.target.closest('li[data-proj]'); if(!li) return;
       var code = li.getAttribute('data-proj');
+      // 타이틀 클릭 → 해당 프로젝트 타입의 상세 페이지(pop)
       if(e.target.closest('.pjTitLink')){
         var p = projByCode(code), t = p && PROJ_TYPE[p.type];
         if(t) window.open(t.pop, '', 'width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes');
         return;
       }
+      // li 영역 클릭 → 해당 과제의 노트 리스트 (검색 모드 해제)
       curProj = code; curSearch = null;
-      document.getElementById('noteSrchClear').classList.remove('shown');
+      var _clr = document.getElementById('elnSrchClear'); if(_clr) _clr.classList.add('dpNone');
+      var _crit = document.getElementById('elnSrchCrit'); if(_crit) _crit.classList.add('dpNone');
       document.querySelectorAll('#projListUl li').forEach(function(x){ x.classList.remove('on'); });
       li.classList.add('on');
       renderUserFilter(curProj);
       renderNotes(curProj);
     });
 
+    // 노트 행 이벤트 위임: 태그=검색 / statusBox=상태순환(데모) / 그 외=상세 팝업
     document.getElementById('noteListUl').addEventListener('click', function(e){
-      var li = e.target.closest('li'); if(!li || !li.hasAttribute('data-idx')) return;
+      var li = e.target.closest('li');
+      if(!li || !li.hasAttribute('data-idx')) return; // 빈 결과 안내 행은 무시
       var n = curNotes[+li.getAttribute('data-idx')];
-      var tagLink = e.target.closest('.noteTagLink');
+      var tagLink = e.target.closest('.elnTagLink');
       if(tagLink){ e.stopPropagation(); searchByTag(tagLink.getAttribute('data-tag')); return; }
-      if(n) openNote({ code: n.code, project: n.project });
+      var box = e.target.closest('.statusBox');
+      if(box){
+        e.stopPropagation();
+        var idx = ST.map(function(s){ return s.k; }).indexOf(n.st);
+        var nx = ST[(idx+1) % ST.length];
+        n.st = nx.k;
+        ST.forEach(function(s){ box.classList.remove(s.cls); });
+        box.classList.add(nx.cls);
+        box.textContent = nx.t;
+        li.setAttribute('data-st', nx.k);
+        applyFilter();
+        toast('Status → "'+nx.t+'"', 'info');
+        return;
+      }
+      // 그 외(제목·메타 등 행 전체) → 상세 팝업(노트 상태 st 전달)
+      if(n) openNote({ code: n.code, project: n.project, st: n.st });
     });
 
-    $(document).on('click', '.newAppleTab li', function(){
+    // 좌측 AppleTab — Project 분류(All/My)로 Project 목록 필터 + 첫 Project 자동 선택 (techlib 탭 패턴)
+    $(document).on('click', '.elnScopeTab li', function(){
       var $li = $(this);
       var offset = $li.offset().left - $li.parent().offset().left;
       $li.parents('.newAppleTab').find('li').removeClass('on');
       $li.parents('.newAppleTab').find('.tabBg').stop().animate({ left: offset - 3 });
       $li.addClass('on');
       curScope = $li.attr('cd'); curSearch = null;
-      document.getElementById('noteSrchClear').classList.remove('shown');
       renderProjectList();
       var first = document.querySelector('#projListUl li[data-proj]');
       if(first){ curProj = first.getAttribute('data-proj'); first.classList.add('on'); renderUserFilter(curProj); renderNotes(curProj); }
       else { curProj = null; document.getElementById('noteListUl').innerHTML = ''; renderUserFilter(''); }
     });
 
-    document.getElementById('noteAuthorFilter').addEventListener('change', function(){ curAuthor = this.value; applyAuthorFilter(); });
-    document.getElementById('newNoteBtn').addEventListener('click', function(){ openNote({ project: curProj || '' }); });
-    document.getElementById('noteSearchBtn').addEventListener('click', function(){ var m = M.Modal.getInstance(document.getElementById('noteSearchModal')); if(m) m.open(); });
-    document.getElementById('srchRunBtn').addEventListener('click', function(){
-      var c = {
-        keyword: document.getElementById('srchKeyword').value.trim(),
-        tags: document.getElementById('srchTags').value.trim(),
-        status: document.getElementById('srchStatus').value,
-        project: document.getElementById('srchProject').value
-      };
-      var m = M.Modal.getInstance(document.getElementById('noteSearchModal')); if(m) m.close();
-      runSearch(c);
+    // 우측 작성자 select → note 필터
+    var userSel = document.getElementById('elnUserFilter');
+    if(userSel) userSel.addEventListener('change', function(){ curAuthor = this.value; applyFilter(); });
+
+    // 작성자 select 글래스 효과 — hBtn과 동일한 마우스 추적(무지개 색수차). glassTrack/glassClear는 glass_engine.js 전역 함수
+    if(window.glassTrack){
+      // glassClear는 glass_engine에 미정의(전역에서 typeof 가드로만 호출) → 안전 가드. sheen은 :hover 종료 시 CSS로 사라짐
+      function glassOff(el){ if(typeof glassClear === 'function') glassClear(el); }
+      $(document).on('mousemove', '.elnNoteHead .select-wrapper', glassTrack);
+      $(document).on('mouseleave', '.elnNoteHead .select-wrapper', function(){ glassOff(this); });
+      // 리스트 행(좌 Project · 우 Note) hover 색수차 — 커서 추적으로 무지개 sheen 이동
+      $(document).on('mousemove', '.type5 .mainList li', glassTrack);
+      $(document).on('mouseleave', '.type5 .mainList li', function(){ glassOff(this); });
+    }
+
+    // New Note → 시작 템플릿 픽커 (현재 Project 컨텍스트로 시작)
+    var b = document.getElementById('elnNewNote');
+    if(b) b.addEventListener('click', function(){ openTemplatePicker(curProj || ''); });
+
+    // 템플릿 픽커 모달 위임 — 카드 클릭=선택(새 노트)
+    document.getElementById('elnTmplBody').addEventListener('click', function(e){
+      var row = e.target.closest('.elnTmplPick');
+      if(row){
+        M.Modal.getInstance(document.getElementById('elnTmplModal')).close();
+        openNote({ project: tmplPickerNb, tmpl: row.getAttribute('data-key') });
+      }
     });
-    document.getElementById('noteSrchClear').addEventListener('click', clearSearch);
+    // 공유 모달 위임 — Send 클릭=전송(체크 표시), 검색 입력=필터
+    document.getElementById('elnShareBody').addEventListener('click', function(e){
+      var send = e.target.closest('.elnShareSend');
+      if(send){
+        var u = ELN_USERS.filter(function(x){ return x.id === send.getAttribute('data-id'); })[0];
+        if(!u) return;
+        shareSent[u.id] = 1;
+        toast('Shared “' + shareTmplName + '” with ' + u.name + '.', 'ok');
+        renderShareList(document.getElementById('elnShareSearch') ? document.getElementById('elnShareSearch').value : '');
+      }
+    });
+    document.getElementById('elnShareBody').addEventListener('input', function(e){
+      if(e.target && e.target.id === 'elnShareSearch') renderShareList(e.target.value);
+    });
+
+    // ELN 전용 검색 버튼(타이틀줄) → 검색 모달. 헤더 통합검색창(#mainSrchInput)은 ELN과 무관 → 건드리지 않음
+    var elnSearchBtn = document.getElementById('elnSearchBtn');
+    if(elnSearchBtn) elnSearchBtn.addEventListener('click', function(){ openSearchModal(''); });
+    // 검색 모달 — Search/Reset/Enter
+    $('#srchGo').on('click', function(){
+      runSearch(gatherSearch());
+      M.Modal.getInstance(document.getElementById('elnSrchModal')).close();
+    });
+    $('#srchReset').on('click', function(){
+      $('#srchKeyword, #srchTags').val('');
+      $('#srchStatus, #srchProject').val('all');
+      $('#elnSrchModal select').formSelect({ dropdownOptions: { container: document.body } });
+    });
+    $('#srchKeyword, #srchTags').on('keydown', function(e){
+      if(e.key === 'Enter'){ e.preventDefault(); runSearch(gatherSearch()); M.Modal.getInstance(document.getElementById('elnSrchModal')).close(); }
+    });
+    // 검색 결과 헤더의 Clear → 현재 Project 복귀
+    var srchClear = document.getElementById('elnSrchClear');
+    if(srchClear) srchClear.addEventListener('click', clearSearch);
   });
   </script>
 </body>

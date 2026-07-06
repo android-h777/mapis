@@ -1,0 +1,421 @@
+<!DOCTYPE html lang="en">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>MAPIS · New Submission</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="css/animate.min.css">
+	<link rel="preload" href="mapis_lib/font/material-symbols-outlined.woff2" as="font" type="font/woff2">
+	<link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
+
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-ui-1.14.1.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/apis_util.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/glass_engine.js"></script>
+</head>
+<body class="popup type2">
+	<!-- New submission 팝업(window.open) — 표준 스택 재플랫폼: mpm_common 재사용 + Classification 게이트만 신규 로직 -->
+	<header class="z-depth-1">
+		<section class="titArea npi">
+			<div><img src="img/MAPISLogo-25.png"></div>
+			<div class="statusTit"><div class="tit">New Tech Report</div></div>
+		</section>
+	</header>
+
+	<aside class="leftAside z-depth-1 blurArea">
+		<section class="hScroll">
+			<ul class="menuUl tlStagger">
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="upcDetails">
+					<i class="material-symbols-outlined left">description</i><span>Basic Data</span>
+				</li>
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="upcPreview">
+					<i class="material-symbols-outlined left">preview</i><span>Preview</span>
+				</li>
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="upcClass">
+					<i class="material-symbols-outlined left">account_tree</i><span>Classification</span>
+				</li>
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="upcAppr">
+					<i class="material-symbols-outlined left">local_library</i><span>Approval</span>
+				</li>
+			</ul>
+		</section>
+		<section class="btnArea">
+			<div class="mb10"><a href="javascript:;" class="waves-effect waves-light hBtn hBlue upSave" id="upSave"><i class="material-symbols-outlined left">save</i><span class="label">Save</span></a></div>
+			<div><a href="javascript:;" class="waves-effect waves-light hBtn hViva upSubmit" id="upSubmit"><i class="material-symbols-outlined left">send</i><span class="label">Submit</span></a></div>
+		</section>
+	</aside>
+
+	<div class="contArea">
+		<article class="contArticle">
+			<section class="cardBox animate__animated mt10" id="upcDetails">
+				<div class="cardTit2"><i class="material-symbols-outlined left">description</i>Basic Data</div>
+				<div class="inputArea">
+					<div class="row"><div class="col s2 ar pl0">Project Code</div><div class="col s10 val grey-text">(Auto-generated on first save)</div></div>
+						<div class="row"><div class="col s2 ar pl0">Report Name</div><div class="col s10"><div class="aniInput"><input type="text" class="browser-default" id="mTitle" placeholder="e.g., Low-Temperature Cure Silicone for Flexible Display"><span class="focus-border"></span></div></div></div>
+					<div class="row"><div class="col s2 ar pl0">Document Type</div><div class="col s4"><select id="mType"><option>TIS Report</option><option>Tech / Market Review</option><option>Process Transfer Memo</option><option>Trip Report</option><option>Improvement Project</option></select></div><div class="col s2 ar pl0">Associated Project # <span class="grey-text">(NPI, NPT)</span></div><div class="col s4"><div class="aniInput"><input type="text" class="browser-default" id="mProject" placeholder="Search project # — e.g., NPI-25-014" autocomplete="off"><span class="focus-border"></span></div></div></div>
+					<div class="row"><div class="col s2 ar pl0">Business</div><div class="col s4"><select id="mBu"><option>Coatings</option><option>Electronic Materials</option><option>Healthcare</option><option>Industrial</option><option>Personal Care</option><option>Specialty Additives</option><option>Tire &amp; Silanes</option><option>Urethane Additives</option></select></div><div class="col s2 ar pl0">Segment</div><div class="col s4"><select id="mSegment"><option>Automotive</option><option>Construction</option><option>Consumer</option><option>Electronics</option><option>Energy</option><option>Healthcare</option><option>Industrial</option><option>Personal Care</option><option>Transportation</option></select></div></div>
+						<div class="row"><div class="col s2 ar pl0">Region / Site</div><div class="col s4"><select id="mRegion"><option>DE — Leverkusen</option><option>KR — All Regions</option><option>US — All Regions</option><option>IN — Bangalore</option><option>IT — Termoli</option><option>JP — Ohta</option><option>CN — Shanghai</option><option>UK — Abingdon</option></select></div><div class="col s2 ar pl0">Author(s)</div><div class="col s4"><div class="aniInput"><input type="text" class="browser-default" id="mAuthor" placeholder="e.g., S.Y. Park"><span class="focus-border"></span></div></div></div>
+					<div class="row"><div class="col s2 ar pl0">Keywords</div><div class="col s10"><div class="tlKwBox"><div class="tlKwAddRow"><div class="aniInput"><input type="text" id="mKwInput" class="browser-default fontR font14" placeholder="Add a keyword, then Enter"><span class="focus-border"></span></div></div><div class="tlKws" id="mKwList"></div></div></div></div>
+					<div class="row"><div class="col s2 ar pl0">Abstract</div><div class="col s10"><div class="aniInput"><textarea class="materialize-textarea" id="mAbs" placeholder="One-paragraph summary…"></textarea><span class="focus-border"></span></div></div></div>
+					<div class="row mt10 pt10 bdT1d_lgrey">
+						<div class="col s2 ar fontM mocha25-text">Report File</div>
+						<div class="col s10">
+							<div class="input-field file-field mt0">
+								<div class="btn"><span>File</span><input type="file" id="upFile" multiple></div>
+								<div class="file-path-wrapper"><input type="text" class="file-path validate" placeholder="No file chosen" autocomplete="off" spellcheck="false"></div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="upcPreview">
+				<div class="cardTit2"><i class="material-symbols-outlined left">preview</i>Document Preview</div>
+				<div id="previewPanel"><div class="prevHint"><i class="material-symbols-outlined">upload_file</i>Upload a report file to see the parsed preview.</div></div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="upcClass">
+				<div class="cardTit2"><i class="material-symbols-outlined left">account_tree</i>Classification</div>
+				<div id="clsPanel"><!-- JS: decision-tree gates --></div>
+			</section>
+
+			<section class="cardBox animate__animated mt10" id="upcAppr">
+				<div class="cardTit2"><i class="material-symbols-outlined left">local_library</i>Approval</div>
+				<div id="apprPanel"><!-- JS: 도출 클래스 기반 결재 라우팅 미리보기 --></div>
+			</section>
+		</article>
+	</div>
+
+	<script>
+	(function(){
+		function $id(i){ return document.getElementById(i); }
+		function esc(s){ return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;'); }
+		function toast(m,t){ if(window.glassToast) glassToast(m, t||'warn'); }   // glassToast 재사용
+
+		/* ── 결재자 모드(mode=approve) — 발행 결재. 조회권한 결재는 techlib_pop에서 별도 처리 ── */
+		function getParam(n){ var m=new RegExp('[?&]'+n+'=([^&]*)').exec(location.search); return m?decodeURIComponent(m[1].replace(/\+/g,' ')):''; }
+		var APPROVE = getParam('mode')==='approve';
+		var VIEW = getParam('mode')==='view';   // 결재 진행중 제출물 열람(읽기전용, 결재 상태 표시)
+		var VIEW_REJECT = 0;   // 반려된 결재 단계(1-based) — Approval 카드에 Rejected 표기용
+		var RO_DOC = null;     // 읽기전용 대상 문서(날짜·반려사유 등 Approval 카드 표기용)
+		var TYPE_LBL={TIS:'TIS Report',TMR:'Tech / Market Review',PTM:'Process Transfer Memo',Trip:'Trip Report',IP:'Improvement Project'};
+		var IDX_LBL={DE:'DE — Leverkusen',KR:'KR — All Regions',US:'US — All Regions',IN:'IN — Bangalore',IT:'IT — Termoli',JP:'JP — Ohta',CN:'CN — Shanghai',UK:'UK — Abingdon'};
+		function gatesFromCls(c){ if(c===0)return{itar:1,jda:null,region:null,external:null}; if(c===1)return{itar:0,jda:0,region:null,external:1}; if(c===2)return{itar:0,jda:0,region:null,external:0}; if(c===3)return{itar:0,jda:1,region:1,external:null}; if(c===4)return{itar:0,jda:1,region:0,external:null}; return{itar:null,jda:null,region:null,external:null}; }
+
+		/* ── Classification Decision Tree (원본 rptlib deriveClass/GATES 그대로) — 자가선택 아님, 게이트 답에서 class 도출 ── */
+		function deriveClass(g){ if(g.itar) return 0; if(g.jda) return g.region?3:4; return g.external?1:2; }
+		var CLS_NM={0:'',1:'Class 1 · Public',2:'Class 2 · Internal',3:'Class 3 · Confidential',4:'Class 4 · Highly Restricted'};
+		function gateClassBadge(c){ if(c===0) return '<span class="rlClassBadge oos"><i class="material-symbols-outlined">block</i>Out of Scope</span>'; return '<span class="rlClassBadge c'+c+'">'+(c>=3?'<i class="material-symbols-outlined">lock</i>':'')+'C'+c+'</span>'; }
+		var GATES=[
+			{k:'itar',     owner:'Manager',  q:'ITAR Restricted or Export Restricted (not EAR 99)?',          show:function(g){return true;}},
+			{k:'jda',      owner:'Tech CoE', q:'Is it subject to special confidentiality agreements (JDA, etc.)?',        show:function(g){return g.itar===0;}},
+			{k:'region',   owner:'Tech CoE', q:'Can access be granted on a region (or nationality) basis?',   show:function(g){return g.jda===1;}},
+			{k:'external', owner:'GT&C',     q:'Has it been approved for external circulation?',                 show:function(g){return g.jda===0;}}
+		];
+		var gates={itar:null,jda:null,region:null,external:null};
+		function gatesComplete(g){ if(g.itar===null) return false; if(g.itar) return true; if(g.jda===null) return false; if(g.jda) return g.region!==null; return g.external!==null; }
+		function renderCls(){
+			var c=deriveClass(gates), done=gatesComplete(gates);
+			var sb=$id('upSubmit'); if(sb) sb.classList.toggle('oosBlock', !done || c===0);
+			var panel=$id('clsPanel'); if(!panel) return;
+			var result=done
+				? '<div class="gateResult'+(c===0?' oos':'')+'"><span class="gateResultEyebrow">Derived classification</span><span class="gateBadgePop animate__animated animate__zoomIn animate__fast">'+gateClassBadge(c)+'</span><div class="gateResultNm">'+esc(CLS_NM[c])+(c===0?'<span class="gateOos ml5">※ Keep these out of the Technical Report Hub</span>':'')+'</div></div>'
+				: '<div class="gateResult pending"><span class="gateResultEyebrow">Derived classification</span><span class="gatePendBadge"><i class="material-symbols-outlined">help</i></span><div class="gateResultNm">Answer the gates to derive the class</div></div>';
+			var rows=GATES.filter(function(gt){return gt.show(gates);}).map(function(gt,i){
+				var v=gates[gt.k];
+				return '<div class="gateRow'+(v===null?' animate__animated animate__flipInX animate__fast':'')+'"><span class="gateNum">'+(i+1)+'</span>'+
+					'<span class="gateQ fontM">'+esc(gt.q)+'</span>'+
+					'<span class="upToggle gateTog"><a href="javascript:;" class="'+(v===1?'on':'')+'" data-gate="'+gt.k+'" data-v="1">Yes</a>'+
+						'<a href="javascript:;" class="'+(v===0?'on':'')+'" data-gate="'+gt.k+'" data-v="0">No</a></span></div>';
+			}).join('');
+			panel.innerHTML='<div class="gatePanel">'+result+'<div class="gateHead">Classification <span class="admMuted">answer each gate — class is derived, not picked</span></div>'+rows+'</div>';
+			renderAppr();
+		}
+		/* Approval 카드(apis_npdi_pop Approval 양식) — 도출 클래스/게이트 기반 결재 라우팅. Manager(ITAR) + (JDA→Technology CoE / else→GT&C) */
+		function apprSteps(){
+			var steps=[{fn:'Manager', who:'David Cho'}];
+			if(gates.jda) steps.push({fn:'Technology CoE Leader', who:'Dr. Henrik Vogel'});
+			else steps.push({fn:'GT&C Leader', who:'Sarah Klein'});
+			return steps;
+		}
+		/* ── 등록 화면 결재자 피커 — 사용자가 퀵서치로 결재자 직접 추가(composition_pop autocomplete 패턴 재사용) ── */
+		var approvers=[];
+		var PEOPLE_MASTER=[
+			{name:'David Cho',        role:'Manager'},
+			{name:'Dr. Henrik Vogel', role:'Technology CoE Leader'},
+			{name:'Sarah Klein',      role:'GT&C Leader'},
+			{name:'S.Y. Park',        role:'Principal Scientist'},
+			{name:'Marco Rossi',      role:'R&D Director'},
+			{name:'Aiko Tanaka',      role:'Quality Lead'},
+			{name:'James Miller',     role:'Business Manager'}
+		];
+		function apprListHtml(){
+			if(!approvers.length) return '<div class="apprHint">No approvers yet — search a name above to add.</div>';
+			var rows=approvers.map(function(a,i){
+				return '<tr><td class="ac">'+(i+1)+'</td><td class="ac">'+esc(a.name)+'</td><td>'+esc(a.role)+'</td>'+
+					'<td class="ac"><a href="javascript:;" class="apprDel" data-i="'+i+'" data-tip="Remove"><i class="material-symbols-outlined">close</i></a></td></tr>';
+			}).join('');
+			return '<div class="fixedTable hBorderTable vMiddle mg10"><table><thead><tr><th class="ac">#</th><th class="ac">Name</th><th>Role</th><th class="ac">Remove</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+		}
+		function renderApprList(){ var l=$id('mApprList'); if(l) l.innerHTML=apprListHtml(); }
+		var _apprBuilt=false;
+		function renderApprPicker(){
+			var panel=$id('apprPanel'); if(!panel) return;
+			if(_apprBuilt){ renderApprList(); return; }   // 이미 만들어졌으면 목록만 갱신(입력·autocomplete 유지)
+			panel.innerHTML='<div class="inputArea"><div class="cardSubTit mt20">Decision Point Approval Status</div>'
+				+'<div class="row"><div class="col s2 ar pl0">Add Approver</div><div class="col s10"><div class="aniInput"><input type="text" class="browser-default" id="mApprInput" placeholder="Search by name — e.g., David Cho" autocomplete="off"><span class="focus-border"></span></div></div></div>'
+				+'<div id="mApprList">'+apprListHtml()+'</div></div>';
+			_apprBuilt=true;
+			if(window.jQuery && $.fn.autocomplete){
+				$('#mApprInput').autocomplete({
+					minLength:0, appendTo:'body',
+					source:function(req,res){ var t=req.term.toLowerCase();
+						res(PEOPLE_MASTER.filter(function(p){ return !approvers.some(function(a){return a.name===p.name;}) && (p.name+' '+p.role).toLowerCase().indexOf(t)>-1; })
+							.slice(0,12).map(function(p){ return { label:p.name+' — '+p.role, value:'', p:p }; })); },
+					focus:function(e){ e.preventDefault(); },
+					select:function(e,ui){ e.preventDefault(); approvers.push(ui.item.p); this.value=''; renderApprList(); return false; },
+					create:function(){ $(this).autocomplete('widget').addClass('cmpSubMenu');
+						$(this).data('ui-autocomplete')._renderItem=function(ul,item){ return $('<li>').append('<a>'+item.label+'</a>').appendTo(ul); }; }
+				}).on('focus', function(){ $(this).autocomplete('search', this.value); });
+			}
+		}
+		function renderAppr(){
+			var panel=$id('apprPanel'); if(!panel) return;
+			if(!APPROVE && !VIEW){ renderApprPicker(); return; }   // 등록 화면 = 결재자 퀵서치 피커
+			var done=gatesComplete(gates), c=deriveClass(gates);
+			if(!done || c===0){
+				panel.innerHTML='<div class="inputArea"><div class="cardSubTit mt20">Decision Point Approval Status</div><div class="apprHint">Complete the classification — the approval routing is derived from the class.</div></div>';
+				return;
+			}
+			var rows=apprSteps().map(function(s,i){
+				var st, stp=i+1, acted=false, isRej=false;
+				if(VIEW && VIEW_REJECT){ acted = (stp<=VIEW_REJECT); isRej = (stp===VIEW_REJECT);   // 반려단계=Rejected, 이전=Approved, 이후=Pending
+					st = stp < VIEW_REJECT ? '<span class="roundBox green">Approved</span>' : (isRej ? '<span class="roundBox viva">Rejected</span>' : '<span class="roundBox grey">Pending</span>');
+				}
+				else if(VIEW){ acted = (i===0); st = i===0 ? '<span class="roundBox green">Approved</span>' : (i===1 ? '<span class="roundBox blue">In Progress</span>' : '<span class="roundBox grey">Pending</span>'); }   // 진행중(목업)
+				else if(APPROVE) st = i===0 ? '<span class="roundBox blue">In Progress</span>' : '<span class="roundBox grey">Pending</span>';
+				else st = '<span class="roundBox grey">Pending</span>';
+				var dateStr = (acted && RO_DOC && RO_DOC.date) ? esc(RO_DOC.date) : '-';   // 승인/반려 완료 단계만 날짜
+				var reason = (isRej && RO_DOC && RO_DOC.apprRejectReason) ? RO_DOC.apprRejectReason : '';
+				var whoCell = esc(s.who) + (reason ? ' <i class="material-icons tlAprCmt" data-tip="'+reason.replace(/&/g,'&amp;').replace(/"/g,'&quot;')+'">chat</i>' : '');   // 결재 의견(반려 사유) — 공용 글래스 툴팁(glass_engine data-tip)
+				return '<tr><td class="ac">'+esc(s.fn)+'</td><td class="ac">'+whoCell+'</td><td class="ac">'+dateStr+'</td><td class="ac">'+st+'</td></tr>';
+			}).join('');
+			var acts = APPROVE ? '<div class="apprActs"><a href="javascript:;" class="waves-effect hBtn hViva apprReject"><i class="material-symbols-outlined left">close</i><span class="label">Reject</span></a>'
+				+'<a href="javascript:;" class="waves-effect waves-light hBtn hGreen apprApprove"><i class="material-symbols-outlined left">check</i><span class="label">Approve</span></a></div>' : '';
+			panel.innerHTML='<div class="inputArea"><div class="cardSubTit mt20">Decision Point Approval Status <span class="admMuted">— derived from '+esc(CLS_NM[c])+'</span></div>'
+				+'<div class="fixedTable hBorderTable vMiddle mg10"><table><thead><tr><th>Approval Type</th><th>Name</th><th>Date</th><th class="ac">Status</th></tr></thead><tbody>'+rows+'</tbody></table></div>'+acts+'</div>';
+		}
+		/* 결재자 모드 진입 — 제출 문서값 채우고 잠금, 게이트는 클래스 역산(작성자 답), 전체 미리보기 자동 */
+		/* 키워드/Abstract 자동 생성(REPORTS엔 없어서 빈 곳 없게 채움) */
+		function genKeywords(d){
+			var raw=[d.bu].concat(String(d.title||'').split(/[\s,—·()\-]+/).filter(function(w){return w.length>4;}).slice(0,4));
+			var seen={}, out=[];
+			raw.forEach(function(k){ k=String(k||'').trim().replace(/^#+/,''); if(k && !seen[k.toLowerCase()]){ seen[k.toLowerCase()]=1; out.push('#'+k); } });
+			return out;
+		}
+		function genAbstract(d){
+			var t=(TYPE_LBL[d.type]||d.type||'report').toLowerCase(), rg=IDX_LBL[d.idx]||d.idx||'—';
+			return 'This '+t+' from the '+(d.bu||'—')+' group at '+rg+' summarizes '+String(d.title||'').replace(/\s*\(.*?\)\s*/g,'').toLowerCase()+', covering the methodology, key results, and recommendations for the '+(d.bu||'—')+' portfolio. Full experimental detail is retained in the attached document.';
+		}
+		/* 읽기전용 Basic Data = plain 텍스트(.col val) 렌더 — disabled 입력 대신 깔끔하게 */
+		function renderBasicRO(d, absv, kws){
+			var typeLbl=TYPE_LBL[d.type]||d.type||'—', regionLbl=IDX_LBL[d.idx]||d.idx||'—';
+			var kwHtml = kws.length ? '<div class="tlKws">'+kws.map(function(k){return '<span class="tlKw roChip">'+esc(k)+'</span>';}).join('')+'</div>' : '—';
+			$id('upcDetails').querySelector('.inputArea').innerHTML=
+				 '<div class="row"><div class="col s2 ar pl0">Project Code</div><div class="col s10 val fontM">'+esc(d.code||'—')+'</div></div>'
+				+'<div class="row"><div class="col s2 ar pl0">Report Name</div><div class="col s10 val">'+esc(d.title||'—')+'</div></div>'
+				+'<div class="row"><div class="col s2 ar pl0">Document Type</div><div class="col s4 val">'+esc(typeLbl)+'</div><div class="col s2 ar pl0">Associated Project #</div><div class="col s4 val">'+esc(d.project||'—')+'</div></div>'
+				+'<div class="row"><div class="col s2 ar pl0">Business</div><div class="col s4 val">'+esc(d.bu||'—')+'</div><div class="col s2 ar pl0">Segment</div><div class="col s4 val">'+esc(d.segment||'—')+'</div></div>'
+				+'<div class="row"><div class="col s2 ar pl0">Region / Site</div><div class="col s4 val">'+esc(regionLbl)+'</div><div class="col s2 ar pl0">Author(s)</div><div class="col s4 val">'+esc(d.author||'—')+'</div></div>'
+				+'<div class="row"><div class="col s2 ar pl0">Keywords</div><div class="col s10 val">'+kwHtml+'</div></div>'
+				+'<div class="row"><div class="col s2 ar pl0">Abstract</div><div class="col s10 val">'+esc(absv)+'</div></div>';
+		}
+		/* 읽기전용 진입(approve 결재자 / view 진행중 열람 공통) — 값 채우고 텍스트로 뿌림 */
+		function initReadonly(){
+			var code=getParam('code'), r=null, absv='';
+			try{ var op=window.opener; if(op && op.REPORTS) r=op.REPORTS.filter(function(x){return x.code===code;})[0]; if(op && op.SUMMARIES) absv=op.SUMMARIES[code]||''; }catch(e){}
+			var d = r || { code:code, title:getParam('title'), type:getParam('type'), bu:getParam('bu'), idx:getParam('idx'), author:getParam('author'), cls:+(getParam('cls')||2), date:getParam('date'), apprReject:+(getParam('apprReject')||0), apprRejectReason:(getParam('reason')||'') };
+			VIEW_REJECT = d.apprReject || 0;   // 반려 단계 → Approval 카드 Rejected 표기
+			RO_DOC = d;                        // 날짜·반려사유 표기용
+			if(!absv) absv=genAbstract(d);
+			var kws=genKeywords(d);
+			/* 미리보기 생성용으로 입력값·키워드칩 잠깐 세팅(→ 이후 텍스트로 교체) */
+			$id('mTitle').value=d.title||''; $id('mAuthor').value=d.author||''; $id('mAbs').value=absv;
+			$id('mType').value=TYPE_LBL[d.type]||d.type||'TIS Report'; $id('mRegion').value=IDX_LBL[d.idx]||'US — All Regions'; if(d.bu) $id('mBu').value=d.bu;
+			kws.forEach(function(k){ var c=document.createElement('span'); c.className='tlKw'; c.setAttribute('data-kw',k); c.textContent=k; $id('mKwList').appendChild(c); });
+			var titEl=document.querySelector('.statusTit .tit'); if(titEl) titEl.textContent = VIEW ? ((((d.code?'['+d.code+'] ':'')+(d.title||'')).trim())||d.code||'') : (d.code||'');   // 뷰모드=[코드] 제목(npdi_pop 형식), approve=코드
+			var statusTitEl=document.querySelector('.statusTit');
+			if(statusTitEl){   // 상태를 NPI 헤더 패턴처럼 roundBox로(색: 진행중=bdBlue · 반려=bdRed)
+				var hst = d.apprReject ? {label:'Rejected', cls:'bdRed'} : {label:'In Approval', cls:'bdBlue'};
+				var badge=document.createElement('div'); badge.className='roundBox '+hst.cls; badge.textContent=hst.label;
+				statusTitEl.appendChild(badge);
+			}
+			document.body.classList.add('roMode');
+			gates=gatesFromCls(d.cls);
+			renderCls();
+			renderPreview((d.code||'document')+'.pdf');
+			renderBasicRO(d, absv, kws);   // Basic Data 입력 → plain 텍스트
+		}
+		$id('clsPanel').addEventListener('click', function(e){ if(APPROVE || VIEW) return;   /* 읽기전용 모드는 게이트 편집 불가 */
+			var a=e.target.closest('[data-gate]'); if(!a) return; var k=a.getAttribute('data-gate'); gates[k]=+a.getAttribute('data-v'); if(k==='itar'){ gates.jda=gates.region=gates.external=null; } else if(k==='jda'){ gates.region=gates.external=null; } renderCls(); });
+		$id('apprPanel').addEventListener('click', function(e){ var d=e.target.closest ? e.target.closest('.apprDel') : null; if(!d) return; approvers.splice(+d.getAttribute('data-i'),1); renderApprList(); });   // 등록 화면 결재자 목록 삭제
+		if(APPROVE || VIEW) initReadonly(); else renderCls();
+		/* 결재자 승인/반려(목업) — 토스트 후 창 닫기 */
+		if(window.jQuery){
+			$(document).on('click', '.apprApprove', function(){ toast('Approved for publication — '+getParam('code')+'.', 'ok'); setTimeout(function(){ try{ window.close(); }catch(e){} }, 1200); });
+			$(document).on('click', '.apprReject', function(){ toast('Rejected — returned to the author.', 'warn'); setTimeout(function(){ try{ window.close(); }catch(e){} }, 1200); });
+		}
+		/* Classification 글래스 색수차 마우스 추적(결과 배너 + 게이트 행) — 재렌더돼도 delegated로 유지 */
+		if(window.glassTrack) $(document).on('mousemove', '#upcClass .gateResult, #upcClass .gateRow', glassTrack);
+
+		/* Basic Data 셀렉트 = Materialize FormSelect(npdi_pop과 동일). 스크롤 컨테이너 클리핑 회피 위해 body 렌더 */
+		if(window.jQuery && $.fn.formSelect) $('#upcDetails select').formSelect({ dropdownOptions: { container: document.body } });
+
+		/* Associated Project # 퀵서치 — composition_pop과 동일한 jQuery UI autocomplete 패턴(cmpSubMenu 스타일 재사용) */
+		var PROJECT_MASTER=[
+			{code:'NPI-25-014', nm:'Low-Temp Cure Silicone — Flexible Display'},
+			{code:'NPI-25-031', nm:'High-Purity PDMS for EV Battery Seal'},
+			{code:'NPI-25-060', nm:'Weatherable Sealant for Facade'},
+			{code:'NPI-24-088', nm:'Optically Clear Adhesive Gel'},
+			{code:'NPT-25-042', nm:'Thermal Interface Compound Scale-up'},
+			{code:'NPT-24-107', nm:'Solvent-Free Release Coating'}
+		];
+		if(window.jQuery && $.fn.autocomplete && !(APPROVE||VIEW)){   // 읽기전용 모드는 퀵서치 비활성
+			$('#mProject').autocomplete({
+				minLength:0, appendTo:'body',
+				source:function(req,res){ var t=req.term.toLowerCase();
+					res(PROJECT_MASTER.filter(function(p){ return (p.code+' '+p.nm).toLowerCase().indexOf(t)>-1; }).slice(0,12)
+						.map(function(p){ return { label:p.code+' — '+p.nm, value:p.code }; })); },
+				focus:function(e){ e.preventDefault(); },
+				create:function(){ $(this).autocomplete('widget').addClass('cmpSubMenu');
+					$(this).data('ui-autocomplete')._renderItem=function(ul,item){ return $('<li>').append('<a>'+item.label+'</a>').appendTo(ul); }; }
+			}).on('focus', function(){ $(this).autocomplete('search', this.value); });   // 포커스 시 전체 목록 표시
+		}
+
+		/* ── 문서 파일 업로드 → 파싱 미리보기(팝업 문서 뷰 dbH·rlDocPage 재사용, 목업) ── */
+		function buildPreviewDoc(){
+			var title=($id('mTitle').value||'Untitled report').trim();
+			var author=($id('mAuthor').value||'—').trim();
+			var bu=$id('mBu').value, type=$id('mType').value, region=$id('mRegion').value;
+			var abs=($id('mAbs').value||'').trim(), kw=currentKw().join(', ');
+			var topic=title.replace(/\s*\(.*?\)\s*/g,''), lc=topic.toLowerCase();
+			var b=[
+				{t:'h1', x:title},
+				{t:'meta', x:type+'  ·  '+author+'  ·  '+region+'  ·  '+bu+'  ·  '+(new Date()).toISOString().slice(0,10)},
+				{t:'h2', x:'Abstract'},
+				{t:'p', x: abs || 'This report summarizes the objectives, methodology, and key findings of the study. The abstract appears here once provided in the submission form.'}
+			];
+			if(kw){ b.push({t:'h2', x:'Keywords'}); b.push({t:'p', x:kw}); }
+			b.push({t:'h2', x:'1. Introduction'});
+			b.push({t:'p', x:'This '+type+' documents work carried out by the '+bu+' group at '+region+', addressing '+lc+' with a focus on reproducibility, scale-up readiness, and alignment with Momentive Global Technology priorities. The content below has been parsed from the uploaded file; layout is reconstructed for on-screen review.'});
+			b.push({t:'p', x:'Prior internal reports established the baseline performance for this chemistry. The present work extends that baseline and documents the experimental conditions, key results, and recommendations relevant to the '+bu+' portfolio.'});
+			b.push({t:'h2', x:'2. Background'});
+			b.push({t:'p', x:'The relevant literature and preceding internal studies are reviewed to frame the current investigation. Key gaps identified in earlier work motivate the scope defined for '+lc+', and the associated performance targets are summarized against prior benchmarks.'});
+			b.push({t:'h2', x:'3. Experimental'});
+			b.push({t:'p', x:'Materials were prepared following standard '+bu+' protocols. Samples were characterized for the properties most relevant to '+lc+'. All measurements were performed in triplicate and reported as mean values; instrument calibration followed the '+region+' laboratory quality plan.'});
+			b.push({t:'p', x:'Test conditions, formulations, and analytical methods are summarized in the sections that follow, with full parameter tables retained in the source document.'});
+			b.push({t:'h2', x:'4. Results & Discussion'});
+			b.push({t:'p', x:'The results confirm the trends anticipated from the abstract. Across the conditions evaluated, the system showed a favorable balance of performance and processability. '+author+' notes that the observed behavior is consistent with the proposed mechanism and supports the recommended direction for further development.'});
+			b.push({t:'p', x:'A sensitivity analysis indicated that the dominant factor is the cure/processing window; secondary factors had a smaller but measurable effect. These findings are directly applicable to ongoing '+bu+' projects and inform the scale-up plan outlined in the conclusion.'});
+			b.push({t:'h2', x:'5. Conclusion'});
+			b.push({t:'p', x:'In summary, this report demonstrates a viable path for '+lc+'. The '+bu+' team recommends advancing to the next development stage, with the experimental details above serving as the reference baseline.'});
+			b.push({t:'h2', x:'Acknowledgements'});
+			b.push({t:'p', x:'The author thanks the '+region+' laboratory team for analytical support and the '+bu+' leadership for project sponsorship. Questions may be directed to '+author+' ('+region+').'});
+			return b;
+		}
+		function renderPreview(fileName){
+			var html=buildPreviewDoc().map(function(b){
+				if(b.t==='h1') return '<h1 class="dbH1">'+esc(b.x)+'</h1>';
+				if(b.t==='meta') return '<div class="dbMeta">'+esc(b.x)+'</div>';
+				if(b.t==='h2') return '<h2 class="dbH2">'+esc(b.x)+'</h2>';
+				return '<p class="dbP">'+esc(b.x)+'</p>';
+			}).join('');
+			// 검토 모드: 파일명에 다운로드 링크(프리뷰만으론 부족 → 원문 다운). 작성 모드는 plain 파일명
+			var fnHtml = (APPROVE||VIEW)
+				? '<a href="javascript:;" class="prevDl" data-file="'+esc(fileName)+'" data-tip="Download original" data-tip-pos="bottom">'+esc(fileName)+' <i class="material-symbols-outlined">download</i></a>'
+				: '<b>'+esc(fileName)+'</b>';
+			$id('previewPanel').innerHTML='<div class="prevSrc"><i class="material-symbols-outlined">description</i>Parsed from '+fnHtml+'</div>'
+				+'<div class="rlDocScroll"><div class="rlDocPage">'+html+'</div></div>';
+		}
+		var _uf=$id('upFile'); if(_uf) _uf.addEventListener('change', function(){ var f=this.files && this.files[0]; if(f) renderPreview(f.name); });
+		/* 원문 다운로드(검토 모드, 목업) */
+		document.addEventListener('click', function(e){ var b=e.target && e.target.closest ? e.target.closest('.prevDl') : null; if(!b) return; toast('Downloading original — '+(b.getAttribute('data-file')||'document')+' … (mock)','ok'); });
+
+		/* ── 키워드 태그 칩 입력(ELN 태그 방식 — 칩 추가/삭제. 추천태그는 제외) ── */
+		function currentKw(){ return Array.prototype.map.call(document.querySelectorAll('#mKwList .tlKw'), function(c){ return c.getAttribute('data-kw'); }); }
+		function addKw(text){
+			var list=$id('mKwList'); text=String(text).trim().replace(/^#+/,''); if(!text) return; text='#'+text;   // ELN처럼 # 접두사
+			if(currentKw().some(function(k){ return k.toLowerCase()===text.toLowerCase(); })) return;   // 중복 방지
+			var chip=document.createElement('span'); chip.className='tlKw'; chip.setAttribute('data-kw', text);
+			chip.innerHTML=esc(text)+'<i class="material-symbols-outlined">close</i>';
+			list.appendChild(chip);
+		}
+		var _kwi=$id('mKwInput');
+		if(_kwi){
+			_kwi.addEventListener('keydown', function(e){
+				if(e.key==='Enter'||e.key===','){ e.preventDefault(); addKw(this.value); this.value=''; }
+				else if(e.key==='Backspace' && !this.value){ var cs=document.querySelectorAll('#mKwList .tlKw'); if(cs.length) cs[cs.length-1].remove(); }
+			});
+			_kwi.addEventListener('blur', function(){ if(this.value.trim()){ addKw(this.value); this.value=''; } });
+		}
+		var _kwl=$id('mKwList');
+		if(_kwl) _kwl.addEventListener('click', function(e){ var x=e.target.closest('.tlKw i'); if(x) x.closest('.tlKw').remove(); });
+
+		/* 좌측 섹션 메뉴 → 우측 카드 스크롤 + active */
+		var cont=document.querySelector('.contArea');
+		document.querySelectorAll('.leftAside .menu-item').forEach(function(mi){
+			mi.addEventListener('click', function(){
+				document.querySelectorAll('.leftAside .menu-item').forEach(function(x){ x.classList.remove('active'); });
+				mi.classList.add('active');
+				var t=$id(mi.getAttribute('data-target'));
+				if(t){ var top=t.getBoundingClientRect().top+(window.pageYOffset||document.documentElement.scrollTop)-100; window.scrollTo({ top:Math.max(0,top), behavior:'smooth' }); }   // window가 스크롤 주체 + 헤더 보정
+			});
+		});
+		/* 스크롤 스파이 — 뷰포트 상단(헤더 아래 ~150px) 기준으로 현재 카드 판정. window/contArea 어느 게 스크롤돼도 getBoundingClientRect로 동작(capture=true로 내부 스크롤도 포착) */
+		function spyActive(){
+			var secs=document.querySelectorAll('.contArea .cardBox[id]'), cur=null;
+			secs.forEach(function(s){ if(s.getBoundingClientRect().top<=150) cur=s.id; });
+			if(!cur && secs.length) cur=secs[0].id;
+			if(cur) document.querySelectorAll('.leftAside .menu-item').forEach(function(mi){ mi.classList.toggle('active', mi.getAttribute('data-target')===cur); });
+		}
+		var _spy;
+		window.addEventListener('scroll', function(){ clearTimeout(_spy); _spy=setTimeout(spyActive, 30); }, true);
+		spyActive();
+		/* 라벨 → 코드 매핑 */
+		var TYPE_MAP={'TIS Report':'TIS','Tech / Market Review':'TMR','Process Transfer Memo':'PTM','Trip Report':'Trip','Improvement Project':'IP'};
+		function siteIdx(v){ return (v||'US — All Regions').split(' ')[0]; }
+
+		/* 임시저장(Draft) — 게이트 미완성이어도 저장. 창 유지, 목업 토스트만 */
+		var _sv=$id('upSave'); if(_sv) _sv.addEventListener('click', function(){
+			var title=(($id('mTitle').value||'').trim())||'Untitled report';
+			toast('Draft saved — '+title+'.', 'ok');
+		});
+
+		/* 제출 → 부모 리스트(REPORTS)에 신규 문서 추가 후, 해당 문서 techlib_pop으로 이동(기안자 = owner 모드) */
+		$id('upSubmit').addEventListener('click', function(){
+			var title=(($id('mTitle').value||'').trim())||'Untitled report';
+			var cls=deriveClass(gates);
+			if(!gatesComplete(gates)){ toast('Answer all classification gates before submitting.'); return; }
+			if(cls===0){ toast('Out of scope — keep these out of the Tech Library.'); return; }
+			var op=null; try{ op=window.opener; }catch(e){}
+			var type=TYPE_MAP[$id('mType').value]||'TIS', bu=$id('mBu').value||'—',
+			    idx=siteIdx($id('mRegion').value), author=($id('mAuthor').value||'').trim()||'Me',
+			    segment=$id('mSegment').value||'—', project=($id('mProject').value||'').trim(),
+			    date=(new Date()).toISOString().slice(0,10);
+			var num='1'; try{ if(op && op.REPORTS) num=String(op.REPORTS.length+1); }catch(e){}
+			var code='NEW-26-'+num.padStart(3,'0');
+			try{ if(op && op.REPORTS){ op.REPORTS.unshift({ code:code, title:title, type:type, site:idx, idx:idx, author:author, bu:bu, segment:segment, project:project, approvers:approvers.slice(), date:date, cls:cls, hits:0 }); if(typeof op.fnRenderList==='function') op.fnRenderList(); } }catch(e){}
+			/* 같은 창을 해당 문서 pop으로 — granted=1(기안자 본인=잠금 회피) + owner 모드(Approval 자동 오픈) */
+			var qs='code='+encodeURIComponent(code)+'&granted=1&new=1&mode=owner'+
+				'&title='+encodeURIComponent(title)+'&type='+encodeURIComponent(type)+'&bu='+encodeURIComponent(bu)+
+				'&idx='+encodeURIComponent(idx)+'&author='+encodeURIComponent(author)+'&cls='+cls+'&date='+encodeURIComponent(date);
+			location.href='apis_techlib_pop.html?'+qs;
+		});
+	})();
+	</script>
+</body>
+</html>
