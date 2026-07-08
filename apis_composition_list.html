@@ -195,11 +195,10 @@
           });
         }
 
-        // 서머리 식별 pill(Item/Comp/BOM/Variant) / 메타 행(label:value) 헬퍼
-        function pill(lbl, val){ return '<span class="cmpPill"><b>'+lbl+'</b>'+val+'</span>'; }
+        // 서머리 메타 행(label:value) 헬퍼
         function infoRow(lbl, val){ return '<div class="col s6">'+lbl+'</div><div class="col s6 val">'+val+'</div>'; }
 
-        // 우측 서머리 — 규제/시험 배지 + 식별 pill + 컴플라이언스 메타 + 조성 Sub-type 섹션 카드
+        // 우측 서머리 — 규제/시험 배지 + 컴플라이언스 메타(식별 항목 포함) + 조성 Sub-type 섹션 카드
         function fnSetSummary(id){
           var c = COMPOSITIONS.find(function(x){ return x.id===id; });
           if(!c) return;
@@ -207,16 +206,13 @@
           var m = CMETA[id] || {};
           var itemCode = 'SE-'+c.id;
           var commercial = (c.status==='act'||c.status==='appr') ? 'Y' : 'N';
-          // 식별 pill 줄 — 캡쳐: Item / Comp / BOM / Variant
-          $("#smPills").html(
-              pill('Item',    itemCode)
-            + pill('Comp',    'COMP-'+c.merp.slice(5)+'-INT-BV0-v1.2')
-            + pill('BOM',     'v3.2 · Var0')
-            + pill('Variant', 'BASE(Default)')
-          );
-          // 컴플라이언스 메타 — 캡쳐(Compliance Item Detail) 항목 순서
+          // 컴플라이언스 메타 — 식별 항목(Item/Comp/BOM/Variant)을 맨 위에 일반 label:value로
           $("#smInfo").html(
-              infoRow('Compliance Item',      itemCode+' · ITM-'+c.merp.slice(1))
+              infoRow('Item',                 itemCode)
+            + infoRow('Comp',                 'COMP-'+c.merp.slice(5)+'-INT-BV0-v1.2')
+            + infoRow('BOM',                  'v3.2 · Var0')
+            + infoRow('Variant',              'BASE(Default)')
+            + infoRow('Compliance Item',      itemCode+' · ITM-'+c.merp.slice(1))
             + infoRow('Item Name',            c.name)
             + infoRow('MERP Code',            c.merp)
             + infoRow('Business Unit',        c.bu)
@@ -231,10 +227,10 @@
           //   BOM(ERP 베이스) + INPUT/ITEM/LEGAL(각 작성·결재). 카드 색으로 진행 상태 구분.
           var s = CSUM[id] || {};
           $("#smSecs").html('<div class="cmpGrid">'
-            + secCard('BOM',   'From ERP',        'done', 'Synced',    s.erp,   'pjContCard_2', apprFor(id,0))
-            + secCard('INPUT', 'Reaction Model',  st4(c.rc), lbl4(c.rc), s.input, 'pjContCard_3', apprFor(id,1))
-            + secCard('ITEM',  'SDS / Label',     st4(c.pc), lbl4(c.pc), s.item,  'pjContCard_4', apprFor(id,2))
-            + secCard('LEGAL', 'REACH',           st4(c.rg), lbl4(c.rg), s.legal, 'pjContCard_5', apprFor(id,3))
+            + secCard('BOM',   'done', 'Synced',    s.erp,   'pjContCard_2', apprFor(id,0))
+            + secCard('INPUT', st4(c.rc), lbl4(c.rc), s.input, 'pjContCard_3', apprFor(id,1))
+            + secCard('ITEM',  st4(c.pc), lbl4(c.pc), s.item,  'pjContCard_4', apprFor(id,2))
+            + secCard('LEGAL', st4(c.rg), lbl4(c.rg), s.legal, 'pjContCard_5', apprFor(id,3))
             + '</div>');
         }
         // 상태 코드 → 카드 상태 클래스 / 상태 라벨
@@ -246,8 +242,8 @@
           if(code==='rev') return 'In Review';
           return 'Submitted';   // pend
         }
-        // 유리판 카드 한 장 — 이름 + 상태 pill + 서브(구성) + 날짜(or 미등록). data-card=팝업 스크롤 대상 카드
-        function secCard(name, sub, state, stLabel, date, cardId, appr){
+        // 유리판 카드 한 장 — 이름 + 상태 pill + 날짜(or 미등록). data-card=팝업 스크롤 대상 카드
+        function secCard(name, state, stLabel, date, cardId, appr){
           var dateEl = date
             ? '<span class="cmpCardDate"><i class="material-symbols-outlined cmpCardCal">event</i>'+date+'</span>'
             : '<span class="cmpCardDate">Not registered</span>';
@@ -257,7 +253,6 @@
             : '';
           return '<div class="cmpCard '+state+'" data-card="'+cardId+'">'
                +   '<div class="cmpCardTop"><span class="cmpCardName">'+name+'</span><span class="cmpCardSt">'+stLabel+'</span></div>'
-               +   '<div class="cmpCardSub">'+sub+'</div>'
                +   '<div class="cmpCardWhen">'+dateEl+byEl+'</div>'
                + '</div>';
         }
@@ -360,7 +355,6 @@
           <span class="cmpBadge agri"><i class="material-symbols-outlined">potted_plant</i>Agriculture Registered</span>
           <span class="cmpBadge retest"><i class="material-symbols-outlined">autorenew</i>Retest Required</span>
         </div>
-        <div class="cmpPills" id="smPills"></div>
         <div class="row subPjInfo" id="smInfo"></div>
         <div class="subTit mt20 ml10">Composition Sections</div>
         <div class="ml10" id="smSecs"></div>
