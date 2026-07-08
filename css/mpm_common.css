@@ -2338,6 +2338,9 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 	font-family: 'Roboto-Regular';
 }
 
+/* 체크박스 라벨 간격 — materialize 기본 35px가 넓어 박스-라벨 결속이 약함 → 30px로 축소 */
+[type="checkbox"] + span:not(.lever) { padding-left: 30px; }
+
 /* 표 셀 내 filled-in 체크박스 정중앙 정렬 — 기본 span padding(35px)이 20px 박스를 좌측에 그려 쏠리는 문제 해소 */
 .chkCenter { display: inline-block; }
 .chkCenter [type="checkbox"] + span:not(.lever) { padding-left: 20px; }
@@ -3324,6 +3327,10 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	border-top-right-radius: 10px;
 }
 .essential {
+	color: #bb2649;
+}
+/* viva(브랜드 레드) 텍스트 강조 — 합계·경고성 수치 등 */
+.vivaText {
 	color: #bb2649;
 }
 .inputArea {
@@ -6074,10 +6081,29 @@ select.browser-default {
 .cmpCard.ing  .cmpCardSt { color: #3a5a9a; background: rgba(115,145,201,.28); }
 .cmpCard.none .cmpCardSt { color: #8a7d6e; background: rgba(150,135,120,.2); }
 .cmpCardSub { font-size: 11.5px; color: #8a7d6e; margin-top: 8px; }
-.cmpCardWhen { font-size: 12.5px; font-weight: 500; color: #5a5040; margin-top: 2px; }
+.cmpCardWhen { display: flex; align-items: center; justify-content: space-between; gap: 8px; font-size: 12.5px; font-weight: 500; color: #5a5040; margin-top: 2px; }
+.cmpCardDate { display: inline-flex; align-items: center; }
 .cmpCardWhen .cmpCardCal { font-size: 14px; color: #A47864; vertical-align: -2px; margin-right: 3px; }
+/* 승인자(사람) — 날짜 우측, 흐린 톤 */
+.cmpCardBy { display: inline-flex; align-items: center; font-weight: 400; color: #8a7d6e; white-space: nowrap; }
 .cmpCard.none .cmpCardWhen { color: #a89a8a; font-style: italic; font-weight: 400; }
 .cmpTlNone { color: #b3a596; font-style: italic; }
+
+/* ── Composition 서머리 상단 — 규제/시험 배지(고정 예시 3종) + 식별 pill 줄 ── */
+/* 배지: 아이콘+색으로 상태 표기. bio=적 / agri=녹 / retest=주황 (모듈 팔레트 통일) */
+.cmpBadges { display: flex; flex-wrap: wrap; gap: 8px; margin: 12px 10px 10px; }
+.cmpBadge { display: inline-flex; align-items: center; gap: 5px; font-size: 12px; font-weight: 600;
+  padding: 4px 12px; border-radius: 14px; border: 1px solid; background: #fff; }
+.cmpBadge i { font-size: 15px; line-height: 1; font-variation-settings: 'opsz' 20, 'wght' 500; }
+.cmpBadge.bio    { color: #bb2649; border-color: rgba(187,38,73,.4);  background: rgba(187,38,73,.06); }
+.cmpBadge.agri   { color: #6a8f3c; border-color: rgba(106,143,60,.4); background: rgba(106,143,60,.09); }
+.cmpBadge.retest { color: #e87e05; border-color: rgba(232,126,5,.4);  background: rgba(232,126,5,.09); }
+/* 식별 pill: Item/Comp/BOM/Variant 빠른 식별 줄 (회청색 배경, 라벨 뒤 콜론) */
+.cmpPills { display: flex; flex-wrap: wrap; gap: 8px; margin: 0 10px 4px; }
+.cmpPill { display: inline-flex; align-items: baseline; gap: 5px; font-size: 12px;
+  padding: 4px 12px; border-radius: 10px; background: #eef1f6; color: #4a5568; }
+.cmpPill b { font-weight: 600; color: #6b7688; font-size: 11px; }
+.cmpPill b::after { content: ':'; }
 
 /* ── Tech Library 모듈 ── */
 /* 좌측 statusBox 추가 상태: Granted(열람승인=청) / Requested(열람신청중=회색). type1(주황)/type2(녹)에 더함 */
@@ -7099,6 +7125,23 @@ body.roMode .tlKwAddRow{display:none;}
 .tlStagger .menu-item:nth-child(3){animation-delay:.22s;}
 .tlStagger .menu-item:nth-child(4){animation-delay:.31s;}
 .tlStagger .menu-item:nth-child(5){animation-delay:.40s;}
+/* ELN 노트 리스트(좌 Project·우 Note) 순차 flipInX — tlStagger와 동일 원리(nth-child animation-delay + fill-mode:both로 지연중 숨김). 등장 자체가 플립 */
+.type5 .mainList li{animation-duration:.7s;}
+.type5 .mainList li:nth-child(1){animation-delay:0s;}
+.type5 .mainList li:nth-child(2){animation-delay:.07s;}
+.type5 .mainList li:nth-child(3){animation-delay:.14s;}
+.type5 .mainList li:nth-child(4){animation-delay:.21s;}
+.type5 .mainList li:nth-child(5){animation-delay:.28s;}
+.type5 .mainList li:nth-child(6){animation-delay:.35s;}
+.type5 .mainList li:nth-child(7){animation-delay:.42s;}
+.type5 .mainList li:nth-child(8){animation-delay:.49s;}
+.type5 .mainList li:nth-child(9){animation-delay:.56s;}
+.type5 .mainList li:nth-child(10){animation-delay:.63s;}
+.type5 .mainList li:nth-child(11){animation-delay:.70s;}
+.type5 .mainList li:nth-child(12){animation-delay:.77s;}
+.type5 .mainList li:nth-child(13){animation-delay:.84s;}
+.type5 .mainList li:nth-child(14){animation-delay:.91s;}
+.type5 .mainList li:nth-child(n+15){animation-delay:.98s;}
 /* 문서 파일 파싱 미리보기 — 팝업 문서 뷰(.rlDocPage) 재사용, 카드 안에서 높이 제한 */
 #upcPreview .prevSrc{display:flex;align-items:center;gap:6px;font-size:12.5px;color:var(--main-hint-color);margin:4px 0 12px;}
 #upcPreview .prevSrc i{font-size:17px;color:var(--rl-accent);}
@@ -7652,19 +7695,11 @@ body.roMode .tlKwAddRow{display:none;}
 /* statusBox: 높이는 base 40px, 폭은 고정 width 대신 콘텐츠 핏(min-width 90) → NPI 실측(92)에 맞춘 슬림 pill */
 .type5 .mainList li .statusBox{width:auto;min-width:90px;}
 .type5 .mainList li{cursor:pointer;}
-/* 떠오름·3D 틸트 제거(ELN만): glass_engine.js가 '.mainList li' mousemove에 인라인
-   style.transform(translateY+perspective+rotateX/Y)을 넣으므로 !important로만 무력화 가능.
-   색수차는 별도(::before + glassTrack CSS변수)라 유지됨 */
-.type5 .mainList li{transform:none !important;}
-/* 행 hover 색수차 sheen — base는 .on::before에만 주는 무지개 conic을 hover까지 확장(좌·우 공통).
-   --olx/--oly/--ol-angle는 glassTrack이 커서 추적으로 갱신 → 마우스 따라 무지개 이동 */
-.type5 .mainList li:not([nodata]):hover::before{
-	content:'';position:absolute;inset:0;border-radius:10px;pointer-events:none;z-index:1;
-	background:conic-gradient(from var(--ol-angle,0deg) at var(--olx,50%) var(--oly,50%),
-		rgba(255,0,0,0) 0%,rgba(255,0,0,0.02) 8%,rgba(255,165,0,0.02) 16%,rgba(255,255,0,0.05) 24%,
-		rgba(0,255,0,0.05) 33%,rgba(0,200,255,0.05) 42%,rgba(0,100,255,0.05) 50%,rgba(130,0,255,0.05) 58%,
-		rgba(255,0,200,0.02) 66%,rgba(255,0,0,0.02) 75%,rgba(255,0,0,0) 83%,transparent 100%);
-}
+/* 3D 틸트 억제는 hover에만(ELN): glass_engine.js가 전역 '.mainList li' mousemove에 인라인 tilt
+   transform을 넣으므로 hover 시 !important로 무력화. 단 :hover로 한정해야 등장 flipInX(비-hover)의
+   rotateX가 안 죽음(무조건 transform:none이면 flip이 opacity만 남아 fadein처럼 보임).
+   글래스 색수차 sheen은 다른 리스트와 동일하게 선택(.on::before)일 때만 — hover sheen 없음 */
+.type5 .mainList li:hover{transform:none !important;}
 
 /* ── 패널 헤더 = NPI .mainTitArea 그대로(타이틀 좌 · 버튼 우, space-between). 별도 레이아웃 불필요.
    검색 기준칩(elnSrchCrit)·Clear는 기본 숨김(dpNone), 검색모드에서만 우 헤더로 이동해 노출 ── */

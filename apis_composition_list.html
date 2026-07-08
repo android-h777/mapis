@@ -64,6 +64,37 @@
           BC7040:  {erp:'2026-06-09', input:null,         item:'2026-06-11', legal:'2026-06-14'}
         };
 
+        // 조성별 규제·성분 메타(목업) — 서머리 Relabel/INCI 표기용. 나머지 필드는 기존 데이터에서 파생
+        var CMETA = {
+          SE9187:  {relabel:'Silseal 9187',      inci:'Dimethicone · Silica · Vinyl Crosspolymer'},
+          LSR2725: {relabel:'LiquidSil 2725',    inci:'Dimethicone · Silica · Platinum Catalyst'},
+          TC5026:  {relabel:'ThermPaste 5026',   inci:'Dimethicone · Alumina · Zinc Oxide'},
+          RTV615:  {relabel:'Encap 615',         inci:'Dimethicone · Silica · Vinyl Dimethicone'},
+          SE6200:  {relabel:'DiGel 6200',        inci:'Dimethicone · Silica'},
+          SL5101:  {relabel:'AdheSeal 5101',     inci:'Dimethicone · Silica · Aminosilane'},
+          HV496:   {relabel:'HV Insulator 496',  inci:'Dimethicone · Silica'},
+          SE1952:  {relabel:'SiliFoam 1952',     inci:'Dimethicone · Silica · Hydrogen Siloxane'},
+          SF7788:  {relabel:'StructFoam 7788',   inci:'Dimethicone · Silica · Blowing Agent'},
+          OC3120:  {relabel:'OptiCoat 3120',     inci:'Dimethicone · Silsesquioxane'},
+          AD4055:  {relabel:'DampGuard 4055',    inci:'Dimethicone · Silica · Vinyl Crosspolymer'},
+          MR9902:  {relabel:'ReleasePro 9902',   inci:'Dimethicone · Cyclopentasiloxane'},
+          TB6300:  {relabel:'ThermBar 6300',     inci:'Dimethicone · Alumina · Silica'},
+          CG2200:  {relabel:'ConduGrease 2200',  inci:'Dimethicone · Silver Flake · Silica'},
+          EL8890:  {relabel:'ElastoSil 8890',    inci:'Dimethicone · Silica · Platinum Catalyst'},
+          PU1150:  {relabel:'PotSeal 1150',      inci:'Dimethicone · Silica · Vinyl Dimethicone'},
+          BC7040:  {relabel:'BondFlex 7040',     inci:'Dimethicone · Silica · Aminosilane'}
+        };
+        // BU → Product Group / Sector of Use 매핑(목업)
+        var PGROUP = {'Adv. Sealants':'Sealant Materials','HPE':'High Voltage Materials','Specialty':'Specialty Compounds','Consumer':'Consumer Materials'};
+        var SECTOR = {'Adv. Sealants':'Construction sealing','HPE':'Electrical insulation','Specialty':'Thermal management','Consumer':'Consumer goods'};
+        function plantCode(p){ var m=(p||'').match(/\d+/); return m?m[0]:'—'; }
+        // 섹션별 승인자(목업) — id·섹션 인덱스로 풀에서 결정론적 선택(BOM=0/INPUT=1/ITEM=2/LEGAL=3)
+        var APPR_POOL = ['R. Wijnands','M. Becker','J. Park','A. Mueller','S. Kim','L. Schmidt'];
+        function apprFor(id, secIdx){
+          var h = 0; for(var i=0;i<id.length;i++){ h += id.charCodeAt(i); }
+          return APPR_POOL[(h + secIdx) % APPR_POOL.length];
+        }
+
         // 제품 행의 Sub-type 상태 배지 — NPI 스테이지 아이콘 체계 (색=상태, 아이콘 앞쪽)
         //  완료=녹 check_circle (Active) / 진행중=주황 play_circle (Draft·Pending·Review) / 미진행=회색 circle(빈 원)
         function subBadge(type, code, label){
@@ -71,7 +102,7 @@
           if(!code){ state=''; ico='circle'; }
           else if(code==='act' || code==='appr'){ state='done'; ico='check_circle'; }
           else { state='ing'; ico='play_circle'; }
-          var stTxt = code ? ST_LABEL[code] : '미등록';
+          var stTxt = code ? ST_LABEL[code] : 'Not registered';
           return '<span class="roundBox cmpSub'+(state?' '+state:'')+'" title="'+label+' '+stTxt+'">'
                +    '<i class="material-symbols-outlined cmpIco">'+ico+'</i>'+label
                + '</span>';
@@ -164,25 +195,46 @@
           });
         }
 
-        // 우측 서머리 — 제품 메타 + 조성 Sub-type 상태 + 도메인 세부(BOM/INPUT/ITEM/LEGAL) + 주요 성분
+        // 서머리 식별 pill(Item/Comp/BOM/Variant) / 메타 행(label:value) 헬퍼
+        function pill(lbl, val){ return '<span class="cmpPill"><b>'+lbl+'</b>'+val+'</span>'; }
+        function infoRow(lbl, val){ return '<div class="col s6">'+lbl+'</div><div class="col s6 val">'+val+'</div>'; }
+
+        // 우측 서머리 — 규제/시험 배지 + 식별 pill + 컴플라이언스 메타 + 조성 Sub-type 섹션 카드
         function fnSetSummary(id){
           var c = COMPOSITIONS.find(function(x){ return x.id===id; });
           if(!c) return;
           $("#dtTit").text('['+c.merp+'] '+c.name);
-          $("#smMerp").text(c.merp);
-          $("#smType").text(c.type);
-          $("#smBu").text(c.bu);
-          $("#smPlant").text(c.plant);
-          $("#smOwner").text(c.owner);
-          $("#smStatus").text(stBoxLabel(c.status));
+          var m = CMETA[id] || {};
+          var itemCode = 'SE-'+c.id;
+          var commercial = (c.status==='act'||c.status==='appr') ? 'Y' : 'N';
+          // 식별 pill 줄 — 캡쳐: Item / Comp / BOM / Variant
+          $("#smPills").html(
+              pill('Item',    itemCode)
+            + pill('Comp',    'COMP-'+c.merp.slice(5)+'-INT-BV0-v1.2')
+            + pill('BOM',     'v3.2 · Var0')
+            + pill('Variant', 'BASE(Default)')
+          );
+          // 컴플라이언스 메타 — 캡쳐(Compliance Item Detail) 항목 순서
+          $("#smInfo").html(
+              infoRow('Compliance Item',      itemCode+' · ITM-'+c.merp.slice(1))
+            + infoRow('Item Name',            c.name)
+            + infoRow('MERP Code',            c.merp)
+            + infoRow('Business Unit',        c.bu)
+            + infoRow('Product Group',        PGROUP[c.bu] || '—')
+            + infoRow('Sector of Use',        SECTOR[c.bu] || '—')
+            + infoRow('Commercial · Trigger', commercial+' · SDS')
+            + infoRow('Relabel names',        m.relabel || '—')
+            + infoRow('INCI (component-based)', m.inci || '—')
+            + infoRow('Related MERP Materials', c.merp+' · '+(Number(c.merp)+1))
+          );
           // 섹션 = 각각 독립 진행(연결 프로세스 아님) → 2×2 상태색 유리판 카드.
           //   BOM(ERP 베이스) + INPUT/ITEM/LEGAL(각 작성·결재). 카드 색으로 진행 상태 구분.
           var s = CSUM[id] || {};
           $("#smSecs").html('<div class="cmpGrid">'
-            + secCard('BOM',   'From ERP',        'done', 'Synced',    s.erp,   'pjContCard_2')
-            + secCard('INPUT', 'Reaction Model',  st4(c.rc), lbl4(c.rc), s.input, 'pjContCard_3')
-            + secCard('ITEM',  'SDS / Label',     st4(c.pc), lbl4(c.pc), s.item,  'pjContCard_4')
-            + secCard('LEGAL', 'REACH',           st4(c.rg), lbl4(c.rg), s.legal, 'pjContCard_5')
+            + secCard('BOM',   'From ERP',        'done', 'Synced',    s.erp,   'pjContCard_2', apprFor(id,0))
+            + secCard('INPUT', 'Reaction Model',  st4(c.rc), lbl4(c.rc), s.input, 'pjContCard_3', apprFor(id,1))
+            + secCard('ITEM',  'SDS / Label',     st4(c.pc), lbl4(c.pc), s.item,  'pjContCard_4', apprFor(id,2))
+            + secCard('LEGAL', 'REACH',           st4(c.rg), lbl4(c.rg), s.legal, 'pjContCard_5', apprFor(id,3))
             + '</div>');
         }
         // 상태 코드 → 카드 상태 클래스 / 상태 라벨
@@ -195,14 +247,18 @@
           return 'Submitted';   // pend
         }
         // 유리판 카드 한 장 — 이름 + 상태 pill + 서브(구성) + 날짜(or 미등록). data-card=팝업 스크롤 대상 카드
-        function secCard(name, sub, state, stLabel, date, cardId){
-          var when = date
-            ? '<div class="cmpCardWhen"><i class="material-symbols-outlined cmpCardCal">event</i>'+date+'</div>'
-            : '<div class="cmpCardWhen">Not registered</div>';
+        function secCard(name, sub, state, stLabel, date, cardId, appr){
+          var dateEl = date
+            ? '<span class="cmpCardDate"><i class="material-symbols-outlined cmpCardCal">event</i>'+date+'</span>'
+            : '<span class="cmpCardDate">Not registered</span>';
+          // 승인자는 등록(날짜 있음)된 섹션에만 표시 — 날짜 우측
+          var byEl = (date && appr)
+            ? '<span class="cmpCardBy">'+appr+'</span>'
+            : '';
           return '<div class="cmpCard '+state+'" data-card="'+cardId+'">'
                +   '<div class="cmpCardTop"><span class="cmpCardName">'+name+'</span><span class="cmpCardSt">'+stLabel+'</span></div>'
                +   '<div class="cmpCardSub">'+sub+'</div>'
-               +   when
+               +   '<div class="cmpCardWhen">'+dateEl+byEl+'</div>'
                + '</div>';
         }
   </script>
@@ -299,20 +355,13 @@
     <div class="rightSection">
       <div class="cardBox">
         <div class="cardTit"><span class="link" id="dtTit">—</span></div>
-        <div class="row subPjInfo">
-          <div class="col s6">MERP Code</div>
-          <div class="col s6 val" id="smMerp">—</div>
-          <div class="col s6">Process Type</div>
-          <div class="col s6 val" id="smType">—</div>
-          <div class="col s6">Business Unit</div>
-          <div class="col s6 val" id="smBu">—</div>
-          <div class="col s6">ERP Plant</div>
-          <div class="col s6 val" id="smPlant">—</div>
-          <div class="col s6">PS Owner</div>
-          <div class="col s6 val" id="smOwner">—</div>
-          <div class="col s6">Status</div>
-          <div class="col s6 val" id="smStatus">—</div>
+        <div class="cmpBadges">
+          <span class="cmpBadge bio"><i class="material-symbols-outlined">warning</i>Biocompatibility Tested</span>
+          <span class="cmpBadge agri"><i class="material-symbols-outlined">potted_plant</i>Agriculture Registered</span>
+          <span class="cmpBadge retest"><i class="material-symbols-outlined">autorenew</i>Retest Required</span>
         </div>
+        <div class="cmpPills" id="smPills"></div>
+        <div class="row subPjInfo" id="smInfo"></div>
         <div class="subTit mt20 ml10">Composition Sections</div>
         <div class="ml10" id="smSecs"></div>
       </div>

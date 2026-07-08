@@ -460,7 +460,8 @@
     notes.forEach(function(n, i){
       var s = stByKey(n.st);
       var li = document.createElement('li');
-      li.className = 'waves-effect waves-hColor animate__animated';
+      // 등장=플립: 생성 시 flipInX 부여(클래스), stagger는 CSS nth-child animation-delay(tlStagger 패턴)
+      li.className = 'waves-effect waves-hColor animate__animated animate__flipInX';
       li.setAttribute('data-st', n.st);
       li.setAttribute('data-author', n.author);
       li.setAttribute('data-idx', i);
@@ -509,11 +510,7 @@
       li.appendChild(box); li.appendChild(main);
       ul.appendChild(li);
     });
-    // 등장 시간차 플립 인(techlib fnSetPrjList 패턴)
-    document.querySelectorAll('#noteListUl li').forEach(function(li, i){
-      li.classList.remove('animate__flipInX');
-      setTimeout(function(){ li.classList.add('animate__flipInX'); }, i * 100);
-    });
+    // 시간차 플립은 CSS(.type5 .mainList li:nth-child) animation-delay로 처리 → JS 불필요
     applyFilter();
   }
   function renderNotes(key){
@@ -533,7 +530,8 @@
       var s = pstByKey(p.status);
       var cnt = NOTES.filter(function(n){ return n.project === p.code; }).length;
       var li = document.createElement('li');
-      li.className = 'waves-effect waves-hColor animate__animated' + (p.code === curProj ? ' on' : '');
+      // 등장=플립: 생성 시 flipInX 부여(우측 노트 리스트와 동일 패턴)
+      li.className = 'waves-effect waves-hColor animate__animated animate__flipInX' + (p.code === curProj ? ' on' : '');
       li.setAttribute('data-proj', p.code);
       // npdi식 pill(세그먼트·소재·계정) + 노트 개수는 우하단 텍스트(pill 아님)
       var pills = projPills(p);
@@ -544,11 +542,7 @@
         '<div class="elnBadge">' + cnt + ' note' + (cnt !== 1 ? 's' : '') + '</div></div></section>';
       ul.appendChild(li);
     });
-    // 등장 시간차 플립 인(npdi_list와 동일: index * 100ms)
-    document.querySelectorAll('#projListUl li').forEach(function(li, i){
-      li.classList.remove('animate__flipInX');
-      setTimeout(function(){ li.classList.add('animate__flipInX'); }, i * 100);
-    });
+    // 시간차 플립은 CSS(.type5 .mainList li:nth-child) animation-delay로 처리 → JS 불필요
   }
 
   // 우측 note를 작성자(select=curAuthor)로 필터
@@ -786,9 +780,8 @@
       function glassOff(el){ if(typeof glassClear === 'function') glassClear(el); }
       $(document).on('mousemove', '.elnNoteHead .select-wrapper', glassTrack);
       $(document).on('mouseleave', '.elnNoteHead .select-wrapper', function(){ glassOff(this); });
-      // 리스트 행(좌 Project · 우 Note) hover 색수차 — 커서 추적으로 무지개 sheen 이동
-      $(document).on('mousemove', '.type5 .mainList li', glassTrack);
-      $(document).on('mouseleave', '.type5 .mainList li', function(){ glassOff(this); });
+      // 리스트 행 sheen은 다른 리스트와 동일하게 .on(.on::before)일 때만 — glass_engine 전역
+      // '.mainList li' 핸들러가 이미 glassTrack으로 .on sheen 좌표를 갱신하므로 별도 바인딩 불필요
     }
 
     // New Note → 시작 템플릿 픽커 (현재 Project 컨텍스트로 시작)
