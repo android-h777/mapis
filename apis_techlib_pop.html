@@ -164,6 +164,33 @@
 	};
 	/* 단일 진실원본: 부모(list.html)의 REPORTS/SUMMARIES 우선 — pop 로컬 사본 staleness(누락 문서·drift) 회피. 딥링크면 로컬 폴백. */
 	try{ if(window.opener && !window.opener.closed){ if(window.opener.REPORTS && window.opener.REPORTS.length) REPORTS=window.opener.REPORTS; if(window.opener.SUMMARIES) SUMMARIES=window.opener.SUMMARIES; if(typeof window.opener.MY_REGION==="string") MY_REGION=window.opener.MY_REGION; if(window.opener.bookmarks) bookmarks=window.opener.bookmarks; if(window.opener.basket) basket=window.opener.basket; } }catch(e){}
+	/* ── AI 번역(국문) — 문서별 초록 번역본. 본문 섹션은 buildDocKo 템플릿으로 생성 ── */
+	var SUMMARIES_KO={
+		'LEV-24-002':'재생 가능 원료 기반 바이오 실리콘 백본의 공동개발(JDA) 타당성 평가 — 경화 거동, 기계적 물성, 석유계 대비 원가 동등성을 검토한다.',
+		'KR-23-011':'플렉서블 OLED 디스플레이용 저온 백금 경화 실리콘 — 100 °C 이하 경화 거동과 폴리이미드 기재 접착력을 특성화하였다.',
+		'ITC-22-031':'펄프·제지 공정의 거품 저감을 위한 실록산 폴리에테르 분산액 최적화 2단계 소포제 개선 프로젝트 — 플랜트 트라이얼 데이터 포함.',
+		'LEV-23-007':'베이킹 페이퍼용 무용제 실리콘 이형 코팅 개발 — 이형력과 수퍼캘린더 크라프트지에 대한 앵커리지의 균형을 다룬다.',
+		'TML-22-002':'수지 중간체 공정이관 메모 — Termoli 스케일업을 위한 반응기 파라미터, 증류 컷, 품질 한계를 상세 기술한다.',
+		'KR-22-003':'OLED 봉지 접착제 스케일업 요청 — 양산 조건에서의 유변학, 수분 차단 성능, 가사시간을 요약한다.',
+		'SH-21-008':'건축용 수성 도료에서의 실리콘 소포제 성능 비교 연구 — 지속성과 재도장성을 순위 평가하였다.',
+		'ABD-20-015':'퍼스널케어 포뮬레이션용 스페셜티 플루이드 기술·시장 리뷰 — 사용감 프로파일과 EU/US 규제 현황을 다룬다.',
+		'TT-18-012':'수상(水相) 센서리 엘라스토머 연구 — 화장품 에멀전에서의 증점 효율과 스킨필을 평가하였다.',
+		'SV-19-006':'연질·경질 폼용 우레탄 첨가제 계면활성제 응용 가이드 — 셀 구조 및 안정성 권장사항 포함.',
+		'WTC-11-029':'CMP용 인시츄 기능화 나노 세리아 분산액 — 입도 제어와 연마 선택비를 기술한다.',
+		'JPN-15-004':'태양광 모듈용 UV 경화 프론트시트 소재 특허 조사 — 화이트스페이스와 실시자유(FTO) 리스크를 식별한다.',
+		'TT-12-016':'실리콘 플루이드 포트폴리오 연간 기술 하이라이트 — 신규 하이드로실릴화 촉매와 에멀전 기술 진전을 요약한다.',
+		'JPN-10-007':'가교 밀도와 실리카 보강이 고경도 실리콘 고무(HCR)의 인장·인열 강도에 미치는 영향.',
+		'TT-11-016':'백금 대체 철-피리딘 디이민 착물 촉매 하이드로실릴화 — 80 °C에서의 반응속도와 선택성을 보고한다.',
+		'LEV-20-027':'액상 실리콘 고무(LSR) 가공 핸드북 — 사출성형, 경화 유변학, 탈형까지 LSR 부품 전 공정을 다룬다.',
+		'BKK-21-019':'동남아시아 기후에서의 1액형 건축 실란트 필드 트라이얼 — 12개월 후 내후성·접착력·시공성을 보고한다.',
+		'SV-19-010':'우레탄 첨가제 화학 기술 리뷰 — 실리콘 계면활성제 구조와 폼 성능 윈도우를 매핑한다.',
+		'2008-MPM-016':'SF1632 플루이드 변색 근본원인 분석 — 하이드로실릴화 공정의 미량 철 오염으로 원인을 규명하였다.',
+		'JPN-09-024':'고경도 고무(HCR) 포트폴리오 개발 로드맵 — 자동차·전자 실링용 신규 그레이드를 제시한다.',
+		'ITC-12-013':'아크릴레이트 관능 실리콘 특허성 조사 — 광경화 백본 개질에 대한 선행기술을 리뷰한다.',
+		'WTC-11-045':'유기관능 실란을 이용한 세리아 나노입자 표면개질 — 연마 슬러리에서의 분산 안정성을 개선한다.'
+	};
+	var docLang='en', BLOCKS_TR={}, _transTimer=null;   // 번역 상태 — en(원문) | ko/ja/zh/de/es(AI 번역, 언어별 캐시)
+	var LANGS={ en:'English (Original)', ko:'한국어', ja:'日本語', zh:'中文(简体)', de:'Deutsch', es:'Español' };
 	function repByCode(c){ return REPORTS.filter(function(r){return r.code===c;})[0]; }
 	function summaryOf(c){ return SUMMARIES[c]||''; }
 	// 리스트 viewable(r)=cls<=2||acc==='granted' 와 동일 규칙 — Related 링크가 열람가능 문서를 잠금 없이 열도록.
@@ -200,6 +227,65 @@
 			{tag:'p', text:'In summary, this report demonstrates a viable path for '+topic.toLowerCase()+'. The '+r.bu+' team recommends advancing to the next development stage, with the experimental details above serving as the reference baseline. Questions may be directed to '+r.author+' ('+idxName(r.idx)+').'}
 		];
 	}
+
+	/* 다국어 본문(목업 AI 번역) — buildDoc과 동일 구조의 언어별 템플릿. KO 초록은 실번역(SUMMARIES_KO), 그 외는 메타 기반 생성 */
+	var TRT={
+		ko:{ abs:'초록', s1:'1. 서론', s2:'2. 실험', s3:'3. 결과 및 고찰', s4:'4. 결론',
+			sum:function(r){ return SUMMARIES_KO[r.code] || ('본 '+typeName(r.type)+'는 '+idxName(r.idx)+' '+r.bu+' 그룹이 수행한 연구의 방법, 주요 결과 및 권장사항을 요약한다.'); },
+			p1a:function(r,t){ return '본 '+typeName(r.type)+'는 '+idxName(r.idx)+' 소재 '+r.bu+' 그룹('+segOf(r.bu)+')이 수행한 연구를 요약한 것이다. 본 연구는 재현성, 스케일업 준비도, Momentive Global Technology 우선순위와의 정합성에 초점을 두고 「'+t+'」 과제를 다룬다.'; },
+			p1b:function(r,t){ return '기존 사내 보고서들은 본 화학 체계의 기준 성능을 확립한 바 있다. 본 연구는 해당 기준선을 확장하고, '+r.bu+' 포트폴리오를 위한 실험 조건, 주요 결과 및 권장사항을 문서화한다.'; },
+			p2:function(r,t){ return '재료는 표준 '+r.bu+' 프로토콜에 따라 준비하였다. 시료는 과제와 가장 관련성 높은 물성에 대해 특성화하였으며, 모든 측정은 3회 반복 후 평균값으로 보고하였다. 기기 교정은 '+idxName(r.idx)+' 실험실 품질 계획을 따랐다.'; },
+			p3a:function(r,t){ return '결과는 초록에서 예상한 경향을 확인해 준다. 평가한 조건 전반에서 배합은 성능과 가공성 간 우수한 균형을 보였다. '+r.author+'는 관찰된 거동이 제안된 메커니즘과 일치하며 향후 개발 방향을 뒷받침한다고 판단한다.'; },
+			p3b:function(r,t){ return '민감도 분석 결과 지배 인자는 경화/가공 윈도우였으며, 부차 인자의 영향은 작지만 측정 가능한 수준이었다. 이 결과는 진행 중인 '+segOf(r.bu)+' 프로젝트에 직접 적용 가능하다.'; },
+			p4:function(r,t){ return '요약하면, 본 보고서는 「'+t+'」의 실행 가능한 경로를 입증한다. '+r.bu+' 팀은 위 실험 상세를 기준선으로 삼아 다음 개발 단계로의 진행을 권고한다. 문의는 '+r.author+'('+idxName(r.idx)+')에게 연락 바란다.'; } },
+		ja:{ abs:'要旨', s1:'1. はじめに', s2:'2. 実験', s3:'3. 結果と考察', s4:'4. 結論',
+			sum:function(r){ return '本'+typeName(r.type)+'は、'+idxName(r.idx)+'の'+r.bu+'グループが実施した研究について、手法・主要な結果・提言をまとめたものである。'; },
+			p1a:function(r,t){ return '本'+typeName(r.type)+'は、'+idxName(r.idx)+'の'+r.bu+'グループ（'+segOf(r.bu)+'）が実施した研究を要約したものである。本研究は再現性、スケールアップへの準備、Momentive Global Technologyの優先課題との整合性に重点を置き、「'+t+'」に取り組む。'; },
+			p1b:function(r,t){ return '既存の社内報告書により本化学系の基準性能は確立されている。本研究はその基準を拡張し、'+r.bu+'ポートフォリオのための実験条件、主要結果、提言を文書化する。'; },
+			p2:function(r,t){ return '材料は標準の'+r.bu+'プロトコルに従って調製した。試料は課題に最も関連する物性について評価し、全測定は3回繰り返し平均値で報告した。機器校正は'+idxName(r.idx)+'ラボの品質計画に従った。'; },
+			p3a:function(r,t){ return '結果は要旨で予想した傾向を裏付けるものである。評価した全条件において、配合は性能と加工性のバランスに優れていた。'+r.author+'は、観察された挙動が提案メカニズムと一致し、今後の開発方針を支持すると述べている。'; },
+			p3b:function(r,t){ return '感度解析の結果、支配因子は硬化／加工ウィンドウであり、二次因子の影響は小さいが測定可能であった。これらの知見は進行中の'+segOf(r.bu)+'プロジェクトに直接適用できる。'; },
+			p4:function(r,t){ return '以上より、本報告書は「'+t+'」の実行可能な道筋を示した。'+r.bu+'チームは上記の実験詳細を基準として、次の開発段階への移行を推奨する。問い合わせは'+r.author+'（'+idxName(r.idx)+'）まで。'; } },
+		zh:{ abs:'摘要', s1:'1. 引言', s2:'2. 实验', s3:'3. 结果与讨论', s4:'4. 结论',
+			sum:function(r){ return '本'+typeName(r.type)+'总结了'+idxName(r.idx)+' '+r.bu+'团队开展的研究，涵盖方法、主要结果及建议。'; },
+			p1a:function(r,t){ return '本'+typeName(r.type)+'总结了位于'+idxName(r.idx)+'的'+r.bu+'团队（'+segOf(r.bu)+'）开展的研究工作。研究围绕“'+t+'”课题，重点关注可重复性、放大生产准备度以及与Momentive Global Technology优先方向的一致性。'; },
+			p1b:function(r,t){ return '既有内部报告已确立该化学体系的基准性能。本研究在此基础上加以扩展，并为'+r.bu+'产品组合记录了实验条件、关键结果与建议。'; },
+			p2:function(r,t){ return '材料按标准'+r.bu+'规程制备。样品针对与课题最相关的性能进行表征，所有测试重复三次并以平均值报告；仪器校准遵循'+idxName(r.idx)+'实验室质量计划。'; },
+			p3a:function(r,t){ return '结果证实了摘要中预期的趋势。在所评估的各条件下，配方在性能与加工性之间表现出良好平衡。'+r.author+'认为所观察到的行为与提出的机理一致，支持后续开发方向。'; },
+			p3b:function(r,t){ return '敏感性分析表明，主导因素为固化/加工窗口；次要因素影响较小但可测量。上述发现可直接应用于正在进行的'+segOf(r.bu)+'项目。'; },
+			p4:function(r,t){ return '综上，本报告论证了“'+t+'”的可行路径。'+r.bu+'团队建议以上述实验细节为基准，推进至下一开发阶段。如有疑问请联系'+r.author+'（'+idxName(r.idx)+'）。'; } },
+		de:{ abs:'Zusammenfassung', s1:'1. Einleitung', s2:'2. Experimenteller Teil', s3:'3. Ergebnisse und Diskussion', s4:'4. Fazit',
+			sum:function(r){ return 'Dieser '+typeName(r.type)+' fasst die Arbeiten der '+r.bu+'-Gruppe am Standort '+idxName(r.idx)+' zusammen — Methodik, zentrale Ergebnisse und Empfehlungen.'; },
+			p1a:function(r,t){ return 'Dieser '+typeName(r.type)+' fasst die Arbeiten der '+r.bu+'-Gruppe ('+segOf(r.bu)+') am Standort '+idxName(r.idx)+' zusammen. Die Studie behandelt „'+t+'“ mit Fokus auf Reproduzierbarkeit, Scale-up-Reife und Ausrichtung an den Prioritäten von Momentive Global Technology.'; },
+			p1b:function(r,t){ return 'Frühere interne Berichte haben die Basisleistung dieser Chemie etabliert. Die vorliegende Arbeit erweitert diese Basis und dokumentiert Versuchsbedingungen, zentrale Ergebnisse und Empfehlungen für das '+r.bu+'-Portfolio.'; },
+			p2:function(r,t){ return 'Die Materialien wurden nach Standard-'+r.bu+'-Protokollen hergestellt. Die Proben wurden hinsichtlich der relevantesten Eigenschaften charakterisiert; alle Messungen erfolgten in Dreifachbestimmung und werden als Mittelwerte berichtet. Die Gerätekalibrierung folgte dem Qualitätsplan des Labors '+idxName(r.idx)+'.'; },
+			p3a:function(r,t){ return 'Die Ergebnisse bestätigen die in der Zusammenfassung erwarteten Trends. Über alle Bedingungen hinweg zeigte die Formulierung ein günstiges Gleichgewicht aus Leistung und Verarbeitbarkeit. '+r.author+' stellt fest, dass das beobachtete Verhalten mit dem vorgeschlagenen Mechanismus übereinstimmt.'; },
+			p3b:function(r,t){ return 'Eine Sensitivitätsanalyse ergab das Härtungs-/Verarbeitungsfenster als dominierenden Faktor; sekundäre Faktoren hatten einen kleineren, aber messbaren Einfluss. Die Erkenntnisse sind direkt auf laufende '+segOf(r.bu)+'-Projekte übertragbar.'; },
+			p4:function(r,t){ return 'Zusammenfassend zeigt dieser Bericht einen gangbaren Weg für „'+t+'“. Das '+r.bu+'-Team empfiehlt den Übergang in die nächste Entwicklungsphase. Rückfragen an '+r.author+' ('+idxName(r.idx)+').'; } },
+		es:{ abs:'Resumen', s1:'1. Introducción', s2:'2. Parte experimental', s3:'3. Resultados y discusión', s4:'4. Conclusión',
+			sum:function(r){ return 'Este '+typeName(r.type)+' resume el trabajo realizado por el grupo de '+r.bu+' en '+idxName(r.idx)+': metodología, resultados clave y recomendaciones.'; },
+			p1a:function(r,t){ return 'Este '+typeName(r.type)+' resume el trabajo realizado por el grupo de '+r.bu+' ('+segOf(r.bu)+') en '+idxName(r.idx)+'. El estudio aborda «'+t+'» con énfasis en la reproducibilidad, la preparación para el escalado y la alineación con las prioridades de Momentive Global Technology.'; },
+			p1b:function(r,t){ return 'Informes internos previos establecieron el rendimiento de referencia de esta química. El presente trabajo amplía esa base y documenta las condiciones experimentales, los resultados clave y las recomendaciones para la cartera de '+r.bu+'.'; },
+			p2:function(r,t){ return 'Los materiales se prepararon siguiendo los protocolos estándar de '+r.bu+'. Las muestras se caracterizaron según las propiedades más relevantes; todas las mediciones se realizaron por triplicado y se informan como valores medios. La calibración siguió el plan de calidad del laboratorio de '+idxName(r.idx)+'.'; },
+			p3a:function(r,t){ return 'Los resultados confirman las tendencias previstas en el resumen. En todas las condiciones evaluadas, la formulación mostró un equilibrio favorable entre rendimiento y procesabilidad. '+r.author+' señala que el comportamiento observado es coherente con el mecanismo propuesto.'; },
+			p3b:function(r,t){ return 'Un análisis de sensibilidad indicó que el factor dominante es la ventana de curado/procesado; los factores secundarios tuvieron un efecto menor pero medible. Estos hallazgos son directamente aplicables a los proyectos de '+segOf(r.bu)+' en curso.'; },
+			p4:function(r,t){ return 'En resumen, este informe demuestra una vía viable para «'+t+'». El equipo de '+r.bu+' recomienda avanzar a la siguiente etapa de desarrollo. Consultas: '+r.author+' ('+idxName(r.idx)+').'; } }
+	};
+	function buildDocTr(r, lang){
+		var T=TRT[lang]; if(!T) return BLOCKS;
+		var t=r.title.replace(/\s*\(.*?\)\s*/g,'');
+		return [
+			{tag:'h1', text:r.title},
+			{tag:'meta', text:r.code+'  ·  '+typeName(r.type)+'  ·  '+r.author+'  ·  '+idxName(r.idx)+'  ·  '+fmtDate(r.date)},
+			{tag:'h2', text:T.abs}, {tag:'p', text:T.sum(r)},
+			{tag:'h2', text:T.s1}, {tag:'p', text:T.p1a(r,t)}, {tag:'p', text:T.p1b(r,t)},
+			{tag:'h2', text:T.s2}, {tag:'p', text:T.p2(r,t)},
+			{tag:'h2', text:T.s3}, {tag:'p', text:T.p3a(r,t)}, {tag:'p', text:T.p3b(r,t)},
+			{tag:'h2', text:T.s4}, {tag:'p', text:T.p4(r,t)}
+		];
+	}
+	function curBlocks(){ return (docLang!=='en' && BLOCKS_TR[docLang]) ? BLOCKS_TR[docLang] : BLOCKS; }
+	function transBanner(){ return '<div class="rlTransBanner"><i class="material-symbols-outlined">auto_awesome</i>AI translation — '+LANGS[docLang]+' (machine translated). The original English text remains authoritative.</div>'; }
 
 	/* ── 하이라이트(전역 match index 부여 → find 내비게이션) ── */
 	var _mid=0;
@@ -349,6 +435,7 @@
 		if(da) da.innerHTML=
 			actBtn('download','download','Download',locked)+
 			actBtn('print','print','Print',locked)+
+			transBtnHtml(locked)+   // AI 번역(국문) 토글 — 잠긴 문서는 비활성(본문 노출 방지)
 			basketBtnHtml(r.code)+   // 장바구니 = 리스트 #bkBtn과 동일(담기 토글). 잠금 무관(제한문서도 담아 열람요청 가능)
 			bmkBtnHtml(r.code);   // 즐겨찾기 = 리스트 #bmkBtn과 동일(별표 토글, 폴더 없음). 잠금 무관하게 항상 토글 가능
 		var _bar=document.querySelector('.rlDocBar'); if(_bar) _bar.classList.toggle('locked', locked);   // 잠김: 뷰탭(viewSeg)·find 비활성
@@ -356,6 +443,53 @@
 	}
 	/* 문서 레벨 액션(라벨 hBtn) — 문서 툴바(docActs)에 배치 */
 	function actBtn(act,ic,label,dis){ return '<a class="waves-effect waves-light hBtn hIco'+(dis?' isDisabled':'')+'" data-act="'+act+'" data-tip="'+label+'" data-tip-pos="bottom" aria-label="'+label+'"><i class="material-symbols-outlined">'+ic+'</i></a>'; }
+	/* AI 번역 버튼 — 언어 메뉴 오픈(on=블루 채움). 잠긴 문서·Original 탭(원문 스냅샷) 비활성 */
+	function transBtnHtml(locked){
+		var on = docLang!=='en', raw = view==='raw';
+		var tip = raw ? 'Original tab shows the source text only' : (on ? ('AI translated — '+LANGS[docLang]+' (click to change)') : 'Translate (AI)');
+		return '<a class="waves-effect waves-light hBtn hIco'+(on?' tlTransOn':'')+((locked||raw)?' isDisabled':'')+'" data-act="translate" data-tip="'+tip+'" data-tip-pos="bottom" aria-label="Translate"><i class="material-symbols-outlined">translate</i></a>';
+	}
+	/* 언어 선택 드롭다운 — 번역 버튼 아래 글래스 메뉴 */
+	function transMenuEl(){
+		var m=document.getElementById('transMenu');
+		if(!m){
+			m=document.createElement('div'); m.id='transMenu'; m.className='rlTransMenu tlHidden';
+			document.body.appendChild(m);
+		}
+		m.innerHTML=Object.keys(LANGS).map(function(k){
+			return '<a href="javascript:;" class="rlTransItem'+(docLang===k?' on':'')+'" data-lang="'+k+'">'
+				+ '<i class="material-symbols-outlined">'+(docLang===k?'check':'')+'</i><span>'+LANGS[k]+'</span></a>';
+		}).join('');
+		return m;
+	}
+	function transMenuToggle(btn){
+		var m=transMenuEl();
+		if(!m.classList.contains('tlHidden')){ m.classList.add('tlHidden'); return; }
+		var rc=btn.getBoundingClientRect();
+		m.style.top=(rc.bottom+6)+'px';
+		m.style.left=Math.max(10, rc.right-170)+'px';   // 버튼 우측 정렬(폭 170px)
+		m.classList.remove('tlHidden');
+	}
+	function transMenuClose(){ var m=document.getElementById('transMenu'); if(m) m.classList.add('tlHidden'); }
+	function setDocLang(lang){
+		transMenuClose();
+		if(!LANGS[lang] || lang===docLang) return;
+		if(lang==='en'){   // 원문 즉시 복귀
+			docLang='en'; renderActs(CUR); renderDoc();
+			toast('Showing the original (English).','info');
+			return;
+		}
+		// AI 번역 로딩 후 전환(언어별 캐시)
+		var scroll=document.getElementById('docScroll');
+		scroll.innerHTML='<div class="rlTransLoading"><span class="tlAiLoading"><i class="material-symbols-outlined">auto_awesome</i>AI translating to '+LANGS[lang]+'<span class="tlAiDot"></span><span class="tlAiDot"></span><span class="tlAiDot"></span></span></div>';
+		clearTimeout(_transTimer);
+		_transTimer=setTimeout(function(){
+			if(!BLOCKS_TR[lang]) BLOCKS_TR[lang]=buildDocTr(CUR, lang);
+			docLang=lang;
+			renderActs(CUR); setView(view);
+			toast('Translated — '+LANGS[lang]+' (AI translation).','ok');
+		}, 1300);
+	}
 	/* 즐겨찾기 버튼 — 리스트 #bmkBtn과 동일(별표 토글). 담김=채운 별(amber, tlBmked) / 미담김=빈 별. material-icons(star/star_border) */
 	function bmkBtnHtml(code){ var on=isBookmarked(code); return '<a class="waves-effect waves-light hBtn hIco'+(on?' tlBmked':'')+'" data-act="bookmark" data-tip="'+(on?'Bookmarked':'Bookmark')+'" data-tip-pos="bottom" aria-label="Bookmark"><i class="material-icons">'+(on?'star':'star_border')+'</i></a>'; }
 	// "뿅" — 추가 시 스케일 팝(재트리거 위해 제거→reflow→추가). opener.tlPopAdd로 리스트 행 마크도 팝
@@ -669,9 +803,9 @@
 			'</div></div>';
 	}
 
-	/* 문서 본문 HTML — doc/raw 뷰가 공유(q='' 이면 하이라이트 마크 없음 → _mid 불변) */
-	function bodyHtml(q){
-		return BLOCKS.map(function(b){
+	/* 문서 본문 HTML — doc/raw 뷰가 공유(q='' 이면 하이라이트 마크 없음 → _mid 불변). blocks 미지정=현재 언어(번역 반영), raw는 BLOCKS(원본) 명시 */
+	function bodyHtml(q, blocks){
+		return (blocks || curBlocks()).map(function(b){
 			if(b.tag==='h1') return '<h1 class="dbH1">'+hlDoc(b.text,q)+'</h1>';
 			if(b.tag==='meta') return '<div class="dbMeta">'+hlDoc(b.text,q)+'</div>';
 			if(b.tag==='h2') return '<h2 class="dbH2">'+hlDoc(b.text,q)+'</h2>';
@@ -691,7 +825,7 @@
 	   foreignObject 안 HTML은 항상 794px로 레이아웃된 뒤 SVG 전체가 균일 스케일만 됨(리사이즈 무리플로우 = 편집 불가 원본 파일 질감). */
 	function renderRaw(scroll){
 		var W=794;
-		var inner='<div class="rlDocPage">'+bodyHtml('')+docFoot()+'</div>';
+		var inner='<div class="rlDocPage">'+bodyHtml('', BLOCKS)+docFoot()+'</div>';   // 원본 뷰 = 항상 영어 원문
 		var H=rlMeasure('<div class="rlRawPage">'+inner+'</div>', W);
 		scroll.innerHTML='<div class="rlRawWrap">'+
 			'<div class="rlRawTag"><i class="material-symbols-outlined">picture_as_pdf</i>Original file · read-only snapshot</div>'+
@@ -706,11 +840,12 @@
 		var scroll=document.getElementById('docScroll');
 		if(cls4Locked()){ scroll.innerHTML=lockedHtml(); matchTotal=0; curMatch=-1; updateFind(); return; }
 		if(view==='raw'){ renderRaw(scroll); matchTotal=0; curMatch=-1; updateFind(); return; }
+		var bn = (docLang==='ko') ? transBanner() : '';
 		if(view==='doc'){
-			scroll.innerHTML='<div class="rlDocPage">'+bodyHtml(q)+docFoot()+'</div>';
+			scroll.innerHTML='<div class="rlDocPage">'+bn+bodyHtml(q)+docFoot()+'</div>';
 		} else {
-			var txt=BLOCKS.map(function(b){ return hlDoc(b.text,q); }).join('\n\n');
-			scroll.innerHTML='<div class="rlDocText">'+txt+'</div>';
+			var txt=curBlocks().map(function(b){ return hlDoc(b.text,q); }).join('\n\n');
+			scroll.innerHTML=bn+'<div class="rlDocText">'+txt+'</div>';
 		}
 		matchTotal=_mid; curMatch=matchTotal? (curMatch<0?0:Math.min(curMatch,matchTotal-1)) : -1;
 		updateFind(); if(curMatch>=0) gotoMatch(curMatch, false);
@@ -731,6 +866,8 @@
 	function setView(v){ view=v; curMatch=matchTotal?0:-1;
 		document.querySelectorAll('#viewSeg li').forEach(function(a){ a.classList.toggle('on', a.getAttribute('data-view')===v); }); var _aL=document.querySelector('#viewSeg li.on'), _bg=document.querySelector('#viewSeg .tabBg'); if(_aL&&_bg) _bg.style.left=(_aL.offsetLeft-3)+'px';
 		var find=document.querySelector('.rlFind'); if(find) find.style.display=(v==='raw')?'none':'';   // 원본 스냅샷은 본문 검색 불가
+		if(CUR) renderActs(CUR);   // 번역 버튼 활성/비활성 갱신(Original 탭=비활성)
+		transMenuClose();
 		renderDoc();
 	}
 
@@ -787,6 +924,12 @@
 			else { $ed.attr('contenteditable','true').addClass('elnSummernoteFallback').attr('data-ph','Write the note…'); }
 		}
 
+		// 언어 메뉴 — 항목 선택 / 외부 클릭 닫기
+		document.addEventListener('click', function(e){
+			var it=e.target.closest('.rlTransItem');
+			if(it){ setDocLang(it.getAttribute('data-lang')); return; }
+			if(!e.target.closest('[data-act="translate"]')) transMenuClose();
+		});
 		// 액션(목업)
 		document.addEventListener('click', function(e){
 			if(e.target.closest('#infoClose')){ toggleInfo(); return; }
@@ -801,6 +944,7 @@
 			if(act==='reqcancel'){ accFormOpen=false; renderDoc(); return; }
 			if(act==='reqsubmit'){ accRequest(); openApprModal(); return; }
 			if(accessLocked() && act==='download'){ accFormOpen=true; renderDoc(); focusReason(); return; }   // 잠긴 문서 다운로드 = 인라인 열람요청
+			if(act==='translate'){ if(accessLocked()||view==='raw') return; transMenuToggle(b); return; }
 			if(act==='download'){ toast('Downloading '+CUR.code+'… (mock)','mocha'); return; }
 			if(act==='print'){ window.print(); return; }
 			else if(act==='basket'){ toggleBasket(); return; }

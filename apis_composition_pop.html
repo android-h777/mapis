@@ -464,22 +464,39 @@
             onCloseStart: function(){ $("header, aside, .contArea").removeClass("modalBlur"); }
           });
 
-          // Composition Compare — 렌더 + 복사/추가/체크 핸들러
-          renderCmpRef();
+          // Composition Compare — 선택기(Item 퀵서치·Variant/Ver·Sub-type) 초기화 + 렌더 + 복사/추가 핸들러
+          initCmpItemSearch();
+          setCmpItem('ref', CMP_SEL.ref.item);       // Ref: 입력창 표기 + 셀렉트 + 표 렌더
+          fillCmpSelectors('tgt');
           renderCmpTgt();
+          // Variant/Ver/Sub-type 변경 → 해당 패널 재렌더 (Variant 변경 시 Ver은 최신으로 보정)
+          $('#cmpModal').on('change', '.jsCmpSel', function(){
+            var side = $(this).data('side'), part = $(this).data('part');
+            CMP_SEL[side][part] = $(this).val();
+            if(part === 'variant'){
+              var it = cmpItemOf(CMP_SEL[side].item);
+              var v = it.variants.find(function(x){ return x.code === CMP_SEL[side].variant; }) || it.variants[0];
+              CMP_SEL[side].ver = v.vers[0];
+            }
+            fillCmpSelectors(side);
+            if(side === 'ref') renderCmpRef(); else renderCmpTgt();
+          });
+          // 유사 Item 추천 칩 클릭 → Reference 교체
+          $('#cmpSimChips').on('click', '.cmpSimChip', function(){
+            var id = $(this).data('id');
+            setCmpItem('ref', id);
+            tlToast({html:'Reference switched — '+id, type:'info'});
+          });
           $('#cmpRefTbody').on('click', '.jsCmpCopy', function(){
             var i = $(this).data('i');
             cmpCopy(i);
-            tlToast({html: REF_CMP[i].name+' copied to Target', type:'success'});
+            tlToast({html: CMP_REF_ROWS[i].name+' copied to Target', type:'success'});
           });
           $('#cmpCopyAll').on('click', function(){
-            REF_CMP.forEach(function(r, i){ cmpCopy(i); });
-            tlToast({html: REF_CMP.length+' substances copied to Target', type:'success'});
+            CMP_REF_ROWS.forEach(function(r, i){ cmpCopy(i); });
+            tlToast({html: CMP_REF_ROWS.length+' substances copied to Target', type:'success'});
           });
           $('#cmpAddSub').on('click', cmpAddSubstance);
-          $('#cmpRefSel').on('change', function(){
-            tlToast({html:'Reference switched — '+$(this).val()+' (demo data)', type:'info'});
-          });
 
           // Variant 행 클릭 → 하단 BOM 연동 + BOM Explorer 카드 최상단으로 스크롤(좌측 메뉴 클릭과 동일)
           $('#variantTbody').on('click', 'tr', function(){
@@ -1063,28 +1080,150 @@
           $('#rgTbody').html(html);
         }
 
-        // ── Composition Compare 모달 — 기준 제품(Reference·Read Only) vs Target(작성) 비교·복사 ──
-        // 용도: 이전 Variant와 비교, 타 제품간 비교(유사제품)
+        // ── Composition Compare 모달 — 비교 대상 3종 지원 ──
+        //  ① 같은 Item의 이전 Version / 다른 Variant  ② Sub-type 간(INPUT vs ITEM 등)  ③ 다른 Item(유사 추천 + 수동 조회)
+        //  양쪽(Ref/Tgt) 각각 Item → Variant/Ver → Sub-type 선택. 패널 타이틀에 식별 정보([MERP] Item · Variant Ver · Sub-type) 표시
         var CMP_CT = ['Constituent','Impurity','Additive','Byproduct','Residual','Rxn Product'];
-        var REF_CMP = [
-          {name:'Polydimethylsiloxane (PDMS)',          cas:'9016-00-6',   ct:'Constituent', conc:65.00},
-          {name:'Trimethylsiloxy-terminated PDMS',      cas:'63148-62-9',  ct:'Constituent', conc:12.00},
-          {name:'Precipitated silica',                  cas:'112926-00-8', ct:'Constituent', conc:18.00},
-          {name:'Methyltriacetoxysilane crosslinker',   cas:'4253-34-3',   ct:'Additive',    conc:3.50},
-          {name:'Dibutyltin diacetate catalyst',        cas:'1067-33-0',   ct:'Impurity',    conc:0.50}
+        var CMP_SUBCLS = {INPUT:'bdBlue', ITEM:'bdGreen', LEGAL:'bdOrange'};   // Sub-type 식별 배지색
+
+        // 비교 가능 Item 마스터 — sim=현재 Item(SE9187) 대비 유사도(추천 정렬·표시용, null=자기 자신)
+        var CMP_ITEMS = [
+          {merp:'10000425', id:'SE9187', name:'SE9187 – Silicone Sealant',     sim:null,
+           variants:[{code:'BASE', vers:['v1.1','v1.0']},{code:'ALT_BOM_2', vers:['v1.0']},{code:'ALT_SUPPLIER_B', vers:['v1.0']}]},
+          {merp:'10000311', id:'SE9100', name:'SE9100 – Silicone Elastomer B', sim:82,
+           variants:[{code:'BASE', vers:['v2.0','v1.2']}]},
+          {merp:'10000512', id:'SE9200', name:'SE9200 – Silicone Sealant HP',  sim:78,
+           variants:[{code:'BASE', vers:['v1.0']},{code:'ALT_BOM_1', vers:['v1.0']}]},
+          {merp:'10000840', id:'SE6200', name:'SE6200 – Dielectric Gel',       sim:64,
+           variants:[{code:'BASE', vers:['v1.3','v1.2']}]}
         ];
-        var TGT_CMP = [
-          {name:'Polymethylhydrosiloxane (residual, unreacted Si-H)', cas:'63148-57-2', ct:'Constituent', conc:10.32},
-          {name:'Dimethylsiloxane cyclic oligomers (D4/D5)',          cas:'541-02-6',   ct:'Impurity',    conc:3.70},
-          {name:'Crosslinked Si-C polymer network',                   cas:'—',          ct:'Rxn Product', conc:58.48},
-          {name:'Fumed silica, dimethylsilyl-treated',                cas:'68611-44-9', ct:'Constituent', conc:12.00},
-          {name:'Calcium carbonate',                                  cas:'471-34-1',   ct:'Constituent', conc:3.00},
-          {name:'Vinyltrimethoxysilane (residual)',                   cas:'2768-02-7',  ct:'Impurity',    conc:1.57}
-        ];
-        // Reference 표 (Read Only) — Conc/Threshold 표기 + 행별 Copy
+        function cmpItemOf(id){ return CMP_ITEMS.find(function(x){ return x.id===id; }) || CMP_ITEMS[0]; }
+
+        // 타 Item의 Sub-type 공통 기준 조성(목업)
+        var CMP_BASE = {
+          'SE9100': [
+            {name:'Polydimethylsiloxane (PDMS)',          cas:'9016-00-6',   ct:'Constituent', conc:65.00},
+            {name:'Trimethylsiloxy-terminated PDMS',      cas:'63148-62-9',  ct:'Constituent', conc:12.00},
+            {name:'Precipitated silica',                  cas:'112926-00-8', ct:'Constituent', conc:18.00},
+            {name:'Methyltriacetoxysilane crosslinker',   cas:'4253-34-3',   ct:'Additive',    conc:3.50},
+            {name:'Dibutyltin diacetate catalyst',        cas:'1067-33-0',   ct:'Impurity',    conc:0.50}
+          ],
+          'SE9200': [
+            {name:'Polymethylhydrosiloxane',              cas:'63148-57-2',  ct:'Constituent', conc:55.20},
+            {name:'Fumed silica, dimethylsilyl-treated',  cas:'68611-44-9',  ct:'Constituent', conc:14.00},
+            {name:'Vinyltrimethoxysilane',                cas:'2768-02-7',   ct:'Additive',    conc:8.30},
+            {name:'Adhesion Promoter AP-30',              cas:'919-30-2',    ct:'Additive',    conc:1.50},
+            {name:'Calcium carbonate',                    cas:'471-34-1',    ct:'Constituent', conc:9.00}
+          ],
+          'SE6200': [
+            {name:'Polydimethylsiloxane (PDMS)',          cas:'9016-00-6',   ct:'Constituent', conc:78.00},
+            {name:'Fumed silica, dimethylsilyl-treated',  cas:'68611-44-9',  ct:'Constituent', conc:8.00},
+            {name:'Pt-divinyltetramethyldisiloxane complex', cas:'68478-92-2', ct:'Additive',  conc:0.05},
+            {name:'Dimethylsiloxane cyclic oligomers (D4/D5)', cas:'541-02-6', ct:'Impurity',  conc:1.20}
+          ]
+        };
+        // Sub-type별 기준 조성 — 현재 Item(SE9187)은 카드 데이터(INPUT=Section B / ITEM / LEGAL) 재사용
+        function ctByCas(cas){ var p = PC_DATA.find(function(x){ return x.cas===cas; }); return p ? ctOf(p.ct) : 'Constituent'; }
+        function cmpBaseRows(itemId, sub){
+          if(itemId === 'SE9187'){
+            if(sub === 'ITEM')  return RF_DATA.map(function(r){ return {name:r.name, cas:r.cas, ct:ctByCas(r.cas), conc:r.conc}; });
+            if(sub === 'LEGAL') return RG_DATA.map(function(r){ return {name:r.name, cas:r.cas, ct:ctByCas(r.cas), conc:r.conc}; });
+            return PC_DATA.map(function(r){ return {name:r.name, cas:r.cas, ct:ctOf(r.ct), conc:r.conc}; });
+          }
+          return CMP_BASE[itemId] || [];
+        }
+        // 선택 조합의 조성 행 — 최신 BASE 그대로, 그 외(이전 Ver·다른 Variant)는 결정론적 편차 파생(목업).
+        // 이전 버전은 마지막 물질 1종이 없던 시점으로 표현(행 수 차이)
+        function cmpRows(sel){
+          var it = cmpItemOf(sel.item);
+          var rows = cmpBaseRows(sel.item, sel.sub).map(function(r){ return {name:r.name, cas:r.cas, ct:r.ct, conc:r.conc}; });
+          var v = it.variants.find(function(x){ return x.code===sel.variant; }) || it.variants[0];
+          if(sel.variant === it.variants[0].code && sel.ver === it.variants[0].vers[0]) return rows;   // 최신 BASE = 원본
+          if(sel.ver !== v.vers[0] && rows.length > 1) rows = rows.slice(0, -1);
+          var h = 0, key = sel.item + sel.variant + sel.ver + sel.sub;
+          for(var i=0;i<key.length;i++) h = (h*31 + key.charCodeAt(i)) % 997;
+          rows.forEach(function(r, i){
+            r.conc = Math.max(0.01, r.conc * (1 + (((h + i*13) % 9) - 4) / 100));   // ±4% 편차
+          });
+          return rows;
+        }
+
+        // 비교 선택 상태 — Target은 현재 열람 중인 Item 고정(자기 버전/Variant/Sub-type은 변경 가능)
+        var CMP_SEL = {
+          ref: {item:'SE9100', variant:'BASE', ver:'v2.0', sub:'ITEM'},
+          tgt: {item:'SE9187', variant:'BASE', ver:'v1.1', sub:'ITEM'}
+        };
+        function cmpEl(side, part){ return $('#cmp'+(side==='ref'?'Ref':'Tgt')+part); }
+        // Variant/Ver 셀렉트 채우기 — Item 선택에 종속. 유효하지 않은 조합은 첫 옵션으로 보정
+        function fillCmpSelectors(side){
+          var s = CMP_SEL[side], it = cmpItemOf(s.item);
+          var v = it.variants.find(function(x){ return x.code===s.variant; });
+          if(!v){ v = it.variants[0]; s.variant = v.code; }
+          if(v.vers.indexOf(s.ver) < 0) s.ver = v.vers[0];
+          cmpEl(side,'Variant').html(it.variants.map(function(x){
+            return '<option value="'+x.code+'"'+(x.code===s.variant?' selected':'')+'>'+x.code+'</option>';
+          }).join(''));
+          cmpEl(side,'Ver').html(v.vers.map(function(x){
+            return '<option value="'+x+'"'+(x===s.ver?' selected':'')+'>'+x+'</option>';
+          }).join(''));
+          cmpEl(side,'Sub').val(s.sub);
+        }
+        // 패널 타이틀 식별 정보 — [MERP] Item · Variant Ver · Sub-type 배지 (+Ref: 유사도·Read Only)
+        function cmpIdentHtml(sel){
+          var it = cmpItemOf(sel.item);
+          return '['+it.merp+'] '+it.id+' · '+sel.variant+' '+sel.ver
+               + ' <span class="roundBox '+CMP_SUBCLS[sel.sub]+' ml5">'+sel.sub+'</span>';
+        }
+        function renderCmpHeads(){
+          var r = CMP_SEL.ref, it = cmpItemOf(r.item);
+          var sim = (r.item !== CMP_SEL.tgt.item && it.sim) ? 'Similarity '+it.sim+'% · ' : '';
+          $('#cmpRefIdent').html('Reference — '+cmpIdentHtml(r)+' <span class="font13">· '+sim+'Read Only</span>');
+          $('#cmpTgtIdent').html('Target — '+cmpIdentHtml(CMP_SEL.tgt));
+        }
+        // 유사 Item 추천 칩 — 유사도 내림차순, 현재 Reference로 선택된 Item은 제외
+        function renderCmpSimChips(){
+          var html = CMP_ITEMS.filter(function(x){ return x.sim && x.id !== CMP_SEL.ref.item; })
+            .sort(function(a,b){ return b.sim - a.sim; })
+            .map(function(x){ return '<a href="javascript:;" class="cmpSimChip" data-id="'+x.id+'">'+x.id+'<span>'+x.sim+'%</span></a>'; })
+            .join('');
+          $('#cmpSimChips').html(html);
+        }
+        // Item 변경(퀵서치 선택·추천 칩) — Variant/Ver 초기화 후 해당 패널 재렌더
+        function setCmpItem(side, id){
+          var s = CMP_SEL[side], it = cmpItemOf(id);
+          s.item = it.id; s.variant = it.variants[0].code; s.ver = it.variants[0].vers[0];
+          if(side === 'ref') $('#cmpRefItem').val('['+it.merp+'] '+it.name);
+          fillCmpSelectors(side);
+          if(side === 'ref') renderCmpRef(); else renderCmpTgt();
+          renderCmpSimChips();
+        }
+        // Reference Item 퀵서치 — MERP·코드·이름 아무거나로 검색(포커스 시 전체 목록). 물질 퀵서치와 동일 스킨
+        function initCmpItemSearch(){
+          $('#cmpRefItem').autocomplete({
+            minLength: 0,
+            appendTo: 'body',
+            source: function(req, res){
+              var t = (req.term || '').toLowerCase();
+              res(CMP_ITEMS.filter(function(x){ return (x.merp+' '+x.id+' '+x.name).toLowerCase().indexOf(t) > -1; })
+                .map(function(x){ return {label:'['+x.merp+'] '+x.name+(x.sim ? ' — Similarity '+x.sim+'%' : ''), item:x}; }));
+            },
+            focus: function(e){ e.preventDefault(); },
+            select: function(e, ui){ e.preventDefault(); setCmpItem('ref', ui.item.item.id); return false; },
+            create: function(){
+              $(this).autocomplete('widget').addClass('cmpSubMenu');
+              $(this).data('ui-autocomplete')._renderItem = function(ul, item){
+                return $('<li>').append('<a>' + item.label + '</a>').appendTo(ul);
+              };
+            }
+          }).on('focus', function(){ $(this).autocomplete('search', $(this).val()); });
+        }
+
+        // Reference 표 (Read Only) — 현재 선택 조합의 조성 + Conc/Threshold 표기 + 행별 Copy
+        var CMP_REF_ROWS = [];
         function renderCmpRef(){
+          CMP_REF_ROWS = cmpRows(CMP_SEL.ref);
           var html = '', total = 0;
-          REF_CMP.forEach(function(r, i){
+          CMP_REF_ROWS.forEach(function(r, i){
             total += r.conc;
             html += '<tr>'
                  +    '<td class="al"><span class="fontM">'+r.name+'</span><br><span class="font13">'+r.cas+'</span></td>'
@@ -1095,6 +1234,7 @@
           });
           $('#cmpRefTbody').html(html);
           $('#cmpRefTotal').text(total.toFixed(2)+'%');
+          renderCmpHeads();
         }
         // Target 행 빌더 — Comp.Type 셀렉트 + Conc 입력(jsConc: 공통 TOTAL 재계산)
         function cmpTgtRow(r){
@@ -1107,13 +1247,14 @@
         }
         function renderCmpTgt(){
           var html = '';
-          TGT_CMP.forEach(function(r){ html += cmpTgtRow(r); });
+          cmpRows(CMP_SEL.tgt).forEach(function(r){ html += cmpTgtRow(r); });
           $('#cmpTgtTbody').html(html);
           recalcTableTotal($('#cmpTgtTbody').closest('table'));
+          renderCmpHeads();
         }
         // Reference → Target 복사 (행/전체)
         function cmpCopy(i){
-          $('#cmpTgtTbody').append(cmpTgtRow(REF_CMP[i]));
+          $('#cmpTgtTbody').append(cmpTgtRow(CMP_REF_ROWS[i]));
           recalcTableTotal($('#cmpTgtTbody').closest('table'));
         }
         // Target 빈 물질 추가 — Section 표들과 동일한 subCell 퀵서치 재사용
@@ -1584,22 +1725,65 @@
 		</div>
 	</article>
 
-	<!-- ── Composition Compare Modal (Materialize · npdi 패턴) — Reference(Read Only) vs Target(작성) ── -->
+	<!-- ── Composition Compare Modal (Materialize · npdi 패턴) — Reference(Read Only) vs Target(작성) ──
+	     비교 대상 3종: ①같은 Item의 이전 Ver/다른 Variant ②Sub-type 간(INPUT/ITEM/LEGAL) ③다른 Item(유사 추천+수동 조회).
+	     양쪽 각각 Item → Variant/Ver → Sub-type 3단 선택, 패널 타이틀에 식별 정보 표시 -->
 	<article id="cmpModal" class="modal" style="width:90%;">
 		<div class="modal-header mochaBg">
 			<h5>Composition Compare</h5>
 			<div class="closeBtns modal-close"><i class="material-symbols-outlined">close</i></div>
 		</div>
 		<div class="modal-content">
-			<div class="inputArea">
-				<div class="row">
-					<div class="col s2 ar pl0">Reference Product</div>
-					<div class="col s5 val">
-						<select class="browser-default ht25" id="cmpRefSel">
-							<option selected>SE9100 · Silicone Elastomer B (Type A · Sealants)</option>
-							<option>SE9187 · BASE Variant v1.0 (previous)</option>
-							<option>SE9200 · Silicone Sealant HP (similar)</option>
-						</select>
+			<div class="row mb0">
+				<!-- Reference 선택 — Item 퀵서치(유사 추천 칩) + Variant/Ver + Sub-type -->
+				<div class="col s6">
+					<div class="cmpSelBox">
+						<div class="inputArea">
+							<div class="row">
+								<div class="col s3 ar pl0">Item</div>
+								<div class="col s9 val">
+									<div class="aniInput"><input type="text" id="cmpRefItem" class="browser-default al" placeholder="Search item — MERP code · name" autocomplete="off"><span class="focus-border"></span></div>
+									<div class="cmpSimChips"><span class="cmpSimLbl">Similar</span><span id="cmpSimChips"></span></div>
+								</div>
+							</div>
+							<div class="row">
+								<div class="col s3 ar pl0">Variant / Ver</div>
+								<div class="col s5 val"><select class="browser-default ht25 jsCmpSel" id="cmpRefVariant" data-side="ref" data-part="variant"></select></div>
+								<div class="col s4 val"><select class="browser-default ht25 jsCmpSel" id="cmpRefVer" data-side="ref" data-part="ver"></select></div>
+							</div>
+							<div class="row">
+								<div class="col s3 ar pl0">Sub-type</div>
+								<div class="col s9 val">
+									<select class="browser-default ht25 jsCmpSel" id="cmpRefSub" data-side="ref" data-part="sub">
+										<option>INPUT</option><option selected>ITEM</option><option>LEGAL</option>
+									</select>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+				<!-- Target 선택 — 현재 열람 Item 고정, 자기 Variant/Ver·Sub-type 선택 가능(이전 버전·Sub-type 간 비교) -->
+				<div class="col s6">
+					<div class="cmpSelBox">
+						<div class="inputArea">
+							<div class="row">
+								<div class="col s3 ar pl0">Item</div>
+								<div class="col s9 val">[10000425] SE9187 – Silicone Sealant <span class="roundBox bdGray ml5">Current</span></div>
+							</div>
+							<div class="row">
+								<div class="col s3 ar pl0">Variant / Ver</div>
+								<div class="col s5 val"><select class="browser-default ht25 jsCmpSel" id="cmpTgtVariant" data-side="tgt" data-part="variant"></select></div>
+								<div class="col s4 val"><select class="browser-default ht25 jsCmpSel" id="cmpTgtVer" data-side="tgt" data-part="ver"></select></div>
+							</div>
+							<div class="row">
+								<div class="col s3 ar pl0">Sub-type</div>
+								<div class="col s9 val">
+									<select class="browser-default ht25 jsCmpSel" id="cmpTgtSub" data-side="tgt" data-part="sub">
+										<option>INPUT</option><option selected>ITEM</option><option>LEGAL</option>
+									</select>
+								</div>
+							</div>
+						</div>
 					</div>
 				</div>
 			</div>
@@ -1608,7 +1792,7 @@
 				<!-- Reference 패널 (Read Only) -->
 				<div class="col s6">
 					<div class="cardSubTitArea mt10">
-						<div class="cardSubTit">Reference — SE9100 <span class="font13">· Similarity 82% · Read Only</span></div>
+						<div class="cardSubTit" id="cmpRefIdent">Reference</div>
 						<div><a href="javascript:;" id="cmpCopyAll" class="waves-effect waves-light hBtn hSmall"><i class="material-symbols-outlined left">east</i>Copy All</a></div>
 					</div>
 					<div class="fixedTable hBorderTable hScroll vMiddle mg10">
@@ -1630,7 +1814,7 @@
 				<!-- Target 패널 (작성) -->
 				<div class="col s6">
 					<div class="cardSubTitArea mt10">
-						<div class="cardSubTit">Target — SE9187 · Silicone Sealant</div>
+						<div class="cardSubTit" id="cmpTgtIdent">Target</div>
 						<div><a href="javascript:;" id="cmpAddSub" class="waves-effect waves-light hBtn hSmall"><i class="material-symbols-outlined left">add</i>Add Substance</a></div>
 					</div>
 					<div class="fixedTable hBorderTable hScroll vMiddle mg10">

@@ -4509,8 +4509,8 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 .newAppleTab .tabBg {
     position: absolute;
     left: -2px;
-    top: -2px;
-    height: 33px;
+    top: -1px;   /* 슬라이딩 pill을 컨테이너 외곽(32px)에 정확히 맞춤 — hBtn(30px+보더 2px)과 동일 높이 */
+    height: 32px;
     width: 104px;
     background-color: rgba(187,38,73,0.02);
     border: 1px solid rgba(187,38,73,0.7);
@@ -6097,6 +6097,20 @@ select.browser-default {
 .cmpBadge.bio    { color: #bb2649; border-color: rgba(187,38,73,.4);  background: rgba(187,38,73,.06); }
 .cmpBadge.agri   { color: #6a8f3c; border-color: rgba(106,143,60,.4); background: rgba(106,143,60,.09); }
 .cmpBadge.retest { color: #e87e05; border-color: rgba(232,126,5,.4);  background: rgba(232,126,5,.09); }
+
+/* ── Composition Compare 모달 — 비교 대상 선택 박스(Item 퀵서치 · Variant/Ver · Sub-type) ── */
+.cmpSelBox { border: 1px solid #e5dcd0; border-radius: 12px; padding: 10px 15px; background: #fbf8f6;
+  box-shadow: inset 0 1px 0 rgba(255,255,255,.7); }
+.cmpSelBox .inputArea .row { margin-bottom: 5px; }
+.cmpSelBox .inputArea .row:last-child { margin-bottom: 0; }
+/* 유사 Item 추천 칩 줄 — Item 검색창 바로 아래 */
+.cmpSimChips { display: flex; align-items: center; flex-wrap: wrap; gap: 5px; margin-top: 5px; }
+.cmpSimLbl { font-size: 13px; color: #8a7d6e; margin-right: 5px; }
+.cmpSimChip { display: inline-flex; align-items: center; gap: 5px; font-size: 13px; font-family: 'Roboto-Medium';
+  color: #a47864; padding: 1px 10px; border: 1px solid rgba(164,120,100,.45); border-radius: 12px; background: #fff;
+  transition: background .15s ease; }
+.cmpSimChip span { font-family: 'Roboto-Regular'; color: #8a7d6e; }
+.cmpSimChip:hover { background: rgba(164,119,100,.07); }
 /* ── Tech Library 모듈 ── */
 /* 좌측 statusBox 추가 상태: Granted(열람승인=청) / Requested(열람신청중=회색). type1(주황)/type2(녹)에 더함 */
 .typeList .mainList li .statusBox.granted { border-color: #7391c9; color: #7391c9; }
@@ -6142,6 +6156,8 @@ select.browser-default {
 
 /* 우측 서머리 액션 버튼 줄(Download / Add to Basket) — 우측 정렬 */
 .techlibActs { display: flex; justify-content: flex-end; gap: 8px; margin: 12px 0 4px; }
+/* 권한 신청 버튼 = 맨 왼쪽 고정(margin-right:auto로 일반 액션들과 공간 분리) — 성격이 다른 액션임을 배치로 구분 */
+.techlibActs #reqBtn { margin-right: auto; }
 .techlibActs .hBtn.on { color: #fff; }
 .techlibActs #bkBtn.on { background: #6a8f3c; border-color: #6a8f3c; }    /* 바구니 담김 = 초록(pop tlInBked 동일) */
 .techlibActs #bmkBtn.on { background: #e0a83e; border-color: #e0a83e; }   /* 북마크 = amber(pop tlBmked 동일) */
@@ -6149,14 +6165,26 @@ select.browser-default {
 #bkBtn.on { background: #899f6a; border-color: #899f6a; color: #fff; }
 /* Bookmark(별표) 활성 = 앰버 */
 #bmkBtn.on { background: #e0a83e; border-color: #e0a83e; color: #fff; }
-.techlibActs .hBtn.isDisabled { opacity: .45; pointer-events: none; }
+.techlibActs .hBtn.isDisabled { opacity: .45; cursor: not-allowed; }   /* pointer-events 유지 — hover 툴팁(권한 신청 안내)이 떠야 함. 클릭은 JS 게이트가 차단 */
 
 /* Basket FAB(우측 하단) 카운트 배지 — header notiCnt와 동일 톤, 버튼 우상단 모서리에 오버레이.
    .btn-floating이 overflow:hidden이라 배지는 버튼 밖(.fixed-action-btn 기준)에 형제로 배치 */
 .tlFabBadge { position: absolute; top: 12px; right: -5px; min-width: 20px; height: 20px; line-height: 20px; text-align: center; background: rgba(187,38,73,.9); color: #fff; border-radius: 10px; font-size: 11px; padding: 0 6px; z-index: 2; box-shadow: 0 1px 3px rgba(0,0,0,.3); }
 
 /* Document Basket 모달 (Materialize 글래스 모달 + 탭 + 테이블) */
-.tlBasketModal { width: 1100px; max-width: 95%; }
+/* 결재 라인 — 내 결재 차례 행 강조(To Approve 펄스 칩과 동일 계열 배경 + 굵은 글자) */
+.hBorderTable tr.tlMyApprRow td { background: rgba(90,125,154,.1); font-family: 'Roboto-Medium'; }
+
+/* 리스트 — 내 결재 차례 li: To Approve 칩과 동일 비바 마젠타 보더 + 은은한 글로우 펄스(선택 행 제외) */
+.typeList .mainList li.tlMyTurn { border: 1px solid rgba(187,38,73,.5); border-bottom: 1px solid rgba(187,38,73,.5); }
+.typeList .mainList li.tlMyTurn:not(.on) { animation: tlMyTurnGlow 2s ease-in-out infinite; }
+@keyframes tlMyTurnGlow {
+	0%, 100% { box-shadow: 0 0 0 0 rgba(187,38,73,0); }
+	50% { box-shadow: 0 0 12px 2px rgba(187,38,73,.3); }
+}
+
+.tlBasketModal { width: 90%; max-width: 1500px; }
+.tlBasketModal #bkSelAllBtn { margin-right: auto; }   /* 전체 선택 = 버튼영역 좌측 분리(reqBtn 패턴) */
 .tlBasketModal .modal-header h5 b { color: #fff; margin-left: 4px; }
 /* 탭 = Materialize Tabs. 글래스 모달에 맞춰 배경 투명 + 모카 액센트 */
 .tlBkTabs.tabs { background: transparent; margin-bottom: 12px; }
@@ -6165,6 +6193,8 @@ select.browser-default {
 .tlBkTabs.tabs .tab a.active span { color: #a47864; }
 .tlBkTabs.tabs .indicator { background-color: #a47864; }
 .tlBkPane { padding-top: 4px; }
+/* 카드 그리드 스크롤 — 헤더/하단 버튼 고정, 카드 영역만 세로 스크롤(공통 스크롤바 스킨은 hScroll 클래스) */
+.tlBasketModal .tlBkPane { max-height: calc(70vh - 180px); overflow-y: auto; padding-top: 0; padding-right: 0; }   /* materialize .modal max-height 70% 안에서 헤더+버튼 제외분만 — 이중 스크롤 방지 */
 /* 테이블 — Document([코드] 타이틀) · Type · Region · Status/Approval */
 .tlBkTableWrap { max-height: 56vh; overflow: auto; position: relative; }
 .tlBkTable { table-layout: fixed; }
@@ -6207,7 +6237,6 @@ select.browser-default {
 .tlRowMarks { position: absolute; top: 9px; right: 11px; display: flex; align-items: center; gap: 5px; pointer-events: none; }
 .typeList .mainList li .tlRowMarks i { font-size: 18px; display: none; }
 .typeList .mainList li.tlBmk .tlRowMarks .tlBmkMark { display: block; color: #e0a83e; }
-.typeList .mainList li.tlInBk .tlRowMarks .tlBasketMark { display: block; color: #6a8f3c; }
 /* "뿅" 추가 애니메이션 — 마크/아이콘/배지가 스케일 오버슈트로 튀어나옴(눈에 띄게). JS가 클래스 토글로 재트리거 */
 @keyframes tlPopIn { 0%{transform:scale(.2);} 55%{transform:scale(1.55);} 75%{transform:scale(.85);} 100%{transform:scale(1);} }
 .tlPopAnim { animation: tlPopIn .42s cubic-bezier(.34,1.56,.64,1); transform-origin: center center; }
@@ -7158,6 +7187,35 @@ body.roMode .tlKwAddRow{display:none;}
 /* 태그 입력 = ELN(.elnModalBody .aniInput input) 룩 이식 — 모카틴트 배경·line-height 25·상단 라운드 */
 .tlKwAddRow .aniInput input.browser-default{border:0;border-radius:5px 5px 0 0;padding:0 5px;height:auto;line-height:25px;background:rgba(164,119,100,.05);box-shadow:none;}
 .tlKwAddRow .aniInput input.browser-default:focus{outline:none;box-shadow:none;background:rgba(164,119,100,.1);}
+/* ── newsub AI 추천(업로드 → 분석 → 키워드·초록 제안) — note_pop 추천칩(elnRec*) 톤 이식(블루=AI 신호) ── */
+.tlRec{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:5px;line-height:normal;}
+.tlRec:empty{display:none;}
+.tlRecLabel{display:inline-flex;align-items:center;gap:3px;font-size:13px;font-family:'Roboto-Medium';color:#9b8c7e;text-transform:uppercase;letter-spacing:.03em;margin-right:5px;}
+.tlRecLabel > i{font-size:15px;color:#5a7d9a;}
+.tlRecChip{display:inline-flex;align-items:center;gap:2px;font-size:13px;color:#5a7d9a;background:rgba(90,125,154,.08);border:1px dashed #c2d0db;border-radius:13px;padding:2px 10px 2px 5px;cursor:pointer;transition:color .15s,background .15s,border-color .15s;}
+.tlRecChip:hover{color:#fff;background:#5a7d9a;border-color:#5a7d9a;}
+.tlRecChip i{font-size:14px;}
+.tlRecEmpty{font-size:13px;color:#b3a596;font-style:italic;}
+/* AI 분석중 인디케이터 — auto_awesome 펄스 + 점 3개 순차 페이드 */
+.tlAiLoading{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:#5a7d9a;line-height:normal;}
+.tlAiLoading > i{font-size:15px;animation:tlAiPulse 1.2s ease-in-out infinite;}
+.tlAiDot{width:4px;height:4px;border-radius:50%;background:#5a7d9a;animation:tlAiPulse 1.2s ease-in-out infinite;}
+.tlAiDot:nth-of-type(2){animation-delay:.2s;}
+.tlAiDot:nth-of-type(3){animation-delay:.4s;}
+@keyframes tlAiPulse{0%,100%{opacity:.25;}50%{opacity:1;}}
+/* 초록 제안 박스 — 추천칩과 동일 블루 대시 톤. 비어 있으면 공간 차지 안 함 */
+.tlAiSug{margin-top:5px;border:1px dashed #c2d0db;border-radius:12px;padding:10px 15px;background:rgba(90,125,154,.05);}
+.tlAiSug:empty{display:none;border:0;padding:0;margin:0;}
+.tlAiSugHead{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-family:'Roboto-Medium';color:#5a7d9a;text-transform:uppercase;letter-spacing:.03em;line-height:normal;}
+.tlAiSugHead > i{font-size:15px;}
+.tlAiSugNote{font-family:'Roboto-Regular';color:#9b8c7e;text-transform:none;letter-spacing:normal;margin-left:3px;}
+.tlAiSugTxt{font-size:13px;color:#5a5040;line-height:1.6;margin-top:5px;}
+.tlAiSugActs{display:flex;align-items:center;justify-content:flex-end;gap:10px;margin-top:10px;}
+.tlAiSugDismiss{font-size:13px;color:#9b8c7e;transition:color .15s;}
+.tlAiSugDismiss:hover{color:#5a5040;}
+/* 읽기전용 모드 — AI 추천 UI·업로드 필드 숨김(제출물 열람/결재 화면) */
+body.roMode .tlRec,body.roMode .tlAiSug{display:none;}
+body.roMode #upFileRow{display:none;}
 /* Yes/No 활성 pill — 글로시 gradient + inner highlight */
 #upcClass .upToggle a.on{background:linear-gradient(145deg,color-mix(in srgb,var(--rl-accent) 86%,white),var(--rl-accent));color:#fff;box-shadow:0 2px 6px color-mix(in srgb,var(--mocha25) 40%,transparent),inset 0 1px 0 rgba(255,255,255,.4);}
 /* newsub: 상단 큰 결과 배너(진보적 노출 — 완료 시 클래스, 미완료 시 pending) */
@@ -8028,3 +8086,158 @@ body.roMode .tlKwAddRow{display:none;}
 .elnChemEmptyLine{display:flex;align-items:center;justify-content:center;gap:6px;padding:18px 16px;margin-bottom:10px;border:1.5px dashed #d9cfc2;border-radius:12px;background:rgba(164,120,100,.03);color:#9b8c7e;font-size:13px;text-align:center;}
 .elnChemEmptyLine i{font-size:18px;color:#cdbfae;}
 .elnChemAdd{display:flex;gap:8px;flex-wrap:wrap;}
+
+/* ── Insight Dashboard v2 (apis_dash2) — 탭(MAPIS/Tableau) + NPI 매트릭스 + 필터 레전드 ── */
+.dashTabPane{display:none;}
+.dashTabPane.on{display:block;}
+.ht260{height:260px;}
+.acWrap{text-align:center;white-space:nowrap;}
+/* NPI Portfolio 매트릭스 — Tableau 원본의 상태색 버블(원형 카운트) 재현 */
+.npiMx table td{padding-top:6px;padding-bottom:6px;}
+.npiBub{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border-radius:18px;color:#fff;font-family:'Roboto-Medium';font-size:13px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 3px rgba(0,0,0,.12);}
+.npiBub.stAct{background:#66b2c4;}
+.npiBub.stAppr{background:#dd7e88;}
+.npiBub.stComp{background:#7fae6d;}
+.npiBub.stHold{background:#eda14b;}
+.npiBub.stCanc{background:#a8c98a;}
+.npiBub.stTot{background:#9e9e9e;}
+.npiMxTotal td{border-top:2px solid #e0d7cb;background:#fbf8f6;}
+.npiMxCnt{font-size:13px;color:#8a7d6e;}
+/* Tableau embed 카드 — URL 미지정 시 플레이스홀더, 지정 시 iframe */
+.tblBox{height:420px;}
+.tblFrame{width:100%;height:100%;border:0;border-radius:10px;}
+.tblPh{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;height:100%;color:#9a8f82;border:1px dashed #d9cfc2;border-radius:12px;background:#fbf8f6;text-align:center;}
+.tblPh i{font-size:44px;color:#cdbfae;}
+.tblPhNote{font-size:13px;color:#b3a596;max-width:320px;line-height:1.5;}
+.tblTag{display:inline-flex;align-items:center;font-size:13px;font-family:'Roboto-Medium';color:#5a7d9a;background:rgba(90,125,154,.1);border-radius:10px;padding:1px 10px;vertical-align:2px;}
+/* 우측 필터 패널 상태 레전드 */
+.fltLegend{display:flex;flex-wrap:wrap;gap:8px 15px;padding:0 10px;}
+.fltLgItem{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:#5a5040;}
+.fltDot{width:12px;height:12px;border-radius:50%;}
+.fltDot.stAct{background:#66b2c4;}
+.fltDot.stAppr{background:#dd7e88;}
+.fltDot.stComp{background:#7fae6d;}
+.fltDot.stHold{background:#eda14b;}
+.fltDot.stCanc{background:#a8c98a;}
+.fltDot.stTot{background:#9e9e9e;}
+/* dash2 확장 — 카드 뷰 전환 라디오 + 목록 상태 pill + 런치 도트색 */
+.dashHide{display:none;}
+.ht300{height:300px;}
+.ht340{height:340px;}
+.dashViewTog{display:flex;align-items:center;gap:15px;}
+.dashViewTog label{display:inline-flex;align-items:center;}
+.dashViewTog [type="radio"]+span{font-size:13px;padding-left:30px;line-height:20px;}
+.lchPill{display:inline-flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap;}
+.fltDot.stSched{background:#6a9fd8;}
+.fltDot.stLate{background:#c6c26b;}
+.npiListNote{font-size:13px;color:#9a8f82;text-align:center;padding:10px 0 5px;}
+/* dash2 드릴다운 — 클릭 가능한 매트릭스 버블 + 안내 힌트 + 목록 모달 */
+.npiBub.jsDrill{cursor:pointer;transition:box-shadow .15s ease;}
+.npiBub.jsDrill:hover{box-shadow:0 0 0 3px rgba(164,119,100,.3),inset 0 1px 0 rgba(255,255,255,.35);}
+.npiMxHint{display:flex;align-items:center;gap:4px;color:#9a8f82;margin-top:5px;}
+.npiMxHint i{font-size:16px;color:#cdbfae;}
+.drillModal{width:1150px;max-width:94%;}
+.drillModal .drillTbl{max-height:540px;overflow-y:auto;}
+/* ── techlib 건별 열람신청 모달(reqModal) + 바스켓 정보 요약 카드(bkView) ── */
+.tlReqModal{width:860px;max-width:92%;}
+.tlReqDoc{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;margin:5px 0 10px;}
+.tlReqChips{display:inline-flex;gap:5px;flex:0 0 auto;}
+.tlReqClsNote{display:flex;align-items:center;gap:6px;font-size:13px;color:#7a5240;line-height:1.5;
+  background:rgba(164,120,100,.07);border:1px solid rgba(164,120,100,.25);border-radius:10px;padding:10px 15px;margin-bottom:10px;}
+.tlReqClsNote i{font-size:16px;color:#a47864;flex:0 0 auto;}
+/* 정보 요약 모드 — 상단 Back 행 + 문서 카드 그리드 */
+.tlBkBackRow{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.tlBkBackRow .tlReqCnt{font-size:13px;color:#a47864;background:#f1e9df;border-radius:10px;padding:2px 10px;}
+/* 카드 그리드 = CSS grid — materialize .col 좌우 패딩 제거로 카드 양끝을 하단 버튼 라인과 맞춤 */
+.tlInfoGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0;}
+.row.tlInfoGrid .col.s6{width:auto;float:none;padding:0;margin:0;left:auto;right:auto;}
+.tlInfoCard{border:1px solid #e5dcd0;border-radius:12px;background:#fff;padding:12px 15px;height:145px;overflow:hidden;
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.7),0 2px 6px rgba(60,45,38,.05);}   /* 높이 고정 — 초록 1줄/2줄 무관 카드 줄맞춤 */
+.tlInfoHead{font-family:'Roboto-Medium';font-size:14px;line-height:1.4;margin-bottom:8px;}
+.tlInfoChips{display:flex;flex-wrap:nowrap;overflow:hidden;gap:5px;align-items:center;margin-bottom:5px;height:20px;}   /* 1줄 고정 — 넘치는 칩은 클립 */
+.tlInfoChips .roundBox{flex:0 0 auto;white-space:nowrap;height:20px;line-height:18px;font-size:12px;padding:0 10px;}   /* 컴팩트 칩(카드 전용) — 내부 줄바꿈 금지, 공간 부족 시 행 끝에서 통째로 클립 */
+.tlInfoMeta{font-size:13px;color:#8a7d6e;margin-bottom:8px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.tlInfoAbs{font-size:13px;color:#555;line-height:1.55;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}   /* 초록(Abstract) 2줄 클램프 — 카드 높이 균일 */
+/* reqModal 기밀 확약 체크 — inputArea line-height 25 vs filled-in 박스(20px·top:0) 세로 어긋남 보정.
+   val 컬럼을 flex 세로중앙으로: 20px 콘텐츠(박스+텍스트)가 25px 행 가운데 → 좌측 라벨 라인과 일치 */
+#reqNdaRow .val{ display: flex; align-items: center; min-height: 25px; }
+#reqNdaRow .val label{ display: inline-flex; align-items: center; }
+#reqNdaRow .val [type="checkbox"] + span:not(.lever){ line-height: 20px; height: auto; display: inline-block; }
+/* 바스켓 기본 화면 = 정보 카드 — 타이틀 앞 체크박스(20px 박스, 여백만 확보) + 타이틀 클릭 상세 */
+.tlInfoHead{display:flex;align-items:flex-start;gap:2px;}
+.tlInfoHead .tlInfoChk{flex:0 0 auto;}
+.tlInfoHead .tlInfoChk [type="checkbox"] + span{padding-left:25px;height:20px;line-height:20px;}   /* 박스(20px)+5px 여백 — 타이틀과 간격 확보 */
+.tlInfoHead .tlBkTit{flex:1;font-size:14px;font-family:'Roboto-Medium';line-height:20px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}   /* 1줄 말줄임(전문=hover title) */
+/* 서머리 액션 아이콘 버튼(hIco) — 팝업 rlDocActs 패턴 동일(38px 정사각, 글래스 툴팁이 라벨 대신) */
+.techlibActs .hBtn.hIco{padding:0;width:38px;min-width:38px;justify-content:center;}
+.techlibActs .hBtn.hIco i{margin:0;font-size:20px;}
+/* AI Summary 버튼 — AI 시그널 블루(newsub 추천칩 톤). hover는 배경 틴트만 */
+.techlibActs #aiBtn{color:#5a7d9a;border-color:rgba(90,125,154,.5);}
+.techlibActs #aiBtn:hover{background:rgba(90,125,154,.08);}
+.techlibActs #aiBtn i{color:#5a7d9a;}
+/* AI 요약 모달 */
+.tlAiSumModal{width:780px;max-width:92%;}
+.aiSumLoading{display:flex;justify-content:center;padding:60px 0;}
+.aiSumAbs{font-size:13px;color:#555;line-height:1.6;padding:5px 10px 0;}
+.aiSumList{margin:5px 10px 0;padding-left:20px;}
+.aiSumList li{font-size:13px;color:#555;line-height:1.6;list-style:disc;margin-bottom:5px;}
+.aiSumNote{display:flex;align-items:center;gap:5px;font-size:13px;color:#9b8c7e;margin-top:20px;padding-top:10px;border-top:1px dashed #e5dcd0;}
+.aiSumNote i{font-size:15px;color:#b3a596;}
+/* 바스켓 카드 AI Summary 아이콘 — 헤더 우측(title flex:1이 밀어줌), AI 블루 + hover 틴트만 */
+.tlInfoHead .tlInfoAi{flex:0 0 auto;display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;border-radius:50%;color:#5a7d9a;transition:background .15s;}
+.tlInfoHead .tlInfoAi:hover{background:rgba(90,125,154,.12);}
+.tlInfoHead .tlInfoAi i{font-size:18px;}
+/* 검색 모달 — Save Search 버튼(버튼 라인 좌측 고정, 단일 저장 슬롯) */
+.tlSrchBtns{display:flex;align-items:center;}
+.tlSrchBtns #scSaveBtn{margin-right:auto;}
+/* ── 리스트 statusBox = 바스켓 담기 토글 (MAPIS 리스트 공통 패턴 — techlib 선적용) ──
+   클릭 시 담김: statusBox가 자기 상태색의 유리판(틴트+블러+윗빛)으로 변하고 우상단 코너에 카트 배지(li.tlInBk 연동) */
+.typeList .mainList li .statusBox{cursor:pointer;position:relative;overflow:visible;transition:background .2s ease, box-shadow .2s ease;}
+/* 카트 배지 — 유리판 우상단 코너에 반쯤 걸침(헤더 notiCnt 배지 문법) → 토글 위치가 statusBox임을 명확히 */
+.typeList .mainList li .statusBox .tlBasketMark{display:none;position:absolute;top:-9px;right:-9px;font-size:13px;line-height:1;color:#fff;background:#6a8f3c;border-radius:50%;padding:3px;box-shadow:0 1px 3px rgba(0,0,0,.25), inset 0 1px 0 rgba(255,255,255,.45);}
+.typeList .mainList li.tlInBk .statusBox .tlBasketMark{display:block;}
+.typeList .mainList li .statusBox:hover{background:color-mix(in srgb, currentColor 8%, white);}
+.typeList .mainList li.tlInBk .statusBox{
+  background:color-mix(in srgb, currentColor 16%, white);
+  backdrop-filter:blur(6px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.75), 0 2px 6px rgba(0,0,0,.08);
+}
+/* statusBox=바스켓 발견 장치 — ①호버 시 고스트 카트 배지 프리뷰(미담김 행만) ②첫 방문 펄스 링(tlCoach, 1회) */
+.typeList .mainList li:not(.tlInBk) .statusBox:hover .tlBasketMark{display:block;opacity:.45;}
+@keyframes tlCoachPulse{0%{box-shadow:0 0 0 0 rgba(106,143,60,.5);}100%{box-shadow:0 0 0 12px rgba(106,143,60,0);}}
+.typeList .mainList li .statusBox.tlCoach{animation:tlCoachPulse 1.3s ease-out infinite;}   /* 지속시간은 JS 타임아웃(30s)이 제어 */
+/* 글래스 토스트 펄스 글로우(pulseGlow) — 타입 색(--toastAccent) 링이 퍼지는 주기 애니. 진입 애니 유지, fade 시 해제 */
+.glassToast.pulseGlow:not(.fade){animation:glassToastIn .24s cubic-bezier(.2,.7,.3,1), glassToastPulse 1.8s ease-out .4s infinite;}
+@keyframes glassToastPulse{
+  0%{box-shadow:0 8px 32px rgba(31,38,135,.22),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(0,0,0,.04),0 0 0 0 color-mix(in srgb, var(--toastAccent,#2f80ed) 45%, transparent);}
+  70%{box-shadow:0 8px 32px rgba(31,38,135,.22),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(0,0,0,.04),0 0 0 14px color-mix(in srgb, var(--toastAccent,#2f80ed) 0%, transparent);}
+  100%{box-shadow:0 8px 32px rgba(31,38,135,.22),inset 0 1px 0 rgba(255,255,255,.6),inset 0 -1px 0 rgba(0,0,0,.04),0 0 0 0 color-mix(in srgb, var(--toastAccent,#2f80ed) 0%, transparent);}
+}
+/* Access·Publish 탭 서머리 결재 액션 — 의견 입력 + Approve/Reject */
+.smApprActs{margin:10px 10px 0;}
+.smApprActs .aniInput textarea.materialize-textarea{font-size:13px;min-height:40px;margin-bottom:0;}
+.smApprBtns{display:flex;justify-content:flex-end;gap:10px;margin-top:8px;}
+/* To Approve 칩 펄스 — 결재 차례 강조(블루 링) */
+@keyframes tlApprPulse{0%{box-shadow:0 0 0 0 rgba(187,38,73,.5);}100%{box-shadow:0 0 0 8px rgba(187,38,73,0);}}
+.cmpMeta .roundBox.tlApprPulse{animation:tlApprPulse 1.5s ease-out infinite;}
+/* ── techlib pop AI 번역 — 툴바 토글(on=AI 블루 채움) + 번역 배너 + 로딩 ── */
+.rlDocActs .hBtn.hIco.tlTransOn{background:#5a7d9a;border-color:#5a7d9a;}
+.rlDocActs .hBtn.hIco.tlTransOn i{color:#fff;}
+.rlTransBanner{display:flex;align-items:center;gap:6px;font-size:13px;color:#5a7d9a;background:rgba(90,125,154,.07);border:1px dashed #c2d0db;border-radius:10px;padding:8px 12px;margin-bottom:25px;}
+.rlTransBanner i{font-size:16px;flex:0 0 auto;}
+.rlTransLoading{display:flex;justify-content:center;padding:100px 0;}
+/* ── 좁은 해상도 대응(리스트 공통) — 타이틀 영역이 컴포넌트 중간에서 깨지지 않고 블록 단위로 줄바꿈 ── */
+.mainTitArea{flex-wrap:wrap;row-gap:10px;}
+.mainTitArea .mainTit{white-space:nowrap;}   /* 타이틀 두 줄 꺾임 방지 */
+.mainTitArea .btnArea{flex-wrap:wrap;row-gap:10px;justify-content:flex-end;}   /* Create/Search가 탭 아래로 통째로 내려감 */
+.newAppleTab ul{display:flex;}               /* 탭 내부 줄바꿈 금지 — pill(tabBg) 좌표계 보존 */
+.newAppleTab li{flex:0 0 auto;}
+/* AI 번역 언어 메뉴 — 툴바 버튼 아래 글래스 드롭다운 */
+.rlTransMenu{position:fixed;z-index:3200;width:170px;padding:5px;border-radius:12px;
+  background:rgba(255,255,255,.85);backdrop-filter:blur(12px) saturate(1.4);
+  border:1px solid rgba(255,255,255,.6);
+  box-shadow:0 8px 32px rgba(31,38,135,.22),inset 0 1px 0 rgba(255,255,255,.6);}
+.rlTransItem{display:flex;align-items:center;gap:6px;padding:7px 10px;border-radius:8px;font-size:13px;color:#3a2c24;transition:background .15s;}
+.rlTransItem i{width:16px;font-size:15px;color:#5a7d9a;}
+.rlTransItem:hover{background:rgba(90,125,154,.1);}
+.rlTransItem.on{font-family:'Roboto-Medium';color:#5a7d9a;}

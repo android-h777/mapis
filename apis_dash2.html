@@ -1,0 +1,557 @@
+<!DOCTYPE html lang="ko">
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>APIS MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="css/animate.min.css">
+    <link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script src="js/highcharts/highcharts.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/glass_engine.js"></script>
+    <script>
+        // ── Insight Dashboard v2 — 탭: MAPIS Analytics(내재화 3종) / Tableau(embed 4종) ──
+        // 내재화 3종 = NPI Portfolio · NPI Forecasts · Launch Report. 각 카드는 Tableau 원본처럼
+        // 라디오로 뷰 전환(집계 ↔ 프로젝트 목록). 모든 차트가 단일 PROJECTS 데이터셋 + 우측 필터에 연동.
+
+        // 상태 팔레트 — Tableau 원본 레전드 근사. 버블·도트는 클래스(stXxx)로 칠함
+        var ST_COLOR  = {'Active':'#66b2c4', 'In Approval':'#dd7e88', 'Complete':'#7fae6d', 'On Hold':'#eda14b', 'Canceled':'#a8c98a', 'Total':'#9e9e9e'};
+        var ST_CLS    = {'Active':'stAct', 'In Approval':'stAppr', 'Complete':'stComp', 'On Hold':'stHold', 'Canceled':'stCanc', 'Total':'stTot'};
+        var LCH_COLOR = {'On-Time':'#7fae6d', 'Late-Launch':'#c6c26b', 'Delayed':'#eda14b', 'Scheduled':'#6a9fd8', 'Total':'#a58d7f'};
+        var LCH_CLS   = {'On-Time':'stComp', 'Late-Launch':'stLate', 'Delayed':'stHold', 'Scheduled':'stSched'};
+        var BU_COLOR  = {'Coatings':'#7a97bd', 'Electronic Materials':'#f0a04b', 'Healthcare':'#e2727d', 'Industrial':'#9fcdc9',
+                         'Personal Care':'#8bbf7e', 'Specialty Additives':'#e8d478', 'Tire & Silanes':'#b48ab4', 'Urethane Additives':'#f4b8c0'};
+
+        var BUS  = ['Coatings','Electronic Materials','Healthcare','Industrial','Personal Care','Specialty Additives','Tire & Silanes','Urethane Additives'];
+        var STS  = ['Active','In Approval','Complete','On Hold','Canceled'];
+        var SEGS = ['Automotive','Construction','Consumer','Electronics','Energy','Healthcare','Industrial','Personal Care','Transportation'];
+        var MSEGS= ['Passenger Car','Hair Care','Servers','ADAS - EM','Power Electronics','Adhesives','Polymer','Skin Care','Consumer Goods','Agriculture','Thermal - EM','System House'];
+        var LOCS = ['DE — Leverkusen','KR — All Regions','US — All Regions','IN — Bangalore','JP — Ohta','CN — Shanghai'];
+        var TYPES= ['Standard NPI','Custom NPI','NPT'];
+        var FYRS = [2026, 2027, 2028, 2029, 2030];
+
+        // BU × Status 기준 건수 (Tableau Active NPI Portfolio 원본 수치 — Grand Total 1,127)
+        var MX = {
+          'Coatings':            [48, 4, 34, 17, 0],
+          'Electronic Materials':[154,18, 63, 95, 1],
+          'Healthcare':          [24, 7, 29,  1, 0],
+          'Industrial':          [78, 2, 90, 16, 2],
+          'Personal Care':       [55, 1, 30,  8, 7],
+          'Specialty Additives': [127, 4, 44, 47, 0],
+          'Tire & Silanes':      [17, 0,  4,  0, 0],
+          'Urethane Additives':  [64, 2, 33,  1, 0]
+        };
+
+        // 프로젝트 목업 이름·리더 풀 (Tableau 캡처 무드)
+        var NAME_A = ['Low-Temp Cure','High-Purity','Next-Gen','UV-Curable','Solvent-Free','High Temp','Anti-Fog','Optically Clear','Fast-Cure','Weatherable'];
+        var NAME_B = ['Silicone Sealant','LSR','Gap Filler','Adhesive','Release Coating','PSA','Dispersion','Additive','Encapsulant','Surfactant'];
+        var LEADERS= ['koki.otashiro','beth.hastings','yasuhito.morita','wai.ming.choi','jackie.sun','joachim.hegge','justin.he','Roxanne.Smith','toshio.yamato','max.conrad','beate.ganter','songyi.ham','gary.milhous','robin.heedfeld'];
+        var STAGES = ['Lab Formulation','Scale-Up','Commercial Go','Post Launch Review'];
+        // 런치 상태 분포 ≈ Scheduled 58% / On-Time 20% / Delayed 17% / Late-Launch 5%
+        var LCH_MIX= ['Scheduled','Scheduled','Scheduled','Scheduled','Scheduled','Scheduled','Scheduled','On-Time','On-Time','Delayed','Delayed','Late-Launch'];
+
+        // 프로젝트 레벨 목업 데이터 — 기준 건수 유지 + 코드/이름/리더/스테이지/런치/5개년 전망을 결정론적 생성.
+        // 3개 차트(Portfolio/Forecast/Launch)가 전부 이 데이터셋에서 파생 → 우측 필터 하나로 동시 반영
+        var PROJECTS = [];
+        (function(){
+          var k = 0;
+          BUS.forEach(function(bu, bi){
+            MX[bu].forEach(function(cnt, si){
+              for(var i=0; i<cnt; i++){
+                var yy = 16 + ((bi*3 + si + i) % 11);                       // 코드 연도 16~26
+                var base = 50 + (k*53 % 1200);                              // 전망 기저값
+                var fc = FYRS.map(function(y, yi){                          // 연차 성장 곡선 — 전사 5개년 총합 ≈ 1.8M(원본 스케일)
+                  return Math.round(base * (0.6 + yi*0.35) * (((k+yi) % 7) + 2) / 13);
+                });
+                PROJECTS.push({
+                  code: (k%9===0 ? 'CN' : 'SN')+'-'+yy+'-'+String(1000 + (k*37) % 9000),
+                  name: NAME_A[k % NAME_A.length]+' '+NAME_B[(k*3 + bi) % NAME_B.length],
+                  bu: bu, st: STS[si],
+                  seg:  SEGS[(bi*2 + si + i) % SEGS.length],
+                  mseg: MSEGS[(bi + i*5) % MSEGS.length],
+                  loc:  (k%4===0) ? 'Null' : LOCS[(bi*3 + i) % LOCS.length],
+                  type: TYPES[(si + i) % TYPES.length],
+                  leader: (k%5===0) ? 'Null' : LEADERS[k % LEADERS.length],
+                  stage: STAGES[k % STAGES.length],
+                  lchYear: 2024 + (k % 5),
+                  lchMon: 1 + (k*7 % 12),
+                  launch: LCH_MIX[k % LCH_MIX.length],
+                  fc: fc,
+                  fcTot: fc.reduce(function(a,b){ return a+b; }, 0),
+                  commGo: (si===2) ? (1 + (k*5 % 12))+'월, '+(2023 + (k % 4)) : 'Null'   // Complete만 Comm Go 보유
+                });
+                k++;
+              }
+            });
+          });
+        })();
+
+        // ── 필터 상태 ──
+        var FILT = {bu:'All', seg:'All', loc:'All', type:'All', year:'2026'};
+        var LIST_CAP = 100;                            // 드릴다운 목록 표시 상한(프로토 성능)
+
+        function fProjects(){
+          return PROJECTS.filter(function(p){
+            return (FILT.bu==='All'  || p.bu===FILT.bu)
+                && (FILT.seg==='All' || p.seg===FILT.seg)
+                && (FILT.loc==='All' || p.loc===FILT.loc)
+                && (FILT.type==='All'|| p.type===FILT.type);
+          });
+        }
+        function nf(n){ return n.toLocaleString(); }
+        function dot(cls, label){ return '<span class="lchPill"><span class="fltDot '+cls+'"></span>'+label+'</span>'; }
+        function capNote(shown, total){
+          return (total > shown) ? '<div class="npiListNote">Showing '+shown+' of '+nf(total)+' projects — refine filters to narrow down.</div>' : '';
+        }
+        function reOverlay(id){ if(window.initAllHBorderTableOverlays) initAllHBorderTableOverlays(document.getElementById(id)); }
+
+        // ══ Card 1 : Active NPI Portfolio — BU×Status 매트릭스. 버블 클릭 → 해당 영역 목록 모달 ══
+        // bu/st 빈 문자열 = 전체(합계 버블용): 행합계=bu만, 열합계=st만, Grand Total=둘 다 전체
+        function bub(n, st, bu){
+          if(!n) return '';
+          return '<span class="npiBub jsDrill '+ST_CLS[st]+'" data-bu="'+(bu||'')+'" data-st="'+(st==='Total'?'':st)+'">'+nf(n)+'</span>';
+        }
+        function renderPortfolio(){
+          var rows = fProjects();
+          $('#fltCnt').text(nf(rows.length)+' projects');
+          var html = '', colTot = [0,0,0,0,0], grand = 0;
+          BUS.forEach(function(bu){
+            var cnts = STS.map(function(st){ return rows.filter(function(p){ return p.bu===bu && p.st===st; }).length; });
+            var tot = cnts.reduce(function(a,b){ return a+b; }, 0);
+            if(!tot) return;
+            cnts.forEach(function(c,i){ colTot[i]+=c; }); grand += tot;
+            html += '<tr><td class="al fontM">'+bu+'</td>'
+                 + cnts.map(function(c,i){ return '<td class="ac">'+bub(c, STS[i], bu)+'</td>'; }).join('')
+                 + '<td class="ac bdL1d_lgrey">'+bub(tot, 'Total', bu)+'</td></tr>';
+          });
+          html += '<tr class="npiMxTotal"><td class="al fontM">Grand Total</td>'
+               + colTot.map(function(c,i){ return '<td class="ac">'+bub(c, STS[i], '')+'</td>'; }).join('')
+               + '<td class="ac bdL1d_lgrey">'+bub(grand, 'Total', '')+'</td></tr>';
+          $('#pfBody').html(html);
+          reOverlay('pfTable');
+        }
+
+        // ══ Card 2 : NPI Revenue Forecast Summary — 연도×BU 스택컬럼. 세그먼트 클릭 → BU×연도 프로그램 목록 모달 ══
+        function renderForecast(){
+          var rows = fProjects();
+          Highcharts.chart('chFc', {
+            chart: { type:'column', style:{ fontFamily:'SF-Light' } },
+            title: { text:'' },
+            xAxis: { categories: FYRS },
+            yAxis: { min:0, title:{ text:'' }, stackLabels:{ enabled:true, style:{ color:'#3a6ea5', fontWeight:'bold' } } },
+            legend: { align:'right', verticalAlign:'middle', layout:'vertical', title:{ text:'BU/Segment/MGPP', style:{ fontSize:'12px' } } },
+            tooltip: { headerFormat:'<b>{category}</b><br/>', pointFormat:'{series.name}: {point.y:,.0f}<br/>Total: {point.stackTotal:,.0f}<br/><span class="font11">Click to list programs</span>' },
+            plotOptions: { column: { stacking:'normal', cursor:'pointer',
+              point: { events: { click: function(){ openDrill('fc', { bu:this.series.name, year:this.category }); } } },
+              dataLabels:{ enabled:true, allowOverlap:false, format:'{point.y:,.0f}' } } },
+            series: BUS.map(function(bu){
+              return { name:bu, color:BU_COLOR[bu],
+                data: FYRS.map(function(y, yi){
+                  return rows.filter(function(p){ return p.bu===bu; }).reduce(function(a,p){ return a + p.fc[yi]; }, 0);
+                }) };
+            }),
+            credits: { enabled:false }
+          });
+        }
+
+        // ══ Card 3 : NPI Launch Report — 상태별 컬럼(+%). 막대 클릭 → 해당 상태 런치 목록 모달 ══
+        function fLaunch(){
+          return fProjects().filter(function(p){ return FILT.year==='All' || p.lchYear === +FILT.year; });
+        }
+        function renderLaunch(){
+          var rows = fLaunch();
+          $('#lcCnt').text(nf(rows.length)+' launches · '+(FILT.year==='All' ? 'all years' : FILT.year));
+          var order = ['On-Time','Late-Launch','Delayed','Scheduled'];
+          var byL = {};
+          rows.forEach(function(p){ byL[p.launch] = (byL[p.launch]||0) + 1; });
+          var tot = rows.length || 1;
+          var data = order.map(function(k){
+            var n = byL[k]||0;
+            return { name:k, y:n, color:LCH_COLOR[k], pct:Math.round(n/tot*100) };
+          });
+          data.push({ name:'Grand Total', y:rows.length, color:LCH_COLOR.Total, pct:100 });
+          Highcharts.chart('chLc', {
+            chart: { type:'column', style:{ fontFamily:'SF-Light' } },
+            title: { text:'' },
+            xAxis: { categories: data.map(function(d){ return d.name; }) },
+            yAxis: { min:0, title:{ text:'' }, gridLineWidth:0, labels:{ enabled:false } },
+            legend: { enabled:false },
+            tooltip: { pointFormat:'<b>{point.y}</b> ({point.pct}%)<br/><span class="font11">Click to list launches</span>' },
+            plotOptions: { column: { colorByPoint:true, borderRadius:'5%', cursor:'pointer',
+              point: { events: { click: function(){ openDrill('lc', { launch:this.name }); } } },
+              dataLabels:{ enabled:true, format:'{point.y} ({point.pct}%)' } } },
+            series: [{ name:'Launches', data: data }],
+            credits: { enabled:false }
+          });
+        }
+
+        // ── 드릴다운 모달 — 매트릭스 버블·차트 영역 클릭 → 해당 영역 프로젝트 목록 (필터 상태 반영) ──
+        function rowPf(p, i){
+          return '<tr><td class="ac font13">'+(i+1)+'</td><td class="al font13">'+p.code+'</td><td class="al fontM">'+p.name+'</td>'
+               + '<td class="al font13">'+p.bu+'</td><td class="al font13">'+p.mseg+'</td><td class="al font13">'+p.leader+'</td>'
+               + '<td class="ac font13">'+p.commGo+'</td><td class="al font13">'+p.loc+'</td>'
+               + '<td class="al">'+dot(ST_CLS[p.st], p.st)+'</td></tr>';
+        }
+        function rowFc(p){
+          return '<tr><td class="al font13">'+p.code+'</td><td class="al fontM">'+p.name+'</td>'
+               + '<td class="al font13">'+p.mseg+'</td><td class="ac font13">'+(1+(p.lchMon%12))+'월, '+p.lchYear+'</td>'
+               + p.fc.map(function(v){ return '<td class="ar font13">'+nf(v)+'</td>'; }).join('')
+               + '<td class="ar fontM kccBlue">'+nf(p.fcTot)+'</td></tr>';
+        }
+        function rowLc(p, i){
+          var actual = (p.launch==='On-Time' || p.launch==='Late-Launch') ? p.lchMon+'월, '+p.lchYear : 'Null';
+          return '<tr><td class="ac font13">'+(i+1)+'</td><td class="al font13">'+p.code+'</td><td class="al fontM">'+p.name+'</td>'
+               + '<td class="al font13">'+p.bu+'</td><td class="al font13">'+p.leader+'</td><td class="al font13">'+p.stage+'</td>'
+               + '<td class="al font13">'+p.loc+'</td><td class="ac font13">'+p.lchMon+'월, '+p.lchYear+'</td><td class="ac font13">'+actual+'</td>'
+               + '<td class="al">'+dot(LCH_CLS[p.launch], p.launch)+'</td></tr>';
+        }
+        var DRILL_HEAD = {
+          pf: '<tr><th class="ac">#</th><th class="al">Project Code</th><th class="al">Project Name</th><th class="al">BU/Segment/MGPP</th>'
+            + '<th class="al">Market Segment</th><th class="al">Project Leader</th><th class="ac">Comm Go</th><th class="al">R&D Location</th><th class="al">Status</th></tr>',
+          fc: '<tr><th class="al">Project Code</th><th class="al">Project Name</th><th class="al">Market Segment</th><th class="ac">Ref Comm</th>'
+            + '<th class="ar">2026</th><th class="ar">2027</th><th class="ar">2028</th><th class="ar">2029</th><th class="ar">2030</th><th class="ar">Grand Total</th></tr>',
+          lc: '<tr><th class="ac">#</th><th class="al">Project Code</th><th class="al">Project Name</th><th class="al">BU/Segment/MGPP</th><th class="al">Project Leader</th>'
+            + '<th class="al">Current Stage</th><th class="al">R&D Location</th><th class="ac">Target Date</th><th class="ac">Actual Comm Go</th><th class="al">Status</th></tr>'
+        };
+        function openDrill(type, ctx){
+          var rows, tit, body;
+          if(type === 'pf'){
+            rows = fProjects().filter(function(p){ return (!ctx.bu || p.bu===ctx.bu) && (!ctx.st || p.st===ctx.st); });
+            tit = 'Portfolio — '+(ctx.bu || 'All BU')+' · '+(ctx.st || 'All Status');
+            body = rows.slice(0, LIST_CAP).map(rowPf).join('');
+          } else if(type === 'fc'){
+            var yi = FYRS.indexOf(+ctx.year);
+            rows = fProjects().filter(function(p){ return p.bu===ctx.bu; })
+                     .sort(function(a,b){ return b.fc[yi] - a.fc[yi]; });
+            tit = 'Forecast — '+ctx.bu+' · '+ctx.year;
+            body = rows.slice(0, LIST_CAP).map(rowFc).join('');
+          } else {
+            rows = fLaunch().filter(function(p){ return ctx.launch==='Grand Total' || p.launch===ctx.launch; });
+            tit = 'Launch — '+ctx.launch+' · '+(FILT.year==='All' ? 'All years' : FILT.year);
+            body = rows.slice(0, LIST_CAP).map(rowLc).join('');
+          }
+          $('#drillTit').text(tit+' — '+nf(rows.length)+' projects');
+          $('#drillBody').html(
+            '<div class="fixedTable hBorderTable hScroll vMiddle mg10 drillTbl"><table><thead>'+DRILL_HEAD[type]+'</thead><tbody>'+body+'</tbody></table></div>'
+            + capNote(Math.min(rows.length, LIST_CAP), rows.length)
+          );
+          M.Modal.getInstance(document.getElementById('drillModal')).open();
+          // 모달 오픈 후 동적 테이블 글래스 오버레이 재초기화(idempotent)
+          if(window.initAllHBorderTableOverlays) setTimeout(function(){ initAllHBorderTableOverlays(document.getElementById('drillModal')); }, 60);
+        }
+
+        function renderAll(){
+          renderPortfolio();
+          renderForecast();
+          renderLaunch();
+        }
+
+        // ── Tableau embed (Lazy) — URL 확보 시 TABLEAU_VIEWS.url 지정 → 탭 첫 진입 시 iframe 로드 ──
+        var TABLEAU_VIEWS = [
+          { tit:'Balanced Scorecard', url:'' },
+          { tit:'ROI and Growth',     url:'' },
+          { tit:'NPI Sales',          url:'' },
+          { tit:'Tech Capex',         url:'' }
+        ];
+        var _tblLoaded = false;
+        function loadTableau(){
+          if(_tblLoaded) return;
+          _tblLoaded = true;
+          TABLEAU_VIEWS.forEach(function(v, i){
+            var $box = $('#tblBox'+i);
+            if(v.url){
+              $box.html('<iframe class="tblFrame" src="'+v.url+'" frameborder="0" allowfullscreen></iframe>');
+            } else {
+              $box.html('<div class="tblPh"><i class="material-symbols-outlined">bar_chart_4_bars</i>'
+                + '<div class="fontM">'+v.tit+'</div>'
+                + '<div class="tblPhNote">Tableau embed — set the server view URL in TABLEAU_VIEWS to load.</div></div>');
+            }
+          });
+        }
+
+        $(document).ready(function(){
+          $('.sidenav').sidenav();
+          $(document).on('click', '.sidenav-overlay, .closeBtns', function(){ $('.sidenav').sidenav('close'); });
+
+          // 상단 탭 (newAppleTab) — MAPIS / TABLEAU 페인 전환, Tableau는 lazy load
+          $(document).on('click', '.newAppleTab li', function(){
+            var offset = $(this).offset().left.toFixed(0) - $(this).parent().offset().left.toFixed(0);
+            $(this).parents('.newAppleTab').find('li').removeClass('on');
+            $(this).parents('.newAppleTab').find('.tabBg').animate({left: offset-3});
+            $(this).addClass('on');
+            var cd = $(this).attr('cd');
+            $('.dashTabPane').removeClass('on');
+            $('#pane'+cd).addClass('on');
+            if(cd==='TBL') loadTableau();
+            else renderAll();
+          });
+
+          // 드릴다운 모달 초기화 (npdi 모달 패턴 — 배경 블러) + 매트릭스 버블 클릭 위임
+          $('#drillModal').modal({
+            onOpenStart: function(){ $('header, .menuAside, .contArea, .statusAside').addClass('modalBlur'); },
+            onCloseStart: function(){ $('header, .menuAside, .contArea, .statusAside').removeClass('modalBlur'); }
+          });
+          $(document).on('click', '.npiBub.jsDrill', function(){
+            openDrill('pf', { bu: $(this).data('bu'), st: $(this).data('st') });
+          });
+
+          // 우측 필터(View Option) — 전 차트 실시간 연동
+          $('.statusAside select').formSelect();
+          $('#fBu, #fSeg, #fLoc, #fType, #fYear').on('change', function(){
+            FILT[this.id.slice(1).toLowerCase()] = this.value;
+            renderAll();
+          });
+          $('#fltReset').on('click', function(){
+            FILT = {bu:'All', seg:'All', loc:'All', type:'All', year:'2026'};
+            $('#fBu, #fSeg, #fLoc, #fType').val('All');
+            $('#fYear').val('2026');
+            $('.statusAside select').formSelect();
+            renderAll();
+            glassToast('Filters reset', 'info');
+          });
+
+          // 우측 패널 열기/닫기 (기존 dash 동일)
+          $('.asideTit i').click(function(){
+            $('.statusAside').animate({'right': -340}, function(){ $('#viewOptBtn').show(); });
+          });
+          $('#viewOptBtn').click(function(){
+            $(this).hide();
+            $('.statusAside').animate({'right': 20}, 500);
+          });
+          setTimeout(function(){ $('.statusAside').animate({'right': 20}, 500); }, 500);
+
+          renderAll();
+        });
+    </script>
+</head>
+<body>
+  <header class="navbar-fixed">
+    <nav>
+      <article class="navTop">
+        <section class="leftSection">
+          <div class="menuIcon">
+            <div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
+          </div>
+          <div><a href="apis_main.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
+        </section>
+        <section class="centerSection">
+          <div class="srchArea">
+            <i class="material-icons prefix">search</i>
+            <input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput">
+          </div>
+        </section>
+        <section class="rightSection">
+          <div class="userInfo">
+            <div class="mr10"><span class="mocha25-text fontM">JONGHO LEE</span></div>
+            <i class="material-icons gardenia25 mocha25-text fLine vCenter hCenter mg0">person</i>
+          </div>
+          <div class="langInfo ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">language</i>
+          </div>
+          <div class="notiArea ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">assignment_turned_in</i>
+            <div class="notiCnt pulse"><span class="font11">3</span></div>
+          </div>
+          <div class="notiArea ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">format_list_bulleted</i>
+            <div class="notiCnt pulse"><span class="font11">6</span></div>
+          </div>
+        </section>
+      </article>
+    </nav>
+  </header>
+
+  <aside class="menuAside">
+    <div id="slide-out" class="sidenav glassBox">
+      <div class="userInfoArea">
+        <div class="photo"><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+        <div class="userInfo">
+          <div class="fontB">JONGHO LEE</div>
+          <div>IT Procurement/HR/R&D Team</div>
+        </div>
+      </div>
+      <div class="menuList">
+        <ul>
+          <li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>Home</a></li>
+          <li class="waves-effect waves-hColor on"><a href="apis_dash.html"><i class="material-icons left">analytics</i>Insight​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_proposal_list.html"><i class="material-icons left">assistant</i>Proposal</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_custom_list.html"><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npt_list.html"><i class="material-icons left">snippet_folder</i>NPT</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_tech_list.html"><i class="material-icons left">build</i>Tech Support</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_note_list.html"><i class="material-icons left">edit_note</i>Lab Note</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_techlib_list.html"><i class="material-icons left">menu_book</i>Tech Library</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_composition_list.html"><i class="material-icons left">layers</i>Composition</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_fmea_list.html"><i class="material-icons left">playlist_add_check_circle</i>FMEA​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_coc.html"><i class="material-icons left">assignment_late</i>CoC​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_psa.html"><i class="material-icons left">health_and_safety</i>PSA</a></li>
+        </ul>
+      </div>
+    </div>
+  </aside>
+
+  <article class="contArea row dashCont">
+    <section class="mainTitArea">
+      <div class="mainTit">NPI Analytics</div>
+      <div class="btnArea">
+        <div class="newAppleTab mr10">
+          <ul>
+            <li class="waves-effect waves-hColor on" cd="MAPIS">MAPIS Analytics</li>
+            <li class="waves-effect waves-hColor" cd="TBL">Tableau</li>
+            <div class="tabBg" style="left: 0px;"></div>
+          </ul>
+        </div>
+        <div class="mr10"><a href="apis_dash.html" class="waves-effect waves-light hBtn wd160px"><i class="material-icons left">insights</i><span class="label">Scorecard</span></a></div>
+        <div><a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn hBlue wd150px animate__animated animate__backInLeft" style="display: none;"><i class="material-icons left">add</i><span class="label">View Option</span></a></div>
+      </div>
+    </section>
+
+    <!-- ── 탭 1 : MAPIS Analytics — 내재화 3종(Portfolio / Forecast / Launch), 각 카드 뷰 전환 라디오 ── -->
+    <section class="col s12 dashTabPane on" id="paneMAPIS">
+
+      <!-- Card 1 : Active NPI Portfolio -->
+      <div class="row mb0">
+        <section class="col s12 mt10 animate__animated animate__zoomIn">
+          <div class="cardBox pb5">
+            <div class="cardTitArea">
+              <div class="cardTit"><span class="linkTit">Active NPI Portfolio</span><span class="mpmOrange font13 ml10">(MPM NPI portfolio · KCC-S not included)</span></div>
+              <div class="npiMxCnt" id="fltCnt"></div>
+            </div>
+            <div class="npiMxHint font13"><i class="material-symbols-outlined">touch_app</i>Click a bubble to list the projects in that area</div>
+            <div class="fixedTable hBorderTable vMiddle mt10 npiMx">
+              <table id="pfTable">
+                <colgroup>
+                  <col style="width:22%;"><col style="width:13%;"><col style="width:13%;"><col style="width:13%;"><col style="width:13%;"><col style="width:13%;"><col style="width:13%;">
+                </colgroup>
+                <thead>
+                  <tr>
+                    <th class="al">BU / Segment / MGPP</th><th class="ac">Active</th><th class="ac">In Approval</th>
+                    <th class="ac">Complete</th><th class="ac">On Hold</th><th class="ac">Canceled</th><th class="ac bdL1d_lgrey">Grand Total</th>
+                  </tr>
+                </thead>
+                <tbody id="pfBody"></tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Card 2 : NPI Revenue Forecast Summary -->
+      <div class="row mb0">
+        <section class="col s12 mt10 animate__animated animate__zoomIn">
+          <div class="cardBox pb5">
+            <div class="cardTitArea">
+              <div class="cardTit"><span class="linkTit">NPI Revenue Forecast Summary</span><span class="mpmOrange font13 ml10">(Sales forecast for MPM NPI portfolio)</span></div>
+            </div>
+            <div class="npiMxHint font13"><i class="material-symbols-outlined">touch_app</i>Click a stack segment to list that BU's programs for the year</div>
+            <div id="chFc" class="ht340 mt10"></div>
+          </div>
+        </section>
+      </div>
+
+      <!-- Card 3 : NPI Launch Report -->
+      <div class="row mb0">
+        <section class="col s12 mt10 animate__animated animate__zoomIn">
+          <div class="cardBox pb5">
+            <div class="cardTitArea">
+              <div class="cardTit"><span class="linkTit">NPI Launch Report</span><span class="mpmOrange font13 ml10">(All launch data &amp; status for MPM portfolio)</span></div>
+              <div class="npiMxCnt" id="lcCnt"></div>
+            </div>
+            <div class="npiMxHint font13"><i class="material-symbols-outlined">touch_app</i>Click a bar to list the launches in that status</div>
+            <div id="chLc" class="ht300 mt10"></div>
+          </div>
+        </section>
+      </div>
+    </section>
+
+    <!-- ── 탭 2 : Tableau (embed 4종 — lazy load, 내재화되면 탭 1로 이동) ── -->
+    <section class="col s12 dashTabPane" id="paneTBL">
+      <div class="row mb0">
+        <section class="col s6 mt10"><div class="cardBox pb5"><div class="cardTitArea"><div class="cardTit"><span class="linkTit">Balanced Scorecard</span><span class="tblTag ml10">Tableau</span></div></div><div class="tblBox mt10" id="tblBox0"></div></div></section>
+        <section class="col s6 mt10"><div class="cardBox pb5"><div class="cardTitArea"><div class="cardTit"><span class="linkTit">ROI and Growth</span><span class="tblTag ml10">Tableau</span></div></div><div class="tblBox mt10" id="tblBox1"></div></div></section>
+      </div>
+      <div class="row mb0">
+        <section class="col s6 mt10"><div class="cardBox pb5"><div class="cardTitArea"><div class="cardTit"><span class="linkTit">NPI Sales</span><span class="tblTag ml10">Tableau</span></div></div><div class="tblBox mt10" id="tblBox2"></div></div></section>
+        <section class="col s6 mt10"><div class="cardBox pb5"><div class="cardTitArea"><div class="cardTit"><span class="linkTit">Tech Capex</span><span class="tblTag ml10">Tableau</span></div></div><div class="tblBox mt10" id="tblBox3"></div></div></section>
+      </div>
+    </section>
+  </article>
+
+  <!-- ── 드릴다운 모달 — 매트릭스 버블·차트 영역 클릭 → 해당 영역 프로젝트 목록 ── -->
+  <article id="drillModal" class="modal hooModal drillModal">
+    <div class="modal-header mochaBg">
+      <h5 id="drillTit">Projects</h5>
+      <div class="closeBtns modal-close"><i class="material-symbols-outlined">close</i></div>
+    </div>
+    <div class="modal-content" id="drillBody"></div>
+  </article>
+
+  <!-- ── 우측 필터 패널 — 기존 dash statusAside(View Option) 패턴, 3개 차트 실시간 연동 ── -->
+  <aside class="statusAside cardBox glassBox">
+    <section>
+      <div class="asideTit">
+        <div class="dpInlineBlock">View Option</div>
+        <div class="right"><i class="material-icons">close</i></div>
+      </div>
+      <div class="input-field">
+        <select id="fBu">
+          <option value="All" selected>All</option>
+          <option>Coatings</option><option>Electronic Materials</option><option>Healthcare</option><option>Industrial</option>
+          <option>Personal Care</option><option>Specialty Additives</option><option>Tire &amp; Silanes</option><option>Urethane Additives</option>
+        </select>
+        <label>Select Business</label>
+      </div>
+      <div class="input-field mt30">
+        <select id="fSeg">
+          <option value="All" selected>All</option>
+          <option>Automotive</option><option>Construction</option><option>Consumer</option><option>Electronics</option><option>Energy</option>
+          <option>Healthcare</option><option>Industrial</option><option>Personal Care</option><option>Transportation</option>
+        </select>
+        <label>Select Segment</label>
+      </div>
+      <div class="input-field mt30">
+        <select id="fLoc">
+          <option value="All" selected>All</option>
+          <option>DE — Leverkusen</option><option>KR — All Regions</option><option>US — All Regions</option>
+          <option>IN — Bangalore</option><option>JP — Ohta</option><option>CN — Shanghai</option>
+        </select>
+        <label>R&amp;D Location</label>
+      </div>
+      <div class="input-field mt30">
+        <select id="fType">
+          <option value="All" selected>All</option>
+          <option>Standard NPI</option><option>Custom NPI</option><option>NPT</option>
+        </select>
+        <label>Project Type</label>
+      </div>
+      <div class="input-field mt30">
+        <select id="fYear">
+          <option value="All">All</option>
+          <option>2024</option><option>2025</option><option value="2026" selected>2026</option><option>2027</option><option>2028</option>
+        </select>
+        <label>Select Year (Launch)</label>
+      </div>
+      <div class="mt20 ar"><a href="javascript:;" id="fltReset" class="waves-effect waves-light hBtn hGrey"><i class="material-icons left">restart_alt</i><span class="label">Reset</span></a></div>
+    </section>
+
+    <section>
+      <div class="link ac font15">Status Legend</div>
+      <div class="fltLegend mt10">
+        <span class="fltLgItem"><span class="fltDot stAct"></span>Active</span>
+        <span class="fltLgItem"><span class="fltDot stAppr"></span>In Approval</span>
+        <span class="fltLgItem"><span class="fltDot stComp"></span>Complete / On-Time</span>
+        <span class="fltLgItem"><span class="fltDot stHold"></span>On Hold / Delayed</span>
+        <span class="fltLgItem"><span class="fltDot stCanc"></span>Canceled</span>
+        <span class="fltLgItem"><span class="fltDot stSched"></span>Scheduled</span>
+        <span class="fltLgItem"><span class="fltDot stLate"></span>Late-Launch</span>
+        <span class="fltLgItem"><span class="fltDot stTot"></span>Grand Total</span>
+      </div>
+    </section>
+  </aside>
+</body>
+</html>

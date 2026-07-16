@@ -327,8 +327,9 @@ $(function() {
 /* ── 글래스 토스트 (MAPIS 공통) ──────────────────────────────────────────────
    eln_proto_simple 의 ELN.toast 를 공통화한 글래스모피즘 토스트.
    glassToast('메시지', 'info'|'ok'|'warn'|'err'). 색추적(glassTrack)으로 ::before 시머. */
-function glassToast(msg, type) {
+function glassToast(msg, type, ms, cls) {
   type = type || 'info';
+  ms = ms || 2400;   // 표시 시간(ms) — 미지정 시 기존 기본값. cls=추가 클래스(예: pulseGlow)
   var wrap = document.getElementById('glassToastWrap');
   if (!wrap) {
     wrap = document.createElement('div');
@@ -338,7 +339,7 @@ function glassToast(msg, type) {
   }
   var icons = { info: 'info', ok: 'check_circle', warn: 'warning', err: 'error' };
   var t = document.createElement('div');
-  t.className = 'glassToast ' + type;
+  t.className = 'glassToast ' + type + (cls ? ' ' + cls : '');
   var ic = document.createElement('i');
   ic.className = 'material-symbols-outlined';
   ic.textContent = icons[type] || 'info';
@@ -352,5 +353,5 @@ function glassToast(msg, type) {
   setTimeout(function () {
     t.classList.add('fade');
     setTimeout(function () { t.remove(); }, 260);
-  }, 2400);
+  }, ms);
 }
