@@ -2173,6 +2173,7 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
     position: fixed;
 	right: -300px;
     top: 90px;
+    z-index: 5;   /* 컨텐츠(newAppleTab z1 등) 위, 헤더(nav)·모달 아래 */
     width: 300px;
     height: calc(100vh - 90px);
     box-shadow: 0 8px 17px 2px rgba(0, 0, 0, 0.14), 0 3px 14px 2px rgba(0, 0, 0, 0.12), 0 5px 5px -3px rgba(0, 0, 0, 0.2);
@@ -2182,6 +2183,11 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 	justify-content: space-between;
 	border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
+}
+/* 타이틀·탭 라인과 안 겹치게 첫 카드 상단 라인에 맞춘 변형(dash2) — .statusAside.glassBox(top:70px)보다 우선 */
+.statusAside.glassBox.tabClearAside {
+    top: 120px;
+    height: calc(100vh - 140px);
 }
 
 .statusAside .asideTit {
@@ -8089,17 +8095,17 @@ body.roMode #upFileRow{display:none;}
 
 /* ── Insight Dashboard v2 (apis_dash2) — 탭(MAPIS/Tableau) + NPI 매트릭스 + 필터 레전드 ── */
 .dashTabPane{display:none;}
-.dashTabPane.on{display:block;}
+.dashTabPane.on{display:block;padding-bottom:20px;}   /* 마지막 카드 하단 여백 */
 .ht260{height:260px;}
 .acWrap{text-align:center;white-space:nowrap;}
 /* NPI Portfolio 매트릭스 — Tableau 원본의 상태색 버블(원형 카운트) 재현 */
 .npiMx table td{padding-top:6px;padding-bottom:6px;}
 .npiBub{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border-radius:18px;color:#fff;font-family:'Roboto-Medium';font-size:13px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 3px rgba(0,0,0,.12);}
-.npiBub.stAct{background:#66b2c4;}
-.npiBub.stAppr{background:#dd7e88;}
-.npiBub.stComp{background:#7fae6d;}
-.npiBub.stHold{background:#eda14b;}
-.npiBub.stCanc{background:#a8c98a;}
+.npiBub.stAct{background:#7391c9;}
+.npiBub.stAppr{background:#a47864;}
+.npiBub.stComp{background:#899f6a;}
+.npiBub.stHold{background:#e0a83e;}
+.npiBub.stCanc{background:#b0a595;}
 .npiBub.stTot{background:#9e9e9e;}
 .npiMxTotal td{border-top:2px solid #e0d7cb;background:#fbf8f6;}
 .npiMxCnt{font-size:13px;color:#8a7d6e;}
@@ -8114,11 +8120,11 @@ body.roMode #upFileRow{display:none;}
 .fltLegend{display:flex;flex-wrap:wrap;gap:8px 15px;padding:0 10px;}
 .fltLgItem{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:#5a5040;}
 .fltDot{width:12px;height:12px;border-radius:50%;}
-.fltDot.stAct{background:#66b2c4;}
-.fltDot.stAppr{background:#dd7e88;}
-.fltDot.stComp{background:#7fae6d;}
-.fltDot.stHold{background:#eda14b;}
-.fltDot.stCanc{background:#a8c98a;}
+.fltDot.stAct{background:#7391c9;}
+.fltDot.stAppr{background:#a47864;}
+.fltDot.stComp{background:#899f6a;}
+.fltDot.stHold{background:#e0a83e;}
+.fltDot.stCanc{background:#b0a595;}
 .fltDot.stTot{background:#9e9e9e;}
 /* dash2 확장 — 카드 뷰 전환 라디오 + 목록 상태 pill + 런치 도트색 */
 .dashHide{display:none;}
@@ -8128,16 +8134,32 @@ body.roMode #upFileRow{display:none;}
 .dashViewTog label{display:inline-flex;align-items:center;}
 .dashViewTog [type="radio"]+span{font-size:13px;padding-left:30px;line-height:20px;}
 .lchPill{display:inline-flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap;}
-.fltDot.stSched{background:#6a9fd8;}
-.fltDot.stLate{background:#c6c26b;}
+.fltDot.stSched{background:#cac494;}
+.fltDot.stLate{background:#ebc39e;}
 .npiListNote{font-size:13px;color:#9a8f82;text-align:center;padding:10px 0 5px;}
 /* dash2 드릴다운 — 클릭 가능한 매트릭스 버블 + 안내 힌트 + 목록 모달 */
+/* Launch Report — Target Choice(AOP/Current) 라디오: 차트 위 우측 정렬 */
+.lchTgtRow{display:flex;justify-content:flex-end;align-items:center;}
+.lchTgtBox{display:flex;align-items:center;gap:15px;}
+.lchTgtBox .lchTgtTit{font-family:'Roboto-Medium';font-size:13px;color:#8a7d6e;}
+.lchTgtBox label span{font-size:13px;padding-left:25px;}
+
 .npiBub.jsDrill{cursor:pointer;transition:box-shadow .15s ease;}
 .npiBub.jsDrill:hover{box-shadow:0 0 0 3px rgba(164,119,100,.3),inset 0 1px 0 rgba(255,255,255,.35);}
 .npiMxHint{display:flex;align-items:center;gap:4px;color:#9a8f82;margin-top:5px;}
 .npiMxHint i{font-size:16px;color:#cdbfae;}
-.drillModal{width:1150px;max-width:94%;}
+/* 카드 전체화면 토글(dash2) — 카드가 뷰포트를 덮고 차트/테이블 높이 확장 */
+.cardBox.cardFull{position:fixed;inset:20px;z-index:1001;margin:0;overflow-y:auto;
+  box-shadow:0 20px 60px rgba(0,0,0,.28),0 4px 16px rgba(0,0,0,.15);}
+body.cardFullOpen{overflow:hidden;}
+.cardBox.cardFull #chFc, .cardBox.cardFull #chLc{height:calc(100vh - 200px);}
+.cardBox.cardFull .npiMx{max-height:calc(100vh - 170px);overflow-y:auto;}
+
+.drillModal{width:90%;max-width:1500px;}
 .drillModal .drillTbl{max-height:540px;overflow-y:auto;}
+/* 드릴 목록 — 과제 코드/과제명 클릭 = NPI 상세 팝업(SNPI→npdi_pop, CNPI→custom_pop) */
+.drillTbl .drillLink{cursor:pointer;}
+.drillTbl .drillLink:hover{color:#a47864;text-decoration:underline;}
 /* ── techlib 건별 열람신청 모달(reqModal) + 바스켓 정보 요약 카드(bkView) ── */
 .tlReqModal{width:860px;max-width:92%;}
 .tlReqDoc{display:flex;align-items:center;justify-content:space-between;gap:10px;font-size:14px;margin:5px 0 10px;}
@@ -8241,3 +8263,34 @@ body.roMode #upFileRow{display:none;}
 .rlTransItem i{width:16px;font-size:15px;color:#5a7d9a;}
 .rlTransItem:hover{background:rgba(90,125,154,.1);}
 .rlTransItem.on{font-family:'Roboto-Medium';color:#5a7d9a;}
+/* 카드 전체화면 닫기 버튼 — 전체화면일 때만 표시 */
+.cardFullClose{display:none;}
+.cardBox.cardFull .cardFullClose{display:inline-flex;}
+
+/* dash2 검색 모달 — 기존 우측 필터 구성을 2컬럼 모달로 */
+.dashSrchModal{width:640px;max-width:90%;}
+
+/* dash2 반칸 카드 — 타이틀 줄 공간 부족 시 버튼 그룹 줄바꿈 허용 */
+.dashTabPane .cardTitArea{flex-wrap:wrap;row-gap:5px;}
+/* 상단 2카드 — flex 스트레치로 높이 동일 */
+.dashTopRow{display:flex;align-items:stretch;}
+.dashTopRow > .col{display:flex;}
+.dashTopRow .cardBox{width:100%;}
+/* dash2 카드 타이틀 버튼 통일 — 모든 버튼 30px 라인 고정, 아이콘 버튼은 30px 원형 */
+.cardBox .cardTitArea .hBtn{height:30px;line-height:26px;font-size:14px;}
+.cardBox .cardTitArea .hBtn.hIco{width:30px;min-width:30px;padding:0;justify-content:center;}
+.cardBox .cardTitArea .hBtn.hIco i{margin:0;font-size:18px;}
+
+/* 드릴 목록 헤더 정렬 — th 클릭 토글(▲▼) */
+.drillTbl thead th{cursor:pointer;user-select:none;}
+.drillTbl thead th.sortOn{color:#a47864;}
+.drillTbl thead th.sortOn.asc::after{content:' ▲';font-size:10px;}
+.drillTbl thead th.sortOn.desc::after{content:' ▼';font-size:10px;}
+/* dash2 카드 타이틀 — margin-bottom 제거 + flex 센터로 버튼과 세로 정렬 일치.
+   cardTitArea flex 는 .contArea 스코프라 전체화면(body 직속 이동) 시 풀림 — dashCard 에 직접 지정 */
+.dashCard .cardTitArea{display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;row-gap:5px;}
+.dashCard .cardTit{margin-bottom:0;display:flex;align-items:center;}
+
+/* dash2 카드 간격 — 좌우·상하 20px 통일(컬럼 패딩 10 + 10, 행 간은 마크업 mt20) */
+.dashTabPane .row .col{padding:0 10px;}
+.dashCard .lchTgtRow{margin-top:5px;}
