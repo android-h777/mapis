@@ -342,7 +342,7 @@
             </ul>
 				  </div>
           <div><a id="viewOptBtn" class="waves-effect waves-light hBtn hBlue wd160px mr10 modal-trigger" href="#bucketModal"><i class="material-icons left">add</i><span class="label">Create</span></a></div>
-          <div><a href="javascript:;" id="viewOptBtn" class="waves-effect waves-light hBtn viva wd160px"><i class="material-icons left">search</i><span class="label">Search</span></a></div>
+          <div><a href="#pjSrchModal" id="pjSearchBtn" class="waves-effect waves-light hBtn viva wd160px modal-trigger"><i class="material-icons left">search</i><span class="label">Search</span></a></div>
         </div>
       </section>
 
@@ -537,6 +537,87 @@
       </div>
     </div>
   </article>
+  <!-- ── 검색 모달 — 리스트 필터 + 검색조건 저장(이력) ── -->
+  <article id="pjSrchModal" class="modal dashSrchModal">
+    <div class="modal-header mochaBg">
+      <h5><i class="material-icons left">search</i>Search Filters</h5>
+      <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+    </div>
+    <div class="modal-content">
+      <div class="row mb0">
+        <div class="input-field col s6">
+          <div class="aniInput">
+            <input type="text" id="psKw" class="browser-default" placeholder="Project code or name">
+            <span class="focus-border"></span>
+          </div>
+          <label class="active">Keyword</label>
+        </div>
+        <div class="input-field col s6">
+          <select id="psSeg">
+            <option value="All" selected>All</option>
+            <option>Coatings</option><option>Electronic Materials</option><option>Healthcare</option><option>Industrial</option>
+            <option>Personal Care</option><option>Specialty Additives</option><option>Tire &amp; Silanes</option><option>Urethane Additives</option>
+          </select>
+          <label>Segment</label>
+        </div>
+      </div>
+      <div class="row mb0">
+        <div class="input-field col s6">
+          <select id="psStatus">
+            <option value="All" selected>All</option>
+            <option>On Going</option><option>Completed</option>
+          </select>
+          <label>Status</label>
+        </div>
+        <div class="input-field col s6">
+          <select id="psLoc">
+            <option value="All" selected>All</option>
+            <option>Leverkeusen</option><option>Waterford</option><option>Hwaseong</option>
+            <option>Ohta</option><option>Shanghai</option><option>Bangalore</option>
+          </select>
+          <label>R&amp;D Location</label>
+        </div>
+      </div>
+      <div class="dashSaveArea" id="pjSaveArea"></div>
+      <div class="btnArea">
+        <a href="javascript:;" id="psReset" class="waves-effect hBtn hGrey"><i class="material-icons left">restart_alt</i><span class="label">Reset</span></a>
+        <a href="javascript:;" id="psSearch" class="waves-effect waves-light hBtn hBlue ml10"><i class="material-icons left">search</i><span class="label">Search</span></a>
+      </div>
+    </div>
+  </article>
   <article class="bgLayer"></article>
+  <script>
+    // ── 검색 모달 — 리스트 텍스트 필터(목업) + 검색조건 저장(공용 initSavedSearch) ──
+    $(document).ready(function(){
+      $('#pjSrchModal').modal();
+      $('#pjSrchModal select').formSelect({ dropdownOptions: { container: document.body } });
+      function pjCrit(){
+        return { kw:$('#psKw').val(), seg:$('#psSeg').val(), st:$('#psStatus').val(), loc:$('#psLoc').val() };
+      }
+      function pjApply(c){
+        $('#psKw').val(c.kw||''); $('#psSeg').val(c.seg||'All'); $('#psStatus').val(c.st||'All'); $('#psLoc').val(c.loc||'All');
+        $('#pjSrchModal select').formSelect({ dropdownOptions: { container: document.body } });
+      }
+      $(document).on('click', '#psSearch', function(){
+        var c = pjCrit(), kw = $.trim(c.kw).toLowerCase();
+        $('.mainList li').each(function(){
+          var t = $(this).text();
+          var ok = (!kw || t.toLowerCase().indexOf(kw) > -1)
+                && (c.seg==='All' || t.indexOf(c.seg) > -1)
+                && (c.st==='All'  || $.trim($(this).find('.statusBox').text())===c.st)
+                && (c.loc==='All' || t.indexOf(c.loc) > -1);
+          $(this).toggle(ok);
+        });
+        M.Modal.getInstance(document.getElementById('pjSrchModal')).close();
+        if(window.glassToast) glassToast('Filters applied', 'ok');
+      });
+      $(document).on('click', '#psReset', function(){
+        pjApply({});
+        $('.mainList li').show();
+      });
+      initSavedSearch({ key:'savedSearch_npdi', area:'#pjSaveArea', collect:pjCrit, apply:pjApply });
+    });
+  </script>
+
 </body>
 </html>

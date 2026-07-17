@@ -8267,8 +8267,12 @@ body.cardFullOpen{overflow:hidden;}
 .cardFullClose{display:none;}
 .cardBox.cardFull .cardFullClose{display:inline-flex;}
 
-/* dash2 검색 모달 — 기존 우측 필터 구성을 2컬럼 모달로 */
-.dashSrchModal{width:640px;max-width:90%;}
+/* dash2 검색 모달 — 기존 우측 필터 구성을 2컬럼 모달로.
+   overflow visible: 멀티 셀렉트 드롭다운이 모달 박스 밖으로 자연스럽게 넘치도록(잘림 방지).
+   overflow 해제로 헤더가 모달 라운드에 안 깎이므로 헤더에 상단 라디우스 직접 지정 */
+.dashSrchModal{width:640px;max-width:90%;overflow:visible;}
+.dashSrchModal .modal-content{overflow:visible;}
+.dashSrchModal .modal-header{border-top-left-radius:30px;border-top-right-radius:30px;}
 
 /* dash2 반칸 카드 — 타이틀 줄 공간 부족 시 버튼 그룹 줄바꿈 허용 */
 .dashTabPane .cardTitArea{flex-wrap:wrap;row-gap:5px;}
@@ -8294,3 +8298,26 @@ body.cardFullOpen{overflow:hidden;}
 /* dash2 카드 간격 — 좌우·상하 20px 통일(컬럼 패딩 10 + 10, 행 간은 마크업 mt20) */
 .dashTabPane .row .col{padding:0 10px;}
 .dashCard .lchTgtRow{margin-top:5px;}
+/* dash2 검색조건 저장 — 이름 붙여 이력 누적, 칩 클릭=불러오기, x=삭제 */
+.dashSaveArea{margin-top:15px;padding-top:15px;border-top:1px dashed #e0d5c8;}
+.dashSaveTit{font-family:'Roboto-Medium';font-size:13px;color:#8a7d6e;display:flex;align-items:center;gap:5px;margin-bottom:10px;}
+.dashSaveTit i{font-size:16px;color:#a47864;}
+.dashSaveList{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.dashSaveChip{display:inline-flex;align-items:center;gap:5px;padding:0 10px;height:26px;border:1px solid #c9b8a6;border-radius:13px;font-size:13px;color:#6b5d4f;background:#faf6f0;cursor:pointer;transition:background .15s;}
+.dashSaveChip:hover{background:#f1e9df;}
+.dashSaveChip i{font-size:14px;color:#a47864;}
+.dashSaveChip .jsSaveDel{color:#b0a595;}
+.dashSaveChip .jsSaveDel:hover{color:#bb2649;}
+.dashSaveEmpty{font-size:13px;color:#b0a595;}
+.dashSaveNew{display:flex;gap:10px;align-items:center;}
+.dashSaveNew input.browser-default{flex:1;height:30px;border:1px solid #d5c8b8;border-radius:8px;padding:0 10px;font-size:13px;background:#fff;}
+/* 포트폴리오 매트릭스 — Portfolio Filter 차원 컬럼 버블 팔레트(웜톤 인덱스 순환) */
+.npiBub.pfC1{background:#b0a595;}
+.npiBub.pfC2{background:#cac494;}
+.npiBub.pfC3{background:#b5cba8;}
+.npiBub.pfC4{background:#899f6a;}
+.npiBub.pfC5{background:#94a9cf;}
+.npiBub.pfC6{background:#8a7d6e;}
+/* 검색 모달 텍스트 입력(aniInput) — 셀렉트 라인과 높이·정렬 통일 */
+.dashSrchModal .input-field .aniInput{margin-top:10px;}
+.dashSrchModal .input-field .aniInput .browser-default{width:100%;height:25px;line-height:25px;font-size:14px;}

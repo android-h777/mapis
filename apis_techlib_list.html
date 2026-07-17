@@ -665,10 +665,8 @@
           }
           $(document).on('click', '#scSearch', function(){ runSearch(collectCrit()); });
 
-          // ── 검색 조건 저장 (단일 슬롯, localStorage) — Save Search로 저장, 다음 방문 시 폼에 자동 복원 ──
-          var SAVED_KEY = 'tlSavedSearch';
-          try{ localStorage.removeItem('tlSavedSearches'); }catch(e){}   // 구버전(다중 목록) 키 정리
-          // 저장 조건 → 폼 반영
+          // ── 검색 조건 저장 — 이름 붙여 이력 누적(공용 initSavedSearch), 칩 클릭=폼 복원 ──
+          try{ localStorage.removeItem('tlSavedSearch'); }catch(e){}   // 구버전(단일 슬롯) 키 정리
           function applyCrit(c){
             $("#scDoc").val(c.doc||''); $("#scAuthor").val(c.author||'');
             $('#techlibSrchModal input[type="checkbox"]').prop('checked', false);
@@ -678,15 +676,7 @@
             $("#scSort").val(c.sort||'new'); $("#scDate").val(c.date||'all');
             $('#techlibSrchModal select').formSelect({ dropdownOptions: { container: document.body } });
           }
-          $(document).on('click', '#scSaveBtn', function(){
-            try{ localStorage.setItem(SAVED_KEY, JSON.stringify(collectCrit())); }catch(e){}
-            tlToast({html:'Search conditions saved — they will be restored next time.', type:'ok'});
-          });
-          // 저장된 조건이 있으면 폼에 복원(검색 실행은 사용자가 Search로)
-          try{
-            var _sv = JSON.parse(localStorage.getItem(SAVED_KEY));
-            if(_sv) applyCrit(_sv);
-          }catch(e){}
+          initSavedSearch({ key:'savedSearch_techlib', area:'#tlSaveArea', collect:collectCrit, apply:applyCrit });
           // 초기화(폼 리셋)
           $(document).on('click', '#scReset', function(){
             $("#scDoc,#scAuthor").val('');
@@ -1105,8 +1095,8 @@
           <div class="col s4"><select id="scDate"><option value="all">Any time</option><option value="y2">2024 – now</option><option value="y1">2018 – 2022</option><option value="y0">Before 2018</option></select></div>
         </div>
       </div>
+      <div class="dashSaveArea" id="tlSaveArea"></div>
       <div class="btnArea tlSrchBtns">
-        <a href="javascript:;" class="waves-effect waves-light hBtn hBlue" id="scSaveBtn"><i class="material-icons left">bookmark_add</i><span class="label">Save Search</span></a>
         <a href="javascript:;" class="waves-effect hBtn hGrey wd100px" id="scReset"><i class="material-icons left">refresh</i><span class="label">Reset</span></a>
         <a href="javascript:;" class="waves-effect waves-light hBtn hViva wd100px ml10" id="scSearch"><i class="material-icons left">search</i><span class="label">Search</span></a>
       </div>
