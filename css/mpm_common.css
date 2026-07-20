@@ -8325,3 +8325,24 @@ a.elnSumLink:hover .lt{color:#004098;text-decoration:underline;}
 .elnNbPanel .elnNbItem .ct{min-width:22px;height:18px;line-height:18px;text-align:center;padding:0 7px;border-radius:9px;background:rgba(164,120,100,.1);color:#8a7160;}
 .elnNbPanel .elnNbItem.on .ct{background:#a47864;color:#fff;}
 .elnNbPanel .elnNbUnfiled .ct{background:rgba(179,165,150,.15);color:#a3968a;}
+/* techlib 검색 — 결과내 재검색 체크(버튼 줄 좌측 분리) */
+.tlSrchBtns .tlWithinChk{margin-right:auto;display:flex;align-items:center;}
+.tlSrchBtns .tlWithinChk [type="checkbox"]+span{padding-left:25px;height:20px;line-height:20px;font-size:13px;}
+/* techlib 검색 — 결과내 재검색 누적 조건 칩(모달 상단) */
+.tlSrchStack{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-bottom:15px;padding:10px;border:1px dashed #d9cfc2;border-radius:10px;background:rgba(164,120,100,.05);}
+.tlSrchStack .tlStackLead{display:flex;align-items:center;gap:4px;font-family:'Roboto-Medium';font-size:13px;color:#8a7160;margin-right:5px;}
+.tlSrchStack .tlStackLead i{font-size:16px;color:#a47864;}
+.tlStackChip{display:inline-flex;align-items:center;gap:5px;padding:0 10px;height:24px;border:1px solid #c9b8a6;border-radius:12px;font-size:13px;color:#6b5d4f;background:#fff;}
+.tlStackChip .jsStackDel{font-size:14px;color:#b0a595;cursor:pointer;}
+.tlStackChip .jsStackDel:hover{color:#bb2649;}
+/* 저장 검색 칩 — 선택(불러온) 상태 = 모카 채움. 무명 Save 시 이 건이 갱신됨 */
+.dashSaveChip.on{background:#a47864;border-color:#a47864;color:#fff;}
+.dashSaveChip.on i{color:#fff;}
+.dashSaveChip.on .jsSaveDel{color:rgba(255,255,255,.7);}
+.dashSaveChip.on .jsSaveDel:hover{color:#fff;}
+/* techlib 리스트 — 검색어 매치 횟수 칩(날짜 앞) */
+/* techlib 행 하단줄 — 칩·매치칩·날짜 세로 중앙 정렬 */
+.typeList .mainList li .subInfo:has(> .techlibRowDate){align-items:center;height:auto;}
+.techlibRowDate{display:inline-flex;align-items:center;}
+.tlMatchCnt{display:inline-flex;align-items:center;gap:2px;height:18px;line-height:18px;padding:0 8px;margin-right:8px;border-radius:9px;background:rgba(164,120,100,.12);color:#8a7160;font-size:11px;font-family:'Roboto-Medium';}
+.tlMatchCnt i{font-size:12px;color:#a47864;}

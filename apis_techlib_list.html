@@ -650,13 +650,15 @@
           function scChecked(sel){ return $(sel+' input:checked').map(function(){ return this.value; }).get(); }
           // 현재 폼 → 검색 조건 객체 (Search 실행·저장 공용)
           function collectCrit(){
-            return { doc:$("#scDoc").val().trim(), author:$("#scAuthor").val().trim(),
+            return { doc:$("#scDoc").val().trim(),
               type:scChecked('#scTypeChk'), idx:scChecked('#scIdxChk'), cls:scChecked('#scClsChk'), bu:scChecked('#scBuChk'),
               date:$("#scDate").val(), sort:$("#scSort").val() };
           }
           // 검색 실행(공용) — 리스트 필터 + 첫 행 선택 + 모달 닫기
           function runSearch(crit){
-            srchCrit = crit;
+            srchCrit = crit;   // 누적 푸시는 '결과내 재검색' 체크 시점에 수행(아래 change 핸들러)
+            $('#scWithin').prop('checked', false);   // 다음 단계는 다시 체크해서 진행(2단계·3단계 …)
+            renderSrchStack();
             fnRenderList();
             var f=$(".mainList li:not(.tlNoRes)").first();
             $(".mainList li").removeClass('on');
@@ -668,7 +670,7 @@
           // ── 검색 조건 저장 — 이름 붙여 이력 누적(공용 initSavedSearch), 칩 클릭=폼 복원 ──
           try{ localStorage.removeItem('tlSavedSearch'); }catch(e){}   // 구버전(단일 슬롯) 키 정리
           function applyCrit(c){
-            $("#scDoc").val(c.doc||''); $("#scAuthor").val(c.author||'');
+            $("#scDoc").val(c.doc||'');
             $('#techlibSrchModal input[type="checkbox"]').prop('checked', false);
             [['#scTypeChk', c.type], ['#scIdxChk', c.idx], ['#scClsChk', c.cls], ['#scBuChk', c.bu]].forEach(function(g){
               (g[1]||[]).forEach(function(v){ $(g[0]+' input[value="'+v+'"]').prop('checked', true); });
@@ -678,8 +680,45 @@
           }
           initSavedSearch({ key:'savedSearch_techlib', area:'#tlSaveArea', collect:collectCrit, apply:applyCrit });
           // 초기화(폼 리셋)
+          // '결과내 재검색' 체크 = 그 순간 현재 검색어가 누적 칩으로 이동 + 폼 비움(다음 조건 입력).
+          // 해제 = 마지막 누적을 되돌려 폼에 복원. 검색 실행 시 체크는 자동 해제 → 2단계·3단계 연속 누적
+          function emptyCrit(){ return { doc:'', type:[], idx:[], cls:[], bu:[], date:'all', sort:srchCrit.sort||'new' }; }
+          function clearSrchForm(){
+            $("#scDoc").val('');
+            $('#techlibSrchModal input[type="checkbox"]').not('#scWithin').prop('checked', false);
+            $("#scDate").val('all');
+            $('#techlibSrchModal select').formSelect({ dropdownOptions: { container: document.body } });
+          }
+          $(document).on('change', '#scWithin', function(){
+            if(this.checked){
+              if(critLabel(srchCrit) === 'All'){   // 검색한 게 없으면 누적할 것도 없음
+                this.checked = false;
+                tlToast({html:'Run a search first — then narrow it down within the results.', type:'info'});
+                return;
+              }
+              srchStack.push(srchCrit);
+              srchCrit = emptyCrit();
+              clearSrchForm();
+            } else if(srchStack.length){
+              srchCrit = srchStack.pop();   // 체크 취소 — 마지막 누적을 현재 조건으로 복원
+              applyCrit(srchCrit);
+            }
+            renderSrchStack();
+          });
+          // 누적 칩 x — 그 단계 조건만 해제하고 리스트 즉시 재필터(모달 유지)
+          $(document).on('click', '.jsStackDel', function(){
+            srchStack.splice(+$(this).attr('data-i'), 1);
+            renderSrchStack();
+            fnRenderList();
+            var f = $(".mainList li:not(.tlNoRes)").first();
+            $(".mainList li").removeClass('on');
+            if(f.length){ f.addClass('on'); fnSetSummary(f.attr('data-id')); }
+          });
           $(document).on('click', '#scReset', function(){
-            $("#scDoc,#scAuthor").val('');
+            srchStack = [];
+            renderSrchStack();
+            $('#scWithin').prop('checked', false);
+            $("#scDoc").val('');
             $('#techlibSrchModal input[type="checkbox"]').prop('checked', false);
             $("#scSort,#scDate").each(function(){ this.selectedIndex=0; });
             $('#techlibSrchModal select').formSelect({ dropdownOptions: { container: document.body } });
@@ -701,14 +740,17 @@
         });
 
         // ── 검색 (apis_item_list bucketModal 패턴 — 모달 폼 Search로 리스트 필터) ──
-        var srchCrit = { doc:'', author:'', type:[], idx:[], cls:[], bu:[], date:'all', sort:'new' };
+        var srchCrit = { doc:'', type:[], idx:[], cls:[], bu:[], date:'all', sort:'new' };
         function uniq(arr){ var s={},o=[]; arr.forEach(function(v){ if(v!=null&&!s[v]){s[v]=1;o.push(v);} }); return o; }
         function passDate(r,d){ if(d==='all')return true; var y=+(String(r.date||'').slice(0,4)); if(d==='y2')return y>=2024; if(d==='y1')return y>=2018&&y<=2023; if(d==='y0')return y<2018; return true; }
         function inSel(arr,v){ return !arr || !arr.length || arr.indexOf(String(v))>=0; }   // 미선택=전체
-        function passSearch(r){
-          var c=srchCrit;
-          if(c.doc && (r.code+' '+r.title).toLowerCase().indexOf(c.doc.toLowerCase())<0) return false;
-          if(c.author && String(r.author).toLowerCase().indexOf(c.author.toLowerCase())<0) return false;
+        var srchStack = [];   // 결과내 재검색 — 이전 검색 조건 누적(AND)
+        function matchCrit(r, c){
+          if(c.doc){
+            // Keyword = 코드 + 제목 + 작성자 + 문서 내용(초록) 통합 검색
+            var hay = (r.code+' '+r.title+' '+String(r.author||'')+' '+(summaryOf(r.code) || genAbstract(r))).toLowerCase();
+            if(hay.indexOf(c.doc.toLowerCase()) < 0) return false;
+          }
           if(!inSel(c.type, r.type)) return false;
           if(!inSel(c.idx, r.idx)) return false;
           if(!inSel(c.cls, r.cls)) return false;
@@ -716,10 +758,70 @@
           if(!passDate(r,c.date)) return false;
           return true;
         }
+        function passSearch(r){
+          for(var i=0; i<srchStack.length; i++){ if(!matchCrit(r, srchStack[i])) return false; }
+          return matchCrit(r, srchCrit);
+        }
+        // 리스트 표시용 — 활성 키워드(누적 단계 포함)의 '첨부 문서 본문' 등장 횟수(목업).
+        // 메타(코드·제목·작성자·초록) 매치 수를 씨앗으로 본문 전체 스케일로 증폭 — 문서·키워드별 결정적(해시)
+        function matchCount(r){
+          var kws = srchStack.concat([srchCrit]).map(function(c){ return (c.doc||'').toLowerCase(); }).filter(Boolean);
+          if(!kws.length) return 0;
+          var hay = (r.code+' '+r.title+' '+String(r.author||'')+' '+(summaryOf(r.code) || genAbstract(r))).toLowerCase();
+          var n = 0;
+          kws.forEach(function(k){
+            var real = 0, i = 0;
+            while((i = hay.indexOf(k, i)) > -1){ real++; i += k.length; }
+            if(!real) return;
+            var h = 0, str = r.code + k;
+            for(var j = 0; j < str.length; j++) h = (h * 31 + str.charCodeAt(j)) >>> 0;
+            n += real * (6 + h % 14) + (h % 9);   // 메타 1~2회 → 본문 기준 대략 6~40회대
+          });
+          return n;
+        }
+        // 누적 조건 한 줄 요약(칩 라벨)
+        function critLabel(c){
+          var p = [];
+          if(c.doc) p.push('“'+c.doc+'”');
+          if(c.type && c.type.length) p.push('Type '+c.type.join('/'));
+          if(c.idx && c.idx.length) p.push('Region '+c.idx.join('/'));
+          if(c.cls && c.cls.length) p.push('Class '+c.cls.join('/'));
+          if(c.bu && c.bu.length) p.push(c.bu.join('/'));
+          if(c.date && c.date !== 'all') p.push({y2:'2024+', y1:'2018–23', y0:'~2017'}[c.date] || c.date);
+          return p.join(' · ') || 'All';
+        }
+        // 모달 상단 누적 칩 렌더 — "Within results of" + 단계별 칩(x=해제)
+        var _stackPrevLen = 0;   // 등장 애니메이션 판단용(행 표시 전환·새 칩)
+        function renderSrchStack(){
+          var row = document.getElementById('scStackRow'); if(!row) return;
+          if(!srchStack.length){ row.classList.add('tlHidden'); row.innerHTML=''; _stackPrevLen = 0; return; }
+          var wasHidden = row.classList.contains('tlHidden');
+          row.classList.remove('tlHidden');
+          row.innerHTML = '<span class="tlStackLead"><i class="material-icons">filter_alt</i>Within results of</span>'
+            + srchStack.map(function(c, i){
+                return '<span class="tlStackChip">'+(i+1)+'. '+critLabel(c)
+                  + '<i class="material-icons jsStackDel" data-i="'+i+'">close</i></span>';
+              }).join('');
+          if(wasHidden){   // 줄 자체 등장 — fadeInDown
+            row.classList.remove('animate__animated','animate__fadeInDown','animate__faster');
+            void row.offsetWidth;
+            row.classList.add('animate__animated','animate__fadeInDown','animate__faster');
+          }
+          if(srchStack.length > _stackPrevLen){   // 새로 추가된 칩 — "뿅" 팝
+            var chips = row.querySelectorAll('.tlStackChip');
+            var last = chips[chips.length - 1];
+            if(last) last.classList.add('tlPopAnim');
+          }
+          _stackPrevLen = srchStack.length;
+        }
         function sortReports(arr){
           var k=srchCrit.sort;
           return arr.slice().sort(function(a,b){
             if(k==='hits') return (b.hits||0)-(a.hits||0);
+            if(k==='match'){   // 검색어 매치 횟수 내림차순(동률=최신순). 키워드 없으면 전부 0 → 최신순과 동일
+              var d = matchCount(b) - matchCount(a);
+              return d !== 0 ? d : String(b.date||'').localeCompare(String(a.date||''));
+            }
             if(k==='old')  return String(a.date||'').localeCompare(String(b.date||''));
             if(k==='az')   return String(a.title).localeCompare(String(b.title));
             return String(b.date||'').localeCompare(String(a.date||''));   // new(기본)
@@ -762,7 +864,9 @@
                  +        '<div class="roundBox contVal1">'+r.type+'</div>'
                  +        '<div class="roundBox contVal2">'+idxName(r.idx)+'</div>'
                  +        '<div class="roundBox contVal3">'+r.author+'</div>'
-                 +      '</div><span class="techlibRowDate">'+fmtDate(r.date)+'</span></div>'
+                 +      '</div><span class="techlibRowDate">'
+                 +        (function(){ var mc = matchCount(r); return mc ? '<span class="tlMatchCnt" data-tip="Keyword matches in this document" data-tip-pos="bottom"><i class="material-icons">search</i>'+mc+'</span>' : ''; })()
+                 +        fmtDate(r.date)+'</span></div>'
                  +    '</section>'
                  +  '</li>';
           });
@@ -1060,12 +1164,12 @@
       <div class="closeBtns modal-close"><i class="material-icons">close</i></div>
     </div>
     <div class="modal-content">
+      <!-- 결과내 재검색 누적 조건 — 단계별 칩(x=해당 단계 해제) -->
+      <div class="tlSrchStack tlHidden" id="scStackRow"></div>
       <div class="srchOptBox">
         <div class="row">
-          <div class="col s2 tit">Document</div>
-          <div class="col s4"><div class="aniInput"><input type="text" class="browser-default" id="scDoc" placeholder="Code or title"><span class="focus-border"></span></div></div>
-          <div class="col s2 tit">Author</div>
-          <div class="col s4"><div class="aniInput"><input type="text" class="browser-default" id="scAuthor"><span class="focus-border"></span></div></div>
+          <div class="col s2 tit">Keyword</div>
+          <div class="col s10"><div class="aniInput"><input type="text" class="browser-default" id="scDoc" placeholder="Title, code, author or contents"><span class="focus-border"></span></div></div>
         </div>
         <div class="row">
           <div class="col s2 tit">Type</div>
@@ -1090,13 +1194,14 @@
         </div>
         <div class="row">
           <div class="col s2 tit">Sort</div>
-          <div class="col s4"><select id="scSort"><option value="new">Newest</option><option value="old">Oldest</option><option value="hits">Most viewed</option><option value="az">Title (A–Z)</option></select></div>
+          <div class="col s4"><select id="scSort"><option value="new">Newest</option><option value="old">Oldest</option><option value="hits">Most viewed</option><option value="match">Keyword matches</option><option value="az">Title (A–Z)</option></select></div>
           <div class="col s2 tit">Period</div>
           <div class="col s4"><select id="scDate"><option value="all">Any time</option><option value="y2">2024 – now</option><option value="y1">2018 – 2022</option><option value="y0">Before 2018</option></select></div>
         </div>
       </div>
       <div class="dashSaveArea" id="tlSaveArea"></div>
       <div class="btnArea tlSrchBtns">
+        <label class="tlChk tlWithinChk"><input type="checkbox" class="filled-in" id="scWithin"/><span>Search within results</span></label>
         <a href="javascript:;" class="waves-effect hBtn hGrey wd100px" id="scReset"><i class="material-icons left">refresh</i><span class="label">Reset</span></a>
         <a href="javascript:;" class="waves-effect waves-light hBtn hViva wd100px ml10" id="scSearch"><i class="material-icons left">search</i><span class="label">Search</span></a>
       </div>

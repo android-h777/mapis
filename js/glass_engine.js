@@ -368,33 +368,42 @@ window.initSavedSearch = function(opts){
     + '<a href="javascript:;" class="waves-effect hBtn jsSaveAdd"><i class="material-icons left">add</i><span class="label">Save</span></a></div>');
   function all(){ try{ return JSON.parse(localStorage.getItem(opts.key)||'[]'); }catch(e){ return []; } }
   function store(l){ localStorage.setItem(opts.key, JSON.stringify(l)); }
+  var activeName = null;   // 불러온(선택된) 저장 건 — 무명 Save 시 이 건을 갱신
   function render(){
     var list = all();
     $area.find('.dashSaveList').html(list.length ? list.map(function(x){
-      return '<span class="dashSaveChip" data-name="'+x.name+'" title="Saved '+(x.date||'')+'"><i class="material-icons">history</i>'+x.name
+      return '<span class="dashSaveChip'+(x.name===activeName?' on':'')+'" data-name="'+x.name+'" title="Saved '+(x.date||'')+'"><i class="material-icons">history</i>'+x.name
            + '<i class="material-icons jsSaveDel" data-name="'+x.name+'">close</i></span>';
     }).join('') : '<span class="dashSaveEmpty">No saved searches yet &mdash; set options and save with a name.</span>');
   }
   $area.on('click', '.jsSaveAdd', function(){
     var name = $.trim($area.find('.jsSaveName').val()).replace(/[<>"']/g, '');
     if(!name){ if(window.glassToast) glassToast('Enter a name for this search.', 'info'); $area.find('.jsSaveName').focus(); return; }
-    var list = all().filter(function(x){ return x.name !== name; });   // 동명 덮어쓰기
+    var existed = all().some(function(x){ return x.name === name; });
+    var list = all().filter(function(x){ return x.name !== name; });   // 동명 = 갱신(덮어쓰기)
     list.push({ name:name, crit:opts.collect(), date:new Date().toISOString().slice(0,10) });
     store(list);
-    $area.find('.jsSaveName').val('');
+    activeName = name;   // 저장 건 선택 상태 + 이름 유지 — 계속 수정하면 갱신, 이름 바꾸면 신규
     render();
-    if(window.glassToast) glassToast('Search saved — "'+name+'"', 'ok');
+    if(window.glassToast) glassToast((existed ? 'Updated — "' : 'Search saved — "')+name+'"', 'ok');
   });
   $area.on('click', '.dashSaveChip', function(e){
     if($(e.target).hasClass('jsSaveDel')) return;
     var name = $(this).attr('data-name');
     var it = all().filter(function(x){ return x.name===name; })[0];
-    if(it){ opts.apply(it.crit); if(window.glassToast) glassToast('Loaded — "'+name+'". Press Search to apply.', 'info'); }
+    if(it){
+      opts.apply(it.crit);
+      activeName = name;
+      $area.find('.jsSaveName').val(name);   // 저장 타이틀 자동 입력 — 그대로 Save=갱신, 수정 후 Save=신규
+      render();
+      if(window.glassToast) glassToast('Loaded — "'+name+'". Press Search to apply.', 'info');
+    }
   });
   $area.on('click', '.jsSaveDel', function(e){
     e.stopPropagation();
     var name = $(this).attr('data-name');
     store(all().filter(function(x){ return x.name !== name; }));
+    if(name === activeName){ activeName = null; if($.trim($area.find('.jsSaveName').val()) === name) $area.find('.jsSaveName').val(''); }
     render();
     if(window.glassToast) glassToast('Deleted — "'+name+'"', 'info');
   });
