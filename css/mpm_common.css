@@ -8321,3 +8321,11 @@ body.cardFullOpen{overflow:hidden;}
 /* 검색 모달 텍스트 입력(aniInput) — 셀렉트 라인과 높이·정렬 통일 */
 .dashSrchModal .input-field .aniInput{margin-top:10px;}
 .dashSrchModal .input-field .aniInput .browser-default{width:100%;height:25px;line-height:25px;font-size:14px;}
+
+/* Composition Compare 모달 — 90% 폭 + 본문 스크롤(전역 .modal overflow:hidden 으로 인한 하단 잘림 방지) */
+.cmpModal{width:90%;max-width:1500px;}
+.cmpModal .modal-content{max-height:calc(80vh - 90px);overflow-y:auto;}
+/* 패널 타이틀 줄 — 타이틀이 길어도 버튼이 눌려 깨지지 않게(타이틀만 줄바꿈, 버튼은 고정 폭) */
+.cmpModal .cardSubTitArea{gap:10px;}
+.cmpModal .cardSubTitArea .cardSubTit{flex:1;min-width:0;}
+.cmpModal .cardSubTitArea .hBtn{white-space:nowrap;flex:0 0 auto;}

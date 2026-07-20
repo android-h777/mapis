@@ -1728,12 +1728,12 @@
 	<!-- ── Composition Compare Modal (Materialize · npdi 패턴) — Reference(Read Only) vs Target(작성) ──
 	     비교 대상 3종: ①같은 Item의 이전 Ver/다른 Variant ②Sub-type 간(INPUT/ITEM/LEGAL) ③다른 Item(유사 추천+수동 조회).
 	     양쪽 각각 Item → Variant/Ver → Sub-type 3단 선택, 패널 타이틀에 식별 정보 표시 -->
-	<article id="cmpModal" class="modal" style="width:90%;">
+	<article id="cmpModal" class="modal cmpModal">
 		<div class="modal-header mochaBg">
 			<h5>Composition Compare</h5>
 			<div class="closeBtns modal-close"><i class="material-symbols-outlined">close</i></div>
 		</div>
-		<div class="modal-content">
+		<div class="modal-content hScroll">
 			<div class="row mb0">
 				<!-- Reference 선택 — Item 퀵서치(유사 추천 칩) + Variant/Ver + Sub-type -->
 				<div class="col s6">
