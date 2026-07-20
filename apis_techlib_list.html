@@ -678,7 +678,16 @@
             $("#scSort").val(c.sort||'new'); $("#scDate").val(c.date||'all');
             $('#techlibSrchModal select').formSelect({ dropdownOptions: { container: document.body } });
           }
-          initSavedSearch({ key:'savedSearch_techlib', area:'#tlSaveArea', collect:collectCrit, apply:applyCrit });
+          // 저장 = 폼 조건 + 결과내 재검색 누적 스택까지 통째로. 불러오면 스택·칩까지 복원
+          function collectSaved(){ return { crit: collectCrit(), stack: srchStack.slice() }; }
+          function applySaved(sv){
+            var crit = (sv && sv.crit) ? sv.crit : sv;   // 구버전(폼만 저장) 하위호환
+            srchStack = (sv && sv.stack) ? sv.stack.slice() : [];
+            $('#scWithin').prop('checked', false);
+            renderSrchStack();
+            applyCrit(crit || {});
+          }
+          initSavedSearch({ key:'savedSearch_techlib', area:'#tlSaveArea', collect:collectSaved, apply:applySaved });
           // 초기화(폼 리셋)
           // '결과내 재검색' 체크 = 그 순간 현재 검색어가 누적 칩으로 이동 + 폼 비움(다음 조건 입력).
           // 해제 = 마지막 누적을 되돌려 폼에 복원. 검색 실행 시 체크는 자동 해제 → 2단계·3단계 연속 누적
@@ -779,6 +788,15 @@
           });
           return n;
         }
+        // 문서 내 키워드 비중(%) — 본문 등장 횟수 ÷ 문서 총 단어수(코드별 결정적 목업 1,500~6,000어) × 100
+        function matchScore(r){
+          var n = matchCount(r);
+          if(!n) return 0;
+          var h = 0, c = String(r.code);
+          for(var j = 0; j < c.length; j++) h = (h * 31 + c.charCodeAt(j)) >>> 0;
+          var words = 1500 + (h % 4500);
+          return Math.min(9.9, n / words * 100);
+        }
         // 누적 조건 한 줄 요약(칩 라벨)
         function critLabel(c){
           var p = [];
@@ -818,8 +836,8 @@
           var k=srchCrit.sort;
           return arr.slice().sort(function(a,b){
             if(k==='hits') return (b.hits||0)-(a.hits||0);
-            if(k==='match'){   // 검색어 매치 횟수 내림차순(동률=최신순). 키워드 없으면 전부 0 → 최신순과 동일
-              var d = matchCount(b) - matchCount(a);
+            if(k==='match'){   // 검색어 비중(%) 내림차순(동률=최신순). 키워드 없으면 전부 0 → 최신순과 동일
+              var d = matchScore(b) - matchScore(a);
               return d !== 0 ? d : String(b.date||'').localeCompare(String(a.date||''));
             }
             if(k==='old')  return String(a.date||'').localeCompare(String(b.date||''));
@@ -865,7 +883,7 @@
                  +        '<div class="roundBox contVal2">'+idxName(r.idx)+'</div>'
                  +        '<div class="roundBox contVal3">'+r.author+'</div>'
                  +      '</div><span class="techlibRowDate">'
-                 +        (function(){ var mc = matchCount(r); return mc ? '<span class="tlMatchCnt" data-tip="Keyword matches in this document" data-tip-pos="bottom"><i class="material-icons">search</i>'+mc+'</span>' : ''; })()
+                 +        (function(){ var ms = matchScore(r); return ms ? '<span class="tlMatchCnt" data-tip="Keyword share of the document text" data-tip-pos="bottom"><i class="material-icons">search</i>'+ms.toFixed(1)+'%</span>' : ''; })()
                  +        fmtDate(r.date)+'</span></div>'
                  +    '</section>'
                  +  '</li>';
@@ -1194,7 +1212,7 @@
         </div>
         <div class="row">
           <div class="col s2 tit">Sort</div>
-          <div class="col s4"><select id="scSort"><option value="new">Newest</option><option value="old">Oldest</option><option value="hits">Most viewed</option><option value="match">Keyword matches</option><option value="az">Title (A–Z)</option></select></div>
+          <div class="col s4"><select id="scSort"><option value="new">Newest</option><option value="old">Oldest</option><option value="hits">Most viewed</option><option value="match">Keyword relevance</option><option value="az">Title (A–Z)</option></select></div>
           <div class="col s2 tit">Period</div>
           <div class="col s4"><select id="scDate"><option value="all">Any time</option><option value="y2">2024 – now</option><option value="y1">2018 – 2022</option><option value="y0">Before 2018</option></select></div>
         </div>
