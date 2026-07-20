@@ -4,85 +4,94 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>MAPIS Lab Note</title>
-	<link rel="preload" href="mapis_lib/font/material-symbols-outlined.woff2" as="font" type="font/woff2">
-	<link rel="preload" href="mapis_lib/font/material-symbols-rounded.woff2" as="font" type="font/woff2">
-	<link rel="preload" href="mapis_lib/font/material-symbols-sharp.woff2" as="font" type="font/woff2">
-	<link rel="preload" href="mapis_lib/font/material-icons.woff2" as="font" type="font/woff2">
-	<link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/mpm_materialize.css">
-    <link rel="stylesheet" type="text/css" href="mapis_lib/css/common.css">
-    <link type="text/css" rel="stylesheet" href="mapis_lib/css/lib/animate.min.css">
+    <title>APIS MPM</title>
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="css/animate.min.css">
+    <link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/apis_util.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/glass_engine.js"></script>
 
-    <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-3.7.1.js"></script>
-	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-ui-1.14.1.js"></script>
-    <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/mpm_materialize.js"></script>
-	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/apis_util.js"></script>
-	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/glass_engine.js"></script>
-
+    <!-- ELN 전용 자원(로컬) — 스택 무관 self-contained -->
     <link rel="stylesheet" type="text/css" href="css/eln_proto.css">
     <script defer src="js/eln_proto.js"></script>
 </head>
 <body>
 	<!-- 공통 헤더(navbar-fixed) — 실제 운영에서 header.html이 들어오는 자리. apis_npdi_list 구조 차용 -->
-	<header class="navbar-fixed">
-		<nav>
-			<article class="navTop">
-				<section class="leftSection">
-					<div class="menuIcon">
-						<div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
-					</div>
-					<div><a href="apis_main.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
-				</section>
-				<section class="centerSection">
-					<div class="srchArea">
-						<i class="material-icons prefix">search</i>
-						<input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput" autocomplete="off">
-					</div>
-				</section>
-				<section class="rightSection">
-					<div class="userInfo">
-						<div class="mr10"><span class="mocha25-text fontM">J.P. KIM</span></div>
-						<i class="material-icons mocha25-text fLine vCenter hCenter mg0">person</i>
-					</div>
-				</section>
-			</article>
-		</nav>
-	</header>
+  <header class="navbar-fixed">
+    <nav>
+      <article class="navTop">
+        <section class="leftSection">
+          <div class="menuIcon">
+            <div data-target="slide-out" class="sidenav-trigger"><i class="material-icons">menu</i></div>
+          </div>
+          <div><a href="apis_main.html"><img src="img/MAPISLogo_h30.png" class="ml20" style="height: 30px;"></a></div>
+        </section>
+        <section class="centerSection">
+          <div class="srchArea">
+            <i class="material-icons prefix">search</i>
+            <input type="text" class="browser-default" placeholder="Search" value="" id="mainSrchInput">
+          </div>
+        </section>
+        <section class="rightSection">
+          <div class="userInfo">
+            <div class="mr10"><span class="mocha25-text fontM">JONGHO LEE</span></div>
+            <i class="material-icons gardenia25 mocha25-text fLine vCenter hCenter mg0">person</i>
+          </div>
+          <div class="langInfo ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">language</i>
+          </div>
+          <div class="notiArea ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">assignment_turned_in</i>
+            <div class="notiCnt pulse"><span class="font11">3</span></div>
+          </div>
+          <div class="notiArea ml10">
+            <i class="material-icons mocha25-text fLine vCenter hCenter mg0">format_list_bulleted</i>
+            <div class="notiCnt pulse"><span class="font11">6</span></div>
+          </div>
+        </section>
+      </article>
+    </nav>
+  </header>
 
 	<!-- 사이드 메뉴(sidenav) — 햄버거로 열림. ELN 네비 + MAPIS 모듈 -->
-	<aside class="menuAside">
-		<div id="slide-out" class="sidenav glassBox">
-			<div class="userInfoArea">
-				<div class="photo"><i class="material-icons" style="font-size:46px;color:#A47864;">account_circle</i></div>
-				<div class="userInfo">
-					<div class="fontB">J.P. Kim</div>
-					<div>R&amp;D · Adhesive Lab</div>
-				</div>
-			</div>
-			<div class="menuList">
-				<ul>
-					<li class="waves-effect waves-hColor on"><a href="apis_note_user_list.html"><i class="material-icons left">edit_note</i>Lab Note</a></li>
-					<li class="waves-effect waves-hColor"><a href="apis_techlib_list.html"><i class="material-icons left">menu_book</i>Tech Library</a></li>
-					<li><a class="subheader" style="color:#9b8c7e;font-size:11px;letter-spacing:.04em;pointer-events:none;">MAPIS MODULES</a></li>
-					<li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>MAPIS Home</a></li>
-					<li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
-					<li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub</a></li>
-					<li class="waves-effect waves-hColor"><a href="apis_composition_list.html"><i class="material-icons left">layers</i>Composition</a></li>
-				</ul>
-			</div>
-		</div>
-	</aside>
+  <aside class="menuAside">
+    <div id="slide-out" class="sidenav glassBox">
+      <div class="userInfoArea">
+        <div class="photo"><img src="https://apis.kccworld.co.kr/selectUserPhotoAjax?EMP_NO=21510804"></div>
+        <div class="userInfo">
+          <div class="fontB">JONGHO LEE</div>
+          <div>IT Procurement/HR/R&D Team</div>
+        </div>
+      </div>
+      <div class="menuList">
+        <ul>
+          <li class="waves-effect waves-hColor"><a href="apis_main.html"><i class="material-icons left">home</i>Home</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_dash2.html"><i class="material-icons left">analytics</i>Dashboard</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_proposal_list.html"><i class="material-icons left">assistant</i>Proposal</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npdi_list.html"><i class="material-icons left">lightbulb</i>Standard NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_custom_list.html"><i class="material-icons left">integration_instructions</i>Custom NPI</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_npt_list.html"><i class="material-icons left">snippet_folder</i>NPT</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_tech_list.html"><i class="material-icons left">build</i>Tech Support</a></li>
+          <li class="waves-effect waves-hColor on"><a href="apis_note_user_list.html"><i class="material-icons left">edit_note</i>Lab Note</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_techlib_list.html"><i class="material-icons left">menu_book</i>Tech Library</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_item_list.html"><i class="material-icons left">colorize</i>Raw Material Hub​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_composition_list.html"><i class="material-icons left">layers</i>Composition</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_fmea_list.html"><i class="material-icons left">playlist_add_check_circle</i>FMEA​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_coc.html"><i class="material-icons left">assignment_late</i>CoC​</a></li>
+          <li class="waves-effect waves-hColor"><a href="apis_psa.html"><i class="material-icons left">health_and_safety</i>PSA</a></li>
+        </ul>
+      </div>
+    </div>
+  </aside>
 
 	<!-- 본문: 통합 화면 (좌 노트북 네비 | 중 노트목록 | 우 요약+계보). 좌측 'All Notes'=전체 최근순, 노트북=그 노트북. List·Chem·Formulation 뷰 전환 -->
 	<article class="contArea elnWsArea">
 		<section class="mainTitArea elnWsTitArea">
 			<div class="mainTit">Lab Note List</div>
-			<!-- 뷰 전환(List·Chem·Formulation) + New Note를 타이틀 줄로 — 노트셋 카운트 폭과 무관하게 위치 고정 -->
-			<div class="elnViewToggle">
-				<a href="javascript:;" class="on" data-view="list"><i class="material-symbols-outlined">view_list</i>List</a>
-				<a href="javascript:;" data-view="chem"><i class="material-symbols-outlined">hexagon</i>Chem</a>
-				<a href="javascript:;" data-view="formulation"><i class="material-symbols-outlined">science</i>Formulation</a>
+				</ul>
 			</div>
 			<div class="elnHeadRight">
 				<!-- ELN 전용 검색(헤더 통합검색과 별개) — 옵션 모달 -->
@@ -113,13 +122,12 @@
 			</aside>
 
 			<!-- 중: 노트 목록 (뷰 전환: List·Chem·Formulation) -->
-			<div class="elnNotePanel">
+			<div class="elnNotePanel cardBox2">
 				<div class="elnNotePanelHead">
 					<div class="pt"><i class="material-symbols-outlined fill" id="nbIcon">stacks</i><span id="nbName">All Notes</span></div>
 					<!-- 검색 결과 모드: 무엇으로 검색했는지(기준) + 타이틀 옆 Clear 버튼 -->
 					<span id="elnSrchCrit" class="elnSrchCrit" style="display:none;"></span>
 					<a href="javascript:;" id="elnSrchClear" class="elnSrchClear" style="display:none;"><i class="material-symbols-outlined">filter_alt_off</i>Clear filters</a>
-					<div class="pc" id="nbCount"></div>
 				</div>
 
 				<!-- List 뷰 -->
@@ -148,7 +156,115 @@
 		</div>
 	</article>
 
+
+	<!-- ELN 검색 모달 — apis_note_list 동일(srchOptBox: 라벨 좌측 표준 레이아웃) -->
+	<div id="elnSrchModal" class="modal elnSrchModal">
+		<div class="modal-header mochaBg">
+			<h5><i class="material-icons left">search</i>Search Notes</h5>
+			<div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+		</div>
+		<div class="modal-content">
+			<div class="srchOptBox">
+				<div class="row">
+					<div class="col s2 tit">Keyword</div>
+					<div class="col s10"><div class="aniInput"><input type="text" class="browser-default" id="srchKeyword" placeholder="Title or code…  (use * ?)" autocomplete="off"><span class="focus-border"></span></div></div>
+				</div>
+				<div class="row">
+					<div class="col s2 tit">Tags</div>
+					<div class="col s10"><div class="aniInput"><input type="text" class="browser-default" id="srchTags" placeholder="e.g. #viscosity  (use * ?)" autocomplete="off"><span class="focus-border"></span></div></div>
+				</div>
+				<div class="row">
+					<div class="col s2 tit">Status</div>
+					<div class="col s4"><select id="srchStatus"></select></div>
+					<div class="col s2 tit">Notebook</div>
+					<div class="col s4"><select id="srchNotebook"></select></div>
+				</div>
+				<div class="row">
+					<div class="col s12"><div class="elnSrchHint"><i class="material-symbols-outlined">tips_and_updates</i><span><b>*</b> matches any characters, <b>?</b> matches a single one. Leave a field blank to ignore it.</span></div></div>
+				</div>
+			</div>
+			<div class="btnArea">
+				<a href="javascript:;" class="waves-effect hBtn hGrey wd100px" id="srchReset"><i class="material-icons left">refresh</i><span class="label">Reset</span></a>
+				<a href="javascript:;" class="waves-effect waves-light hBtn hViva wd100px ml10" id="srchGo"><i class="material-icons left">search</i><span class="label">Search</span></a>
+			</div>
+		</div>
+	</div>
+
+	<!-- 시작 템플릿 픽커 모달 — apis_note_list 동일(표준 Materialize 글래스 모달) -->
+	<div id="elnTmplModal" class="modal elnTmplModal">
+		<div class="modal-header mochaBg">
+			<h5><i class="material-icons left">note_add</i>Start a New Note</h5>
+			<div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+		</div>
+		<div class="modal-content" id="elnTmplBody"><!-- JS 렌더 --></div>
+	</div>
+
+	<!-- 템플릿 공유 모달 — 동료 퀵서치 -->
+	<div id="elnShareModal" class="modal elnShareModal">
+		<div class="modal-header mochaBg">
+			<h5><i class="material-icons left">share</i>Share Template</h5>
+			<div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+		</div>
+		<div class="modal-content" id="elnShareBody"><!-- JS 렌더 --></div>
+	</div>
+
 	<script>
+	/* ── MAPIS 공통화 브리지 — ELN 자체 토스트/모달을 공통 컴포넌트(glassToast·Materialize 모달)로 위임 ── */
+	// 모달 body 텍스트 입력을 aniInput 패턴으로 감싸기(인라인 스타일 대체)
+	function aniWrap(inp){
+		var w = document.createElement('div'); w.className = 'aniInput';
+		var fb = document.createElement('span'); fb.className = 'focus-border';
+		w.appendChild(inp); w.appendChild(fb);
+		return w;
+	}
+	function initMapisBridge(){
+		if(!window.ELN) return;
+		// 토스트 → glassToast (warn 은 info 톤으로)
+		ELN.toast = function(msg, type){ glassToast(msg, type === 'warn' ? 'info' : (type || 'info')); };
+		// 모달 → Materialize(mochaBg 헤더 + modalBlur + btnArea hBtn) — 기존 API({title,icon,body,actions,close}) 유지
+		ELN.modal = function(o){
+			var art = document.createElement('article');
+			art.className = 'modal mapisElnModal';
+			var hd = document.createElement('div'); hd.className = 'modal-header mochaBg';
+			hd.innerHTML = '<h5>' + (o.icon ? '<i class="material-symbols-outlined left">' + o.icon + '</i>' : '') + esc(o.title || '') + '</h5>'
+			             + '<div class="closeBtns"><i class="material-symbols-outlined">close</i></div>';
+			var mc = document.createElement('div'); mc.className = 'modal-content';
+			if(typeof o.body === 'string'){ var msg = document.createElement('div'); msg.className = 'mapisElnMsg'; msg.textContent = o.body; mc.appendChild(msg); }
+			else if(o.body) mc.appendChild(o.body);
+			var ba = document.createElement('div'); ba.className = 'btnArea';
+			var inst = null;
+			function close(){ if(inst) inst.close(); }
+			// 라벨 → 아이콘 매핑(MAPIS hBtn 관례: 아이콘 + 라벨)
+			var BTN_ICON = { 'Create':'add', 'Save':'save', 'Cancel':'cancel', 'Delete':'delete', 'Close':'close', 'Search':'search', 'OK':'check' };
+			(o.actions || []).forEach(function(a){
+				var b = document.createElement('a'); b.href = 'javascript:;';
+				var cls = 'waves-effect waves-light hBtn ml10';
+				if(a.type === 'elnDanger') cls += ' hViva';           // 파괴적 액션(Delete)만 비바
+				else if(a.type === 'hViva') cls += ' hBlue';         // 주 액션(Create/Save/Search) = 파란색(MAPIS 관례)
+				else cls += ' hGrey';
+				b.className = cls;
+				var ic = a.icon || BTN_ICON[a.label] || '';
+				b.innerHTML = (ic ? '<i class="material-icons left">' + ic + '</i>' : '') + '<span class="label">' + esc(a.label || 'OK') + '</span>';
+				b.addEventListener('click', function(){
+					var keep = a.onClick ? a.onClick() : undefined;
+					if(keep !== true) close();   // onClick 이 true 반환 시 모달 유지(검증 실패 등)
+				});
+				ba.appendChild(b);
+			});
+			mc.appendChild(ba);
+			art.appendChild(hd); art.appendChild(mc);
+			document.body.appendChild(art);
+			inst = M.Modal.init(art, {
+				onOpenStart: function(){ $('header, .menuAside, .contArea').addClass('modalBlur'); },
+				onCloseStart: function(){ $('header, .menuAside, .contArea').removeClass('modalBlur'); },
+				onCloseEnd: function(){ inst.destroy(); art.remove(); }
+			});
+			hd.querySelector('.closeBtns').addEventListener('click', close);
+			inst.open();
+			return { close: close };
+		};
+	}
+
 	// status 코드 ↔ statusBox 색클래스 + 라벨 (mapis 팔레트 재사용)
 	var ST = [
 		{k:'ing',  cls:'blue',   t:'In Progress'},
@@ -163,50 +279,76 @@
 		var q = [];
 		if(nb) q.push('nb=' + encodeURIComponent(nb));
 		if(tmpl) q.push('tmpl=' + encodeURIComponent(tmpl));
-		window.open('apis_eln_pop.html' + (q.length ? '?' + q.join('&') : ''), 'elnNoteDetail', 'width=1480,height=900,scrollbars=yes,resizable=yes');
+		window.open('apis_eln_pop_simple.html' + (q.length ? '?' + q.join('&') : ''), 'elnNoteDetail', 'width=1480,height=900,scrollbars=yes,resizable=yes');
 	}
 
 	/* ── 시작 템플릿 — New Note 시 구조(섹션 구성)를 먼저 선택. Public(고정) + My Templates(localStorage 공유) ── */
 	var ELN_TEMPLATES = [
-		{ key:'empty',       icon:'description', name:'Blank',       desc:'Just the Overview — build it up yourself.', sections:['Overview'] },
-		{ key:'general',     icon:'note',        name:'General',     desc:'Overview + a free-form Notes section.',     sections:['Overview','Notes'] },
-		{ key:'formulation', icon:'science',     name:'Formulation', desc:'Overview + Formulation + Conclusion.',       sections:['Overview','Formulation','Conclusion'] }
+		{ key:'empty',       icon:'description', name:'Blank',       desc:'Start from scratch.',        sections:['Overview'] },
+		{ key:'general',     icon:'note',        name:'General',     desc:'Free-form notes.',           sections:['Overview','Notes'] },
+		{ key:'formulation', icon:'science',     name:'Formulation', desc:'Formulation & analysis.',    sections:['Overview','Formulation'] },
+		{ key:'experiment',  icon:'labs',        name:'Experiment',  desc:'Data tables & charts.',      sections:['Overview','Data Visualization'] },
+		{ key:'analysis',    icon:'analytics',   name:'Analysis',    desc:'Structures & linked items.', sections:['Overview','ChemStudio','Related Items'] },
+		{ key:'report',      icon:'summarize',   name:'Full Report', desc:'The complete note.',         sections:['Overview','Formulation','Data Visualization','ChemStudio','Related Items','Attachments'] }
 	];
-	// My Templates 저장소(목업) — list/pop 두 창이 같은 origin localStorage로 공유
-	function loadMyTemplates(){ try { return JSON.parse(localStorage.getItem('eln.myTemplates') || '[]'); } catch(e){ return []; } }
-	// 템플릿 픽커 모달 — 선택 시 그 구조로 새 노트 열기(?tmpl=)
-	function openTemplatePicker(nb){
-		var wrap = document.createElement('div');
-		wrap.className = 'elnTmplPicker';
-		function card(t, custom){
-			var chips = (t.sections||[]).map(function(s){ var lbl = (typeof s === 'string') ? s : (s.label || s.type); return '<span class="elnTmplChip">'+esc(lbl)+'</span>'; }).join('');
-			// 커스텀 템플릿만 공유 버튼(타 동료에게 전달). 카드는 div(role=button) — 버튼 안 버튼 중첩 회피
-			var share = custom ? '<a href="javascript:;" class="elnTmplShare" data-key="'+esc(t.key)+'" title="Share with a colleague"><i class="material-symbols-outlined">share</i></a>' : '';
-			return '<div class="elnTmplCard" role="button" tabindex="0" data-key="'+esc(t.key)+'"'+(custom?' data-custom="1"':'')+'>'
-				+ share
-				+ '<div class="elnTmplCardTop"><i class="material-symbols-outlined">'+esc(t.icon||'description')+'</i><span class="elnTmplName">'+esc(t.name)+'</span></div>'
-				+ (t.desc ? '<div class="elnTmplDesc">'+esc(t.desc)+'</div>' : '')
-				+ '<div class="elnTmplChips">'+chips+'</div></div>';
-		}
-		var mine = loadMyTemplates();
-		wrap.innerHTML = '<div class="elnTmplGroupLabel">My Templates</div>'
-			+ (mine.length
-				? '<div class="elnTmplGrid">' + mine.map(function(t){ return card(t, true); }).join('') + '</div>'
-				: '<div class="elnTmplEmpty">No custom templates yet — save a note’s structure as a template from the note editor.</div>')
-			+ '<div class="elnTmplGroupLabel">Public Templates</div>'
-			+ '<div class="elnTmplGrid">' + ELN_TEMPLATES.map(function(t){ return card(t, false); }).join('') + '</div>';
-		var ref = ELN.modal({ title:'Start a new note', icon:'note_add', body:wrap, actions:[ { label:'Cancel', type:'' } ] });
-		wrap.querySelectorAll('.elnTmplCard').forEach(function(cardEl){
-			cardEl.addEventListener('click', function(e){
-				if(e.target.closest('.elnTmplShare')) return;          // 공유 버튼 클릭은 카드 선택과 분리
-				ref.close(); openNote(nb, cardEl.getAttribute('data-key'));
+	// My Templates 기본 세트 — sections 는 팝업(realizeTemplate)과 공유하는 {type,label} 형식
+	var DEFAULT_MY_TEMPLATES = [
+		{ key:'my_visc',    name:'Viscosity Study', sections:[{type:'overview',label:'Overview'},{type:'formulation',label:'Formulation'},{type:'table',label:'Data Visualization'}] },
+		{ key:'my_scaleup', name:'Scale-up Report', sections:[{type:'overview',label:'Overview'},{type:'table',label:'Data Visualization'},{type:'attach',label:'Attachments'}] },
+		{ key:'my_quick',   name:'Quick Memo',      sections:[{type:'overview',label:'Overview'},{type:'editor',label:'Editor'}] }
+	];
+	(function(){ try { if(!JSON.parse(localStorage.getItem('eln.myTemplates')||'null')) localStorage.setItem('eln.myTemplates', JSON.stringify(DEFAULT_MY_TEMPLATES)); } catch(e){} })();
+	// My Templates 저장소(목업) — list/pop 두 창이 같은 origin localStorage로 공유(비면 기본 세트)
+	function loadMyTemplates(){ try { var v = JSON.parse(localStorage.getItem('eln.myTemplates') || 'null'); return (v && v.length) ? v : DEFAULT_MY_TEMPLATES; } catch(e){ return DEFAULT_MY_TEMPLATES; } }
+	/* ── 시작 템플릿 픽커 + 공유 — apis_note_list 와 동일한 표준 Materialize 모달 구성 ── */
+	// 카드 색수차 + 틸트(Add Module 카드 그리드 공용)
+	function wirePickTilt(scope){
+		if(!scope) return;
+		scope.querySelectorAll('.elnAddPickCard').forEach(function(card){
+			if(card._tilt) return; card._tilt = true;
+			card.addEventListener('mousemove', function(e){
+				if(typeof glassTrack === 'function') glassTrack.call(card, e);
+				var r = card.getBoundingClientRect();
+				var x = ((e.clientX - r.left) / r.width) * 100, y = ((e.clientY - r.top) / r.height) * 100;
+				card.style.transform = 'perspective(600px) rotateX(' + ((50 - y) / 50 * 8) + 'deg) rotateY(' + ((x - 50) / 50 * 8) + 'deg) scale(1.02)';
+			});
+			card.addEventListener('mouseleave', function(){
+				if(typeof glassClear === 'function') glassClear(card);
+				card.style.transition = 'transform .3s ease'; card.style.transform = '';
+				setTimeout(function(){ card.style.transition = ''; }, 300);
 			});
 		});
-		wrap.querySelectorAll('.elnTmplShare').forEach(function(sh){
-			sh.addEventListener('click', function(e){ e.preventDefault(); e.stopPropagation(); openShareTemplate(sh.getAttribute('data-key'), sh); });
-		});
 	}
-	// 공유 대상(목업 동료) + 템플릿 공유 — 퀵서치 popover. 여러 명에게 연속 전송 가능(전송 시 체크 표시)
+
+	var tmplPickerNb = '';   // 픽커를 연 시점의 노트북 컨텍스트
+	// 템플릿 카드 — 섹션 칩 최대 3개 + '+N'(전체 glass 툴팁) → 카드 높이 균일
+	function tmplCardHtml(t, custom){
+		var secs = (t.sections||[]).map(function(x){ return (typeof x === 'string') ? x : (x.label || x.type); });
+		var MAX = 3;
+		var chips = secs.slice(0, MAX).map(function(l){ return '<span class="roundBox">'+esc(l)+'</span>'; }).join('');
+		if(secs.length > MAX) chips += '<span class="roundBox elnMoreChip" data-tip="'+esc(secs.slice(MAX).join(' · '))+'">+'+(secs.length - MAX)+'</span>';
+		return '<div class="elnAddPickCard elnTmplPick'+(custom?' elnTmplMy':'')+'" role="button" tabindex="0" data-key="'+esc(t.key)+'"'+(custom?' data-custom="1"':'')+'>'
+			+ (!custom ? '<i class="material-symbols-outlined">'+esc(t.icon||'description')+'</i>' : '')
+			+ '<span class="nm">'+esc(t.name)+'</span>'
+			+ ((!custom && t.desc) ? '<span class="ds">'+esc(t.desc)+'</span>' : '')
+			+ (chips ? '<div class="elnTmplChips">'+chips+'</div>' : '')
+			+ '</div>';
+	}
+	function tmplGridHtml(list, custom, emptyMsg, scroll){
+		if(!list.length) return '<div class="elnTblEmpty">'+emptyMsg+'</div>';
+		return '<div class="elnAddPickGrid'+(scroll?' elnPickScroll':'')+'">' + list.map(function(t){ return tmplCardHtml(t, custom); }).join('') + '</div>';
+	}
+	function openTemplatePicker(nb){
+		tmplPickerNb = nb || '';
+		var mine = loadMyTemplates();
+		document.getElementById('elnTmplBody').innerHTML =
+			'<div class="cardSubTit">Public Templates</div>' + tmplGridHtml(ELN_TEMPLATES, false, '', true)
+			+ '<div class="cardSubTit mt30">My Templates</div>' + tmplGridHtml(mine, true, 'No custom templates yet — save a note’s structure as a template from the note editor.');
+		wirePickTilt(document.getElementById('elnTmplBody'));
+		M.Modal.getInstance(document.getElementById('elnTmplModal')).open();
+	}
+
+	// 공유 대상(목업 동료) — 표준 모달 + fixedTable, 여러 명 연속 전송(전송 시 체크)
 	var ELN_USERS = [
 		{ id:'sypark', name:'S.Y. Park', team:'Flexible OLED' },
 		{ id:'mjlee',  name:'M.J. Lee',  team:'Optical Clear Resin' },
@@ -215,39 +357,35 @@
 		{ id:'jwseo',  name:'J.W. Seo',  team:'RGBOLED Adhesive' },
 		{ id:'ehan',   name:'E. Han',    team:'Customer A Project' }
 	];
-	function userInitials(name){ return name.replace(/[^A-Za-z.\s]/g,'').split(/[.\s]+/).filter(Boolean).map(function(p){ return p[0]; }).slice(0,2).join('').toUpperCase(); }
-	function openShareTemplate(tmplKey, anchor){
+	var shareTmplName = '', shareSent = {};
+	function renderShareList(q){
+		var ql = (q||'').toLowerCase();
+		var matches = ELN_USERS.filter(function(u){ return (u.name+' '+u.team+' '+u.id).toLowerCase().indexOf(ql)>=0; });
+		var rows = matches.length ? matches.map(function(u){
+			var done = !!shareSent[u.id];
+			return '<tr><td class="al">'+esc(u.name)+'</td><td class="al">'+esc(u.team)+'</td>'
+				+ '<td class="ac">'+(done
+					? '<i class="material-symbols-outlined elnSentIco" title="Shared">check_circle</i>'
+					: '<a href="javascript:;" class="waves-effect waves-light hBtn hSmall elnShareSend" data-id="'+esc(u.id)+'"><i class="material-symbols-outlined left">send</i><span class="label">Send</span></a>')
+				+ '</td></tr>';
+		}).join('') : '<tr><td colspan="3" class="al elnTblEmpty">No colleagues match.</td></tr>';
+		document.getElementById('elnShareList').innerHTML = rows;
+		if(typeof initAllHBorderTableOverlays === 'function') initAllHBorderTableOverlays(document.getElementById('elnShareBody'));
+	}
+	function openShareTemplate(tmplKey){
 		var tmpl = loadMyTemplates().filter(function(t){ return t.key===tmplKey; })[0];
-		var nm = tmpl ? tmpl.name : 'template';
-		var wrap = document.createElement('div'); wrap.className = 'elnPickWrap';
-		var head = document.createElement('div'); head.className = 'elnShareHead';
-		head.innerHTML = '<i class="material-symbols-outlined">share</i>Share “'+esc(nm)+'”';
-		var search = document.createElement('input'); search.type='text'; search.className='browser-default elnPickSearch'; search.placeholder='Search colleagues…';
-		var ul = document.createElement('div'); ul.className='elnPickList';
-		var sent = {};
-		function render(q){
-			ul.innerHTML='';
-			var ql=(q||'').toLowerCase();
-			var matches = ELN_USERS.filter(function(u){ return (u.name+' '+u.team+' '+u.id).toLowerCase().indexOf(ql)>=0; });
-			if(!matches.length){ var em=document.createElement('div'); em.className='elnPickEmpty'; em.textContent='No colleagues match.'; ul.appendChild(em); return; }
-			matches.forEach(function(u){
-				var it=document.createElement('div'); it.className='elnPickRow elnUserRow'+(sent[u.id]?' sent':'');
-				it.innerHTML='<span class="elnUserAv">'+esc(userInitials(u.name))+'</span>'
-					+'<span class="elnUserMeta"><b>'+esc(u.name)+'</b><span>'+esc(u.team)+'</span></span>'
-					+(sent[u.id] ? '<i class="material-symbols-outlined elnUserSent">check_circle</i>' : '<i class="material-symbols-outlined elnUserSend">send</i>');
-				it.addEventListener('click', function(){
-					if(sent[u.id]) return;
-					sent[u.id]=1;
-					ELN.toast('Shared “'+nm+'” with '+u.name+'.', 'ok');
-					render(search.value);
-				});
-				ul.appendChild(it);
-			});
-		}
-		search.addEventListener('input', function(){ render(search.value); });
-		wrap.appendChild(head); wrap.appendChild(search); wrap.appendChild(ul); render('');
-		ELN.popover({ anchor: anchor, content: wrap, width: 300 });
-		setTimeout(function(){ try{ search.focus(); }catch(e){} }, 60);
+		shareTmplName = tmpl ? tmpl.name : 'template';
+		shareSent = {};
+		document.getElementById('elnShareBody').innerHTML =
+			'<div class="cardSubTit">Share “'+esc(shareTmplName)+'”</div>'
+			+ '<div class="aniInput elnShareSrch"><input type="text" class="browser-default" id="elnShareSearch" placeholder="Search colleagues…" autocomplete="off"><span class="focus-border"></span></div>'
+			+ '<div class="elnTblWrap"><table class="fixedTable hBorderTable vMiddle mg10">'
+			+ '<thead><tr><th class="al">Colleague</th><th class="al">Team</th><th class="ac elnShareColAct">Send</th></tr></thead>'
+			+ '<tbody id="elnShareList"></tbody></table></div>';
+		renderShareList('');
+		var tmplInst = M.Modal.getInstance(document.getElementById('elnTmplModal')); if(tmplInst) tmplInst.close();
+		M.Modal.getInstance(document.getElementById('elnShareModal')).open();
+		setTimeout(function(){ try{ document.getElementById('elnShareSearch').focus(); }catch(e){} }, 120);
 	}
 
 	// 노트북별 노트셋 (요약·계보 데이터 포함, 데모 목업)
@@ -307,27 +445,8 @@
 		notes.forEach(function(n){ if(c[n.st] != null) c[n.st]++; });
 		return c;
 	}
-	// 헤더 카운트 = status 필터 칩(현황 표시 + 클릭 필터 겸용 — newAppleTab 대체)
-	function headerCount(notes){
-		var c = statusCounts(notes);
-		var chip = function(f, label, dotK, title){
-			var on = (curFilter === f);
-			// 레이블 펼침 제거 — 모든 칩을 항상 [점+숫자+툴팁]으로(너비 고정). 활성은 .on 강조만.
-			return '<span class="elnHdrFilter tooltipped' + (on ? ' on' : '') + '" data-f="' + f + '" data-position="bottom" data-tooltip="' + title + '">' +
-				(dotK ? '<span class="elnDot ' + dotK + '"></span>' : '') +
-				'<span class="num">' + label + '</span></span>';
-		};
-		return chip('all', 'All ' + notes.length, '', 'All notes') +
-			chip('ing', c.ing, 'ing', 'In Progress') + chip('ok', c.ok, 'ok', 'Success') +
-			chip('fail', c.fail, 'fail', 'Failed') + chip('hold', c.hold, 'hold', 'On Hold');
-	}
-	// nbCount 갱신 + materialize 툴팁 재초기화(필터칩이 동적 재생성되므로 매번 init)
-	function setHeaderCount(){
-		$(".material-tooltip").remove();
-		var el = document.getElementById('nbCount');
-		el.innerHTML = headerCount(curNotes);
-		if(window.M && M.Tooltip) M.Tooltip.init(el.querySelectorAll('.tooltipped'));
-	}
+	// 헤더 status 필터 칩 제거됨 — setHeaderCount 는 호환용 no-op
+	function setHeaderCount(){}
 
 	// 카테고리 → 기존 roundBox 색 클래스(디자인 시스템 재사용). 미정의 카테고리는 stone25
 	function noteChips(n){
@@ -358,21 +477,20 @@
 			box.textContent = s.t;
 			var main = document.createElement('section');
 			main.className = 'wd100p';
-			// All Notes 뷰: 어느 노트북 노트인지 제목 위에 풀네임 라벨로(pill 대신)
+			// 1줄: 제목
+			var tit = document.createElement('div');
+			tit.className = 'pjTit';
+			tit.innerHTML = '<span class="elnNoteTit">' + esc('[' + n.code + '] ' + n.title) + '</span>';
+			main.appendChild(tit);
+			// 2줄: 노트북명(All Notes 뷰) + 태그 — 한 줄에
+			var meta = document.createElement('div'); meta.className = 'elnMetaLine';
 			if(showNb){
 				var nbl = document.createElement('div');
 				nbl.className = 'elnNoteNb';
 				nbl.innerHTML = '<i class="material-symbols-outlined fill">' + (n._nbIcon || 'folder') + '</i>' + esc(n._nbName);
 				var nicon = nbl.querySelector('i'); if(nicon) nicon.style.color = nbColor(n._nb); // 노트북 색
-				main.appendChild(nbl);
+				meta.appendChild(nbl);
 			}
-			var tit = document.createElement('div');
-			tit.className = 'pjTit';
-			tit.textContent = '[' + n.code + '] ' + n.title;
-			main.appendChild(tit); 
-
-			var meta = document.createElement('div'); meta.className = 'elnNoteMeta'; // pill + tags on one line
-			// 태그 = 칩이 아니라 별도 줄에 링크처럼(클릭 → 그 태그 검색)
 			if(n.tags && n.tags.length){
 				var tagLine = document.createElement('div'); tagLine.className = 'elnNoteTags';
 				n.tags.forEach(function(t){
@@ -381,8 +499,8 @@
 					tagLine.appendChild(a);
 				});
 				meta.appendChild(tagLine);
-				main.appendChild(meta);
 			}
+			if(meta.children.length) main.appendChild(meta);
 			li.appendChild(box); li.appendChild(main);
 			ul.appendChild(li);
 		});
@@ -574,7 +692,6 @@
 			setHeaderCount(); // 필터 칩(클릭 가능)
 			selectFirst();
 		} else {
-			document.getElementById('nbCount').textContent = "";
 			if(curView === 'chem'){ renderChemView(curNotes); selectFirstLens('elnChemUl'); }
 			else if(curView === 'formulation'){ renderFmlView(curNotes); selectFirstLens('elnFmlUl'); }
 		}
@@ -604,8 +721,8 @@
 	// List 행과 동일한 머리(상태 + 노트북라벨 + 제목) — 렌즈 뷰 공용
 	function lensRowHead(n, s){
 		return '<section class="statusBox '+s.cls+'">'+s.t+'</section>'
-			+ '<section class="wd100p"><div class="elnNoteNb" data-nb="'+esc(n._nb)+'"><i class="material-symbols-outlined fill">'+(n._nbIcon||'folder')+'</i>'+esc(n._nbName)+'</div>'
-			+ '<div class="pjTit">['+esc(n.code)+'] '+esc(n.title)+'</div>';
+			+ '<section class="wd100p"><div class="pjTit"><span class="elnNoteTit">['+esc(n.code)+'] '+esc(n.title)+'</span></div>'
+			+ '<div class="elnMetaLine"><div class="elnNoteNb" data-nb="'+esc(n._nb)+'"><i class="material-symbols-outlined fill">'+(n._nbIcon||'folder')+'</i>'+esc(n._nbName)+'</div></div>';
 	}
 	function paintNbColor(li, n){ var i = li.querySelector('.elnNoteNb i'); if(i) i.style.color = nbColor(n._nb); }
 
@@ -692,8 +809,6 @@
 		var clr = document.getElementById('elnSrchClear'); if(clr) clr.style.display = '';
 		var crit = document.getElementById('elnSrchCrit'); if(crit){ var d = describeCriteria(c); crit.innerHTML = d; crit.style.display = d ? '' : 'none'; }
 		curView = 'list';
-		var tg = document.querySelector('.elnViewToggle');
-		if(tg){ tg.querySelectorAll('a').forEach(function(x){ x.classList.remove('on'); }); var la = tg.querySelector('a[data-view="list"]'); if(la) la.classList.add('on'); }
 		renderNoteList(curNotes, true);
 		applyView();
 		ELN.toast(curNotes.length ? ('Found ' + curNotes.length + ' note' + (curNotes.length > 1 ? 's' : '') + '.') : 'No notes match your search.', curNotes.length ? 'ok' : 'warn');
@@ -708,54 +823,30 @@
 		if(!tag) return;
 		runSearch({ keyword: '', tags: tag, status: 'all', notebook: 'all' });
 	}
-	// 검색 모달 — 필드 폼 + 와일드카드 안내. prefill = navbar 입력값을 keyword로 선반영
-	function openSearchModal(prefill){
-		var form = document.createElement('div');
-		form.className = 'elnSrchForm';
-		form.innerHTML =
-			'<div class="elnSrchRow"><label>Keyword</label>' +
-				'<input type="text" id="srchKeyword" class="browser-default" placeholder="Title or code…  (use * ?)" autocomplete="off"></div>' +
-			'<div class="elnSrchRow"><label>Tags</label>' +
-				'<input type="text" id="srchTags" class="browser-default" list="srchTagList" placeholder="e.g. #viscosity  (type to autocomplete · * ?)" autocomplete="off">' +
-				'<datalist id="srchTagList"></datalist></div>' +
-			'<div class="elnSrchGrid">' +
-				'<div class="elnSrchRow"><label>Status</label><select id="srchStatus" class="browser-default"></select></div>' +
-				'<div class="elnSrchRow"><label>Notebook</label><select id="srchNotebook" class="browser-default"></select></div>' +
-			'</div>' +
-			'<div class="elnSrchHint"><i class="material-symbols-outlined">tips_and_updates</i>' +
-				'<span><b>*</b> matches any characters, <b>?</b> matches a single one. Leave a field blank to ignore it.</span></div>';
+	// 검색 모달(정적 #elnSrchModal — apis_note_list 표준 srchOptBox 레이아웃). prefill = keyword 선반영
+	function fillSearchSelects(){
 		function opt(sel, value, label){ var o = document.createElement('option'); o.value = value; o.textContent = label; sel.appendChild(o); }
-		var stSel = form.querySelector('#srchStatus');
-		opt(stSel, 'all', 'Any status'); ST.forEach(function(s){ opt(stSel, s.k, s.t); });
-		var nbSel = form.querySelector('#srchNotebook');
+		var stSel = document.getElementById('srchStatus');
+		var nbSel = document.getElementById('srchNotebook');
+		if(!stSel || stSel.options.length) return;   // 1회만
+		opt(stSel, 'all', 'Any status'); ST.forEach(function(x){ opt(stSel, x.k, x.t); });
 		opt(nbSel, 'all', 'All notebooks');
 		Object.keys(NB).forEach(function(k){ opt(nbSel, k, NB[k].name); });
-		// 태그 자동완성 — 데이터에 존재하는 태그 전부를 datalist로(중복 제거)
-		var tagDL = form.querySelector('#srchTagList'); var tseen = {};
-		getNotes('all').forEach(function(n){ (n.tags || []).forEach(function(t){ if(!tseen[t]){ tseen[t] = 1; var o = document.createElement('option'); o.value = t; tagDL.appendChild(o); } }); });
-		var kw = form.querySelector('#srchKeyword');
-		if(prefill) kw.value = prefill;
-
-		function gather(){
-			return {
-				keyword: kw.value.trim(),
-				tags: form.querySelector('#srchTags').value.trim(),
-				status: stSel.value,
-				notebook: nbSel.value
-			};
-		}
-		var ref = ELN.modal({
-			title: 'Search notes', icon: 'search', body: form,
-			actions: [
-				{ label: 'Cancel', type: '' },
-				{ label: 'Search', type: 'hViva', onClick: function(){ runSearch(gather()); } }
-			]
-		});
-		// Enter = 즉시 검색(모달 닫고 결과)
-		[kw, form.querySelector('#srchTags')].forEach(function(inp){
-			inp.addEventListener('keydown', function(e){ if(e.key === 'Enter'){ e.preventDefault(); runSearch(gather()); ref.close(); } });
-		});
-		setTimeout(function(){ kw.focus(); }, 60);
+		$('#elnSrchModal select').formSelect({ dropdownOptions: { container: document.body } });
+	}
+	function gatherSearch(){
+		return {
+			keyword: document.getElementById('srchKeyword').value.trim(),
+			tags: document.getElementById('srchTags').value.trim(),
+			status: document.getElementById('srchStatus').value,
+			notebook: document.getElementById('srchNotebook').value
+		};
+	}
+	function openSearchModal(prefill){
+		fillSearchSelects();
+		if(prefill) document.getElementById('srchKeyword').value = prefill;
+		M.Modal.getInstance(document.getElementById('elnSrchModal')).open();
+		setTimeout(function(){ try{ document.getElementById('srchKeyword').focus(); }catch(e){} }, 120);
 	}
 
 	/* ── 노트북 이름수정·삭제 — hover ⋯ 메뉴(시스템 항목 All/No Notebook 제외) ── */
@@ -773,9 +864,8 @@
 		var nb = NB[key]; if(!nb) return;
 		var inp = document.createElement('input');
 		inp.type = 'text'; inp.className = 'browser-default'; inp.value = nb.name;
-		inp.style.cssText = 'width:100%;height:40px;border:1px solid #d9cfc2;border-radius:8px;padding:0 12px;font-size:14px;';
 		ELN.modal({
-			title: 'Rename Notebook', icon: 'edit', body: inp,
+			title: 'Rename Notebook', icon: 'edit', body: aniWrap(inp),
 			actions: [
 				{ label: 'Save', type: 'hViva', onClick: function(){
 					var name = (inp.value || '').trim();
@@ -970,9 +1060,8 @@
 			ref.close();
 			var inp = document.createElement('input');
 			inp.type = 'text'; inp.className = 'browser-default'; inp.placeholder = 'Notebook name';
-			inp.style.cssText = 'width:100%;height:40px;border:1px solid #d9cfc2;border-radius:8px;padding:0 12px;font-size:14px;';
 			ELN.modal({
-				title: 'New Notebook', icon: 'create_new_folder', body: inp,
+				title: 'New Notebook', icon: 'create_new_folder', body: aniWrap(inp),
 				actions: [
 					{ label: 'Create', type: 'hViva', onClick: function(){
 						var name = (inp.value || '').trim() || 'Untitled Notebook';
@@ -1008,6 +1097,38 @@
 
 	$(document).ready(function(){
 		// 공통 헤더 sidenav 초기화 (apis_npdi_list 패턴)
+		initMapisBridge();   // ELN 토스트/모달 → MAPIS 공통 위임
+		// 템플릿 픽커/공유 모달 init (mochaBg + modalBlur)
+		$('#elnTmplModal, #elnShareModal, #elnSrchModal').modal({
+			onOpenStart: function(){ $('header, .menuAside, .contArea').addClass('modalBlur'); },
+			onCloseStart: function(){ $('header, .menuAside, .contArea').removeClass('modalBlur'); }
+		});
+		// 픽커 카드 클릭 = 선택(새 노트) / 공유 버튼 = 공유 모달
+		document.getElementById('elnTmplBody').addEventListener('click', function(e){
+			var sh = e.target.closest('.elnTmplShare');
+			if(sh){ e.stopPropagation(); openShareTemplate(sh.getAttribute('data-key')); return; }
+			var row = e.target.closest('.elnTmplPick');
+			if(row){
+				M.Modal.getInstance(document.getElementById('elnTmplModal')).close();
+				openNote(tmplPickerNb, row.getAttribute('data-key'));
+			}
+		});
+		// 공유 모달 위임 — Send=전송(체크), 검색=필터
+		document.getElementById('elnShareBody').addEventListener('click', function(e){
+			var send = e.target.closest('.elnShareSend');
+			if(send){
+				var u = ELN_USERS.filter(function(x){ return x.id === send.getAttribute('data-id'); })[0];
+				if(!u) return;
+				shareSent[u.id] = 1;
+				ELN.toast('Shared “' + shareTmplName + '” with ' + u.name + '.', 'ok');
+				renderShareList(document.getElementById('elnShareSearch') ? document.getElementById('elnShareSearch').value : '');
+			}
+		});
+		document.getElementById('elnShareBody').addEventListener('input', function(e){
+			if(e.target && e.target.id === 'elnShareSearch') renderShareList(e.target.value);
+		});
+		// 노트 리스트 행 틸트 비활성 — 엔진(.mainList li) 핸들러보다 늦게 바인딩되어 인라인 transform 을 상쇄
+		$(document).on('mousemove mouseleave', '.elnNotePanel .mainList li', function(){ this.style.transform = ''; });
 		$('.sidenav').sidenav();
 		$(document).on('click', '.sidenav-overlay, .closeBtns', function(){ $('.sidenav').sidenav('close'); });
 
@@ -1072,18 +1193,6 @@
 			applyView();
 		});
 
-		// 뷰 전환 토글 (List · Chem · Formulation)
-		document.querySelector('.elnViewToggle').addEventListener('click', function(e){
-			var a = e.target.closest('a[data-view]');
-			if(!a) return;
-			var v = a.getAttribute('data-view');
-			if(v === curView) return;
-			curView = v;
-			this.querySelectorAll('a').forEach(function(x){ x.classList.remove('on'); });
-			a.classList.add('on');
-			applyView();
-		});
-
 		// Chem·Formulation 렌즈 뷰: 행 클릭 → 요약 선택 / 제목(.pjTit) 클릭 → 노트 열기 (List와 동일 동선)
 		['elnChemView','elnFmlView'].forEach(function(viewId){
 			var ulId = (viewId === 'elnChemView') ? 'elnChemUl' : 'elnFmlUl';
@@ -1122,15 +1231,6 @@
 			if(e.target.closest('.elnFullView')){ e.preventDefault(); openLineageModal(curSummaryNote); }
 		});
 
-		// 헤더 현황 칩 클릭 = status 필터(현황 표시 겸 드릴다운 — newAppleTab 대체)
-		document.getElementById('nbCount').addEventListener('click', function(e){
-			var chip = e.target.closest('.elnHdrFilter');
-			if(!chip) return;
-			curFilter = chip.getAttribute('data-f');
-			applyFilter();
-			setHeaderCount(); // 활성 표시 갱신
-		});
-
 		// New Note(노트 레벨) → 시작 템플릿 픽커 먼저. All Notes 뷰면 노트북 미지정으로 시작
 		var b = document.getElementById('elnNewNote');
 		if(b) b.addEventListener('click', function(){
@@ -1141,9 +1241,8 @@
 		if(nbBtn) nbBtn.addEventListener('click', function(){
 			var inp = document.createElement('input');
 			inp.type = 'text'; inp.className = 'browser-default'; inp.placeholder = 'Notebook name';
-			inp.style.cssText = 'width:100%;height:40px;border:1px solid #d9cfc2;border-radius:8px;padding:0 12px;font-size:14px;';
 			ELN.modal({
-				title: 'New Notebook', icon: 'create_new_folder', body: inp,
+				title: 'New Notebook', icon: 'create_new_folder', body: aniWrap(inp),
 				actions: [
 					{ label: 'Create', type: 'hViva', onClick: function(){
 						var name = (inp.value || '').trim() || 'Untitled Notebook';
@@ -1161,6 +1260,19 @@
 		// ELN 전용 검색 버튼(타이틀줄) → 옵션 모달. 헤더 통합검색창(#mainSrchInput)은 ELN과 무관 → 건드리지 않음
 		var elnSearchBtn = document.getElementById('elnSearchBtn');
 		if(elnSearchBtn) elnSearchBtn.addEventListener('click', function(){ openSearchModal(''); });
+		// 검색 모달 — Search/Reset/Enter
+		$(document).on('click', '#srchGo', function(){
+			runSearch(gatherSearch());
+			M.Modal.getInstance(document.getElementById('elnSrchModal')).close();
+		});
+		$(document).on('click', '#srchReset', function(){
+			$('#srchKeyword, #srchTags').val('');
+			$('#srchStatus, #srchNotebook').val('all');
+			$('#elnSrchModal select').formSelect({ dropdownOptions: { container: document.body } });
+		});
+		$(document).on('keydown', '#srchKeyword, #srchTags', function(e){
+			if(e.key === 'Enter'){ e.preventDefault(); $('#srchGo').click(); }
+		});
 		// 검색 결과 헤더의 Clear → All Notes 복귀
 		var srchClear = document.getElementById('elnSrchClear');
 		if(srchClear) srchClear.addEventListener('click', clearSearch);

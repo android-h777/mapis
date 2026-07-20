@@ -2184,11 +2184,7 @@ nav .srchDtArea .srchBox .srchRstArea li .iconBox {
 	border-top-right-radius: 0px;
     border-bottom-right-radius: 0px;
 }
-/* 타이틀·탭 라인과 안 겹치게 첫 카드 상단 라인에 맞춘 변형(dash2) — .statusAside.glassBox(top:70px)보다 우선 */
-.statusAside.glassBox.tabClearAside {
-    top: 120px;
-    height: calc(100vh - 140px);
-}
+
 
 .statusAside .asideTit {
 	margin-bottom: 50px;
@@ -3013,9 +3009,7 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 .popup header .titArea.npt {
 	background-color: #f6fbfb;
 }
-.popup header .titArea.techSpt {
-	background-color: #f6f7fb;
-}
+
 .popup header .titArea.rmh {
 	background-color: #f9f6fb;
 }
@@ -3177,14 +3171,6 @@ body::-webkit-scrollbar-track .mainCardBox .collapsible-body::-webkit-scrollbar-
 	margin: 0px 10px;
 }
 
-.popup header .statusArea .nowPin {
-	width: 20px;
-    line-height: 20px;
-    font-size: 20px;
-    vertical-align: middle;
-    color: #e87e05 !important;
-	margin: 0px 0px 0px 5px;
-}
 
 .popup header .bdBox.on::before, .popup header .statusArea .NPI_box .overView_stage.on::before {
   content: '';
@@ -4838,7 +4824,6 @@ kbd {
 }
 
 
-
 /* Vertical Header */
 
 .newTaskGantt div.ganttview-vtheader {
@@ -4928,7 +4913,6 @@ kbd {
 .newTaskGantt div.ganttview-vtheader-item-name-3.STEP, .newTaskGantt .ganttview-grid-row[type="STEP"] .ganttview-grid-row-cell {
 	background-color: #F6F1F0;
 }
-
 
 
 .newTaskGantt div.ganttview-vtheader-item-name-3.STEP {
@@ -6092,7 +6076,7 @@ select.browser-default {
 /* 승인자(사람) — 날짜 우측, 흐린 톤 */
 .cmpCardBy { display: inline-flex; align-items: center; font-weight: 400; color: #8a7d6e; white-space: nowrap; }
 .cmpCard.none .cmpCardWhen { color: #a89a8a; font-style: italic; font-weight: 400; }
-.cmpTlNone { color: #b3a596; font-style: italic; }
+
 
 /* ── Composition 서머리 상단 — 규제/시험 배지(고정 예시 3종) ── */
 /* 배지: 아이콘+색으로 상태 표기. bio=적 / agri=녹 / retest=주황 (모듈 팔레트 통일) */
@@ -6183,6 +6167,8 @@ select.browser-default {
 
 /* 리스트 — 내 결재 차례 li: To Approve 칩과 동일 비바 마젠타 보더 + 은은한 글로우 펄스(선택 행 제외) */
 .typeList .mainList li.tlMyTurn { border: 1px solid rgba(187,38,73,.5); border-bottom: 1px solid rgba(187,38,73,.5); }
+/* 선택(.on)과 겹칠 때도 마젠타 보더 우선 — .on 의 border !important 를 동일 강도로 재정의 */
+.typeList .mainList li.tlMyTurn.on { border: 1px solid rgba(187,38,73,.55) !important; border-bottom: 1px solid rgba(187,38,73,.55) !important; }
 .typeList .mainList li.tlMyTurn:not(.on) { animation: tlMyTurnGlow 2s ease-in-out infinite; }
 @keyframes tlMyTurnGlow {
 	0%, 100% { box-shadow: 0 0 0 0 rgba(187,38,73,0); }
@@ -6192,35 +6178,13 @@ select.browser-default {
 .tlBasketModal { width: 90%; max-width: 1500px; }
 .tlBasketModal #bkSelAllBtn { margin-right: auto; }   /* 전체 선택 = 버튼영역 좌측 분리(reqBtn 패턴) */
 .tlBasketModal .modal-header h5 b { color: #fff; margin-left: 4px; }
-/* 탭 = Materialize Tabs. 글래스 모달에 맞춰 배경 투명 + 모카 액센트 */
-.tlBkTabs.tabs { background: transparent; margin-bottom: 12px; }
-.tlBkTabs.tabs .tab a { color: #8a7d6e; }
-.tlBkTabs.tabs .tab a:hover, .tlBkTabs.tabs .tab a.active { color: #a47864; }
-.tlBkTabs.tabs .tab a.active span { color: #a47864; }
-.tlBkTabs.tabs .indicator { background-color: #a47864; }
+
+
 .tlBkPane { padding-top: 4px; }
 /* 카드 그리드 스크롤 — 헤더/하단 버튼 고정, 카드 영역만 세로 스크롤(공통 스크롤바 스킨은 hScroll 클래스) */
 .tlBasketModal .tlBkPane { max-height: calc(70vh - 180px); overflow-y: auto; padding-top: 0; padding-right: 0; }   /* materialize .modal max-height 70% 안에서 헤더+버튼 제외분만 — 이중 스크롤 방지 */
-/* 테이블 — Document([코드] 타이틀) · Type · Region · Status/Approval */
-.tlBkTableWrap { max-height: 56vh; overflow: auto; position: relative; }
-.tlBkTable { table-layout: fixed; }
-.tlBkTable .tlBkColChk { width: 40px; }
-.tlBkTable .tlBkColType { width: 62px; }
-.tlBkTable .tlBkColRgn { width: 120px; }
-.tlBkTable .tlBkColCls { width: 74px; }
-.tlBkTable .tlBkColStat { width: 112px; }
-.tlBkTable .tlBkColAppr { width: 128px; }
-.tlBkTable .tlBkColReq { width: 104px; }
-.tlBkTable .tlBkColPeriod { width: 168px; }
-/* Document = 한 줄 고정(넘치면 말줄임). 나머지 컬럼 폭을 타이트하게 잡아 Document에 공간 확보 */
-.tlBkTable .tlBkColDoc { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-/* 만료·반려 건 = 종료 상태(비활성): 체크박스 disabled + 제목 흐리게 */
-.tlBkTable .bkChk:disabled + span { opacity: .4; cursor: not-allowed; }
-.tlBkTable tr.tlExpired .tlBkTit, .tlBkTable tr.tlRejected .tlBkTit { color: #b0a595; }
-.tlBkReqDate { color: #777; font-size: 12px; white-space: nowrap; }
-.tlBkTable tbody tr:hover { background: #f7f2ec; }
-/* Status = roundBox 칩 — 동일 폭(min-width)·가운데 정렬·컴팩트 패딩. Class는 색 글자(.techlibClsTxt) */
-.tlBkTable .roundBox { white-space: nowrap; padding: 0 12px; min-width: 96px; text-align: center; box-sizing: border-box; }
+
+
 .tlBkTit { font-size: 13px; color: #333; cursor: pointer; }
 .tlBkTit:hover { color: #a47864; text-decoration: underline; }
 /* 리스트 제목 = 상세 팝업 링크(마우스오버 표시) — techlib 전용(.tlLink로 스코프) */
@@ -6262,24 +6226,11 @@ select.browser-default {
 .tlNoRes div { font-size: 14px; color: #8a7d6e; }
 /* 탭별 노출 토글 */
 .tlHidden { display: none !important; }
-/* Requested 탭 Approval — 접힘 셀(현재상태 roundBox + chevron) → 클릭 시 전체 결재 라인 아코디언 */
-.tlAprToggle { display: inline-flex; align-items: center; gap: 5px; cursor: pointer; }
-.tlAprCaret { font-size: 18px; color: #a08a78; transition: transform .25s ease; }
-.tlAprCaret.open { transform: rotate(180deg); }
-.tlAprMain { cursor: default; }
-/* 아코디언 상세행 — max-height 트랜지션으로 슬라이드다운 */
-.tlAprDetailRow > td { padding: 0 !important; border: 0 !important; background: transparent; }
-.tlAprPanel { max-height: 0; overflow: hidden; transition: max-height .32s ease; }
-.tlAprDetailRow.open .tlAprPanel { max-height: 360px; }
-.tlAprPanelInner { padding: 12px 16px 14px; background: #faf7f2; border-top: 1px solid #ece3d5; }
-/* 전체 결재 라인 테이블(캡쳐 NPI Approval 카드 양식) — 헤더 얇게, 상속 border 정리 */
-.tlAprLine { width: 100%; border-collapse: collapse; }
-.tlAprLine tr { border: 0; }   /* materialize tr border-bottom 제거 */
-/* 헤더 굵기 X(font-weight 400) + 상위 .fixedTable.hBorderTable의 tbody border-top #ddd 제거 */
-.tlAprLine th { font-size: 11px; color: #999; font-weight: 400; padding: 4px 10px; border-top: 0 !important; border-bottom: 1px solid #e6dccb; white-space: nowrap; }
-.tlAprLine td { font-size: 12px; color: #444; padding: 6px 10px; border-top: 0 !important; border-bottom: 1px solid #f0e9dd; }
-.tlAprLine tbody tr:last-child td { border-bottom: 0; }
-.tlAprLine .roundBox { min-width: 88px; text-align: center; padding: 0 10px; box-sizing: border-box; }
+
+
+   /* materialize tr border-bottom 제거 */
+
+
 /* 서머리 결재 이력 테이블 — 행 hover 글래스 오버레이(glassRowOverlay) 위치 기준 */
 #smAppr .fixedTable.hBorderTable { position: relative; }
 /* 반려 사유 대화 아이콘 — 결재자 옆, hover 시 글래스 툴팁 */
@@ -6307,28 +6258,22 @@ select.browser-default {
     rgba(255, 0, 200, .01) 66%, rgba(255, 0, 0, .01) 75%, rgba(255, 0, 0, 0) 83%, transparent 100%);
 }
 .material-tooltip.glassTip .tooltip-content { position: relative; z-index: 1; }
-/* 우측 서머리 Related reports 아이템(원본 pop .rlRelItem 대응) */
-.techlibRelItem { display: block; padding: 7px 10px; border-radius: 8px; text-decoration: none; color: inherit; cursor: pointer; }
-.techlibRelItem:hover { background: #f1e9df; }
-.techlibRelItem .t { display: block; font-size: 13px; color: #333; }
-.techlibRelItem .s { display: block; font-size: 11px; color: #999; margin-top: 2px; }
-.techlibRelItem .s .code { color: #a47864; }
-.techlibRelEmpty { padding: 8px 10px; font-size: 12px; color: #999; }
+
 
 /* 열람신청 결재 모듈 — apis_npdi_pop Approval 카드(결재 상태 테이블) 참조. Selected 탭 접힘 아래 인라인 */
 .tlReq { margin-top: 16px; animation: tlReqIn .34s cubic-bezier(.2, .7, .3, 1) both; }
 .tlReq .cardSubTit { display: flex; align-items: center; }
-.tlReq .tlReqCnt { margin-left: 10px; font-size: 12px; font-weight: 400; color: #a47864; background: #f1e9df; border-radius: 10px; padding: 2px 10px; }
+
 .tlReqWrap { position: relative; margin-top: 6px; }
 .tlReqTbl { table-layout: fixed; }
 .tlReqTbl .tlReqCDate { width: 130px; }
 .tlReqTbl .tlReqCStat { width: 120px; }
 .tlReqTbl .roundBox { min-width: 92px; text-align: center; padding: 0 12px; box-sizing: border-box; }
-.tlReqActs { display: flex; justify-content: flex-end; gap: 10px; margin-top: 14px; }
+
 /* 접힘 테이블 등장 + 결재 모듈 슬라이드업 애니메이션 */
 @keyframes tlReqIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes tlCollapseIn { from { opacity: .35; transform: scaleY(.9); } to { opacity: 1; transform: scaleY(1); } }
-.tlBkTableWrap.tlCollapsed { animation: tlCollapseIn .28s ease both; transform-origin: top center; }
+
 
 /* Composition 물질 퀵서치(jQuery UI autocomplete) 드롭다운 — body에 append되며 cmpSubMenu로만 스코프 */
 .ui-autocomplete.cmpSubMenu {
@@ -7853,17 +7798,16 @@ body.roMode #upFileRow{display:none;}
 
 /* ── 템플릿 픽커 / 공유 모달 — 카드그리드·팝오버 → 표준 fixedTable 양식으로 변환 ── */
 .elnTblWrap{width:100%;box-sizing:border-box;}
-.elnTmplRow{cursor:pointer;transition:background .15s;}
-.elnTmplRow:hover{background:rgba(164,120,100,.07);}
-.elnTmplIco{font-size:19px;color:#A47864;vertical-align:middle;margin-right:8px;}
+
+
 .elnTmplName{font-size:14px;font-weight:700;color:#3a2c24;vertical-align:middle;}
 .elnTmplChips{display:flex;flex-wrap:wrap;gap:4px;}
 .elnTblEmpty{color:#9b8c7e;font-size:12.5px;padding:16px 10px;text-align:center;}
 .elnTmplShare{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;border-radius:7px;color:#b1a08e;background:rgba(164,120,100,.08);transition:background .15s,color .15s;}
 .elnTmplShare:hover{background:#A47864;color:#fff;}
 .elnTmplShare i{font-size:16px;}
-.elnTmplColNm{width:210px;}
-.elnTmplColSec{width:230px;}
+
+
 .elnTmplColShare,.elnShareColAct{width:90px;}
 .elnShareSrch{margin:4px 0 12px;}
 .elnSentIco{color:#3aaa6f;font-size:20px;vertical-align:middle;}
@@ -8095,9 +8039,8 @@ body.roMode #upFileRow{display:none;}
 
 /* ── Insight Dashboard v2 (apis_dash2) — 탭(MAPIS/Tableau) + NPI 매트릭스 + 필터 레전드 ── */
 .dashTabPane{display:none;}
-.dashTabPane.on{display:block;padding-bottom:20px;}   /* 마지막 카드 하단 여백 */
-.ht260{height:260px;}
-.acWrap{text-align:center;white-space:nowrap;}
+.dashTabPane.on{display:block;padding-bottom:20px;}   
+
 /* NPI Portfolio 매트릭스 — Tableau 원본의 상태색 버블(원형 카운트) 재현 */
 .npiMx table td{padding-top:6px;padding-bottom:6px;}
 .npiBub{display:inline-flex;align-items:center;justify-content:center;min-width:36px;height:36px;padding:0 10px;border-radius:18px;color:#fff;font-family:'Roboto-Medium';font-size:13px;box-shadow:inset 0 1px 0 rgba(255,255,255,.35),0 1px 3px rgba(0,0,0,.12);}
@@ -8108,7 +8051,7 @@ body.roMode #upFileRow{display:none;}
 .npiBub.stCanc{background:#b0a595;}
 .npiBub.stTot{background:#9e9e9e;}
 .npiMxTotal td{border-top:2px solid #e0d7cb;background:#fbf8f6;}
-.npiMxCnt{font-size:13px;color:#8a7d6e;}
+
 /* Tableau embed 카드 — URL 미지정 시 플레이스홀더, 지정 시 iframe */
 .tblBox{height:420px;}
 .tblFrame{width:100%;height:100%;border:0;border-radius:10px;}
@@ -8116,9 +8059,8 @@ body.roMode #upFileRow{display:none;}
 .tblPh i{font-size:44px;color:#cdbfae;}
 .tblPhNote{font-size:13px;color:#b3a596;max-width:320px;line-height:1.5;}
 .tblTag{display:inline-flex;align-items:center;font-size:13px;font-family:'Roboto-Medium';color:#5a7d9a;background:rgba(90,125,154,.1);border-radius:10px;padding:1px 10px;vertical-align:2px;}
-/* 우측 필터 패널 상태 레전드 */
-.fltLegend{display:flex;flex-wrap:wrap;gap:8px 15px;padding:0 10px;}
-.fltLgItem{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:#5a5040;}
+
+
 .fltDot{width:12px;height:12px;border-radius:50%;}
 .fltDot.stAct{background:#7391c9;}
 .fltDot.stAppr{background:#a47864;}
@@ -8126,13 +8068,11 @@ body.roMode #upFileRow{display:none;}
 .fltDot.stHold{background:#e0a83e;}
 .fltDot.stCanc{background:#b0a595;}
 .fltDot.stTot{background:#9e9e9e;}
-/* dash2 확장 — 카드 뷰 전환 라디오 + 목록 상태 pill + 런치 도트색 */
-.dashHide{display:none;}
+
 .ht300{height:300px;}
 .ht340{height:340px;}
-.dashViewTog{display:flex;align-items:center;gap:15px;}
-.dashViewTog label{display:inline-flex;align-items:center;}
-.dashViewTog [type="radio"]+span{font-size:13px;padding-left:30px;line-height:20px;}
+
+
 .lchPill{display:inline-flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap;}
 .fltDot.stSched{background:#cac494;}
 .fltDot.stLate{background:#ebc39e;}
@@ -8146,8 +8086,8 @@ body.roMode #upFileRow{display:none;}
 
 .npiBub.jsDrill{cursor:pointer;transition:box-shadow .15s ease;}
 .npiBub.jsDrill:hover{box-shadow:0 0 0 3px rgba(164,119,100,.3),inset 0 1px 0 rgba(255,255,255,.35);}
-.npiMxHint{display:flex;align-items:center;gap:4px;color:#9a8f82;margin-top:5px;}
-.npiMxHint i{font-size:16px;color:#cdbfae;}
+
+
 /* 카드 전체화면 토글(dash2) — 카드가 뷰포트를 덮고 차트/테이블 높이 확장 */
 .cardBox.cardFull{position:fixed;inset:20px;z-index:1001;margin:0;overflow-y:auto;
   box-shadow:0 20px 60px rgba(0,0,0,.28),0 4px 16px rgba(0,0,0,.15);}
@@ -8167,9 +8107,8 @@ body.cardFullOpen{overflow:hidden;}
 .tlReqClsNote{display:flex;align-items:center;gap:6px;font-size:13px;color:#7a5240;line-height:1.5;
   background:rgba(164,120,100,.07);border:1px solid rgba(164,120,100,.25);border-radius:10px;padding:10px 15px;margin-bottom:10px;}
 .tlReqClsNote i{font-size:16px;color:#a47864;flex:0 0 auto;}
-/* 정보 요약 모드 — 상단 Back 행 + 문서 카드 그리드 */
-.tlBkBackRow{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
-.tlBkBackRow .tlReqCnt{font-size:13px;color:#a47864;background:#f1e9df;border-radius:10px;padding:2px 10px;}
+
+
 /* 카드 그리드 = CSS grid — materialize .col 좌우 패딩 제거로 카드 양끝을 하단 버튼 라인과 맞춤 */
 .tlInfoGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin:0;}
 .row.tlInfoGrid .col.s6{width:auto;float:none;padding:0;margin:0;left:auto;right:auto;}
@@ -8211,7 +8150,7 @@ body.cardFullOpen{overflow:hidden;}
 .tlInfoHead .tlInfoAi i{font-size:18px;}
 /* 검색 모달 — Save Search 버튼(버튼 라인 좌측 고정, 단일 저장 슬롯) */
 .tlSrchBtns{display:flex;align-items:center;}
-.tlSrchBtns #scSaveBtn{margin-right:auto;}
+
 /* ── 리스트 statusBox = 바스켓 담기 토글 (MAPIS 리스트 공통 패턴 — techlib 선적용) ──
    클릭 시 담김: statusBox가 자기 상태색의 유리판(틴트+블러+윗빛)으로 변하고 우상단 코너에 카트 배지(li.tlInBk 연동) */
 .typeList .mainList li .statusBox{cursor:pointer;position:relative;overflow:visible;transition:background .2s ease, box-shadow .2s ease;}
@@ -8332,3 +8271,37 @@ body.cardFullOpen{overflow:hidden;}
 /* 원료 링크(HALB·ROH → Raw Material Hub 팝업) — 화학물질명은 링크 없음 */
 .matLink{cursor:pointer;}
 .matLink:hover{color:#a47864;text-decoration:underline;}
+/* ELN 노트 상태 statusBox 색 변형 — mapis_lib common.css 포팅(apis_note_user_list) */
+.typeList .mainList li .statusBox.blue { border-color: #7391C8 !important; color: #7391C8 !important; background-color: #ffffff !important; }
+.typeList .mainList li .statusBox.green { border-color: #899F6A !important; color: #899F6A !important; background-color: #ffffff !important; }
+.typeList .mainList li .statusBox.red { border-color: #c62828 !important; color: #c62828 !important; background-color: #ffffff !important; }
+.typeList .mainList li .statusBox.orange { border-color: #e87e05 !important; color: #e87e05 !important; background-color: #ffffff !important; }
+/* apis_note_user_list — ELN 모달의 MAPIS 공통 스킨(브리지 ELN.modal) */
+.mapisElnModal{width:640px;max-width:90%;}
+.mapisElnModal .modal-content{max-height:calc(80vh - 90px);overflow-y:auto;}
+.mapisElnModal .mapisElnMsg{font-size:14px;color:#555;line-height:1.6;}
+.mapisElnModal .aniInput .browser-default{width:100%;height:30px;line-height:30px;font-size:14px;}
+.mapisElnModal .elnSrchRow .aniInput{width:100%;}
+/* apis_note_user_list — 리스트 행 2줄 구성: 제목 / 노트북명·태그 한 줄 */
+.elnMetaLine{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:2px;}
+.elnMetaLine .elnNoteNb{margin-bottom:0;}
+.elnMetaLine .elnNoteTags{margin-top:0;}
+/* apis_note_user_list — 중앙 노트 리스트도 카드 스킨(좌 노트북·우 요약과 통일) */
+.elnNotePanel.cardBox2{padding:12px 16px;}
+/* apis_note_user_list — 카드 3단 사이 여백(eln_proto.css 의 gap:0 보다 높은 specificity 로 재정의) */
+.elnWsArea .elnListWrap{gap:20px;}
+/* apis_note_user_list — 제목 클릭 영역을 텍스트 폭으로 한정(행 전체가 팝업 클릭영역이 되지 않게).
+   hover 언더라인/색은 공통 규칙(.typeList .mainList li .pjTit:hover — #004098 underline)을 그대로 사용 */
+.elnListWrap .pjTit{width:fit-content;max-width:100%;}
+/* apis_note_user_list — 타이틀 줄 우측 패딩 제거: Search/New Note 버튼 우측 끝 = 카드 우측 라인 */
+.elnWsArea .elnWsTitArea{padding-right:0;}
+/* apis_note_user_list — 행 hover 리프트 제거(공통 li:hover 의 translateY(-1px) 상쇄) — 글라스 배경/그림자는 유지 */
+.elnNotePanel .mainList li:hover{transform:none;}
+/* apis_note_user_list — 노트 패널 헤더 하단 구분선 */
+.elnNotePanel .elnNotePanelHead{border-bottom:1px solid #e6ddd0;margin-bottom:10px;}
+/* apis_note_user_list — 검색 모달 필드를 MAPIS 공통 룩으로(eln_proto 의 40px 라운드 박스 무력화) */
+.elnSrchForm .aniInput input.browser-default{height:30px;border:0;border-radius:5px 5px 0 0;padding:0 10px;background:rgba(164,119,100,.05);}
+/* 템플릿 픽커 — 내용이 길 때 모달 내부 스크롤(전역 .modal overflow:hidden 잘림 방지) */
+#elnTmplModal .modal-content{max-height:calc(80vh - 90px);overflow-y:auto;}
+/* apis_note_user_list — 검색 인풋 포커스: eln_proto 의 보더/박스섀도 무력화(aniInput focus-border 만 사용) */
+.elnSrchForm .aniInput input.browser-default:focus{border:0;outline:none;box-shadow:none;background:rgba(164,119,100,.05);}

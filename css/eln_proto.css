@@ -1,3 +1,6 @@
+/* MAPIS 스택(mapis_lib common.css 미로딩) fallback 변수 — 동일 값이라 기존 페이지 영향 없음 */
+:root{ --orangetiger:#e87e05; --gray60:#6F6F6F; }
+
 /* MAPIS ELN 프로토타입 전용 스타일 — mapis_lib 위에 얹기만(운영 자산 불가침).
    합칠 때 이 파일 = ELN이 추가한 CSS 전부. */
 
