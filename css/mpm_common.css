@@ -8071,11 +8071,12 @@ body.roMode #upFileRow{display:none;}
 
 .ht300{height:300px;}
 .ht340{height:340px;}
+.ht400{height:400px;}
 
 
 .lchPill{display:inline-flex;align-items:center;gap:6px;font-size:13px;white-space:nowrap;}
-.fltDot.stSched{background:#cac494;}
-.fltDot.stLate{background:#ebc39e;}
+.fltDot.stSched{background:#C8C2A8;}
+.fltDot.stLate{background:#D9C27E;}
 .npiListNote{font-size:13px;color:#9a8f82;text-align:center;padding:10px 0 5px;}
 /* dash2 드릴다운 — 클릭 가능한 매트릭스 버블 + 안내 힌트 + 목록 모달 */
 /* Launch Report — Target Choice(AOP/Current) 라디오: 차트 위 우측 정렬 */
@@ -8305,3 +8306,22 @@ body.cardFullOpen{overflow:hidden;}
 #elnTmplModal .modal-content{max-height:calc(80vh - 90px);overflow-y:auto;}
 /* apis_note_user_list — 검색 인풋 포커스: eln_proto 의 보더/박스섀도 무력화(aniInput focus-border 만 사용) */
 .elnSrchForm .aniInput input.browser-default:focus{border:0;outline:none;box-shadow:none;background:rgba(164,119,100,.05);}
+/* apis_note_user_list — 요약 Modules 칩(노트가 가진 모듈 구성 표시) */
+.elnSumMods{display:flex;flex-wrap:wrap;gap:4px;}
+.elnSumMods .roundBox{margin:0;font-size:12px;padding:0 10px;line-height:20px;height:20px;}
+/* apis_note_user_list — 요약 Linked 섹션(NPI 과제·배합 연결 표시) */
+.elnSumLinks{display:flex;flex-direction:column;gap:6px;}
+.elnSumLink{display:flex;align-items:center;gap:6px;font-size:13px;color:#3a2c24;}
+.elnSumLink i{font-size:16px;color:#a47864;}
+.elnSumLink .lt{overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.elnSumLink .roundBox{margin:0;flex:0 0 auto;font-size:11px;padding:0 8px;line-height:18px;height:18px;}
+a.elnSumLink:hover .lt{color:#004098;text-decoration:underline;}
+/* apis_note_user_list — 요약 타이틀 = 상세 팝업 링크(리스트 제목과 동일 hover 관례) */
+.elnSummary .elnSumTit.jsSumOpen{cursor:pointer;width:fit-content;max-width:100%;}
+.elnSummary .elnSumTit.jsSumOpen:hover{color:#004098;text-decoration:underline;}
+/* apis_note_user_list — New Notebook = viva hBtn(패널 하단 고정, 풀폭 센터) */
+.elnNbPanel .elnNbNewBtn{margin-top:auto;justify-content:center;}
+/* apis_note_user_list — 노트북 카운트를 알약 배지로(맨눈 숫자 → 감싼 칩) */
+.elnNbPanel .elnNbItem .ct{min-width:22px;height:18px;line-height:18px;text-align:center;padding:0 7px;border-radius:9px;background:rgba(164,120,100,.1);color:#8a7160;}
+.elnNbPanel .elnNbItem.on .ct{background:#a47864;color:#fff;}
+.elnNbPanel .elnNbUnfiled .ct{background:rgba(179,165,150,.15);color:#a3968a;}

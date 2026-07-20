@@ -112,13 +112,9 @@
 					<div class="elnNbItem" data-nb="rgboled"><i class="material-symbols-outlined fill">folder</i><span class="nm">RGBOLED Adhesive</span><span class="ct">6</span></div>
 					<div class="elnNbItem" data-nb="foled"><i class="material-symbols-outlined fill">folder</i><span class="nm">Flexible OLED</span><span class="ct">3</span></div>
 					<div class="elnNbItem" data-nb="optical"><i class="material-symbols-outlined fill">folder</i><span class="nm">Optical Clear Resin</span><span class="ct">2</span></div>
+					<div class="elnNbItem" data-nb="customerA"><i class="material-symbols-outlined fill">folder</i><span class="nm">Customer A Project</span><span class="ct">4</span></div>
 				</div>
-				<div class="elnNbGrpLabel">SHARED NOTEBOOKS</div>
-				<!-- Shared Notebooks — 이 안에서만 드래그 정렬 -->
-				<div class="elnNbGroup" data-group="shared">
-					<div class="elnNbItem" data-nb="customerA"><i class="material-symbols-outlined fill">folder_shared</i><span class="nm">Customer A Project</span><span class="ct">4</span></div>
-				</div>
-				<a href="javascript:;" id="elnNewNotebook" class="elnNbNew"><i class="material-symbols-outlined">create_new_folder</i>New Notebook</a>
+				<a href="javascript:;" id="elnNewNotebook" class="waves-effect waves-light hBtn hViva elnNbNewBtn"><i class="material-symbols-outlined left">create_new_folder</i><span class="label">New Notebook</span></a>
 			</aside>
 
 			<!-- 중: 노트 목록 (뷰 전환: List·Chem·Formulation) -->
@@ -412,7 +408,7 @@
 			{code:'NT-2603-00120', title:'Haze reduction — final formulation', st:'ok', ver:'v3', cat:'Formulation', fml:'FML-OC-3310', tags:['#haze'], author:'M.J. Lee', date:'2026-03-28'},
 			{code:'NT-2603-00088', title:'Yellowing aging test (85°C/85%RH)', st:'ing', ver:'v1', cat:'Formulation', fml:'FML-OC-3308', tags:['#aging'], author:'M.J. Lee', date:'2026-03-12'}
 		]},
-		customerA: { name:'Customer A Project', icon:'folder_shared', notes:[
+		customerA: { name:'Customer A Project', icon:'folder', notes:[
 			{code:'NT-2605-00301', title:'Customer A — OCR spec review', st:'ing', ver:'', cat:'General', fml:'', tags:['#customerA'], author:'J.P. Kim', date:'2026-05-30'},
 			{code:'NT-2605-00288', title:'Adhesion to PET film', st:'ok', ver:'v2', cat:'Formulation', fml:'FML-CA-4410', tags:['#adhesion'], author:'J.P. Kim', date:'2026-05-26'},
 			{code:'NT-2605-00270', title:'Cost-down reformulation', st:'hold', ver:'v1', cat:'Formulation', fml:'FML-CA-4408', tags:['#costdown'], author:'J.P. Kim', date:'2026-05-20'},
@@ -506,6 +502,14 @@
 		});
 		setHeaderCount();
 		applyFilter();
+		flipInList(ul);   // 행 진입 애니메이션(npdi 리스트 동일 — flipInX 스태거)
+	}
+	// 행 순차 등장 — 다른 MAPIS 리스트(fnSetPrjList)와 동일 패턴
+	function flipInList(ul){
+		ul.querySelectorAll('li').forEach(function(li, i){
+			li.classList.remove('animate__flipInX');
+			setTimeout(function(){ li.classList.add('animate__flipInX'); }, i * 80);
+		});
 	}
 	function renderNotes(key){
 		curNotes = getNotes(key);
@@ -586,21 +590,19 @@
 			'<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">blender</i>Formulation</div>'+
 			'<div class="elnSumFml"><i class="material-symbols-outlined">science</i><span><b>'+esc(n.fml)+'</b></span>'+
 			'<span class="chip"><i class="material-symbols-outlined" style="font-size:12px;vertical-align:-2px;">link</i> Linked</span></div></div>' : '';
-		// History = 자기가 속한 파생 트리 전체를 시간 내림차순(최신이 위)으로 평면 나열. 트리 구조(분기)는 무시.
-		// 현재 노트는 제자리에서 pulse로 위치 표시. 깊은 분기 구조는 Full view 그래프에서.
-		var lin = computeLineage(n).slice().sort(function(a, b){ return a.note.date < b.note.date ? 1 : (a.note.date > b.note.date ? -1 : 0); });
-		var linHtml;
-		if(lin.length > 1){
-			var lnNode = function(L){ return '<div class="elnLineNode'+(L.current?' current':'')+'" data-code="'+esc(L.note.code)+'" title="'+esc(L.note.title)+'"><span class="elnLineDot '+L.note.st+'"></span><span class="nm">'+esc(L.note.title)+'</span></div>'; };
-			linHtml = '<div class="elnLineage">' + lin.map(lnNode).join('') + '</div>';
-		} else {
-			linHtml = '<div class="elnSumNoLin">Root note — no derivation yet.</div>';
-		}
+		// 연결 항목 — NPI 과제(클릭=상세 팝업) + Formulation 코드
+		var links = [];
+		var proj = noteProject(n);
+		if(proj) links.push('<a href="javascript:;" class="elnSumLink jsLinkNpi" data-code="'+esc(proj)+'"><i class="material-symbols-outlined">lightbulb</i><span class="lt">'+esc(proj)+'</span><span class="roundBox bdBlue">NPI</span></a>');
+		if(n.fml) links.push('<div class="elnSumLink"><i class="material-symbols-outlined">science</i><span class="lt">'+esc(n.fml)+'</span><span class="roundBox bdGreen">Formulation</span></div>');
+		var linksHtml = links.length
+			? '<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">link</i>Linked</div><div class="elnSumLinks">'+links.join('')+'</div></div>'
+			: '';
 		sum.classList.remove('empty');
 		sum.innerHTML =
 			'<div class="elnSumHead">'+
 				'<div class="elnSumStatusRow"><span class="elnSumPill dotOnly" data-st="'+n.st+'" title="'+esc(s.t)+'"><span class="elnDot '+n.st+'"></span></span><span class="elnSumCode">'+esc(n.code)+'</span></div>'+
-				'<div class="elnSumTit">'+esc(n.title)+'</div>'+
+				'<div class="elnSumTit jsSumOpen" data-tip="Open note" data-tip-pos="bottom">'+esc(n.title)+'</div>'+
 			'</div>'+
 			'<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">info</i>Overview</div>'+
 				'<div class="elnSumMeta">'+
@@ -610,10 +612,10 @@
 					'<div class="elnSumMetaRow"><span class="k">Modified</span><span class="v">'+esc(n.date)+'</span></div>'+
 				'</div>'+
 			'</div>'+
-			noteSectionsHtml(n) +
-			(chipsHtml ? '<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">sell</i>Tags</div><div class="elnSumChips">'+chipsHtml+'</div></div>' : '')+
-			'<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">account_tree</i>History'+
-				'<a href="javascript:;" class="more elnFullView">Full view<i class="material-symbols-outlined" style="font-size:13px;">open_in_full</i></a></div>'+linHtml+'</div>';
+			'<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">view_agenda</i>Modules</div>'+
+				'<div class="elnSumChips elnSumMods">'+noteHeaders(n).map(function(h){ return '<span class="roundBox">'+esc(h)+'</span>'; }).join('')+'</div></div>'+
+			linksHtml +
+			(chipsHtml ? '<div class="elnSumSec"><div class="elnSumSecTit"><i class="material-symbols-outlined">sell</i>Tags</div><div class="elnSumChips">'+chipsHtml+'</div></div>' : '');
 	}
 
 	// 계보 전체 트리(모달용) — parent 링크로 계산한 파생 트리를 들여쓰기로(분기 표현)
@@ -902,7 +904,7 @@
 		});
 	}
 	/* ── 노트북 색상(혼합: 그룹 기본 + 개별 덮어쓰기). 색은 NB[key].color에 저장 ── */
-	var NB_GROUP_COLOR = { my:'#A47864', shared:'#A47864', unfiled:'#b3a596' }; // 그룹 기본색(Shared도 일단 My와 동일)
+	var NB_GROUP_COLOR = { my:'#A47864', unfiled:'#b3a596' }; // 그룹 기본색
 	// 큐레이션 빠른 팔레트 10색 — PANTONE 2025·2026 혼합(첫=mocha25=그룹 기본). mocha/cfblue/tendril/viola/rose + willow/sea26/blue26/choco/stone
 	var NB_PALETTE = ['#A47864','#7391C8','#8ca571','#a893bd','#D19C97','#9B8B50','#89BDD3','#4D677D','#56443F','#A89A8E'];
 	// 확장 팔레트 = mpm_materialize.css에서 추출한 머티리얼 색(패밀리 × lighten-5~darken-4). [이름, [10shade]]
@@ -928,7 +930,7 @@
 		["GREY",['#FAFAFA','#F5F5F5','#EEEEEE','#E0E0E0','#BDBDBD','#9E9E9E','#757575','#616161','#424242','#212121']],
 		["BLACK",['#000000']]
 	];
-	function nbGroupOf(key){ if(key === 'unfiled') return 'unfiled'; return (NB[key] && NB[key].icon === 'folder_shared') ? 'shared' : 'my'; }
+	function nbGroupOf(key){ return (key === 'unfiled') ? 'unfiled' : 'my'; }
 	function nbColor(key){ return (NB[key] && NB[key].color) || NB_GROUP_COLOR[nbGroupOf(key)] || '#A47864'; }
 	// 좌측 패널 항목의 폴더 아이콘에 색 반영(직속 i만 — ⋯ 아이콘 제외)
 	function applyNbColor(item){
@@ -1208,27 +1210,19 @@
 
 		// 우측 요약의 'Full view' → 계보 모달 (별도 화면 대체)
 		document.getElementById('elnSummary').addEventListener('click', function(e){
+			var st = e.target.closest('.jsSumOpen');
+			if(st && curSummaryNote){ openNote(curSummaryNote._nb); return; }
+			var npi = e.target.closest('.jsLinkNpi');
+			if(npi){
+				var code = npi.getAttribute('data-code') || '';
+				var page = code.indexOf('[CN-') === 0 ? 'apis_custom_pop.html' : (code.indexOf('[SN-') === 0 ? 'apis_npdi_pop.html' : 'projectPopup.html');
+				window.open(page, '', 'width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes');
+				return;
+			}
 			var nbPick = e.target.closest('.elnSumNbPick');
 			if(nbPick){ openSummaryNbPicker(nbPick, curSummaryNote); return; }
 			var tagc = e.target.closest('.elnSumChip');
 			if(tagc){ searchByTag(tagc.getAttribute('data-tag')); return; }
-			// 계보 노드 클릭 → 그 노트로 요약 전환(트리 탐색). 리스트에 있으면 하이라이트도
-			var linNode = e.target.closest('.elnLineNode[data-code]');
-			if(linNode){
-				var code = linNode.getAttribute('data-code');
-				var tgt = getNotes('all').filter(function(x){ return x.code === code; })[0];
-				if(tgt){
-					renderSummary(tgt);
-					var i = curNotes.map(function(x){ return x.code; }).indexOf(code);
-					if(i >= 0){
-						document.querySelectorAll('#noteListUl li').forEach(function(x){ x.classList.remove('on'); });
-						var li = document.querySelector('#noteListUl li[data-idx="'+i+'"]');
-						if(li){ li.classList.add('on'); li.scrollIntoView({ block:'nearest', behavior:'smooth' }); } // 선택 항목으로 리스트 스크롤 따라가기
-					}
-				}
-				return;
-			}
-			if(e.target.closest('.elnFullView')){ e.preventDefault(); openLineageModal(curSummaryNote); }
 		});
 
 		// New Note(노트 레벨) → 시작 템플릿 픽커 먼저. All Notes 뷰면 노트북 미지정으로 시작

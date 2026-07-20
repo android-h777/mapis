@@ -21,10 +21,11 @@
         // 상태 팔레트 — MAPIS 공통 톤(mocha·olive·blue·amber + aesop 웜톤). 버블·도트는 클래스(stXxx)로 칠함
         var ST_COLOR  = {'Active':'#7391c9', 'In Approval':'#a47864', 'Complete':'#899f6a', 'On Hold':'#e0a83e', 'Canceled':'#b0a595', 'Total':'#9e9e9e'};
         var ST_CLS    = {'Active':'stAct', 'In Approval':'stAppr', 'Complete':'stComp', 'On Hold':'stHold', 'Canceled':'stCanc', 'Total':'stTot'};
-        var LCH_COLOR = {'On-Time':'#899f6a', 'Late-Launch':'#ebc39e', 'Delayed':'#e0a83e', 'Scheduled':'#cac494', 'Total':'#b0a595'};
+        var LCH_COLOR = {'On-Time':'#94A96B', 'Late-Launch':'#D9C27E', 'Delayed':'#DFA75C', 'Scheduled':'#C8C2A8', 'Total':'#A99F93'};
         var LCH_CLS   = {'On-Time':'stComp', 'Late-Launch':'stLate', 'Delayed':'stHold', 'Scheduled':'stSched'};
-        var BU_COLOR  = {'Coatings':'#a47864', 'Electronic Materials':'#7391c9', 'Healthcare':'#c48b8b', 'Industrial':'#899f6a',
-                         'Personal Care':'#ebc39e', 'Specialty Additives':'#cac494', 'Tire & Silanes':'#8a7d6e', 'Urethane Additives':'#e0a83e'};
+        // MAPIS 차트 팔레트 — 아이보리/모카 베이스에 맞춘 중간 채도 8색(웜 6 + 비올라·틸 2로 구분감)
+        var BU_COLOR  = {'Coatings':'#B08268', 'Electronic Materials':'#7B99C9', 'Healthcare':'#C98B8B', 'Industrial':'#94A96B',
+                         'Personal Care':'#E5B07E', 'Specialty Additives':'#A48EBB', 'Tire & Silanes':'#7FB5AE', 'Urethane Additives':'#D9C27E'};
 
         var BUS  = ['Coatings','Electronic Materials','Healthcare','Industrial','Personal Care','Specialty Additives','Tire & Silanes','Urethane Additives'];
         var STS  = ['Active','In Approval','Complete','On Hold','Canceled'];
@@ -262,12 +263,15 @@
             chart: { type:'column', style:{ fontFamily:'SF-Light' } },
             title: { text:'' },
             xAxis: { categories: yrs },
-            yAxis: { min:0, title:{ text:'' }, stackLabels:{ enabled:true, style:{ color:'#3a6ea5', fontWeight:'bold' } } },
+            yAxis: { min:0, title:{ text:'' }, stackLabels:{ enabled:true, style:{ color:'#6b5d4f', fontWeight:'bold', textOutline:'none' } } },
             legend: { align:'right', verticalAlign:'middle', layout:'vertical', title:{ text:'BU/Segment/MGPP', style:{ fontSize:'12px' } } },
             tooltip: { headerFormat:'<b>{category}</b><br/>', pointFormat:'{series.name}: {point.y:,.0f}<br/>Total: {point.stackTotal:,.0f}<br/><span class="font11">Click to list programs</span>' },
-            plotOptions: { column: { stacking:'normal', cursor:'pointer',
+            plotOptions: { column: { stacking:'normal', cursor:'pointer', borderWidth:1, borderColor:'#ffffff',
               point: { events: { click: function(){ openDrill('fc', { bu:this.series.name, year:this.category }); } } },
-              dataLabels:{ enabled:true, allowOverlap:false, format:'{point.y:,.0f}' } } },
+              // 세그먼트 숫자 = 박스 없는 흰 글자(inside, 전부 표시 — 생략 없음). 작은 조각 대비 폰트 10px + 오버랩 허용
+              dataLabels:{ enabled:true, inside:true, allowOverlap:true, crop:false, overflow:'allow', padding:0,
+                style:{ color:'#ffffff', fontSize:'10px', fontWeight:'400', textOutline:'none' },
+                format:'{point.y:,.0f}' } } },
             series: BUS.map(function(bu){
               return { name:bu, color:BU_COLOR[bu],
                 data: yrs.map(function(y){
@@ -770,7 +774,7 @@
                 <label><input name="fcType" type="radio" class="with-gap" value="pie"/><span>Pie</span></label>
               </div>
             </div>
-            <div id="chFc" class="ht340 mt10"></div>
+            <div id="chFc" class="ht400 mt10"></div>
           </div>
         </section>
         <section class="col s6 mt20 animate__animated animate__zoomIn">
@@ -791,7 +795,7 @@
                 <label><input name="lchTgt" type="radio" class="with-gap" value="cur"/><span>Current</span></label>
               </div>
             </div>
-            <div id="chLc" class="ht300 mt10"></div>
+            <div id="chLc" class="ht400 mt10"></div>
           </div>
         </section>
       </div>
