@@ -8329,3 +8329,6 @@ body.cardFullOpen{overflow:hidden;}
 .cmpModal .cardSubTitArea{gap:10px;}
 .cmpModal .cardSubTitArea .cardSubTit{flex:1;min-width:0;}
 .cmpModal .cardSubTitArea .hBtn{white-space:nowrap;flex:0 0 auto;}
+/* 원료 링크(HALB·ROH → Raw Material Hub 팝업) — 화학물질명은 링크 없음 */
+.matLink{cursor:pointer;}
+.matLink:hover{color:#a47864;text-decoration:underline;}

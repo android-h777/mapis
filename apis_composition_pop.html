@@ -543,6 +543,10 @@
           });
 
           // BOM 트리 fold 토글 (NPI npdi-fold 패턴) — 부모(level-1) 클릭 시 자식(level-2) 부드럽게 접기/펼치기
+          // 원료명 클릭 → Raw Material Hub 상세 팝업 (item 리스트 동일 패턴)
+          $(document).on('click', '.matLink', function(){
+            window.open('apis_item_pop.html', '', 'width=1520, height=880, toolbar=no, menubar=no, scrollbars=yes, resizable=yes');
+          });
           $('#bomTbody').on('click', '.npdi-fold:not(.npdi-fold-disabled)', function(){
             var $f = $(this), g = $f.data('fold');
             var expanded = $f.text().indexOf('▼') > -1;
@@ -657,6 +661,11 @@
           else renderBOMTree(data);
         }
 
+        // 원료(HALB·ROH)만 Raw Material Hub 상세 링크 — 완제품(FERT)·포장재(VERP)·화학물질은 제외
+        function matLink(name, cat){
+          return (cat==='HALB' || cat==='ROH') ? '<span class="matLink" data-tip="Open in Raw Material Hub" data-tip-pos="bottom">'+name+'</span>' : name;
+        }
+
         // Tree 뷰 — 자재 계층(L0~L2) + MTART + Qty (fold·flip 유지)
         function renderBOMTree(data){
           $('#bomCols').html(BOM_COLS_TREE);
@@ -673,10 +682,10 @@
               var hasChild = data[idx+1] && data[idx+1].lv === 2;
               first = (hasChild
                         ? '<span class="npdi-fold" data-fold="'+curG+'">▼</span>'
-                        : '<span class="npdi-fold npdi-fold-disabled"></span>') + '<span class="fontM">'+r.name+'</span>';
+                        : '<span class="npdi-fold npdi-fold-disabled"></span>') + '<span class="fontM">'+matLink(r.name, r.cat)+'</span>';
             } else {                      // level-2 (자식)
               trAttr = ' data-child="'+curG+'"';
-              first = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ ' + r.name;
+              first = '&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;└─ ' + matLink(r.name, r.cat);
             }
             // 행 단위 flip 등장: 인덱스별 stagger(최대 0.6s에서 cap)
             var dly = Math.min(idx * 0.04, 0.6);
@@ -716,7 +725,7 @@
               : '<span class="font13">'+a.places[0].split(':')[0].trim()+'</span>';
             var dly = Math.min(idx * 0.04, 0.6);
             html += '<tr class="animate__animated animate__flipInX animate__faster" style="animation-delay:'+dly.toFixed(2)+'s">'
-                 +    '<td class="al font13 nowrap"><span class="fontM">'+a.name+'</span></td>'
+                 +    '<td class="al font13 nowrap"><span class="fontM">'+matLink(a.name, a.cat)+'</span></td>'
                  +    '<td class="ac font13 nowrap">'+a.mid+'</td>'
                  +    '<td class="ac font13 nowrap">'+a.cat+'</td>'
                  +    '<td class="ar font13 nowrap">'+a.qty.toFixed(2)+'</td>'
@@ -756,7 +765,7 @@
             if(i === 0 || RC_DATA[i-1].srcId !== r.srcId){
               var span = 1;
               while(i+span < RC_DATA.length && RC_DATA[i+span].srcId === r.srcId) span++;
-              matCell = '<td class="al"'+(span>1?' rowspan="'+span+'"':'')+'><span class="fontM">'+matName+'</span><br><span class="font13">'+r.srcId+' · '+matNo+'</span></td>';
+              matCell = '<td class="al"'+(span>1?' rowspan="'+span+'"':'')+'><span class="fontM">'+matLink(matName, 'ROH')+'</span><br><span class="font13">'+r.srcId+' · '+matNo+'</span></td>';
             }
             html += '<tr>'
                  +    matCell
@@ -880,7 +889,7 @@
             if(i === 0 || RXN_COND[i-1].srcId !== r.srcId){
               var span = 1;
               while(i+span < RXN_COND.length && RXN_COND[i+span].srcId === r.srcId) span++;
-              matCell = '<td class="al"'+(span>1?' rowspan="'+span+'"':'')+'><span class="fontM">'+matName+'</span><br><span class="font13">'+r.srcId+' · '+matNo+'</span></td>';
+              matCell = '<td class="al"'+(span>1?' rowspan="'+span+'"':'')+'><span class="fontM">'+matLink(matName, 'ROH')+'</span><br><span class="font13">'+r.srcId+' · '+matNo+'</span></td>';
             }
             html += '<tr>'
                  +    matCell
