@@ -497,6 +497,20 @@
             openDrill('pf', { row: $(this).attr('data-row'), col: $(this).attr('data-col') });
           });
 
+          // 포트폴리오 유리판 버블 — 마우스 추적 3D 틸트(±20° + scale, 루미나 글라스 인터랙션)
+          $(document).on('mousemove', '.npiBub.jsDrill', function(e){
+            if(typeof glassTrack === 'function') glassTrack.call(this, e);
+            var r = this.getBoundingClientRect();
+            var x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+            this.style.transform = 'perspective(250px) rotateX(' + ((0.5 - y) * 40).toFixed(2) + 'deg) rotateY(' + ((x - 0.5) * 40).toFixed(2) + 'deg) scale(1.12)';
+          });
+          $(document).on('mouseleave', '.npiBub.jsDrill', function(){
+            var el = this;
+            el.style.transition = 'transform .25s ease';
+            el.style.transform = '';
+            setTimeout(function(){ el.style.transition = ''; }, 250);
+          });
+
           // 드릴 목록 헤더 클릭 → 컬럼 정렬 토글(asc→desc)
           $(document).on('click', '#drillModal thead th', function(){
             if(!_drill) return;
