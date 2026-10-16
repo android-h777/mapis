@@ -28,12 +28,9 @@
 .elnStatusChip[data-status="appr"] .dot{background:var(--viola25);}
 .elnStatusChip:hover{filter:brightness(.97);border-color:#A47864;}
 /* status 드롭다운(popover 내부) — 노트북 픽커 메뉴와 동일한 룩 */
-.elnStatusMenu{display:flex;flex-direction:column;min-width:190px;}
-.elnStatusMenuItem{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;
-  cursor:pointer;font-size:13px;color:#3a2c24;transition:background .12s;}
-.elnStatusMenuItem:hover{background:rgba(164,120,100,.08);}
+.elnStatusMenu{display:flex;flex-direction:column;min-width:190px;}   /* 항목 룩 = 아래 '공용 메뉴 스킨' */
 .elnStatusMenuItem .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;}
-.elnStatusMenuItem .chk{margin-left:auto;font-size:16px;color:#3aaa6f;}
+.elnStatusMenuItem .chk{margin-left:auto;font-size:20px;color:#000;}
 .elnStatusMenuItem[data-status="ing"]  .dot{background:#2f80ed;}
 .elnStatusMenuItem[data-status="ok"]   .dot{background:#3aaa6f;}
 .elnStatusMenuItem[data-status="fail"] .dot{background:#d65a5a;}
@@ -64,41 +61,43 @@
 .elnToast.fade{animation:elnToastOut .25s ease forwards;}
 @keyframes elnToastIn{from{transform:translateY(-12px);opacity:0;}to{transform:translateY(0);opacity:1;}}
 @keyframes elnToastOut{to{transform:translateY(-12px);opacity:0;}}
-/* 모달 */
-.elnModalBack{position:fixed;inset:0;background:rgba(40,30,24,.42);backdrop-filter:blur(3px);
-  z-index:1500;display:flex;align-items:center;justify-content:center;animation:elnFadeIn .18s ease;}
-.elnModal{background:#fff;border-radius:14px;width:560px;max-width:92vw;max-height:84vh;overflow:hidden;
-  box-shadow:0 20px 60px rgba(0,0,0,.28);display:flex;flex-direction:column;animation:elnPop .2s ease;}
-/* 헤더 — 시스템 Materialize 모달(.modal-header.mochaBg)과 완전 동일: mocha 바 + 흰 h5 타이틀(1.64rem) + 27px 아이콘 + close 아이콘 */
-.elnModalHead{padding:0 20px;height:50px;background:var(--mocha25);color:#fff;
-  font-family:var(--font-main-m);display:flex;align-items:center;}
-.elnModalHead h5{margin:0;display:flex;align-items:center;color:#fff;line-height:1;}
-.elnModalHead h5 i{font-size:27px;color:#fff;}
-.elnModalHead .x{margin-left:auto;cursor:pointer;border:0;background:transparent;padding:0;display:flex;align-items:center;opacity:.92;}
-.elnModalHead .x:hover{opacity:1;}
-.elnModalHead .x i{font-size:32px;color:#fff;}
-.elnModalBody{padding:18px 20px;overflow-y:auto;}
-/* 모달 안 aniInput — 컴포지션 모달과 동일한 밑줄 인풋. 박스 override(.elnModalBody input[type=text])보다 우선 */
-.elnModalBody .aniInput input.browser-default{border:0;border-radius:5px 5px 0 0;padding:0 5px;height:auto;line-height:25px;background:rgba(164,119,100,.05);box-shadow:none;}
-.elnModalBody .aniInput input.browser-default:focus{outline:none;box-shadow:none;background:rgba(164,119,100,.1);}
+/* 모달 = 시스템 Materialize 모달(M.Modal, ELN.modal 이 생성한 article.modal.elnMz). 글래스·헤더·오버레이·blur 는 common.css 담당.
+   여기선 본문 높이 상한만: .modal 이 overflow:hidden·max-height:80% 라 modal-content 가 스스로 스크롤 */
+.modal.elnMz .modal-content{max-height:calc(80vh - 50px);}
+/* 모달 안 aniInput — 컴포지션 모달과 동일한 밑줄 인풋. 박스 override(.elnMz input[type=text])보다 우선 */
+.elnMz .aniInput input.browser-default{border:0;border-radius:5px 5px 0 0;padding:0 5px;height:auto;line-height:25px;background:rgba(164,119,100,.05);box-shadow:none;}
+.elnMz .aniInput input.browser-default:focus{outline:none;box-shadow:none;background:rgba(164,119,100,.1);}
 /* 모달 plain input(aniInput 미사용 — 노트북 rename·ChemStudio 등): 깔끔한 박스 유지 */
-.elnModalBody input[type=text]:not(.aniInput input),.elnModalBody input:not([type]):not(.aniInput input){width:100%;box-sizing:border-box;height:auto;border:1px solid #e6ddd0;border-radius:10px;background:#fff;padding:10px 12px;font-size:14px;color:#3a2c24;box-shadow:none;margin:0;}
-.elnModalBody input[type=text]:not(.aniInput input):focus,.elnModalBody input:not([type]):not(.aniInput input):focus{outline:none;border-color:#A47864;box-shadow:0 0 0 1px #A47864;}
-/* Project quick-search 픽커 */
-.elnPickWrap{display:flex;flex-direction:column;}
+.elnMz input[type=text]:not(.aniInput input),.elnMz input:not([type]):not(.aniInput input){width:100%;box-sizing:border-box;height:auto;border:1px solid #e6ddd0;border-radius:10px;background:#fff;padding:10px 12px;font-size:14px;color:#3a2c24;box-shadow:none;margin:0;}
+.elnMz input[type=text]:not(.aniInput input):focus,.elnMz input:not([type]):not(.aniInput input):focus{outline:none;border-color:#A47864;box-shadow:0 0 0 1px #A47864;}
+/* select2 표준 부품 — 구조·박스·칩은 MAPIS 스킨(common.css) 그대로. 여기엔 templateResult/Selection 내부 보조 스타일만 */
+.elnS2Row{display:flex;align-items:center;gap:8px;min-width:0;}
+.elnS2Row .nm{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.elnS2Row .mt{flex:0 0 auto;color:#9b8c7e;font-size:12px;}                       /* 흐린 보조정보(부서·버전·분자식) */
+.elnS2Row .nm + .mt{margin-left:auto;padding-left:12px;}
+.elnS2Thumb{flex:0 0 auto;width:44px;height:30px;display:inline-flex;align-items:center;justify-content:center;overflow:hidden;}
+.elnS2Thumb .elnChemMol{width:100%;height:100%;}
+.elnS2Row .elnChemSub{font-family:ui-monospace,Menlo,Consolas,monospace;}
+/* 리스트 페이지(apis_eln_list_simple.html)의 동료 검색 팝오버가 아직 쓰는 목록 부품 — 팝업 페이지는 select2 로 전환 완료. 룩은 공용 메뉴 스킨과 동일 */
+.elnPickWrap{display:flex;flex-direction:column;padding:10px;}
 .elnPickSearch{width:100%;box-sizing:border-box;border:1px solid #e6ddd0;border-radius:8px;padding:8px 10px;font-size:13px;color:#3a2c24;margin-bottom:8px;}
 .elnPickSearch:focus{outline:none;border-color:#A47864;box-shadow:0 0 0 1px #A47864;}
-.elnPickList{max-height:280px;overflow-y:auto;}
-.elnPickRow{padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:#3a2c24;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.elnPickRow:hover{background:rgba(164,120,100,.10);}
-.elnPickRow.cur{color:#A47864;font-weight:600;}
+.elnPickList{max-height:280px;overflow-y:auto;margin:0 -10px -10px;}
+.elnPickRow{min-height:32px;padding:5px 16px;line-height:22px;cursor:pointer;font-size:14px;color:#000;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.elnPickRow:hover{background-color:color-mix(in oklch,var(--main-color),white 70%);}
 .elnPickEmpty{padding:12px;text-align:center;color:#b3a596;font-size:13px;}
-/* Project = 텍스트 + 링크(스타일은 .elnBasicRow .elnProjVal 영역 참조) */
-.elnPickNone{color:#9b8c7e;font-style:italic;}  /* 픽커의 No Project 행 */
-/* 풋터 — 시스템 모달 .modal .btnArea 와 동일: 구분선 없이 우측정렬 flex */
-.elnModalFoot{padding:0 20px 18px;display:flex;justify-content:flex-end;flex-wrap:wrap;gap:8px;}
+.elnFmlPickBar{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.elnFmlPickScope{flex:0 0 240px;}
+.elnFmlPickBar .aniInput{flex:1;margin:0;}
+.elnFmlPickTbl{max-height:300px;overflow-y:auto;margin:0;}
+.elnFmlPickTbl tbody tr{cursor:pointer;}
+.elnFmlPickTbl th,.elnFmlPickTbl td{white-space:nowrap;padding-left:8px;padding-right:8px;}
+.elnFmlPickTbl td:nth-child(3){white-space:normal;min-width:150px;}
+.elnFmlPickCnt{margin-top:8px;font-size:12px;color:#7a6757;text-align:right;}
+.elnS2Field{width:100%;}
+.elnS2Lbl{margin:12px 0 4px;font-size:12px;color:#9a8b7e;}
+.elnS2Lbl:first-child{margin-top:0;}
 @keyframes elnFadeIn{from{opacity:0;}to{opacity:1;}}
-@keyframes elnPop{from{transform:scale(.96);opacity:0;}to{transform:scale(1);opacity:1;}}
 
 /* Project/Tags는 Note와 동일 .elnBasicRow 한 줄 양식 사용(이전 .elnOvSec collapsible·.elnProjLine 제거) */
 /* .elnRightTit 스타일은 .elnSumSecTit 통합 정의로 일원화(아래 .elnSumSec 영역 참조) */
@@ -117,15 +116,6 @@
 /* ── TaskA1: 배합 연계 ── */
 .rmName{color:#5a3e30;text-decoration:underline dotted;text-underline-offset:2px;}
 .rmName:hover{color:#A47864;background:rgba(164,120,100,.08);}
-.elnFmlPick{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid #e6ddd0;border-radius:10px;
-  margin-bottom:8px;cursor:pointer;transition:all .15s;}
-.elnFmlPick:hover{border-color:#A47864;background:rgba(164,120,100,.06);}
-.elnFmlPick.on{border-color:#A47864;background:rgba(164,120,100,.12);}
-.elnFmlPick > .chk{font-size:22px;color:#c9bcae;flex:0 0 auto;}      /* 체크박스(다중선택) */
-.elnFmlPick.on > .chk{color:#A47864;}
-.elnFmlPick .txt{min-width:0;}
-.elnFmlPick .tit{font-weight:600;font-size:14px;color:#5a3e30;}
-.elnFmlPick .sub{font-size:12px;color:#999;margin-top:2px;}
 /* 배합 비교표: 헤더 배합코드 강조, 배합 간 값이 다른 wt% 셀 강조 */
 .elnFmlCmp table{width:100%;}
 .elnFmlCmp th b{color:#A47864;}
@@ -212,7 +202,7 @@
 .elnBasicRow.alignTop{align-items:flex-start;}                          /* Tags 등 멀티라인 값: 레이블을 첫 줄에 맞춤 */
 .elnBasicRow.alignTop .elnBasicLabel{padding-top:5px;}
 /* 레이블 폰트/크기/두께/색 = npdi 폼 레이블(.inputArea .row .col, body 상속)과 동일: 13px·light·normal·main-text */
-.elnBasicRow .elnBasicLabel{flex:0 0 16.6667%;justify-content:flex-end;margin:0;
+.elnBasicRow .elnBasicLabel{flex:0 0 16.6667%;justify-content:flex-end;text-align:right;margin:0;   /* text-align: 두 줄로 넘친 레이블도 줄마다 우측 정렬 */
   font-family:var(--font-main-l);font-size:13px;font-weight:400;color:var(--main-text-color);}
 .elnBasicRow > :not(.elnBasicLabel){flex:1 1 auto;min-width:0;margin:0;}  /* 값/입력 자리 = 남은 폭 */
 /* Project = 텍스트 + 링크(읽기 표시). 클릭 시 프로젝트 상세 */
@@ -226,7 +216,40 @@
 .elnSchedField.stage{flex:0 0 190px;}
 .elnSchedField.task{flex:1 1 260px;}
 .elnSchedSel .select-wrapper{margin:0;width:100%;}
-.elnBasicRow .elnTagBox{padding:0;}                                      /* row 안에선 자체 패딩 불필요 */
+.elnSchedSel .elnHdrW190{flex:0 0 190px;width:190px;}                    /* Experiment Date 고정폭 */
+.elnSchedSel .elnHdrW280{flex:0 0 280px;width:280px;}                    /* Paper Notebook Ref 고정폭 */
+.elnSchedField.elnPlatName{flex:0 0 280px;width:280px;}                  /* Platform / Pre-NPC 이름 입력(자동완성) */
+.ui-autocomplete .elnPlatUsed{color:#9b8c7e;font-size:12px;}             /* 자동완성: 사용 건수 */
+/* ── Associated Project # (NPI, NPT) — 칩(Primary 1개, 항상 첫 칩) + Add project. 칩 클릭 → 동작 메뉴. 좌측 강조 막대 없음 ── */
+.elnBasicRow .elnPjBox{display:flex;flex-wrap:wrap;align-items:center;gap:8px;min-width:0;}
+.elnPjChips{display:flex;flex-wrap:wrap;gap:6px;min-width:0;}
+.elnPjChip{display:inline-flex;align-items:center;gap:6px;max-width:100%;padding:4px 12px;border-radius:14px;box-sizing:border-box;
+  border:1px solid #A47864;background:#fbf6f2;color:#3a2c24;font-size:13px;line-height:1.4;cursor:pointer;
+  transition:background .15s,box-shadow .15s;pointer-events:auto;}
+.elnPjChip:hover{background:rgba(164,120,100,.16);}
+.elnPjChip b{font-weight:700;white-space:nowrap;}
+.elnPjChip .t{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+/* Primary: 진한 채움 대신 두꺼운 모카 테두리 + 한 톤 짙은 바탕(은은하게). ★·PRIMARY 배지로 구분 유지 */
+.elnPjChip.primary{border:2px solid #A47864;background:#f1e6de;color:#3a2c24;}
+.elnPjChip.primary:hover{background:#ead9ce;}
+.elnPjChip.primary > i{color:#A47864;}
+.elnPjChip > i{font-size:15px;flex:0 0 auto;}
+.elnPjChip .pri{flex:0 0 auto;font-size:9.5px;font-weight:700;letter-spacing:.08em;padding:1px 6px;border-radius:8px;
+  background:#A47864;color:#fff;}
+.elnPjNone{font-size:13px;color:#9b8c7e;}
+/* Add project = MAPIS 공통 hBtn(자체 스타일 없음) → 같은 자리 aniInput + 공통 autocomplete. 칩 높이는 hBtn(30px)에 맞춤 */
+.elnPjChip{height:30px;box-sizing:border-box;padding-top:0;padding-bottom:0;}
+.elnPjChip > i{line-height:1;}
+.elnPjSrch{width:280px;flex:0 0 280px;}
+.cardBox.elnLocked .elnPjSrch,body.elnApproved .elnPjSrch{display:none !important;}
+/* 라벨 도움말(운영 표준 tooltipped helpTooltip leftTooltip) — 색은 표준(orangetiger)으로 되돌림(.elnBasicLabel > i 모카 규칙 예외),
+   글자와 간격은 운영처럼 2px(레이블 flex gap 6px 대신) */
+.elnBasicLabel .helpTooltip{font-size:16px;vertical-align:-3px;color:var(--orangetiger);}
+/* 도움말 달린 레이블은 flex 대신 인라인 흐름 — 두 줄로 넘쳐도 아이콘이 첫 줄 글자 바로 앞에 붙음(운영 col s2 ar 와 같은 모양) */
+.elnBasicRow .elnBasicLabel:has(> .helpTooltip){display:block;}
+.elnInfoTip:hover{color:#A47864 !important;}
+body.elnApproved .elnPjAdd{display:none;}                                /* 승인(읽기전용): 프로젝트 추가 숨김 */
+.elnBasicRow .elnTagBox{padding:0;}                                     /* row 안에선 자체 패딩 불필요 */
 /* 메타: 아이콘 + 라벨/값 카드, 화면 폭에 맞춰 자동 흐름 */
 .elnMeta{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;}
 /* Author·Modified(읽기전용) = 팝업 헤더 우측, 옅은 inline. titArea가 flex → margin-left:auto로 우측 정렬 */
@@ -508,19 +531,27 @@
 #tab_ov .cardTit2 > i.left{margin-right:0;}            /* float 무시 + 큰 기본여백 제거 → gap으로 일관 간격 */
 #tab_ov .cardTit2 > a:first-of-type{margin-left:auto;} /* 첫 우측요소부터 오른쪽 정렬(닫기는 맨 끝) */
 /* 노트 전체 view(승인) 모드 — 값은 또렷하게: disabled/readonly 기본 흐림 제거(역설 방지) */
-body.elnApproved #tab_ov input,body.elnApproved #tab_ov textarea,body.elnApproved #tab_ov select,
-body.elnApproved #tab_ov select:disabled,body.elnApproved #tab_ov input:disabled{opacity:1;color:#3a2c24;-webkit-text-fill-color:#3a2c24;cursor:default;}
+/* Audit Trail 필터(select)는 view 모드에서도 조작 가능한 컨트롤 → :not(#card_audit)로 제외 */
+body.elnApproved #tab_ov .cardBox:not(#card_approval) input,body.elnApproved #tab_ov .cardBox:not(#card_approval) textarea,body.elnApproved #tab_ov .cardBox:not(#card_audit):not(#card_approval) select,
+body.elnApproved #tab_ov .cardBox:not(#card_approval) select:disabled,body.elnApproved #tab_ov .cardBox:not(#card_approval) input:disabled{opacity:1;color:#3a2c24;-webkit-text-fill-color:#3a2c24;cursor:default;}
 /* View 모드 = plain 텍스트 출력 — readOnly 인풋 chrome 제거(보더·밑줄·배경·화살표) */
-body.elnApproved #tab_ov input,body.elnApproved #tab_ov textarea,body.elnApproved #tab_ov select{border:0 !important;background:transparent !important;box-shadow:none !important;padding-left:0 !important;}
-body.elnApproved #tab_ov .aniInput .focus-border{display:none !important;}
+body.elnApproved #tab_ov .cardBox:not(#card_approval) input,body.elnApproved #tab_ov .cardBox:not(#card_approval) textarea,body.elnApproved #tab_ov .cardBox:not(#card_audit):not(#card_approval) select{border:0 !important;background:transparent !important;box-shadow:none !important;padding-left:0 !important;}
+body.elnApproved #tab_ov .cardBox:not(#card_approval) .aniInput .focus-border{display:none !important;}
 body.elnApproved #tab_ov .cardTit2 input.elnModTitle{border-bottom:0 !important;padding-left:0 !important;}
 body.elnApproved #tab_ov .select-wrapper .caret{display:none !important;}
+/* Materialize 드롭다운은 init 시점에만 disabled를 확인 → view 모드에서 클릭 자체를 차단(값 변경·기록 방지) */
+body.elnApproved #tab_ov .select-wrapper{pointer-events:none;}
 /* View 모드 = Save 버튼 숨김 */
 body.elnApproved #elnSaveBtn{display:none !important;}
 /* 섹션 삭제(×) — 자물쇠 오른쪽 코너 끝. hover 시 빨강(삭제 affordance). (Local History E7sZ에서 복원) */
-.elnModDel{color:#c9bcae;cursor:pointer;flex:0 0 auto;transition:color .15s;}
-.elnModDel:hover{color:#d65a5a;}
-.elnModDel i{font-size:18px;display:block;}
+/* 역할(섹션 삭제)에 맞게 눈에 띄는 테두리 아이콘 버튼 — 운영 btn_deleteColumn 계열(테두리+radius) 확대판, hover 시 viva */
+.elnModDel{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;margin-left:8px;flex:0 0 auto;
+  border:1px solid rgba(164,120,100,.35);border-radius:8px;background:#fff;color:#a08b7c;cursor:pointer;transition:color .15s,border-color .15s,background-color .15s;}
+.elnModDel:hover{color:var(--viva);border-color:rgba(187,38,73,.55);background:rgba(187,38,73,.06);}
+/* 삭제 버튼 hover → 지워질 카드(섹션) 테두리를 viva로 + 옅은 링(radius를 따라감 — 좌측 막대 아님) */
+#tab_ov > .cardBox{transition:border-color .15s,box-shadow .15s;}
+#tab_ov > .cardBox:has(.elnModDel:hover){border-color:var(--viva);box-shadow:0 0 0 4px rgba(187,38,73,.12);}
+.elnModDel i{font-size:19px;display:block;}
 /* 승인(전체 view) 모드: 편집 affordance 차단(입력요소는 JS가 readonly/disabled) */
 /* 커스텀 편집 컨트롤(form 요소가 아님) — 클릭 차단 */
 body.elnApproved .elnStatusChip,
@@ -548,11 +579,88 @@ body.elnApproved .elnTag{padding-right:11px;}   /* close 아이콘 자리 → �
 .elnApprDpTable th:nth-child(4),.elnApprDpTable td:nth-child(4){width:120px;}
 .hBtn.hSign{color:#2e8c5c;border:2px solid #2e8c5c;}
 .hBtn.hSign::before{background-color:#2e8c5c;}
+
+/* ── Approval(공동서명) 카드 ── */
+.elnSignBar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px;}
+.elnSignActs{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;}
+.elnSignSeg{display:inline-flex;align-items:center;gap:0;font-size:12px;}
+.elnSignSegLbl{color:#9a8b7e;margin-right:8px;}
+.elnSignTab{margin:0;}
+.elnSignTab ul{display:flex;margin:0;padding:0;}
+.elnSignTab li{flex:0 0 auto;}
+.elnSignTab .tabBg{transition:left .2s ease;}
+.elnSignCs{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:14px;font-size:13px;}
+.elnSignCsLbl{font-weight:600;color:#5a4a3e;margin-right:4px;}
+.elnSignChip{display:inline-flex;align-items:center;gap:4px;}
+.elnSignChip i{font-size:14px;cursor:pointer;opacity:.8;}
+.elnSignChip i:hover{opacity:1;}
+.elnSignNone{color:#9a8b7e;font-size:13px;}
+.elnSignTable td{vertical-align:middle;}
+.elnSignRole{font-size:11px;color:#9a8b7e;}
+.elnSignTable .aniInput select.browser-default{width:100%;min-width:110px;}
+.elnSignTable .aniInput textarea.materialize-textarea{width:100%;min-height:32px;box-sizing:border-box;}
+/* 섹션 선택 목록(Submit Sections · Share scope) — 테두리 박스 + 헤더 + 헤어라인 행 (fixedTable.hBorderTable 선 톤) */
+.elnPickBox{border:1px solid var(--gray20);border-radius:5px;background:#fcfaf8;overflow:hidden;}
+.elnPickHd{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:38px;padding:0 12px;background:rgba(164,120,100,.07);border-bottom:1px solid var(--gray20);font-size:12px;color:#7a6757;}
+.elnPickHd label,.elnSignPickRow label{font-size:13px;color:#3a2c24;}
+.elnPickCnt{font-size:12px;color:#9b8c7e;}
+.elnSignPickList{display:flex;flex-direction:column;max-height:240px;overflow-y:auto;}
+.elnSignPickRow{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:40px;padding:0 12px;border-top:1px solid var(--gray20);}
+.elnSignPickRow:first-child{border-top:0;}
+
+/* ── 섹션 잠금(제출됨) — 값은 또렷하게 두고 편집 affordance만 숨김 ── */
+.elnLockBadge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:#c08a3e;background:rgba(224,168,62,.12);border:1px solid rgba(224,168,62,.35);border-radius:9px;padding:2px 9px;white-space:nowrap;flex:0 0 auto;}
+.elnLockBadge.signed{color:#2e8c5c;background:rgba(58,170,111,.12);border-color:rgba(58,170,111,.3);}
+.elnLockBadge i{font-size:14px;}
+.cardBox.elnLocked .elnModDel,
+.cardBox.elnLocked .elnFmlToolbar,
+.cardBox.elnLocked .elnChemAdd,.cardBox.elnLocked .elnChemItemActions,.cardBox.elnLocked .elnChemDel,
+.cardBox.elnLocked .elnRelAdd,.cardBox.elnLocked .elnRelDel,
+.cardBox.elnLocked .elnAttachDrop,
+.cardBox.elnLocked .elnDataTableTools .elnDataBtn,
+.cardBox.elnLocked .elnTagAddRow,.cardBox.elnLocked .elnPjAdd,.cardBox.elnLocked .elnRecTags,.cardBox.elnLocked .elnTag i,
+.cardBox.elnLocked .note-editor .note-toolbar,.cardBox.elnLocked .note-editor .note-statusbar,
+.cardBox.elnLocked .elnAttachItem i.x,.cardBox.elnLocked .elnLinkItem i.x,.cardBox.elnLocked .elnChartGrip{display:none !important;}
+.cardBox.elnLocked .elnVizPick{pointer-events:none;}   /* Visualize as — 선택 상태는 보이되 변경 불가 */
+.cardBox.elnLocked i.elnIconPick{cursor:default;}
+.cardBox.elnLocked i.elnIconPick:hover{background:transparent;}
+.cardBox.elnLocked .elnTag{padding-right:11px;}
+.cardBox.elnLocked .select-wrapper{pointer-events:none;}
+.cardBox.elnLocked .select-wrapper .caret{display:none !important;}
+.cardBox.elnLocked .note-editable{pointer-events:none;background:transparent;}
+.cardBox.elnLocked input,.cardBox.elnLocked textarea,.cardBox.elnLocked select{opacity:1;color:#3a2c24;-webkit-text-fill-color:#3a2c24;cursor:default;}
+.cardBox.elnLocked .aniInput .focus-border{display:none !important;}
+.cardBox.elnLocked .elnErrataWrap input,.cardBox.elnLocked .elnErrataWrap textarea{cursor:text;}
+.leftAside .menuUl .menu-item.elnLockedNav .elnNavHandle{display:none !important;}
+/* 잠금/승인 view: Summernote 이미지 dropzone 숨김, 포스트잇 삭제·이동 불가(접기는 허용) */
+.cardBox.elnLocked .note-dropzone,body.elnApproved .note-dropzone,
+.cardBox.elnLocked .elnPostitClose,body.elnApproved .elnPostitClose{display:none !important;}
+.cardBox.elnLocked .elnPostitBar,.cardBox.elnLocked .elnPostitGrip,
+body.elnApproved .elnPostitBar,body.elnApproved .elnPostitGrip{cursor:default;}
+.leftAside .menuUl .menu-item .elnNavLock{margin-left:auto;font-size:15px;color:#c08a3e;flex:0 0 auto;}
+
+/* ── Errata ── */
+.elnErrataWrap{padding:0 20px 16px;}
+.elnErrata{margin-top:12px;padding:12px 14px;border:1px solid #e6ddd0;border-radius:10px;background:#fff;}
+.elnErrataHead{display:flex;align-items:center;gap:8px;}
+.elnErrataMeta{font-size:12px;color:#9a8b7e;}
+.elnErrataBody{margin-top:8px;font-size:14px;line-height:1.5;white-space:pre-wrap;color:#3a2c24;}
+.elnErrataReason{margin-top:4px;font-size:12px;color:#7a6a5c;}
+.elnErrataBar{margin-top:12px;display:flex;justify-content:flex-end;}   /* 버튼이 가로로 늘어나지 않게 — 모듈 툴바처럼 우측 정렬 */
+/* Errata 모달 — 라벨 폭 확보 + 밑줄형 textarea(aniInput) */
+.elnMz .elnBasicRow .elnBasicLabel{flex:0 0 100px;}
+.elnMz .aniInput textarea.materialize-textarea{display:block;width:100%;box-sizing:border-box;border:0;border-radius:5px 5px 0 0;padding:4px 5px;line-height:1.5;background:rgba(164,119,100,.05);box-shadow:none;resize:vertical;}
+.elnMz .aniInput textarea.materialize-textarea:focus{outline:none;background:rgba(164,119,100,.1);}
 /* 헤더 결재 상태 배지 — 기본 숨김, 상태 클래스(pending/approved/rejected) 부여 시 노출.
    (HTML 인라인 style="display:none" 제거 대체 — 노출은 renderApprovalBadge가 상태 클래스로 제어) */
 .elnApprBadge{display:none;align-items:center;gap:5px;margin-top:6px;font-size:13px;font-weight:600;
   border-radius:9px;padding:3px 10px;width:fit-content;max-width:100%;border:1px solid;}
 .elnApprBadge.pending,.elnApprBadge.approved,.elnApprBadge.rejected{display:inline-flex;}
+/* 헤더 행(.statusTit flex, align-items 기본 stretch)에서 배지 margin-top이 행을 키워 상태 알약까지 늘어나던 문제 → 둘 다 세로 가운데 */
+.statusTit #elnHeadStatus,.statusTit .elnApprBadge{align-self:center;margin-top:0;}
+.statusTit .elnApprBadge{margin-left:8px;}
+/* mapis .titArea i{font-size:30px}가 배지 아이콘을 키워 배지 높이 38px → 배지 기본 16px로 되돌림(.elnHeadRight와 같은 방식) */
+.popup header .titArea .elnApprBadge > i{font-size:16px;color:inherit;}
 .elnApprBadge > i{font-size:16px;flex:0 0 auto;}
 .elnApprBadge.pending{color:#c08a3e;background:rgba(224,168,62,.12);border-color:rgba(224,168,62,.35);}
 .elnApprBadge.approved{color:#2e8c5c;background:rgba(58,170,111,.12);border-color:rgba(58,170,111,.3);}
@@ -613,7 +721,8 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnPostit{position:absolute;z-index:20;background:#fff7c2;border:1px solid #e8d98a;border-radius:8px;
   box-shadow:0 5px 16px rgba(120,100,40,.2);font-size:13px;}
 .elnPostitBar{display:flex;align-items:center;gap:2px;padding:3px 4px;cursor:move;border-bottom:1px solid rgba(180,160,80,.3);}
-.elnPostitGrip{font-size:16px;color:#b9a96a;margin-right:auto;cursor:move;}
+.elnPostitGrip{font-size:16px;color:#b9a96a;cursor:move;}
+.elnPostitWho{flex:1;min-width:0;margin-left:2px;font-size:11px;color:#a89a5a;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .elnPostitCollapse,.elnPostitClose{display:inline-flex;color:#a89a5a;padding:1px;border-radius:4px;}
 .elnPostitCollapse:hover,.elnPostitClose:hover{background:rgba(180,160,80,.2);color:#7a6a2a;}
 .elnPostitCollapse i,.elnPostitClose i{font-size:15px;}
@@ -665,15 +774,23 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnDataTable th.elnColCat[data-role]::after{background:#b9a48f;}   /* 카테고리 배지는 중립색 */
 .elnDataTable td[data-ph]:empty::before{content:attr(data-ph);color:#cdbfae;font-style:italic;pointer-events:none;}   /* 빈 셀 placeholder */
 /* 우클릭 context menu(ELN.popover 내부에 들어감) */
-.elnCtxMenu{display:flex;flex-direction:column;min-width:170px;padding:4px;}
-.elnCtxMenuItem{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;
-  font-size:13px;font-weight:600;color:#4a3a30;transition:background .12s;}
-.elnCtxMenuItem:hover{background:#f4ece0;}
-.elnCtxMenuItem i{font-size:18px;color:#A47864;}
+.elnCtxMenu{display:flex;flex-direction:column;min-width:170px;}   /* 항목 룩 = '공용 메뉴 스킨' */
+.elnCtxMenuItem i{font-size:20px;color:var(--main-color);}
 .elnModChartPh i{font-size:36px;color:#e0d6c8;}
 /* 팝오버(ELN.popover) — 누른 자리에 뜨는 경량 픽커. 모달(1500) 위, 토스트(2000) 아래 */
-.elnPopover{position:fixed;z-index:1800;background:#fff;border:1px solid #e6ddd0;border-radius:12px;
-  box-shadow:0 8px 28px rgba(58,44,36,.16);padding:10px;animation:elnFadeIn .15s ease;}
+/* ── MAPIS 표준 플로팅 레이어 스킨 ──
+   메뉴(.dropdown-content / .ui-autocomplete / select2 dropdown)와 동일: 흰 배경·radius 0·머티리얼 2단 그림자·항목 32px/22px 라인·hover = main-color 70% 틴트.
+   .elnPopover(메뉴·카드 공통 컨테이너) + .elnRefCard(@참조 hover 카드)가 같은 외곽 스킨을 쓴다. 내부 패딩은 내용이 결정(메뉴 0, 카드 .elnCardBox, 격자 .pad) */
+.elnPopover,.elnRefCard{background:#fff;border:0;border-radius:0;
+  box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12),0 1px 5px 0 rgba(0,0,0,.2);color:#000;font-size:14px;}
+.elnPopover{position:fixed;z-index:1800;padding:0;max-height:min(420px,calc(100vh - 16px));overflow-y:auto;animation:diagonal-open 150ms cubic-bezier(0,0,.2,1) forwards;transform-origin:left top;}
+.elnPopover.pad{padding:10px;}
+.elnPopover.above{transform-origin:left bottom;}
+.elnStatusMenuItem,.elnCtxMenuItem,.elnNbPopItem,.elnRelMenuItem{display:flex;align-items:center;gap:10px;box-sizing:border-box;min-height:32px;padding:5px 16px;
+  line-height:22px;font-size:14px;color:#000;cursor:pointer;background:transparent;border:0;border-radius:0;}
+.elnStatusMenuItem:hover,.elnCtxMenuItem:hover,.elnNbPopItem:hover,.elnRelMenuItem:hover{background-color:color-mix(in oklch,var(--main-color),white 70%);}
+.elnStatusMenuItem.cur,.elnNbPopItem.cur{background-color:color-mix(in oklch,var(--main-color),white 90%);}
+.elnStatusMenuItem.cur:hover,.elnNbPopItem.cur:hover{background-color:color-mix(in oklch,var(--main-color),white 70%);}
 .elnPopover .elnModGrid{gap:7px;}
 .elnPopover .elnModType{padding:8px 11px;}
 /* 카드 사이 hover '+' 라인 — Notion식 위치 지정 삽입.
@@ -698,17 +815,12 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnNbPick.unfiled{color:#b9842a;}
 /* Notebook 픽커 popover 목록 */
 .elnNbPopList{display:flex;flex-direction:column;min-width:230px;}
-.elnNbPopItem{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;
-  font-size:13.5px;color:#3a2c24;}
-.elnNbPopItem:hover{background:rgba(164,120,100,.08);}
-.elnNbPopItem > i{font-size:18px;color:#A47864;font-variation-settings:'FILL' 1;} /* 픽커·메뉴 아이콘도 fill */
-.elnNbPopItem .chk{margin-left:auto;font-size:16px;color:#3aaa6f;}
-.elnNbPopItem.new{border-top:1px solid #efe7db;margin-top:4px;padding-top:11px;color:#7a5240;font-weight:600;}
-/* 픽커 팝오버 내 Unfiled — 리스트 좌패널과 동일한 "임시 보관소" 시각언어(점선·흐림·분리) */
-.elnNbPopItem.unfiled{border:1px dotted #cdbfae;background:rgba(0,0,0,.012);margin-bottom:7px;}
+.elnNbPopItem > i{font-size:20px;color:var(--main-color);font-variation-settings:'FILL' 1;} /* 픽커·메뉴 아이콘도 fill */
+.elnNbPopItem .chk{margin-left:auto;font-size:20px;color:#000;}   /* 현재 선택 = select2/Materialize 선택 항목과 같은 우측 체크 */
+.elnNbPopItem.new{border-top:1px solid var(--gray20);}
+/* Unfiled(No Notebook) — 표준 메뉴 항목 + 흐린 글자만 */
 .elnNbPopItem.unfiled > i{color:#b3a596;}
 .elnNbPopItem.unfiled span{color:#8a7d6f;}
-.elnNbPopItem.unfiled:hover{border-color:#b8a690;background:rgba(164,120,100,.06);}
 /* 위험 액션(삭제) — 붉은 톤 */
 .elnNbPopItem.danger > i,
 .elnNbPopItem.danger span{color:#c0392b;}
@@ -942,21 +1054,20 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnRelItem{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #efe7db;border-radius:9px;background:#fff;font-size:13px;}
 .elnRelItem > i:first-child{font-size:18px;color:#A47864;flex:0 0 auto;}
 .elnRelType{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#b3a596;flex:0 0 auto;min-width:52px;}
-.elnRelLink{color:#2f6fb3;text-decoration:none;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
-.elnRelLink:hover{text-decoration:underline;}
+.elnRelNoAccess{flex:0 0 auto;display:inline-flex;align-items:center;gap:2px;font-size:11px;font-weight:600;color:#7b8189;background:rgba(154,160,166,.18);border-radius:8px;padding:1px 7px 1px 4px;margin-right:6px;}
+.elnRelNoAccess i{font-size:13px;}
+.elnRelLink{color:#2f6fb0;text-decoration:none;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.elnRelLink:hover{color:#A47864;text-decoration:underline;}   /* 팝업 링크 공통 규칙(=Basic Data Project 링크): 파랑 → hover 모카+밑줄 */
 .elnRelDel{margin-left:auto;font-size:16px;color:#c9bcae;cursor:pointer;flex:0 0 auto;}
 .elnRelDel:hover{color:#d65a5a;}
-.elnRelAddBtn{align-self:flex-start;margin-left:0;}
-.elnRelMenu{display:flex;flex-direction:column;padding:4px;}
-.elnRelUrlRow{display:flex;gap:6px;padding:2px 4px 8px;border-bottom:1px solid #efe7db;margin-bottom:4px;}
-.elnRelUrlRow input{flex:1 1 auto;height:34px;margin:0;}
-.elnRelMenuItem{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;cursor:pointer;font-size:13px;color:#3a2c24;}
-.elnRelMenuItem:hover{background:rgba(164,120,100,.10);}
-.elnRelMenuItem i{font-size:18px;color:#A47864;}
-.elnRelMenuChev{margin-left:auto;font-size:16px;color:#c9bcae;}
-.elnPickBack{display:flex;align-items:center;gap:3px;font-size:12px;font-weight:600;color:#9b8c7e;cursor:pointer;padding:2px 2px 8px;}
-.elnPickBack:hover{color:#7a5240;}
-.elnPickBack i{font-size:18px;}
+/* Related Items 인라인 추가 줄: [Type select2] [검색 select2 | URL aniInput] [Add hBtn] */
+.elnRelAdd{display:flex;align-items:flex-end;gap:12px;margin:0 0 12px;}
+.elnRelAdd .elnRelAddType{flex:0 0 130px;}
+.elnRelAdd .elnRelAddVal{flex:1 1 auto;min-width:0;}
+.elnRelAdd .aniInput{margin:0;}
+.elnRelAdd .hBtn{flex:0 0 auto;margin:0;}
+.elnRelMenu{display:flex;flex-direction:column;}   /* 프로젝트 칩 메뉴 — 항목 룩 = 공용 메뉴 스킨 */
+.elnRelMenuItem i{font-size:20px;color:var(--main-color);}
 .elnAttachDrop{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px dashed #d9cfc2;border-radius:10px;
   cursor:pointer;color:#9b8c7e;font-size:12px;transition:all .15s;}
 .elnAttachDrop:hover,.elnAttachDrop.drag{border-color:#A47864;background:rgba(164,120,100,.06);color:#7a5240;}
@@ -992,8 +1103,8 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 /* 승인(전체 view) 시 제목 편집 차단(JS가 제목 input=readOnly도 설정) */
 body.elnApproved .elnModTitle{pointer-events:none;}
 /* 승인(전체 view): 빈 입력의 placeholder 숨김 — 편집 가능처럼 보이지 않게 */
-body.elnApproved #tab_ov input::placeholder,body.elnApproved #tab_ov textarea::placeholder{color:transparent;}
-body.elnApproved #tab_ov input::-webkit-input-placeholder,body.elnApproved #tab_ov textarea::-webkit-input-placeholder{color:transparent;}
+body.elnApproved #tab_ov .cardBox:not(#card_approval) input::placeholder,body.elnApproved #tab_ov .cardBox:not(#card_approval) textarea::placeholder{color:transparent;}
+body.elnApproved #tab_ov .cardBox:not(#card_approval) input::-webkit-input-placeholder,body.elnApproved #tab_ov .cardBox:not(#card_approval) textarea::-webkit-input-placeholder{color:transparent;}
 /* 좌측 목차 클릭 스크롤 시 고정 헤더(position:fixed, height:50px / 본문 margin-top:65px)가 카드를 가리지 않게 — scrollIntoView가 scroll-margin-top 존중. (이전 120px는 옛 큰 헤더 기준이라 과해서 카드가 너무 내려갔음) */
 #tab_ov .cardBox{scroll-margin-top:72px;}
 /* contenteditable 텍스트: 마우스 안 올려도 편집 가능함을 은은히 — 점선 밑줄(text-decoration이라 레이아웃 영향 없음).
@@ -1102,7 +1213,7 @@ body.elnResizing{cursor:ew-resize;user-select:none;}
 .elnChemMol .aromatic{fill:none;stroke:#3a2c24;stroke-width:1.6;}
 .elnChemMol .elnChemHandles circle{fill:#A47864;stroke:#fff;stroke-width:1;}
 /* 승인(전체 view) 시 ChemStudio 카드 = 추가 바 + 아이템 액션(편집/교체/삭제) 숨김(다른 view 규칙과 일관) */
-body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions{display:none;}
+body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions,body.elnApproved .elnRelAdd{display:none;}
 
 /* ── ChemStudio 에디터(모달 내부) ── */
 .elnChemEditor{display:flex;flex-direction:column;gap:12px;width:min(620px,82vw);}
@@ -1136,15 +1247,6 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions{display:none;}
 .elnChemBrand{flex:0 0 auto;font-size:13px;color:#7a5240;letter-spacing:.01em;}
 .elnChemBrand b{font-weight:800;color:#A47864;}
 .elnChemFrame .elnChemStudioMain{padding:12px;}
-/* Link existing 통합검색 행 — 썸네일 + 이름/식/CAS */
-.elnChemRow{display:flex;align-items:center;gap:10px;}
-.elnChemRowThumb{flex:0 0 auto;width:44px;height:34px;display:flex;align-items:center;justify-content:center;
-  border:1px solid #ece4d8;border-radius:7px;background:#fff;}
-.elnChemRowThumb .elnChemMol{width:100%;height:100%;}
-.elnChemRowMeta{display:flex;flex-direction:column;min-width:0;line-height:1.3;}
-.elnChemRowMeta b{font-size:13px;color:#3a2c24;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.elnChemRowMeta span{font-size:11.5px;color:#9b8c7e;font-family:ui-monospace,Menlo,Consolas,monospace;}
-.elnChemRowMeta sub{font-size:.78em;}
 .elnChemCasTxt{margin-left:6px;color:#9b8c7e;}
 
 /* ── 시작 템플릿 픽커(New Note 모달) — 모달 본문 폭을 그대로 채워 가로 스크롤 방지 ── */
@@ -1395,3 +1497,96 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions{display:none;}
 /* 노트 전환 시 본문 페이드 스왑 — '다른 노트를 불러온' 느낌 */
 @keyframes elnNoteSwap{0%{opacity:1;}28%{opacity:.2;transform:translateY(5px);}100%{opacity:1;transform:none;}}
 .contArea.elnSwapping{animation:elnNoteSwap .42s ease;}
+
+/* Audit Trail 카드 */
+/* Data Visualization 표 — 헤더 셀 안 hover ×(운영 btn_deleteColumn 모양: #ddd 테두리·radius 5px, hover 시 viva) */
+.elnDtDelHost{position:relative;}
+.elnDtDel{position:absolute;z-index:3;display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;
+  border:1px solid #ddd;border-radius:5px;background:#fff;color:#9b8c7e;cursor:pointer;}
+.elnDtDel i{font-size:16px;}
+.elnDtDel:hover{color:var(--viva);border-color:rgba(187,38,73,.4);}
+.elnAuditHead{display:flex;align-items:center;justify-content:space-between;gap:20px;padding-right:10px;}
+.elnAuditHead .cardSubTit{margin:0;}
+.elnAuditFilter{display:flex;justify-content:flex-end;gap:20px;font-size:12px;}
+.elnAuditFilter label{display:inline-flex;align-items:center;gap:6px;}
+.elnAuditFilter select{width:auto;min-width:130px;height:30px;}
+.elnAuditNote{margin:6px 10px 10px;font-size:12px;color:#9aa0a6;}
+
+/* ── 공동편집자(Co-editors) + 공유(Share) ── */
+/* 헤더 우측 도구군: Share 버튼. 뒤따르는 Note List 버튼은 auto 여백 대신 고정 간격 */
+.elnHeadTools{margin-left:auto;display:flex;align-items:center;gap:12px;}
+.popup header .titArea .elnHeadTools + .elnHeadRight{margin-left:10px;}
+.popup header .titArea .elnHeadTools .hBtn i{font-size:24px;color:inherit;margin-right:5px;}
+.elnHeadTools .hBtn .label{width:auto;}
+/* Share 버튼: 아이콘 + 건수 배지(.modalTabBadge.noticeTabBadge). 배지가 비면(0명) 아이콘 우측 여백 제거 → 가운데 */
+.popup header .titArea .elnHeadTools #elnShareBtn:has(.elnShareCnt:empty) i{margin-right:0;}
+#elnShareBtn .elnShareCnt{margin-left:0;}
+/* @참조 hover 카드 구조(header / body / footer). 외곽 스킨은 위 '표준 플로팅 레이어 스킨'(.elnPopover/.elnRefCard) */
+.elnRefCard{padding:12px 16px;font-size:13px;color:#000;}
+.elnRefFoot{margin-top:12px;padding-top:10px;border-top:1px solid var(--gray20);display:flex;justify-content:flex-end;}
+/* Share & Access 모달 */
+.elnAccTbl{max-height:320px;overflow-y:auto;margin:0 0 4px;}   /* 스크롤바 모양 = hScroll */
+.elnAccTbl td{vertical-align:middle;}
+.elnAccTbl td.ac{white-space:nowrap;}   /* 수정·삭제 아이콘 한 줄 */
+.elnAccTbl .elnAccId{color:#9b8c7e;font-size:12px;}
+/* 행 동작 아이콘(운영 action-col 계열) — 밑줄 없음, 26px 클릭 영역, hover 시 수정=모카·삭제=viva */
+.elnAccTbl .elnAccIco{display:inline-flex;align-items:center;justify-content:center;width:26px;height:26px;margin:0 1px;vertical-align:middle;
+  border-radius:6px;color:#9b8c7e;text-decoration:none;border:0;transition:color .15s,background-color .15s;}
+.elnAccTbl .elnAccIco i{font-size:18px;}
+.elnAccTbl .elnAccIco:hover{color:#A47864;background:rgba(164,120,100,.10);}
+.elnAccTbl .elnAccIco.rm:hover{color:var(--viva);background:rgba(187,38,73,.07);}
+.elnShBar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 8px;}
+.elnShBar .cardSubTit{margin:0;}
+.elnShHint{font-size:12px;color:#9b8c7e;margin-left:4px;}
+.elnShFixed{font-size:13px;}
+.elnShFixed .elnAccId{color:#9b8c7e;font-size:12px;}
+.elnShareScope{display:flex;flex-direction:column;gap:6px;}
+.elnShareScope .elnShareSecs{margin:4px 0 0 4px;min-width:0;}
+.elnShareOkRow{font-size:13px;line-height:1.4;}
+/* 섹션 카드 헤더: 마지막 편집자 라벨 (작은 회색 글씨) */
+.elnLastEdit{display:inline-flex;align-items:center;gap:4px;flex:0 0 auto;font-size:12px;font-weight:400;color:#9b8c7e;white-space:nowrap;}
+.elnLastEdit.empty{display:none;}
+.elnLastEdit b{font-weight:600;color:#7a6757;}
+#tab_ov .cardTit2 .elnLastEdit i{font-size:14px;margin:0;color:inherit;float:none;}
+
+/* ── Copy To 모달 + 'Copied from' 행 (리스트 페이지 Copy To 모달과 동일 양식) ── */
+.elnCloneSrc{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:8px;background:rgba(164,120,100,.07);color:#5a4438;font-size:13px;line-height:1.5;margin-bottom:14px;}
+.elnCloneSrc i{font-size:18px;color:#A47864;flex:0 0 auto;}
+.elnReqLbl{font-size:12px;font-weight:600;color:#7a5240;margin:4px 0 6px;}
+.elnCloneSecs{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin-bottom:12px;max-height:200px;overflow:auto;}
+.elnCloneSecs label,.elnCloneData label{color:#3a2c24;font-size:13px;}
+.elnCloneData{padding:10px 0;margin-bottom:10px;border-top:1px solid #efe7db;border-bottom:1px solid #efe7db;}
+.elnCloneInfo{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:8px;background:rgba(164,120,100,.07);color:#7a5240;font-size:12px;line-height:1.5;}
+.elnCloneInfo i{font-size:16px;color:#A47864;flex:0 0 auto;margin-top:1px;}
+
+/* ── @ 노트 참조: 본문 칩 · 자동완성 드롭다운 · 호버 요약 카드 ── */
+a.elnNoteRef,.note-editable a.elnNoteRef{display:inline-block;background:rgba(164,120,100,.14);color:#8a5a45;border-radius:6px;padding:0 7px;margin:0 1px;
+  font-weight:600;font-size:.92em;line-height:1.5;text-decoration:none;cursor:pointer;white-space:nowrap;transition:background .12s;}
+a.elnNoteRef:hover,.note-editable a.elnNoteRef:hover{background:rgba(164,120,100,.26);color:#6f4533;text-decoration:none;}
+a.elnNoteRef.restricted,.note-editable a.elnNoteRef.restricted{background:rgba(154,160,166,.18);color:#7b8189;}
+.note-hint-popover.note-popover{z-index:1700;min-width:420px;max-width:560px;background:#fff;
+  border:0;border-radius:0;box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12),0 1px 5px 0 rgba(0,0,0,.2);padding:0;overflow:hidden;}   /* 공용 플로팅 레이어 스킨 */
+.note-hint-popover .note-popover-content,.note-hint-popover .popover-content{padding:0;margin:0;max-height:330px;overflow-y:auto;text-align:left;background:transparent;min-width:0;min-height:0;}
+/* summernote-lite가 .note-hint-popover .popover-content .note-hint-group .note-hint-item{display:block!important} + 파란 active(#428bca)를 걸어 둠 → 한 단계 높은 특이도로 덮음 */
+.note-hint-popover.note-popover .popover-content .note-hint-group .note-hint-item{display:flex!important;align-items:center;gap:10px;min-height:32px;padding:5px 16px;border-radius:0;cursor:pointer;font-size:14px;color:#000;line-height:22px;white-space:nowrap;}
+.note-hint-popover.note-popover .popover-content .note-hint-group .note-hint-item:hover,
+.note-hint-popover.note-popover .popover-content .note-hint-group .note-hint-item.active{display:flex!important;background:color-mix(in oklch,var(--main-color),white 70%);color:#000;font-weight:400;line-height:22px;}
+/* hover·키보드 선택(active) = 공용 메뉴 hover 틴트 + 우측 ↵(Enter로 삽입) 안내 */
+.note-hint-popover.note-popover .popover-content .note-hint-group .note-hint-item::after{content:'keyboard_return';font-family:'Material Symbols Outlined';font-size:16px;line-height:1;color:#A47864;flex:0 0 16px;visibility:hidden;}
+.note-hint-popover.note-popover .popover-content .note-hint-group .note-hint-item.active::after{visibility:visible;}
+.note-hint-popover .elnHintCode{flex:0 0 auto;font-weight:700;color:#8a5a45;font-variant-numeric:tabular-nums;}
+.note-hint-popover .elnHintTit{flex:1 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.note-hint-popover .elnHintAuth{flex:0 0 auto;font-size:12px;color:#9b8c7e;}
+.note-hint-popover .elnHintLock{flex:0 0 auto;display:inline-flex;align-items:center;gap:2px;font-size:11px;font-weight:600;color:#7b8189;background:rgba(154,160,166,.18);border-radius:8px;padding:1px 7px 1px 4px;}
+.note-hint-popover .elnHintLock i{font-size:13px;}
+.elnRelVia{flex:0 0 auto;font-size:11px;font-weight:600;color:#8a5a45;background:rgba(164,120,100,.12);border-radius:8px;padding:1px 8px;white-space:nowrap;}
+.elnRefCard{position:fixed;z-index:1800;width:300px;box-sizing:border-box;animation:elnFadeIn .14s ease;}   /* 외곽 스킨 = 공용 플로팅 레이어 스킨, 구조 = 공용 카드 */
+.elnRefHd{display:flex;align-items:center;justify-content:space-between;gap:8px;}
+.elnRefHd b{font-size:13px;color:#8a5a45;}
+.elnRefHd .roundBox{font-size:11px;}
+.elnRefTit{margin-top:6px;font-size:14px;font-weight:700;line-height:1.4;}
+.elnRefMeta{margin-top:8px;display:flex;flex-wrap:wrap;gap:4px 14px;font-size:12px;color:#7a6757;}
+.elnRefMeta span{display:inline-flex;align-items:center;gap:4px;}
+.elnRefMeta i{font-size:15px;color:#A47864;}
+.elnRefLock{margin-top:10px;display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:8px;background:rgba(154,160,166,.14);color:#6b727a;font-size:12px;}
+.elnRefLock i{font-size:16px;}

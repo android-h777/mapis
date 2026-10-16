@@ -10,6 +10,7 @@
 	<link rel="preload" href="mapis_lib/font/material-symbols-sharp.woff2" as="font" type="font/woff2">
 	<link rel="preload" href="mapis_lib/font/material-icons.woff2" as="font" type="font/woff2">
     <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/mpm_materialize.css">
+    <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/select2.min.css">
     <link rel="stylesheet" type="text/css" href="mapis_lib/css/common.css">
     <link type="text/css" rel="stylesheet" href="mapis_lib/css/lib/animate.min.css">
     <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/sweetalert2.min.css">
@@ -18,6 +19,7 @@
     <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-3.7.1.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-ui-1.14.1.js"></script>
     <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/mpm_materialize.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/mpm_select2.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/apis_util.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/highcharts-12.3.0/highcharts.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/highcharts-12.3.0/highcharts-more.js"></script>
@@ -42,7 +44,11 @@
 				<div id="elnApprovalBadge" class="elnApprBadge"></div>
 			</div>
 			<!-- 헤더 우측: 이 과제의 연구노트 리스트(스테이지별) 토글 -->
-			<a href="javascript:;" id="elnNoteListBtn" class="waves-effect waves-light hBtn hViva elnHeadRight" title="Show research notes of this project"><i class="material-symbols-outlined left">edit_note</i><span class="label">Note List</span></a>
+			<!-- 협업 도구: 참여자 아바타(작성자+공동편집자) · 공유 현황 칩 · Share 버튼 (eln_proto_simple.js ELN.coedit이 렌더) -->
+			<div class="elnHeadTools" id="elnHeadTools">
+				<a href="javascript:;" id="elnShareBtn" class="waves-effect waves-light hBtn hMocha" title="Share &amp; Access — who can view or edit this note"><i class="material-symbols-outlined left">share</i><span class="modalTabBadge noticeTabBadge elnShareCnt"></span></a>
+			</div>
+			<a href="javascript:;" id="elnNoteListBtn" class="waves-effect waves-light hBtn hMocha elnHeadRight" title="Show research notes of this project"><i class="material-symbols-outlined left">edit_note</i><span class="label">Note List</span></a>
 		</section>
 	</header>
 
@@ -62,10 +68,14 @@
 								<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_approval">
 						<i class="material-symbols-outlined left">approval</i><span>Approval</span>
 					</li>
+				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_audit">
+						<i class="material-symbols-outlined left">manage_history</i><span>Audit Trail</span>
+					</li>
 				</ul>
 		</section>
 		<section class="btnArea">
-			<div><a href="javascript:;" id="elnSaveTemplate" class="waves-effect waves-light hBtn" title="Save this note's section structure as a reusable template (no data)"><i class="material-symbols-outlined left">bookmark_add</i><span class="label">Save template</span></a></div>
+			<div><a href="javascript:;" id="elnCopyTo" class="waves-effect waves-light hBtn hViola" title="Create a new note from the current one (opens in a new window)"><i class="material-symbols-outlined left">file_copy</i><span class="label">Copy To</span></a></div>
+			<div><a href="javascript:;" id="elnSaveTemplate" class="waves-effect waves-light hBtn mt10" title="Save this note's section structure as a reusable template (no data)"><i class="material-symbols-outlined left">bookmark_add</i><span class="label">Save Template</span></a></div>
 			<div><a href="javascript:;" id="elnAddModule" class="waves-effect waves-light hBtn hViva mt10"><i class="material-symbols-outlined left">add_box</i><span class="label">Add Module</span></a></div>
 			<div><a href="javascript:;" id="elnSaveBtn" class="waves-effect waves-light hBtn hBlue mt30"><i class="material-symbols-outlined left">save</i><span class="label">Save</span></a></div>
 		</section>
@@ -89,19 +99,64 @@
 						</div>
 					</div>
 					<!-- status: Overview 드롭다운 제거 → 헤더 알약으로. category 제거. Author·Modified는 헤더 우측 상단 -->
-					<!-- Project — 읽기 표시: [코드] 이름 링크(클릭 시 프로젝트 상세 팝업) -->
-					<div class="elnBasicRow">
-						<label class="elnBasicLabel">Project</label>
-						<span class="elnProjVal" id="elnProjVal" data-proj="[SN-26-0031] RGBOLED Display Adhesive">
-							<a class="link elnProjLink" href="javascript:;" title="Open project">[SN-26-0031] RGBOLED Display Adhesive</a>
-						</span>
+					<!-- Associated Project # (NPI, NPT) — MAPIS에서 프로젝트 번호 = NPI 번호. 칩 = 연결 프로젝트(Primary 1개, 항상 첫 칩). 칩 클릭 → 동작 메뉴. 칩·버튼은 JS(renderProjects)가 렌더 -->
+					<div class="elnBasicRow alignTop">
+						<!-- 도움말 아이콘: 운영 표준(snpi Confidential?·Target Date) — 우측 정렬 레이블은 글자 앞(leftTooltip), 툴팁은 위로 -->
+						<label class="elnBasicLabel"><i class="material-symbols-outlined tooltipped helpTooltip leftTooltip" data-position="top" data-html="true" data-tooltip="★ Primary sets the schedule (Stage / Task) and the Note List.<br>Linking a project does not grant access to this note.">help</i>Associated Project # (NPI, NPT, TS)</label>
+						<div class="elnPjBox">
+							<div class="elnPjChips" id="elnProjVal"></div>
+							<!-- 추가 = MAPIS 공통 부품: hBtn → 같은 자리에 aniInput + jQuery UI autocomplete(공통 .ui-autocomplete 스킨, 운영 TechLib Associated Project # 퀵서치와 동일 방식) -->
+							<a class="waves-effect waves-light hBtn elnPjAdd" id="elnProjAdd" href="javascript:;"><i class="material-symbols-outlined left">add</i><span class="label">Add Project</span></a>
+							<div class="aniInput elnPjSrch" id="elnProjSrchWrap" style="display:none;"><input type="text" class="browser-default fontR font14" id="elnProjSrch" placeholder="Search project # — e.g., SN-26-0001" autocomplete="off"><span class="focus-border"></span></div>
+						</div>
 					</div>
-					<!-- Schedule — 이 노트가 작성된 과제 스케줄 위치(스테이지 → 태스크). apis_npdi_pop Detailed Schedule 태스크 참조 -->
-					<div class="elnBasicRow">
+					<!-- Schedule — Primary 프로젝트의 스케줄 위치(스테이지 → 태스크). apis_npdi_pop Detailed Schedule 태스크 참조. 프로젝트가 없으면 select 대신 안내문 -->
+					<div class="elnBasicRow" id="elnSchedRow">
 						<label class="elnBasicLabel">Stage</label>
-						<div class="elnSchedSel">
+						<div class="elnSchedSel" id="elnSchedSel">
 							<div class="elnSchedField stage"><select id="elnSchedStage"></select></div>
 							<div class="elnSchedField task"><select id="elnSchedTask"></select></div>
+						</div>
+						<span class="elnHint" id="elnSchedNoProj" style="display:none">Link a project to pick a stage</span>
+					</div>
+					<!-- Experiment Date — 실제 실험 수행일 -->
+					<div class="elnBasicRow">
+						<label class="elnBasicLabel">Experiment Date</label>
+						<div class="elnSchedSel">
+							<div class="aniInput elnHdrW190">
+								<input type="date" id="elnExpDate" class="browser-default fontR font14" value="2026-10-08">
+								<span class="focus-border"/>
+							</div>
+							<span class="elnHint">Date the experiment was actually run</span>
+						</div>
+					</div>
+					<!-- Platform / Pre-NPC — 프로젝트 연결과 독립(배타 아님). MAPIS 프로젝트 번호가 없는 작업용 -->
+					<div class="elnBasicRow">
+						<label class="elnBasicLabel">Platform / Pre-NPC</label>
+						<div class="elnSchedSel">
+							<!-- 정해진 마스터 목록이 없어(운영에 코드 없음) 유형만 고르고 이름은 입력 — 다른 노트에서 쓴 이름을 자동완성으로 추천(같은 이름 재사용 → 검색·묶음) -->
+							<div class="elnSchedField stage">
+								<select id="elnPlatform">
+									<option value="">Not specified</option>
+									<option value="platform" selected>Platform Technology</option>
+									<option value="prenpc">Pre-NPC</option>
+								</select>
+							</div>
+							<div class="aniInput elnSchedField elnPlatName">
+								<input type="text" id="elnPlatformName" class="browser-default fontR font14" value="UV-Curable Adhesives" placeholder="Name — e.g., UV-Curable Adhesives" autocomplete="off">
+								<span class="focus-border"/>
+							</div>
+							<span class="elnHint">For work without a MAPIS project # (before NPC)</span>
+						</div>
+					</div>
+					<!-- Paper Notebook Ref -->
+					<div class="elnBasicRow">
+						<label class="elnBasicLabel">Paper Notebook Ref</label>
+						<div class="elnSchedSel">
+							<div class="aniInput elnHdrW280">
+								<input type="text" id="elnPaperRef" class="browser-default fontR font14" placeholder="e.g. Lab Book #3, p.42" value="Lab Book #3, p.42">
+								<span class="focus-border"/>
+							</div>
 						</div>
 					</div>
 					<!-- Tags — Note와 동일 row 양식. 값 자리는 칩 + 입력 + 추천(멀티라인이라 상단 정렬) -->
@@ -129,8 +184,8 @@
 				<div class="cardTit2"><i class="material-symbols-outlined left">science</i>Formulation</div>
 				<!-- 타이틀과 분리된 액션 툴바 — 제목 아래 줄로 분리 -->
 				<div class="elnFmlToolbar">
-					<a class="waves-effect waves-light hBtn" id="btnChangeFml" href="javascript:;"><i class="material-symbols-outlined left">checklist</i><span class="label">Select</span></a>
-					<a class="waves-effect waves-light hBtn hViva" id="btnOpenFormulator" href="javascript:;"><i class="material-symbols-outlined left">open_in_new</i><span class="label">Open in formulator</span></a>
+					<a class="waves-effect waves-light hBtn" id="btnChangeFml" href="javascript:;"><i class="material-symbols-outlined left">link</i><span class="label">Link</span></a>
+					<a class="waves-effect waves-light hBtn hViva" id="btnOpenFormulator" href="javascript:;"><i class="material-symbols-outlined left">open_in_new</i><span class="label">Open in Formulator</span></a>
 				</div>
 				<div class="elnBasic">
 					<!-- 본문은 연결된 배합들을 컬럼으로 나란히 비교 -->
@@ -205,43 +260,41 @@
 					<label class="elnBasicLabel">Conclusion · Summary</label>
 					<div class="elnConcl">
 						<!-- Editor 모듈(wireEditorModule)과 동일 Summernote 패턴 — 미로드 시 contenteditable 폴백 -->
-						<div class="elnSummernote elnConclEditor">v3 reached 4,520 cP viscosity, passing all 3 specs. Recommend transfer to mass-production validation (SN-26-0031). CoC issuance pending.</div>
+						<div class="elnSummernote elnConclEditor">v3 reached 4,520 cP viscosity, passing all 3 specs — a clear improvement over the base polymer in <a class="elnNoteRef" data-code="NT-2604-00098" contenteditable="false" href="javascript:;">@NT-2604-00098</a>. Recommend transfer to mass-production validation (SN-26-0031). CoC issuance pending.</div>
 					</div>
 				</div>
 			</section>
 
-			<!-- Approval — apis_npdi_pop 의 Approval 카드와 동일(Dates + Decision Point Approval Status) -->
+			<!-- Approval — 공동서명(co-sign) 현황. 내용은 JS(ELN.signoff)가 #elnSignBody에 렌더 -->
 			<section class="cardBox animate__animated mt10" id="card_approval">
 				<div class="cardTit2"><i class="material-symbols-outlined left">approval</i>Approval</div>
 				<div>
+					<div class="inputArea elnSign" id="elnSignBody"></div>
+				</div>
+			</section>
+
+			<!-- Audit Trail — 최하단 고정 시스템 카드(Approval 아래). JS(ELN.audit)가 렌더 -->
+			<section class="cardBox animate__animated mt10" id="card_audit">
+				<div class="cardTit2"><i class="material-symbols-outlined left">manage_history</i>Audit Trail</div>
+				<div>
 					<div class="inputArea">
-						<div class="cardSubTit mt30">Decision Point Approval Status</div>
+						<!-- 소제목 + 필터 한 줄(좌: 제목, 우: 필터) -->
+						<div class="elnAuditHead">
+							<div class="cardSubTit">Change History</div>
+							<div class="elnAuditFilter">
+								<label>Section <select id="elnAuditSec" class="browser-default"></select></label>
+								<label>User <select id="elnAuditUser" class="browser-default"></select></label>
+							</div>
+						</div>
 						<div class="fixedTable hBorderTable hScroll mg10">
-							<table class="elnApprDpTable">
+							<table class="elnAuditTable">
 								<thead>
-									<tr>
-										<th>Approval Type</th>
-										<th>Name</th>
-										<th>Date</th>
-										<th>Status</th>
-									</tr>
+									<tr><th>Date / Time</th><th>User</th><th>Section</th><th>Action</th><th>Change</th></tr>
 								</thead>
-								<tbody>
-									<tr>
-										<td class="ac">Marketing Leader</td>
-										<td class="ac">Jim Quan</td>
-										<td class="ac">26.09.2025</td>
-										<td class="ac"><span class="roundBox tendril25">Approved</span></td>
-									</tr>
-									<tr>
-										<td class="ac">Technology Leader</td>
-										<td class="ac">Charles Kim</td>
-										<td class="ac">-</td>
-										<td class="ac"><span class="roundBox stone25">Pending</span></td>
-									</tr>
-								</tbody>
+								<tbody id="elnAuditBody"></tbody>
 							</table>
 						</div>
+						<div class="elnAuditNote">Entries are recorded automatically and cannot be edited or deleted.</div>
 					</div>
 				</div>
 			</section>
@@ -280,7 +333,7 @@
 		// 탭 / 셀렉트 초기화
 		if(window.M){
 			if(M.Tabs) M.Tabs.init(document.querySelectorAll('.tabs'), {});
-			if(M.FormSelect) M.FormSelect.init(document.querySelectorAll('select'), {});
+			if(M.FormSelect) M.FormSelect.init(document.querySelectorAll('select:not(.browser-default)'), {});   // select2 대상(.browser-default)은 제외
 			if(M.textareaAutoResize) document.querySelectorAll('.materialize-textarea').forEach(function(t){M.textareaAutoResize(t);});
 		}
 		// 좌측 메뉴 → 카드 스크롤 + 활성
@@ -294,6 +347,7 @@
 				$(el).summernote({
 					placeholder:'Write the conclusion of this note',
 					height:160,
+						hint:(window.ELN && ELN.noteHint) ? ELN.noteHint(el) : [],   // @ 로 다른 노트 참조
 					toolbar:[
 						['style', ['style']],
 						['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
