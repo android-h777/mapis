@@ -71,7 +71,8 @@ html.tipLock,html.tipLock body{overflow:hidden}
 .tt-cap{font-size:11px;color:var(--ink2);margin:9px 0 3px;font-weight:700}
 .tt-req{margin:0 0 4px;padding:5px 9px;background:var(--soft);border:1px solid var(--line);border-radius:6px;font-size:12px;color:var(--ink2);font-style:italic}
 .tt-fig{margin:0 0 6px}
-.tt-fig img{display:block;width:100%;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
+/* 캡처는 화면 크기 그대로라 폭이 제각각 — 작은 캡처를 늘려 흐리게 만들지 않는다 */
+.tt-fig img{display:block;max-width:100%;width:auto;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
 .tt-fig figcaption{font-size:11.5px;margin-top:3px;color:var(--ink)}
 .tt-fig .lb{font-weight:700;color:var(--blue);font-size:11px;margin-top:4px}
 ol.cl{list-style:none;margin:2px 0 0;padding:0}
@@ -82,6 +83,23 @@ ol.cl li b{color:var(--blue)}
 .tt-steps li{margin:2px 0}
 .tt-pin{margin-top:8px;font-size:10.5px;color:var(--ink2);text-align:right}
 
+/* ── 모두 펼치기 · 회의 표 · 그림 번호 ── */
+.bar{display:flex;gap:8px;align-items:center;margin:10px 0 0}
+.btnx{font:inherit;font-size:12px;border:1px solid var(--blue);color:var(--blue);background:var(--paper);border-radius:999px;padding:2px 12px;cursor:pointer}
+.btnx:hover{background:var(--blueSoft)}
+#allTips{display:none;margin-top:6px}
+#allTips.show{display:block}
+.tipCard{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:10px;padding:12px 14px;margin:0 0 12px;font-size:12.5px;line-height:1.5}
+.tipCard .tt-fig img{max-width:min(100%,760px)}
+/* 번호가 그림과 같이 줄도록 감싼 상자에 폭 상한을 둔다 — 그림만 줄면 상자는 원래 폭으로 남아 % 번호가 그림 밖으로 나간다 */
+.tipCard .tt-fig .shot{max-width:min(100%,760px)}
+.tt-fig .shot img{max-width:100%}
+table.dec td.cur{color:var(--ink2);font-size:12px}
+.shot{position:relative;display:inline-block;max-width:100%;vertical-align:top}
+.shot img{display:block}
+.shot .mk{position:absolute;transform:translate(-50%,-50%);min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--blue);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center;box-shadow:0 0 0 2px #fff;pointer-events:none}
+.tipCard .tt-pin{display:none}   /* 펼친 카드엔 '클릭 고정' 안내 불필요 */
+
 @media (max-width:640px){ .wrap{padding:22px 16px 40px} .cols,.cols.c3{grid-template-columns:1fr} .tt-pair{grid-template-columns:1fr} }
 @media (max-width:900px){ table{font-size:12px} }
 @page{size:A4 landscape;margin:8mm 10mm}
@@ -91,7 +109,8 @@ ol.cl li b{color:var(--blue)}
   table,.box{font-size:10px} th,td{padding:2px 6px} tr.grp td{padding:2px 6px;font-size:10px}
   .box{padding:5px 9px}
   table,.box{break-inside:avoid}
-  #tip,.hint,template{display:none!important}
+  #tip,.hint,.bar,template{display:none!important}
+  #allTips{display:block!important}
   tr[data-tip]:hover{background:none}
 }
 </style>
@@ -101,8 +120,10 @@ ol.cl li b{color:var(--blue)}
 
 <header>
   <h1>Lab Note 구현 결과 (1차 프로토타입)</h1>
-  <div class="meta">2026-10-15 · 대상 화면: 연구노트 리스트(apis_note_user_list.html) / 노트 상세 팝업(apis_eln_pop_simple.html) · 시연용 프로토타입</div>
+  <div class="meta">2026-10-16 · 「Lab Note 구현 계획」 15개 항목 기준 · 대상 화면: 연구노트 리스트 · 검색 / 노트 상세 팝업(Basic Data · 섹션 · Approval · Audit Trail · Share &amp; Access · Copy To) · 시연용 프로토타입</div>
   <div class="hint">각 행에 마우스를 올리면 현업 요청 원문, 실제 프로토타입 화면 캡처(번호 설명 포함), 시연 순서, 계획 대비 변경, 운영 구현 시 고려사항이 표시됩니다. 클릭하면 창이 고정되어 스크롤할 수 있습니다. (모바일은 탭)</div>
+  <div class="hint">시연은 프로토타입 배포 화면(Vercel)에서 합니다. 캡처는 예시 데이터라 그림 속 번호 · 이름 · 시각은 시연 화면과 다를 수 있습니다.</div>
+  <div class="bar"><button type="button" class="btnx" id="btnAll" data-on="모두 펼치기 ▾" data-off="펼친 내용 닫기 ▴">모두 펼치기 ▾</button><span class="meta">표 아래에 항목별 상세(그림 · 시연 순서 · 변경점)를 차례로 펼칩니다. 인쇄하면 항상 펼쳐서 나옵니다.</span></div>
 </header>
 
 <h2>구현 결과</h2>
@@ -117,9 +138,9 @@ ol.cl li b{color:var(--blue)}
   <tr data-tip="t4"><td class="no">4</td><td class="f">Audit Trail</td><td class="rq">Audit Trail 기능</td><td>시각·사용자·섹션·동작·변경 전→후 표와 Section/User 필터. 헤더부터 에디터·표·첨부·결재까지 대부분의 변경을 기록</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">섹션 내부 변경(표·첨부·에디터 등)까지 기록하도록 범위 확장(사용자 요청). 노트 전환·복제 같은 프로그램 일괄 변경은 기록 제외.</td></tr>
 
   <tr class="grp"><td colspan="6">2단계 · 협업 · 검색</td></tr>
-  <tr data-tip="t5"><td class="no">5</td><td class="f">공동 편집자</td><td class="rq">공동 편집자 추가, 공동 편집 노트에서 수정한 사람 이름 표시, 편집자별 변경 추적</td><td>헤더 Share · N 버튼의 Share &amp; Access 창에서 Co-editor 추가(공유와 한 곳에서 관리). 섹션별 Last edited by 표시, 변경은 Audit Trail로 추적. 승인된 노트에는 Co-editor 추가 불가</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">동시 편집은 다루지 않음 — 원문에 동시 편집 요구가 없고, Co-editor는 번갈아 편집하는 개념. 섹션 잠금은 섹션별 저장을 전제해 노트 단위 저장과 맞지 않아 제외(사용자 결정). 공동편집자와 서명자는 다른 사람으로 구성. 헤더 아바타 대신 Share 버튼 하나(개인정보 사유로 사진·아바타 미사용).</td></tr>
-  <tr data-tip="t6"><td class="no">6</td><td class="f">공유</td><td class="rq">규정 준수 하에 노트·섹션을 다른 사용자와 공유 (예: R&amp;D ↔ Process Technology 스케일업 협업)</td><td>Share &amp; Access 창(공동 편집자와 같은 창). 목록 화면에서 접근 인원(Function·Scope) 확인·Edit·Remove, Add People로 대상·Function(Co-editor/Viewer)·범위·사유·정보보호 확인 입력. Viewer만 섹션 단위 공유 가능. 사유와 정보보호 확인은 Audit Trail에 함께 기록</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">공동 편집자와 공유를 한 모달로 통합 — 공유 권한 Edit과 Co-editor가 같은 개념이라 하나로 정리(사용자 결정). Function은 Co-editor/Viewer 두 단계(코멘트 기능이 없어 Commenter 제외). 정보보호 확인 체크는 원문 "under compliance"의 해석(운영에 없는 요소) — 감사 근거가 남도록 Audit 기록에 포함(사용자 결정). Co-editor는 항상 전체 노트, 섹션 공유는 Viewer만(원문 "sections" 공유 = 보여 주는 범위). 승인된 노트도 Viewer 공유 허용. 공유는 프로젝트 연결과 무관.</td></tr>
-  <tr data-tip="t7"><td class="no">7</td><td class="f">노트 복제</td><td class="rq">기존 실험을 복제해서 시작 (Copy from)</td><td>왼쪽 버튼 영역(Save Template 위)의 Copy To 버튼 › 복사할 섹션 + Include entered data 선택 › Copy 하면 새 창에 저장 전 복사본 생성(새 번호). 원래 창은 그대로. 리스트 요약 패널에서도 Copy To(데이터 포함 여부만 선택, 전체 섹션 복사) › 새 창에 저장 전 복사본, 저장 후 리스트에 표시</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">운영 FMEA 'Copy To'와 같은 이름·위치·흐름(새 창, 저장 전). 'Clone' 대신 'Copy'로 용어 통일. Sections to Copy는 섹션 구성, Include entered data는 값 — Basic Data는 필수 섹션이라 항상 포함(체크 고정). 연결 프로젝트는 데이터 선택과 무관하게 복사(노트 메타데이터). 승인된 노트를 복사해도 새 노트는 편집 가능.</td></tr>
+  <tr data-tip="t5"><td class="no">5</td><td class="f">공동 편집자</td><td class="rq">공동 편집자 추가, 공동 편집 노트에서 수정한 사람 이름 표시, 편집자별 변경 추적</td><td>헤더 Share 버튼(공유 아이콘 + 인원 수 배지)의 Share &amp; Access 창에서 Co-editor 추가(공유와 한 곳에서 관리). 섹션별 Last edited by 표시, 변경은 Audit Trail로 추적. 승인된 노트에는 Co-editor 추가 불가</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">동시 편집은 다루지 않음. 원문에 동시 편집 요구가 없고, Co-editor는 번갈아 편집하는 개념. 섹션 잠금은 섹션별 저장을 전제해 노트 단위 저장과 맞지 않아 제외(사용자 결정). 공동편집자와 서명자는 다른 사람으로 구성. 헤더 아바타 대신 Share 버튼 하나(개인정보 사유로 사진·아바타 미사용).</td></tr>
+  <tr data-tip="t6"><td class="no">6</td><td class="f">공유</td><td class="rq">규정 준수 하에 노트·섹션을 다른 사용자와 공유 (예: R&amp;D ↔ Process Technology 스케일업 협업)</td><td>Share &amp; Access 창(공동 편집자와 같은 창). 목록 화면에서 접근 인원(Function·Scope) 확인·Edit·Remove, Add People로 대상·Function(Co-editor/Viewer)·범위·사유·정보보호 확인 입력. Viewer만 섹션 단위 공유 가능. 사유와 정보보호 확인은 Audit Trail에 함께 기록</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">공동 편집자와 공유를 한 모달로 통합: 공유 권한 Edit과 Co-editor가 같은 개념이라 하나로 정리(사용자 결정). Function은 Co-editor/Viewer 두 단계(코멘트 기능이 없어 Commenter 제외). 정보보호 확인 체크는 원문 "under compliance"의 해석(운영에 없는 요소)이며, 감사 근거가 남도록 Audit 기록에 포함(사용자 결정). Co-editor는 항상 전체 노트, 섹션 공유는 Viewer만(원문 "sections" 공유 = 보여 주는 범위). 승인된 노트도 Viewer 공유 허용. 공유는 프로젝트 연결과 무관.</td></tr>
+  <tr data-tip="t7"><td class="no">7</td><td class="f">노트 복제</td><td class="rq">기존 실험을 복제해서 시작 (Copy from)</td><td>왼쪽 버튼 영역(Save Template 위)의 Copy To 버튼 › 복사할 섹션 + Include entered data 선택 › Copy 하면 새 창에 저장 전 복사본 생성(새 번호). 원래 창은 그대로. 리스트 요약 패널에서도 Copy To(데이터 포함 여부만 선택, 전체 섹션 복사) › 새 창에 저장 전 복사본, 저장 후 리스트에 표시</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">운영 FMEA 'Copy To'와 같은 이름·위치·흐름(새 창, 저장 전). 'Clone' 대신 'Copy'로 용어 통일. Sections to Copy는 섹션 구성, Include entered data는 값. Basic Data는 필수 섹션이라 항상 포함(체크 고정). 연결 프로젝트는 데이터 선택과 무관하게 복사(노트 메타데이터). 승인된 노트를 복사해도 새 노트는 편집 가능.</td></tr>
   <tr data-tip="t8"><td class="no">8</td><td class="f">노트 상호참조</td><td class="rq">같은·다른 작성자의 ELN 실험을 상호참조로 삽입, 관련 실험 링크 추가</td><td>에디터에서 @ 입력 시 노트 자동완성, 칩 링크, 마우스 오버 요약 카드, 클릭 시 새 팝업. Related Items에 자동 추가</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">Summernote 기본 기능(hint)으로 실제 구현 가능 확인. 칩 클릭 시 새 창(작성 중 노트 유지). Related Items의 참조 항목은 에디터가 원본이라 직접 삭제 불가, 에디터에서 지우면 함께 제거.</td></tr>
   <tr data-tip="t9"><td class="no">9</td><td class="f">검색 확장</td><td class="rq">작성자·프로젝트명·NPI 번호 등으로 검색, 첨부파일(Office·텍스트 형식) 내용까지 검색<span class="nice">Nice</span></td><td>저자, Project # / NPI, 첨부 본문 검색(일치 문장 강조) 구현<br>구조식 검색<span class="badge">검토 중</span> 화면에 Under review로만 표시(화학 검색 엔진 필요)</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">"NPI 번호 검색"은 프로젝트 코드·이름 검색으로 통일(Primary·Associated 모두). 구조식 검색은 화학 검색 엔진이 필요해 검토 중.</td></tr>
   <tr data-tip="t10"><td class="no">10</td><td class="f">권한 없는 노트 검색</td><td class="rq">읽기 권한이 없는 ELN도 검색 (허용되면 기본 정보만 표시)</td><td>검색 결과에 자물쇠 행(번호·제목·저자·날짜)만 표시, 클릭 시 접근 불가 요약과 Request Access(사유 필수)</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">프로젝트 등 기본 정보로는 검색되되 본문·태그·첨부는 비노출(원문 "show just the basic data if allowed").</td></tr>
@@ -140,7 +161,7 @@ ol.cl li b{color:var(--blue)}
   <li>헤더 버튼 정리, 링크 스타일 통일</li>
   <li>Change History의 제목과 필터를 한 줄로 배치</li>
   <li>Formulation 배합 선택 → <b>Link Formulations</b>: 하는 일(노트에 배합 연결, 2개 이상이면 비교 표시)에 맞게 이름 변경. 기본 범위는 이 노트의 연결 프로젝트 전체(Primary만 아님), All projects로 넓혀 검색 가능. 표에 배합 이름·Project # 표시 (운영 Formulator 데이터에 프로젝트 번호가 있다는 전제)</li>
-  <li>Sticky note에 작성자·시각 표시. 볼 수 있는 사람 = 그 섹션을 볼 수 있는 사람(Share &amp; Access 범위 그대로, 메모별 별도 공유 없음) — 메모는 섹션 밖으로 나가지 않음</li>
+  <li>Sticky note에 작성자·시각 표시. 볼 수 있는 사람 = 그 섹션을 볼 수 있는 사람(Share &amp; Access 범위 그대로, 메모별 별도 공유 없음). 메모는 섹션 밖으로 나가지 않음</li>
   <li>노트 상태 표기를 결재 상태 하나로 통일: 리스트·노트 헤더·Note List 모두 In Progress → In Approval → Approved (기존 리스트의 Success / Failed / On Hold, Done / In Review / Draft 표기 폐기)</li>
   <li>Formulation 섹션은 노트당 하나: 지운 뒤 Add Module로 다시 고르면 원래 섹션이 복원됨(빈 섹션이 새로 생기지 않음)</li>
 </ul></div>
@@ -157,12 +178,22 @@ ol.cl li b{color:var(--blue)}
   <tr data-tip="x6"><td class="f">NPI 번호 별도 입력칸</td><td>Associated Project # (NPI, NPT, TS) 칸으로 통합(중복)</td></tr>
 </table>
 
+<h2>회의에서 정할 것</h2>
+<table class="dec">
+  <colgroup><col style="width:170px"><col><col style="width:34%"></colgroup>
+  <tr><th>항목</th><th>정할 것</th><th>지금 구현(기본안)</th></tr>
+  <tr><td class="f">1. 여러 프로젝트에 걸친 실험</td><td>여러 프로젝트(NPI)에 동등하게 걸친 공동 실험이 얼마나 되는지, 그중 Primary 하나를 골라 Stage / Task와 Note List 기준으로 삼는 방식이 맞는지</td><td class="cur">여러 프로젝트 연결 + ★ Primary 1개(처음 연결한 것 자동, 바꿀 수 있음)</td></tr>
+  <tr><td class="f">1. Platform / Pre-NPC 이름</td><td>운영에 목록이 없음. 관리 목록(공통코드, 관리 주체 지정)으로 둘지, 자유 입력으로 둘지</td><td class="cur">유형(Platform Technology / Pre-NPC) 선택 + 이름 입력, 다른 노트에서 쓴 이름 자동완성</td></tr>
+</table>
+
 <h2>확인 필요</h2>
 <div class="cols c3">
   <div class="box"><b>법무 · QA</b><ul><li>PDF 내보내기 허용 여부</li><li>SharePoint 작업 문서를 법적 기록에서 제외해도 되는지</li></ul></div>
-  <div class="box"><b>IT</b><ul><li>SharePoint 문서가 MAPIS 화면 안에 표시되는지 테스트</li><li>WAS 대수 및 웹소켓 브로커(공동 편집 실시간 표시용)</li></ul></div>
-  <div class="box"><b>현업 (시연 중 질문)</b><ul><li>NPI 번호가 MAPIS 프로젝트 코드와 같은 것인지</li><li>여러 NPI에 동등하게 걸친 공동 실험이 얼마나 되는지</li><li>Pre-NPC가 정식 프로젝트가 되면 이전 노트를 어떻게 처리할지</li><li>공동 편집은 번갈아 작업(현재 설계: 동시 편집 없음, 섹션별 마지막 편집자 표시 + Audit)이면 충분한지 — 기존 BIOVIA ELN에서 같은 실험을 동시에 편집했었는지. 동시 편집이 꼭 필요하면 SharePoint 작업 문서(12번)로 대응</li></ul></div>
+  <div class="box"><b>IT</b><ul><li>SharePoint 문서가 MAPIS 화면 안에 표시되는지 테스트</li></ul></div>
+  <div class="box"><b>현업 (시연 중 질문)</b><ul><li>NPI 번호가 MAPIS 프로젝트 코드와 같은 것인지</li><li>Pre-NPC가 정식 프로젝트가 되면 이전 노트를 어떻게 처리할지</li><li>공동 편집은 번갈아 작업(현재 설계: 동시 편집 없음, 섹션별 마지막 편집자 표시 + Audit)이면 충분한지, 기존 BIOVIA ELN에서 같은 실험을 동시에 편집했었는지. 동시 편집이 꼭 필요하면 SharePoint 작업 문서(12번)로 대응</li></ul></div>
 </div>
+
+<div id="allTips"><h2>항목별 상세</h2></div>
 
 </div>
 
@@ -176,7 +207,7 @@ ol.cl li b{color:var(--blue)}
   <div class="tt-req">"Header: Need an option to add platform technology or Pre-NPC in Header (Without NPC Numbers in MAPIS). Header field for associated NPI number(s)." · Nice: "Header field for associated paper notebook(s) &amp; page(s)." · Must: "Date of Experiment"</div>
   <div class="tt-cap">화면</div>
   <figure class="tt-fig">
-    <img src="img/eln/01_basic.png" alt="Basic Data 카드의 헤더 필드">
+    <div class="shot"><img src="img/eln/01_basic.png" alt="Basic Data 카드의 헤더 필드"><span class="mk" style="left:19.6%;top:2.7%">①</span><span class="mk" style="left:48.6%;top:2.7%">②</span><span class="mk" style="left:8.9%;top:55.4%">③</span><span class="mk" style="left:7.7%;top:74.4%">④</span><span class="mk" style="left:7.2%;top:92.9%">⑤</span></div>
     <figcaption><ol class="cl">
       <li><b>①</b> Associated Project # (NPI, NPT, TS): 프로젝트 칩 여러 개. 테두리가 두꺼운 <b>★ PRIMARY</b> 칩(SN-26-0031)은 Stage/Task·Note List 기준 프로젝트</li>
       <li><b>②</b> 나머지 칩(PT-26-0021, TS-26-0205)과 <b>Add Project</b> 버튼: 같은 실험이 여러 프로젝트에 걸칠 때 추가. 라벨 옆 <b>?</b> 아이콘은 운영 표준 도움말 툴팁</li>
@@ -186,16 +217,16 @@ ol.cl li b{color:var(--blue)}
     </ol></figcaption>
   </figure>
   <figure class="tt-fig">
-    <img src="img/eln/01_projadd.png" alt="프로젝트 추가 자동완성">
-    <figcaption><div class="lb">프로젝트 추가 (MAPIS 공통 부품)</div><ol class="cl"><li><b>①</b> Add Project를 누르면 같은 자리에 표준 입력칸이 나타남</li><li><b>②</b> 프로젝트 번호나 이름을 입력하면 공통 자동완성 목록("SN-26-0018 — Flexible OLED Encapsulant", 운영 TechLib 퀵서치와 같은 방식)</li><li><b>③</b> 고르면 칩이 추가되고 Audit Trail에 "Project linked" 기록</li></ol></figcaption>
+    <div class="shot"><img src="img/eln/01_projadd.png" alt="프로젝트 추가 자동완성"><span class="mk" style="left:19.7%;top:41.5%">①</span><span class="mk" style="left:50.9%;top:59.7%">②</span><span class="mk" style="left:98.0%;top:18.7%">③</span></div>
+    <figcaption><div class="lb">프로젝트 추가 (MAPIS 공통 부품)</div><ol class="cl"><li><b>①</b> Add Project를 누르면 같은 자리에 표준 입력칸이 나타남</li><li><b>②</b> 프로젝트 번호나 이름을 입력하면 공통 자동완성 목록. 표시는 MAPIS 표준 [코드] 이름(예: [SN-26-0018] Flexible OLED Encapsulant)</li><li><b>③</b> 고르면 칩 줄 끝에 새 칩이 붙고, Audit Trail에 "Project linked" 기록</li></ol></figcaption>
   </figure>
   <div class="tt-pair">
     <figure class="tt-fig">
-      <img src="img/eln/01_projmenu.png" alt="프로젝트 칩 메뉴">
-      <figcaption><div class="lb">칩 메뉴</div><ol class="cl"><li><b>①</b> Open project: 프로젝트 화면 열기</li><li><b>②</b> Set as primary: 이 칩을 Primary로 변경</li><li><b>③</b> Unlink: 연결 해제</li></ol></figcaption>
+      <div class="shot"><img src="img/eln/01_projmenu.png" alt="프로젝트 칩 메뉴"><span class="mk" style="left:91.9%;top:44.7%">①</span><span class="mk" style="left:91.9%;top:66.3%">②</span><span class="mk" style="left:91.9%;top:88.0%">③</span></div>
+      <figcaption><div class="lb">칩 메뉴</div><ol class="cl"><li><b>①</b> Open Project: 프로젝트 화면 열기</li><li><b>②</b> Set as Primary: 이 칩을 Primary로 변경</li><li><b>③</b> Unlink: 연결 해제</li></ol></figcaption>
     </figure>
     <figure class="tt-fig">
-      <img src="img/eln/01_list_summary.png" alt="리스트 요약 패널">
+      <div class="shot"><img src="img/eln/01_list_summary.png" alt="리스트 요약 패널"><span class="mk" style="left:4.2%;top:82.1%">①</span><span class="mk" style="left:4.2%;top:95.5%">②</span></div>
       <figcaption><div class="lb">리스트 요약 패널</div><ol class="cl"><li><b>①</b> ASSOCIATED PROJECT # 칩과 PRIMARY 표시가 리스트에서도 보임</li><li><b>②</b> "Linking a project does not grant access to it." 연결해도 접근 권한은 생기지 않음</li></ol></figcaption>
     </figure>
   </div>
@@ -222,7 +253,7 @@ ol.cl li b{color:var(--blue)}
   <div class="tt-req">"Author chooses Co-Signers"</div>
   <div class="tt-cap">화면</div>
   <figure class="tt-fig">
-    <img src="img/eln/02_approval_before.png" alt="Approval 카드, 작성자 화면, 제출 전">
+    <div class="shot"><img src="img/eln/02_approval_before.png" alt="Approval 카드, 작성자 화면, 제출 전"><span class="mk" style="left:27.1%;top:24.3%">①</span><span class="mk" style="left:46.8%;top:40.9%">②</span><span class="mk" style="left:62.7%;top:24.3%">③</span><span class="mk" style="left:32.8%;top:89.9%">④</span></div>
     <figcaption><div class="lb">제출 전 (작성자 화면)</div><ol class="cl">
       <li><b>①</b> View as Author / Co-Signer: 시연용 전환 탭(운영에서는 로그인 사용자에 따라 결정)</li>
       <li><b>②</b> Co-Signers 칩(Jim Quan · Group Leader, Aishwarya Venkatakrishnan · Witness): 작성자가 직접 지정, × 로 제거</li>
@@ -231,15 +262,15 @@ ol.cl li b{color:var(--blue)}
     </ol></figcaption>
   </figure>
   <figure class="tt-fig">
-    <img src="img/eln/02_approval_cosigner.png" alt="Approval 카드, 서명자 화면">
+    <div class="shot"><img src="img/eln/02_approval_cosigner.png" alt="Approval 카드, 서명자 화면"><span class="mk" style="left:35.2%;top:35.3%">①</span><span class="mk" style="left:34.1%;top:73.3%">②</span><span class="mk" style="left:86.2%;top:71.6%">③</span></div>
     <figcaption><div class="lb">제출 후 (Co-Signer 화면)</div><ol class="cl">
       <li><b>①</b> Jim Quan: Approved(초록), 코멘트 "Data verified.", 일시 기록 완료</li>
-      <li><b>②</b> Aishwarya: 아직 미결 — Approved / Not Approved 선택, 코멘트 입력(Not Approved는 필수)</li>
+      <li><b>②</b> Aishwarya: 아직 미결. Approved / Not Approved 선택, 코멘트 입력(Not Approved는 필수)</li>
       <li><b>③</b> Submit: 서명자가 결정을 확정</li>
     </ol></figcaption>
   </figure>
   <figure class="tt-fig">
-    <img src="img/eln/02_header_appr.png" alt="결재 중 헤더">
+    <div class="shot"><img src="img/eln/02_header_appr.png" alt="결재 중 헤더"><span class="mk" style="left:66.0%;top:50.0%">①</span><span class="mk" style="left:97.6%;top:50.0%">②</span></div>
     <figcaption><div class="lb">헤더</div><ol class="cl"><li><b>①</b> 상태 배지 In Approval</li><li><b>②</b> "Awaiting 1 signature": 남은 서명 수 안내</li></ol></figcaption>
   </figure>
   <div class="tt-cap">시연 순서</div>
@@ -261,7 +292,7 @@ ol.cl li b{color:var(--blue)}
   <div class="tt-req">"Add additional sections and Errata after ELN Submission"</div>
   <div class="tt-cap">화면</div>
   <figure class="tt-fig">
-    <img src="img/eln/03_locked_editor.png" alt="제출되어 잠긴 Editor 카드">
+    <div class="shot"><img src="img/eln/03_locked_editor.png" alt="제출되어 잠긴 Editor 카드"><span class="mk" style="left:46.8%;top:8.1%">①</span><span class="mk" style="left:2.6%;top:24.3%">②</span><span class="mk" style="left:82.6%;top:91.2%">③</span></div>
     <figcaption><div class="lb">제출 후 (잠긴 섹션)</div><ol class="cl">
       <li><b>①</b> 🔒 "Submitted 2026-10-12 09:30" 배지: 이 섹션은 제출되어 잠김(편집·삭제·드래그·키보드 입력 차단)</li>
       <li><b>②</b> 본문 영역은 읽기 전용</li>
@@ -270,13 +301,13 @@ ol.cl li b{color:var(--blue)}
   </figure>
   <div class="tt-pair">
     <figure class="tt-fig">
-      <img src="img/eln/03_errata_modal.png" alt="Add Errata 창">
+      <div class="shot"><img src="img/eln/03_errata_modal.png" alt="Add Errata 창"><span class="mk" style="left:11.6%;top:34.8%">①</span><span class="mk" style="left:15.0%;top:66.3%">②</span><span class="mk" style="left:47.4%;top:81.6%">③</span></div>
       <figcaption><div class="lb">Errata 입력</div><ol class="cl"><li><b>①</b> Correction: 정정 내용(필수)</li><li><b>②</b> Reason: 정정 사유(필수)</li><li><b>③</b> Save</li></ol></figcaption>
     </figure>
     <div></div>
   </div>
   <figure class="tt-fig">
-    <img src="img/eln/03_errata_block.png" alt="승인된 Basic Data와 Errata 블록">
+    <div class="shot"><img src="img/eln/03_errata_block.png" alt="승인된 Basic Data와 Errata 블록"><span class="mk" style="left:67.9%;top:4.7%">①</span><span class="mk" style="left:9.9%;top:43.1%">②</span><span class="mk" style="left:2.9%;top:77.9%">③</span></div>
     <figcaption><div class="lb">승인 후</div><ol class="cl">
       <li><b>①</b> 초록 배지 "Approved · Jim Quan, Aishwarya…": 승인 완료 섹션</li>
       <li><b>②</b> 본문은 원문 그대로(Experiment Date 2026-10-08) 보존</li>
@@ -299,12 +330,12 @@ ol.cl li b{color:var(--blue)}
   <div class="tt-req">"Audit Trail feature"</div>
   <div class="tt-cap">화면</div>
   <figure class="tt-fig">
-    <img src="img/eln/04_audit.png" alt="Audit Trail 카드의 Change History">
+    <div class="shot"><img src="img/eln/04_audit.png" alt="Audit Trail 카드의 Change History"><span class="mk" style="left:58.7%;top:8.8%">①</span><span class="mk" style="left:76.1%;top:15.1%">②</span><span class="mk" style="left:62.6%;top:67.3%">③</span><span class="mk" style="left:46.7%;top:15.1%">④</span><span class="mk" style="left:31.1%;top:95.4%">⑤</span></div>
     <figcaption><ol class="cl">
       <li><b>①</b> Section / User 필터: 섹션이나 사용자로 좁혀 보기</li>
       <li><b>②</b> 표 열: Date/Time · User · Section · Action · Change(변경 전→후)</li>
       <li><b>③</b> 변경 전→후 표시 예: Crosslinker (wt%): <s>1.8</s> › 2.2 (David Lee, Formulation)</li>
-      <li><b>④</b> 결재·Errata·공유 이력도 같은 표에 기록: Submitted / Approved / Note approved / Errata added / Access granted / Access changed / Access removed</li>
+      <li><b>④</b> 결재·Errata·공유 이력도 같은 표에 기록(그림: Submitted, Approved, Note approved, Errata added, Access granted. 권한 변경·회수는 Access changed / Access removed)</li>
       <li><b>⑤</b> 하단 문구: "Entries are recorded automatically and cannot be edited or deleted."</li>
     </ol></figcaption>
   </figure>
@@ -320,35 +351,35 @@ ol.cl li b{color:var(--blue)}
 </template>
 
 <template id="t5">
-  <div class="tt-h">5. 공동 편집자 <span>팝업 › 헤더 Share · 각 섹션</span></div>
+  <div class="tt-h">5. 공동 편집자 <span>팝업 › 헤더 Share 버튼 · 각 섹션</span></div>
   <div class="tt-cap">요청 원문</div>
   <div class="tt-req">"Able to add co-editor. Show Editor Name when ELN is modified in case of Co-Editor enabled ELNs. AV: Track changes done by the coeditor/editor"</div>
   <div class="tt-cap">화면</div>
   <figure class="tt-fig">
-    <img src="img/eln/05_header.png" alt="팝업 헤더">
+    <div class="shot"><img src="img/eln/05_header.png" alt="팝업 헤더"><span class="mk" style="left:70.9%;top:16.0%">①</span><span class="mk" style="left:81.7%;top:16.0%">②</span><span class="mk" style="left:48.5%;top:50.0%">③</span></div>
     <figcaption><div class="lb">헤더</div><ol class="cl">
-      <li><b>①</b> <b>Share · 4</b>: 작성자 외 접근 인원 수(공동 편집자·공유 대상 합계). 누르면 Share &amp; Access 창에서 Co-editor 추가(6번과 같은 창)</li>
+      <li><b>①</b> <b>Share 버튼</b>: 공유 아이콘 + 배지 "4" = 작성자 외 접근 인원 수(공동 편집자·공유 대상 합계). 누르면 Share &amp; Access 창에서 Co-editor 추가(6번과 같은 창)</li>
       <li><b>②</b> Note List 버튼</li>
       <li><b>③</b> 헤더에 참여자 사진·아바타는 표시하지 않음(개인정보)</li>
     </ol></figcaption>
   </figure>
   <figure class="tt-fig">
-    <img src="img/eln/05_lastedit.png" alt="섹션 제목 줄의 마지막 편집자">
+    <div class="shot"><img src="img/eln/05_lastedit.png" alt="섹션 제목 줄의 마지막 편집자"><span class="mk" style="left:66.9%;top:10.5%">①</span><span class="mk" style="left:65.2%;top:73.9%">②</span></div>
     <figcaption><div class="lb">섹션별 마지막 편집자</div><ol class="cl">
       <li><b>①</b> 섹션 제목 줄 오른쪽 "Last edited by 이름 · 시각": 섹션마다 마지막으로 고친 사람(Co-editor 포함)</li>
-      <li><b>②</b> 내가 고치면 즉시 내 이름과 현재 시각으로 바뀜. 누가 무엇을 바꿨는지는 Audit Trail(4번)에 남음</li>
+      <li><b>②</b> 내가(Charles Kim) 고친 섹션은 내 이름과 고친 시각으로 바뀜. 누가 무엇을 바꿨는지는 Audit Trail(4번)에 남음</li>
     </ol></figcaption>
   </figure>
   <div class="tt-cap">시연 순서</div>
   <ol class="tt-steps">
-    <li>헤더 Share · N 버튼 › Share &amp; Access 창의 Add People에서 Function을 Co-editor로 선택해 추가(승인된 노트에는 Co-editor 추가 불가, Viewer만 가능)</li>
+    <li>헤더 Share 버튼 › Share &amp; Access 창의 Add People에서 Function을 Co-editor로 선택해 추가(승인된 노트에는 Co-editor 추가 불가, Viewer만 가능)</li>
     <li>섹션 제목 줄의 "Last edited by 이름 · 시각" 확인 (Formulation = David Lee, Data Visualization = Min-ji Park)</li>
     <li>아무 섹션이나 값을 고치면 그 섹션 라벨이 내 이름으로 바뀜</li>
   </ol>
   <div class="tt-cap">계획 대비 변경</div>
   <ul class="tt-l">
     <li>계획의 <b>섹션 편집 잠금은 제외</b>, 동시 편집은 다루지 않음. 원문에 동시 편집 요구가 없고(Co-editor = 번갈아 편집), 섹션 잠금은 섹션별 저장이 있어야 의미가 있어 노트 단위 저장과 맞지 않음</li>
-    <li>공동 편집자 추가를 별도 버튼이 아니라 <b>Share &amp; Access 창으로 통합</b>(6번 참고). 헤더 아바타는 개인정보 사유로 제거, Share · N 버튼으로 대체</li>
+    <li>공동 편집자 추가를 별도 버튼이 아니라 <b>Share &amp; Access 창으로 통합</b>(6번 참고). 헤더 아바타는 개인정보 사유로 제거, 인원 수 배지가 달린 Share 버튼으로 대체</li>
   </ul>
   <div class="tt-cap">운영 구현 시 고려</div>
   <ul class="tt-l">
@@ -358,13 +389,13 @@ ol.cl li b{color:var(--blue)}
 </template>
 
 <template id="t6">
-  <div class="tt-h">6. 공유 <span>팝업 › 헤더 Share · N 버튼 (Share &amp; Access)</span></div>
+  <div class="tt-h">6. 공유 <span>팝업 › 헤더 Share 버튼 (Share &amp; Access)</span></div>
   <div class="tt-cap">요청 원문</div>
   <div class="tt-req">"Share ELN sections/experiments with other users under compliance — e.g. each Segment's R&amp;D Technology frequently needs to collaborate with Process Technology to scale up NPI products, sometimes across poles."</div>
   <div class="tt-cap">화면</div>
   <div class="tt-pair">
     <figure class="tt-fig">
-      <img src="img/eln/06_share_modal.png" alt="Share &amp; Access 목록 화면">
+      <div class="shot"><img src="img/eln/06_share_modal.png" alt="Share &amp; Access 목록 화면"><span class="mk" style="left:3.9%;top:23.5%">①</span><span class="mk" style="left:83.6%;top:47.3%">②</span><span class="mk" style="left:54.3%;top:73.9%">③</span><span class="mk" style="left:74.4%;top:23.5%">④</span></div>
       <figcaption><div class="lb">목록 화면 (기본)</div><ol class="cl">
         <li><b>①</b> People with Access 표: 작성자 Charles Kim(Owner), David Lee·Min-ji Park(Co-editor), Jim Quan(Viewer), Sarah Chen(Viewer, Formulation·Data Visualization 섹션만)의 Function·Scope. 사람은 <b>이름 (ID)</b></li>
         <li><b>②</b> 행 오른쪽 ✎ Edit(기 등록 인원 수정), ✕ Remove(접근 회수). Owner 행은 수정 불가</li>
@@ -373,7 +404,7 @@ ol.cl li b{color:var(--blue)}
       </ol></figcaption>
     </figure>
     <figure class="tt-fig">
-      <img src="img/eln/06_share_pop.png" alt="Add People 입력 화면">
+      <div class="shot"><img src="img/eln/06_share_pop.png" alt="Add People 입력 화면"><span class="mk" style="left:11.4%;top:14.4%">①</span><span class="mk" style="left:9.5%;top:23.1%">②</span><span class="mk" style="left:11.9%;top:29.2%">③</span><span class="mk" style="left:10.7%;top:80.7%">④</span></div>
       <figcaption><div class="lb">입력 화면 (Add People / Edit access)</div><ol class="cl">
         <li><b>①</b> People: 사람 검색 후 선택(Tom Reyes). Edit일 때는 대상이 고정 표시</li>
         <li><b>②</b> Function: Co-editor / Viewer. Co-editor를 고르면 Scope가 Entire note로 고정</li>
@@ -384,8 +415,8 @@ ol.cl li b{color:var(--blue)}
   </div>
   <div class="tt-cap">시연 순서</div>
   <ol class="tt-steps">
-    <li>헤더 Share · N › Share &amp; Access 목록 화면 › Add People › 대상·Function·Scope·Reason 입력, 확인 체크 › Share</li>
-    <li>목록 화면에 추가된 행 확인(헤더 N 증가)</li>
+    <li>헤더 Share 버튼 › Share &amp; Access 목록 화면 › Add People › 대상·Function·Scope·Reason 입력, 확인 체크 › Share</li>
+    <li>목록 화면에 추가된 행 확인(헤더 배지 숫자 증가)</li>
     <li>행의 ✎ Edit로 Function·Scope 변경 또는 ✕ Remove › Audit Trail에서 Access granted / changed / removed 기록 확인(추가·수정 기록 끝에 사유와 "Security policy acknowledged")</li>
   </ol>
   <div class="tt-cap">계획 대비 변경</div>
@@ -405,32 +436,32 @@ ol.cl li b{color:var(--blue)}
   <div class="tt-req">"Clone Experiments (Copy from)"</div>
   <div class="tt-cap">화면</div>
   <figure class="tt-fig">
-    <img src="img/eln/07_copy_btn.png" alt="왼쪽 버튼 영역의 Copy To 버튼">
+    <div class="shot"><img src="img/eln/07_copy_btn.png" alt="왼쪽 버튼 영역의 Copy To 버튼"><span class="mk" style="left:10.5%;top:5.2%">①</span></div>
     <figcaption><div class="lb">왼쪽 버튼 영역</div><ol class="cl"><li><b>①</b> <b>Copy To</b> 버튼: Save Template 위에 위치(운영 FMEA와 같은 위치)</li></ol></figcaption>
   </figure>
   <div class="tt-pair">
     <figure class="tt-fig">
-      <img src="img/eln/07_clone_modal.png" alt="팝업의 Copy To 창">
+      <div class="shot"><img src="img/eln/07_clone_modal.png" alt="팝업의 Copy To 창"><span class="mk" style="left:4.2%;top:22.6%">①</span><span class="mk" style="left:4.2%;top:31.3%">②</span><span class="mk" style="left:4.2%;top:63.0%">③</span><span class="mk" style="left:4.2%;top:75.6%">④</span><span class="mk" style="left:64.4%;top:89.0%">⑤</span></div>
       <figcaption><div class="lb">팝업 Copy To 창</div><ol class="cl">
         <li><b>①</b> 원본 노트 번호·제목</li>
         <li><b>②</b> Sections to Copy: 새 노트에 넣을 섹션(구성) 체크. Basic Data는 필수 섹션이라 체크 고정</li>
         <li><b>③</b> Include entered data: 체크하면 값·표·텍스트까지, 해제하면 빈 구조만</li>
-        <li><b>④</b> 안내: 현재 데이터로 새 창에 새 노트 생성, 저장하지 않은 변경은 복사되지 않음, 서명·Errata·Audit 이력도 복사되지 않음</li>
+        <li><b>④</b> 안내: 새 창에 새 노트 생성, 저장하지 않은 변경은 복사되지 않음, 서명·Errata·Audit 이력도 복사되지 않음</li>
         <li><b>⑤</b> Cancel / <b>Copy</b></li>
       </ol></figcaption>
     </figure>
     <figure class="tt-fig">
-      <img src="img/eln/07_list_clone_modal.png" alt="리스트의 Copy To 창(일부)">
+      <div class="shot"><img src="img/eln/07_list_clone_modal.png" alt="리스트의 Copy To 창"><span class="mk" style="left:3.8%;top:47.9%">①</span><span class="mk" style="left:3.8%;top:65.6%">②</span></div>
       <figcaption><div class="lb">리스트 요약 패널의 Copy To 창</div><ol class="cl"><li><b>①</b> 리스트 요약 패널의 Copy To 모달: Include entered data(데이터 포함 여부)만 선택하고 Copy 하면 전체 섹션이 복사되어 새 창에 저장 전 복사본이 열림</li><li><b>②</b> 리스트에는 행이 바로 추가되지 않고, 새 노트는 저장 후에 리스트에 나타남(운영에서는 새로고침/웹소켓으로 반영, 프로토타입에는 미표시)</li></ol></figcaption>
     </figure>
   </div>
   <figure class="tt-fig">
-    <img src="img/eln/07_clone_header.png" alt="복사 후 새 창의 헤더">
-    <figcaption><div class="lb">복사 직후 새 창의 헤더</div><ol class="cl"><li><b>①</b> 새 번호 NT-2610-00188, 제목 뒤에 "(copy)". 저장 전의 복사본</li><li><b>②</b> 상태는 In Progress (편집 가능)</li><li><b>③</b> 원래 창은 그대로 유지됨(새 창에서 열림)</li></ol></figcaption>
+    <div class="shot"><img src="img/eln/07_clone_header.png" alt="복사 후 새 창의 헤더"><span class="mk" style="left:81.9%;top:48.0%">①</span><span class="mk" style="left:97.7%;top:50.0%">②</span></div>
+    <figcaption><div class="lb">복사 직후 새 창의 헤더</div><ol class="cl"><li><b>①</b> 새 번호 NT-2610-00188, 제목 뒤에 "(copy)". 저장 전의 복사본</li><li><b>②</b> 상태는 In Progress (편집 가능)</li><li>원래 창은 그대로 유지됨(복사본은 새 창에서 열림)</li></ol></figcaption>
   </figure>
   <figure class="tt-fig">
-    <img src="img/eln/07_clone_basic.png" alt="복사된 노트의 Basic Data">
-    <figcaption><div class="lb">복사된 Basic Data</div><ol class="cl"><li><b>①</b> Associated Project # 칩(★ PRIMARY 포함)이 그대로 복사됨</li><li><b>②</b> 원본 노트 링크는 화면에 두지 않음(복사본이 원본과 연결될 필요 없음). 출처는 Audit Trail 첫 기록 "Note created · Copied from …"에만 남음</li></ol></figcaption>
+    <div class="shot"><img src="img/eln/07_clone_basic.png" alt="복사된 노트의 Basic Data"><span class="mk" style="left:22.1%;top:29.7%">①</span></div>
+    <figcaption><div class="lb">복사된 Basic Data</div><ol class="cl"><li><b>①</b> Associated Project # 칩(★ PRIMARY 포함)이 그대로 복사됨</li><li>원본 노트 링크는 화면에 두지 않음(복사본이 원본과 연결될 필요 없음). 출처는 Audit Trail 첫 기록 "Note created · Copied from …"에만 남음</li></ol></figcaption>
   </figure>
   <div class="tt-cap">시연 순서</div>
   <ol class="tt-steps"><li>팝업 왼쪽의 Copy To 또는 리스트 요약 패널에서 Copy To(리스트는 Include entered data만 선택, 전체 섹션 복사)</li><li>팝업은 섹션·Include entered data 선택 › Copy</li><li>새 창에 열린 복사본의 번호, 프로젝트 칩 확인(원래 창은 그대로)</li><li>Audit Trail 첫 기록 "Note created · Copied from …" 확인</li></ol>
@@ -445,7 +476,7 @@ ol.cl li b{color:var(--blue)}
   <div class="tt-cap">화면</div>
   <div class="tt-pair">
     <figure class="tt-fig">
-      <img src="img/eln/08_hint.png" alt="@ 자동완성 목록">
+      <div class="shot"><img src="img/eln/08_hint.png" alt="@ 자동완성 목록"><span class="mk" style="left:26.3%;top:27.6%">①</span><span class="mk" style="left:15.8%;top:38.1%">②</span><span class="mk" style="left:92.8%;top:46.5%">③</span><span class="mk" style="left:97.0%;top:38.1%">④</span></div>
       <figcaption><div class="lb">@ 입력</div><ol class="cl">
         <li><b>①</b> 본문에 "@NT-26"까지 입력</li>
         <li><b>②</b> 자동완성 목록: 번호 · 제목 · 저자</li>
@@ -454,19 +485,19 @@ ol.cl li b{color:var(--blue)}
       </ol></figcaption>
     </figure>
     <figure class="tt-fig">
-      <img src="img/eln/08_refcard.png" alt="참조 칩의 마우스 오버 카드">
+      <div class="shot"><img src="img/eln/08_refcard.png" alt="참조 칩의 마우스 오버 카드"><span class="mk" style="left:28.0%;top:18.8%">①</span><span class="mk" style="left:23.0%;top:42.4%">②</span><span class="mk" style="left:68.5%;top:83.3%">③</span></div>
       <figcaption><div class="lb">칩에 마우스 오버</div><ol class="cl">
         <li><b>①</b> 삽입된 @NT-2605-00131 칩</li>
-        <li><b>②</b> 요약 카드: 번호, 상태(In Review), 제목, 저자, 날짜</li>
+        <li><b>②</b> 요약 카드: 번호, 상태(In Approval), 제목, 저자, 날짜</li>
         <li><b>③</b> Open: 새 팝업으로 열기</li>
       </ol></figcaption>
     </figure>
   </div>
   <figure class="tt-fig">
-    <img src="img/eln/08_related.png" alt="Related Items 카드">
+    <div class="shot"><img src="img/eln/08_related.png" alt="Related Items 카드"><span class="mk" style="left:95.7%;top:63.6%">①</span><span class="mk" style="left:87.8%;top:85.0%">②</span></div>
     <figcaption><div class="lb">Related Items</div><ol class="cl">
       <li><b>①</b> MATERIAL 항목(RM-0421): × 로 직접 삭제 가능</li>
-      <li><b>②</b> NOTE 항목(NT-2605-00131): "Referenced in Editor" 배지 — 에디터 참조에서 자동 추가된 것이라 여기서 삭제 불가, 에디터에서 지우면 함께 제거</li>
+      <li><b>②</b> NOTE 항목(NT-2605-00131): "Referenced in Editor" 배지. 에디터 참조에서 자동 추가된 것이라 여기서 삭제 불가, 에디터에서 지우면 함께 제거</li>
     </ol></figcaption>
   </figure>
   <div class="tt-cap">시연 순서</div>
@@ -481,7 +512,7 @@ ol.cl li b{color:var(--blue)}
   <div class="tt-req">"Search using Author name, Project Name, NPI Number etc." · Nice: "Search feature also searches contents of attachments (Microsoft Office documents and other XML/text-based formats)."</div>
   <div class="tt-cap">화면</div>
   <figure class="tt-fig">
-    <img src="img/eln/09_search_modal.png" alt="Search Notes 창">
+    <div class="shot"><img src="img/eln/09_search_modal.png" alt="Search Notes 창"><span class="mk" style="left:12.1%;top:48.4%">①</span><span class="mk" style="left:52.0%;top:48.4%">②</span><span class="mk" style="left:7.8%;top:57.3%">③</span><span class="mk" style="left:10.3%;top:66.2%">④</span></div>
     <figcaption><div class="lb">검색 조건</div><ol class="cl">
       <li><b>①</b> Author: 저자 선택</li>
       <li><b>②</b> Project # / NPI: 프로젝트 코드나 이름(Primary·Associated 모두 대상)</li>
@@ -491,7 +522,7 @@ ol.cl li b{color:var(--blue)}
   </figure>
   <div class="tt-pair">
     <figure class="tt-fig">
-      <img src="img/eln/09_search_result.png" alt="첨부 본문 검색 결과">
+      <div class="shot"><img src="img/eln/09_search_result.png" alt="첨부 본문 검색 결과"><span class="mk" style="left:32.9%;top:12.6%">①</span><span class="mk" style="left:15.4%;top:25.7%">②</span><span class="mk" style="left:3.7%;top:81.3%">③</span></div>
       <figcaption><div class="lb">첨부 본문 검색 결과</div><ol class="cl">
         <li><b>①</b> 상단 필터 칩 Keyword / Attachments Included</li>
         <li><b>②</b> 파일명(test_result.pdf)과 일치 문장, 키워드(viscosity) 강조</li>
@@ -499,7 +530,7 @@ ol.cl li b{color:var(--blue)}
       </ol></figcaption>
     </figure>
     <figure class="tt-fig">
-      <img src="img/eln/09_search_project.png" alt="프로젝트 번호 검색 결과">
+      <div class="shot"><img src="img/eln/09_search_project.png" alt="프로젝트 번호 검색 결과"><span class="mk" style="left:17.8%;top:28.6%">①</span><span class="mk" style="left:70.2%;top:50.5%">②</span></div>
       <figcaption><div class="lb">프로젝트 번호 검색 (PT-26-0021)</div><ol class="cl">
         <li><b>①</b> Primary가 아닌 Associated 프로젝트로 검색해도 노트가 나옴</li>
         <li><b>②</b> "Associated: PT-26-0021" 배지로 어떤 연결 때문에 나왔는지 표시</li>
@@ -519,7 +550,7 @@ ol.cl li b{color:var(--blue)}
   <div class="tt-cap">화면</div>
   <div class="tt-pair">
     <figure class="tt-fig">
-      <img src="img/eln/09_search_result.png" alt="검색 결과의 자물쇠 행">
+      <div class="shot"><img src="img/eln/09_search_result.png" alt="검색 결과의 자물쇠 행"><span class="mk" style="left:17.8%;top:81.8%">①</span><span class="mk" style="left:33.8%;top:92.5%">②</span><span class="mk" style="left:75.9%;top:89.6%">③</span></div>
       <figcaption><div class="lb">검색 결과</div><ol class="cl">
         <li><b>①</b> 맨 아래 흐린 🔒 행: 번호 · 제목 · 저자 · 날짜만 표시</li>
         <li><b>②</b> 본문 일치 문장·태그·첨부는 보이지 않음</li>
@@ -527,10 +558,10 @@ ol.cl li b{color:var(--blue)}
       </ol></figcaption>
     </figure>
     <figure class="tt-fig">
-      <img src="img/eln/10_restricted_summary.png" alt="접근 불가 노트의 요약 패널">
+      <div class="shot"><img src="img/eln/10_restricted_summary.png" alt="접근 불가 노트의 요약 패널"><span class="mk" style="left:4.2%;top:26.1%">①</span><span class="mk" style="left:19.0%;top:71.4%">②</span><span class="mk" style="left:7.3%;top:88.2%">③</span></div>
       <figcaption><div class="lb">행을 클릭하면</div><ol class="cl">
         <li><b>①</b> OVERVIEW: 저자 · 팀 · 프로젝트 · 수정일 등 기본 정보만</li>
-        <li><b>②</b> "You don't have access to this note." — 내용·첨부·태그는 승인 전까지 숨김</li>
+        <li><b>②</b> "You don't have access to this note." 문구, 내용·첨부·태그는 승인 전까지 숨김</li>
         <li><b>③</b> Request Access (사유 필수) › 요청 후 Requested 상태</li>
       </ol></figcaption>
     </figure>
@@ -686,6 +717,20 @@ ol.cl li b{color:var(--blue)}
   document.addEventListener('keydown', function(e){ if(e.key === 'Escape') hide(); });
   window.addEventListener('scroll', function(){ if(!pinned) hide(); else if(cur) place(cur, null); }, {passive:true});
   window.addEventListener('resize', function(){ if(cur) place(cur, null); });
+
+  // 모두 펼치기 — 툴팁 내용을 표 아래에 차례로 펼친다(화면 공유 · 인쇄용). 인쇄할 때는 늘 펼친다.
+  var all = document.getElementById('allTips'), btn = document.getElementById('btnAll');
+  document.querySelectorAll('tr[data-tip]').forEach(function(row){
+    var t = document.getElementById(row.getAttribute('data-tip'));
+    if(!t) return;
+    var card = document.createElement('div'); card.className = 'tipCard';
+    card.appendChild(t.content.cloneNode(true)); all.appendChild(card);
+  });
+  if(btn) btn.addEventListener('click', function(){
+    var on = all.classList.toggle('show');
+    btn.textContent = on ? btn.getAttribute('data-off') : btn.getAttribute('data-on');
+    if(on) all.scrollIntoView({behavior:'smooth', block:'start'});
+  });
 })();
 </script>
 </body>

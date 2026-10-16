@@ -343,7 +343,7 @@
             'width=1480,height=900,scrollbars=yes,resizable=yes');
           return;
         }
-        ELN.toast(info.msg + (label ? ' — ' + label : '') + '.', 'info');
+        ELN.toast(info.msg + (label ? ': ' + label : '') + '.', 'info');
       });
     }
   }
@@ -488,7 +488,7 @@
       var diff = present.length > 1 && Math.max.apply(null, present) !== Math.min.apply(null, present);
       fmls.forEach(function (f, i) {
         var td = document.createElement('td'); td.className = 'ar';
-        if (vals[i] == null) { td.textContent = '–'; td.classList.add('cGray'); }
+        if (vals[i] == null) { td.textContent = '-'; td.classList.add('cGray'); }
         else { td.textContent = vals[i].toFixed(1); totals[i] += vals[i]; if (diff) td.classList.add('elnCmpDiff'); }
         tr.appendChild(td);
       });
@@ -519,7 +519,7 @@
       var kt = document.createElement('td'); kt.textContent = k; tr.appendChild(kt);
       fmls.forEach(function (f) {
         var mm = f.metrics.filter(function (m) { return m.k === k; })[0];
-        var td = document.createElement('td'); td.className = 'ar fontBold'; td.textContent = mm ? mm.v : '–'; tr.appendChild(td);
+        var td = document.createElement('td'); td.className = 'ar fontBold'; td.textContent = mm ? mm.v : '-'; tr.appendChild(td);
       });
       tbody.appendChild(tr);
     });
@@ -534,7 +534,7 @@
     var series = fmls.map(function (f, i) { return { name: f.code + ' ' + f.ver, data: f.chart.data, color: palette[i % palette.length], borderRadius: 3 }; });
     fmlChart = Highcharts.chart('chartFmlAnalysis', {
       chart: { type: 'column', height: 240, backgroundColor: 'transparent' },
-      title: { text: 'Key Metrics — Comparison', style: { fontSize: '13px', color: '#5a3e30' } },
+      title: { text: 'Key Metrics Comparison', style: { fontSize: '13px', color: '#5a3e30' } },
       credits: { enabled: false },
       legend: { enabled: fmls.length > 1, itemStyle: { fontSize: '10px', color: '#5a3e30' } },
       xAxis: { categories: fmls[0].chart.cats, lineColor: '#d9cfc2' },
@@ -670,7 +670,7 @@
     { code: 'NT-2604-00098', title: 'PSA Base Polymer Screening',                         stage: 'LAB FORMULATION', date: '2026-04-12', status: 'done',   modules: ['fml','table','editor'] },
     { code: 'NT-2604-00115', title: 'Tackifier Compatibility Study',                       stage: 'LAB FORMULATION', date: '2026-04-28', status: 'done',   modules: ['fml','table','chem','related'] },
     { code: 'NT-2605-00131', title: 'Crosslinker Ratio Optimization',                      stage: 'LAB FORMULATION', date: '2026-05-06', status: 'review', modules: ['fml','table','editor','attach'] },
-    { code: 'NT-2605-00142', title: 'UV-Curable PSA Viscosity Improvement — RGBOLED',      stage: 'SCALE-UP',        date: '2026-05-15', status: 'ing', current: true, projects: ['SN-26-0031', 'PT-26-0021', 'TS-26-0205'], modules: ['fml','editor','table','chem','related','attach'] },
+    { code: 'NT-2605-00142', title: 'UV-Curable PSA Viscosity Improvement (RGBOLED)',      stage: 'SCALE-UP',        date: '2026-05-15', status: 'ing', current: true, projects: ['SN-26-0031', 'PT-26-0021', 'TS-26-0205'], modules: ['fml','editor','table','chem','related','attach'] },
     { code: 'NT-2605-00150', title: 'Pilot Coating Trial #1',                              stage: 'SCALE-UP',        date: '2026-05-22', status: 'ing',    modules: ['editor','attach'] },
     { code: 'NT-2606-00171', title: 'Mass-Production Validation Plan',                     stage: 'COMMERCIAL GO',   date: '2026-06-03', status: 'draft',  modules: ['editor'] }
   ];
@@ -764,7 +764,7 @@
     if (scrim) scrim.addEventListener('click', closePanel);
     var proj = document.getElementById('elnNoteListProj');
     if (proj) proj.addEventListener('click', function () {
-      ELN.toast('Opening project detail — ' + proj.textContent.trim() + '.', 'info');
+      ELN.toast('Opening project detail: ' + proj.textContent.trim() + '.', 'info');
     });
     var body = document.getElementById('elnNoteListBody');
     if (body) body.addEventListener('click', function (e) {
@@ -816,7 +816,7 @@
       var cont = document.querySelector('.contArea');
       if (cont) { cont.classList.remove('elnSwapping'); void cont.offsetWidth; cont.classList.add('elnSwapping');
         cont.addEventListener('animationend', function h() { cont.classList.remove('elnSwapping'); cont.removeEventListener('animationend', h); }); }
-      ELN.toast('Switched to ' + n.code + ' — ' + n.title + '.', 'ok');
+      ELN.toast('Switched to ' + n.code + ': ' + n.title + '.', 'ok');
     }
 
     // 노트 모듈 구성 적용 — 실제 모듈 시스템(addNoteModule/removeSection) 재사용.
@@ -993,7 +993,7 @@
       wrap.appendChild(item);
     });
     ELN.modal({
-      title: 'New Note — Select Category', icon: 'note_add', body: wrap,
+      title: 'New Note: Select Category', icon: 'note_add', body: wrap,
       actions: [
         { label: 'Start with This Category', type: 'hViva', onClick: function () {
             applyCategory(chosen);
@@ -1020,11 +1020,11 @@
      apis_eln_list.html과 동일 모델. 계보를 배열로 저장하지 않고 각 노트의 parent만 두고
      트리를 유도한다(git 커밋 그래프식). 데이터는 list의 RGBOLED 노트북 서브트리(NT-코드)와 일치. */
   var LINEAGE_NOTES = [
-    { code: 'NT-2605-00098', title: 'Initial trial — spec not met',                   st: 'fail', ver: 'v1', date: '2026-05-21', nb: 'Flexible OLED',      project: 'SN-26-0018' },
-    { code: 'NT-2605-00118', title: 'Viscosity Modifier ratio tuning (v2)',           st: 'hold', ver: 'v2', date: '2026-05-27', parent: 'NT-2605-00098', nb: 'RGBOLED Adhesive',   project: 'SN-26-0031' },
-    { code: 'NT-2605-00097', title: 'Cure rate vs UV dose — condition sweep',         st: 'ok',   ver: 'v1', date: '2026-05-24', parent: 'NT-2605-00118', nb: 'RGBOLED Adhesive',   project: 'SN-26-0031' },
+    { code: 'NT-2605-00098', title: 'Initial trial: spec not met',                     st: 'ok', ver: 'v1', date: '2026-05-21', nb: 'Flexible OLED',      project: 'SN-26-0018' },
+    { code: 'NT-2605-00118', title: 'Viscosity Modifier ratio tuning (v2)',           st: 'appr', ver: 'v2', date: '2026-05-27', parent: 'NT-2605-00098', nb: 'RGBOLED Adhesive',   project: 'SN-26-0031' },
+    { code: 'NT-2605-00097', title: 'Cure rate vs UV dose: condition sweep',           st: 'ok',   ver: 'v1', date: '2026-05-24', parent: 'NT-2605-00118', nb: 'RGBOLED Adhesive',   project: 'SN-26-0031' },
     { code: 'NT-2605-00072', title: 'Crosslinker screening for adhesion',             st: 'ing',  ver: '',   date: '2026-05-15', parent: 'NT-2605-00098', nb: 'Crosslinker Studies', project: 'SN-26-0031' },
-    { code: 'NT-2605-00142', title: 'UV-Curable PSA Viscosity Improvement — RGBOLED', st: 'ing',  ver: 'v3', date: '2026-05-28', parent: 'NT-2605-00118', nb: 'RGBOLED Adhesive',   project: 'SN-26-0031' }
+    { code: 'NT-2605-00142', title: 'UV-Curable PSA Viscosity Improvement (RGBOLED)', st: 'ing',  ver: 'v3', date: '2026-05-28', parent: 'NT-2605-00118', nb: 'RGBOLED Adhesive',   project: 'SN-26-0031' }
   ];
   var CURRENT_CODE = 'NT-2605-00142';  // 지금 보고 있는 노트(헤더 [NT-2605-00142]와 일치)
   var newVerSeq = 3;                   // 현재 v3 → "New version"은 v4부터
@@ -1081,7 +1081,7 @@
       if (n.code === CURRENT_CODE) { ELN.toast('This is the note you are viewing.', 'info'); return; }
       ELN.modal({
         title: n.title, icon: 'account_tree',
-        body: n.code + ' · ' + (n.ver || '—') + ' · ' + (STATUS_LABEL[n.st] || n.st),
+        body: n.code + ' · ' + (n.ver || '-') + ' · ' + (STATUS_LABEL[n.st] || n.st),
         actions: [
           { label: 'Open This Note', type: 'hBlue', onClick: function () { ELN.toast('Opening ' + n.code + '.', 'info'); } },
           { label: 'Close', type: '' }
@@ -1100,7 +1100,7 @@
         date: '2026-05-29', parent: CURRENT_CODE, _new: true
       });
       renderLineage();                                   // 현재 노트 History에 새 버전 노드 반영
-      ELN.toast('Created ' + code + ' (' + ver + ') — opening…', 'ok');
+      ELN.toast('Created ' + code + ' (' + ver + '), opening…', 'ok');
       // 즉시 새 버전 팝업으로 이동해 작업(파생: parent=현재 노트)
       window.open('apis_eln_pop.html?newver=' + encodeURIComponent(ver) + '&parent=' + encodeURIComponent(CURRENT_CODE),
         'elnNote_' + code, 'width=1480,height=900,scrollbars=yes,resizable=yes');
@@ -1210,11 +1210,11 @@
       }
       if (note && note.code !== 'NT-2605-00142') {
         var d = note.date || '2026-10-01';
-        seed(d + ' 09:00', 'Charles Kim', 'Basic Data', 'Note created', { detail: note.code + (note.title ? ' — ' + note.title : '') });
+        seed(d + ' 09:00', 'Charles Kim', 'Basic Data', 'Note created', { detail: note.code + (note.title ? ': ' + note.title : '') });
         return;
       }
       seed('2026-10-06 09:12', 'Charles Kim', 'Basic Data', 'Note created', { detail: 'From template "Formulation"' });
-      seed('2026-10-06 09:20', 'Charles Kim', 'Basic Data', 'Field changed', { field: 'Note Title', before: 'PSA Viscosity Improvement', after: 'UV-Curable PSA Viscosity Improvement — RGBOLED' });
+      seed('2026-10-06 09:20', 'Charles Kim', 'Basic Data', 'Field changed', { field: 'Note Title', before: 'PSA Viscosity Improvement', after: 'UV-Curable PSA Viscosity Improvement (RGBOLED)' });
       seed('2026-10-07 14:05', 'Charles Kim', 'Data Visualization', 'Module added', {});
       // 공유 기록 = Share & Access 시드(ceSeedPeople)와 같은 사람·시각·형식(실제 공유 시 기록과 동일)
       var POL = ' · Security policy acknowledged';
@@ -1380,7 +1380,7 @@
   function openNoteFromGraph(code) {
     if (code === CURRENT_CODE) { ELN.toast('This is the note you are viewing.', 'info'); return; }
     var n = lineageIndex()[code];
-    ELN.toast('Opening ' + code + (n ? ' — ' + n.title : '') + '.', 'info');
+    ELN.toast('Opening ' + code + (n ? ': ' + n.title : '') + '.', 'info');
   }
 
   function openHistoryModal() {
@@ -1401,7 +1401,7 @@
 
   /* ── BIOVIA식 모듈러 노트: 기본 템플릿 + 모듈 추가/삭제(고정 템플릿 탈피) ── */
   var MODULE_TYPES = [
-    { key: 'editor',   icon: 'edit_note',   title: 'Editor',             desc: 'Rich text — text, tables, images' },
+    { key: 'editor',   icon: 'edit_note',   title: 'Editor',             desc: 'Rich text: text, tables, images' },
     { key: 'table',    icon: 'insert_chart', title: 'Data Visualization', desc: 'Editable table + multi-series chart' },
     { key: 'chem',     icon: 'hexagon',     title: 'ChemStudio',         desc: 'Sketch a chemical structure' },
     { key: 'fml',      icon: 'science',     title: 'Formulation',        desc: 'Embed from formulator' },
@@ -1453,7 +1453,7 @@
         + '</ul></div>';
       case 'chem': return '<div class="elnChemBox">'
         + '<ul class="elnChemList"></ul>'
-        + '<div class="elnChemEmptyLine"><i class="material-symbols-outlined">hexagon</i>No structures yet — add one or more from ChemStudio.</div>'
+        + '<div class="elnChemEmptyLine"><i class="material-symbols-outlined">hexagon</i>No structures yet. Add one or more from ChemStudio.</div>'
         + '<div class="elnChemAdd">'
         + '<a href="javascript:;" class="waves-effect waves-light hBtn elnChemOpen"><i class="material-symbols-outlined left">add</i>Add New</a>'
         + '<a href="javascript:;" class="waves-effect waves-light hBtn elnChemLink"><i class="material-symbols-outlined left">library_add</i>Add Existing</a>'
@@ -1968,7 +1968,7 @@
         var key = btn.getAttribute('data-key'), t = templateByKey(key);
         ref.close();
         var s = realizeTemplate(key);
-        ELN.toast('Swapped to ' + (t ? t.name : key) + ' — data kept · +' + s.added + ' / −' + s.removed + ' section(s).', 'ok');
+        ELN.toast('Swapped to ' + (t ? t.name : key) + ' (data kept) · +' + s.added + ' / −' + s.removed + ' section(s).', 'ok');
       });
     });
   }
@@ -2163,7 +2163,7 @@
     else if (st !== 'ok' && ro) { apprView = false; setNoteApproved(false); }
     if (st === 'ok' && SO.overall !== 'ok') {
       // 서명 제출 경로(announce)·모듈 삭제 등 외부 경로 모두 전이 시 토스트 + 감사로그 1건 (reset 시드는 SO.overall을 먼저 맞춰 두므로 발생 안 함)
-      ELN.toast('All sections approved — the note is now approved and locked.', 'ok');
+      ELN.toast('All sections approved. The note is now approved and locked.', 'ok');
       ELN.audit.log({ user: 'System', section: SO_SEC, action: 'Note approved', detail: 'All sections approved' });   // 시스템 이벤트 — 시드와 같은 귀속
     }
     SO.overall = st;
@@ -2193,7 +2193,7 @@
     var comment = ta ? ta.value.trim() : '';
     reject = !!sel && sel.value === 'notapproved';
     if (reject && !comment) { soWarn('Comment Required', 'Please enter comments when selecting Not Approved.'); return; }
-    var detail = sub.names.join(', ') + (comment ? ' — "' + comment + '"' : '');
+    var detail = sub.names.join(', ') + (comment ? ': "' + comment + '"' : '');
     row.comment = comment; row.signed = ELN.audit.now();
     if (!reject) {
       row.status = 'approved';
@@ -2207,7 +2207,7 @@
     }
     var before = SO.overall;
     soApply(true, true);
-    if (reject) ELN.toast('Not approved — the sections are unlocked for editing.', 'warn');
+    if (reject) ELN.toast('Not approved. The sections are unlocked for editing.', 'warn');
     else if (SO.overall !== 'ok' || before === 'ok') ELN.toast('Approved.', 'ok');
   }
   function soHasPerson(name) { return SO.cosigners.some(function (c) { return c.name === name; }); }
@@ -2390,7 +2390,7 @@
         ELN.audit.log({ ts: sd.requested, section: SO_SEC, action: 'Submitted', detail: sdNames });
         sd.rows.forEach(function (r) {
           if (r.status !== 'approved') return;
-          ELN.audit.log({ ts: r.signed, user: r.name, section: SO_SEC, action: 'Approved', detail: sdNames + (r.comment ? ' — "' + r.comment + '"' : '') });
+          ELN.audit.log({ ts: r.signed, user: r.name, section: SO_SEC, action: 'Approved', detail: sdNames + (r.comment ? ': "' + r.comment + '"' : '') });
         });
         if (st === 'ok') ELN.audit.log({ ts: sd.rows[sd.rows.length - 1].signed, user: 'System', section: SO_SEC, action: 'Note approved', detail: 'All sections approved' });
       }
@@ -2584,7 +2584,7 @@
             var name = (inp.value || '').trim() || 'Untitled Notebook';
             NOTEBOOKS.push({ key: 'nb' + NOTEBOOKS.length, name: name, icon: 'folder' });
             setNotebookMeta(name);
-            ELN.toast('Notebook "' + name + '" created — note filed.', 'ok');
+            ELN.toast('Notebook "' + name + '" created. Note filed.', 'ok');
           } }
         ]
       });
@@ -2663,7 +2663,7 @@
       var chip = document.createElement('span');
       chip.className = 'elnPjChip' + (prim ? ' primary' : '');
       chip.setAttribute('data-code', c);
-      chip.title = prim ? 'Primary — sets Stage / Task and the Note List' : 'Click for actions';
+      chip.title = prim ? 'Primary: sets Stage / Task and the Note List' : 'Click for actions';
       chip.innerHTML = (prim ? '<i class="material-symbols-outlined fill">star</i>' : '') + '<b>' + esc(c) + '</b>'
         + (p ? '<span class="t">' + esc(p.t) + '</span>' : '') + (prim ? '<span class="pri">PRIMARY</span>' : '');
       wrap.appendChild(chip);
@@ -2687,7 +2687,7 @@
     var bs = so ? so.text : '', bt = to ? to.text : '';
     st.value = ''; fillSchedTasks('', null); schedReinit(st); schedReinit(tk);
     st._auditPrev = 'Not assigned'; tk._auditPrev = 'Not assigned';
-    if (bs && bs !== 'Not assigned') projAudit('Field changed', { field: 'Stage / Task', before: bs + ' / ' + bt, after: 'Not assigned', detail: "Stage / Task reset — pick from the new primary's schedule" });
+    if (bs && bs !== 'Not assigned') projAudit('Field changed', { field: 'Stage / Task', before: bs + ' / ' + bt, after: 'Not assigned', detail: "Stage / Task reset. Pick from the new primary's schedule" });
   }
   function linkProject(c) {
     if (NOTE_PROJ.indexOf(c) >= 0) { ELN.toast('Project already linked.', 'warn'); return; }
@@ -2707,7 +2707,7 @@
       resetSchedule();
     }
     persistProj(); renderProjects();
-    ELN.toast(c + ' unlinked' + (before !== after && after ? ' — ' + after + ' is now Primary.' : '.'), 'info');
+    ELN.toast(c + ' unlinked' + (before !== after && after ? '. ' + after + ' is now Primary.' : '.'), 'info');
   }
   function setPrimaryProject(c) {
     var idx = NOTE_PROJ.indexOf(c); if (idx <= 0) return;
@@ -2716,7 +2716,7 @@
     projAudit('Primary project changed', { before: before, after: c });
     resetSchedule();
     persistProj(); renderProjects();
-    ELN.toast(c + ' is now Primary — Stage / Task reset.', 'ok');
+    ELN.toast(c + ' is now Primary. Stage / Task reset.', 'ok');
   }
   // 칩 클릭 메뉴 — 잠금 중엔 Open만
   function openProjMenu(chip, code) {
@@ -2751,7 +2751,7 @@
       source: function (req, res) {
         var q = (req.term || '').toLowerCase();
         res(MAPIS_PROJECTS.filter(function (p) { return NOTE_PROJ.indexOf(p.c) < 0 && (p.c + ' ' + p.t).toLowerCase().indexOf(q) >= 0; })
-          .map(function (p) { return { label: p.c + ' — ' + p.t, value: p.c }; }));
+          .map(function (p) { return { label: '[' + p.c + '] ' + p.t, value: p.c }; }));
       },
       focus: function (e) { e.preventDefault(); },
       select: function (e, ui) { e.preventDefault(); linkProject(ui.item.value); closeSrch(); }
@@ -2773,7 +2773,7 @@
     function syncName() {   // 유형 미지정이면 이름 칸 숨김(값은 비움)
       var none = !sel.value;
       inp.closest('.elnPlatName').style.display = none ? 'none' : '';
-      if (!none) inp.placeholder = 'Name — e.g., ' + PLATFORM_USED[sel.value][0].n;
+      if (!none) inp.placeholder = 'Name (e.g., ' + PLATFORM_USED[sel.value][0].n + ')';
       if (none && inp.value) {
         inp.value = '';
         setTimeout(function () { inp.dispatchEvent(new Event('change', { bubbles: true })); }, 0);   // 감사 기록 — 유형 변경 기록 다음 순서로
@@ -2967,7 +2967,7 @@
         var v = sel.value === '__none' ? '' : sel.value;
         if (v === cur) return;
         setParentMeta(v);
-        if (v) ELN.toast('Parent set to ' + v + '.', 'ok'); else ELN.toast('Parent removed — root note.', 'info');
+        if (v) ELN.toast('Parent set to ' + v + '.', 'ok'); else ELN.toast('Parent removed. Root note.', 'info');
       } }
     ] });
     S2.mount(sel, { data: data, placeholder: 'Search note # or title', minimumResultsForSearch: 0,
@@ -3583,7 +3583,7 @@
     var el = body.querySelector('.elnSummernote'); if (!el) return;
     if (window.$ && $.fn && $.fn.summernote) {
       $(el).summernote({
-        placeholder: 'Write rich text — formatting, tables, images…',
+        placeholder: 'Write rich text: formatting, tables, images…',
         height: 200,
         hint: ELN.noteHint ? ELN.noteHint(el) : [],   // @ 로 다른 노트 참조(자동완성)
         toolbar: [
@@ -3717,7 +3717,7 @@
     var fm0 = (ex && ex.formula) || 'C8H8';
     var TOOLS = [
       { k: 'select', ic: 'arrow_selector_tool', t: 'Select / move' },
-      { k: 'single', glyph: '—', t: 'Single bond' },
+      { k: 'single', glyph: '-', t: 'Single bond' },
       { k: 'double', glyph: '=', t: 'Double bond' },
       { k: 'triple', glyph: '≡', t: 'Triple bond' },
       { k: 'ring', ic: 'hexagon', t: 'Benzene ring' },
@@ -3741,7 +3741,7 @@
       + '<div class="elnChemTools">' + toolsHtml + '</div>'
       + '<div class="elnChemCanvasWrap">'
       + '<div class="elnChemCanvas">' + chemMoleculeSvg(true) + '</div>'
-      + '<div class="elnChemHintBar"><i class="material-symbols-outlined">draw</i>Embedded ChemStudio — pick a tool, then sketch on the canvas.</div>'
+      + '<div class="elnChemHintBar"><i class="material-symbols-outlined">draw</i>Embedded ChemStudio: pick a tool, then sketch on the canvas.</div>'
       + '</div></div></div>'
       + '<div class="elnChemMeta">'
       + '<label>Molecular Name<input type="text" class="browser-default elnChemName" value="' + esc(nm0) + '"></label>'
@@ -4200,7 +4200,7 @@
     var nSec = kept.length;
     var nn = { code: code, title: title, stage: src.stage, date: CLONE_TODAY, status: 'ing', current: true, modules: modules, projects: NOTE_PROJ.slice(),   // 연결 프로젝트는 노트 메타 — 선택 섹션과 무관하게 복제
       clonedFrom: { code: src.code, title: src.title },
-      cloneDetail: 'Copied from ' + src.code + ' — ' + nSec + ' section' + (nSec === 1 ? '' : 's') + ', data ' + (include ? 'included' : 'not included') };
+      cloneDetail: 'Copied from ' + src.code + ': ' + nSec + ' section' + (nSec === 1 ? '' : 's') + ', data ' + (include ? 'included' : 'not included') };
     PROJECT_NOTES.forEach(function (x) { x.current = false; });
     PROJECT_NOTES.unshift(nn);
     CURRENT_CODE = code;
@@ -4216,7 +4216,7 @@
     var cont = document.querySelector('.contArea');
     if (cont) { cont.classList.remove('elnSwapping'); void cont.offsetWidth; cont.classList.add('elnSwapping');
       cont.addEventListener('animationend', function h() { cont.classList.remove('elnSwapping'); cont.removeEventListener('animationend', h); }); }
-    ELN.toast('Copied from ' + src.code + ' — not saved yet.', 'ok');
+    ELN.toast('Copied from ' + src.code + ' (not saved yet).', 'ok');
   }
   /* Copy To (운영 FMEA 패턴) — 좌측 버튼 → 옵션 모달 → 새 팝업창(?copyFrom=)에서 복사본을 '저장 전' 상태로 연다. 현재 창은 변환하지 않음.
      섹션 키: 정적 카드는 카드 id(card_basic·card_fml…), 동적 모듈은 '<modtype>#<n>'(새 창에서 카드 id 가 달라지므로 종류+순번으로 식별) */
@@ -4311,7 +4311,7 @@
     li.innerHTML = '<i class="material-symbols-outlined">description</i><span class="elnRelType">Note</span>'
       + '<a href="javascript:;" class="elnRelLink" data-code="' + esc(n.code) + '">' + esc('[' + n.code + '] ' + n.title) + '</a>'
       + (n.restricted ? '<span class="elnRelNoAccess"><i class="material-symbols-outlined">lock</i>No access</span>' : '')
-      + '<span class="elnRelVia" title="Linked by an @mention in the Editor — delete the mention there to unlink">Referenced in Editor</span>';
+      + '<span class="elnRelVia" title="Linked by an @mention in the Editor. Delete the mention there to unlink">Referenced in Editor</span>';
     list.appendChild(li);
   }
   // 에디터에서 @참조 칩이 지워지면 Related의 해당 항목도 제거(다른 에디터에 같은 참조가 남아 있으면 유지)
@@ -4322,7 +4322,7 @@
       list.querySelectorAll('li[data-ref]').forEach(function (li) {
         var code = li.getAttribute('data-ref'); if (live[code]) return;
         li.remove();
-        ELN.audit.log({ section: sectionNameOf(list.closest('.cardBox')), action: 'Link removed', detail: 'Note: [' + code + '] — mention deleted in Editor' });
+        ELN.audit.log({ section: sectionNameOf(list.closest('.cardBox')), action: 'Link removed', detail: 'Note: [' + code + '] (mention deleted in Editor)' });
       });
     });
   }
@@ -4354,7 +4354,7 @@
     var added = false;
     refRelLists().forEach(function (l) { if (!refRelHas(l, n.code)) { refRelAdd(l, n); added = true; if (ELN.coedit) ELN.coedit.touch(l.closest('.cardBox')); } });
     ELN.audit.log({ section: sectionNameOf(card), action: 'Note referenced', detail: n.code });
-    if (added) ELN.toast('Linked ' + n.code + ' — added to Related Items.', 'ok');
+    if (added) ELN.toast('Linked ' + n.code + ' (added to Related Items).', 'ok');
   }
   ELN.noteRef = { fillRelated: refFillRelated };
 

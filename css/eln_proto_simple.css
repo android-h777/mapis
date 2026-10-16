@@ -531,6 +531,8 @@ body.elnApproved .elnPjAdd{display:none;}                                /* 승�
 #tab_ov .cardTit2 > i.left{margin-right:0;}            /* float 무시 + 큰 기본여백 제거 → gap으로 일관 간격 */
 #tab_ov .cardTit2 > a:first-of-type{margin-left:auto;} /* 첫 우측요소부터 오른쪽 정렬(닫기는 맨 끝) */
 /* 노트 전체 view(승인) 모드 — 값은 또렷하게: disabled/readonly 기본 흐림 제거(역설 방지) */
+/* Audit Trail 표: 글꼴은 운영 표준 .fixedTable.smallFont(13px, HTML), Date / Time 은 한 줄(줄바꿈 없음) */
+.elnAuditTable th:first-child,.elnAuditTable td:first-child{white-space:nowrap;width:140px;}
 /* Audit Trail 필터(select)는 view 모드에서도 조작 가능한 컨트롤 → :not(#card_audit)로 제외 */
 body.elnApproved #tab_ov .cardBox:not(#card_approval) input,body.elnApproved #tab_ov .cardBox:not(#card_approval) textarea,body.elnApproved #tab_ov .cardBox:not(#card_audit):not(#card_approval) select,
 body.elnApproved #tab_ov .cardBox:not(#card_approval) select:disabled,body.elnApproved #tab_ov .cardBox:not(#card_approval) input:disabled{opacity:1;color:#3a2c24;-webkit-text-fill-color:#3a2c24;cursor:default;}

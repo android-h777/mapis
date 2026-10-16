@@ -1,0 +1,737 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lab Note Results</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+KR:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#f7f3ee; --paper:#fff; --ink:#2f2622; --ink2:#6b5d55; --line:#e6ddd3; --soft:#f6f0ea;
+  --mocha:#a47764; --amber:#b8730c; --blue:#4f6fae; --blueSoft:#e9eff9; --red:#bb2649; --green:#6f8a4c;
+  --tipShadow:0 10px 30px rgba(60,40,30,.18);
+}
+@media (prefers-color-scheme: dark){
+  :root:not([data-theme="light"]){
+    --bg:#1b1715; --paper:#251f1c; --ink:#efe7e1; --ink2:#b6a89f; --line:#3d342f; --soft:#2f2724;
+    --mocha:#d1a28c; --amber:#e6a64a; --blue:#93acdf; --blueSoft:#24304a; --red:#ef6f8c; --green:#a9c483;
+    --tipShadow:0 10px 30px rgba(0,0,0,.5);
+  }
+}
+:root[data-theme="dark"]{
+  --bg:#1b1715; --paper:#251f1c; --ink:#efe7e1; --ink2:#b6a89f; --line:#3d342f; --soft:#2f2724;
+  --mocha:#d1a28c; --amber:#e6a64a; --blue:#93acdf; --blueSoft:#24304a; --red:#ef6f8c; --green:#a9c483;
+  --tipShadow:0 10px 30px rgba(0,0,0,.5);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Sans KR","Malgun Gothic",sans-serif;font-size:14px;line-height:1.5;word-break:keep-all}
+.wrap{max-width:1180px;margin:0 auto;padding:32px 24px 48px}
+header{border-bottom:3px solid var(--mocha);padding-bottom:10px;margin-bottom:14px}
+h1{font-size:22px;line-height:1.3;margin:0 0 3px}
+.meta{color:var(--ink2);font-size:12.5px}
+.hint{font-size:12px;color:var(--blue);margin-top:4px}
+h2{font-size:15px;margin:18px 0 7px;padding-left:9px;border-left:4px solid var(--mocha)}
+table{width:100%;table-layout:fixed;border-collapse:collapse;background:var(--paper);border:1px solid var(--line);font-size:13px}
+th,td{padding:6px 9px;border-bottom:1px solid var(--line);text-align:left;vertical-align:top}
+th{background:var(--soft);color:var(--ink2);font-size:12px;white-space:nowrap}
+tr.grp td{background:var(--soft);font-weight:700;color:var(--mocha);font-size:12.5px;padding:5px 9px}
+tr[data-tip]{cursor:help;transition:background .12s}
+tr[data-tip]:hover,tr[data-tip].on{background:var(--blueSoft)}
+td.no{text-align:center;color:var(--ink2)}
+td.f{font-weight:700}
+td.s{color:var(--ink2);font-size:12px}
+td.rq{color:var(--ink2)}
+td.nt{color:var(--ink2);font-size:12px}
+.badge{display:inline-block;font-size:11px;font-weight:700;padding:0 7px;border-radius:999px;border:1px solid var(--amber);color:var(--amber);margin-left:4px;white-space:nowrap}
+.badge.ok{border-color:var(--green);color:var(--green);margin-left:0}
+.badge.wip{border-color:var(--amber);color:var(--amber);margin-left:0}
+.badge.todo{border-color:var(--ink2);color:var(--ink2);margin-left:0}
+.nice{display:inline-block;font-size:10.5px;font-weight:700;padding:0 6px;border-radius:999px;border:1px solid var(--blue);background:var(--blueSoft);color:var(--blue);margin-left:5px;white-space:nowrap;vertical-align:1px}
+.note{margin:6px 0 0;font-size:12.5px;color:var(--ink2)}
+ul{margin:0;padding-left:18px} li{margin:2px 0}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.cols.c3{grid-template-columns:1fr 1fr 1fr}
+.box{background:var(--paper);border:1px solid var(--line);padding:9px 13px;font-size:13px}
+.box b{display:block;margin-bottom:3px}
+
+/* ── tooltip ── */
+#tip{position:fixed;z-index:50;width:min(760px,calc(100vw - 24px));max-height:calc(100vh - 40px);overflow:auto;background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:10px;box-shadow:var(--tipShadow);padding:12px 14px 12px;font-size:12.5px;line-height:1.5;pointer-events:none;opacity:0;transform:translateY(4px);transition:opacity .12s,transform .12s;visibility:hidden}
+#tip.show{opacity:1;transform:none;visibility:visible}
+#tip.pin{pointer-events:auto}
+/* while pinned: keep tooltip scrolling inside it and lock the page scroll (scrollbar gutter kept, no layout shift) */
+#tip{overscroll-behavior:contain}
+html{scrollbar-gutter:stable}
+html.tipLock,html.tipLock body{overflow:hidden}
+.tt-h{font-weight:700;font-size:13.5px;margin-bottom:5px;display:flex;justify-content:space-between;gap:8px;align-items:baseline}
+.tt-h span{font-weight:500;font-size:11.5px;color:var(--ink2);white-space:nowrap}
+.tt-l{margin:0 0 6px;padding-left:16px}
+.tt-l li{margin:2px 0}
+.tt-cap{font-size:11px;color:var(--ink2);margin:9px 0 3px;font-weight:700}
+.tt-req{margin:0 0 4px;padding:5px 9px;background:var(--soft);border:1px solid var(--line);border-radius:6px;font-size:12px;color:var(--ink2);font-style:italic}
+.tt-fig{margin:0 0 6px}
+/* captures are at screen size and vary in width; never upscale small ones */
+.tt-fig img{display:block;max-width:100%;width:auto;height:auto;border:1px solid var(--line);border-radius:6px;background:#fff}
+.tt-fig figcaption{font-size:11.5px;margin-top:3px;color:var(--ink)}
+.tt-fig .lb{font-weight:700;color:var(--blue);font-size:11px;margin-top:4px}
+ol.cl{list-style:none;margin:2px 0 0;padding:0}
+ol.cl li{margin:1px 0;padding-left:1.5em;text-indent:-1.5em}
+ol.cl li b{color:var(--blue)}
+.tt-pair{display:grid;grid-template-columns:1fr 1fr;gap:8px;align-items:start}
+.tt-steps{margin:0 0 6px;padding-left:20px}
+.tt-steps li{margin:2px 0}
+.tt-pin{margin-top:8px;font-size:10.5px;color:var(--ink2);text-align:right}
+
+/* ── expand all · meeting table · figure markers ── */
+.bar{display:flex;gap:8px;align-items:center;margin:10px 0 0}
+.btnx{font:inherit;font-size:12px;border:1px solid var(--blue);color:var(--blue);background:var(--paper);border-radius:999px;padding:2px 12px;cursor:pointer}
+.btnx:hover{background:var(--blueSoft)}
+#allTips{display:none;margin-top:6px}
+#allTips.show{display:block}
+.tipCard{background:var(--paper);border:1px solid var(--line);border-top:3px solid var(--blue);border-radius:10px;padding:12px 14px;margin:0 0 12px;font-size:12.5px;line-height:1.5}
+.tipCard .tt-fig img{max-width:min(100%,760px)}
+/* cap the width of the wrapper box so the markers shrink with the picture; if only the picture shrank, the box would keep its full width and the % markers would fall outside the picture */
+.tipCard .tt-fig .shot{max-width:min(100%,760px)}
+.tt-fig .shot img{max-width:100%}
+table.dec td.cur{color:var(--ink2);font-size:12px}
+.shot{position:relative;display:inline-block;max-width:100%;vertical-align:top}
+.shot img{display:block}
+.shot .mk{position:absolute;transform:translate(-50%,-50%);min-width:18px;height:18px;padding:0 4px;border-radius:9px;background:var(--blue);color:#fff;font-size:11px;font-weight:700;line-height:18px;text-align:center;box-shadow:0 0 0 2px #fff;pointer-events:none}
+.tipCard .tt-pin{display:none}   /* expanded cards do not need the 'click to pin' hint */
+
+@media (max-width:640px){ .wrap{padding:22px 16px 40px} .cols,.cols.c3{grid-template-columns:1fr} .tt-pair{grid-template-columns:1fr} }
+@media (max-width:900px){ table{font-size:12px} }
+@page{size:A4 landscape;margin:8mm 10mm}
+@media print{
+  body{background:#fff;font-size:10.5px;line-height:1.35} .wrap{padding:0;max-width:none}
+  h1{font-size:17px} h2{margin:8px 0 3px;font-size:13px} header{margin-bottom:6px}
+  table,.box{font-size:10px} th,td{padding:2px 6px} tr.grp td{padding:2px 6px;font-size:10px}
+  .box{padding:5px 9px}
+  table,.box{break-inside:avoid}
+  #tip,.hint,.bar,template{display:none!important}
+  #allTips{display:block!important}
+  tr[data-tip]:hover{background:none}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+<header>
+  <h1>Lab Note Implementation Results (Phase 1 Prototype)</h1>
+  <div class="meta">2026-10-16 · Based on the 15 items in the "Lab Note Implementation Plan" · Screens: Lab note list · Search / Note details pop-up (Basic Data · sections · Approval · Audit Trail · Share &amp; Access · Copy To) · Demo prototype</div>
+  <div class="hint">Hover over a row to see the user's original request, real prototype screen captures (with numbered notes), a demo walkthrough, changes from the plan, and points to watch for production rollout. Click a row to pin the panel so you can scroll it. (Tap on mobile.)</div>
+  <div class="hint">The demo runs on the deployed prototype (Vercel). Captures use sample data, so numbers, names and times in the pictures may differ from the demo screen.</div>
+  <div class="bar"><button type="button" class="btnx" id="btnAll" data-on="Expand all ▾" data-off="Collapse ▴">Expand all ▾</button><span class="meta">Lays out every item's details (pictures · demo steps · changes) below the tables. Printing always shows them expanded.</span></div>
+</header>
+
+<h2>Results</h2>
+<table>
+  <colgroup><col style="width:30px"><col style="width:100px"><col style="width:24%"><col style="width:28%"><col style="width:100px"><col></colgroup>
+  <tr><th>No</th><th>Feature</th><th>Request (summary of user feedback)</th><th>What was implemented</th><th>Status</th><th>Notes</th></tr>
+
+  <tr class="grp"><td colspan="6">Step 1 · Record reliability</td></tr>
+  <tr data-tip="t1"><td class="no">1</td><td class="f">Header fields</td><td class="rq">Header fields for experiment date, a Platform tech / Pre-NPC option (work without a MAPIS NPC number), associated NPI number(s) (several), and paper notebook and page references<span class="nice">Nice</span></td><td>Experiment Date, Platform / Pre-NPC and Paper Notebook Ref. added to Basic Data. NPI numbers are merged into Associated Project # (NPI, NPT, TS) chips (one marked Primary)</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">After a design review (4 models), the separate NPI field was merged into the production label Associated Project # (NPI, NPT, TS) (in MAPIS, NPI number = project code). Covers the whole project module, Tech Support included. Platform/Pre-NPC can coexist with projects. Production has no master list for Platform or Pre-NPC, so the user picks only the type (Platform Technology / Pre-NPC) and types the name; names used in other notes are suggested by autocomplete (user decision). Stage follows the scheme for the Primary's type; Task comes from each project's schedule. The paper notebook reference was Nice, but it was included because it is cheap to build.</td></tr>
+  <tr data-tip="t2"><td class="no">2</td><td class="f">Co-Signer sign-off</td><td class="rq">The author picks the Co-Signers (signers) directly</td><td>Author assigns signers → submits by section or all at once → signer chooses Approved / Not Approved (comment required). Progress shown by the header status and badges</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">The card keeps its existing name "Approval" instead of being renamed "Sign-off" (to avoid confusing users). The sign-off row format matches the production approval UI.</td></tr>
+  <tr data-tip="t3"><td class="no">3</td><td class="f">Lock after submission · Errata</td><td class="rq">Sections can still be added and Errata (corrections) made after ELN submission</td><td>Submitted sections block both editing and deletion; they unlock on rejection, and once fully approved the whole note is read-only. Errata (reason required) can still be added after approval</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">The review found ways to bypass the lock with the keyboard, dragging and image drops; these were closed. Errata are allowed even after approval (the original never changes, corrections are only added).</td></tr>
+  <tr data-tip="t4"><td class="no">4</td><td class="f">Audit Trail</td><td class="rq">Audit Trail feature</td><td>Table of time · user · section · action · before→after, with Section/User filters. Records most changes, from the header to the editor, tables, attachments and approvals</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">Scope extended to changes inside sections (tables, attachments, editor, etc.) (user request). Bulk changes made by the program, such as switching notes or copying, are not recorded.</td></tr>
+
+  <tr class="grp"><td colspan="6">Step 2 · Collaboration · Search</td></tr>
+  <tr data-tip="t5"><td class="no">5</td><td class="f">Co-editors</td><td class="rq">Add co-editors, show the name of the person who edited a co-edited note, track changes per editor</td><td>Co-editors are added in the Share &amp; Access window opened from the header Share button (share icon + people-count badge), managed in one place together with sharing. Last edited by shown per section; changes tracked in the Audit Trail. Co-editors cannot be added to an approved note</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">Simultaneous editing is not covered. The original request does not ask for it, and Co-editors are meant to take turns editing. Section locking assumes per-section saving, which does not fit note-level saving, so it was left out (user decision). Co-editors and signers are different people. A single Share button instead of header avatars (no photos or avatars, for privacy reasons).</td></tr>
+  <tr data-tip="t6"><td class="no">6</td><td class="f">Sharing</td><td class="rq">Share notes and sections with other users under compliance (e.g. R&amp;D ↔ Process Technology scale-up collaboration)</td><td>Share &amp; Access window (the same window as co-editors). The list view shows who has access (Function · Scope) with Edit · Remove; Add People takes the person, Function (Co-editor/Viewer), scope, reason and the security-policy acknowledgement. Only Viewers can be given section-level access. The reason and acknowledgement are recorded together in the Audit Trail</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">Co-editors and sharing merged into one modal: the Edit sharing permission and Co-editor are the same concept, so they were combined (user decision). Function has two levels, Co-editor/Viewer (Commenter left out because there is no comment feature). The security-policy checkbox is our reading of "under compliance" in the original request (production has no such element), and it is included in the Audit record so that audit evidence remains (user decision). Co-editors always get the whole note; section sharing is for Viewers only (sharing "sections" in the original request = the visible scope). Viewer sharing is allowed on approved notes too. Sharing is independent of project links.</td></tr>
+  <tr data-tip="t7"><td class="no">7</td><td class="f">Copy note</td><td class="rq">Start from a copy of an existing experiment (Copy from)</td><td>Copy To button in the left button area (above Save Template) › choose Sections to Copy + Include entered data › Copy creates an unsaved copy in a new window (new number). The original window stays as it is. The list summary panel also has Copy To (only choose whether to include data; all sections are copied) › unsaved copy in a new window, shown in the list after saving</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">Same name, position and flow as production FMEA 'Copy To' (new window, before saving). The term 'Copy' is used instead of 'Clone' throughout. Sections to Copy is the section structure, Include entered data is the values. Basic Data is a required section, so it is always included (checkbox fixed). Linked projects are copied regardless of the data option (note metadata). A copy of an approved note is editable.</td></tr>
+  <tr data-tip="t8"><td class="no">8</td><td class="f">Note cross-references</td><td class="rq">Insert cross-references to ELN experiments by the same or other authors, add links to related experiments</td><td>Typing @ in the editor autocompletes notes; they become chip links with a hover summary card, and a click opens a new pop-up. Added to Related Items automatically</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">Confirmed that it can really be built with Summernote's built-in feature (hint). Clicking a chip opens a new window (the note being written stays open). Reference entries in Related Items come from the editor, which is their source, so they cannot be deleted there directly; deleting them in the editor removes them as well.</td></tr>
+  <tr data-tip="t9"><td class="no">9</td><td class="f">Extended search</td><td class="rq">Search by author, project name, NPI number, etc., including the contents of attachments (Office and text formats)<span class="nice">Nice</span></td><td>Search by author, Project # / NPI and attachment text (matching sentences highlighted)<br>Structure search<span class="badge">Under review</span> shown on screen as Under review only (needs a chemical search engine)</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">"NPI number search" is unified into project code and name search (both Primary and Associated). Structure search is under review because it needs a chemical search engine.</td></tr>
+  <tr data-tip="t10"><td class="no">10</td><td class="f">Searching notes without access</td><td class="rq">Search ELNs even without read access (show only the basic data if allowed)</td><td>Search results show only a locked row (number · title · author · date); clicking it shows a no-access summary and Request Access (reason required)</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">Notes are found through basic data such as the project, but body text, tags and attachments are not shown (original: "show just the basic data if allowed").</td></tr>
+
+  <tr class="grp"><td colspan="6">Step 3 · Content</td></tr>
+  <tr data-tip="t11"><td class="no">11</td><td class="f">Attachment preview</td><td class="rq">Office · PDF · image integration, preview of attached content, larger attachment size limit, video upload<span class="nice">Nice</span></td><td>Preview of Word · Excel · PPT · PDF · images · video inside the note; re-uploading creates a new version</td><td class="s"><span class="badge todo">Planned</span></td><td class="nt">Office OLE embedding and double-click editing are not possible on the web → replaced by preview + new-version upload. Files stay on the file server.</td></tr>
+  <tr data-tip="t12"><td class="no">12</td><td class="f">SharePoint working documents<br><span class="badge" style="margin-left:0">Under review</span></td><td class="rq">View and edit SharePoint · Teams documents from the ELN, with the latest version pulled in automatically<span class="nice">Nice</span></td><td>Link SharePoint documents, edit them in web or desktop Office. Not part of the legal record</td><td class="s"><span class="badge todo">Planned</span></td><td class="nt">Principle: these are working documents and are excluded from the legal record. Needs confirmation from Legal · QA and IT (display inside the screen).</td></tr>
+  <tr data-tip="t13"><td class="no">13</td><td class="f">ChemStudio integration</td><td class="rq">Biovia · ChemDraw reaction integration (show molecular weight · batch number), built-in structure editor<span class="nice">Nice</span></td><td>Draw structures and reactions with ChemStudio and show molecular weight etc. in the note</td><td class="s"><span class="badge todo">Planned</span></td><td class="nt">ChemDraw · Biovia replaced by our own ChemStudio (with a built-in Ketcher-family editor).</td></tr>
+  <tr data-tip="t14"><td class="no">14</td><td class="f">PDF export</td><td class="rq">Download the ELN as PDF (needs Legal confirmation)<span class="nice">Nice</span></td><td>Save the note as a PDF file (to be confirmed after Legal review)</td><td class="s"><span class="badge todo">Planned</span></td><td class="nt">To be confirmed after Legal review.</td></tr>
+  <tr data-tip="t15"><td class="no">15</td><td class="f">Translation</td><td class="rq">Local-language entry and translation features</td><td>View note text translated into another language (view only)</td><td class="s"><span class="badge todo">Planned</span></td><td class="nt">View only (the original never changes). The translation service still has to be chosen from company-approved services.</td></tr>
+</table>
+<p class="note">Status: Implemented = ready to demo / Planned = to be built in the next step. Nice = Nice-to-have (good-to-have requests). Existing features (templates, tags, related item links, Excel paste → table · chart) are kept as they are.</p>
+
+<h2>Other improvements</h2>
+<div class="box"><ul>
+  <li>Rows and columns can be deleted in Data Visualization tables (hover over a header cell to show ×)</li>
+  <li>The section delete button now stands out</li>
+  <li>Header buttons tidied up, link styles unified</li>
+  <li>The Change History title and filters placed on one line</li>
+  <li>Formulation selection → <b>Link Formulations</b>: renamed to match what it does (links formulations to the note and shows a comparison when there are two or more). The default scope is all projects linked to this note (not only the Primary), and the search can be widened to All projects. The table shows the formulation name and Project # (assuming production Formulator data carries the project number)</li>
+  <li>Sticky notes show the author and time. Who can see them = whoever can see that section (the Share &amp; Access scope as is, no separate sharing per sticky note). Sticky notes never leave their section</li>
+  <li>Note status unified into the single approval status: the list, the note header and Note List all show In Progress → In Approval → Approved (the old list labels Success / Failed / On Hold and Done / In Review / Draft are dropped)</li>
+  <li>One Formulation section per note: after it is deleted, choosing it again in Add Module restores the original section (no new empty section is created)</li>
+</ul></div>
+
+<h2>Excluded items</h2>
+<table class="ex">
+  <colgroup><col style="width:36%"><col></colgroup>
+  <tr><th>Requirement</th><th>Reason</th></tr>
+  <tr data-tip="x1"><td class="f">Excel · Word object embedding · double-click editing</td><td>Technically not possible in a web browser (covered instead by 11 Attachment preview and 12 SharePoint working documents)</td></tr>
+  <tr data-tip="x2"><td class="f">ChemDraw · Biovia integration</td><td>Replaced by 13 ChemStudio integration</td></tr>
+  <tr data-tip="x3"><td class="f">Short ELN numbers</td><td>The current MAPIS numbering scheme (NT-2605-00142) is kept</td></tr>
+  <tr data-tip="x4"><td class="f">Grid line removal on scanned notes · handwriting recognition</td><td>Cost is high for the benefit</td></tr>
+  <tr data-tip="x5"><td class="f">Custom roles · permissions</td><td>Belongs to the admin screens, outside this scope</td></tr>
+  <tr data-tip="x6"><td class="f">Separate NPI number field</td><td>Merged into the Associated Project # (NPI, NPT, TS) field (duplicate)</td></tr>
+</table>
+
+<h2>Decisions for this meeting</h2>
+<table class="dec">
+  <colgroup><col style="width:170px"><col><col style="width:34%"></colgroup>
+  <tr><th>Item</th><th>To decide</th><th>Current implementation (default)</th></tr>
+  <tr><td class="f">1. Experiments across several projects</td><td>How many joint experiments span several projects (NPI) equally, and is it right to pick one of them as the Primary and use it as the basis for Stage / Task and Note List?</td><td class="cur">Several projects linked + one ★ Primary (the first one linked, set automatically; can be changed)</td></tr>
+  <tr><td class="f">1. Platform / Pre-NPC names</td><td>Production has no list. Keep them as a managed list (common code, with an assigned owner) or as free text?</td><td class="cur">Choose the type (Platform Technology / Pre-NPC) + type the name, with autocomplete from names used in other notes</td></tr>
+</table>
+
+<h2>Open points</h2>
+<div class="cols c3">
+  <div class="box"><b>Legal · QA</b><ul><li>Whether PDF export is allowed</li><li>Whether SharePoint working documents may be excluded from the legal record</li></ul></div>
+  <div class="box"><b>IT</b><ul><li>Test whether SharePoint documents can be displayed inside MAPIS screens</li></ul></div>
+  <div class="box"><b>Business users (questions during the demo)</b><ul><li>Is the NPI number the same as the MAPIS project code?</li><li>When a Pre-NPC becomes a formal project, what happens to the earlier notes?</li><li>Is taking turns enough for co-editing (current design: no simultaneous editing, last editor shown per section + Audit), and did people edit the same experiment at the same time in the existing BIOVIA ELN? If simultaneous editing is truly needed, it is handled with SharePoint working documents (item 12)</li></ul></div>
+</div>
+
+<div id="allTips"><h2>Item details</h2></div>
+
+</div>
+
+<div id="tip" role="tooltip"></div>
+
+<!-- ═════════ Tooltip content ═════════ -->
+
+<template id="t1">
+  <div class="tt-h">1. Header fields <span>Pop-up › Basic Data</span></div>
+  <div class="tt-cap">Original request</div>
+  <div class="tt-req">"Header: Need an option to add platform technology or Pre-NPC in Header (Without NPC Numbers in MAPIS). Header field for associated NPI number(s)." · Nice: "Header field for associated paper notebook(s) &amp; page(s)." · Must: "Date of Experiment"</div>
+  <div class="tt-cap">Screens</div>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/01_basic.png" alt="Header fields in the Basic Data card"><span class="mk" style="left:19.6%;top:2.7%">①</span><span class="mk" style="left:48.6%;top:2.7%">②</span><span class="mk" style="left:8.9%;top:55.4%">③</span><span class="mk" style="left:7.7%;top:74.4%">④</span><span class="mk" style="left:7.2%;top:92.9%">⑤</span></div>
+    <figcaption><ol class="cl">
+      <li><b>①</b> Associated Project # (NPI, NPT, TS): several project chips. The thick-bordered <b>★ PRIMARY</b> chip (SN-26-0031) is the project used for Stage/Task and Note List</li>
+      <li><b>②</b> The other chips (PT-26-0021, TS-26-0205) and the <b>Add Project</b> button: add more when the same experiment spans several projects. The <b>?</b> icon next to the label is the standard production help tooltip</li>
+      <li><b>③</b> Experiment Date: the day the experiment was actually done (date picker)</li>
+      <li><b>④</b> Platform / Pre-NPC: for work without a MAPIS project number (before NPC). Choose the type (Platform Technology / Pre-NPC) + type the name (autocompletes names used in other notes, with usage counts)</li>
+      <li><b>⑤</b> Paper Notebook Ref: paper notebook volume and page reference (e.g. Lab Book #3, p.42)</li>
+    </ol></figcaption>
+  </figure>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/01_projadd.png" alt="Add project autocomplete"><span class="mk" style="left:19.7%;top:41.5%">①</span><span class="mk" style="left:50.9%;top:59.7%">②</span><span class="mk" style="left:98.0%;top:18.7%">③</span></div>
+    <figcaption><div class="lb">Adding a project (MAPIS common component)</div><ol class="cl"><li><b>①</b> Clicking Add Project shows the standard input field in the same place</li><li><b>②</b> Typing a project number or name shows the common autocomplete list, in the MAPIS standard [code] name format (e.g. [SN-26-0018] Flexible OLED Encapsulant)</li><li><b>③</b> Picking one adds a new chip at the end of the chip row and records "Project linked" in the Audit Trail</li></ol></figcaption>
+  </figure>
+  <div class="tt-pair">
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/01_projmenu.png" alt="Project chip menu"><span class="mk" style="left:91.9%;top:44.7%">①</span><span class="mk" style="left:91.9%;top:66.3%">②</span><span class="mk" style="left:91.9%;top:88.0%">③</span></div>
+      <figcaption><div class="lb">Chip menu</div><ol class="cl"><li><b>①</b> Open Project: opens the project screen</li><li><b>②</b> Set as Primary: makes this chip the Primary</li><li><b>③</b> Unlink: removes the link</li></ol></figcaption>
+    </figure>
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/01_list_summary.png" alt="List summary panel"><span class="mk" style="left:4.2%;top:82.1%">①</span><span class="mk" style="left:4.2%;top:95.5%">②</span></div>
+      <figcaption><div class="lb">List summary panel</div><ol class="cl"><li><b>①</b> The ASSOCIATED PROJECT # chips and the PRIMARY mark also show in the list</li><li><b>②</b> "Linking a project does not grant access to it." Linking a project gives no access rights to it</li></ol></figcaption>
+    </figure>
+  </div>
+  <div class="tt-cap">Demo</div>
+  <ol class="tt-steps">
+    <li>Note pop-up › in Basic Data, enter Experiment Date, Platform / Pre-NPC and Paper Notebook Ref</li>
+    <li>Click a project chip › Set as primary to change the Primary → the Stage list switches to that project type's scheme (SN 6 stages / CN 2 stages / NPT 3 stages / none for Tech Support) and Task shows that project's schedule. Unlink removes the link</li>
+    <li>Add Project › type "flex" › pick from the list to add the project › check that the list summary panel shows it</li>
+  </ol>
+  <div class="tt-cap">Changes from the plan</div>
+  <ul class="tt-l"><li>No separate "NPI number(s)" field was created; it is merged into the production MAPIS field <b>Associated Project # (NPI, NPT, TS)</b> (in MAPIS, NPI number = project code). Reflects the design review</li></ul>
+  <div class="tt-cap">Production notes</div>
+  <ul class="tt-l">
+    <li>New note-project link table (note, project type, project, Primary flag), following the existing link conventions in production</li>
+    <li>Project search can reuse the production TechLib quick-search API (getRelProjectListAjax) as is. Only the chip + Primary structure is newly proposed UI</li>
+    <li>The Stage list comes from production common codes per Primary type (snpi_stage · cnpi_stage · npt_stage). Task <b>differs per project, so it is read from that project's schedule (Gantt) table</b>. The prototype shows made-up schedules per demo project</li>
+    <li>The Experiment Date display format follows the PC language (English PCs show 10/14/2026). Need to decide whether to unify the format</li>
+  </ul>
+</template>
+
+<template id="t2">
+  <div class="tt-h">2. Co-Signer sign-off <span>Pop-up › Approval card · header</span></div>
+  <div class="tt-cap">Original request</div>
+  <div class="tt-req">"Author chooses Co-Signers"</div>
+  <div class="tt-cap">Screens</div>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/02_approval_before.png" alt="Approval card, author view, before submission"><span class="mk" style="left:27.1%;top:24.3%">①</span><span class="mk" style="left:46.8%;top:40.9%">②</span><span class="mk" style="left:62.7%;top:24.3%">③</span><span class="mk" style="left:32.8%;top:89.9%">④</span></div>
+    <figcaption><div class="lb">Before submission (author view)</div><ol class="cl">
+      <li><b>①</b> View as Author / Co-Signer: switch tabs for the demo only (in production this depends on the logged-in user)</li>
+      <li><b>②</b> Co-Signers chips (Jim Quan · Group Leader, Aishwarya Venkatakrishnan · Witness): assigned directly by the author, removed with ×</li>
+      <li><b>③</b> Add Co-Signer / Submit Sections (submit selected sections) / Submit All (submit everything)</li>
+      <li><b>④</b> Co-Signer Sign-Off Status table: shows "Nothing submitted yet" because nothing has been submitted yet</li>
+    </ol></figcaption>
+  </figure>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/02_approval_cosigner.png" alt="Approval card, signer view"><span class="mk" style="left:35.2%;top:35.3%">①</span><span class="mk" style="left:34.1%;top:73.3%">②</span><span class="mk" style="left:86.2%;top:71.6%">③</span></div>
+    <figcaption><div class="lb">After submission (Co-Signer view)</div><ol class="cl">
+      <li><b>①</b> Jim Quan: Approved (green), comment "Data verified.", date and time recorded</li>
+      <li><b>②</b> Aishwarya: still pending. Choose Approved / Not Approved and enter a comment (required for Not Approved)</li>
+      <li><b>③</b> Submit: the signer confirms the decision</li>
+    </ol></figcaption>
+  </figure>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/02_header_appr.png" alt="Header during approval"><span class="mk" style="left:66.0%;top:50.0%">①</span><span class="mk" style="left:97.6%;top:50.0%">②</span></div>
+    <figcaption><div class="lb">Header</div><ol class="cl"><li><b>①</b> Status badge In Approval</li><li><b>②</b> "Awaiting 1 signature": how many signatures are still needed</li></ol></figcaption>
+  </figure>
+  <div class="tt-cap">Demo</div>
+  <ol class="tt-steps">
+    <li>Add <b>?st=appr</b> to the end of the address to open a note in approval</li>
+    <li>In the Approval card, switch to the View as <b>Co-Signer</b> tab</li>
+    <li>On a pending signer row, choose Approved (or Not Approved + comment) › Submit</li>
+    <li>Check that the header status and the Awaiting badge change</li>
+  </ol>
+  <div class="tt-cap">Changes from the plan</div>
+  <ul class="tt-l"><li>The card keeps its existing name <b>Approval</b> instead of being renamed "Sign-off"</li></ul>
+  <div class="tt-cap">Production notes</div>
+  <ul class="tt-l"><li>Stored in the same row format as the existing MAPIS approval feature. The approval module (TS09_APPR) can be reused</li></ul>
+</template>
+
+<template id="t3">
+  <div class="tt-h">3. Lock after submission · Errata <span>Pop-up › each section</span></div>
+  <div class="tt-cap">Original request</div>
+  <div class="tt-req">"Add additional sections and Errata after ELN Submission"</div>
+  <div class="tt-cap">Screens</div>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/03_locked_editor.png" alt="Editor card locked after submission"><span class="mk" style="left:46.8%;top:8.1%">①</span><span class="mk" style="left:2.6%;top:24.3%">②</span><span class="mk" style="left:82.6%;top:91.2%">③</span></div>
+    <figcaption><div class="lb">After submission (locked section)</div><ol class="cl">
+      <li><b>①</b> 🔒 "Submitted 2026-10-12 09:30" badge: this section has been submitted and is locked (editing, deleting, dragging and keyboard input are blocked)</li>
+      <li><b>②</b> The body area is read-only</li>
+      <li><b>③</b> <b>Errata</b> button: corrections can be added even to a locked section</li>
+    </ol></figcaption>
+  </figure>
+  <div class="tt-pair">
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/03_errata_modal.png" alt="Add Errata window"><span class="mk" style="left:11.6%;top:34.8%">①</span><span class="mk" style="left:15.0%;top:66.3%">②</span><span class="mk" style="left:47.4%;top:81.6%">③</span></div>
+      <figcaption><div class="lb">Entering an Errata</div><ol class="cl"><li><b>①</b> Correction: what is corrected (required)</li><li><b>②</b> Reason: why it is corrected (required)</li><li><b>③</b> Save</li></ol></figcaption>
+    </figure>
+    <div></div>
+  </div>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/03_errata_block.png" alt="Approved Basic Data with an Errata block"><span class="mk" style="left:67.9%;top:4.7%">①</span><span class="mk" style="left:9.9%;top:43.1%">②</span><span class="mk" style="left:2.9%;top:77.9%">③</span></div>
+    <figcaption><div class="lb">After approval</div><ol class="cl">
+      <li><b>①</b> Green badge "Approved · Jim Quan, Aishwarya…": a fully approved section</li>
+      <li><b>②</b> The body keeps the original as it was (Experiment Date 2026-10-08)</li>
+      <li><b>③</b> <b>Errata #1</b> block: date/time, author, correction and Reason are added below the original (the original is not changed)</li>
+    </ol></figcaption>
+  </figure>
+  <div class="tt-cap">Demo</div>
+  <ol class="tt-steps">
+    <li>In the ?st=appr note, try to edit a submitted (locked) section › check that it is blocked</li>
+    <li>In a section of an approved note, click Errata</li>
+    <li>Enter Correction and Reason › Save › check the Errata #1 block</li>
+  </ol>
+  <div class="tt-cap">Production notes</div>
+  <ul class="tt-l"><li>The server decides whether a section is locked; the screen only displays it (so the lock cannot be bypassed on the screen)</li></ul>
+</template>
+
+<template id="t4">
+  <div class="tt-h">4. Audit Trail <span>Pop-up › left menu</span></div>
+  <div class="tt-cap">Original request</div>
+  <div class="tt-req">"Audit Trail feature"</div>
+  <div class="tt-cap">Screen</div>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/04_audit.png" alt="Change History in the Audit Trail card"><span class="mk" style="left:58.7%;top:8.8%">①</span><span class="mk" style="left:76.1%;top:15.1%">②</span><span class="mk" style="left:62.6%;top:67.3%">③</span><span class="mk" style="left:46.7%;top:15.1%">④</span><span class="mk" style="left:31.1%;top:95.4%">⑤</span></div>
+    <figcaption><ol class="cl">
+      <li><b>①</b> Section / User filters: narrow the view down by section or user</li>
+      <li><b>②</b> Table columns: Date/Time · User · Section · Action · Change (before→after)</li>
+      <li><b>③</b> Example of before→after: Crosslinker (wt%): <s>1.8</s> › 2.2 (David Lee, Formulation)</li>
+      <li><b>④</b> Approval, Errata and sharing history is recorded in the same table (picture: Submitted, Approved, Note approved, Errata added, Access granted. Permission changes and revocations show as Access changed / Access removed)</li>
+      <li><b>⑤</b> Footer text: "Entries are recorded automatically and cannot be edited or deleted."</li>
+    </ol></figcaption>
+  </figure>
+  <div class="tt-cap">What is recorded</div>
+  <ul class="tt-l">
+    <li>Header fields, tags, adding/deleting sections and their name · icon · order, approval submission/approval/rejection, Errata, co-editors, sharing, @references</li>
+    <li>Editor body (one entry when editing finishes), tables · charts, attachments, Related Items, ChemStudio structures, sticky notes</li>
+  </ul>
+  <div class="tt-cap">Demo</div>
+  <ol class="tt-steps"><li>Change any item in the note</li><li>Open Audit Trail in the left menu</li><li>Narrow down with the Section / User filters</li></ol>
+  <div class="tt-cap">Production notes</div>
+  <ul class="tt-l"><li>The production change log format (TS09_SYS_DATA_CHANGE_LOG) can be reused</li><li>Built as append-only so users cannot edit or delete entries</li></ul>
+</template>
+
+<template id="t5">
+  <div class="tt-h">5. Co-editors <span>Pop-up › header Share button · each section</span></div>
+  <div class="tt-cap">Original request</div>
+  <div class="tt-req">"Able to add co-editor. Show Editor Name when ELN is modified in case of Co-Editor enabled ELNs. AV: Track changes done by the coeditor/editor"</div>
+  <div class="tt-cap">Screens</div>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/05_header.png" alt="Pop-up header"><span class="mk" style="left:70.9%;top:16.0%">①</span><span class="mk" style="left:81.7%;top:16.0%">②</span><span class="mk" style="left:48.5%;top:50.0%">③</span></div>
+    <figcaption><div class="lb">Header</div><ol class="cl">
+      <li><b>①</b> <b>Share button</b>: share icon + badge "4" = number of people with access besides the author (co-editors and share recipients combined). Clicking it opens the Share &amp; Access window, where Co-editors are added (the same window as item 6)</li>
+      <li><b>②</b> Note List button</li>
+      <li><b>③</b> No participant photos or avatars are shown in the header (privacy)</li>
+    </ol></figcaption>
+  </figure>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/05_lastedit.png" alt="Last editor in the section title row"><span class="mk" style="left:66.9%;top:10.5%">①</span><span class="mk" style="left:65.2%;top:73.9%">②</span></div>
+    <figcaption><div class="lb">Last editor per section</div><ol class="cl">
+      <li><b>①</b> "Last edited by name · time" at the right of the section title row: the last person to change each section (Co-editors included)</li>
+      <li><b>②</b> A section I (Charles Kim) changed switches to my name and the time of my change. Who changed what is kept in the Audit Trail (item 4)</li>
+    </ol></figcaption>
+  </figure>
+  <div class="tt-cap">Demo</div>
+  <ol class="tt-steps">
+    <li>Header Share button › Add People in the Share &amp; Access window › choose Co-editor as the Function and add (Co-editors cannot be added to an approved note, only Viewers)</li>
+    <li>Check "Last edited by name · time" in the section title rows (Formulation = David Lee, Data Visualization = Min-ji Park)</li>
+    <li>Change a value in any section, and that section's label changes to my name</li>
+  </ol>
+  <div class="tt-cap">Changes from the plan</div>
+  <ul class="tt-l">
+    <li>The plan's <b>section edit lock was left out</b>, and simultaneous editing is not covered. The original request does not ask for simultaneous editing (Co-editor = taking turns), and a section lock only makes sense with per-section saving, which does not fit note-level saving</li>
+    <li>Adding co-editors is <b>merged into the Share &amp; Access window</b> instead of a separate button (see item 6). Header avatars were removed for privacy and replaced by a Share button with a people-count badge</li>
+  </ul>
+  <div class="tt-cap">Production notes</div>
+  <ul class="tt-l">
+    <li>A version check on save is enough: if someone else saved first, do not overwrite, and ask the user to reopen the note (prevents overwriting without any simultaneous-editing feature)</li>
+    <li>People are shown in the production standard <b>Name (ID)</b> format (no photo or department)</li>
+  </ul>
+</template>
+
+<template id="t6">
+  <div class="tt-h">6. Sharing <span>Pop-up › header Share button (Share &amp; Access)</span></div>
+  <div class="tt-cap">Original request</div>
+  <div class="tt-req">"Share ELN sections/experiments with other users under compliance — e.g. each Segment's R&amp;D Technology frequently needs to collaborate with Process Technology to scale up NPI products, sometimes across poles."</div>
+  <div class="tt-cap">Screens</div>
+  <div class="tt-pair">
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/06_share_modal.png" alt="Share &amp; Access list view"><span class="mk" style="left:3.9%;top:23.5%">①</span><span class="mk" style="left:83.6%;top:47.3%">②</span><span class="mk" style="left:54.3%;top:73.9%">③</span><span class="mk" style="left:74.4%;top:23.5%">④</span></div>
+      <figcaption><div class="lb">List view (default)</div><ol class="cl">
+        <li><b>①</b> People with Access table: Function · Scope for the author Charles Kim (Owner), David Lee · Min-ji Park (Co-editor), Jim Quan (Viewer) and Sarah Chen (Viewer, Formulation · Data Visualization sections only). People are shown as <b>Name (ID)</b></li>
+        <li><b>②</b> At the right of each row, ✎ Edit (change an existing entry) and ✕ Remove (revoke access). The Owner row cannot be changed</li>
+        <li><b>③</b> Scope: Entire note, or the names of the shared sections (Sarah Chen)</li>
+        <li><b>④</b> <b>Add People</b> at the top right of the table opens the input view</li>
+      </ol></figcaption>
+    </figure>
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/06_share_pop.png" alt="Add People input view"><span class="mk" style="left:11.4%;top:14.4%">①</span><span class="mk" style="left:9.5%;top:23.1%">②</span><span class="mk" style="left:11.9%;top:29.2%">③</span><span class="mk" style="left:10.7%;top:80.7%">④</span></div>
+      <figcaption><div class="lb">Input view (Add People / Edit access)</div><ol class="cl">
+        <li><b>①</b> People: search for and pick a person (Tom Reyes). In Edit the person is shown fixed</li>
+        <li><b>②</b> Function: Co-editor / Viewer. Choosing Co-editor fixes Scope to Entire note</li>
+        <li><b>③</b> Scope: a Viewer can be given only some sections with Selected sections (e.g. Data Visualization)</li>
+        <li><b>④</b> Reason (required) and the security policy acknowledgement (Share stays disabled until it is ticked), then Share. Both are kept in the Audit Trail entry as "Reason: … · Security policy acknowledged". It is a modal on top of the list, so Share or Cancel closes only this window and the list behind it is refreshed</li>
+      </ol></figcaption>
+    </figure>
+  </div>
+  <div class="tt-cap">Demo</div>
+  <ol class="tt-steps">
+    <li>Header Share button › Share &amp; Access list view › Add People › enter the person, Function, Scope and Reason, tick the acknowledgement › Share</li>
+    <li>Check the new row in the list view (the number on the header badge goes up)</li>
+    <li>Change Function or Scope with ✎ Edit on a row, or ✕ Remove › check the Access granted / changed / removed entries in the Audit Trail (grant and change entries end with the reason and "Security policy acknowledged")</li>
+  </ol>
+  <div class="tt-cap">Changes from the plan</div>
+  <ul class="tt-l">
+    <li>Co-editors (item 5) and sharing are <b>merged into one modal</b>. The Edit sharing permission and Co-editor are the same concept, so Edit was folded into Co-editor. Of the plan's three levels (view, comment, edit), comment was dropped because there is no comment feature → Function: Co-editor / Viewer</li>
+    <li>Co-editors always get the whole note (section-level edit rights were left out because they would split responsibility); section sharing is for Viewers only</li>
+    <li>The list view and the input view were separated, and Edit for existing entries was added. The earlier Shared chips and Revoke popover are replaced by Remove in the list</li>
+    <li>Co-editors cannot be added to an approved note (that would change its content); Viewers can</li>
+  </ul>
+  <div class="tt-cap">Production notes</div>
+  <ul class="tt-l"><li>Follow the approach of the TechLib access permission table (period · approval)</li><li>People are shown in the production standard Name (ID) format throughout; no photos, avatars or departments (privacy)</li></ul>
+</template>
+
+<template id="t7">
+  <div class="tt-h">7. Copy note <span>Pop-up left buttons · list summary panel</span></div>
+  <div class="tt-cap">Original request</div>
+  <div class="tt-req">"Clone Experiments (Copy from)"</div>
+  <div class="tt-cap">Screens</div>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/07_copy_btn.png" alt="Copy To button in the left button area"><span class="mk" style="left:10.5%;top:5.2%">①</span></div>
+    <figcaption><div class="lb">Left button area</div><ol class="cl"><li><b>①</b> <b>Copy To</b> button: placed above Save Template (the same position as in production FMEA)</li></ol></figcaption>
+  </figure>
+  <div class="tt-pair">
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/07_clone_modal.png" alt="Copy To window in the pop-up"><span class="mk" style="left:4.2%;top:22.6%">①</span><span class="mk" style="left:4.2%;top:31.3%">②</span><span class="mk" style="left:4.2%;top:63.0%">③</span><span class="mk" style="left:4.2%;top:75.6%">④</span><span class="mk" style="left:64.4%;top:89.0%">⑤</span></div>
+      <figcaption><div class="lb">Copy To window in the pop-up</div><ol class="cl">
+        <li><b>①</b> Source note number and title</li>
+        <li><b>②</b> Sections to Copy: tick the sections (structure) to put in the new note. Basic Data is a required section, so its checkbox is fixed</li>
+        <li><b>③</b> Include entered data: when ticked, values, tables and text are copied too; when unticked, only the empty structure</li>
+        <li><b>④</b> Notice: a new note is created in a new window; unsaved changes are not copied, and neither are signatures, Errata or Audit history</li>
+        <li><b>⑤</b> Cancel / <b>Copy</b></li>
+      </ol></figcaption>
+    </figure>
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/07_list_clone_modal.png" alt="Copy To window in the list"><span class="mk" style="left:3.8%;top:47.9%">①</span><span class="mk" style="left:3.8%;top:65.6%">②</span></div>
+      <figcaption><div class="lb">Copy To window in the list summary panel</div><ol class="cl"><li><b>①</b> Copy To modal in the list summary panel: choose only Include entered data (whether to include data), then Copy copies all sections and opens an unsaved copy in a new window</li><li><b>②</b> No row is added to the list right away; the new note appears in the list after it is saved (production reflects it by refresh/WebSocket; not shown in the prototype)</li></ol></figcaption>
+    </figure>
+  </div>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/07_clone_header.png" alt="Header of the new window after copying"><span class="mk" style="left:81.9%;top:48.0%">①</span><span class="mk" style="left:97.7%;top:50.0%">②</span></div>
+    <figcaption><div class="lb">Header of the new window right after copying</div><ol class="cl"><li><b>①</b> New number NT-2610-00188 and "(copy)" after the title. An unsaved copy</li><li><b>②</b> Status is In Progress (editable)</li><li>The original window stays as it is (the copy opens in a new window)</li></ol></figcaption>
+  </figure>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/07_clone_basic.png" alt="Basic Data of the copied note"><span class="mk" style="left:22.1%;top:29.7%">①</span></div>
+    <figcaption><div class="lb">Copied Basic Data</div><ol class="cl"><li><b>①</b> The Associated Project # chips (★ PRIMARY included) are copied as they are</li><li>No link to the source note is shown on screen (the copy does not need to be tied to the source). The origin is kept only in the first Audit Trail entry "Note created · Copied from …"</li></ol></figcaption>
+  </figure>
+  <div class="tt-cap">Demo</div>
+  <ol class="tt-steps"><li>Copy To on the left of the pop-up, or Copy To in the list summary panel (the list only offers Include entered data and copies all sections)</li><li>In the pop-up, choose sections and Include entered data › Copy</li><li>Check the number and project chips of the copy opened in the new window (the original window stays as it is)</li><li>Check the first Audit Trail entry "Note created · Copied from …"</li></ol>
+  <div class="tt-cap">Changes from the plan</div>
+  <ul class="tt-l"><li>Matched to production FMEA's <b>Copy To</b> in name, position and flow (new window, before saving). The term 'Copy' is used instead of 'Clone' throughout</li><li>From the list, too, the copy opens in a new window (unsaved). The new note appears in the list after saving (production reflects it by refresh/WebSocket)</li><li>Linked projects are copied regardless of the section and data choices. A copy of an approved note is editable</li></ul>
+</template>
+
+<template id="t8">
+  <div class="tt-h">8. Note cross-references <span>Pop-up › body editor · Related Items</span></div>
+  <div class="tt-cap">Original request</div>
+  <div class="tt-req">"Insert cross-references to other ELN experiments by same author / by other authors." · "Link to add related Experiment"</div>
+  <div class="tt-cap">Screens</div>
+  <div class="tt-pair">
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/08_hint.png" alt="@ autocomplete list"><span class="mk" style="left:26.3%;top:27.6%">①</span><span class="mk" style="left:15.8%;top:38.1%">②</span><span class="mk" style="left:92.8%;top:46.5%">③</span><span class="mk" style="left:97.0%;top:38.1%">④</span></div>
+      <figcaption><div class="lb">Typing @</div><ol class="cl">
+        <li><b>①</b> "@NT-26" typed in the body</li>
+        <li><b>②</b> Autocomplete list: number · title · author</li>
+        <li><b>③</b> Notes without access are marked with a "No access" badge</li>
+        <li><b>④</b> Selecting one (Enter) inserts it as a chip</li>
+      </ol></figcaption>
+    </figure>
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/08_refcard.png" alt="Hover card on a reference chip"><span class="mk" style="left:28.0%;top:18.8%">①</span><span class="mk" style="left:23.0%;top:42.4%">②</span><span class="mk" style="left:68.5%;top:83.3%">③</span></div>
+      <figcaption><div class="lb">Hovering over a chip</div><ol class="cl">
+        <li><b>①</b> The inserted @NT-2605-00131 chip</li>
+        <li><b>②</b> Summary card: number, status (In Approval), title, author, date</li>
+        <li><b>③</b> Open: opens the note in a new pop-up</li>
+      </ol></figcaption>
+    </figure>
+  </div>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/08_related.png" alt="Related Items card"><span class="mk" style="left:95.7%;top:63.6%">①</span><span class="mk" style="left:87.8%;top:85.0%">②</span></div>
+    <figcaption><div class="lb">Related Items</div><ol class="cl">
+      <li><b>①</b> MATERIAL item (RM-0421): can be deleted directly with ×</li>
+      <li><b>②</b> NOTE item (NT-2605-00131): "Referenced in Editor" badge. It was added automatically from the editor reference, so it cannot be deleted here; deleting it in the editor removes it as well</li>
+    </ol></figcaption>
+  </figure>
+  <div class="tt-cap">Demo</div>
+  <ol class="tt-steps"><li>Type @ in the body › pick a note</li><li>Hover over the chip to see the summary card › click Open</li><li>Check the item added to Related Items</li></ol>
+  <div class="tt-cap">Production notes</div>
+  <ul class="tt-l"><li>Only the autocomplete search needs to be replaced with a server API call (confirmed that it can be built with the editor's built-in feature)</li></ul>
+</template>
+
+<template id="t9">
+  <div class="tt-h">9. Extended search <span>List › Search</span></div>
+  <div class="tt-cap">Original request</div>
+  <div class="tt-req">"Search using Author name, Project Name, NPI Number etc." · Nice: "Search feature also searches contents of attachments (Microsoft Office documents and other XML/text-based formats)."</div>
+  <div class="tt-cap">Screens</div>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/09_search_modal.png" alt="Search Notes window"><span class="mk" style="left:12.1%;top:48.4%">①</span><span class="mk" style="left:52.0%;top:48.4%">②</span><span class="mk" style="left:7.8%;top:57.3%">③</span><span class="mk" style="left:10.3%;top:66.2%">④</span></div>
+    <figcaption><div class="lb">Search criteria</div><ol class="cl">
+      <li><b>①</b> Author: pick an author</li>
+      <li><b>②</b> Project # / NPI: project code or name (both Primary and Associated projects are searched)</li>
+      <li><b>③</b> Attachments: tick "Include text inside attachments" to search attachment text as well</li>
+      <li><b>④</b> Structure: Draw Structure + <b>Under review</b> mark. Structure search is under review because it needs a chemical search engine</li>
+    </ol></figcaption>
+  </figure>
+  <div class="tt-pair">
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/09_search_result.png" alt="Attachment text search results"><span class="mk" style="left:32.9%;top:12.6%">①</span><span class="mk" style="left:15.4%;top:25.7%">②</span><span class="mk" style="left:3.7%;top:81.3%">③</span></div>
+      <figcaption><div class="lb">Attachment text search results</div><ol class="cl">
+        <li><b>①</b> Filter chips at the top: Keyword / Attachments Included</li>
+        <li><b>②</b> File name (test_result.pdf) and the matching sentence, with the keyword (viscosity) highlighted</li>
+        <li><b>③</b> Locked row at the bottom: a note without access (item 10)</li>
+      </ol></figcaption>
+    </figure>
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/09_search_project.png" alt="Project number search results"><span class="mk" style="left:17.8%;top:28.6%">①</span><span class="mk" style="left:70.2%;top:50.5%">②</span></div>
+      <figcaption><div class="lb">Project number search (PT-26-0021)</div><ol class="cl">
+        <li><b>①</b> Searching by an Associated project, not the Primary, still finds the note</li>
+        <li><b>②</b> The "Associated: PT-26-0021" badge shows which link made it match</li>
+      </ol></figcaption>
+    </figure>
+  </div>
+  <div class="tt-cap">Demo</div>
+  <ol class="tt-steps"><li>List › open Search</li><li>Enter viscosity in Keyword + tick the attachment text option › Search › check the highlighted sentence</li><li>Enter PT-26-0021 in Project # / NPI › check the Associated badge</li></ol>
+  <div class="tt-cap">Changes from the plan</div>
+  <ul class="tt-l"><li>"NPI number search" is unified into project code and name search. Structure search only shows Under review on screen</li></ul>
+</template>
+
+<template id="t10">
+  <div class="tt-h">10. Searching notes without access <span>List › search results · summary panel</span></div>
+  <div class="tt-cap">Original request</div>
+  <div class="tt-req">"Search within ELNs without read access (show just the basic data if allowed)"</div>
+  <div class="tt-cap">Screens</div>
+  <div class="tt-pair">
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/09_search_result.png" alt="Locked row in the search results"><span class="mk" style="left:17.8%;top:81.8%">①</span><span class="mk" style="left:33.8%;top:92.5%">②</span><span class="mk" style="left:75.9%;top:89.6%">③</span></div>
+      <figcaption><div class="lb">Search results</div><ol class="cl">
+        <li><b>①</b> Dimmed 🔒 row at the bottom: only number · title · author · date are shown</li>
+        <li><b>②</b> Matching body sentences, tags and attachments are not shown</li>
+        <li><b>③</b> Request Access button</li>
+      </ol></figcaption>
+    </figure>
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/10_restricted_summary.png" alt="Summary panel of a note without access"><span class="mk" style="left:4.2%;top:26.1%">①</span><span class="mk" style="left:19.0%;top:71.4%">②</span><span class="mk" style="left:7.3%;top:88.2%">③</span></div>
+      <figcaption><div class="lb">Clicking the row</div><ol class="cl">
+        <li><b>①</b> OVERVIEW: only basic data such as author · team · project · modified date</li>
+        <li><b>②</b> The message "You don't have access to this note."; content, attachments and tags stay hidden until access is approved</li>
+        <li><b>③</b> Request Access (reason required) › Requested status after the request</li>
+      </ol></figcaption>
+    </figure>
+  </div>
+  <div class="tt-cap">Demo</div>
+  <ol class="tt-steps"><li>Search so that another team's note shows up (e.g. viscosity)</li><li>Click the locked row › check the no-access summary</li><li>Request Access › enter a reason › check the Requested status</li></ol>
+  <div class="tt-cap">Changes from the plan</div>
+  <ul class="tt-l"><li>Notes are found through basic data such as the project, but body text, tags and attachments are not shown</li></ul>
+</template>
+
+<template id="t11">
+  <div class="tt-h">11. Attachment preview <span>Pop-up › Attachments</span></div>
+  <div class="tt-cap">Original request</div>
+  <div class="tt-req">"Integration with Microsoft Office (Word, Excel, PowerPoint), PDF, Image Reader to Upload Files. AV: When we attach files – see the content/preview of the files" · Nice: "Can we upload a video?" / "Increase attachment size limit"</div>
+  <ul class="tt-l">
+    <li>As planned: files stored on the file server (Word · Excel · PPT · PDF · images · video) are previewed inside the note; re-uploading creates a new version</li>
+    <li><b>To be built in the next step</b></li>
+  </ul>
+</template>
+<template id="t12">
+  <div class="tt-h">12. SharePoint working documents <span>Under review</span></div>
+  <div class="tt-cap">Original request</div>
+  <div class="tt-req">"Documents embedded in ELN can be viewed and edited via SharePoint or Teams… automatically pull latest version into ELN." (Nice)</div>
+  <ul class="tt-l">
+    <li>As planned: link documents, edit them in web or desktop Office, not part of the legal record</li>
+    <li>Need to test whether the company SharePoint allows its documents to be displayed inside MAPIS screens</li>
+    <li><b>To be built in the next step</b></li>
+  </ul>
+</template>
+<template id="t13">
+  <div class="tt-h">13. ChemStudio integration <span>Pop-up</span></div>
+  <div class="tt-cap">Original request</div>
+  <div class="tt-req">"Software Integration for Biovia or chemdraw for reactions. AV: Shows molecular weight; batch # etc." · Nice: "Built-in chemical structure editor (… Ketcher …)"</div>
+  <ul class="tt-l">
+    <li>As planned: draw structures and reactions with ChemStudio and show molecular weight etc. in the note</li>
+    <li>Now: the note has a ChemStudio section (Add New / Add Existing, structure list). Adding, changing and deleting structures is recorded in the Audit Trail</li>
+    <li><b>To be built in the next step</b>: a real connection to the ChemStudio editor (draw structures and reactions → show molecular weight etc. in the note)</li>
+  </ul>
+</template>
+<template id="t14">
+  <div class="tt-h">14. PDF export <span>Pop-up</span></div>
+  <div class="tt-cap">Original request</div>
+  <div class="tt-req">"Download ELN as PDF? Need to check with Legal team" (Nice)</div>
+  <ul class="tt-l">
+    <li>As planned: save the note as PDF (choose the included sections, signatures and Audit)</li>
+    <li>To be confirmed after Legal review. <b>To be built in the next step</b></li>
+  </ul>
+</template>
+<template id="t15">
+  <div class="tt-h">15. Translation <span>Pop-up</span></div>
+  <div class="tt-cap">Original request</div>
+  <div class="tt-req">"Local language entry/Translation features"</div>
+  <ul class="tt-l">
+    <li>As planned: translated view of text sections (view only); a company-approved translation service still has to be chosen</li>
+    <li><b>To be built in the next step</b></li>
+  </ul>
+</template>
+
+<template id="x1">
+  <div class="tt-h">Excluded · Excel/Word object embedding <span>OLE</span></div>
+  <ul class="tt-l">
+    <li>OLE is a mechanism used between Windows desktop programs, so it <b>does not exist in web browsers</b></li>
+    <li>Instead: attachment preview (item 11), SharePoint working documents (item 12), Excel paste → table conversion (existing feature)</li>
+  </ul>
+</template>
+<template id="x2">
+  <div class="tt-h">Replaced · ChemDraw / Biovia integration</div>
+  <ul class="tt-l">
+    <li>Integrating commercial products raises license and company firewall issues</li>
+    <li>Our own ChemStudio handles structures, reactions and molecular weight (item 13)</li>
+  </ul>
+</template>
+<template id="x3">
+  <div class="tt-h">Kept as is · Short ELN numbers</div>
+  <ul class="tt-l">
+    <li>MAPIS has no researcher ID concept, and notebooks are folders that can be moved, so putting them in the number would make numbers change</li>
+    <li>The existing <b>NT-YYMM-sequence</b> scheme (NT-2605-00142) is kept</li>
+  </ul>
+</template>
+<template id="x4">
+  <div class="tt-h">Excluded · Scanned note processing</div>
+  <ul class="tt-l">
+    <li>This is image processing and handwriting OCR territory, with high development cost for the accuracy it would reach</li>
+    <li>Scans can be kept as image attachments (item 11)</li>
+  </ul>
+</template>
+<template id="x5">
+  <div class="tt-h">Out of scope · Custom roles and permissions</div>
+  <ul class="tt-l">
+    <li>Needs a separate permission management screen (for admins), which is outside the two screens covered this time</li>
+    <li>Only the Function levels of sharing (item 6, Co-editor/Viewer) are implemented</li>
+  </ul>
+</template>
+<template id="x6">
+  <div class="tt-h">Merged · Separate NPI number field</div>
+  <ul class="tt-l">
+    <li>In MAPIS the NPI number is the same as the project code (SN/CN/PT), so a separate field would be a duplicate</li>
+    <li>Merged into the Associated Project # (NPI, NPT, TS) field, with one Primary chosen among several (item 1)</li>
+  </ul>
+</template>
+
+<script>
+(function(){
+  var tip = document.getElementById('tip');
+  var cur = null, pinned = false;
+  var touch = window.matchMedia('(hover: none)').matches;
+
+  function fill(row){
+    var t = document.getElementById(row.getAttribute('data-tip'));
+    if(!t) return false;
+    tip.innerHTML = '';
+    tip.appendChild(t.content.cloneNode(true));
+    tip.scrollTop = 0;
+    return true;
+  }
+  function place(row, mx){
+    var r = row.getBoundingClientRect(), w = tip.offsetWidth, h = tip.offsetHeight;
+    var vw = window.innerWidth, vh = window.innerHeight, gap = 8;
+    var left = (mx == null ? r.left + 160 : mx - 60);
+    left = Math.max(12, Math.min(left, vw - w - 12));
+    var top = r.bottom + gap;
+    if(top + h > vh - 12) top = r.top - h - gap;
+    if(top < 12) top = Math.max(12, vh - h - 12);
+    tip.style.left = left + 'px'; tip.style.top = top + 'px';
+  }
+  function show(row, mx){
+    if(cur) cur.classList.remove('on');
+    if(!fill(row)) return;
+    cur = row; row.classList.add('on');
+    tip.classList.add('show');
+    place(row, mx);
+    // re-place once late images change the height
+    tip.querySelectorAll('img').forEach(function(im){
+      if(!im.complete) im.addEventListener('load', function(){ if(cur === row) place(row, mx); });
+    });
+  }
+  function hide(){
+    tip.classList.remove('show','pin'); pinned = false;
+    document.documentElement.classList.remove('tipLock');
+    if(cur){ cur.classList.remove('on'); cur = null; }
+  }
+  document.querySelectorAll('tr[data-tip]').forEach(function(row){
+    row.addEventListener('mouseenter', function(e){ if(!touch && !pinned) show(row, e.clientX); });
+    row.addEventListener('mouseleave', function(){ if(!touch && !pinned) hide(); });
+    row.addEventListener('click', function(e){
+      if(cur === row && pinned){ hide(); return; }
+      show(row, touch ? null : e.clientX); pinned = true; tip.classList.add('pin');
+      document.documentElement.classList.add('tipLock');   // lock page scroll while pinned
+      e.stopPropagation();
+    });
+  });
+  document.addEventListener('click', function(e){ if(pinned && !tip.contains(e.target)) hide(); });
+  document.addEventListener('keydown', function(e){ if(e.key === 'Escape') hide(); });
+  window.addEventListener('scroll', function(){ if(!pinned) hide(); else if(cur) place(cur, null); }, {passive:true});
+  window.addEventListener('resize', function(){ if(cur) place(cur, null); });
+
+  // expand all: lays out the tooltip contents one after another below the tables (for screen sharing and printing); printing always shows them expanded
+  var all = document.getElementById('allTips'), btn = document.getElementById('btnAll');
+  document.querySelectorAll('tr[data-tip]').forEach(function(row){
+    var t = document.getElementById(row.getAttribute('data-tip'));
+    if(!t) return;
+    var card = document.createElement('div'); card.className = 'tipCard';
+    card.appendChild(t.content.cloneNode(true)); all.appendChild(card);
+  });
+  if(btn) btn.addEventListener('click', function(){
+    var on = all.classList.toggle('show');
+    btn.textContent = on ? btn.getAttribute('data-off') : btn.getAttribute('data-on');
+    if(on) all.scrollIntoView({behavior:'smooth', block:'start'});
+  });
+})();
+</script>
+</body>
+</html>

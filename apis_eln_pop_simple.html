@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>MAPIS Lab Note — Experiment</title>
+    <title>MAPIS Lab Note</title>
 	<link rel="preload" href="mapis_lib/font/material-symbols-outlined.woff2" as="font" type="font/woff2">
 	<link rel="preload" href="mapis_lib/font/material-symbols-rounded.woff2" as="font" type="font/woff2">
 	<link rel="preload" href="mapis_lib/font/material-symbols-sharp.woff2" as="font" type="font/woff2">
@@ -38,7 +38,7 @@
 		<section class="titArea npi">
 			<div><img src="img/MAPISLogo-25.png"></div>
 			<div class="statusTit">
-				<div class="tit">[NT-2605-00142] UV-Curable PSA Viscosity Improvement — RGBOLED</div>
+				<div class="tit">[NT-2605-00142] UV-Curable PSA Viscosity Improvement (RGBOLED)</div>
 				<!-- status: 수동 드롭다운 제거 → 결재 흐름에 따라 갱신되는 읽기전용 알약(setHeadStatus) -->
 				<div id="elnHeadStatus" class="roundBox blue" data-status="ing">In Progress</div>
 				<div id="elnApprovalBadge" class="elnApprBadge"></div>
@@ -46,7 +46,7 @@
 			<!-- 헤더 우측: 이 과제의 연구노트 리스트(스테이지별) 토글 -->
 			<!-- 협업 도구: 참여자 아바타(작성자+공동편집자) · 공유 현황 칩 · Share 버튼 (eln_proto_simple.js ELN.coedit이 렌더) -->
 			<div class="elnHeadTools" id="elnHeadTools">
-				<a href="javascript:;" id="elnShareBtn" class="waves-effect waves-light hBtn hMocha" title="Share &amp; Access — who can view or edit this note"><i class="material-symbols-outlined left">share</i><span class="modalTabBadge noticeTabBadge elnShareCnt"></span></a>
+				<a href="javascript:;" id="elnShareBtn" class="waves-effect waves-light hBtn hMocha" title="Share &amp; Access: who can view or edit this note"><i class="material-symbols-outlined left">share</i><span class="modalTabBadge noticeTabBadge elnShareCnt"></span></a>
 			</div>
 			<a href="javascript:;" id="elnNoteListBtn" class="waves-effect waves-light hBtn hMocha elnHeadRight" title="Show research notes of this project"><i class="material-symbols-outlined left">edit_note</i><span class="label">Note List</span></a>
 		</section>
@@ -93,7 +93,7 @@
 						<label class="elnBasicLabel"><span class="essential">*</span>Note Title</label>
 						<div class="elnBasicTitle">
 							<div class="aniInput">
-								<input type="text" value="UV-Curable PSA Viscosity Improvement — RGBOLED" class="browser-default fontR font14" placeholder="Enter note title">
+								<input type="text" value="UV-Curable PSA Viscosity Improvement (RGBOLED)" class="browser-default fontR font14" placeholder="Enter note title">
 								<span class="focus-border"/>
 							</div>
 						</div>
@@ -107,7 +107,7 @@
 							<div class="elnPjChips" id="elnProjVal"></div>
 							<!-- 추가 = MAPIS 공통 부품: hBtn → 같은 자리에 aniInput + jQuery UI autocomplete(공통 .ui-autocomplete 스킨, 운영 TechLib Associated Project # 퀵서치와 동일 방식) -->
 							<a class="waves-effect waves-light hBtn elnPjAdd" id="elnProjAdd" href="javascript:;"><i class="material-symbols-outlined left">add</i><span class="label">Add Project</span></a>
-							<div class="aniInput elnPjSrch" id="elnProjSrchWrap" style="display:none;"><input type="text" class="browser-default fontR font14" id="elnProjSrch" placeholder="Search project # — e.g., SN-26-0001" autocomplete="off"><span class="focus-border"></span></div>
+							<div class="aniInput elnPjSrch" id="elnProjSrchWrap" style="display:none;"><input type="text" class="browser-default fontR font14" id="elnProjSrch" placeholder="Search project # (e.g., SN-26-0001)" autocomplete="off"><span class="focus-border"></span></div>
 						</div>
 					</div>
 					<!-- Schedule — Primary 프로젝트의 스케줄 위치(스테이지 → 태스크). apis_npdi_pop Detailed Schedule 태스크 참조. 프로젝트가 없으면 select 대신 안내문 -->
@@ -143,7 +143,7 @@
 								</select>
 							</div>
 							<div class="aniInput elnSchedField elnPlatName">
-								<input type="text" id="elnPlatformName" class="browser-default fontR font14" value="UV-Curable Adhesives" placeholder="Name — e.g., UV-Curable Adhesives" autocomplete="off">
+								<input type="text" id="elnPlatformName" class="browser-default fontR font14" value="UV-Curable Adhesives" placeholder="Name (e.g., UV-Curable Adhesives)" autocomplete="off">
 								<span class="focus-border"/>
 							</div>
 							<span class="elnHint">For work without a MAPIS project # (before NPC)</span>
@@ -189,7 +189,7 @@
 				</div>
 				<div class="elnBasic">
 					<!-- 본문은 연결된 배합들을 컬럼으로 나란히 비교 -->
-					<label class="elnBasicLabel">Composition <span class="elnHint">— wt% by formulation · click a material for Rawmathub</span></label>
+					<label class="elnBasicLabel">Composition <span class="elnHint">(wt% by formulation · click a material for Rawmathub)</span></label>
 					<div class="fixedTable hBorderTable hScroll elnFmlCmp">
 						<table>
 							<thead id="fmlCmpCompHead"><!-- JS 렌더: Material | Code | 배합별 컬럼 --></thead>
@@ -198,7 +198,7 @@
 					</div>
 
 					<!-- 분석 임베드 (formulator 분석을 노트 안에 그대로) · 배합별 나란히 비교 -->
-					<label class="elnBasicLabel">Analysis <span class="elnHint">— side-by-side metrics · read-only</span></label>
+					<label class="elnBasicLabel">Analysis <span class="elnHint">(side-by-side metrics · read-only)</span></label>
 					<div class="elnFmlAnalysis">
 						<div class="elnFmlChart"><div id="chartFmlAnalysis"></div></div>
 						<div class="elnFmlMetrics">
@@ -260,7 +260,7 @@
 					<label class="elnBasicLabel">Conclusion · Summary</label>
 					<div class="elnConcl">
 						<!-- Editor 모듈(wireEditorModule)과 동일 Summernote 패턴 — 미로드 시 contenteditable 폴백 -->
-						<div class="elnSummernote elnConclEditor">v3 reached 4,520 cP viscosity, passing all 3 specs — a clear improvement over the base polymer in <a class="elnNoteRef" data-code="NT-2604-00098" contenteditable="false" href="javascript:;">@NT-2604-00098</a>. Recommend transfer to mass-production validation (SN-26-0031). CoC issuance pending.</div>
+						<div class="elnSummernote elnConclEditor">v3 reached 4,520 cP viscosity, passing all 3 specs, a clear improvement over the base polymer in <a class="elnNoteRef" data-code="NT-2604-00098" contenteditable="false" href="javascript:;">@NT-2604-00098</a>. Recommend transfer to mass-production validation (SN-26-0031). CoC issuance pending.</div>
 					</div>
 				</div>
 			</section>
@@ -286,7 +286,7 @@
 								<label>User <select id="elnAuditUser" class="browser-default"></select></label>
 							</div>
 						</div>
-						<div class="fixedTable hBorderTable hScroll mg10">
+						<div class="fixedTable hBorderTable hScroll mg10 smallFont">
 							<table class="elnAuditTable">
 								<thead>
 									<tr><th>Date / Time</th><th>User</th><th>Section</th><th>Action</th><th>Change</th></tr>
