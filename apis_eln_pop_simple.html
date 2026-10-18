@@ -13,6 +13,7 @@
     <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/select2.min.css">
     <link rel="stylesheet" type="text/css" href="mapis_lib/css/common.css">
     <link type="text/css" rel="stylesheet" href="mapis_lib/css/lib/animate.min.css">
+    <link type="text/css" rel="stylesheet" href="mapis_lib/css/animapis.css">
     <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/sweetalert2.min.css">
 
     <link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
@@ -24,6 +25,7 @@
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/highcharts-12.3.0/highcharts.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/highcharts-12.3.0/highcharts-more.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/glass_engine.js"></script>
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/animapis.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/sweetalert2.all.min.js"></script>
 	<!-- Summernote(lite — Bootstrap 불필요). Editor 모듈에서 사용 -->
 	<link rel="stylesheet" type="text/css" href="mapis_lib/lib/summernote-0.9.0/summernote-lite.min.css">
@@ -43,12 +45,10 @@
 				<div id="elnHeadStatus" class="roundBox blue" data-status="ing">In Progress</div>
 				<div id="elnApprovalBadge" class="elnApprBadge"></div>
 			</div>
-			<!-- 헤더 우측: 이 과제의 연구노트 리스트(스테이지별) 토글 -->
 			<!-- 협업 도구: 참여자 아바타(작성자+공동편집자) · 공유 현황 칩 · Share 버튼 (eln_proto_simple.js ELN.coedit이 렌더) -->
 			<div class="elnHeadTools" id="elnHeadTools">
 				<a href="javascript:;" id="elnShareBtn" class="waves-effect waves-light hBtn hMocha" title="Share &amp; Access: who can view or edit this note"><i class="material-symbols-outlined left">share</i><span class="modalTabBadge noticeTabBadge elnShareCnt"></span></a>
 			</div>
-			<a href="javascript:;" id="elnNoteListBtn" class="waves-effect waves-light hBtn hMocha elnHeadRight" title="Show research notes of this project"><i class="material-symbols-outlined left">edit_note</i><span class="label">Note List</span></a>
 		</section>
 	</header>
 
@@ -99,32 +99,13 @@
 						</div>
 					</div>
 					<!-- status: Overview 드롭다운 제거 → 헤더 알약으로. category 제거. Author·Modified는 헤더 우측 상단 -->
-					<!-- Associated Project # (NPI, NPT) — MAPIS에서 프로젝트 번호 = NPI 번호. 칩 = 연결 프로젝트(Primary 1개, 항상 첫 칩). 칩 클릭 → 동작 메뉴. 칩·버튼은 JS(renderProjects)가 렌더 -->
-					<div class="elnBasicRow alignTop">
-						<!-- 도움말 아이콘: 운영 표준(snpi Confidential?·Target Date) — 우측 정렬 레이블은 글자 앞(leftTooltip), 툴팁은 위로 -->
-						<label class="elnBasicLabel"><i class="material-symbols-outlined tooltipped helpTooltip leftTooltip" data-position="top" data-html="true" data-tooltip="★ Primary sets the schedule (Stage / Task) and the Note List.<br>Linking a project does not grant access to this note.">help</i>Associated Project # (NPI, NPT, TS)</label>
-						<div class="elnPjBox">
-							<div class="elnPjChips" id="elnProjVal"></div>
-							<!-- 추가 = MAPIS 공통 부품: hBtn → 같은 자리에 aniInput + jQuery UI autocomplete(공통 .ui-autocomplete 스킨, 운영 TechLib Associated Project # 퀵서치와 동일 방식) -->
-							<a class="waves-effect waves-light hBtn elnPjAdd" id="elnProjAdd" href="javascript:;"><i class="material-symbols-outlined left">add</i><span class="label">Add Project</span></a>
-							<div class="aniInput elnPjSrch" id="elnProjSrchWrap" style="display:none;"><input type="text" class="browser-default fontR font14" id="elnProjSrch" placeholder="Search project # (e.g., SN-26-0001)" autocomplete="off"><span class="focus-border"></span></div>
-						</div>
-					</div>
-					<!-- Schedule — Primary 프로젝트의 스케줄 위치(스테이지 → 태스크). apis_npdi_pop Detailed Schedule 태스크 참조. 프로젝트가 없으면 select 대신 안내문 -->
-					<div class="elnBasicRow" id="elnSchedRow">
-						<label class="elnBasicLabel">Stage</label>
-						<div class="elnSchedSel" id="elnSchedSel">
-							<div class="elnSchedField stage"><select id="elnSchedStage"></select></div>
-							<div class="elnSchedField task"><select id="elnSchedTask"></select></div>
-						</div>
-						<span class="elnHint" id="elnSchedNoProj" style="display:none">Link a project to pick a stage</span>
-					</div>
+					<!-- 프로젝트 연결(NPI·NPT·TS)은 Related Items 모듈의 'Project' 항목으로 이동(2026-10-16). Primary·Stage 개념 제거 -->
 					<!-- Experiment Date — 실제 실험 수행일 -->
 					<div class="elnBasicRow">
 						<label class="elnBasicLabel">Experiment Date</label>
 						<div class="elnSchedSel">
 							<div class="aniInput elnHdrW190">
-								<input type="date" id="elnExpDate" class="browser-default fontR font14" value="2026-10-08">
+								<input type="text" id="elnExpDate" class="datepicker browser-default fontR font14" value="10-08-2026" placeholder="MM-DD-YYYY" autocomplete="off">
 								<span class="focus-border"/>
 							</div>
 							<span class="elnHint">Date the experiment was actually run</span>
@@ -305,17 +286,6 @@
 	<!-- 우측 패널 토글 손잡이 (패널과 분리된 독립 fixed 버튼 — 항상 화면에 노출) -->
 	<!-- 우측 패널 제거 — Tags·History는 Overview 카드 내부 collapsible로 이동 -->
 
-	<!-- Note List — 이 과제의 연구노트 리스트(스테이지별 그룹). 헤더 NoteList 버튼으로 우측에서 슬라이드 -->
-	<div id="elnNoteListScrim" class="elnNoteListScrim"></div>
-	<aside id="elnNoteListPanel" class="elnNoteList z-depth-2">
-		<div class="elnNoteListHead">
-			<div class="tit"><i class="material-symbols-outlined left">edit_note</i>Note List</div>
-			<button type="button" class="x" id="elnNoteListClose" aria-label="Close"><i class="material-symbols-outlined">close</i></button>
-		</div>
-		<div class="elnNoteListProj" id="elnNoteListProj" title="Open project detail">[SN-26-0031] RGBOLED Display Adhesive</div>
-		<div class="elnNoteListBody" id="elnNoteListBody"><!-- renderNoteList(): 스테이지 그룹 + 노트 아이템 --></div>
-	</aside>
-
 	<!-- Add Module 모달 — 시스템 Materialize 모달(apis_npdi_pop ProcessMap과 동일 패턴).
 	     글래스/오버레이/뒤배경 blur는 기본 .modal 규칙 + glass_engine.js가 처리. 그리드는 JS 렌더 -->
 	<div id="addModuleModal" class="modal hooModal">
@@ -347,7 +317,8 @@
 				$(el).summernote({
 					placeholder:'Write the conclusion of this note',
 					height:160,
-						hint:(window.ELN && ELN.noteHint) ? ELN.noteHint(el) : [],   // @ 로 다른 노트 참조
+						// [주석 처리 2026-10-16] 현업 요청으로 에디터 @노트 참조 제외
+						// hint:(window.ELN && ELN.noteHint) ? ELN.noteHint(el) : [],   // @ 로 다른 노트 참조
 					toolbar:[
 						['style', ['style']],
 						['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],

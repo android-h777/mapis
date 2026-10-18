@@ -25,6 +25,9 @@
 .animapis__slideInLeft { --ap-from: translateX(-100%); }
 .animapis__slideInRight{ --ap-from: translateX(100%); }
 .animapis__zoomIn      { --ap-op: 0; --ap-from: scale(.3);        --ap-blur: 3px; }
+/* slideInDown — animate.css slideInDown 과 같은 동작(자기 높이만큼 위에서 내려옴) */
+.animapis__slideInDown { animation-name: animapis-enter; --ap-from: translateY(-100%); }
+/* 펼치기·접기(jQuery slideDown/slideUp 대체)는 클래스가 아니라 JS 함수: animapis.slideDown(el) / animapis.slideUp(el) */
 
 @keyframes animapis-backInLeft{
 	0%  { opacity: .7; transform: translateX(-100%) scale(.72); }

@@ -8,6 +8,8 @@
  *   animapis.play('#box', 'flipInX').then(fn);   // 재생 후 완료 콜백
  *   animapis.play(els, 'fadeInLeft', { loop:true, duration:600, delay:100 });
  *   animapis.stop('#box');                        // 즉시 중단 + 클래스 정리
+ *   animapis.slideDown(panel).then(fn);            // jQuery slideDown 대체(높이가 늘며 아래 내용을 밀어냄)
+ *   animapis.slideUp(panel).then(fn);              // jQuery slideUp 대체(접은 뒤 display:none)
  *
  * target: CSS 셀렉터 / DOM 엘리먼트 / NodeList·배열 / jQuery 객체 모두 허용
  */
@@ -87,6 +89,39 @@
 		});
 	}
 
-	global.animapis = { play: play, stop: stop, PREFIX: PREFIX };
+	/* slideDown / slideUp — jQuery slideDown·slideUp 과 같은 동작(높이·위아래 여백이 0 ↔ 실제 크기로 변해 아래 내용을
+	   자연스럽게 밀고 당김). jQuery 는 매 프레임 JS 로 style 을 바꾸지만 여기선 브라우저 내장 Web Animations API 가 처리.
+	   options: duration(ms, 기본 260), easing, display(펼칠 때 display 값, 기본 '' = CSS 기본값). Promise 반환 */
+	function slideOne(el, open, options) {
+		return new Promise(function (resolve) {
+			if (open) el.style.display = options.display || '';
+			if (!el.animate) {                                    // 미지원 브라우저: 즉시 결과 상태로
+				if (!open) el.style.display = 'none';
+				resolve(el); return;
+			}
+			var cs = getComputedStyle(el), h = el.getBoundingClientRect().height;
+			var full = { height: h + 'px', paddingTop: cs.paddingTop, paddingBottom: cs.paddingBottom,
+				marginTop: cs.marginTop, marginBottom: cs.marginBottom, borderTopWidth: cs.borderTopWidth, borderBottomWidth: cs.borderBottomWidth, opacity: 1 };
+			var zero = { height: '0px', paddingTop: '0px', paddingBottom: '0px', marginTop: '0px', marginBottom: '0px', borderTopWidth: '0px', borderBottomWidth: '0px', opacity: 0 };
+			var prevOverflow = el.style.overflow, prevBox = el.style.boxSizing;
+			el.style.overflow = 'hidden'; el.style.boxSizing = 'border-box';   // 애니메이션 중 내용 잘림 + 높이에 패딩·테두리 포함
+			if (el._apSlide) el._apSlide.cancel();
+			var anim = el._apSlide = el.animate(open ? [zero, full] : [full, zero], {
+				duration: options.duration != null ? options.duration : 260,
+				easing: options.easing || 'cubic-bezier(.22, 1, .36, 1)'
+			});
+			anim.onfinish = function () {
+				el._apSlide = null;
+				el.style.overflow = prevOverflow; el.style.boxSizing = prevBox;
+				if (!open) el.style.display = 'none';
+				resolve(el);
+			};
+			anim.oncancel = function () { el.style.overflow = prevOverflow; el.style.boxSizing = prevBox; };
+		});
+	}
+	function slideDown(target, options) { options = options || {}; return Promise.all(toElements(target).map(function (el) { return slideOne(el, true, options); })); }
+	function slideUp(target, options) { options = options || {}; return Promise.all(toElements(target).map(function (el) { return slideOne(el, false, options); })); }
+
+	global.animapis = { play: play, stop: stop, slideDown: slideDown, slideUp: slideUp, PREFIX: PREFIX };
 
 })(window);
