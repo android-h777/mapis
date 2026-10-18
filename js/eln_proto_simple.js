@@ -4413,6 +4413,512 @@
     }, 450);
   });
 
+  /* ══ 요구 15 — AI 번역 보기(view only) · 요구 14 — Export PDF ══════════════════════════════
+     운영 근거: 번역 = TechLibTranslationService(Azure OpenAI), PDF = TechLibTransPdfBuilder(Java). 프로토타입은 둘 다 목업.
+     · 번역은 화면 보기 전용 — 값은 저장·감사로그 대상 아님(원문만 공식 기록). 번역 중엔 노트 읽기전용, 원문 복귀 시 값·잠금을 정확히 되돌림
+     · PDF 는 항상 원문으로 생성(번역 중이면 먼저 원문으로 복귀) → 새 창 인쇄용 미리보기 + window.print()(사용자가 'Save as PDF') */
+
+  // 데모 노트 Editor 본문 시드 — 기본 배치의 Editor 모듈은 비어 있어 번역·PDF 시연용 실험 기록을 채움(데모 노트 첫 진입만, 감사로그 없음)
+  var DEMO_EDITOR_HTML = '<p><b>Objective</b></p>'
+    + '<p>Bring the viscosity of the UV-curable PSA into the 4,200 to 4,800 cP target window without losing cure rate or optical clarity.</p>'
+    + '<p><b>Procedure</b></p>'
+    + '<ul><li>Raised the viscosity modifier from 2.5 to 4.0 wt% (v2 to v3).</li>'
+    + '<li>Mixed at 25 °C for 30 min, then degassed under vacuum (-0.09 MPa).</li>'
+    + '<li>Cured at 1,200 mJ/cm² and measured viscosity, cure rate and haze.</li></ul>'
+    + '<p><b>Observations</b></p>'
+    + '<p>v3 reached 4,520 cP and passed all three specs. Slight yellowing was seen at the coating edge, so repeat with batch 2 before review.</p>';
+  window.addEventListener('load', function () {
+    setTimeout(function () {
+      var q = null; try { q = new URLSearchParams(location.search); } catch (e) {}
+      if (!isDemoEntry() || (q && q.get('copyFrom'))) return;
+      var el = document.querySelector('#tab_ov > .cardBox[data-modtype="editor"] .elnSummernote'); if (!el) return;
+      if (soHasSn(el)) {
+        var ne = jQuery(el).next('.note-editor').find('.note-editable')[0];
+        if (ne && !(ne.textContent || '').trim()) { try { jQuery(el).summernote('code', DEMO_EDITOR_HTML); } catch (e2) {} }
+      } else if (!(el.textContent || '').trim()) el.innerHTML = DEMO_EDITOR_HTML;
+    }, 160);
+  });
+
+  /* ── 번역 목업 사전 — 데모 노트의 보이는 내용(제목·섹션명·Basic Data 자유입력·Editor·스티커·데이터 표). 실구현: Azure OpenAI 호출 결과 ── */
+  var TR_LANGS = [['en', 'English (Original)'], ['ko', 'Korean'], ['ja', 'Japanese'], ['zh', 'Chinese (Simplified)'], ['de', 'German'], ['es', 'Spanish']];
+  var TR_KEYS = [
+    'UV-Curable PSA Viscosity Improvement (RGBOLED)',
+    'Basic Data', 'Formulation', 'Editor', 'Data Visualization', 'ChemStudio', 'Related Items', 'Attachments', 'Conclusion',
+    'UV-Curable Adhesives', 'Lab Book #3, p.42', 'Add batch 2 viscosity results before review',
+    'Objective',
+    'Bring the viscosity of the UV-curable PSA into the 4,200 to 4,800 cP target window without losing cure rate or optical clarity.',
+    'Procedure',
+    'Raised the viscosity modifier from 2.5 to 4.0 wt% (v2 to v3).',
+    'Mixed at 25 °C for 30 min, then degassed under vacuum (-0.09 MPa).',
+    'Cured at 1,200 mJ/cm² and measured viscosity, cure rate and haze.',
+    'Observations',
+    'v3 reached 4,520 cP and passed all three specs. Slight yellowing was seen at the coating edge, so repeat with batch 2 before review.',
+    'Category', 'Sample A', 'Sample B'
+  ];
+  var TR_DICT = {
+    ko: ['UV 경화형 PSA 점도 개선 (RGBOLED)',
+      '기본 정보', '배합', '에디터', '데이터 시각화', 'ChemStudio', '관련 항목', '첨부 파일', '결론',
+      'UV 경화형 접착제', '실험 노트 #3, 42쪽', '검토 전에 2차 배치 점도 결과 추가',
+      '목표',
+      '경화율과 광학 투명도를 유지하면서 UV 경화형 PSA의 점도를 목표 범위인 4,200~4,800 cP로 맞춘다.',
+      '실험 방법',
+      '점도 조절제를 2.5 wt%에서 4.0 wt%로 늘렸다(v2에서 v3로).',
+      '25 °C에서 30분간 혼합한 뒤 진공(-0.09 MPa)에서 탈포했다.',
+      '1,200 mJ/cm²로 경화한 뒤 점도, 경화율, 헤이즈를 측정했다.',
+      '관찰 결과',
+      'v3는 4,520 cP에 도달해 세 가지 규격을 모두 통과했다. 코팅 가장자리에서 약간의 황변이 관찰되어, 검토 전에 2차 배치로 반복 실험한다.',
+      '구분', '시료 A', '시료 B'],
+    ja: ['UV硬化型PSAの粘度改善 (RGBOLED)',
+      '基本情報', '配合', 'エディター', 'データ可視化', 'ChemStudio', '関連項目', '添付ファイル', '結論',
+      'UV硬化型接着剤', 'ラボノート #3、42ページ', 'レビュー前にバッチ2の粘度結果を追加',
+      '目的',
+      '硬化率と光学的透明性を損なわずに、UV硬化型PSAの粘度を目標範囲の4,200～4,800 cPに収める。',
+      '手順',
+      '粘度調整剤を2.5 wt%から4.0 wt%に増量した（v2からv3へ）。',
+      '25 °Cで30分間混合し、真空（-0.09 MPa）で脱泡した。',
+      '1,200 mJ/cm²で硬化させ、粘度、硬化率、ヘイズを測定した。',
+      '観察結果',
+      'v3は4,520 cPに達し、3つの規格すべてに合格した。塗工端部にわずかな黄変が見られたため、レビュー前にバッチ2で再試験する。',
+      '区分', 'サンプルA', 'サンプルB'],
+    zh: ['UV固化型PSA粘度改进 (RGBOLED)',
+      '基本信息', '配方', '编辑器', '数据可视化', 'ChemStudio', '相关项目', '附件', '结论',
+      'UV固化胶粘剂', '实验记录本 #3，第42页', '评审前补充第2批次的粘度结果',
+      '目标',
+      '在不降低固化率和光学透明度的前提下，将UV固化型PSA的粘度控制在4,200～4,800 cP的目标范围内。',
+      '步骤',
+      '将粘度调节剂从2.5 wt%提高到4.0 wt%（v2至v3）。',
+      '在25 °C下混合30分钟，然后真空（-0.09 MPa）脱泡。',
+      '以1,200 mJ/cm²固化，并测量粘度、固化率和雾度。',
+      '观察结果',
+      'v3达到4,520 cP，三项规格全部合格。涂层边缘出现轻微黄变，评审前用第2批次重复试验。',
+      '类别', '样品A', '样品B'],
+    de: ['Viskositätsverbesserung des UV-härtenden PSA (RGBOLED)',
+      'Stammdaten', 'Formulierung', 'Editor', 'Datenvisualisierung', 'ChemStudio', 'Verknüpfte Elemente', 'Anhänge', 'Fazit',
+      'UV-härtende Klebstoffe', 'Laborbuch #3, S. 42', 'Viskositätsergebnisse von Charge 2 vor der Prüfung ergänzen',
+      'Ziel',
+      'Die Viskosität des UV-härtenden PSA in das Zielfenster von 4.200 bis 4.800 cP bringen, ohne Härtungsgrad oder optische Klarheit zu verlieren.',
+      'Vorgehen',
+      'Viskositätsmodifikator von 2,5 auf 4,0 Gew.-% erhöht (v2 auf v3).',
+      'Bei 25 °C 30 min gemischt, anschließend unter Vakuum (-0,09 MPa) entgast.',
+      'Mit 1.200 mJ/cm² gehärtet und Viskosität, Härtungsgrad und Trübung gemessen.',
+      'Beobachtungen',
+      'v3 erreichte 4.520 cP und erfüllte alle drei Spezifikationen. Am Beschichtungsrand zeigte sich eine leichte Vergilbung, daher vor der Prüfung mit Charge 2 wiederholen.',
+      'Kategorie', 'Probe A', 'Probe B'],
+    es: ['Mejora de la viscosidad del PSA curable por UV (RGBOLED)',
+      'Datos básicos', 'Formulación', 'Editor', 'Visualización de datos', 'ChemStudio', 'Elementos relacionados', 'Adjuntos', 'Conclusión',
+      'Adhesivos curables por UV', 'Cuaderno de laboratorio n.º 3, p. 42', 'Añadir los resultados de viscosidad del lote 2 antes de la revisión',
+      'Objetivo',
+      'Llevar la viscosidad del PSA curable por UV al rango objetivo de 4.200 a 4.800 cP sin perder grado de curado ni claridad óptica.',
+      'Procedimiento',
+      'Se aumentó el modificador de viscosidad de 2,5 a 4,0 % en peso (v2 a v3).',
+      'Se mezcló a 25 °C durante 30 min y luego se desgasificó al vacío (-0,09 MPa).',
+      'Se curó a 1.200 mJ/cm² y se midieron la viscosidad, el grado de curado y la turbidez.',
+      'Observaciones',
+      'v3 alcanzó 4.520 cP y cumplió las tres especificaciones. Se observó un leve amarilleo en el borde del recubrimiento, por lo que se repetirá con el lote 2 antes de la revisión.',
+      'Categoría', 'Muestra A', 'Muestra B']
+  };
+  var TR_ITEM = { ko: '항목 ', ja: '項目', zh: '项目', de: 'Position ', es: 'Elemento ' };   // 'Item N' 행 머리
+  var TR = { lang: 'en', pending: null, timer: null, saved: [], locked: [] };
+
+  function trName(lang) { for (var i = 0; i < TR_LANGS.length; i++) if (TR_LANGS[i][0] === lang) return TR_LANGS[i][1]; return lang; }
+  function trNorm(s) { return String(s == null ? '' : s).replace(/\s+/g, ' ').trim(); }
+  // 문장 단위 목업 번역 — 사전에 없으면 '[KO] 원문'(실서비스가 번역할 자리 표시). 숫자·기호만 있는 값은 그대로
+  function trText(s, lang) {
+    var k = trNorm(s);
+    if (!k || !/[A-Za-z]/.test(k)) return s;
+    var i = TR_KEYS.indexOf(k), out = i >= 0 ? TR_DICT[lang][i] : null;
+    if (out == null) { var m = /^Item (\d+)$/.exec(k); if (m) out = TR_ITEM[lang] + m[1]; }
+    if (out == null) out = '[' + lang.toUpperCase() + '] ' + k;
+    return /^\s*/.exec(s)[0] + out + /\s*$/.exec(s)[0];   // 앞뒤 공백 보존(인라인 텍스트 노드)
+  }
+  function trSetVal(el, prop, val) { TR.saved.push({ el: el, prop: prop, v: el[prop] }); el[prop] = val; }
+  function trTextNodes(root, lang) {
+    var w = document.createTreeWalker(root, NodeFilter.SHOW_TEXT, null), n, list = [];
+    while ((n = w.nextNode())) list.push(n);
+    list.forEach(function (t) { if (trNorm(t.nodeValue)) trSetVal(t, 'nodeValue', trText(t.nodeValue, lang)); });
+  }
+  function trApply(lang) {
+    var h = document.querySelector('.popup header .statusTit .tit');
+    if (h) { var m = /^(\[[^\]]+\]\s*)([\s\S]*)$/.exec(h.textContent); if (m) trSetVal(h, 'textContent', m[1] + trText(m[2], lang)); }
+    soCards().forEach(function (c) {
+      var t = c.querySelector('.cardTit2 .elnModTitle');
+      if (t && t.value.trim()) {
+        trSetVal(t, 'value', trText(t.value, lang));
+        var sp = document.querySelector('.leftAside .menuUl .menu-item[data-target="' + c.id + '"] span');
+        if (sp) trSetVal(sp, 'textContent', trText(sp.textContent, lang));
+      }
+      c.querySelectorAll('.note-editable, .elnSummernoteFallback, .elnPostitBody, .elnDataTable th, .elnDataTable td').forEach(function (el) { trTextNodes(el, lang); });
+    });
+    ['.elnBasicTitle input', '#elnPlatformName', '#elnPaperRef'].forEach(function (s) {
+      var el = document.querySelector(s); if (el && el.value.trim()) trSetVal(el, 'value', trText(el.value, lang));
+    });
+  }
+  // 번역 중 읽기전용 — 이미 잠긴 것(승인·결재 잠금)은 건드리지 않고, 이번에 잠근 것만 기록해 정확히 되돌림
+  function trLock(on) {
+    if (!on) {
+      TR.locked.reverse().forEach(function (x) {
+        if (x[1] === 'sn') { try { jQuery(x[0]).summernote('enable'); } catch (e) {} }
+        else if (x[1] === 'ce') x[0].setAttribute('contenteditable', 'true');
+        else x[0][x[1]] = false;
+      });
+      TR.locked = [];
+      return;
+    }
+    soCards().forEach(function (card) {
+      card.querySelectorAll('input, textarea').forEach(function (el) {
+        if (el.classList.contains('select-dropdown')) { if (!el.disabled) { el.disabled = true; TR.locked.push([el, 'disabled']); } return; }
+        if (!el.readOnly) { el.readOnly = true; TR.locked.push([el, 'readOnly']); }
+      });
+      card.querySelectorAll('select').forEach(function (el) { if (!el.disabled) { el.disabled = true; TR.locked.push([el, 'disabled']); } });
+      card.querySelectorAll('.elnSummernote').forEach(function (el) {
+        if (!soHasSn(el)) return;
+        var ne = jQuery(el).next('.note-editor').find('.note-editable')[0];
+        if (ne && ne.getAttribute('contenteditable') === 'true') { try { jQuery(el).summernote('disable'); } catch (e) {} TR.locked.push([el, 'sn']); }
+      });
+      card.querySelectorAll('[contenteditable="true"], [contenteditable=""]').forEach(function (el) { el.setAttribute('contenteditable', 'false'); TR.locked.push([el, 'ce']); });
+    });
+    if (document.activeElement && document.activeElement.closest && document.activeElement.closest('#tab_ov')) { try { document.activeElement.blur(); } catch (e2) {} }
+  }
+  function trBtnSync() {
+    var b = document.getElementById('elnTransBtn'); if (!b) return;
+    var on = TR.lang !== 'en' || !!TR.pending;
+    b.classList.toggle('elnTrOn', on);
+    b.title = on ? 'AI translated: ' + trName(TR.pending || TR.lang) + ' (click to change)' : 'Translate (AI): view this note in another language';
+  }
+  function trBanner(state, lang) {
+    var old = document.getElementById('elnTrBanner');
+    if (state === 'off') { if (old) old.remove(); return; }
+    var b = old || document.createElement('div');
+    b.id = 'elnTrBanner'; b.className = 'elnTrBanner';
+    if (state === 'loading') {
+      b.innerHTML = '<span class="elnTrLoading"><i class="material-symbols-outlined">auto_awesome</i>AI translating to ' + esc(trName(lang))
+        + '<span class="elnTrDot"></span><span class="elnTrDot"></span><span class="elnTrDot"></span></span>';
+    } else {
+      b.innerHTML = '<i class="material-symbols-outlined">translate</i><span class="txt">Translated to ' + esc(trName(lang)) + ' by AI. The original remains the official record. Editing is disabled while the translation is shown.</span>'
+        + '<a href="javascript:;" class="waves-effect waves-light hBtn hSmall elnTrOrig"><i class="material-symbols-outlined left">undo</i><span class="label">Show Original</span></a>';
+      b.querySelector('.elnTrOrig').addEventListener('click', function () { trSet('en'); });
+    }
+    if (!old) {
+      var cont = document.querySelector('.contArea'); if (!cont) return;
+      cont.insertBefore(b, cont.firstChild);
+      if (window.animapis && animapis.play) { try { animapis.play(b, 'fadeIn'); } catch (e) {} }
+    }
+  }
+  function trRestore() {
+    if (TR.timer) { clearTimeout(TR.timer); TR.timer = null; }
+    TR.pending = null;
+    for (var i = TR.saved.length - 1; i >= 0; i--) { var s = TR.saved[i]; s.el[s.prop] = s.v; }
+    TR.saved = [];
+    trLock(false);
+    document.body.classList.remove('elnTranslated', 'elnTranslating');
+    TR.lang = 'en';
+    trBanner('off'); trBtnSync();
+  }
+  // lang 전환: 원문(en)이면 즉시 복귀. 그 외는 'AI translating…' ~1초 후 적용(언어 바꿀 때도 원문으로 되돌린 뒤 적용 → 원문 기준 번역)
+  function trSet(lang, quiet) {
+    if (lang === (TR.pending || TR.lang)) return;
+    var was = TR.lang !== 'en' || !!TR.pending;
+    trRestore();
+    if (lang === 'en') { if (was && !quiet) ELN.toast('Showing the original (English).', 'info'); return; }
+    TR.pending = lang;
+    document.body.classList.add('elnTranslating');
+    trBanner('loading', lang); trBtnSync();
+    TR.timer = setTimeout(function () {
+      TR.timer = null; TR.pending = null;
+      document.body.classList.remove('elnTranslating');
+      trLock(true); trApply(lang);
+      TR.lang = lang;
+      document.body.classList.add('elnTranslated');
+      trBanner('done', lang); trBtnSync();
+      ELN.toast('Translated to ' + trName(lang) + ' (AI translation, view only).', 'ok');
+    }, 1100);
+  }
+  function trMenu(btn) {
+    var cur = TR.pending || TR.lang;
+    var menu = document.createElement('div'); menu.className = 'elnStatusMenu elnTrMenu';
+    var hd = document.createElement('div'); hd.className = 'elnTrMenuHd';
+    hd.innerHTML = '<i class="material-symbols-outlined">auto_awesome</i><span>AI Translation (View Only)</span>';
+    menu.appendChild(hd);
+    TR_LANGS.forEach(function (l) {
+      var it = document.createElement('div');
+      it.className = 'elnStatusMenuItem elnTrItem' + (l[0] === cur ? ' cur' : '');
+      it.innerHTML = '<span>' + esc(l[1]) + '</span>' + (l[0] === cur ? '<i class="material-symbols-outlined chk">check</i>' : '');
+      it.addEventListener('click', function () { ref.close(); trSet(l[0]); });
+      menu.appendChild(it);
+    });
+    var ref = ELN.popover({ anchor: btn, content: menu });
+  }
+  ELN.translate = { set: trSet, restore: trRestore, lang: function () { return TR.lang; } };
+  document.addEventListener('DOMContentLoaded', function () {
+    var b = document.getElementById('elnTransBtn');
+    if (b) b.addEventListener('click', function () { trMenu(b); });
+    trBtnSync();
+  });
+  // 번역 중 기록을 읽거나 바꾸는 동작(Export·Copy·Share·Save·결재 등) → 먼저 원문으로 복귀(캡처 단계라 각 버튼 핸들러보다 앞섬)
+  document.addEventListener('click', function (e) {
+    if (TR.lang === 'en' && !TR.pending) return;
+    var t = e.target && e.target.closest && e.target.closest('#elnExportPdf, #elnCopyTo, #elnSaveTemplate, #elnShareBtn, #elnSaveBtn, #elnAddModule, #card_approval [data-act], .elnAddEnd, .elnModDivider');
+    if (!t) return;
+    trSet('en', true);
+    ELN.toast('Switched back to the original. Translations are view only.', 'info');
+  }, true);
+  // 번역 중엔 섹션 우클릭 스티커 추가 막음(네이티브 메뉴 유지)
+  document.addEventListener('contextmenu', function (e) {
+    if (TR.lang === 'en' && !TR.pending) return;
+    if (e.target && e.target.closest && e.target.closest('#tab_ov')) e.stopPropagation();
+  }, true);
+  // 노트 전환 전에도 원문 복귀
+  window.addEventListener('load', function () {
+    if (typeof ELN.selectNote !== 'function') return;
+    var orig = ELN.selectNote;
+    ELN.selectNote = function () { trSet('en', true); return orig.apply(this, arguments); };
+  });
+
+  /* ── 요구 14: Export PDF — 좌측 버튼 → 옵션 모달(섹션·Audit Trail·첨부 목록) → 'Generating PDF…' → 새 창 인쇄용 미리보기 + print ──
+     실구현: 서버(TechLibTransPdfBuilder 계열)가 PDF 를 만들어 내려줌. 내보내기 허용 여부는 Legal/QA 확인 필요(계획서) */
+  ELN.pdfAutoPrint = true;   // 미리보기 창이 열리면 인쇄 대화상자를 바로 띄움(false = 미리보기만, 툴바의 Save as PDF 로)
+  function pdfTxt(el) {
+    if (!el) return '';
+    var c = el.cloneNode(true);
+    c.querySelectorAll('i.material-symbols-outlined, i.material-icons, .elnDtDel, button, input, select, script, style').forEach(function (n) { n.remove(); });
+    return c.textContent.replace(/\s+/g, ' ').trim();
+  }
+  function pdfTable(tbl) {
+    if (!tbl) return '';
+    var h = '';
+    tbl.querySelectorAll('tr').forEach(function (tr) {
+      var cells = Array.prototype.filter.call(tr.children, function (td) { return td.tagName === 'TD' || td.tagName === 'TH'; });
+      if (!cells.length) return;
+      h += '<tr>' + cells.map(function (td) {
+        var tag = td.tagName.toLowerCase(), v = pdfTxt(td);
+        var cls = /^[-+]?[\d,.]+\s*%?$/.test(v) ? ' class="r"' : (td.classList.contains('ac') ? ' class="c"' : '');
+        return '<' + tag + cls + (td.colSpan > 1 ? ' colspan="' + td.colSpan + '"' : '') + '>' + esc(v) + '</' + tag + '>';
+      }).join('') + '</tr>';
+    });
+    return h ? '<table class="grid">' + h + '</table>' : '';
+  }
+  function pdfRows(head, rows) {   // head: [..], rows: [[..]] → 표
+    if (!rows.length) return '<p class="muted">None.</p>';
+    return '<table class="grid"><tr>' + head.map(function (x) { return '<th>' + esc(x) + '</th>'; }).join('') + '</tr>'
+      + rows.map(function (r) { return '<tr>' + r.map(function (x) { return '<td>' + esc(x) + '</td>'; }).join('') + '</tr>'; }).join('') + '</table>';
+  }
+  function pdfKv(rows) {
+    return '<table class="kv">' + rows.map(function (r) { return '<tr><th>' + esc(r[0]) + '</th><td>' + esc(r[1] || '-') + '</td></tr>'; }).join('') + '</table>';
+  }
+  function pdfChart(box) {
+    if (!box || box.offsetParent === null) return '';
+    var svg = box.querySelector('svg.highcharts-root') || box.querySelector('svg');
+    return svg ? '<div class="chart">' + svg.outerHTML + '</div>' : '';
+  }
+  function pdfVal(sel) { var el = document.querySelector(sel); return el ? String(el.value || '').trim() : ''; }
+  function pdfBasic() {
+    var ps = document.getElementById('elnPlatform'), pt = ps && ps.value ? ps.options[ps.selectedIndex].text : '', pn = pdfVal('#elnPlatformName');
+    var tags = [].slice.call(document.querySelectorAll('#elnTags .elnTag')).map(function (t) { return t.getAttribute('data-tag') || pdfTxt(t); });
+    return pdfKv([['Note Title', pdfVal('.elnBasicTitle input')], ['Experiment Date', pdfVal('#elnExpDate')],
+      ['Platform / Pre-NPC', pt ? pt + (pn ? ': ' + pn : '') : 'Not specified'], ['Paper Notebook Ref', pdfVal('#elnPaperRef')], ['Tags', tags.join(', ')]]);
+  }
+  function pdfFml(card) {
+    var body = card.querySelector(':scope > .elnBasic'), h = '';
+    if (!body) return pdfTxt(card);
+    Array.prototype.forEach.call(body.children, function (el) {
+      if (el.matches('label.elnBasicLabel')) { var c = el.cloneNode(true); c.querySelectorAll('.elnHint').forEach(function (n) { n.remove(); }); h += '<h3>' + esc(c.textContent.trim()) + '</h3>'; }
+      else if (el.matches('.elnFmlAnalysis')) h += '<div class="two">' + pdfChart(el.querySelector('.elnFmlChart')) + '<div>' + pdfTable(el.querySelector('.elnFmlMetrics table')) + '</div></div>';
+      else if (el.matches('.elnMeta')) h += pdfKv([].slice.call(el.querySelectorAll('.elnMetaItem')).map(function (m) { return [pdfTxt(m.querySelector('.k')), pdfTxt(m.querySelector('.v'))]; }));
+      else if (el.matches('.elnResults')) h += '<div class="two"><div>' + pdfTable(el.querySelector('table')) + '</div>' + pdfChart(el.querySelector('.elnResultsChart')) + '</div>';
+      else if (el.querySelector('table') || el.tagName === 'TABLE') h += pdfTable(el.tagName === 'TABLE' ? el : el.querySelector('table'));
+    });
+    return h;
+  }
+  function pdfEditor(card) {
+    var ne = card.querySelector('.note-editable') || card.querySelector('.elnSummernote');
+    if (!ne) return '';
+    var c = ne.cloneNode(true);
+    c.querySelectorAll('script, style, iframe, object, embed').forEach(function (n) { n.remove(); });
+    c.querySelectorAll('*').forEach(function (n) {
+      [].slice.call(n.attributes).forEach(function (a) { if (/^on/i.test(a.name) || a.name === 'contenteditable') n.removeAttribute(a.name); });
+    });
+    return (c.textContent || '').trim() || c.querySelector('img') ? '<div class="rt">' + c.innerHTML + '</div>' : '<p class="muted">No content.</p>';
+  }
+  function pdfSection(card) {
+    if (card.id === 'card_basic') return pdfBasic();
+    if (card.id === 'card_fml') return pdfFml(card);
+    var t = card.getAttribute('data-modtype');
+    if (t === 'editor') return pdfEditor(card);
+    if (t === 'table') return pdfChart(card.querySelector('.elnDataChart')) + pdfTable(card.querySelector('.elnDataTable'));
+    if (t === 'chem') {
+      return pdfRows(['Structure', 'Formula', 'CAS No.'], [].slice.call(card.querySelectorAll('.elnChemItem')).map(function (li) {
+        var d = li._chemData || {}; return [d.name || pdfTxt(li.querySelector('.elnChemName2')), d.formula || '', d.cas || ''];
+      }));
+    }
+    if (t === 'related') {
+      return pdfRows(['Type', 'Item'], [].slice.call(card.querySelectorAll('.elnRelItem')).map(function (li) {
+        return [pdfTxt(li.querySelector('.elnRelType')), pdfTxt(li.querySelector('.elnRelLink')) || pdfTxt(li)];
+      }));
+    }
+    var c = card.cloneNode(true); var tt = c.querySelector('.cardTit2'); if (tt) tt.remove();
+    var txt = pdfTxt(c);
+    return txt ? '<p>' + esc(txt) + '</p>' : '<p class="muted">No content.</p>';
+  }
+  function pdfExtras(card) {   // 섹션에 붙은 Errata · 스티커
+    var h = '';
+    card.querySelectorAll('.elnErrata').forEach(function (b) {
+      h += '<div class="errata"><b>' + esc(pdfTxt(b.querySelector('.elnErrataHead .roundBox'))) + '</b> <span class="muted">' + esc(pdfTxt(b.querySelector('.elnErrataMeta'))) + '</span>'
+        + '<div>' + esc(pdfTxt(b.querySelector('.elnErrataBody'))) + '</div><div class="muted">' + esc(pdfTxt(b.querySelector('.elnErrataReason'))) + '</div></div>';
+    });
+    card.querySelectorAll('.elnPostit').forEach(function (p) {
+      var txt = pdfTxt(p.querySelector('.elnPostitBody')); if (!txt) return;
+      h += '<div class="sticky"><b>Sticky Note</b> <span class="muted">' + esc(pdfTxt(p.querySelector('.elnPostitWho'))) + '</span><div>' + esc(txt) + '</div></div>';
+    });
+    return h;
+  }
+  function pdfAuditChange(e) {
+    var pre = e.field ? e.field + ': ' : '';
+    var hasB = e.before != null && e.before !== '', hasA = e.after != null && e.after !== '';
+    if (hasB && hasA) return pre + e.before + ' → ' + e.after + (e.detail ? ' (' + e.detail + ')' : '');
+    return pre + (e.detail || (hasA ? e.after : (hasB ? e.before + ' (removed)' : ''))) || '-';
+  }
+  function pdfAttachRows(cards) {
+    var rows = [];
+    cards.forEach(function (c) {
+      c.querySelectorAll('.elnAttachItem').forEach(function (li) {
+        var a = li._att;
+        if (a && a.vers && a.vers.length) { var v = a.vers[a.vers.length - 1]; rows.push([a.name, 'v' + v.v, v.by, toMdy(String(v.ts).slice(0, 10)), fmtFileSize(v.size)]); }
+        else rows.push([pdfTxt(li.querySelector('.nm')) || pdfTxt(li), '-', '-', '-', 'Link']);
+      });
+    });
+    return rows;
+  }
+  function pdfDoc(o) {
+    var src = cloneSource(), all = soCards(), ent = ELN.audit.entries();
+    var created = ent.filter(function (e) { return e.action === 'Note created'; }).map(function (e) { return e.ts; }).sort()[0] || '';
+    var modified = ent.map(function (e) { return e.ts; }).sort().pop() || '';
+    var st = document.getElementById('elnHeadStatus');
+    var base = location.href.replace(/[^\/]*$/, '');
+    var foot = 'Exported by ' + ELN.currentUser + ' on ' + toMdy(o.stamp) + ' · Not a controlled copy';
+    var h = '';
+    h += '<header class="dochd"><img src="' + esc(base + 'img/MAPISLogo-25.png') + '" alt="MAPIS"><span>Electronic Lab Notebook · Reference Copy</span></header>';
+    h += '<h1>' + esc('[' + src.code + '] ' + src.title) + '</h1>';
+    h += '<table class="meta"><tr><th>Status</th><td>' + esc(st ? st.textContent.trim() : '') + '</td><th>Author</th><td>' + esc(ELN.currentUser) + '</td></tr>'
+      + '<tr><th>Created</th><td>' + esc(toMdy(created) || '-') + '</td><th>Last Modified</th><td>' + esc(toMdy(modified) || '-') + '</td></tr>'
+      + '<tr><th>Experiment Date</th><td>' + esc(pdfVal('#elnExpDate') || '-') + '</td><th>Co-Signers</th><td>' + esc(SO.cosigners.map(function (c) { return c.name + ' (' + c.role + ')'; }).join(', ') || '-') + '</td></tr></table>';
+    var n = 0;
+    all.forEach(function (c) {
+      if (o.ids.indexOf(c.id) < 0) return;
+      h += '<section class="sec"><h2><span class="no">' + (++n) + '</span>' + esc(sectionNameOf(c)) + '</h2>' + pdfSection(c) + pdfExtras(c) + '</section>';
+    });
+    if (SO.subs.length) {
+      var srows = [];
+      SO.subs.forEach(function (s) { s.rows.forEach(function (r) {
+        srows.push([s.names.join(', '), r.role, r.name, (SO_ST[r.status] || SO_ST.pending)[1], r.comment || '', r.signed && (r.status === 'approved' || r.status === 'notapproved') ? toMdy(r.signed) : '-']);
+      }); });
+      h += '<section class="sec"><h2><span class="no">' + (++n) + '</span>Sign-Off</h2>' + pdfRows(['Sections', 'Role', 'Co-Signer', 'Decision', 'Comment', 'Date'], srows) + '</section>';
+    }
+    if (o.att) h += '<section class="sec"><h2><span class="no">' + (++n) + '</span>Attachments List</h2><p class="muted">File names and current versions only. Files are kept in MAPIS and are not embedded in this PDF.</p>'
+      + pdfRows(['File', 'Version', 'Uploaded By', 'Date', 'Size'], pdfAttachRows(o.attCards)) + '</section>';
+    if (o.audit) {
+      var arows = ent.sort(function (a, b) { return a.ts < b.ts ? 1 : a.ts > b.ts ? -1 : 0; }).map(function (e) { return [toMdy(e.ts), e.user, e.section || '-', e.action, pdfAuditChange(e)]; });
+      h += '<section class="sec audit"><h2><span class="no">' + (++n) + '</span>Audit Trail</h2>' + pdfRows(['Date / Time', 'User', 'Section', 'Action', 'Change'], arows) + '</section>';
+    }
+    h += '<footer class="docft"><span>' + esc(foot) + '</span><span>[' + esc(src.code) + ']</span></footer>';
+    var css = '@font-face{font-family:"Roboto";src:url(' + base + 'mapis_lib/font/Roboto-Regular.woff2) format("woff2");font-weight:400;}'
+      + '@font-face{font-family:"Roboto";src:url(' + base + 'mapis_lib/font/Roboto-Medium.woff2) format("woff2");font-weight:600;}'
+      + '@page{size:A4;margin:16mm 14mm 18mm;@bottom-left{content:"' + foot.replace(/"/g, '') + '";font:8pt Roboto,Arial,sans-serif;color:#8a7b70;}@bottom-right{content:"Page " counter(page) " of " counter(pages);font:8pt Roboto,Arial,sans-serif;color:#8a7b70;}}'
+      + '*{box-sizing:border-box;}html{background:#e9e4de;}body{margin:0;font:10.5pt/1.5 Roboto,"Segoe UI",Arial,sans-serif;color:#2b211b;}'
+      + '.bar{position:sticky;top:0;z-index:5;display:flex;align-items:center;gap:10px;padding:10px 20px;background:#fff;box-shadow:0 1px 4px rgba(0,0,0,.12);font-size:13px;color:#5a3e30;}'
+      + '.bar b{flex:1;}.bar button{font:13px Roboto,Arial,sans-serif;border:1px solid rgba(164,120,100,.7);background:#fff;color:#A47864;border-radius:50px;padding:6px 16px;cursor:pointer;}'
+      + '.bar button.pri{background:#A47864;color:#fff;border-color:#A47864;}'
+      + '.sheet{position:relative;width:210mm;min-height:297mm;margin:20px auto;padding:16mm 14mm 14mm;background:#fff;box-shadow:0 2px 12px rgba(0,0,0,.15);overflow:hidden;}'
+      + '.wm{position:fixed;top:45%;left:50%;transform:translate(-50%,-50%) rotate(-30deg);font-size:54pt;font-weight:600;letter-spacing:4px;color:rgba(164,120,100,.07);white-space:nowrap;pointer-events:none;z-index:0;}'
+      + '.dochd{display:flex;align-items:center;justify-content:space-between;padding-bottom:8px;border-bottom:2px solid #A47864;}.dochd img{height:22px;}.dochd span{font-size:9pt;color:#8a7b70;}'
+      + 'h1{font-size:16pt;font-weight:600;margin:14px 0 10px;color:#2b211b;}'
+      + 'table{border-collapse:collapse;width:100%;}th,td{text-align:left;vertical-align:top;padding:4px 7px;}'
+      + '.meta{margin-bottom:14px;font-size:9.5pt;}.meta th{width:16%;color:#8a7b70;font-weight:400;background:#f7f3ef;border:1px solid #e6ddd3;}.meta td{width:34%;border:1px solid #e6ddd3;}'
+      + '.sec{position:relative;z-index:1;margin-top:16px;}.sec h2{display:flex;align-items:center;gap:8px;font-size:12.5pt;font-weight:600;color:#5a3e30;margin:0 0 8px;padding-bottom:4px;border-bottom:1px solid #e6ddd3;break-after:avoid;}'
+      + '.sec h2 .no{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;background:#A47864;color:#fff;font-size:9pt;}'
+      + 'h3{font-size:10.5pt;font-weight:600;color:#5a3e30;margin:12px 0 6px;break-after:avoid;}'
+      + '.kv th{width:28%;color:#8a7b70;font-weight:400;border-bottom:1px solid #f0e9e1;}.kv td{border-bottom:1px solid #f0e9e1;}'
+      + '.grid{font-size:9pt;margin:4px 0 8px;}.grid th{background:#f7f3ef;color:#5a3e30;font-weight:600;border:1px solid #e6ddd3;}.grid td{border:1px solid #e6ddd3;}.grid tr{break-inside:avoid;}'
+      + '.r{text-align:right;}.c{text-align:center;}.muted{color:#8a7b70;font-size:9pt;}'
+      + '.two{display:grid;grid-template-columns:1fr 1fr;gap:12px;align-items:start;}.chart{break-inside:avoid;}.chart svg{width:100%;height:auto;}'
+      + '.rt p{margin:0 0 6px;}.rt ul,.rt ol{margin:0 0 6px;padding-left:20px;}.rt img{max-width:100%;}'
+      + '.sticky{margin:8px 0;padding:6px 10px;background:#fff8d6;border:1px solid #efe1a0;border-radius:6px;font-size:9pt;break-inside:avoid;}'
+      + '.errata{margin:8px 0;padding:6px 10px;background:#faf6f2;border:1px solid #e6ddd3;border-radius:6px;font-size:9pt;break-inside:avoid;}'
+      + '.audit .grid{font-size:8pt;}.audit .grid td:first-child{white-space:nowrap;}'
+      + '.docft{display:flex;justify-content:space-between;margin-top:22px;padding-top:6px;border-top:1px solid #e6ddd3;font-size:8pt;color:#8a7b70;}'
+      + '@media print{html{background:#fff;}.bar{display:none;}.sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none;overflow:visible;}.docft{display:none;}}';
+    var title = src.code + '_' + src.title;
+    return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>' + esc(title) + '</title><style>' + css + '</style></head><body>'
+      + '<div class="bar"><b>PDF Preview · ' + esc('[' + src.code + '] ' + src.title) + '</b><button type="button" onclick="window.close()">Close</button><button type="button" class="pri" onclick="window.print()">Save as PDF</button></div>'
+      + '<div class="sheet"><div class="wm">NOT A CONTROLLED COPY</div>' + h + '</div>'
+      + (o.autoPrint ? '<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},400);});<\/script>' : '')
+      + '</body></html>';
+  }
+  function pdfWrite(w, html) { w.document.open(); w.document.write(html); w.document.close(); }
+  function pdfLoadingHtml() {
+    return '<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Generating PDF…</title><style>body{margin:0;height:100vh;display:flex;align-items:center;justify-content:center;background:#e9e4de;font:14px Roboto,"Segoe UI",Arial,sans-serif;color:#5a3e30;}'
+      + '.sp{width:18px;height:18px;margin-right:10px;border:2px solid rgba(164,120,100,.3);border-top-color:#A47864;border-radius:50%;animation:s .8s linear infinite;}@keyframes s{to{transform:rotate(360deg);}}</style></head>'
+      + '<body><div class="sp"></div>Generating PDF…</body></html>';
+  }
+  function openPdfModal() {
+    var src = cloneSource(), cards = soCards();
+    var secCards = cards.filter(function (c) { return c.getAttribute('data-modtype') !== 'attach'; });
+    var attCards = cards.filter(function (c) { return c.getAttribute('data-modtype') === 'attach'; });
+    var stamp = ELN.audit.now();
+    var st = document.getElementById('elnHeadStatus');
+    var body = document.createElement('div'); body.className = 'elnCloneBody';
+    body.innerHTML = '<div class="elnCloneSrc"><i class="material-symbols-outlined">picture_as_pdf</i><span><b>' + esc('[' + src.code + '] ' + src.title) + '</b> · ' + esc(st ? st.textContent.trim() : '') + '</span></div>'
+      + '<div class="elnReqLbl">Sections to Include</div>';
+    var pb = soPickBox(secCards.map(function (c) {
+      var basic = c.id === 'card_basic';
+      return { id: c.id, name: sectionNameOf(c), checked: true, disabled: basic, tag: basic ? 'Always Included' : '' };
+    }));
+    body.appendChild(pb.el);
+    var opts = document.createElement('div'); opts.className = 'elnPdfOpts';
+    opts.innerHTML = '<label><input type="checkbox" class="filled-in" id="elnPdfAudit"><span>Include Audit Trail</span></label>'
+      + '<div><label><input type="checkbox" class="filled-in" id="elnPdfAtt"' + (attCards.length ? ' checked' : ' disabled') + '><span>Include Attachments List</span></label>'
+      + '<span class="elnPdfHint">' + (attCards.length ? 'File names and versions only. Files are not embedded.' : 'This note has no Attachments section.') + '</span></div>';
+    body.appendChild(opts);
+    var info = document.createElement('div'); info.className = 'elnCloneInfo';
+    info.innerHTML = '<i class="material-symbols-outlined">verified_user</i><span>Every page carries the footer <b>"Exported by ' + esc(ELN.currentUser) + ' on ' + esc(toMdy(stamp)) + ' · Not a controlled copy"</b>. '
+      + 'The record in MAPIS remains the official version. This export is recorded in the Audit Trail.</span>';
+    body.appendChild(info);
+    var busy = false, m = null;
+    m = ELN.modal({ title: 'Export PDF', icon: 'picture_as_pdf', size: 'md', body: body, actions: [
+      { label: 'Cancel', type: '' },
+      { label: 'Export', icon: 'picture_as_pdf', type: 'hViva', onClick: function () {
+        if (busy) return true;
+        var ids = ['card_basic'].concat(pb.ids());
+        var audit = body.querySelector('#elnPdfAudit').checked, att = body.querySelector('#elnPdfAtt').checked;
+        busy = true;
+        var btns = m.body.querySelectorAll('.btnArea .hBtn'), go = btns[btns.length - 1];
+        btns.forEach(function (b) { b.classList.add('elnBusy'); });
+        go.innerHTML = '<i class="material-symbols-outlined left elnSpin">progress_activity</i><span class="label">Generating PDF…</span>';
+        // 팝업 차단 회피: 클릭 순간 창을 먼저 열고(생성 중 화면), 생성 후 내용 채움. 차단되면 숨은 iframe 으로 인쇄 대화상자
+        var w = null;
+        try { w = window.open('', 'elnPdf_' + Date.now(), 'width=1000,height=900,scrollbars=yes,resizable=yes'); } catch (e) { w = null; }
+        if (w) { try { pdfWrite(w, pdfLoadingHtml()); } catch (e2) {} }
+        setTimeout(function () {
+          var names = ids.map(function (id) { return sectionNameOf(document.getElementById(id)); });
+          var html = pdfDoc({ ids: ids, audit: audit, att: att, attCards: attCards, stamp: ELN.audit.now(), autoPrint: w ? ELN.pdfAutoPrint : true });
+          if (w && !w.closed) { pdfWrite(w, html); try { w.focus(); } catch (e3) {} }
+          else {
+            var fr = document.createElement('iframe'); fr.className = 'elnPdfFrame'; fr.setAttribute('aria-hidden', 'true');
+            document.body.appendChild(fr); pdfWrite(fr.contentWindow, html);
+            setTimeout(function () { fr.remove(); }, 60000);
+          }
+          ELN.audit.log({ section: 'Basic Data', action: 'PDF exported',
+            detail: 'Sections: ' + names.join(', ') + (audit ? ' · Audit Trail included' : '') + (att ? ' · Attachments list included' : '') });
+          m.close();
+          ELN.toast('PDF ready. Use Save as PDF in the print dialog.', 'ok');
+        }, 900);
+        return true;
+      } }
+    ] });
+  }
+  document.addEventListener('DOMContentLoaded', function () {
+    var b = document.getElementById('elnExportPdf'); if (b) b.addEventListener('click', openPdfModal);
+  });
+
   // [주석 처리 2026-10-16] 현업 요청으로 에디터 @노트 참조 제외 — 아래 블록 끝(IIFE 닫기 직전)까지 통째로 비활성.
   //  되살리려면 이 줄 아래의 '/*' 와 파일 끝의 '*/' 를 지우고, wireEditorModule·wireRelatedModule·apis_eln_pop_simple.html 의 Conclusion 에디터에 있는 [주석 처리] 줄도 되돌린다.
   /*

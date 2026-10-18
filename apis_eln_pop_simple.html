@@ -47,6 +47,8 @@
 			</div>
 			<!-- 협업 도구: 참여자 아바타(작성자+공동편집자) · 공유 현황 칩 · Share 버튼 (eln_proto_simple.js ELN.coedit이 렌더) -->
 			<div class="elnHeadTools" id="elnHeadTools">
+				<!-- 요구 15: AI 번역 보기(view only) — 언어 메뉴(ELN.popover) → 'AI translating…' → 번역 배너. eln_proto_simple.js trMenu/trSet -->
+				<a href="javascript:;" id="elnTransBtn" class="waves-effect waves-light hBtn hMocha hIco" title="Translate (AI): view this note in another language" aria-label="Translate"><i class="material-symbols-outlined">translate</i></a>
 				<a href="javascript:;" id="elnShareBtn" class="waves-effect waves-light hBtn hMocha" title="Share &amp; Access: who can view or edit this note"><i class="material-symbols-outlined left">share</i><span class="modalTabBadge noticeTabBadge elnShareCnt"></span></a>
 			</div>
 		</section>
@@ -76,6 +78,8 @@
 		<section class="btnArea">
 			<div><a href="javascript:;" id="elnCopyTo" class="waves-effect waves-light hBtn hViola" title="Create a new note from the current one (opens in a new window)"><i class="material-symbols-outlined left">file_copy</i><span class="label">Copy To</span></a></div>
 			<div><a href="javascript:;" id="elnSaveTemplate" class="waves-effect waves-light hBtn mt10" title="Save this note's section structure as a reusable template (no data)"><i class="material-symbols-outlined left">bookmark_add</i><span class="label">Save Template</span></a></div>
+			<!-- 요구 14: Export PDF — 옵션 모달 → 인쇄용 미리보기 새 창 + print(Save as PDF). 승인·잠금 노트에서도 사용 가능 -->
+			<div><a href="javascript:;" id="elnExportPdf" class="waves-effect waves-light hBtn mt10" title="Export this note as a PDF (reference copy, not a controlled copy)"><i class="material-symbols-outlined left">picture_as_pdf</i><span class="label">Export PDF</span></a></div>
 			<div><a href="javascript:;" id="elnAddModule" class="waves-effect waves-light hBtn hViva mt10"><i class="material-symbols-outlined left">add_box</i><span class="label">Add Module</span></a></div>
 			<div><a href="javascript:;" id="elnSaveBtn" class="waves-effect waves-light hBtn hBlue mt30"><i class="material-symbols-outlined left">save</i><span class="label">Save</span></a></div>
 		</section>

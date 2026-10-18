@@ -1559,6 +1559,45 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions,body.elnApprov
 .elnCloneInfo{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:8px;background:rgba(164,120,100,.07);color:#7a5240;font-size:12px;line-height:1.5;}
 .elnCloneInfo i{font-size:16px;color:#A47864;flex:0 0 auto;margin-top:1px;}
 
+/* ── 요구 14: Export PDF 모달(Copy To 모달 양식 재사용) + 생성 중 버튼 ── */
+.elnPdfOpts{display:flex;flex-direction:column;gap:8px;padding:10px 0;margin:12px 0 10px;border-top:1px solid #efe7db;border-bottom:1px solid #efe7db;}
+.elnPdfOpts label{color:#3a2c24;font-size:13px;}
+.elnPdfHint{font-size:12px;color:#9b8c7e;margin-left:8px;}
+@keyframes elnSpin{to{transform:rotate(360deg);}}
+.hBtn i.elnSpin{animation:elnSpin .9s linear infinite;}
+.hBtn.elnBusy{pointer-events:none;}
+.elnPdfFrame{position:fixed;right:0;bottom:0;width:0;height:0;border:0;visibility:hidden;}   /* 팝업 차단 시 인쇄용 숨은 iframe */
+
+/* ── 요구 15: AI 번역 보기 — techlib pop(mpm_common.css .rlTrans*·.tlAi*) 룩을 ELN 이름으로 이식(이 팝업은 mpm_common.css 미로드) ── */
+.popup header .titArea .elnHeadTools .hBtn.hIco{padding:0;width:38px;min-width:38px;justify-content:center;}
+.popup header .titArea .elnHeadTools .hBtn.hIco i{margin:0;font-size:22px;}
+.popup header .titArea .elnHeadTools .hBtn.hIco.elnTrOn{background:#5a7d9a;border-color:#5a7d9a;color:#fff;}   /* 번역 켜짐 = AI 블루 채움(techlib tlTransOn) */
+.popup header .titArea .elnHeadTools .hBtn.hIco.elnTrOn i{color:#fff;}
+.elnTrMenu{min-width:210px;}
+.elnTrMenuHd{display:flex;align-items:center;gap:6px;padding:9px 16px 7px;font-size:12px;color:#5a7d9a;border-bottom:1px solid var(--gray20);}
+.elnTrMenuHd i{font-size:15px;}
+.elnTrBanner{position:sticky;top:58px;z-index:20;display:flex;align-items:center;gap:8px;min-height:40px;margin:10px 0 0;padding:5px 8px 5px 12px;
+  font-size:13px;color:#5a7d9a;background:rgba(241,245,248,.96);border:1px dashed #c2d0db;border-radius:10px;backdrop-filter:blur(6px);}
+.elnTrBanner > i{font-size:16px;flex:0 0 auto;}
+.elnTrBanner .txt{flex:0 1 auto;}
+.elnTrBanner .hBtn{flex:0 0 auto;margin-left:6px;}   /* 문구 바로 뒤(우상단 토스트에 가리지 않게) */
+.elnTrLoading{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:#5a7d9a;line-height:normal;}
+.elnTrLoading > i{font-size:15px;animation:elnTrPulse 1.2s ease-in-out infinite;}
+.elnTrDot{width:4px;height:4px;border-radius:50%;background:#5a7d9a;animation:elnTrPulse 1.2s ease-in-out infinite;}
+.elnTrDot:nth-of-type(2){animation-delay:.2s;}
+.elnTrDot:nth-of-type(3){animation-delay:.4s;}
+@keyframes elnTrPulse{0%,100%{opacity:.25;}50%{opacity:1;}}
+body.elnTranslating #tab_ov{opacity:.45;pointer-events:none;transition:opacity .2s;}
+/* 번역 보기 = 읽기전용: 편집 도구 숨김(승인 view 규칙과 같은 대상). 값 잠금은 JS(trLock) */
+body.elnTranslated .elnModDel,body.elnTranslated .elnModDivider,body.elnTranslated .elnAddEnd,
+body.elnTranslated .elnTagAddRow,body.elnTranslated .elnTag i,body.elnTranslated .elnFmlToolbar,
+body.elnTranslated .elnAttachDrop,body.elnTranslated .elnAttachItem i.x,body.elnTranslated .elnChemAdd,body.elnTranslated .elnChemItemActions,
+body.elnTranslated .elnRelAdd,body.elnTranslated .elnRelHint,body.elnTranslated .elnRelDel,body.elnTranslated .elnPostitClose,
+body.elnTranslated .elnDataTableTools,body.elnTranslated .note-editor .note-toolbar,body.elnTranslated .note-editor .note-statusbar{display:none !important;}
+body.elnTranslated .elnTag{padding-right:11px;}
+body.elnTranslated .elnModTitle{pointer-events:none;}
+body.elnTranslated #tab_ov .note-editable{background:transparent;}
+
 /* ── @ 노트 참조: 본문 칩 · 자동완성 드롭다운 · 호버 요약 카드 ── */
 a.elnNoteRef,.note-editable a.elnNoteRef{display:inline-block;background:rgba(164,120,100,.14);color:#8a5a45;border-radius:6px;padding:0 7px;margin:0 1px;
   font-weight:600;font-size:.92em;line-height:1.5;text-decoration:none;cursor:pointer;white-space:nowrap;transition:background .12s;}
