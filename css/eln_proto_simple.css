@@ -695,6 +695,13 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnPostitCollapse i,.elnPostitClose i{font-size:15px;}
 .elnPostitBody{padding:7px 9px;min-height:46px;color:#5a4a1a;line-height:1.45;outline:none;word-break:break-word;}
 .elnPostitBody:empty::before{content:attr(data-ph);color:#c4b56a;}
+/* 크기 조절 손잡이(오른쪽 아래 대각선 줄무늬) — 잠금·승인·접힘·번역 보기에선 숨김 */
+.elnPostitBody{box-sizing:border-box;overflow:auto;}
+.elnPostitResize{position:absolute;right:1px;bottom:1px;width:12px;height:12px;cursor:nwse-resize;opacity:.55;
+  background:linear-gradient(135deg,transparent 0 45%,#b9a96a 45% 52%,transparent 52% 68%,#b9a96a 68% 75%,transparent 75%);}
+.elnPostit:hover .elnPostitResize,.elnPostit.resizing .elnPostitResize{opacity:1;}
+.elnPostit.resizing{user-select:none;}
+.elnPostit.collapsed .elnPostitResize,.cardBox.elnLocked .elnPostitResize,body.elnApproved .elnPostitResize,body.elnTranslated .elnPostitResize{display:none;}
 .elnPostit.collapsed{width:auto !important;}
 .elnPostit.collapsed .elnPostitBody{display:none;}
 .elnPostit.collapsed .elnPostitBar{border-bottom:0;}

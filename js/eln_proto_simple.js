@@ -2430,7 +2430,8 @@
       + '<span class="elnPostitWho" title="Visible to everyone with access to this section">' + esc(author) + ' · ' + time + '</span>'
       + '<a href="javascript:;" class="elnPostitCollapse" title="Collapse"><i class="material-symbols-outlined">expand_less</i></a>'
       + '<a href="javascript:;" class="elnPostitClose" title="Remove"><i class="material-symbols-outlined">close</i></a></div>'
-      + '<div class="elnPostitBody" contenteditable="true" data-ph="Note…"></div>';
+      + '<div class="elnPostitBody" contenteditable="true" data-ph="Note…"></div>'
+      + '<span class="elnPostitResize" title="Drag to resize"></span>';
     if (opts.text) p.querySelector('.elnPostitBody').textContent = opts.text;
     card.appendChild(p);
     p.querySelector('.elnPostitCollapse').addEventListener('click', function () {
@@ -2456,6 +2457,23 @@
         p.style.top = Math.max(2, Math.min(oy + (ev.clientY - sy), ch - ph - 2)) + 'px';
       }
       function up() { document.removeEventListener('mousemove', mv); document.removeEventListener('mouseup', up); }
+      document.addEventListener('mousemove', mv); document.addEventListener('mouseup', up);
+    });
+    // 크기 조절 — 오른쪽 아래 손잡이 드래그. 너비 160~480px, 본문 높이 46~360px, 섹션 밖으로 넘치지 않게.
+    //  운영: 위치(x, y)와 함께 크기(w, h)도 저장(이동처럼 감사 기록은 남기지 않음)
+    var body = p.querySelector('.elnPostitBody');
+    p.querySelector('.elnPostitResize').addEventListener('mousedown', function (e) {
+      if (postitFrozen() || p.classList.contains('collapsed')) return;
+      e.preventDefault(); e.stopPropagation();
+      var sx = e.clientX, sy = e.clientY, ow = p.offsetWidth, oh = body.offsetHeight;
+      var maxW = Math.min(480, card.clientWidth - (parseFloat(p.style.left) || 0) - 2);
+      var maxH = Math.min(360, card.clientHeight - (parseFloat(p.style.top) || 0) - (p.offsetHeight - oh) - 2);
+      p.classList.add('resizing');
+      function mv(ev) {
+        p.style.width = Math.max(160, Math.min(ow + (ev.clientX - sx), maxW)) + 'px';
+        body.style.height = Math.max(46, Math.min(oh + (ev.clientY - sy), maxH)) + 'px';
+      }
+      function up() { p.classList.remove('resizing'); document.removeEventListener('mousemove', mv); document.removeEventListener('mouseup', up); }
       document.addEventListener('mousemove', mv); document.addEventListener('mouseup', up);
     });
     if (opts.seed) return p;
