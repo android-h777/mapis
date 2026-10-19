@@ -673,7 +673,7 @@
 					paintReqBtns();
 					ELN.toast('Access request sent to ' + n.author + '.', 'ok');
 				} },
-				{ label: 'Cancel', type: '' }
+				{ label: 'Cancel', type: 'hGrey' }
 			]
 		});
 		setTimeout(function(){ ta.focus(); }, 80);
@@ -1105,7 +1105,7 @@
 					if(curNbKey === key){ var h = document.getElementById('nbName'); if(h) h.textContent = name; }
 					ELN.toast('Renamed to "' + name + '".', 'ok');
 				} },
-				{ label: 'Cancel', type: '' }
+				{ label: 'Cancel', type: 'hGrey' }
 			]
 		});
 		setTimeout(function(){ inp.focus(); inp.select(); }, 60);
@@ -1127,7 +1127,7 @@
 					if(curNbKey === key){ var all = document.querySelector('.elnNbItem.elnNbAll'); if(all) all.click(); }
 					else if(curNbKey === 'all' || curNbKey === 'unfiled'){ renderNotes(curNbKey); applyView(); }
 				} },
-				{ label: 'Cancel', type: '' }
+				{ label: 'Cancel', type: 'hGrey' }
 			]
 		});
 	}
@@ -1297,7 +1297,7 @@
 						var name = (inp.value || '').trim() || 'Untitled Notebook';
 						moveNoteToNotebook(note, addNotebook(name));
 					} },
-					{ label: 'Cancel', type: '' }
+					{ label: 'Cancel', type: 'hGrey' }
 				]
 			});
 			setTimeout(function(){ inp.focus(); }, 60);
@@ -1486,7 +1486,7 @@
 						var ni = document.querySelector('.elnNbItem[data-nb="' + key + '"]');
 						if(ni) ni.click(); // 새 노트북 자동 선택(위임 핸들러가 처리)
 					} },
-					{ label: 'Cancel', type: '' }
+					{ label: 'Cancel', type: 'hGrey' }
 				]
 			});
 			setTimeout(function(){ inp.focus(); }, 50);

@@ -74,7 +74,12 @@
     function close() { if (inst && inst.isOpen) inst.close(); }
     xbtn.addEventListener('click', close);
 
-    (opts.actions || [{ label: 'Close', type: '' }]).forEach(function (a) {
+    // 버튼 순서 = 운영 표준(common.html approvalModal 등): 실행 버튼 먼저, Cancel 은 마지막 + hGrey·close 아이콘
+    var acts = (opts.actions || [{ label: 'Close', type: '' }]).slice();
+    function isCancel(a) { return a && a.label === 'Cancel'; }
+    acts.sort(function (a, b) { return (isCancel(a) ? 1 : 0) - (isCancel(b) ? 1 : 0); });   // 안정 정렬 — 나머지 순서는 유지
+    acts.forEach(function (a) { if (isCancel(a)) { if (!a.type) a.type = 'hGrey'; if (!a.icon) a.icon = 'close'; } });
+    acts.forEach(function (a) {
       var b = document.createElement('a');
       b.href = 'javascript:;';
       b.className = 'waves-effect waves-light hBtn ml10 ' + (a.type || '');
@@ -4271,8 +4276,9 @@
         + '<div class="elnShHint" style="display:none;">Co-editors work on the whole note.</div>'
         + '<div class="elnShareSecs" style="display:none;"></div></div></div>'
         + '<div class="elnBasicRow"><div class="elnBasicLabel"></div><label class="elnShareOkRow"><input type="checkbox" class="filled-in elnShOk"><span>I have checked this complies with the company information security policy.</span></label></div>'
-        + '<div class="btnArea elnShFormBtns"><a href="javascript:;" class="waves-effect hBtn jsShCancel"><span class="label mr0">Cancel</span></a>'
-        + '<a href="javascript:;" class="waves-effect waves-light hBtn hViva jsShGo"><i class="material-symbols-outlined left">' + (edit ? 'check' : 'share') + '</i><span class="label">' + (edit ? 'Save' : 'Share') + '</span></a></div>';
+        + '<div class="btnArea elnShFormBtns">'   // 운영 표준 순서: 실행 먼저, Cancel(hGrey) 나중
+        + '<a href="javascript:;" class="waves-effect waves-light hBtn hViva jsShGo"><i class="material-symbols-outlined left">' + (edit ? 'check' : 'share') + '</i><span class="label">' + (edit ? 'Save' : 'Share') + '</span></a>'
+        + '<a href="javascript:;" class="waves-effect hBtn hGrey jsShCancel"><i class="material-symbols-outlined left">close</i><span class="label">Cancel</span></a></div>';
       host.appendChild(fv);
       host.style.display = ''; host.style.visibility = 'hidden';   // 폼 구성(select2 등)이 끝난 뒤 높이를 재서 펼치도록 — 아래 syncScope() 다음에 slideDown
       view.querySelector('.elnShAdd').style.display = 'none';   // 폼이 열려 있는 동안 Add People 숨김(같은 폼 중복 열기 방지)
