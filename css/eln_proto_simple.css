@@ -683,7 +683,7 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnPostitBody{padding:7px 9px;min-height:46px;color:#5a4a1a;line-height:1.45;outline:none;word-break:break-word;}
 .elnPostitBody:empty::before{content:attr(data-ph);color:#c4b56a;}
 /* 크기 조절 손잡이(오른쪽 아래 대각선 줄무늬) — 잠금·승인·접힘·번역 보기에선 숨김 */
-.elnPostitBody{box-sizing:border-box;overflow:auto;}
+.elnPostitBody{box-sizing:border-box;overflow:auto;min-height:60px;}   /* border-box 라 패딩 포함 60 = 예전 기본 크기(46 + 패딩 14) */
 .elnPostitResize{position:absolute;right:1px;bottom:1px;width:12px;height:12px;cursor:nwse-resize;opacity:.55;
   background:linear-gradient(135deg,transparent 0 45%,#b9a96a 45% 52%,transparent 52% 68%,#b9a96a 68% 75%,transparent 75%);}
 .elnPostit:hover .elnPostitResize,.elnPostit.resizing .elnPostitResize{opacity:1;}

@@ -2612,11 +2612,11 @@
       e.preventDefault(); e.stopPropagation();
       var sx = e.clientX, sy = e.clientY, ow = p.offsetWidth, oh = body.offsetHeight;
       var maxW = Math.min(480, card.clientWidth - (parseFloat(p.style.left) || 0) - 2);
-      var maxH = Math.min(360, card.clientHeight - (parseFloat(p.style.top) || 0) - (p.offsetHeight - oh) - 2);
+      var maxH = Math.max(oh, Math.min(360, card.clientHeight - (parseFloat(p.style.top) || 0) - (p.offsetHeight - oh) - 2));   // 카드 아래 끝 근처라도 현재 높이 밑으로 강제로 줄지 않게
       p.classList.add('resizing');
       function mv(ev) {
         p.style.width = Math.max(160, Math.min(ow + (ev.clientX - sx), maxW)) + 'px';
-        body.style.height = Math.max(46, Math.min(oh + (ev.clientY - sy), maxH)) + 'px';
+        body.style.height = Math.max(Math.min(60, oh), Math.min(oh + (ev.clientY - sy), maxH)) + 'px';   // 최소 = 기본 본문 높이(패딩 포함 60px)
       }
       function up() { p.classList.remove('resizing'); document.removeEventListener('mousemove', mv); document.removeEventListener('mouseup', up); }
       document.addEventListener('mousemove', mv); document.addEventListener('mouseup', up);
@@ -5068,7 +5068,7 @@
         var ids = ['card_basic'].concat(pb.ids());
         var audit = body.querySelector('#elnPdfAudit').checked, att = body.querySelector('#elnPdfAtt').checked;
         busy = true;
-        var btns = m.body.querySelectorAll('.btnArea .hBtn'), go = btns[btns.length - 1];
+        var btns = m.body.querySelectorAll('.btnArea .hBtn'), go = m.body.querySelector('.btnArea .hBtn.hViva');   // 실행 버튼은 클래스로(버튼 순서 표준화로 마지막 = Cancel)
         btns.forEach(function (b) { b.classList.add('elnBusy'); });
         go.innerHTML = '<i class="material-symbols-outlined left elnSpin">progress_activity</i><span class="label">Generating PDF…</span>';
         // 팝업 차단 회피: 클릭 순간 창을 먼저 열고(생성 중 화면), 생성 후 내용 채움. 차단되면 숨은 iframe 으로 인쇄 대화상자
