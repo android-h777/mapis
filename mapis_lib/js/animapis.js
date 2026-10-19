@@ -91,10 +91,18 @@
 
 	/* slideDown / slideUp — jQuery slideDown·slideUp 과 같은 동작(높이·위아래 여백이 0 ↔ 실제 크기로 변해 아래 내용을
 	   자연스럽게 밀고 당김). jQuery 는 매 프레임 JS 로 style 을 바꾸지만 여기선 브라우저 내장 Web Animations API 가 처리.
-	   options: duration(ms, 기본 260), easing, display(펼칠 때 display 값, 기본 '' = CSS 기본값). Promise 반환 */
+	   options: duration(ms, 기본 260), easing, display(펼칠 때 display 값. 생략하면 접기 전 인라인 display 복원, 없으면 '').
+	   Promise 반환. 진행 중에 다시 부르면 jQuery .stop() 처럼 이전 것을 끊음 — 끊긴 쪽 Promise 는 완료되지 않음(콜백 미실행),
+	   임시 스타일(overflow·box-sizing)은 항상 원래 값으로 복원 */
 	function slideOne(el, open, options) {
 		return new Promise(function (resolve) {
-			if (open) el.style.display = options.display || '';
+			if (el._apSlide) {                                   // 진행 중인 펼치기·접기를 먼저 끊고 임시 스타일을 동기로 복원(측정·저장 전에)
+				var prev = el._apSlide; el._apSlide = null;
+				prev.onfinish = null; prev.cancel();
+			}
+			if (el._apOrig) { el.style.overflow = el._apOrig.overflow; el.style.boxSizing = el._apOrig.boxSizing; el._apOrig = null; }
+			if (!open && el.style.display && el.style.display !== 'none') el._apDisplay = el.style.display;   // 접기 전 인라인 display 기억
+			if (open) el.style.display = options.display != null ? options.display : (el._apDisplay || '');
 			if (!el.animate) {                                    // 미지원 브라우저: 즉시 결과 상태로
 				if (!open) el.style.display = 'none';
 				resolve(el); return;
@@ -103,20 +111,18 @@
 			var full = { height: h + 'px', paddingTop: cs.paddingTop, paddingBottom: cs.paddingBottom,
 				marginTop: cs.marginTop, marginBottom: cs.marginBottom, borderTopWidth: cs.borderTopWidth, borderBottomWidth: cs.borderBottomWidth, opacity: 1 };
 			var zero = { height: '0px', paddingTop: '0px', paddingBottom: '0px', marginTop: '0px', marginBottom: '0px', borderTopWidth: '0px', borderBottomWidth: '0px', opacity: 0 };
-			var prevOverflow = el.style.overflow, prevBox = el.style.boxSizing;
+			el._apOrig = { overflow: el.style.overflow, boxSizing: el.style.boxSizing };
 			el.style.overflow = 'hidden'; el.style.boxSizing = 'border-box';   // 애니메이션 중 내용 잘림 + 높이에 패딩·테두리 포함
-			if (el._apSlide) el._apSlide.cancel();
 			var anim = el._apSlide = el.animate(open ? [zero, full] : [full, zero], {
 				duration: options.duration != null ? options.duration : 260,
 				easing: options.easing || 'cubic-bezier(.22, 1, .36, 1)'
 			});
 			anim.onfinish = function () {
 				el._apSlide = null;
-				el.style.overflow = prevOverflow; el.style.boxSizing = prevBox;
+				if (el._apOrig) { el.style.overflow = el._apOrig.overflow; el.style.boxSizing = el._apOrig.boxSizing; el._apOrig = null; }
 				if (!open) el.style.display = 'none';
 				resolve(el);
 			};
-			anim.oncancel = function () { el.style.overflow = prevOverflow; el.style.boxSizing = prevBox; };
 		});
 	}
 	function slideDown(target, options) { options = options || {}; return Promise.all(toElements(target).map(function (el) { return slideOne(el, true, options); })); }

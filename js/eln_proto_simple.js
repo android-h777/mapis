@@ -2977,7 +2977,7 @@
     var key = String(name).toLowerCase();
     return Array.prototype.filter.call(list.querySelectorAll('.elnAttachItem'), function (li) { return li._att && li._att.name.toLowerCase() === key; })[0] || null;
   }
-  function attFrozen(li) { return document.body.classList.contains('elnApproved') || !!li.closest('.elnLocked'); }
+  function attFrozen(li) { var b = document.body.classList; return b.contains('elnApproved') || b.contains('elnTranslated') || !!li.closest('.elnLocked'); }   // 번역 보기 중에도 읽기 전용
 
   // 데모 노트(NT-2605-00142) 첨부 시드 — 파일 서버에 이미 올라가 있는 파일들(목업). ATTACH_SEED 가 켜진 동안 만들어지는 Attachments 모듈에만
   var ATTACH_SEED = false;
@@ -3504,7 +3504,7 @@
       a.innerHTML = '<i class="material-symbols-outlined">close</i>'; a.style.display = 'none'; dtWrap.appendChild(a); return a;
     }
     var colDel = mkDel('Delete this series'), rowDel = mkDel('Delete this row'), colTgt = null, rowTgt = null;
-    function dtFrozen() { return !!box.closest('.elnLocked') || document.body.classList.contains('elnApproved'); }
+    function dtFrozen() { var b = document.body.classList; return !!box.closest('.elnLocked') || b.contains('elnApproved') || b.contains('elnTranslated'); }   // 번역 보기 중에도 읽기 전용
     function placeDel(btn, cell) {
       var wr = dtWrap.getBoundingClientRect(), r = cell.getBoundingClientRect();
       btn.style.display = '';
@@ -4077,16 +4077,25 @@
     /* ── Add / Edit = 같은 모달 안, 표 위로 펼치는 폼(중첩 모달 X). 저장하면 접히고 표가 갱신 ── */
     // animate=true 면 접히는 애니메이션 뒤 정리, then = 정리 후 실행(저장 후 표 갱신 등).
     // 애니메이션 = MAPIS 공용 animapis.slideDown/slideUp(높이 펼침·접기, 아래 표를 자연스럽게 밀고 당김)
+    // 접는 도중에 다른 Edit/Add 를 누르면 그 접기는 끊김(animapis 는 끊긴 쪽 완료를 부르지 않음) → 미뤄 둔 후속 작업(저장 후 표 갱신)은
+    //  다음 closeForm 이 대신 실행(pendingThen). closeSeq 로 끊긴 애니메이션의 늦은 정리를 막음
+    var closeSeq = 0, pendingThen = null;
     function closeForm(animate, then) {
-      var host = view.querySelector('.elnShForm'); if (!host) { if (then) then(); return; }
-      function cleanup() {
-        host.querySelectorAll('select').forEach(function (s) { if (jQuery(s).data('select2')) { try { jQuery(s).select2('destroy'); } catch (e) {} } });
-        host.innerHTML = ''; host.style.display = 'none';
-        var add = view.querySelector('.elnShAdd'); if (add) add.style.display = '';
+      var seq = ++closeSeq, carry = pendingThen; pendingThen = null;
+      var host = view.querySelector('.elnShForm');
+      function run() {
+        if (host) {
+          host.querySelectorAll('select').forEach(function (s) { if (jQuery(s).data('select2')) { try { jQuery(s).select2('destroy'); } catch (e) {} } });
+          host.innerHTML = ''; host.style.display = 'none';
+          var add = view.querySelector('.elnShAdd'); if (add) add.style.display = '';
+        }
+        if (carry) carry();
         if (then) then();
       }
-      if (animate && window.animapis && animapis.slideUp && host.style.display !== 'none') animapis.slideUp(host, { duration: 220 }).then(cleanup);
-      else cleanup();
+      if (host && animate && window.animapis && animapis.slideUp && host.style.display !== 'none') {
+        pendingThen = function () { if (carry) carry(); if (then) then(); };
+        animapis.slideUp(host, { duration: 220 }).then(function () { if (seq !== closeSeq) return; pendingThen = null; run(); });
+      } else run();
     }
     function showForm(p) {
       var edit = !!p;
