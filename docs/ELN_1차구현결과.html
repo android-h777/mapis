@@ -133,7 +133,7 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
 
   <tr class="grp"><td colspan="6">1단계 · 기록 신뢰성</td></tr>
   <tr data-tip="t1"><td class="no">1</td><td class="f">헤더 필드</td><td class="rq">헤더에 실험 날짜, Platform tech / Pre-NPC 선택(MAPIS NPC 번호가 없는 과제), 연관 NPI 번호(여러 개), 종이 노트·페이지 참조<span class="nice">Nice</span></td><td>Basic Data에 Experiment Date(MAPIS 표준 날짜 선택기, MM-DD-YYYY 표시), Platform / Pre-NPC, Paper Notebook Ref. 추가. NPI 번호(여러 개)는 Related Items의 Project 항목으로 연결</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">NPI 별도 칸은 만들지 않음(MAPIS에선 NPI 번호 = 프로젝트 코드). 프로젝트(NPI, NPT, TS 모두)는 Related Items에 Project 항목으로 여러 개 동등하게 연결. Primary 프로젝트, Basic Data의 Associated Project # 칸, Stage/Task 칸은 제거(2026-10-16 결정). Platform/Pre-NPC는 프로젝트와 공존 가능. 운영에 Platform·Pre-NPC 마스터 목록이 없어 유형(Platform Technology / Pre-NPC)만 고르고 이름은 입력, 다른 노트에서 쓴 이름은 자동완성으로 추천(사용자 결정). 날짜는 MAPIS 표준 MM-DD-YYYY로 표시. 종이 노트 참조는 Nice였으나 구현 부담이 작아 포함.</td></tr>
-  <tr data-tip="t2"><td class="no">2</td><td class="f">Co-Signer 서명</td><td class="rq">작성자가 Co-Signer(서명자)를 직접 선택</td><td>작성자가 서명자 지정 → 섹션별/전체 제출 → 서명자가 Approved / Not Approved(코멘트 필수). 헤더 상태와 배지로 진행 표시</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">카드 이름은 "Sign-off"로 바꾸지 않고 기존 "Approval" 유지(사용자 혼동 방지). 서명 행 형식은 운영 결재 UI와 동일.</td></tr>
+  <tr data-tip="t2"><td class="no">2</td><td class="f">Co-Signer 서명</td><td class="rq">작성자가 Co-Signer(서명자)를 직접 선택</td><td>MAPIS 표준 결재 UI(FMEA와 같음). 작성자가 Add Row로 결재선(Type · Function · Assignee) 지정 → Initiate Approval: 제출할 섹션 선택 › 상신 의견 › 제출 → 현재 결재자가 Approved / Not Approved(의견 필수) › Submit. 결정 전에는 Withdraw Approval로 회수. 카드 상태 배지(Not Initiated / Pending / Approved / Rejected)와 헤더 배지로 진행 표시</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">카드 이름은 "Sign-off"로 바꾸지 않고 기존 "Approval" 유지(사용자 혼동 방지). 결재선 편집표 · 현황표 · 버튼은 운영 표준 결재(appr_util.js, FMEA 방식)와 같은 형식으로 통일(2026-10-19 결정). ELN 전용은 섹션 단위 제출 · 잠금, 반려 시 잠금 해제, 승인 후 Errata, "Approved n of m sections" 표시만.</td></tr>
   <tr data-tip="t3"><td class="no">3</td><td class="f">제출 후 잠금 · Errata</td><td class="rq">ELN 제출 후에도 섹션 추가와 Errata(정정) 가능</td><td>제출 섹션은 편집·삭제 모두 차단, 반려 시 해제, 전체 승인 시 노트 전체 읽기 전용. 승인 후에도 Errata(사유 필수) 추가 가능</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">리뷰에서 키보드·드래그·이미지 드롭으로 잠금을 우회하는 경로가 발견돼 보강. Errata는 승인 후에도 허용(원문 불변, 정정만 추가).</td></tr>
   <tr data-tip="t4"><td class="no">4</td><td class="f">Audit Trail</td><td class="rq">Audit Trail 기능</td><td>시각·사용자·섹션·동작·변경 전→후 표와 Section/User 필터. 헤더부터 에디터·표·첨부·결재까지 대부분의 변경을 기록</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">섹션 내부 변경(표·첨부·에디터 등)까지 기록하도록 범위 확장(사용자 요청). 노트 전환·복제 같은 프로그램 일괄 변경은 기록 제외.</td></tr>
 
@@ -162,6 +162,7 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <li>Change History의 제목과 필터를 한 줄로 배치</li>
   <li>Formulation 배합 선택 → <b>Link Formulations</b>: 하는 일(노트에 배합 연결, 2개 이상이면 비교 표시)에 맞게 이름 변경. 기본 범위는 이 노트에 연결된 프로젝트(Related Items의 Project 항목) 전체, All projects로 넓혀 검색 가능. 표에 배합 이름·Project # 표시 (운영 Formulator 데이터에 프로젝트 번호가 있다는 전제)</li>
   <li>Sticky note에 작성자·시각 표시. 볼 수 있는 사람 = 그 섹션을 볼 수 있는 사람(Share &amp; Access 범위 그대로, 메모별 별도 공유 없음). 메모는 섹션 밖으로 나가지 않음</li>
+  <li>Sticky note 크기 조절(2026-10-19): 메모 오른쪽 아래 손잡이를 끌어 너비 160~480px, 본문 높이 46~360px 안에서 조절, 섹션 밖으로는 커지지 않음. 접힘 · 잠금 · 승인 · 번역 보기에서는 손잡이 숨김. 이동과 같이 Audit 기록 없음. 운영에서는 위치(x, y)와 함께 크기(w, h)도 저장</li>
   <li>노트 상태 표기를 결재 상태 하나로 통일: 리스트·노트 헤더 모두 In Progress → In Approval → Approved (기존 리스트의 Success / Failed / On Hold, Done / In Review / Draft 표기 폐기)</li>
   <li>날짜 표시를 MAPIS 표준 MM-DD-YYYY로 통일(운영 형식 MM-dd-yyyy). Experiment Date는 표준 날짜 선택기 사용(전에는 PC 언어에 따라 형식이 달라짐)</li>
   <li>리스트 오른쪽 요약 패널을 MAPIS 표준 요약 형식으로 변경(Tech Library·Composition 리스트와 같음): 제목 링크, 라벨/값 행, 소제목(Related Projects · Modules · Tags), 상태는 색 글자, 패널 폭 확대</li>
@@ -191,6 +192,7 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <tr><td class="f">1. 프로젝트 연결</td><td>2026-10-16 결정: Primary 프로젝트 개념과 Basic Data의 Associated Project # (NPI, NPT, TS) 칸을 없앰. 프로젝트는 Related Items의 Project 항목으로만 연결</td><td class="cur">Related Items › Project: 프로젝트 번호나 이름으로 검색, [코드] 이름으로 표시, 클릭하면 프로젝트가 열림. 안내 "Linking a project does not grant access to this note." 데모 노트는 프로젝트 3개 연결</td></tr>
   <tr><td class="f">1. Stage / Task</td><td>2026-10-16 결정: Stage(Task) 칸 제거. Primary 프로젝트를 기준으로 하던 칸이라 함께 없앰</td><td class="cur">없음</td></tr>
   <tr><td class="f">1. 날짜 형식</td><td>2026-10-16 결정: 날짜는 MAPIS 표준 MM-DD-YYYY로 표시(운영 MM-dd-yyyy)</td><td class="cur">화면의 날짜 모두 MM-DD-YYYY. Experiment Date는 표준 날짜 선택기</td></tr>
+  <tr><td class="f">2. 결재 UI</td><td>2026-10-19 결정: 결재 UI를 MAPIS 표준 결재(FMEA 방식)로 통일, ELN 전용은 섹션 단위 제출·잠금·Errata만</td><td class="cur">Approval 카드: 상태 배지 + Add Row · Initiate Approval · Withdraw Approval, Approval Line 편집표(Type · Function · Assignee), Approval Status 현황표(Type · Function · Assignee · Status · Comments · Date · Submit, 제출마다 Submission 행에 섹션 목록)</td></tr>
   <tr><td class="f">6. 공유 입력 화면</td><td>2026-10-16 결정: 모달 위에 모달을 겹쳐 띄우지 않음(현업 요청)</td><td class="cur">Share &amp; Access 창 안에서 Add People(또는 행의 Edit 연필)을 누르면 접근 인원 표 위에 입력 폼이 펼쳐짐. 저장하면 폼이 접히고 표가 갱신됨</td></tr>
   <tr><td class="f">6. 공유 사유(Reason) 입력</td><td>2026-10-16 결정: Share 사유(Reason) 입력칸 제거. 원문은 "규정 준수 하에 공유"만 요구하고, 사유는 자체 해석으로 넣은 칸이었으며 화면 어디에도 쓰이지 않음</td><td class="cur">정보보호 규정 확인 체크만 필수(체크 전엔 Share · Save 비활성). Audit 기록 끝에 "Security policy acknowledged"</td></tr>
   <tr><td class="f">7. 리스트의 Copy To</td><td>2026-10-16 결정: 리스트 요약 패널의 Copy To 제거. 원문(Copy from)에 위치 지정이 없어 노트 팝업에만 둠</td><td class="cur">노트 팝업 Copy To: 섹션 선택 + Include entered data, 새 창에서 열림</td></tr>
@@ -265,20 +267,44 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <div class="tt-req">"Author chooses Co-Signers"</div>
   <div class="tt-cap">화면</div>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/02_approval_before.png" alt="Approval 카드, 작성자 화면, 제출 전"><span class="mk" style="left:27.1%;top:24.3%">①</span><span class="mk" style="left:46.8%;top:40.9%">②</span><span class="mk" style="left:62.7%;top:24.3%">③</span><span class="mk" style="left:32.8%;top:89.9%">④</span></div>
-    <figcaption><div class="lb">제출 전 (작성자 화면)</div><ol class="cl">
-      <li><b>①</b> View as Author / Co-Signer: 시연용 전환 탭(운영에서는 로그인 사용자에 따라 결정)</li>
-      <li><b>②</b> Co-Signers 칩(Jim Quan · Group Leader, Aishwarya Venkatakrishnan · Witness): 작성자가 직접 지정, × 로 제거</li>
-      <li><b>③</b> Add Co-Signer / Submit Sections(섹션 선택 제출) / Submit All(전체 제출)</li>
-      <li><b>④</b> Co-Signer Sign-Off Status 표: 아직 제출 전이라 "Nothing submitted yet"</li>
+    <div class="shot"><img src="img/eln/02_approval_before.png" alt="Approval 카드, 작성자 화면, 상신 전"><span class="mk" style="left:20.4%;top:15.4%">①</span><span class="mk" style="left:76.4%;top:15.4%">②</span><span class="mk" style="left:99.2%;top:15.4%">③</span><span class="mk" style="left:67.6%;top:32.4%">④</span><span class="mk" style="left:36.1%;top:50.4%">⑤</span><span class="mk" style="left:98.6%;top:79.0%">⑥</span></div>
+    <figcaption><div class="lb">상신 전 (작성자 화면)</div><ol class="cl">
+      <li><b>①</b> 카드 전체 상태 배지: Not Initiated(상신 전) › Pending › Approved / Rejected</li>
+      <li><b>②</b> Add Row: 결재선에 행 추가</li>
+      <li><b>③</b> Initiate Approval: 제출할 섹션 선택 › 상신 의견 › 제출</li>
+      <li><b>④</b> Demo: View as Author / Co-Signer: 시연용 전환 탭(운영에서는 로그인 사용자에 따라 결정)</li>
+      <li><b>⑤</b> 결재선 편집표: Type(Approval / Reference) · Function(Group Leader / Witness / Reviewer) · Assignee. 같은 담당자를 두 번 고르면 경고</li>
+      <li><b>⑥</b> 행에 마우스를 올리면 삭제 아이콘 표시, 확인 창 후 삭제</li>
+    </ol></figcaption>
+  </figure>
+  <div class="tt-pair">
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/02_approval_sections.png" alt="Initiate Approval 1단계, 섹션 선택"><span class="mk" style="left:4.0%;top:29.7%">①</span><span class="mk" style="left:73.0%;top:38.5%">②</span><span class="mk" style="left:61.8%;top:90.6%">③</span></div>
+      <figcaption><div class="lb">Initiate Approval 1단계: 섹션 선택 (ELN 전용)</div><ol class="cl"><li><b>①</b> Select all: 전부 고르면 노트 전체 제출</li><li><b>②</b> 이미 제출된 섹션은 Submitted로 표시되고 고를 수 없음</li><li><b>③</b> Next</li></ol></figcaption>
+    </figure>
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/02_approval_comment.png" alt="Initiate Approval 2단계, 상신 의견"><span class="mk" style="left:4.1%;top:58.4%">①</span><span class="mk" style="left:48.8%;top:84.2%">②</span></div>
+      <figcaption><div class="lb">2단계: 상신 의견</div><ol class="cl"><li><b>①</b> 의견 입력(선택, 500자까지). 위에 고른 섹션 목록 표시</li><li><b>②</b> Submit › 확인 창 › 제출. 고른 섹션은 잠김</li></ol></figcaption>
+    </figure>
+  </div>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/02_approval_initiated.png" alt="Approval 카드, 작성자 화면, 상신 후"><span class="mk" style="left:18.7%;top:7.5%">①</span><span class="mk" style="left:74.0%;top:2.9%">②</span><span class="mk" style="left:99.2%;top:7.5%">③</span><span class="mk" style="left:33.7%;top:71.3%">④</span><span class="mk" style="left:68.7%;top:78.0%">⑤</span></div>
+    <figcaption><div class="lb">상신 후 (작성자 화면, 2개 섹션 제출)</div><ol class="cl">
+      <li><b>①</b> 상태 배지 Pending</li>
+      <li><b>②</b> Initiate Approval: 아직 제출하지 않은 섹션을 이어서 제출 가능</li>
+      <li><b>③</b> Withdraw Approval: 결재자 결정 전 회수, 제출한 섹션 잠금 해제</li>
+      <li><b>④</b> Approval Status 표(Type · Function · Assignee · Status · Comments · Date · Submit): 제출마다 Submission 행(상태, Sections 목록)</li>
+      <li><b>⑤</b> Request 행: 작성자(Charles Kim)의 상신 의견과 날짜</li>
     </ol></figcaption>
   </figure>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/02_approval_cosigner.png" alt="Approval 카드, 서명자 화면"><span class="mk" style="left:37.1%;top:33.6%">①</span><span class="mk" style="left:35.9%;top:73.8%">②</span><span class="mk" style="left:87.9%;top:72.0%">③</span></div>
-    <figcaption><div class="lb">제출 후 (Co-Signer 화면)</div><ol class="cl">
-      <li><b>①</b> Jim Quan: Approved(초록), 코멘트 "Data verified.", 일시 기록 완료</li>
-      <li><b>②</b> Aishwarya: 아직 미결. Approved / Not Approved 선택, 코멘트 입력(Not Approved는 필수)</li>
-      <li><b>③</b> Submit: 서명자가 결정을 확정</li>
+    <div class="shot"><img src="img/eln/02_approval_cosigner.png" alt="Approval 카드, 서명자 화면"><span class="mk" style="left:86.9%;top:24.1%">①</span><span class="mk" style="left:39.9%;top:70.3%">②</span><span class="mk" style="left:38.5%;top:82.2%">③</span><span class="mk" style="left:78.5%;top:82.2%">④</span><span class="mk" style="left:90.6%;top:82.2%">⑤</span></div>
+    <figcaption><div class="lb">결재 중 (Co-Signer 화면, ?st=appr)</div><ol class="cl">
+      <li><b>①</b> Demo: View as Co-Signer 탭</li>
+      <li><b>②</b> Jim Quan: Approved, 의견 "Data verified.", 날짜 기록</li>
+      <li><b>③</b> 현재 결재자(Aishwarya) 행: Approved / Not Approved 선택</li>
+      <li><b>④</b> Comments 입력(Not Approved면 필수)</li>
+      <li><b>⑤</b> Submit: 결정 확정. Not Approved면 제출 섹션 잠금 해제, 전원 승인이면 섹션 승인</li>
     </ol></figcaption>
   </figure>
   <figure class="tt-fig">
@@ -287,15 +313,15 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   </figure>
   <div class="tt-cap">시연 순서</div>
   <ol class="tt-steps">
-    <li>주소 뒤에 <b>?st=appr</b>를 붙여 결재 중인 노트를 연다</li>
-    <li>Approval 카드에서 View as <b>Co-Signer</b> 탭으로 전환</li>
-    <li>미결 서명자 행에서 Approved(또는 Not Approved + 코멘트) 선택 › Submit</li>
-    <li>헤더 상태와 Awaiting 배지가 바뀌는 것 확인</li>
+    <li>Approval 카드에서 <b>Add Row</b>로 결재선 확인 · 수정</li>
+    <li><b>Initiate Approval</b> › 섹션 선택 › Next › 상신 의견 › Submit (결정 전에는 Withdraw Approval로 회수 가능)</li>
+    <li>Demo: View as <b>Co-Signer</b> 탭 › 현재 결재자 행에서 Approved(또는 Not Approved + 의견) › Submit</li>
+    <li>헤더 상태와 Awaiting 배지가 바뀌는 것 확인. 결재 중인 노트를 바로 보려면 주소 뒤에 <b>?st=appr</b></li>
   </ol>
   <div class="tt-cap">계획 대비 변경</div>
-  <ul class="tt-l"><li>카드 이름을 "Sign-off"로 바꾸지 않고 기존 <b>Approval</b> 유지</li></ul>
+  <ul class="tt-l"><li>카드 이름을 "Sign-off"로 바꾸지 않고 기존 <b>Approval</b> 유지</li><li>결재 UI를 MAPIS 표준 결재(FMEA 방식)로 통일(2026-10-19 결정). Co-Signer 칩, Add Co-Signer 창, Submit Sections / Submit All 버튼, Sections | Role | Co-Signer | Decision 표를 Add Row 결재선 편집표, Initiate Approval, Withdraw Approval, 표준 Approval Status 표로 교체. ELN 전용은 섹션 단위 제출 · 잠금, 반려 시 잠금 해제, 승인 후 Errata, "Approved n of m sections" 표시만 유지</li></ul>
   <div class="tt-cap">운영 구현 시 고려</div>
-  <ul class="tt-l"><li>기존 MAPIS 결재 기능과 같은 행 형태로 저장. 결재 모듈(TS09_APPR) 재사용 가능</li></ul>
+  <ul class="tt-l"><li>화면은 운영 표준 결재 카드(appr_util.js)와 같은 구조라 재사용 가능. 저장은 기존 MAPIS 결재 기능과 같은 행 형태(결재 모듈 TS09_APPR) + 제출별 섹션 목록(ELN 전용)</li></ul>
 </template>
 
 <template id="t3">
@@ -353,7 +379,7 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   </figure>
   <div class="tt-cap">기록 대상</div>
   <ul class="tt-l">
-    <li>헤더 필드, 태그, 섹션 추가/삭제/이름·아이콘·순서, 결재 제출/승인/반려, Errata, 공동편집자, 공유</li>
+    <li>헤더 필드, 태그, 섹션 추가/삭제/이름·아이콘·순서, 결재선 추가/삭제, 결재 제출/회수/승인/반려, Errata, 공동편집자, 공유</li>
     <li>에디터 본문(편집을 마칠 때 1건), 표·차트, 첨부, Related Items, ChemStudio 구조, 포스트잇</li>
   </ul>
   <div class="tt-cap">시연 순서</div>

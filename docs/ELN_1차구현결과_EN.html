@@ -133,7 +133,7 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
 
   <tr class="grp"><td colspan="6">Step 1 · Record reliability</td></tr>
   <tr data-tip="t1"><td class="no">1</td><td class="f">Header fields</td><td class="rq">Header fields for experiment date, a Platform tech / Pre-NPC option (work without a MAPIS NPC number), associated NPI number(s) (several), and paper notebook and page references<span class="nice">Nice</span></td><td>Experiment Date (MAPIS standard date picker, shown as MM-DD-YYYY), Platform / Pre-NPC and Paper Notebook Ref. added to Basic Data. NPI numbers (several) are linked as Project items in Related Items</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">No separate NPI field (in MAPIS, NPI number = project code). Projects (NPI, NPT and TS alike) are linked as Project items in Related Items, several per note, all equal. The Primary project, the Associated Project # field in Basic Data and the Stage/Task field were removed (decision of 2026-10-16). Platform/Pre-NPC can coexist with projects. Production has no master list for Platform or Pre-NPC, so the user picks only the type (Platform Technology / Pre-NPC) and types the name; names used in other notes are suggested by autocomplete (user decision). Dates are shown in the MAPIS standard MM-DD-YYYY. The paper notebook reference was Nice, but it was included because it is cheap to build.</td></tr>
-  <tr data-tip="t2"><td class="no">2</td><td class="f">Co-Signer sign-off</td><td class="rq">The author picks the Co-Signers (signers) directly</td><td>Author assigns signers → submits by section or all at once → signer chooses Approved / Not Approved (comment required). Progress shown by the header status and badges</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">The card keeps its existing name "Approval" instead of being renamed "Sign-off" (to avoid confusing users). The sign-off row format matches the production approval UI.</td></tr>
+  <tr data-tip="t2"><td class="no">2</td><td class="f">Co-Signer sign-off</td><td class="rq">The author picks the Co-Signers (signers) directly</td><td>MAPIS standard approval UI (same as FMEA). The author sets the approval line (Type · Function · Assignee) with Add Row → Initiate Approval: choose the sections to submit › request comment › submit → the current approver chooses Approved / Not Approved (comment required) › Submit. Before any decision, Withdraw Approval takes it back. Progress shown by the card status badge (Not Initiated / Pending / Approved / Rejected) and the header badges</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">The card keeps its existing name "Approval" instead of being renamed "Sign-off" (to avoid confusing users). The approval line editor, status table and buttons follow the production standard approval (appr_util.js, FMEA style) (decided 2026-10-19). ELN-specific parts are only per-section submission · lock, unlock on rejection, Errata after approval, and the "Approved n of m sections" badge.</td></tr>
   <tr data-tip="t3"><td class="no">3</td><td class="f">Lock after submission · Errata</td><td class="rq">Sections can still be added and Errata (corrections) made after ELN submission</td><td>Submitted sections block both editing and deletion; they unlock on rejection, and once fully approved the whole note is read-only. Errata (reason required) can still be added after approval</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">The review found ways to bypass the lock with the keyboard, dragging and image drops; these were closed. Errata are allowed even after approval (the original never changes, corrections are only added).</td></tr>
   <tr data-tip="t4"><td class="no">4</td><td class="f">Audit Trail</td><td class="rq">Audit Trail feature</td><td>Table of time · user · section · action · before→after, with Section/User filters. Records most changes, from the header to the editor, tables, attachments and approvals</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">Scope extended to changes inside sections (tables, attachments, editor, etc.) (user request). Bulk changes made by the program, such as switching notes or copying, are not recorded.</td></tr>
 
@@ -162,6 +162,7 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <li>The Change History title and filters placed on one line</li>
   <li>Formulation selection → <b>Link Formulations</b>: renamed to match what it does (links formulations to the note and shows a comparison when there are two or more). The default scope is all projects linked to this note (Project items in Related Items), and the search can be widened to All projects. The table shows the formulation name and Project # (assuming production Formulator data carries the project number)</li>
   <li>Sticky notes show the author and time. Who can see them = whoever can see that section (the Share &amp; Access scope as is, no separate sharing per sticky note). Sticky notes never leave their section</li>
+  <li>Sticky note resizing (2026-10-19): drag the handle at the bottom-right of a sticky note to resize it within 160-480 px wide and 46-360 px body height; it never grows past its section. The handle is hidden when the note is collapsed, locked, approved or in translation view. Like moving, resizing leaves no Audit entry. Production would store the size (w, h) together with the position (x, y)</li>
   <li>Note status unified into the single approval status: the list and the note header both show In Progress → In Approval → Approved (the old list labels Success / Failed / On Hold and Done / In Review / Draft are dropped)</li>
   <li>Dates shown in the MAPIS standard MM-DD-YYYY (production format MM-dd-yyyy). Experiment Date uses the standard date picker (before, the format changed with the PC language)</li>
   <li>The summary panel on the right of the list now uses the MAPIS standard summary layout (same as the Tech Library and Composition lists): title link, label/value rows, section headings (Related Projects · Modules · Tags), status as colored text, wider panel</li>
@@ -191,6 +192,7 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <tr><td class="f">1. Project links</td><td>Decided 2026-10-16: the Primary project concept and the Associated Project # (NPI, NPT, TS) field in Basic Data are removed. Projects are linked only as Project items in Related Items</td><td class="cur">Related Items › Project: search by project # or title, shown as [CODE] Title, a click opens the project. Hint "Linking a project does not grant access to this note." The demo note has 3 projects linked</td></tr>
   <tr><td class="f">1. Stage / Task</td><td>Decided 2026-10-16: the Stage (Task) field is removed. It was based on the Primary project, so it goes too</td><td class="cur">None</td></tr>
   <tr><td class="f">1. Date format</td><td>Decided 2026-10-16: dates are shown in the MAPIS standard MM-DD-YYYY (production MM-dd-yyyy)</td><td class="cur">All dates on screen are MM-DD-YYYY. Experiment Date uses the standard date picker</td></tr>
+  <tr><td class="f">2. Approval UI</td><td>Decided 2026-10-19: the approval UI is unified with the MAPIS standard approval (FMEA style); only per-section submission · lock · Errata stay ELN-specific</td><td class="cur">Approval card: status badge + Add Row · Initiate Approval · Withdraw Approval, Approval Line editor table (Type · Function · Assignee), Approval Status table (Type · Function · Assignee · Status · Comments · Date · Submit, one Submission row per submission with its sections)</td></tr>
   <tr><td class="f">6. Sharing input form</td><td>Decided 2026-10-16: no modal opened on top of another modal (business users' request)</td><td class="cur">In the Share &amp; Access window, Add People (or the Edit pencil on a row) expands an input form above the access table. Saving collapses the form and refreshes the table</td></tr>
   <tr><td class="f">6. Sharing Reason field</td><td>Decided 2026-10-16: the Share Reason field is removed. The original request only asks to "share under compliance"; the reason field was our own interpretation and was not shown anywhere</td><td class="cur">Only the security-policy acknowledgement is required (Share · Save stay disabled until it is ticked). Audit entries end with "Security policy acknowledged"</td></tr>
   <tr><td class="f">7. Copy To in the list</td><td>Decided 2026-10-16: Copy To in the list summary panel is removed. The original request (Copy from) names no location, so it stays only in the note pop-up</td><td class="cur">Note pop-up Copy To: choose sections + Include entered data, opens in a new window</td></tr>
@@ -265,20 +267,44 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <div class="tt-req">"Author chooses Co-Signers"</div>
   <div class="tt-cap">Screens</div>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/02_approval_before.png" alt="Approval card, author view, before submission"><span class="mk" style="left:27.1%;top:24.3%">①</span><span class="mk" style="left:46.8%;top:40.9%">②</span><span class="mk" style="left:62.7%;top:24.3%">③</span><span class="mk" style="left:32.8%;top:89.9%">④</span></div>
-    <figcaption><div class="lb">Before submission (author view)</div><ol class="cl">
-      <li><b>①</b> View as Author / Co-Signer: switch tabs for the demo only (in production this depends on the logged-in user)</li>
-      <li><b>②</b> Co-Signers chips (Jim Quan · Group Leader, Aishwarya Venkatakrishnan · Witness): assigned directly by the author, removed with ×</li>
-      <li><b>③</b> Add Co-Signer / Submit Sections (submit selected sections) / Submit All (submit everything)</li>
-      <li><b>④</b> Co-Signer Sign-Off Status table: shows "Nothing submitted yet" because nothing has been submitted yet</li>
+    <div class="shot"><img src="img/eln/02_approval_before.png" alt="Approval card, author view, before initiation"><span class="mk" style="left:20.4%;top:15.4%">①</span><span class="mk" style="left:76.4%;top:15.4%">②</span><span class="mk" style="left:99.2%;top:15.4%">③</span><span class="mk" style="left:67.6%;top:32.4%">④</span><span class="mk" style="left:36.1%;top:50.4%">⑤</span><span class="mk" style="left:98.6%;top:79.0%">⑥</span></div>
+    <figcaption><div class="lb">Before initiation (author view)</div><ol class="cl">
+      <li><b>①</b> Overall status badge of the card: Not Initiated (not yet started) › Pending › Approved / Rejected</li>
+      <li><b>②</b> Add Row: adds a row to the approval line</li>
+      <li><b>③</b> Initiate Approval: choose the sections to submit › request comment › submit</li>
+      <li><b>④</b> Demo: View as Author / Co-Signer: switch tabs for the demo only (in production this depends on the logged-in user)</li>
+      <li><b>⑤</b> Approval line editor table: Type (Approval / Reference) · Function (Group Leader / Witness / Reviewer) · Assignee. Picking the same assignee twice shows a warning</li>
+      <li><b>⑥</b> Hovering a row shows the delete icon; the row is deleted after a confirmation</li>
+    </ol></figcaption>
+  </figure>
+  <div class="tt-pair">
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/02_approval_sections.png" alt="Initiate Approval step 1, section selection"><span class="mk" style="left:4.0%;top:29.7%">①</span><span class="mk" style="left:73.0%;top:38.5%">②</span><span class="mk" style="left:61.8%;top:90.6%">③</span></div>
+      <figcaption><div class="lb">Initiate Approval step 1: choose sections (ELN-specific)</div><ol class="cl"><li><b>①</b> Select all: choosing everything submits the whole note</li><li><b>②</b> Sections already submitted are shown as Submitted and cannot be chosen</li><li><b>③</b> Next</li></ol></figcaption>
+    </figure>
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/02_approval_comment.png" alt="Initiate Approval step 2, request comment"><span class="mk" style="left:4.1%;top:58.4%">①</span><span class="mk" style="left:48.8%;top:84.2%">②</span></div>
+      <figcaption><div class="lb">Step 2: request comment</div><ol class="cl"><li><b>①</b> Comment (optional, up to 500 characters). The chosen sections are listed above it</li><li><b>②</b> Submit › confirmation › submitted. The chosen sections are locked</li></ol></figcaption>
+    </figure>
+  </div>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/02_approval_initiated.png" alt="Approval card, author view, after initiation"><span class="mk" style="left:18.7%;top:7.5%">①</span><span class="mk" style="left:74.0%;top:2.9%">②</span><span class="mk" style="left:99.2%;top:7.5%">③</span><span class="mk" style="left:33.7%;top:71.3%">④</span><span class="mk" style="left:68.7%;top:78.0%">⑤</span></div>
+    <figcaption><div class="lb">After initiation (author view, 2 sections submitted)</div><ol class="cl">
+      <li><b>①</b> Status badge Pending</li>
+      <li><b>②</b> Initiate Approval: sections not yet submitted can still be submitted</li>
+      <li><b>③</b> Withdraw Approval: takes the request back before any approver decides, and unlocks the submitted sections</li>
+      <li><b>④</b> Approval Status table (Type · Function · Assignee · Status · Comments · Date · Submit): one Submission row per submission (status, Sections list)</li>
+      <li><b>⑤</b> Request row: the author's (Charles Kim) request comment and date</li>
     </ol></figcaption>
   </figure>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/02_approval_cosigner.png" alt="Approval card, signer view"><span class="mk" style="left:37.1%;top:33.6%">①</span><span class="mk" style="left:35.9%;top:73.8%">②</span><span class="mk" style="left:87.9%;top:72.0%">③</span></div>
-    <figcaption><div class="lb">After submission (Co-Signer view)</div><ol class="cl">
-      <li><b>①</b> Jim Quan: Approved (green), comment "Data verified.", date and time recorded</li>
-      <li><b>②</b> Aishwarya: still pending. Choose Approved / Not Approved and enter a comment (required for Not Approved)</li>
-      <li><b>③</b> Submit: the signer confirms the decision</li>
+    <div class="shot"><img src="img/eln/02_approval_cosigner.png" alt="Approval card, signer view"><span class="mk" style="left:86.9%;top:24.1%">①</span><span class="mk" style="left:39.9%;top:70.3%">②</span><span class="mk" style="left:38.5%;top:82.2%">③</span><span class="mk" style="left:78.5%;top:82.2%">④</span><span class="mk" style="left:90.6%;top:82.2%">⑤</span></div>
+    <figcaption><div class="lb">In approval (Co-Signer view, ?st=appr)</div><ol class="cl">
+      <li><b>①</b> Demo: View as Co-Signer tab</li>
+      <li><b>②</b> Jim Quan: Approved, comment "Data verified.", date recorded</li>
+      <li><b>③</b> Current approver's (Aishwarya) row: choose Approved / Not Approved</li>
+      <li><b>④</b> Comments (required for Not Approved)</li>
+      <li><b>⑤</b> Submit: confirms the decision. Not Approved unlocks the submitted sections; when everyone approves, the sections are approved</li>
     </ol></figcaption>
   </figure>
   <figure class="tt-fig">
@@ -287,15 +313,15 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   </figure>
   <div class="tt-cap">Demo</div>
   <ol class="tt-steps">
-    <li>Add <b>?st=appr</b> to the end of the address to open a note in approval</li>
-    <li>In the Approval card, switch to the View as <b>Co-Signer</b> tab</li>
-    <li>On a pending signer row, choose Approved (or Not Approved + comment) › Submit</li>
-    <li>Check that the header status and the Awaiting badge change</li>
+    <li>In the Approval card, check or change the approval line with <b>Add Row</b></li>
+    <li><b>Initiate Approval</b> › choose sections › Next › request comment › Submit (before any decision, Withdraw Approval takes it back)</li>
+    <li>Demo: View as <b>Co-Signer</b> tab › on the current approver's row choose Approved (or Not Approved + comment) › Submit</li>
+    <li>Check that the header status and the Awaiting badge change. To open a note already in approval, add <b>?st=appr</b> to the end of the address</li>
   </ol>
   <div class="tt-cap">Changes from the plan</div>
-  <ul class="tt-l"><li>The card keeps its existing name <b>Approval</b> instead of being renamed "Sign-off"</li></ul>
+  <ul class="tt-l"><li>The card keeps its existing name <b>Approval</b> instead of being renamed "Sign-off"</li><li>The approval UI is unified with the MAPIS standard approval (FMEA style) (decided 2026-10-19). The Co-Signer chips, Add Co-Signer window, Submit Sections / Submit All buttons and the Sections | Role | Co-Signer | Decision table are replaced by the Add Row approval line editor, Initiate Approval, Withdraw Approval and the standard Approval Status table. Only per-section submission · lock, unlock on rejection, Errata after approval and the "Approved n of m sections" badge stay ELN-specific</li></ul>
   <div class="tt-cap">Production notes</div>
-  <ul class="tt-l"><li>Stored in the same row format as the existing MAPIS approval feature. The approval module (TS09_APPR) can be reused</li></ul>
+  <ul class="tt-l"><li>The screen has the same structure as the production standard approval card (appr_util.js), so it can be reused. Stored in the same row format as the existing MAPIS approval feature (approval module TS09_APPR) + the section list per submission (ELN-specific)</li></ul>
 </template>
 
 <template id="t3">
@@ -353,7 +379,7 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   </figure>
   <div class="tt-cap">What is recorded</div>
   <ul class="tt-l">
-    <li>Header fields, tags, adding/deleting sections and their name · icon · order, approval submission/approval/rejection, Errata, co-editors, sharing</li>
+    <li>Header fields, tags, adding/deleting sections and their name · icon · order, adding/removing approvers, approval submission/withdrawal/approval/rejection, Errata, co-editors, sharing</li>
     <li>Editor body (one entry when editing finishes), tables · charts, attachments, Related Items, ChemStudio structures, sticky notes</li>
   </ul>
   <div class="tt-cap">Demo</div>
