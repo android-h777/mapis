@@ -250,9 +250,12 @@
 				</div>
 			</section>
 
-			<!-- Approval — 공동서명(co-sign) 현황. 내용은 JS(ELN.signoff)가 #elnSignBody에 렌더 -->
+			<!-- Approval — MAPIS 표준 결재 카드(appr_util.js renderApprovalCard: 헤더 cardTit2 + 전체상태 뱃지 + 액션바). 상태 뱃지·액션바·본문은 JS(ELN.signoff)가 렌더 -->
 			<section class="cardBox animate__animated mt10" id="card_approval">
-				<div class="cardTit2"><i class="material-symbols-outlined left">approval</i>Approval</div>
+				<div class="fLine vCenter hSB elnApprHd">
+					<div class="fLine vCenter"><div class="cardTit2"><i class="material-symbols-outlined left">local_library</i>Approval</div><span id="elnApprOverall" class="roundBox grey font12 pl10 pr10 fontR ml10"></span></div>
+					<div class="fLine elnApprActs" id="elnApprActs" style="gap: 8px;"></div>
+				</div>
 				<div>
 					<div class="inputArea elnSign" id="elnSignBody"></div>
 				</div>

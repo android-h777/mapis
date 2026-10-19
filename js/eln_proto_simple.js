@@ -1945,12 +1945,20 @@
   /* ── Approval(공동서명) — 섹션 제출(submit) → 공동서명자 Sign/Reject. 제출된 섹션은 개별 잠금, 정정은 Errata ── */
   var apprView = false;   // false=Edit / true=View(승인 모드)
   var SO_SEC = 'Approval';   // 감사로그 section명 (카드 제목과 동일)
-  var SO_ROLES = ['Witness', 'Group Leader', 'Reviewer'];
+  var SO_ROLES = ['Group Leader', 'Witness', 'Reviewer'];   // 결재선 Function(운영 appr-role-sel 자리)
+  // 운영 공통코드 appr_type / appr_dtl_status / appr_status 라벨·색(appr_util.js _TYPE_STYLE·_DTL_BADGE_COLOR·_OVERALL_BADGE)
+  var SO_TYPES = [['APPR', 'Approval'], ['REF', 'Reference']];
+  var SO_TYPE_LBL = { REQ: 'Request', APPR: 'Approval', REF: 'Reference' };
+  var SO_TYPE_STYLE = { REQ: 'mocha25 outline font12 fontM', APPR: 'green outline font12 fontM', REF: 'blue outline font12 fontM' };
   var SO_PEOPLE = ['Jim Quan', 'Aishwarya Venkatakrishnan', 'Min-ji Park', 'David Lee', 'Sarah Chen'];
-  var SO_DEFAULT_CS = [{ name: 'Jim Quan', role: 'Group Leader' }, { name: 'Aishwarya Venkatakrishnan', role: 'Witness' }];
-  var SO = { view: 'author', seq: 0, cosigners: SO_DEFAULT_CS.slice(), subs: [], overall: 'ing' };   // subs[]: {id, ids, names, requested, rejected, rows:[{name, role, status, signed, comment}]}
-  // 행 상태: pending / approved / notapproved / skipped (MAPIS 결재 뱃지 색: grey·green·red·purple)
-  var SO_ST = { pending: ['grey', 'Pending'], approved: ['green', 'Approved'], notapproved: ['red', 'Not Approved'], skipped: ['purple', 'Skipped'] };
+  var SO_DEFAULT_CS = [{ type: 'APPR', name: 'Jim Quan', role: 'Group Leader' }, { type: 'APPR', name: 'Aishwarya Venkatakrishnan', role: 'Witness' }];
+  // cosigners[] = 결재선 편집표 행 {uid, type:'APPR'|'REF', role, name}. subs[]: {id, ids, names, requested, requester, reqComment, rejected, withdrawn, rows:[{type, name, role, status, signed, comment}]}
+  var SO = { view: 'author', seq: 0, ruid: 0, cosigners: [], subs: [], overall: 'ing' };
+  function soDefaultLine() { return SO_DEFAULT_CS.map(function (c) { return { uid: ++SO.ruid, type: c.type, name: c.name, role: c.role }; }); }
+  SO.cosigners = soDefaultLine();
+  // 행 상태: pending / approved / notapproved / skipped (운영 appr_dtl_status 라벨·뱃지 색: WAIT grey · APPR green · REJT red · SKIP purple)
+  var SO_ST = { pending: ['grey', 'Waiting'], approved: ['green', 'Approved'], notapproved: ['red', 'Not Approved'], skipped: ['purple', 'Skipped'] };
+  function soIsAppr(r) { return r.type !== 'REF'; }   // 참조(REF) 행은 결정 없음 — 잠금·대기 계산에서 제외
 
   function soById(id) { return document.getElementById(id); }
   // 제출 대상 기록 섹션(현재 순서, 숨김 카드 제외)
@@ -1962,19 +1970,20 @@
     });
     return out;
   }
-  function soActive() { return SO.subs.filter(function (s) { return !s.rejected; }); }
+  function soActive() { return SO.subs.filter(function (s) { return !s.rejected && !s.withdrawn; }); }   // 반려·회수된 제출은 잠금·상태 계산에서 제외
   function soLockInfo(id) {   // 이 섹션이 속한 유효 제출들의 잠금 표시 정보(없으면 null)
     var subs = soActive().filter(function (s) { return s.ids.indexOf(id) >= 0; });
     if (!subs.length) return null;
     var all = true, names = [];
     subs.forEach(function (s) { s.rows.forEach(function (r) {
+      if (!soIsAppr(r)) return;
       if (r.status !== 'approved') all = false; else if (names.indexOf(r.name) < 0) names.push(r.name);
     }); });
     return { signed: all, text: all ? 'Approved · ' + names.join(', ') : 'Submitted ' + toMdy(subs[subs.length - 1].requested) };
   }
   function soPendingCount() {
     var n = 0;
-    soActive().forEach(function (s) { s.rows.forEach(function (r) { if (r.status === 'pending') n++; }); });
+    soActive().forEach(function (s) { s.rows.forEach(function (r) { if (soIsAppr(r) && r.status === 'pending') n++; }); });
     return n;
   }
   function soOverall() {   // ing / appr / ok — 대기행 있으면 appr, 전원 승인+전 섹션 제출이면 ok, 일부만 승인이면 ing
@@ -2139,18 +2148,50 @@
     else if (soActive().length) { var c = soApprovedCount(); el.className = 'elnApprBadge approved'; el.innerHTML = '<i class="material-symbols-outlined">verified</i>Approved ' + c.n + ' of ' + c.m + ' sections'; }
     else { el.className = 'elnApprBadge'; el.innerHTML = ''; }
   }
-  function soSubmit(ids) {
+  // 상신(Initiate) — 선택 섹션 + 상신 의견. 결재선(편집표)의 현재 행을 이 제출의 결재 행으로 복사
+  function soSubmit(ids, comment) {
     var names = ids.map(function (id) { return sectionNameOf(soById(id)); });
-    SO.subs.push({ id: ++SO.seq, ids: ids, names: names, requested: ELN.audit.now(), rejected: false,
-      rows: SO.cosigners.map(function (c) { return { name: c.name, role: c.role, status: 'pending', signed: '', comment: '' }; }) });
-    ELN.audit.log({ section: SO_SEC, action: 'Submitted', detail: names.join(', ') });
+    SO.subs.push({ id: ++SO.seq, ids: ids, names: names, requested: ELN.audit.now(), requester: ELN.currentUser, reqComment: comment || '', rejected: false, withdrawn: false,
+      rows: SO.cosigners.filter(function (c) { return c.name; }).map(function (c) { return { type: c.type, name: c.name, role: c.role, status: 'pending', signed: '', comment: '' }; }) });
+    ELN.audit.log({ section: SO_SEC, action: 'Submitted', detail: names.join(', ') + (comment ? ': "' + comment + '"' : '') });
     soApply(true, true);
-    ELN.toast(ids.length + ' section' + (ids.length > 1 ? 's' : '') + ' submitted for co-signature.', 'ok');
+    var txt = ids.length + ' section' + (ids.length > 1 ? 's' : '') + ' submitted. Approval has been initiated successfully.';
+    if (typeof Swal !== 'undefined') Swal.fire({ icon: 'success', title: 'Submitted', text: txt });   // 운영 _doSubmitApproval 성공 알림
+    else ELN.toast(txt, 'ok');
   }
+  // 회수(Withdraw) — 요청자 본인 + 아직 아무 결정도 없는 제출만. 섹션 잠금 해제, 이력은 표에 'Withdrawal'로 남김
+  function soCanWithdraw(s) {
+    return !s.rejected && !s.withdrawn && s.requester === ELN.currentUser
+      && s.rows.filter(soIsAppr).every(function (r) { return r.status === 'pending'; });
+  }
+  function soWithdraw(s) {
+    s.withdrawn = true; s.withdrawnAt = ELN.audit.now();
+    ELN.audit.log({ section: SO_SEC, action: 'Withdrawn', detail: s.names.join(', ') });
+    soApply(true, true);
+    ELN.toast('Approval withdrawn. The sections are unlocked for editing.', 'info');
+  }
+  function soOpenWithdraw() {
+    var list = SO.subs.filter(soCanWithdraw);
+    if (!list.length) return;
+    if (typeof Swal === 'undefined') { soWithdraw(list[list.length - 1]); return; }
+    var o = { title: 'Withdraw Approval?', text: 'This will withdraw the approval request. No approver has taken action yet, so it can be safely withdrawn.',
+      icon: 'warning', showCancelButton: true, confirmButtonText: 'Confirm', cancelButtonText: 'Cancel' };   // 운영 bindWithdrawButton 문구
+    if (list.length > 1) {   // ELN: 진행 중 제출이 여럿이면 어느 제출인지 고름
+      o.input = 'select'; o.inputOptions = {};
+      list.forEach(function (s) { o.inputOptions[s.id] = 'Submission ' + soSubNo(s) + ': ' + s.names.join(', '); });
+      o.inputValue = String(list[list.length - 1].id);
+    }
+    Swal.fire(o).then(function (res) {
+      if (!res.isConfirmed) return;
+      var s = list.length > 1 ? soSubById(+res.value) : list[0];
+      if (s && soCanWithdraw(s)) soWithdraw(s);
+    });
+  }
+  function soSubNo(s) { return SO.subs.indexOf(s) + 1; }
   function soSubById(id) { for (var i = 0; i < SO.subs.length; i++) if (SO.subs[i].id === id) return SO.subs[i]; return null; }
   function soDecide(subId, idx, reject) {
     var sub = soSubById(subId), row = sub && sub.rows[idx];
-    if (!row || row.status !== 'pending') return;
+    if (!row || row.status !== 'pending' || !soIsAppr(row) || sub.rejected || sub.withdrawn) return;
     var tr = document.querySelector('#elnSignBody tr[data-sub="' + subId + '"][data-row="' + idx + '"]');
     var ta = tr && tr.querySelector('textarea'), sel = tr && tr.querySelector('select');
     var comment = ta ? ta.value.trim() : '';
@@ -2173,9 +2214,50 @@
     if (reject) ELN.toast('Not approved. The sections are unlocked for editing.', 'warn');
     else if (SO.overall !== 'ok' || before === 'ok') ELN.toast('Approved.', 'ok');
   }
-  function soHasPerson(name) { return SO.cosigners.some(function (c) { return c.name === name; }); }
-  function soCanRemove(name) {
-    return !SO.subs.some(function (s) { return !s.rejected && s.rows.some(function (r) { return r.name === name && (r.status === 'pending' || r.status === 'approved'); }); });   // 반려된 제출의 행은 무시
+  /* 결재선 편집표(운영 manual 모드 _buildApproverRowHtml) — 행 변경은 이후 상신분에만 적용(진행 중 제출의 결재 행은 그대로) */
+  function soLineRow(uid) { for (var i = 0; i < SO.cosigners.length; i++) if (SO.cosigners[i].uid === uid) return SO.cosigners[i]; return null; }
+  function soLineDetail(c) { return c.name + ' · ' + (c.role || 'No Function') + ' · ' + (SO_TYPE_LBL[c.type] || c.type); }
+  function soLineCheck() {   // 상신 전 검증 → [제목, 문구] 또는 null
+    var line = SO.cosigners;
+    if (!line.some(function (c) { return c.type === 'APPR' && c.name; })) return ['No Approvers', 'Add at least one approver with an assignee.'];
+    if (line.some(function (c) { return !c.role; })) return ['Function Required', 'Please select a function for every row.'];
+    if (line.some(function (c) { return !c.name; })) return ['Assignee Required', 'Please select an assignee for every row.'];
+    return null;
+  }
+  function soAddRow() {
+    SO.cosigners.push({ uid: ++SO.ruid, type: 'APPR', role: '', name: '' });
+    renderSignoff();
+  }
+  function soDelRow(uid) {
+    var c = soLineRow(uid); if (!c) return;
+    function del() {
+      SO.cosigners = SO.cosigners.filter(function (x) { return x.uid !== uid; });
+      if (c.name) { ELN.audit.log({ section: SO_SEC, action: 'Approver removed', detail: soLineDetail(c) }); ELN.toast(c.name + ' removed.', 'info'); }
+      renderSignoff();
+    }
+    if (typeof Swal === 'undefined') { del(); return; }
+    Swal.fire({ icon: 'question', titleText: 'Delete this row?', text: c.name ? c.name + ' will be removed from the approval line.' : '',
+      showCancelButton: true, confirmButtonText: 'Confirm', cancelButtonText: 'Cancel' }).then(function (r) { if (r.isConfirmed) del(); });
+  }
+  function soLineChange(sel) {
+    var tr = sel.closest('tr[data-uid]'), c = tr && soLineRow(+tr.getAttribute('data-uid')); if (!c) return;
+    var v = sel.value || '';
+    if (sel.classList.contains('appr-user-sel')) {
+      if (v === c.name) return;
+      if (v && SO.cosigners.some(function (x) { return x !== c && x.name === v; })) {
+        soWarn('Duplicate Assignee', v + ' is already in the approval line.');
+        jQuery(sel).val(c.name || '').trigger('change.select2');
+        return;
+      }
+      if (c.name) ELN.audit.log({ section: SO_SEC, action: 'Approver removed', detail: soLineDetail(c) });
+      c.name = v;
+      if (v) ELN.audit.log({ section: SO_SEC, action: 'Approver added', detail: soLineDetail(c) });
+      return;
+    }
+    var key = sel.classList.contains('appr-type-sel') ? 'type' : 'role';
+    if (c[key] === v) return;
+    c[key] = v;
+    if (c.name) ELN.audit.log({ section: SO_SEC, action: 'Approver updated', detail: soLineDetail(c) });
   }
 
   /* 섹션 선택 목록 — 테두리 컨테이너 + 헤더(Select all · N of M selected) + 헤어라인 행. items: [{id,name,checked,disabled,tag}] */
@@ -2202,108 +2284,160 @@
   }
 
   /* 모달들 */
-  function soOpenSubmit() {
-    if (!SO.cosigners.length) { ELN.toast('Add at least one co-signer first.', 'warn'); return; }
+  // Initiate Approval — ELN 단계: ① 제출 섹션 선택(soPickBox, 잠긴 섹션은 체크·비활성 'Submitted') → ② 표준 상신 의견(_showRequestCommentModal) → 상신.
+  //  두 모달은 차례로(앞 모달이 닫힌 뒤 다음을 엶) — 중첩 없음
+  function soOpenInitiate() {
+    var bad = soLineCheck();
+    if (bad) { soWarn(bad[0], bad[1]); return; }
     var cards = soCards();
     if (!cards.some(function (c) { return !soLockInfo(c.id); })) { ELN.toast('No unsubmitted sections.', 'info'); return; }
     var pb = soPickBox(cards.map(function (c) {
       var locked = !!soLockInfo(c.id);
-      return { id: c.id, name: sectionNameOf(c), disabled: locked, checked: locked, tag: locked ? 'Submitted' : '' };
+      return { id: c.id, name: sectionNameOf(c), disabled: locked, checked: true, tag: locked ? 'Submitted' : '' };   // 미제출은 기본 전부 선택(= 노트 전체)
     }));
-    var wrap = pb.el;
-    ELN.modal({ title: 'Submit Sections', icon: 'playlist_add_check', size: 'md', body: wrap, actions: [
-      { label: 'Cancel', type: '' },
-      { label: 'Submit', type: 'hViva', icon: 'send', onClick: function () {
+    var body = document.createElement('div');
+    var note = document.createElement('div'); note.className = 'elnApprStepNote';
+    note.textContent = 'Step 1 of 2. Select the sections to submit. Select all submits the whole note. Submitted sections are locked; corrections are added as Errata.';
+    body.appendChild(note); body.appendChild(pb.el);
+    ELN.modal({ title: 'Initiate Approval', icon: 'send', size: 'md', body: body, actions: [
+      { label: 'Next', type: 'hViva', icon: 'arrow_forward', onClick: function () {
         var ids = pb.ids();
         if (!ids.length) { ELN.toast('Select at least one section.', 'warn'); return true; }
-        soSubmit(ids);
-      } }
+        setTimeout(function () { soOpenRequestComment(ids); }, 300);
+      } },
+      { label: 'Cancel', type: 'hGrey', icon: 'close' }
     ] });
   }
-  function soSubmitAll() {
-    if (!SO.cosigners.length) { ELN.toast('Add at least one co-signer first.', 'warn'); return; }
-    var ids = soCards().filter(function (c) { return !soLockInfo(c.id); }).map(function (c) { return c.id; });
-    if (!ids.length) { ELN.toast('No unsubmitted sections.', 'info'); return; }
-    ELN.modal({ title: 'Submit All', icon: 'send', size: 'sm',
-      body: 'Submit ' + ids.length + ' section' + (ids.length > 1 ? 's' : '') + ' for co-signature? Submitted sections can no longer be edited; corrections are added as Errata.',
-      actions: [{ label: 'Cancel', type: '' }, { label: 'Submit', type: 'hViva', icon: 'send', onClick: function () { soSubmit(ids); } }] });
-  }
-  function soOpenAdd() {
-    var avail = SO_PEOPLE.filter(function (p) { return p !== ELN.currentUser && !soHasPerson(p); });
-    if (!avail.length) { ELN.toast('Everyone available is already a co-signer.', 'info'); return; }
-    var wrap = document.createElement('div');
-    var pLbl = document.createElement('div'); pLbl.className = 'elnS2Lbl'; pLbl.textContent = 'Co-signer';
-    var pSel = S2.make(false);   // 운영 사람 선택과 동일 부품: select2(User ID / Name)
-    var roleLbl = document.createElement('div'); roleLbl.className = 'elnS2Lbl'; roleLbl.textContent = 'Role';
-    var sel = document.createElement('select');   // 짧은 단일 목록 = select2(검색창 없음)
-    SO_ROLES.forEach(function (r) { var o = document.createElement('option'); o.value = r; o.textContent = r; sel.appendChild(o); });
-    wrap.appendChild(pLbl); wrap.appendChild(pSel); wrap.appendChild(roleLbl); wrap.appendChild(sel);
-    ELN.modal({ title: 'Add Co-Signer', icon: 'person_add', size: 'sm', body: wrap, actions: [
-      { label: 'Cancel', type: '' },
-      { label: 'Add', type: 'hViva', icon: 'person_add', onClick: function () {
-        var picked = pSel.value;
-        if (!picked) { ELN.toast('Select a person first.', 'warn'); return true; }
-        SO.cosigners.push({ name: picked, role: sel.value });
-        ELN.audit.log({ section: SO_SEC, action: 'Co-signer added', detail: picked + ' (' + sel.value + ')' });
-        // 진행 중(반려·완전승인 아님) 제출마다 대기행 추가
-        var added = 0;
-        SO.subs.forEach(function (s) {
-          if (s.rejected || !s.rows.some(function (r) { return r.status === 'pending'; })) return;
-          s.rows.push({ name: picked, role: sel.value, status: 'pending', signed: '', comment: '' }); added++;
-        });
-        if (added) ELN.audit.log({ section: SO_SEC, action: 'Signature requested', detail: picked + ' added to ' + added + ' pending submission' + (added > 1 ? 's' : '') });
-        if (added) soApply(true, false); else renderSignoff();
-        ELN.toast(picked + ' added as co-signer.', 'ok');
-      } }
+  // 운영 #apprRequestCommentModal(common.html approvalModal) 과 같은 구성: send 아이콘 제목 + aniInput textarea + Submit(hViva)·Cancel(hGrey)
+  function soOpenRequestComment(ids) {
+    var names = ids.map(function (id) { return sectionNameOf(soById(id)); });
+    var body = document.createElement('div');
+    body.innerHTML = '<div class="elnApprStepNote">Step 2 of 2. ' + ids.length + ' section' + (ids.length > 1 ? 's' : '') + ': ' + esc(names.join(', ')) + '</div>'
+      + '<div class="aniInput"><textarea class="materialize-textarea" style="min-height:80px;" maxlength="500" placeholder="Enter your comment (optional)"></textarea><span class="focus-border"></span></div>';
+    var ta = body.querySelector('textarea');
+    ELN.modal({ title: 'Initiate Approval', icon: 'send', size: 'sm', body: body, actions: [
+      { label: 'Submit', type: 'hViva', icon: 'send', onClick: function () {
+        var cm = ta.value.trim();
+        if (!soLineCheck()) setTimeout(function () { soSubmit(ids, cm); }, 280);   // 모달이 닫힌 뒤 상신(성공 Swal 이 모달 위에 겹치지 않게)
+      } },
+      { label: 'Cancel', type: 'hGrey', icon: 'close' }
     ] });
-    S2.mount(pSel, { data: S2.people(avail), placeholder: 'User ID / Name', minimumResultsForSearch: 0, templateResult: S2.T.person });
-    S2.mount(sel);
+    setTimeout(function () { ta.focus(); }, 60);
   }
 
   /* 카드 렌더 */
+  // 운영 _typeLabel / 상태 뱃지 / 전체 상태 뱃지(_OVERALL_BADGE: PEND blue·APPR green·REJT red·WITH grey, 미기안 grey 'Not Initiated')
+  function soTypeLabel(t) { return '<span class="roundBox pl10 pr10 ' + (SO_TYPE_STYLE[t] || 'font12') + '" style="min-width: 77px;">' + esc(SO_TYPE_LBL[t] || t) + '</span>'; }
+  function soDtlBadge(color, label) { return '<span class="roundBox ' + color + ' pl10 pr10 font12" style="min-width: 94px;">' + esc(label) + '</span>'; }
+  function soSubState(s) {   // [색, 아이콘, 라벨]
+    if (s.withdrawn) return ['grey', 'undo', 'Withdrawal'];
+    if (s.rejected) return ['red', 'block', 'Rejected'];
+    if (s.rows.some(function (r) { return soIsAppr(r) && r.status === 'pending'; })) return ['blue', 'play_circle', 'Pending'];
+    return ['green', 'check_circle', 'Approved'];
+  }
+  function soCardState() {
+    if (!SO.subs.length) return ['grey', 'circle', 'Not Initiated'];
+    if (soOverall() === 'ok') return ['green', 'check_circle', 'Approved'];
+    if (soPendingCount()) return ['blue', 'play_circle', 'Pending'];
+    var last = SO.subs[SO.subs.length - 1];
+    if (last.withdrawn || last.rejected) return soSubState(last);
+    return ['green', 'check_circle', 'Partially Approved'];   // ELN: 일부 섹션만 승인
+  }
+  function soDate(ts) { return ts ? esc(toMdy(String(ts).slice(0, 10))) : '-'; }   // 운영 _formatDateUS(MM-DD-YYYY), 시각은 title
+  function soDateCell(ts) { return '<td class="ac appr-timestamp"' + (ts ? ' title="' + esc(toMdy(ts)) + '"' : '') + '>' + soDate(ts) + '</td>'; }
+
+  /* 카드 렌더 — 헤더(전체 상태 뱃지 + 액션바) / 데모 'View as' / 결재선 편집표(상신 전) / 결재 현황표(상신 후) */
   function renderSignoff() {
     var box = soById('elnSignBody'); if (!box) return;
     var au = SO.view === 'author';
-    var h = '<div class="elnSignBar"><div class="elnSignSeg"><span class="elnSignSegLbl">View as</span>'
+    var canInit = au && soCards().some(function (c) { return !soLockInfo(c.id); });   // 미제출 섹션이 남아 있으면 결재선 편집·상신 가능
+    var canWd = au && SO.subs.some(soCanWithdraw);
+    var cs = soCardState(), bd = soById('elnApprOverall');
+    if (bd) { bd.className = 'roundBox ' + cs[0] + ' font12 pl10 pr10 fontR ml10'; bd.innerHTML = '<i class="material-symbols-outlined left font14 mr5">' + cs[1] + '</i>' + esc(cs[2]); }
+    var bar = soById('elnApprActs');
+    if (bar) bar.innerHTML = (canInit
+        ? '<a href="javascript:;" class="waves-effect waves-hColor hBtn hMocha" data-act="addRow"><i class="material-symbols-outlined left">person_add</i><span class="label">Add Row</span></a>'
+        + '<a href="javascript:;" class="waves-effect waves-hColor hBtn hViva" data-act="init"><i class="material-symbols-outlined left">send</i><span class="label">Initiate Approval</span></a>' : '')
+      + (canWd ? '<a href="javascript:;" class="waves-effect waves-hColor hBtn hViva" data-act="withdraw"><i class="material-symbols-outlined left">cancel</i>Withdraw Approval</a>' : '');
+
+    // 데모 전용: 운영은 로그인 사용자로 판단(본인 대기 행만 결정 입력)
+    var h = '<div class="elnApprDemo" title="Demo only. In MAPIS the controls follow the logged-in user."><span class="elnApprDemoLbl">Demo:</span><span class="elnSignSegLbl">View as</span>'
       + '<div class="newAppleTab greenTab wd130pxType elnSignTab"><ul>'
       + '<li class="waves-effect waves-hColor' + (au ? ' on' : '') + '" data-act="view" data-v="author">Author</li>'
       + '<li class="waves-effect waves-hColor' + (au ? '' : ' on') + '" data-act="view" data-v="cosigner">Co-Signer</li>'
       + '<div class="tabBg"></div></ul></div></div>';
-    if (au) {
-      h += '<div class="elnSignActs">'
-        + '<a href="javascript:;" class="waves-effect waves-light hBtn" data-act="add"><i class="material-symbols-outlined left">person_add</i><span class="label">Add Co-Signer</span></a>'
-        + '<a href="javascript:;" class="waves-effect waves-light hBtn" data-act="subSel"><i class="material-symbols-outlined left">playlist_add_check</i><span class="label">Submit Sections</span></a>'
-        + '<a href="javascript:;" class="waves-effect waves-light hBtn hViva" data-act="subAll"><i class="material-symbols-outlined left">send</i><span class="label">Submit All</span></a></div>';
-    }
-    h += '</div><div class="elnSignCs"><span class="elnSignCsLbl">Co-Signers</span>';
-    if (!SO.cosigners.length) h += '<span class="elnSignNone">None assigned</span>';
-    SO.cosigners.forEach(function (c) {
-      h += '<span class="roundBox outline stone25 elnSignChip">' + esc(c.name) + ' · ' + esc(c.role)
-        + (au && soCanRemove(c.name) ? '<i class="material-symbols-outlined" data-act="rm" data-n="' + esc(c.name) + '" title="Remove">close</i>' : '') + '</span>';
-    });
-    h += '</div><div class="cardSubTit mt30">Co-Signer Sign-Off Status</div>'
-      + '<div class="fixedTable hBorderTable hScroll mg10"><table class="elnSignTable"><thead><tr>'
-      + '<th>Sections</th><th>Role</th><th>Co-Signer</th><th>Decision</th><th>Comment</th><th>Date</th><th></th></tr></thead><tbody>';
-    var rows = '';
-    SO.subs.forEach(function (s) {
-      s.rows.forEach(function (r, i) {
-        var st = SO_ST[r.status] || SO_ST.pending, dec, cm, act = '';
-        if (r.status === 'pending' && !s.rejected && !au) {   // Co-Signer 뷰: 결정 입력
-          dec = '<div class="aniInput"><select class="browser-default"><option value="approved">Approved</option><option value="notapproved">Not Approved</option></select></div>';
-          cm = '<div class="aniInput"><textarea class="materialize-textarea" maxlength="500" placeholder="(Optional)"></textarea><span class="focus-border"></span></div>';
-          act = '<a href="javascript:;" class="waves-effect waves-hColor hBtn hViola hSmall pl5" data-act="submit" data-sub="' + s.id + '" data-row="' + i + '"><i class="material-symbols-outlined mr0">check_small</i>Submit</a>';
-        } else {
-          dec = '<span class="roundBox ' + st[0] + ' pl10 pr10 font12" style="min-width:94px">' + st[1] + '</span>';
-          cm = esc(r.comment || '');
-        }
-        rows += '<tr data-sub="' + s.id + '" data-row="' + i + '"><td>' + esc(s.names.join(', ')) + '</td><td class="al font12">' + esc(r.role) + '</td>'
-          + '<td class="al">' + esc(r.name) + '</td><td class="ac">' + dec + '</td><td>' + cm + '</td>'
-          + '<td class="ac">' + ((r.status === 'approved' || r.status === 'notapproved') && r.signed ? esc(toMdy(r.signed)) : '-') + '</td><td class="ac">' + act + '</td></tr>';
+    var both = canInit && SO.subs.length;
+
+    // 결재선 편집표 — 운영 table.appr-editor-mode(Type | Function | Assignee | 삭제 td.action-col)
+    if (canInit) {
+      if (both) h += '<div class="cardSubTit mt10">Approval Line</div>';
+      h += '<div class="fixedTable hBorderTable vMiddle elnApprLineWrap"><table class="appr-editor-mode elnApprLine"><colgroup>'
+        + '<col style="width: 150px;"><col style="width: 200px;"><col style="width: auto;"><col class="col-appr-delete" style="width: 40px;"></colgroup>'
+        + '<thead><tr><th class="al">Type</th><th class="al">Function</th><th class="al">Assignee</th><th class="col-appr-delete"></th></tr></thead><tbody>';
+      if (!SO.cosigners.length) h += '<tr><td colspan="4" class="ac grey-text">No approvers. Click Add Row to build the approval line.</td></tr>';
+      SO.cosigners.forEach(function (c) {
+        h += '<tr data-uid="' + c.uid + '" data-type="' + esc(c.type) + '">'
+          + '<td><select class="appr-type-sel browser-default">' + SO_TYPES.map(function (t) { return '<option value="' + t[0] + '"' + (t[0] === c.type ? ' selected' : '') + '>' + t[1] + '</option>'; }).join('') + '</select></td>'
+          + '<td><select class="appr-role-sel browser-default"><option value=""></option>' + SO_ROLES.map(function (r) { return '<option value="' + esc(r) + '"' + (r === c.role ? ' selected' : '') + '>' + esc(r) + '</option>'; }).join('') + '</select></td>'
+          + '<td class="appr-assignee"><select class="appr-user-sel browser-default"><option value=""></option></select></td>'
+          + '<td class="ac action-col"><a class="waves-effect deleteBtn" title="Delete" data-act="delRow"><i class="material-symbols-outlined">delete</i></a></td></tr>';
       });
-    });
-    h += rows || '<tr><td colspan="7" class="ac">Nothing submitted yet. Submit sections to request co-signatures.</td></tr>';
-    box.innerHTML = h + '</tbody></table></div>';
+      h += '</tbody></table></div>';
+    }
+
+    // 결재 현황표 — 운영 table.appr-status-table(Type | Function | Assignee | Status | Comments | Date | Submit). ELN: 제출마다 섹션 소제목 행 + Request 행
+    if (SO.subs.length) {
+      if (both) h += '<div class="cardSubTit mt20">Approval Status</div>';
+      h += '<div class="fixedTable vMiddle elnApprStatusWrap' + (both ? '' : ' mt10') + '"><table class="appr-status-table elnApprStatus"><colgroup>'
+        + '<col style="width: 100px;"><col style="width: 150px;"><col style="width: 220px;"><col style="width: 130px;"><col style="width: auto;"><col style="width: 120px;"><col style="width: 90px;"></colgroup>'
+        + '<thead><tr><th>Type</th><th class="al">Function</th><th class="al">Assignee</th><th>Status</th><th class="al">Comments</th><th>Date</th><th></th></tr></thead><tbody>';
+      SO.subs.forEach(function (s) {
+        var ss = soSubState(s), active = !s.rejected && !s.withdrawn;
+        h += '<tr class="elnApprSubHd"><td colspan="7"><div class="elnApprSubLine"><span class="elnApprSubNo">Submission ' + soSubNo(s) + '</span>'
+          + '<span class="roundBox ' + ss[0] + ' font12 pl10 pr10 fontR"><i class="material-symbols-outlined left font14 mr5">' + ss[1] + '</i>' + ss[2] + '</span>'
+          + '<span class="elnApprSubSecs"><b>Sections</b>' + esc(s.names.join(', ')) + '</span>'
+          + (s.withdrawn ? '<span class="elnApprSubMeta">Withdrawn ' + soDate(s.withdrawnAt) + '</span>' : '') + '</div></td></tr>';
+        h += '<tr class="tr-appr-req"><td class="ac">' + soTypeLabel('REQ') + '</td><td class="al font12">Author</td><td class="al">' + esc(s.requester || ELN.currentUser) + '</td>'
+          + '<td class="ac">' + soDtlBadge('mocha25', 'Requested') + '</td><td><span>' + esc(s.reqComment || '') + '</span></td>' + soDateCell(s.requested) + '<td class="ac appr-save-btn-cell"></td></tr>';
+        s.rows.forEach(function (r, i) {
+          var isRef = !soIsAppr(r), edit = !au && active && !isRef && r.status === 'pending', dec, cm, act = '';
+          if (edit) {   // 데모 Co-Signer 뷰 = 결재자 본인: 운영 결정 컨트롤(Approved / Not Approved + 의견 + Submit)
+            dec = '<div class="aniInput"><select name="approvalStatus" class="browser-default"><option value="approved">Approved</option><option value="notapproved">Not Approved</option></select></div>';
+            cm = '<div class="aniInput"><textarea name="approvalComment" class="materialize-textarea" maxlength="500" placeholder="(Optional)"></textarea><span class="focus-border"></span></div>';
+            act = '<a href="javascript:;" class="waves-effect waves-hColor hBtn hViola hSmall appr-save-btn pl5" data-act="submit" data-sub="' + s.id + '" data-row="' + i + '"><i class="material-symbols-outlined mr0">check_small</i>Submit</a>';
+          } else {
+            if (isRef || (r.status === 'pending' && !active)) dec = '<span class="grey-text font12">-</span>';
+            else if (r.status === 'pending') dec = soDtlBadge('cfblue25', 'In Progress');
+            else { var st = SO_ST[r.status] || SO_ST.pending; dec = soDtlBadge(st[0], st[1]); }
+            cm = '<span>' + esc(r.comment || '') + '</span>';
+          }
+          var decided = r.status === 'approved' || r.status === 'notapproved';
+          h += '<tr data-sub="' + s.id + '" data-row="' + i + '"' + (edit ? ' class="tr-accent"' : '') + '>'
+            + '<td class="ac">' + soTypeLabel(isRef ? 'REF' : 'APPR') + '</td><td class="al font12">' + esc(r.role || '-') + '</td><td class="al">' + esc(r.name) + '</td>'
+            + '<td class="ac">' + dec + '</td><td>' + cm + '</td>' + soDateCell(decided ? r.signed : '') + '<td class="ac appr-save-btn-cell">' + act + '</td></tr>';
+        });
+      });
+      h += '</tbody></table></div>';
+    } else if (!canInit) {
+      h += '<div class="appr-empty"><i class="material-symbols-outlined">inbox</i><p class="appr-empty-msg">No approval requests yet.</p></div>';
+    }
+    box.innerHTML = h;
     soPlaceTabBg(box);
+    soMountSelects(box);
+  }
+  // select2 부착(운영 [select2] 속성 셀렉트와 같은 부품): 짧은 목록은 검색창 없음, 담당자는 'User ID / Name' 검색
+  function soMountSelects(box) {
+    if (!S2.ready()) return;
+    var people = S2.people(SO_PEOPLE.filter(function (p) { return p !== ELN.currentUser; }));
+    box.querySelectorAll('select.appr-type-sel, select.appr-role-sel').forEach(function (sel) {
+      S2.mount(sel, { minimumResultsForSearch: Infinity, placeholder: sel.classList.contains('appr-role-sel') ? 'Select' : undefined });
+    });
+    box.querySelectorAll('select.appr-user-sel').forEach(function (sel) {
+      var c = soLineRow(+sel.closest('tr').getAttribute('data-uid'));
+      S2.mount(sel, { data: people, placeholder: 'User ID / Name', minimumResultsForSearch: 0, templateResult: S2.T.person });
+      if (c && c.name) jQuery(sel).val(c.name).trigger('change.select2');
+    });
+    box.querySelectorAll('select[name="approvalStatus"]').forEach(function (sel) { S2.mount(sel, { minimumResultsForSearch: Infinity }); });
   }
   // View-as 탭 pill 위치: 활성 li 기준(common.css .tabBg 기본 left:-2px)
   function soPlaceTabBg(box) {
@@ -2311,9 +2445,9 @@
     if (on && bg) bg.style.left = (on.offsetLeft - 2) + 'px';
   }
   function initSignoff() {
-    var box = soById('elnSignBody'); if (!box) return;
-    box.addEventListener('click', function (e) {
-      var t = e.target.closest('[data-act]'); if (!t || !box.contains(t)) return;
+    var box = soById('elnSignBody'), card = soById('card_approval'); if (!box || !card) return;
+    card.addEventListener('click', function (e) {   // 헤더 액션바 + 본문 공용
+      var t = e.target.closest('[data-act]'); if (!t || !card.contains(t)) return;
       var act = t.getAttribute('data-act');
       if (act === 'view') {
         var v = t.getAttribute('data-v'); if (v === SO.view) return;
@@ -2321,17 +2455,22 @@
         t.classList.add('on'); soPlaceTabBg(box);   // pill 슬라이드(CSS transition) 후 재렌더
         setTimeout(function () { SO.view = v; renderSignoff(); }, 220);
       }
-      else if (act === 'add') soOpenAdd();
-      else if (act === 'subSel') soOpenSubmit();
-      else if (act === 'subAll') soSubmitAll();
-      else if (act === 'rm') {
-        var n = t.getAttribute('data-n');
-        SO.cosigners = SO.cosigners.filter(function (c) { return c.name !== n; });
-        ELN.audit.log({ section: SO_SEC, action: 'Co-signer removed', detail: n });
-        renderSignoff(); ELN.toast(n + ' removed.', 'info');
-      }
+      else if (act === 'addRow') soAddRow();
+      else if (act === 'delRow') soDelRow(+t.closest('tr').getAttribute('data-uid'));
+      else if (act === 'init') soOpenInitiate();
+      else if (act === 'withdraw') soOpenWithdraw();
       else if (act === 'submit') soDecide(+t.getAttribute('data-sub'), +t.getAttribute('data-row'));
     });
+    if (window.jQuery) {   // select2 는 jQuery change 를 쏨 → jQuery 위임 바인딩
+      jQuery(box).on('change', 'select.appr-type-sel, select.appr-role-sel, select.appr-user-sel', function () { soLineChange(this); });
+      jQuery(box).on('change', 'select[name="approvalStatus"]', function () {   // 운영: Not Approved 선택 시 의견 필수 강조(.aniInput.appr-required)
+        var tr = this.closest('tr'), ai = tr && tr.querySelector('textarea[name="approvalComment"]');
+        if (!ai) return;
+        var req = this.value === 'notapproved';
+        ai.closest('.aniInput').classList.toggle('appr-required', req);
+        ai.placeholder = req ? '(Required)' : '(Optional)';
+      });
+    }
     renderSignoff(); soBadge();
   }
   document.addEventListener('DOMContentLoaded', initSignoff);
@@ -2339,18 +2478,19 @@
   // 데모 상태 시드(감사로그 없음): 'appr' = Jim 서명·Aishwarya 대기, 'ok' = 모두 서명, 그 외 = 초기화
   ELN.signoff = {
     reset: function (st) {
-      SO.view = 'author'; SO.cosigners = SO_DEFAULT_CS.slice(); SO.subs = []; SO.overall = 'ing';
+      SO.view = 'author'; SO.cosigners = soDefaultLine(); SO.subs = []; SO.overall = 'ing';
       document.querySelectorAll('#tab_ov > .cardBox > .elnErrataWrap').forEach(function (w) { w.remove(); });
       if (st === 'appr' || st === 'ok') {
         var cards = soCards();
-        SO.subs.push({ id: ++SO.seq, ids: cards.map(function (c) { return c.id; }), names: cards.map(sectionNameOf), requested: '2026-10-12 09:30', rejected: false,
-          rows: [{ name: 'Jim Quan', role: 'Group Leader', status: 'approved', signed: '2026-10-12 15:10', comment: 'Data verified.' },
-            st === 'ok' ? { name: 'Aishwarya Venkatakrishnan', role: 'Witness', status: 'approved', signed: '2026-10-13 10:05', comment: '' }
-                        : { name: 'Aishwarya Venkatakrishnan', role: 'Witness', status: 'pending', signed: '', comment: '' }] });
+        SO.subs.push({ id: ++SO.seq, ids: cards.map(function (c) { return c.id; }), names: cards.map(sectionNameOf), requested: '2026-10-12 09:30',
+          requester: ELN.currentUser, reqComment: 'Please review the v3 viscosity results.', rejected: false, withdrawn: false,
+          rows: [{ type: 'APPR', name: 'Jim Quan', role: 'Group Leader', status: 'approved', signed: '2026-10-12 15:10', comment: 'Data verified.' },
+            st === 'ok' ? { type: 'APPR', name: 'Aishwarya Venkatakrishnan', role: 'Witness', status: 'approved', signed: '2026-10-13 10:05', comment: '' }
+                        : { type: 'APPR', name: 'Aishwarya Venkatakrishnan', role: 'Witness', status: 'pending', signed: '', comment: '' }] });
         SO.overall = soOverall();
         // 시드한 제출/서명에 맞는 감사 이력(시드 시각·사용자 사용 — 표는 ts 정렬이라 시간순 유지). 액션명은 실제 제출/서명 경로와 동일
         var sd = SO.subs[0], sdNames = sd.names.join(', ');
-        ELN.audit.log({ ts: sd.requested, section: SO_SEC, action: 'Submitted', detail: sdNames });
+        ELN.audit.log({ ts: sd.requested, section: SO_SEC, action: 'Submitted', detail: sdNames + ': "' + sd.reqComment + '"' });
         sd.rows.forEach(function (r) {
           if (r.status !== 'approved') return;
           ELN.audit.log({ ts: r.signed, user: r.name, section: SO_SEC, action: 'Approved', detail: sdNames + (r.comment ? ': "' + r.comment + '"' : '') });
@@ -4827,7 +4967,7 @@
     h += '<h1>' + esc('[' + src.code + '] ' + src.title) + '</h1>';
     h += '<table class="meta"><tr><th>Status</th><td>' + esc(st ? st.textContent.trim() : '') + '</td><th>Author</th><td>' + esc(ELN.currentUser) + '</td></tr>'
       + '<tr><th>Created</th><td>' + esc(toMdy(created) || '-') + '</td><th>Last Modified</th><td>' + esc(toMdy(modified) || '-') + '</td></tr>'
-      + '<tr><th>Experiment Date</th><td>' + esc(pdfVal('#elnExpDate') || '-') + '</td><th>Co-Signers</th><td>' + esc(SO.cosigners.map(function (c) { return c.name + ' (' + c.role + ')'; }).join(', ') || '-') + '</td></tr></table>';
+      + '<tr><th>Experiment Date</th><td>' + esc(pdfVal('#elnExpDate') || '-') + '</td><th>Approval Line</th><td>' + esc(SO.cosigners.filter(function (c) { return c.name; }).map(function (c) { return c.name + ' (' + (c.role || '-') + (c.type === 'REF' ? ', Reference' : '') + ')'; }).join(', ') || '-') + '</td></tr></table>';
     var n = 0;
     all.forEach(function (c) {
       if (o.ids.indexOf(c.id) < 0) return;
@@ -4835,10 +4975,15 @@
     });
     if (SO.subs.length) {
       var srows = [];
-      SO.subs.forEach(function (s) { s.rows.forEach(function (r) {
-        srows.push([s.names.join(', '), r.role, r.name, (SO_ST[r.status] || SO_ST.pending)[1], r.comment || '', r.signed && (r.status === 'approved' || r.status === 'notapproved') ? toMdy(r.signed) : '-']);
-      }); });
-      h += '<section class="sec"><h2><span class="no">' + (++n) + '</span>Sign-Off</h2>' + pdfRows(['Sections', 'Role', 'Co-Signer', 'Decision', 'Comment', 'Date'], srows) + '</section>';
+      SO.subs.forEach(function (s) {   // 결재 현황표와 같은 열 순서 + ELN 'Sections'
+        var secs = 'Submission ' + soSubNo(s) + ' (' + soSubState(s)[2] + '): ' + s.names.join(', ');
+        srows.push(['Request', 'Author', s.requester || ELN.currentUser, 'Requested', s.reqComment || '', toMdy(String(s.requested).slice(0, 10)), secs]);
+        s.rows.forEach(function (r) {
+          var stl = !soIsAppr(r) || (r.status === 'pending' && (s.rejected || s.withdrawn)) ? '-' : (r.status === 'pending' ? 'In Progress' : (SO_ST[r.status] || SO_ST.pending)[1]);
+          srows.push([SO_TYPE_LBL[r.type] || 'Approval', r.role || '-', r.name, stl, r.comment || '', r.signed && (r.status === 'approved' || r.status === 'notapproved') ? toMdy(String(r.signed).slice(0, 10)) : '-', secs]);
+        });
+      });
+      h += '<section class="sec"><h2><span class="no">' + (++n) + '</span>Approval</h2>' + pdfRows(['Type', 'Function', 'Assignee', 'Status', 'Comments', 'Date', 'Sections'], srows) + '</section>';
     }
     if (o.att) h += '<section class="sec"><h2><span class="no">' + (++n) + '</span>Attachments List</h2><p class="muted">File names and current versions only. Files are kept in MAPIS and are not embedded in this PDF.</p>'
       + pdfRows(['File', 'Version', 'Uploaded By', 'Date', 'Size'], pdfAttachRows(o.attCards)) + '</section>';

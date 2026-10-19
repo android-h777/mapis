@@ -546,25 +546,12 @@ body.elnApproved .elnTag{padding-right:11px;}   /* close 아이콘 자리 → �
 .hBtn.hSign{color:#2e8c5c;border:2px solid #2e8c5c;}
 .hBtn.hSign::before{background-color:#2e8c5c;}
 
-/* ── Approval(공동서명) 카드 ── */
-.elnSignBar{display:flex;align-items:center;justify-content:space-between;gap:10px;flex-wrap:wrap;margin-top:14px;}
-.elnSignActs{display:flex;gap:8px;flex-wrap:wrap;margin-left:auto;}
-.elnSignSeg{display:inline-flex;align-items:center;gap:0;font-size:12px;}
+/* ── Approval 카드: 데모 'View as' 탭(표준 결재 카드 규칙은 파일 끝 #card_approval 블록) ── */
 .elnSignSegLbl{color:#9a8b7e;margin-right:8px;}
 .elnSignTab{margin:0;}
 .elnSignTab ul{display:flex;margin:0;padding:0;}
 .elnSignTab li{flex:0 0 auto;}
 .elnSignTab .tabBg{transition:left .2s ease;}
-.elnSignCs{display:flex;align-items:center;gap:6px;flex-wrap:wrap;margin-top:14px;font-size:13px;}
-.elnSignCsLbl{font-weight:600;color:#5a4a3e;margin-right:4px;}
-.elnSignChip{display:inline-flex;align-items:center;gap:4px;}
-.elnSignChip i{font-size:14px;cursor:pointer;opacity:.8;}
-.elnSignChip i:hover{opacity:1;}
-.elnSignNone{color:#9a8b7e;font-size:13px;}
-.elnSignTable td{vertical-align:middle;}
-.elnSignRole{font-size:11px;color:#9a8b7e;}
-.elnSignTable .aniInput select.browser-default{width:100%;min-width:110px;}
-.elnSignTable .aniInput textarea.materialize-textarea{width:100%;min-height:32px;box-sizing:border-box;}
 /* 섹션 선택 목록(Submit Sections · Share scope) — 테두리 박스 + 헤더 + 헤어라인 행 (fixedTable.hBorderTable 선 톤) */
 .elnPickBox{border:1px solid var(--gray20);border-radius:5px;background:#fcfaf8;overflow:hidden;}
 .elnPickHd{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:38px;padding:0 12px;background:rgba(164,120,100,.07);border-bottom:1px solid var(--gray20);font-size:12px;color:#7a6757;}
@@ -1636,3 +1623,34 @@ a.elnNoteRef.restricted,.note-editable a.elnNoteRef.restricted{background:rgba(1
 .elnRefMeta i{font-size:15px;color:#A47864;}
 .elnRefLock{margin-top:10px;display:flex;align-items:center;gap:6px;padding:8px 10px;border-radius:8px;background:rgba(154,160,166,.14);color:#6b727a;font-size:12px;}
 .elnRefLock i{font-size:16px;}
+
+/* ── Approval 카드 = MAPIS 표준 결재 카드(appr_util.js renderApprovalCard / common.css 결재 규칙) ──
+   표준 클래스 그대로: table.appr-editor-mode · td.action-col > a.deleteBtn · tr.tr-accent · .aniInput.appr-required (mapis_lib common.css 에 있음).
+   mapis_lib 에 없는 운영 규칙(.appr-empty)과 ELN 전용 부분(데모 View as, 제출 소제목 행, 단계 안내)만 여기서 #card_approval 범위로 보탬 */
+#card_approval .elnApprHd{flex-wrap:wrap;gap:8px;}
+#card_approval .elnApprHd .cardTit2{margin-bottom:0;}
+#card_approval .elnApprActs .hBtn{display:inline-flex;align-items:center;}
+#elnApprOverall:empty{display:none;}
+#card_approval .elnApprDemo{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin:10px 0 8px;font-size:12px;color:#9a8b7e;}
+#card_approval .elnApprDemoLbl{font-weight:700;letter-spacing:.02em;color:#A47864;}
+#card_approval .elnApprDemo .elnSignSegLbl{margin-right:4px;}
+#card_approval .cardSubTit{margin-bottom:6px;}
+#card_approval table.appr-editor-mode td{vertical-align:middle;}
+#card_approval table.appr-editor-mode .select2-container{min-width:120px;}
+#card_approval .appr-status-table td{vertical-align:middle;}
+#card_approval .appr-status-table .aniInput .select2-container{min-width:130px;}
+#card_approval .appr-status-table textarea.materialize-textarea{width:100%;min-height:32px;box-sizing:border-box;}
+#card_approval tr.elnApprSubHd td{background:var(--gray10, #f7f5f2);padding-top:8px;padding-bottom:8px;}
+#card_approval .elnApprSubLine{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;font-size:13px;}
+#card_approval .elnApprSubNo{font-weight:700;color:#3a2c24;}
+#card_approval .elnApprSubSecs{color:#5a4a3e;}
+#card_approval .elnApprSubSecs b{font-weight:600;color:#9a8b7e;margin-right:6px;}
+#card_approval .elnApprSubMeta{color:#9a8b7e;font-size:12px;}
+/* Not Approved 선택 시 의견 필수 강조 — 운영 .aniInput.appr-required(input 용)를 textarea 에도 */
+#card_approval .aniInput.appr-required textarea{border-bottom-color:var(--viva);}
+#card_approval .aniInput.appr-required textarea::placeholder{color:var(--viva);opacity:.7;}
+/* 운영 common.css .appr-empty (mapis_lib 에 없음) */
+#card_approval .appr-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:36px 16px;text-align:center;color:var(--main-hint-color, #9a8b7e);}
+#card_approval .appr-empty > i{font-size:34px;opacity:.4;}
+#card_approval .appr-empty .appr-empty-msg{margin:0;font-size:13px;line-height:1.6;}
+.elnApprStepNote{font-size:13px;color:#7a6757;margin-bottom:10px;line-height:1.5;}
