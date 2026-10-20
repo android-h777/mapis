@@ -692,7 +692,14 @@
     var fmlCard = document.getElementById('card_fml');
     if (fmlCard) fmlCard.style.display = show ? '' : 'none';
     var fmlLi = document.querySelector('.leftAside .menuUl .menu-item[data-target="card_fml"]');
-    if (fmlLi) fmlLi.style.display = show ? '' : 'none';
+    // 인라인 display 는 공용 CSS(!important)에 져서 목차가 남았음 → 숨김 클래스(elnNavHidden)로. 숨기면 active 도 Basic Data 로
+    if (fmlLi) {
+      fmlLi.classList.toggle('elnNavHidden', !show);
+      if (!show && fmlLi.classList.contains('active')) {
+        fmlLi.classList.remove('active');
+        var b = document.querySelector('.leftAside .menuUl .menu-item[data-target="card_basic"]'); if (b) b.classList.add('active');
+      }
+    }
     if (ELN.signoff) ELN.signoff.refresh();
   }
   // 초기 로드: 리스트에서 연 노트(code)의 실제 fml 유무로 Formulation 카드 동기화(마크 없으면 카드도 없게).
@@ -2923,6 +2930,22 @@
   }
   document.addEventListener('DOMContentLoaded', initAnimateCleanup);
 
+  // 좌측 목차 등장 — 정적 목차 + 모듈 목차(initDefaultModules·initTemplate, 앞선 DOMContentLoaded 리스너)를 다 만든 뒤
+  //  보이는 항목에 순서대로 지연을 주어 한 번에 fadeInLeft. 이후 동적으로 추가되는 목차는 대상 아님
+  function playNavIntro() {
+    var ul = document.querySelector('.leftAside .menuUl'); if (!ul || !ul.classList.contains('elnNavPending')) return;
+    var i = 0;
+    ul.querySelectorAll('.menu-item').forEach(function (li) {
+      if (li.classList.contains('elnNavHidden') || li.offsetParent === null) return;
+      li.style.animationDelay = (0.05 + i * 0.06).toFixed(2) + 's'; i++;
+      li.classList.add('animate__animated', 'animate__fadeInLeft');
+      li.addEventListener('animationend', function done() { li.style.animationDelay = ''; li.removeEventListener('animationend', done); });
+    });
+    ul.classList.remove('elnNavPending');
+  }
+  document.addEventListener('DOMContentLoaded', function () { setTimeout(playNavIntro, 0); });
+  window.addEventListener('load', playNavIntro);   // 안전장치: 혹시 앞 단계가 늦거나 실패해도 목차가 숨은 채로 남지 않게
+
   /* ── 좌측 목차 드래그 핸들 — 우측에 항상 옅게 보이는 6점 grip(drag_indicator). hover 시 진해지고 grab 커서.
      그 아이콘 = sortable handle. 평소에도 보여서 "드래그로 순서변경 가능"을 설명 없이 알림 ── */
   // grip hover 안내 레이어 — 공유 1개를 body에 fixed로(사이드바 overflow에 안 잘림). 미니 재정렬 애니메이션 + 라벨
@@ -3062,7 +3085,7 @@
     if (!menu || !article) return;
     var LINE = 90;   // 뷰포트 상단에서 90px(고정 헤더 + scroll-margin 바로 아래) 지점을 지난 마지막 카드 = 현재
     function update() {
-      var cards = article.querySelectorAll('.cardBox');
+      var cards = [].filter.call(article.querySelectorAll('.cardBox'), function (c) { return c.offsetParent !== null; });   // 숨긴 카드(Formulation 등)는 위치가 0 이라 제외
       if (!cards.length) return;
       var curId = cards[0].id;
       for (var i = 0; i < cards.length; i++) {

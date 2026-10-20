@@ -995,17 +995,13 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnNavTipAnim .row.c{top:13px;}
 .elnNavTipAnim .row.b{top:7px;background:#fff;box-shadow:0 1px 5px rgba(0,0,0,.35);animation:elnDragRow 1.7s ease-in-out infinite;}
 @keyframes elnDragRow{0%,100%{top:7px;}28%{top:0;}56%{top:14px;}}
-/* 좌측 목차 진입 = 순차 cascade. stagger 없이 동시에 fadeInLeft 하면 로드 타이밍과 겹쳐 일부 li만 보임 → nth-child 지연으로 차례 등장.
-   animation-fill-mode:both(animate.css 기본)로 지연 동안 from 상태 유지 → 깜빡임 없음. 끝나면 JS(animationend)가 클래스 제거 */
+/* 좌측 목차 진입 = 순차 cascade. 정적 목차와 JS 모듈 목차가 따로 그려지면 두 번에 나눠 들어오고(모듈 삽입 시 nth-child 지연이 바뀌어
+   Approval 이 다시 재생됨) → 목차를 다 만든 뒤 playNavIntro 가 보이는 항목에 순서대로 지연(inline animation-delay)을 주어 한 번에 등장.
+   그 전(elnNavPending)엔 숨김. animation-fill-mode:both 라 지연 동안 from 상태 유지. 끝나면 JS(animationend)가 클래스 제거 */
+.leftAside .menuUl.elnNavPending .menu-item{opacity:0;}
 .leftAside .menuUl .menu-item.animate__fadeInLeft{animation-duration:.5s;}
-.leftAside .menuUl .menu-item:nth-child(1).animate__fadeInLeft{animation-delay:.05s;}
-.leftAside .menuUl .menu-item:nth-child(2).animate__fadeInLeft{animation-delay:.12s;}
-.leftAside .menuUl .menu-item:nth-child(3).animate__fadeInLeft{animation-delay:.19s;}
-.leftAside .menuUl .menu-item:nth-child(4).animate__fadeInLeft{animation-delay:.26s;}
-.leftAside .menuUl .menu-item:nth-child(5).animate__fadeInLeft{animation-delay:.33s;}
-.leftAside .menuUl .menu-item:nth-child(6).animate__fadeInLeft{animation-delay:.40s;}
-.leftAside .menuUl .menu-item:nth-child(7).animate__fadeInLeft{animation-delay:.47s;}
-.leftAside .menuUl .menu-item:nth-child(8).animate__fadeInLeft{animation-delay:.54s;}
+/* 숨긴 섹션의 목차(예: 템플릿에 없는 Formulation) — 공용 common.css '.popup aside.leftAside ul li{display:flex !important}' 보다 우선 */
+.popup aside.leftAside ul li.elnNavHidden{display:none !important;}
 
 /* ── 우측 패널: 파일 첨부 + URL 링크 ── */
 .elnAttachBox{display:flex;flex-direction:column;gap:8px;}

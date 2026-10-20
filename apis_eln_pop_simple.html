@@ -56,21 +56,22 @@
 
 	<aside class="leftAside z-depth-1 blurArea">
 		<section class="hScroll">
-			<ul class="menuUl">
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="card_basic">
+			<!-- elnNavPending: 모듈 목차까지 다 만든 뒤 한 번에 순서대로 등장(playNavIntro). 그 전엔 숨김 -->
+			<ul class="menuUl elnNavPending">
+				<li class="menu-item waves-effect waves-hColor active" data-target="card_basic">
 					<i class="material-symbols-outlined left">inventory_2</i><span>Basic Data</span>
 				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_fml">
+				<li class="menu-item waves-effect waves-hColor" data-target="card_fml">
 					<i class="material-symbols-outlined left">science</i><span>Formulation</span>
 				</li>
 				<!-- Process·Results는 Formulation 모듈 내부로 병합 — 별도 목차 없음 -->
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_concl">
+				<li class="menu-item waves-effect waves-hColor" data-target="card_concl">
 					<i class="material-symbols-outlined left">summarize</i><span>Conclusion</span>
 				</li>
-								<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_approval">
+				<li class="menu-item waves-effect waves-hColor" data-target="card_approval">
 						<i class="material-symbols-outlined left">local_library</i><span>Approval</span>
 					</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_audit">
+				<li class="menu-item waves-effect waves-hColor" data-target="card_audit">
 						<i class="material-symbols-outlined left">manage_history</i><span>Audit Trail</span>
 					</li>
 				</ul>
