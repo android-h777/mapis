@@ -307,7 +307,7 @@
   /* ── Task4: 우측 접이식 연계패널 + status 연동 + 참조 클릭 액션 ── */
   var REF_INFO = {
     fml:  { msg: 'Opening formulation in formulator' },
-    rm:   { msg: 'Opening material in Rawmathub', url: 'apis_item_pop.html' },
+    rm:   { msg: 'Opening material in Raw Material Hub', url: 'apis_item_pop.html' },
     npdi: { msg: 'Navigating to project' },
     note: { msg: 'Opening parent note' }
   };
@@ -447,18 +447,6 @@
       chart: { cats: ['NV %', 'VOC(×10)', 'Visc(×1k)', 'Cost'], data: [41.0, 29.0, 5.1, 14.2] }
     }
   };
-  // 원료 상세 목업
-  var RM_INFO = {
-    'RM-S1042': 'Silicone PSA Base · Viscosity 5,000cP · CAS 63148-62-9 · Supplier KCC',
-    'RM-T55': 'Solvent (Toluene) · BP 110.6°C · CAS 108-88-3',
-    'RM-V210': 'Viscosity Modifier · Non-volatile · Recommended 2~5wt%',
-    'RM-X07': 'Crosslinker · Platinum-catalyzed · Store cool & dark',
-    'RM-P318': 'UV Photoinitiator · λmax 320nm · Recommended 1~2wt%',
-    'RM-A220': 'Acrylic Base Polymer · Tg -20°C',
-    'RM-TK9': 'Tackifier · Softening point 95°C',
-    'RM-PL3': 'Plasticizer · Low-volatility · Phthalate-free',
-    'RM-C12': 'Curing Agent · Isocyanate-based'
-  };
 
   // 이 노트에 연결된 배합들(다중) — 본문은 배합별 컬럼 비교로 표시
   var linkedFmls = ['FML-EM-2208', 'FML-EM-2207'];
@@ -476,7 +464,7 @@
     var fmls = fmlList();
     thead.innerHTML = ''; tbody.innerHTML = '';
     var htr = document.createElement('tr');
-    ['Material (Rawmathub)', 'Code'].forEach(function (h) { var th = document.createElement('th'); th.textContent = h; htr.appendChild(th); });
+    ['Material', 'Code'].forEach(function (h) { var th = document.createElement('th'); th.textContent = h; htr.appendChild(th); });
     fmls.forEach(function (f) { var th = document.createElement('th'); th.className = 'ar'; th.innerHTML = f.code + ' <b>' + f.ver + '</b>'; htr.appendChild(th); });
     thead.appendChild(htr);
     // 원료 union(첫 등장 순서 보존)
@@ -485,8 +473,10 @@
     var totals = fmls.map(function () { return 0; });
     order.forEach(function (code) {
       var tr = document.createElement('tr');
-      var nameTd = document.createElement('td'); nameTd.className = 'rmName'; nameTd.textContent = map[code];
-      nameTd.style.cursor = 'pointer'; nameTd.dataset.rm = code; tr.appendChild(nameTd);
+      // 원료명 = 운영 표준 링크(<span class="link">, 실선 밑줄·lapisblue). 툴팁에만 'Raw Material Hub'(내부 용어 Rawmathub 은 화면에 안 씀)
+      var nameTd = document.createElement('td'); nameTd.className = 'rmName'; nameTd.dataset.rm = code;
+      var nameLk = document.createElement('span'); nameLk.className = 'link'; nameLk.textContent = map[code]; nameLk.title = 'Open in Raw Material Hub';
+      nameTd.appendChild(nameLk); tr.appendChild(nameTd);
       var codeTd = document.createElement('td'); codeTd.className = 'ac'; codeTd.textContent = code; tr.appendChild(codeTd);
       var vals = fmls.map(function (f) { var row = f.rows.filter(function (r) { return r.code === code; })[0]; return row ? row.wt : null; });
       var present = vals.filter(function (v) { return v != null; });
@@ -631,15 +621,9 @@
       'siliconeFormulator', 'width=1480,height=900,scrollbars=yes,resizable=yes');
   }
 
+  // 원료 클릭 → 운영과 같이 Raw Material Hub 팝업 창을 바로 엶(운영 au.openRawmathubPopup: 창 이름 rawmathubPop_<코드>). 프로토타입은 apis_item_pop.html
   function openFmlRmInfo(code) {
-    ELN.modal({
-      title: 'Rawmathub · ' + code, icon: 'communities',
-      body: RM_INFO[code] || ('No info for ' + code + '.'),
-      actions: [
-        { label: 'Open in Rawmathub', type: 'hBlue', onClick: function () { ELN.toast('Opening ' + code + ' in Rawmathub.', 'info'); } },
-        { label: 'Close', type: '' }
-      ]
-    });
+    window.open('apis_item_pop.html?mat=' + encodeURIComponent(code), 'rawmathubPop_' + code, 'width=1520,height=880,scrollbars=yes,resizable=yes');
   }
 
   function initFmlActions() {
@@ -657,7 +641,7 @@
     var btnChange = document.getElementById('btnChangeFml');
     if (btnChange) btnChange.addEventListener('click', openFmlSelect);
 
-    // 원료명 클릭 → Rawmathub 정보 (이벤트 위임)
+    // 원료명 클릭 → Raw Material Hub 팝업 (이벤트 위임)
     var tbody = document.getElementById('fmlTableBody');
     if (tbody) tbody.addEventListener('click', function (e) {
       var cell = e.target.closest('td.rmName[data-rm]');

@@ -114,7 +114,6 @@
 .elnRefMore{color:#5a7d9a;font-size:12px;font-weight:500;}
 
 /* ── TaskA1: 배합 연계 ── */
-.rmName{color:#5a3e30;text-decoration:underline dotted;text-underline-offset:2px;}
 .rmName:hover{color:#A47864;background:rgba(164,120,100,.08);}
 /* 배합 비교표: 헤더 배합코드 강조, 배합 간 값이 다른 wt% 셀 강조 */
 .elnFmlCmp table{width:100%;}
