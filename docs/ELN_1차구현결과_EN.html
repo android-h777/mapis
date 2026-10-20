@@ -133,15 +133,15 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
 
   <tr class="grp"><td colspan="6">Step 1 · Record reliability</td></tr>
   <tr data-tip="t1"><td class="no">1</td><td class="f">Header fields</td><td class="rq">Header fields for experiment date, a Platform tech / Pre-NPC option (work without a MAPIS NPC number), associated NPI number(s) (several), and paper notebook and page references<span class="nice">Nice</span></td><td>Experiment Date (MAPIS standard date picker, shown as MM-DD-YYYY), Platform / Pre-NPC and Paper Notebook Ref. added to Basic Data. NPI numbers (several) are linked as Project items in Related Items</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">No separate NPI field (in MAPIS, NPI number = project code). Projects (NPI, NPT and TS alike) are linked as Project items in Related Items, several per note, all equal. The Primary project, the Associated Project # field in Basic Data and the Stage/Task field were removed (decision of 2026-10-16). Platform/Pre-NPC can coexist with projects. Production has no master list for Platform or Pre-NPC, so the user picks only the type (Platform Technology / Pre-NPC) and types the name; names used in other notes are suggested by autocomplete (user decision). Dates are shown in the MAPIS standard MM-DD-YYYY. The paper notebook reference was Nice, but it was included because it is cheap to build.</td></tr>
-  <tr data-tip="t2"><td class="no">2</td><td class="f">Co-Signer sign-off</td><td class="rq">The author picks the Co-Signers (signers) directly</td><td>MAPIS standard approval UI (same as FMEA). The author sets the approval line (Type · Function · Assignee) with Add Row → Initiate Approval: choose the sections to submit › request comment › submit → the current approver chooses Approved / Not Approved (comment required) › Submit. Before any decision, Withdraw Approval takes it back. Progress shown by the card status badge (Not Initiated / Pending / Approved / Rejected) and the header badges</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">The card keeps its existing name "Approval" instead of being renamed "Sign-off" (to avoid confusing users). The approval line editor, status table and buttons follow the production standard approval (appr_util.js, FMEA style) (decided 2026-10-19). ELN-specific parts are only per-section submission · lock, unlock on rejection, Errata after approval, and the "Approved n of m sections" badge.</td></tr>
-  <tr data-tip="t3"><td class="no">3</td><td class="f">Lock after submission · Errata</td><td class="rq">Sections can still be added and Errata (corrections) made after ELN submission</td><td>Submitted sections block both editing and deletion; they unlock on rejection, and once fully approved the whole note is read-only. Errata (reason required) can still be added after approval</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">The review found ways to bypass the lock with the keyboard, dragging and image drops; these were closed. Errata are allowed even after approval (the original never changes, corrections are only added).</td></tr>
+  <tr data-tip="t2"><td class="no">2</td><td class="f">Co-Signer sign-off</td><td class="rq">The author picks the Co-Signers (signers) directly</td><td>MAPIS standard approval UI (same as FMEA). The author sets the approval line (Type · Function · Assignee) with Add Row → Initiate Approval: request comment › Submit sends the whole note for approval. In production the approvers choose Approved / Not Approved (comment required), and before any decision Withdraw Approval takes it back. Progress shown by the card status badge (Not Initiated / Pending / Approved / Rejected) and the header badges</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">The card keeps its existing name "Approval" instead of being renamed "Sign-off" (to avoid confusing users). The approval line editor, status table and buttons follow the production standard approval (appr_util.js, FMEA style) (decided 2026-10-19). Per-section submission (partial approval) was removed based on business user feedback; the whole note is approved as one unit (decided 2026-10-20). The prototype has no approver screen and treats a submission as approved right away.</td></tr>
+  <tr data-tip="t3"><td class="no">3</td><td class="f">Lock after submission · Errata</td><td class="rq">Sections can still be added and Errata (corrections) made after ELN submission</td><td>Once submitted, the whole note is read-only (editing, deleting and adding sections are blocked); it unlocks on rejection or withdrawal. Errata (reason required) can still be added during and after approval</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">The review found ways to bypass the lock with the keyboard, dragging and image drops; these were closed. Errata are allowed even after approval (the original never changes, corrections are only added). "Adding sections after submission" in the original request assumed partial approval, so it was dropped together with partial approval (2026-10-20). Additions after submission go into Errata.</td></tr>
   <tr data-tip="t4"><td class="no">4</td><td class="f">Audit Trail</td><td class="rq">Audit Trail feature</td><td>Table of time · user · section · action · before→after, with Section/User filters. Records most changes, from the header to the editor, tables, attachments and approvals</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">Scope extended to changes inside sections (tables, attachments, editor, etc.) (user request). Bulk changes made by the program, such as switching notes or copying, are not recorded.</td></tr>
 
   <tr class="grp"><td colspan="6">Step 2 · Collaboration · Search</td></tr>
   <tr data-tip="t5"><td class="no">5</td><td class="f">Co-editors</td><td class="rq">Add co-editors, show the name of the person who edited a co-edited note, track changes per editor</td><td>Co-editors are added in the Share &amp; Access window opened from the header Share button (share icon + people-count badge), managed in one place together with sharing. Last edited by shown per section; changes tracked in the Audit Trail. Co-editors cannot be added to an approved note</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">Simultaneous editing is not covered. The original request does not ask for it, and Co-editors are meant to take turns editing. Section locking assumes per-section saving, which does not fit note-level saving, so it was left out (user decision). Co-editors and signers are different people. A single Share button instead of header avatars (no photos or avatars, for privacy reasons).</td></tr>
   <tr data-tip="t6"><td class="no">6</td><td class="f">Sharing</td><td class="rq">Share notes and sections with other users under compliance (e.g. R&amp;D ↔ Process Technology scale-up collaboration)</td><td>Share &amp; Access window (the same window as co-editors). The access table shows who has access (Function as a badge · Scope); hovering a row shows Edit · Remove (Remove asks for confirmation before revoking). Add People (or Edit) opens an input form above the table in the same window for the person, Function (Co-editor/Viewer), scope and the security-policy acknowledgement (no modal on top of a modal). Only Viewers can be given section-level access. The acknowledgement is recorded in the Audit Trail</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">Co-editors and sharing merged into one modal: the Edit sharing permission and Co-editor are the same concept, so they were combined (user decision). Function has two levels, Co-editor/Viewer (Commenter left out because there is no comment feature). The security-policy checkbox is our reading of "under compliance" in the original request (production has no such element), and it is included in the Audit record so that audit evidence remains (user decision). Co-editors always get the whole note; section sharing is for Viewers only (sharing "sections" in the original request = the visible scope). Viewer sharing is allowed on approved notes too. Sharing is independent of project links. At the business users' request, the input form opens above the table instead of as a nested modal (2026-10-16). The sharing Reason field was removed (2026-10-16): the original request only says "under compliance"; the reason field was our own interpretation and was not shown anywhere.</td></tr>
   <tr data-tip="t7"><td class="no">7</td><td class="f">Copy note</td><td class="rq">Start from a copy of an existing experiment (Copy from)</td><td>Copy To button in the left button area (above Save Template) › choose Sections to Copy + Include entered data › Copy creates an unsaved copy in a new window (new number). The original window stays as it is. Shown in the list after saving</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">Same name, position and flow as production FMEA 'Copy To' (new window, before saving). The term 'Copy' is used instead of 'Clone' throughout. The original request only says "Copy from" and names no location, so Copy To is only in the note pop-up (Copy To in the list summary panel was removed on 2026-10-16). Sections to Copy is the section structure, Include entered data is the values. Basic Data is a required section, so it is always included (checkbox fixed). When Related Items is copied, the linked projects (Project items) stay regardless of the data option (note metadata). A copy of an approved note is editable.</td></tr>
-  <tr data-tip="t8"><td class="no">8</td><td class="f">Note cross-references</td><td class="rq">Insert cross-references to ELN experiments by the same or other authors, add links to related experiments</td><td>Related notes are searched and added as links in Related Items<br>Editor @ note reference<span class="badge">On hold</span> turned off at the business users' request</td><td class="s"><span class="badge wip">Partly on hold</span></td><td class="nt">Links to related experiments (original: "Link to add related Experiment") are provided as Note items in Related Items. The editor @ reference (autocomplete, chip links, summary card) was fully built with Summernote's built-in feature (hint), but was turned off on 2026-10-16 at the business users' request. The code is kept as comments, so it can be turned back on.</td></tr>
+  <tr data-tip="t8"><td class="no">8</td><td class="f">Note cross-references</td><td class="rq">Insert cross-references to ELN experiments by the same or other authors, add links to related experiments</td><td>Related notes are searched and added as links in Related Items<br>Editor @ note reference<span class="badge">On hold</span> turned off at the business users' request</td><td class="s"><span class="badge wip">Partly on hold</span></td><td class="nt">Links to related experiments (original: "Link to add related Experiment") are provided as Lab Note items in Related Items. The editor @ reference (autocomplete, chip links, summary card) was fully built with Summernote's built-in feature (hint), but was turned off on 2026-10-16 at the business users' request. The code is kept as comments, so it can be turned back on.</td></tr>
   <tr data-tip="t9"><td class="no">9</td><td class="f">Extended search</td><td class="rq">Search by author, project name, NPI number, etc., including the contents of attachments (Office and text formats)<span class="nice">Nice</span></td><td>Search by author, Project # / NPI and attachment text (matching sentences highlighted)<br>Structure search: Formula / Name / CAS-No autocomplete input + Draw Structure (opens ChemStudio)</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">"NPI number search" is unified into project code and name search (all projects linked to the note). Structure search is linked to ChemStudio: ChemStudio already has an integrated search (Formula / name / CAS-No), and notes are matched through the structures linked in the note's ChemStudio module (input added 2026-10-19; the prototype uses a mock structure list).</td></tr>
   <tr data-tip="t10"><td class="no">10</td><td class="f">Searching notes without access</td><td class="rq">Search ELNs even without read access (show only the basic data if allowed)</td><td>Search results show only a locked row (number · title · author · date); clicking it shows a no-access summary and Request Access (reason required)</td><td class="s"><span class="badge ok">Implemented</span></td><td class="nt">Notes are found through basic data such as the project, but body text, tags and attachments are not shown (original: "show just the basic data if allowed").</td></tr>
 
@@ -167,7 +167,9 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <li>Dates shown in the MAPIS standard MM-DD-YYYY (production format MM-dd-yyyy). Experiment Date uses the standard date picker (before, the format changed with the PC language)</li>
   <li>The summary panel on the right of the list now uses the MAPIS standard summary layout (same as the Tech Library and Composition lists): title link, label/value rows, section headings (Related Projects · Modules · Tags), status as colored text, wider panel</li>
   <li>One Formulation section per note: after it is deleted, choosing it again in Add Module restores the original section (no new empty section is created)</li>
-  <li>The Related Items add row uses the MAPIS standard input: Material · Project · Note share the same input with the common autocomplete, URL is a plain input</li>
+  <li>The Related Items add row uses the MAPIS standard input: Material · Project · Lab Note share the same input with the common autocomplete, URL is a plain input</li>
+  <li>Related Items entries are shown as MAPIS standard chips, the same as attachments, flowing side by side (2026-10-20): sorted by type (Project → Material → Lab Note → URL), the × delete sits at the right end of the chip (darker on hover). The type "Note" is renamed "Lab Note". The hint "Linking a project does not grant access" is removed from the pop-up and the list</li>
+  <li>The Audit Trail table has a maximum height of 300px and scrolls inside the table when it overflows (header stays fixed)</li>
   <li>The Share &amp; Access table follows the MAPIS standard: Function badges (Owner filled · Co-editor blue outline · Viewer grey outline), Edit · Remove icons appear only when the row is hovered, and Remove revokes access only after a confirmation (Confirm / Cancel)</li>
   <li>List: the selected row no longer drops down on hover (2px shift removed); the New Notebook button is a plain button</li>
 </ul></div>
@@ -189,14 +191,14 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <colgroup><col style="width:170px"><col><col style="width:34%"></colgroup>
   <tr><th>Item</th><th>To decide</th><th>Current implementation (default)</th></tr>
   <tr><td class="f">1. Platform / Pre-NPC names</td><td>Production has no list. Keep them as a managed list (common code, with an assigned owner) or as free text?</td><td class="cur">Choose the type (Platform Technology / Pre-NPC) + type the name, with autocomplete from names used in other notes</td></tr>
-  <tr><td class="f">1. Project links</td><td>Decided 2026-10-16: the Primary project concept and the Associated Project # (NPI, NPT, TS) field in Basic Data are removed. Projects are linked only as Project items in Related Items</td><td class="cur">Related Items › Project: search by project # or title, shown as [CODE] Title, a click opens the project. Hint "Linking a project does not grant access to this note." The demo note has 3 projects linked</td></tr>
+  <tr><td class="f">1. Project links</td><td>Decided 2026-10-16: the Primary project concept and the Associated Project # (NPI, NPT, TS) field in Basic Data are removed. Projects are linked only as Project items in Related Items</td><td class="cur">Related Items › Project: search by project # or title, shown as [CODE] Title, a click opens the project. The demo note has 3 projects linked</td></tr>
   <tr><td class="f">1. Stage / Task</td><td>Decided 2026-10-16: the Stage (Task) field is removed. It was based on the Primary project, so it goes too</td><td class="cur">None</td></tr>
   <tr><td class="f">1. Date format</td><td>Decided 2026-10-16: dates are shown in the MAPIS standard MM-DD-YYYY (production MM-dd-yyyy)</td><td class="cur">All dates on screen are MM-DD-YYYY. Experiment Date uses the standard date picker</td></tr>
-  <tr><td class="f">2. Approval UI</td><td>Decided 2026-10-19: the approval UI is unified with the MAPIS standard approval (FMEA style); only per-section submission · lock · Errata stay ELN-specific</td><td class="cur">Approval card: status badge + Add Row · Initiate Approval · Withdraw Approval, Approval Line editor table (Type · Function · Assignee), Approval Status table (Type · Function · Assignee · Status · Comments · Date · Submit, one Submission row per submission with its sections)</td></tr>
+  <tr><td class="f">2. Approval UI</td><td>Decided 2026-10-19: the approval UI is unified with the MAPIS standard approval (FMEA style). Decided 2026-10-20: partial approval (per-section submission) is removed and the whole note is approved as one unit. The approver screen is the same as the common production module, so the demo View as tabs are removed</td><td class="cur">Approval card: status badge + Add Row · Initiate Approval, Approval Line editor table (Type · Function · Assignee), Approval Status table (Type · Function · Assignee · Status · Comments · Date, one Submission row per submission). The prototype approves a submission right away</td></tr>
   <tr><td class="f">6. Sharing input form</td><td>Decided 2026-10-16: no modal opened on top of another modal (business users' request)</td><td class="cur">In the Share &amp; Access window, Add People (or the Edit pencil on a row) expands an input form above the access table. Saving collapses the form and refreshes the table</td></tr>
   <tr><td class="f">6. Sharing Reason field</td><td>Decided 2026-10-16: the Share Reason field is removed. The original request only asks to "share under compliance"; the reason field was our own interpretation and was not shown anywhere</td><td class="cur">Only the security-policy acknowledgement is required (Share · Save stay disabled until it is ticked). Audit entries end with "Security policy acknowledged"</td></tr>
   <tr><td class="f">7. Copy To in the list</td><td>Decided 2026-10-16: Copy To in the list summary panel is removed. The original request (Copy from) names no location, so it stays only in the note pop-up</td><td class="cur">Note pop-up Copy To: choose sections + Include entered data, opens in a new window</td></tr>
-  <tr><td class="f">8. Editor @ note reference</td><td>Decided 2026-10-16: turned off at the business users' request. The code is kept as comments so it can be turned back on</td><td class="cur">Related notes are linked as Note items in Related Items</td></tr>
+  <tr><td class="f">8. Editor @ note reference</td><td>Decided 2026-10-16: turned off at the business users' request. The code is kept as comments so it can be turned back on</td><td class="cur">Related notes are linked as Lab Note items in Related Items</td></tr>
   <tr><td class="f">9. Structure search</td><td>Decided 2026-10-16: linked to ChemStudio instead of a chemical search engine. Notes are found through the structures linked in their ChemStudio module</td><td class="cur">A Formula / Name / CAS-No autocomplete input in the search window (added 2026-10-19) + the Draw Structure button opens ChemStudio</td></tr>
   <tr><td class="f">12. SharePoint working documents</td><td>Decided 2026-10-16: still under review, not reflected in this prototype</td><td class="cur">None (research summary in the item 12 details)</td></tr>
   <tr><td class="f">Note List in the note pop-up</td><td>Decided 2026-10-16: the Note List button and panel are removed (they listed the Primary project's notes by stage)</td><td class="cur">None</td></tr>
@@ -232,13 +234,13 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
     </ol></figcaption>
   </figure>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/01_projadd.png" alt="Add project autocomplete in Related Items"><span class="mk" style="left:1.9%;top:15.3%">①</span><span class="mk" style="left:14.5%;top:32.0%">②</span><span class="mk" style="left:92.0%;top:13.8%">③</span><span class="mk" style="left:1.9%;top:35.3%">④</span></div>
-    <figcaption><div class="lb">Linking a project (Related Items › Project item, MAPIS common component)</div><ol class="cl"><li><b>①</b> Choose Project as the type in the Related Items add row. All four types (Material · Project · Note · URL) use the same MAPIS standard input (URL is a plain input, the others use the common autocomplete)</li><li><b>②</b> Typing a project number or name (in the figure: PT-26) shows the common autocomplete list, in the MAPIS standard [CODE] Title format (e.g. [PT-26-0034] Low Viscosity Binder Gel T)</li><li><b>③</b> Picking one and clicking Add adds a Project item and records it in the Audit Trail. Clicking the item opens the project screen</li><li><b>④</b> When the type is Project, a hint below the add row reads "Linking a project does not grant access to this note." (partly hidden by the autocomplete list in the figure)</li></ol></figcaption>
+    <div class="shot"><img src="img/eln/01_projadd.png" alt="Add project autocomplete in Related Items"><span class="mk" style="left:1.5%;top:42.3%">①</span><span class="mk" style="left:12.4%;top:56.2%">②</span><span class="mk" style="left:91.1%;top:40.8%">③</span></div>
+    <figcaption><div class="lb">Linking a project (Related Items › Project item, MAPIS common component)</div><ol class="cl"><li><b>①</b> Choose Project as the type in the Related Items add row. All four types (Material · Project · Lab Note · URL) use the same MAPIS standard input (URL is a plain input, the others use the common autocomplete)</li><li><b>②</b> Typing a project number or name (in the figure: PT-26) shows the common autocomplete list, in the MAPIS standard [CODE] Title format (e.g. [PT-26-0034] Low Viscosity Binder Gel T)</li><li><b>③</b> Picking one and clicking Add adds a Project chip and records it in the Audit Trail. Clicking the chip's name opens the project screen</li></ol></figcaption>
   </figure>
   <div class="tt-pair">
     <figure class="tt-fig">
-      <div class="shot"><img src="img/eln/01_list_summary.png" alt="List summary panel"><span class="mk" style="left:3.8%;top:5.8%">①</span><span class="mk" style="left:4.0%;top:18.5%">②</span><span class="mk" style="left:5.8%;top:53.3%">③</span><span class="mk" style="left:5.8%;top:67.4%">④</span><span class="mk" style="left:3.8%;top:75.2%">⑤</span></div>
-      <figcaption><div class="lb">List summary panel (MAPIS standard summary layout)</div><ol class="cl"><li><b>①</b> Title link: [note number] title</li><li><b>②</b> Label/value rows: Status (colored text) · Note # · Notebook · Author · Modified · Formulation</li><li><b>③</b> Related Projects: the linked projects as [CODE] Title links (a click opens the project)</li><li><b>④</b> "Linking a project does not grant access to it." Linking a project gives no access rights to it</li><li><b>⑤</b> Modules · Tags</li></ol></figcaption>
+      <div class="shot"><img src="img/eln/01_list_summary.png" alt="List summary panel"><span class="mk" style="left:1.5%;top:8.7%">①</span><span class="mk" style="left:1.5%;top:30.8%">②</span><span class="mk" style="left:1.5%;top:49.9%">③</span><span class="mk" style="left:1.5%;top:74.3%">④</span></div>
+      <figcaption><div class="lb">List summary panel (MAPIS standard summary layout)</div><ol class="cl"><li><b>①</b> Title link: [note number] title</li><li><b>②</b> Label/value rows: Status (colored text) · Note # · Notebook · Author · Modified · Formulation</li><li><b>③</b> Related Projects: the linked projects as [CODE] Title links (a click opens the project). Linking a project gives no access rights to the note (the hint text was removed on 2026-10-20)</li><li><b>④</b> Modules · Tags</li></ol></figcaption>
     </figure>
     <div></div>
   </div>
@@ -267,44 +269,29 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <div class="tt-req">"Author chooses Co-Signers"</div>
   <div class="tt-cap">Screens</div>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/02_approval_before.png" alt="Approval card, author view, before initiation"><span class="mk" style="left:20.4%;top:15.4%">①</span><span class="mk" style="left:76.4%;top:15.4%">②</span><span class="mk" style="left:99.2%;top:15.4%">③</span><span class="mk" style="left:67.6%;top:32.4%">④</span><span class="mk" style="left:36.1%;top:50.4%">⑤</span><span class="mk" style="left:98.6%;top:79.0%">⑥</span></div>
-    <figcaption><div class="lb">Before initiation (author view)</div><ol class="cl">
+    <div class="shot"><img src="img/eln/02_approval_before.png" alt="Approval card, before initiation"><span class="mk" style="left:9.4%;top:18.6%">①</span><span class="mk" style="left:76.7%;top:18.6%">②</span><span class="mk" style="left:85.5%;top:18.6%">③</span><span class="mk" style="left:1.5%;top:39.9%">④</span><span class="mk" style="left:94.4%;top:74.6%">⑤</span></div>
+    <figcaption><div class="lb">Before initiation</div><ol class="cl">
       <li><b>①</b> Overall status badge of the card: Not Initiated (not yet started) › Pending › Approved / Rejected</li>
       <li><b>②</b> Add Row: adds a row to the approval line</li>
-      <li><b>③</b> Initiate Approval: choose the sections to submit › request comment › submit</li>
-      <li><b>④</b> Demo: View as Author / Co-Signer: switch tabs for the demo only (in production this depends on the logged-in user)</li>
-      <li><b>⑤</b> Approval line editor table: Type (Approval / Reference) · Function (Group Leader / Witness / Reviewer) · Assignee. Picking the same assignee twice shows a warning</li>
-      <li><b>⑥</b> Hovering a row shows the delete icon; the row is deleted after a confirmation</li>
+      <li><b>③</b> Initiate Approval: request comment › Submit sends the whole note for approval</li>
+      <li><b>④</b> Approval line editor table: Type (Approval / Reference) · Function (Group Leader / Witness / Reviewer) · Assignee. Picking the same assignee twice shows a warning</li>
+      <li><b>⑤</b> Hovering a row shows the delete icon; the row is deleted after a confirmation</li>
     </ol></figcaption>
   </figure>
   <div class="tt-pair">
     <figure class="tt-fig">
-      <div class="shot"><img src="img/eln/02_approval_sections.png" alt="Initiate Approval step 1, section selection"><span class="mk" style="left:4.0%;top:29.7%">①</span><span class="mk" style="left:73.0%;top:38.5%">②</span><span class="mk" style="left:61.8%;top:90.6%">③</span></div>
-      <figcaption><div class="lb">Initiate Approval step 1: choose sections (ELN-specific)</div><ol class="cl"><li><b>①</b> Select all: choosing everything submits the whole note</li><li><b>②</b> Sections already submitted are shown as Submitted and cannot be chosen</li><li><b>③</b> Next</li></ol></figcaption>
+      <div class="shot"><img src="img/eln/02_approval_comment.png" alt="Initiate Approval, request comment"><span class="mk" style="left:4.1%;top:50.0%">①</span><span class="mk" style="left:48.8%;top:81.0%">②</span></div>
+      <figcaption><div class="lb">Initiate Approval: request comment (same window as production)</div><ol class="cl"><li><b>①</b> Comment (optional, up to 500 characters)</li><li><b>②</b> Submit: sends the whole note. There is no section selection step (partial approval removed, 2026-10-20)</li></ol></figcaption>
     </figure>
-    <figure class="tt-fig">
-      <div class="shot"><img src="img/eln/02_approval_comment.png" alt="Initiate Approval step 2, request comment"><span class="mk" style="left:4.1%;top:58.4%">①</span><span class="mk" style="left:48.8%;top:84.2%">②</span></div>
-      <figcaption><div class="lb">Step 2: request comment</div><ol class="cl"><li><b>①</b> Comment (optional, up to 500 characters). The chosen sections are listed above it</li><li><b>②</b> Submit › confirmation › submitted. The chosen sections are locked</li></ol></figcaption>
-    </figure>
+    <div></div>
   </div>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/02_approval_initiated.png" alt="Approval card, author view, after initiation"><span class="mk" style="left:18.7%;top:7.5%">①</span><span class="mk" style="left:74.0%;top:2.9%">②</span><span class="mk" style="left:99.2%;top:7.5%">③</span><span class="mk" style="left:33.7%;top:71.3%">④</span><span class="mk" style="left:68.7%;top:78.0%">⑤</span></div>
-    <figcaption><div class="lb">After initiation (author view, 2 sections submitted)</div><ol class="cl">
-      <li><b>①</b> Status badge Pending</li>
-      <li><b>②</b> Initiate Approval: sections not yet submitted can still be submitted</li>
-      <li><b>③</b> Withdraw Approval: takes the request back before any approver decides, and unlocks the submitted sections</li>
-      <li><b>④</b> Approval Status table (Type · Function · Assignee · Status · Comments · Date · Submit): one Submission row per submission (status, Sections list)</li>
-      <li><b>⑤</b> Request row: the author's (Charles Kim) request comment and date</li>
-    </ol></figcaption>
-  </figure>
-  <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/02_approval_cosigner.png" alt="Approval card, signer view"><span class="mk" style="left:86.9%;top:24.1%">①</span><span class="mk" style="left:39.9%;top:70.3%">②</span><span class="mk" style="left:38.5%;top:82.2%">③</span><span class="mk" style="left:78.5%;top:82.2%">④</span><span class="mk" style="left:90.6%;top:82.2%">⑤</span></div>
-    <figcaption><div class="lb">In approval (Co-Signer view, ?st=appr)</div><ol class="cl">
-      <li><b>①</b> Demo: View as Co-Signer tab</li>
-      <li><b>②</b> Jim Quan: Approved, comment "Data verified.", date recorded</li>
-      <li><b>③</b> Current approver's (Aishwarya) row: choose Approved / Not Approved</li>
-      <li><b>④</b> Comments (required for Not Approved)</li>
-      <li><b>⑤</b> Submit: confirms the decision. Not Approved unlocks the submitted sections; when everyone approves, the sections are approved</li>
+    <div class="shot"><img src="img/eln/02_approval_initiated.png" alt="Approval card, approved right after initiation"><span class="mk" style="left:9.4%;top:13.9%">①</span><span class="mk" style="left:1.5%;top:43.4%">②</span><span class="mk" style="left:1.5%;top:56.6%">③</span><span class="mk" style="left:39.5%;top:68.7%">④</span></div>
+    <figcaption><div class="lb">After initiation (prototype: approved right away)</div><ol class="cl">
+      <li><b>①</b> Status badge Approved. The header status is also Approved and the whole note is read-only</li>
+      <li><b>②</b> Approval Status table (Type · Function · Assignee · Status · Comments · Date): one Submission row per submission (initiating again after a rejection or withdrawal adds Submission 2)</li>
+      <li><b>③</b> Request row: the author's (Charles Kim) request comment and date</li>
+      <li><b>④</b> Approver rows: the prototype has no approver screen and marks every approver Approved right after submission. In production each approver chooses Approved / Not Approved (comment required), and before any decision the author can take it back with Withdraw Approval</li>
     </ol></figcaption>
   </figure>
   <figure class="tt-fig">
@@ -314,14 +301,13 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <div class="tt-cap">Demo</div>
   <ol class="tt-steps">
     <li>In the Approval card, check or change the approval line with <b>Add Row</b></li>
-    <li><b>Initiate Approval</b> › choose sections › Next › request comment › Submit (before any decision, Withdraw Approval takes it back)</li>
-    <li>Demo: View as <b>Co-Signer</b> tab › on the current approver's row choose Approved (or Not Approved + comment) › Submit</li>
-    <li>Check that the header status and the Awaiting badge change. To open a note already in approval, add <b>?st=appr</b> to the end of the address</li>
+    <li><b>Initiate Approval</b> › request comment › Submit › check that it is approved (header Approved, whole note read-only)</li>
+    <li>To open a note in approval, add <b>?st=appr</b> to the end of the address (header In Approval, Awaiting badge)</li>
   </ol>
   <div class="tt-cap">Changes from the plan</div>
-  <ul class="tt-l"><li>The card keeps its existing name <b>Approval</b> instead of being renamed "Sign-off"</li><li>The approval UI is unified with the MAPIS standard approval (FMEA style) (decided 2026-10-19). The Co-Signer chips, Add Co-Signer window, Submit Sections / Submit All buttons and the Sections | Role | Co-Signer | Decision table are replaced by the Add Row approval line editor, Initiate Approval, Withdraw Approval and the standard Approval Status table. Only per-section submission · lock, unlock on rejection, Errata after approval and the "Approved n of m sections" badge stay ELN-specific</li></ul>
+  <ul class="tt-l"><li>The card keeps its existing name <b>Approval</b> instead of being renamed "Sign-off"</li><li>The approval UI is unified with the MAPIS standard approval (FMEA style) (decided 2026-10-19). The Co-Signer chips, Add Co-Signer window, Submit Sections / Submit All buttons and the Sections | Role | Co-Signer | Decision table are replaced by the Add Row approval line editor, Initiate Approval, Withdraw Approval and the standard Approval Status table</li><li>Partial approval (per-section submission · per-section lock badges · lock icons in the side menu · "Approved n of m sections") was removed based on business user feedback; the whole note is approved as one unit (decided 2026-10-20). The approver screen is the same as the common production module, so the demo View as Author / Co-Signer tabs were removed too, and the prototype approves a submission right away</li></ul>
   <div class="tt-cap">Production notes</div>
-  <ul class="tt-l"><li>The screen has the same structure as the production standard approval card (appr_util.js), so it can be reused. Stored in the same row format as the existing MAPIS approval feature (approval module TS09_APPR) + the section list per submission (ELN-specific)</li></ul>
+  <ul class="tt-l"><li>The screen and the approval unit match the production standard approval card (appr_util.js), so the common module can be used as is. Stored in the same row format as the existing MAPIS approval feature (approval module TS09_APPR). No server logic for per-section approval is needed</li></ul>
 </template>
 
 <template id="t3">
@@ -330,11 +316,10 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <div class="tt-req">"Add additional sections and Errata after ELN Submission"</div>
   <div class="tt-cap">Screens</div>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/03_locked_editor.png" alt="Editor card locked after submission"><span class="mk" style="left:48.3%;top:7.4%">①</span><span class="mk" style="left:2.6%;top:24.3%">②</span><span class="mk" style="left:85.3%;top:90.6%">③</span></div>
-    <figcaption><div class="lb">After submission (locked section)</div><ol class="cl">
-      <li><b>①</b> 🔒 "Submitted 10-12-2026 09:30" badge: this section has been submitted and is locked (editing, deleting, dragging and keyboard input are blocked)</li>
-      <li><b>②</b> The body area is read-only</li>
-      <li><b>③</b> <b>Errata</b> button: corrections can be added even to a locked section</li>
+    <div class="shot"><img src="img/eln/03_locked_editor.png" alt="Editor card locked during approval"><span class="mk" style="left:1.5%;top:47.6%">①</span><span class="mk" style="left:88.9%;top:85.0%">②</span></div>
+    <figcaption><div class="lb">In approval (?st=appr, whole note locked)</div><ol class="cl">
+      <li><b>①</b> The body is read-only (editing, deleting, dragging and keyboard input are blocked). All sections are locked together, and Add Module · Save are hidden. The status is shown only in the header (In Approval) and the Approval card (per-section lock badges and side-menu lock icons were removed on 2026-10-20)</li>
+      <li><b>②</b> <b>Errata</b> button: corrections can be added even to a locked section</li>
     </ol></figcaption>
   </figure>
   <div class="tt-pair">
@@ -345,16 +330,15 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
     <div></div>
   </div>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/03_errata_block.png" alt="Approved Basic Data with an Errata block"><span class="mk" style="left:56.5%;top:5.7%">①</span><span class="mk" style="left:27.0%;top:28.7%">②</span><span class="mk" style="left:2.4%;top:86.1%">③</span></div>
+    <div class="shot"><img src="img/eln/03_errata_block.png" alt="Approved Basic Data with an Errata block"><span class="mk" style="left:18.1%;top:26.5%">①</span><span class="mk" style="left:3.2%;top:73.9%">②</span></div>
     <figcaption><div class="lb">After approval</div><ol class="cl">
-      <li><b>①</b> Green badge "Approved · Jim Quan, Aishwarya…": a fully approved section</li>
-      <li><b>②</b> The body keeps the original as it was (Experiment Date 10-08-2026)</li>
-      <li><b>③</b> <b>Errata #1</b> block: date/time, author, correction and Reason are added below the original (the original is not changed)</li>
+      <li><b>①</b> The body keeps the original as it was (Experiment Date 10-08-2026)</li>
+      <li><b>②</b> <b>Errata #1</b> block: date/time, author, correction and Reason are added below the original (the original is not changed)</li>
     </ol></figcaption>
   </figure>
   <div class="tt-cap">Demo</div>
   <ol class="tt-steps">
-    <li>In the ?st=appr note, try to edit a submitted (locked) section › check that it is blocked</li>
+    <li>In the ?st=appr note (in approval), try to edit a section › check that it is blocked</li>
     <li>In a section of an approved note, click Errata</li>
     <li>Enter Correction and Reason › Save › check the Errata #1 block</li>
   </ol>
@@ -368,11 +352,11 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <div class="tt-req">"Audit Trail feature"</div>
   <div class="tt-cap">Screen</div>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/04_audit.png" alt="Change History in the Audit Trail card"><span class="mk" style="left:58.1%;top:9.3%">①</span><span class="mk" style="left:70.8%;top:15.5%">②</span><span class="mk" style="left:63.5%;top:68.5%">③</span><span class="mk" style="left:41.8%;top:20.2%">④</span><span class="mk" style="left:31.5%;top:95.4%">⑤</span></div>
+    <div class="shot"><img src="img/eln/04_audit.png" alt="Change History in the Audit Trail card"><span class="mk" style="left:58.5%;top:15.5%">①</span><span class="mk" style="left:52.1%;top:24.4%">②</span><span class="mk" style="left:96.0%;top:72.7%">③</span><span class="mk" style="left:42.7%;top:57.8%">④</span><span class="mk" style="left:1.5%;top:90.3%">⑤</span></div>
     <figcaption><ol class="cl">
       <li><b>①</b> Section / User filters: narrow the view down by section or user</li>
-      <li><b>②</b> Table columns: Date/Time · User · Section · Action · Change (before→after)</li>
-      <li><b>③</b> Example of before→after: Crosslinker (wt%): <s>1.8</s> › 2.2 (David Lee, Formulation)</li>
+      <li><b>②</b> Table columns: Date/Time · User · Section · Action · Change (before→after, e.g. Crosslinker (wt%): <s>1.8</s> › 2.2)</li>
+      <li><b>③</b> The table is at most 300px high; with many entries it scrolls inside the table (header stays fixed)</li>
       <li><b>④</b> Approval, Errata and sharing history is recorded in the same table (picture: Submitted, Approved, Note approved, Errata added, Access granted. Permission changes and revocations show as Access changed / Access removed)</li>
       <li><b>⑤</b> Footer text: "Entries are recorded automatically and cannot be edited or deleted."</li>
     </ol></figcaption>
@@ -498,7 +482,7 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
     <figcaption><div class="lb">Header of the new window right after copying</div><ol class="cl"><li><b>①</b> New number NT-2610-00188 and "(copy)" after the title. An unsaved copy</li><li><b>②</b> Status is In Progress (editable)</li><li>The original window stays as it is (the copy opens in a new window)</li></ol></figcaption>
   </figure>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/07_clone_basic.png" alt="Linked projects of the copied note"><span class="mk" style="left:1.8%;top:51.4%">①</span></div>
+    <div class="shot"><img src="img/eln/07_clone_basic.png" alt="Linked projects of the copied note"><span class="mk" style="left:1.5%;top:75.2%">①</span></div>
     <figcaption><div class="lb">Copied project links</div><ol class="cl"><li><b>①</b> The Project items in Related Items (linked projects) are copied as they are. The figure shows a copy made with Include entered data turned off: the Material item is left out and only the Project items remain</li><li>No link to the source note is shown on screen (the copy does not need to be tied to the source). The origin is kept only in the first Audit Trail entry "Note created · Copied from …"</li></ol></figcaption>
   </figure>
   <div class="tt-cap">Demo</div>
@@ -513,16 +497,16 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <div class="tt-req">"Insert cross-references to other ELN experiments by same author / by other authors." · "Link to add related Experiment"</div>
   <div class="tt-cap">Screens</div>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/08_related.png" alt="Related Items card"><span class="mk" style="left:1.9%;top:23.7%">①</span><span class="mk" style="left:2.7%;top:38.6%">②</span><span class="mk" style="left:2.7%;top:88.3%">③</span><span class="mk" style="left:94.0%;top:88.3%">④</span></div>
+    <div class="shot"><img src="img/eln/08_related.png" alt="Related Items card"><span class="mk" style="left:1.5%;top:42.3%">①</span><span class="mk" style="left:1.5%;top:64.2%">②</span><span class="mk" style="left:24.2%;top:78.1%">③</span><span class="mk" style="left:50.7%;top:78.7%">④</span></div>
     <figcaption><div class="lb">Related Items</div><ol class="cl">
-      <li><b>①</b> Add row: pick the type (Material / Project / Note / URL) and search. All four types use the same MAPIS standard input (URL is a plain input, the others use the common autocomplete)</li>
-      <li><b>②</b> PROJECT item: [CODE] Title; a click opens the project screen (item 1)</li>
-      <li><b>③</b> NOTE item (NT-2605-00072): a related experiment (note) found with the Note type and linked directly</li>
-      <li><b>④</b> × deletes the item</li>
+      <li><b>①</b> Add row: pick the type (Material / Project / Lab Note / URL) and search. All four types use the same MAPIS standard input (URL is a plain input, the others use the common autocomplete)</li>
+      <li><b>②</b> Entries are MAPIS standard chips, the same as attachments, flowing side by side and sorted by type (Project → Material → Lab Note → URL). A PROJECT chip shows [CODE] Title; a click opens the project screen (item 1)</li>
+      <li><b>③</b> LAB NOTE chip (NT-2605-00098): a related experiment (note) found with the Lab Note type and linked directly</li>
+      <li><b>④</b> × deletes the entry (darker when the chip is hovered)</li>
     </ol></figcaption>
   </figure>
   <div class="tt-cap">Demo</div>
-  <ol class="tt-steps"><li>In Related Items, choose the Note type › search by note number or title › Add</li><li>Check the added NOTE item</li></ol>
+  <ol class="tt-steps"><li>In Related Items, choose the Lab Note type › search by note number or title › Add</li><li>Check that the added LAB NOTE chip is placed after the Material chip</li></ol>
   <div class="tt-cap">Changes from the plan</div>
   <ul class="tt-l"><li>The editor @ note reference (autocomplete, chip links, hover summary card, automatic Related Items entry) was fully built but turned off at the business users' request (2026-10-16). The code is kept as comments, so it can be turned back on</li></ul>
   <div class="tt-cap">Production notes</div>
