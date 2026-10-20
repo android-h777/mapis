@@ -1393,10 +1393,13 @@
       case 'fml': return '<div class="elnFmlHead"><i class="material-symbols-outlined">science</i>'
         + '<div class="elnFmlId">No formulation linked yet</div>'
         + '<a href="javascript:;" class="waves-effect waves-light hBtn elnFmlLink"><i class="material-symbols-outlined left">link</i>Link…</a></div>';
+      // 운영 표준 첨부 UI(_fmeaAttach.html: input-field file-field + file-area). 블록 전체가 드롭존(_mfBindDrop 방식)
       case 'attach': return '<div class="elnAttachBox">'
-        + '<label class="elnAttachDrop"><i class="material-symbols-outlined">upload_file</i>'
-        + '<span>Drop files or <b>choose</b></span><input type="file" class="elnFileInput" multiple hidden></label>'
-        + '<ul class="elnAttachList"></ul></div>';
+        + '<div class="input-field file-field mt0 mb5">'
+        + '<div class="btn"><span>File</span><input type="file" class="elnFileInput" multiple></div>'
+        + '<div class="file-path-wrapper"><input type="text" class="file-path validate" placeholder="No file chosen" autocomplete="off" spellcheck="false"></div>'
+        + '</div>'
+        + '<div class="file-area elnAttachList"></div></div>';
       case 'related': return '<div class="elnRelBox">'
         + '<div class="elnRelAdd"><div class="elnRelAddType"><select><option>Material</option><option>Project</option><option>Note</option><option>URL</option></select></div>'
         + '<div class="elnRelAddVal"></div>'
@@ -3115,25 +3118,53 @@
   }
   // 첨부 항목 — li._att = { name, vers:[{ v, size, by, ts, file? }] } (마지막 = 현재 버전). 파일 서버 보관·버전 누적을 목업
   // vers 생략 = 지금 사용자가 올린 v1
+  // 칩 = 운영 TechLib 저장 첨부 칩(techLibNewsub.js renderSavedFiles: fileChip tlPickChip) 형태
+  //   [순번(2건 이상일 때만)] 이름 + 버전 배지(ELN 고유) | 다운로드 · 삭제(맨 끝). 칩 본문 클릭 = 미리보기.
+  //   올린 사람·날짜·크기는 칩 툴팁(title)으로
   function addFileItem(listEl, name, size, vers, file) {
-    var li = document.createElement('li'); li.className = 'elnAttachItem'; li.title = 'Preview';
+    var li = document.createElement('span'); li.className = 'fileChip elnAttachItem';
+    li.setAttribute('role', 'button'); li.tabIndex = 0;
     li._att = { name: name, vers: vers || [{ v: 1, size: size, by: ELN.currentUser, ts: ELN.audit.now(), file: file || null }] };
-    var ic = document.createElement('i'); ic.className = 'material-symbols-outlined'; ic.textContent = fileGlyph(name);
-    var nm = document.createElement('span'); nm.className = 'nm'; nm.textContent = name;
+    var nm = document.createElement('span'); nm.className = 'nm elnAttNm'; nm.textContent = name;
     var vb = document.createElement('span'); vb.className = 'roundBox outline mocha25 elnAttVer';
-    var by = document.createElement('em'); by.className = 'elnAttBy';
-    var sz = document.createElement('em'); sz.className = 'elnAttSz';
-    li.appendChild(ic); li.appendChild(nm); li.appendChild(vb); li.appendChild(by); li.appendChild(sz); li.appendChild(attachRemoveIcon(li));
+    var acts = document.createElement('span'); acts.className = 'elnAttActs';
+    var dl = document.createElement('a'); dl.className = 'elnAttDl'; dl.href = 'javascript:;'; dl.title = 'Download';
+    dl.setAttribute('aria-label', 'Download attachment');
+    dl.innerHTML = '<i class="material-icons tiny">download</i>';
+    var del = document.createElement('i'); del.className = 'material-icons tiny btn_deleteFile'; del.textContent = 'close';
+    del.setAttribute('role', 'button'); del.tabIndex = 0; del.title = 'Delete'; del.setAttribute('aria-label', 'Delete attachment');
+    acts.appendChild(dl); acts.appendChild(del);
+    li.appendChild(nm); li.appendChild(vb); li.appendChild(acts);
     listEl.appendChild(li);
     attRefresh(li);
+    attRenumber(listEl);
     return li;
   }
   function attCur(att) { return att.vers[att.vers.length - 1]; }
-  function attRefresh(li) {   // 카드 행 표시(버전 배지·올린 사람·날짜·크기) = 현재 버전
+  function attRefresh(li) {   // 칩 표시(버전 배지) + 툴팁(올린 사람·날짜·크기) = 현재 버전
     var c = attCur(li._att);
     li.querySelector('.elnAttVer').textContent = 'v' + c.v;
-    li.querySelector('.elnAttBy').textContent = c.by + ' · ' + toMdy(String(c.ts).slice(0, 10));
-    li.querySelector('.elnAttSz').textContent = fmtFileSize(c.size);
+    li.title = li._att.name + ' (v' + c.v + ')\nUploaded by ' + c.by + ' on ' + toMdy(String(c.ts).slice(0, 10)) + ' · ' + fmtFileSize(c.size) + '\nClick to preview.';
+  }
+  // 순번은 첨부가 둘 이상일 때만(운영 tlPickNo 규칙) — 추가·삭제 때마다 다시 매김
+  function attRenumber(listEl) {
+    if (!listEl) return;
+    var chips = listEl.querySelectorAll('.elnAttachItem'), multi = chips.length > 1;
+    Array.prototype.forEach.call(chips, function (li, i) {
+      var no = li.querySelector('.elnAttNo');
+      if (!multi) { if (no) no.remove(); return; }
+      if (!no) { no = document.createElement('span'); no.className = 'elnAttNo'; no.setAttribute('aria-hidden', 'true'); li.insertBefore(no, li.firstChild); }
+      no.textContent = String(i + 1);
+    });
+  }
+  // 다운로드 — 지금 올린 파일은 실제로 내려받고, 파일 서버 시드(목업)는 안내 토스트만
+  function attDownload(att, v) {
+    if (v.file) {
+      var u = URL.createObjectURL(v.file);
+      var a = document.createElement('a'); a.href = u; a.download = att.name; document.body.appendChild(a); a.click(); a.remove();
+      setTimeout(function () { try { URL.revokeObjectURL(u); } catch (e) {} }, 4000);
+    }
+    ELN.toast('Downloading ' + att.name + ' (v' + v.v + ').', 'info');
   }
   // 같은 이름 재업로드 / Upload New Version → 다음 버전으로 쌓음(이전 버전 보관) + Audit
   function attAddVersion(li, f) {
@@ -3190,15 +3221,16 @@
 
   // Attachments 모듈 본문 배선(파일 선택·드롭) — scope = 해당 모듈 본문
   function wireFileModule(scope) {
-    var drop = scope.querySelector('.elnAttachDrop');
+    var zone = scope.querySelector('.elnAttachBox');
     var input = scope.querySelector('.elnFileInput');
     var list = scope.querySelector('.elnAttachList');
-    if (!drop || !list) return;
+    if (!zone || !input || !list) return;
     if (ATTACH_SEED) seedAttachments(list);   // 데모 노트: 파일 서버에 있는 첨부 5건(로그 없이)
+    function frozen() { return attFrozen(list); }   // 승인 view·번역 보기·잠긴 섹션 = 업로드·삭제 불가(미리보기·다운로드는 허용)
     function addFiles(files) {
       if (!files || !files.length) return;
       var fcard = list.closest('.cardBox');
-      if (document.body.classList.contains('elnApproved') || (fcard && fcard.classList.contains('elnLocked'))) return;   // 잠긴 섹션(드롭존도 CSS 로 숨김)
+      if (frozen()) return;   // 잠긴 섹션(업로드 컨트롤도 CSS 로 숨김)
       var added = 0, lastVer = null;
       Array.prototype.forEach.call(files, function (f) {
         var same = attFindByName(list, f.name);   // 같은 이름 = 새 버전으로 쌓음(이전 버전 보관)
@@ -3211,23 +3243,83 @@
       else ELN.toast((added ? added + ' file' + (added > 1 ? 's' : '') + ' attached' : '')
         + (added && vers ? ', ' : '') + (vers ? vers + ' new version' + (vers > 1 ? 's' : '') + ' added' : '') + '.', 'ok');
     }
-    // 항목 클릭 = 읽기전용 미리보기(× 제외)
-    list.addEventListener('click', function (e) {
-      if (e.target.closest && e.target.closest('.x')) return;
+    // 칩: 본문 클릭(Enter/Space) = 읽기전용 미리보기 · 다운로드 아이콘 = 현재 버전 내려받기 · 삭제 아이콘 = 확인 후 제거(운영 techLibNewsub.js 칩 핸들러와 같은 갈래)
+    function onChip(e) {
+      if (e.type === 'keydown' && e.key !== ' ' && e.key !== 'Enter') return;
       var li = e.target.closest && e.target.closest('.elnAttachItem');
-      if (li && li._att) openFilePreview(li);
+      if (!li || !li._att) return;
+      if (e.target.closest('.elnAttDl')) { e.preventDefault(); e.stopPropagation(); attDownload(li._att, attCur(li._att)); return; }
+      if (e.target.closest('.btn_deleteFile')) { e.preventDefault(); e.stopPropagation(); attConfirmDelete(li); return; }
+      if (e.target.closest('.elnAttActs')) return;   // 동작 구역(아이콘 사이 여백 포함)은 제외
+      e.preventDefault();
+      openFilePreview(li);
+    }
+    list.addEventListener('click', onChip);
+    list.addEventListener('keydown', onChip);
+    // 고르는 즉시 첨부(프로토타입엔 별도 Save 단계가 없음). 경로 칸은 Materialize 위임 핸들러가 비운 input 을 읽어 "No file chosen" 으로 돌아간다
+    input.addEventListener('change', function () { var fs = Array.prototype.slice.call(input.files || []); input.value = ''; addFiles(fs); });
+    attBindDrop(zone, input, frozen);
+  }
+
+  // 삭제 확인 — 운영 fmeaPopup.js / techLibNewsub.js 와 같은 Swal(Delete the file? · question · Confirm/Cancel)
+  function attConfirmDelete(li) {
+    if (attFrozen(li)) return;
+    Swal.fire({ titleText: 'Delete the file?', icon: 'question', showCancelButton: true, confirmButtonText: 'Confirm', cancelButtonText: 'Cancel' })
+      .then(function (r) {
+        if (!(r && r.isConfirmed) || !li.isConnected || attFrozen(li)) return;
+        var list = li.parentNode, card = li.closest('.cardBox');
+        auditMod(card, 'File removed', { detail: li._att.name });
+        li.remove();
+        attRenumber(list);
+        ELN.toast('Deletion complete', 'ok');
+      });
+  }
+
+  /* 드래그 첨부 — 운영 apis_util.js _mfBindDrop 과 같은 동작:
+     존 = 파일 input 과 목록을 함께 담는 블록(.elnAttachBox) · 파일을 끌 때만 반응 · 깊이 카운터로 깜빡임 방지 ·
+     preventDefault 는 항상(안 하면 브라우저가 파일로 이동) · 잠긴 동안은 dropEffect none 으로 거부 ·
+     폴더는 webkitGetAsEntry 로 걸러 Swal 안내 · 드롭 파일은 input 에 넣고 네이티브 change 를 쏴서 고르기와 같은 경로로 */
+  function attDragHasFiles(e) { var dt = e.dataTransfer; return !!dt && Array.prototype.indexOf.call(dt.types || [], 'Files') >= 0; }
+  function attFilesOnly(dt) {
+    var all = Array.prototype.slice.call(dt.files || []), items = dt.items;
+    if (!items || items.length !== all.length || typeof items[0].webkitGetAsEntry !== 'function') return all;
+    return all.filter(function (f, i) { var en = null; try { en = items[i].webkitGetAsEntry(); } catch (e) {} return !en || en.isFile; });
+  }
+  function attBindDrop(zone, input, frozen) {
+    if (zone._mfDropBound) return;
+    zone._mfDropBound = true; zone.classList.add('mfDropZone');
+    function liveSlot() { return !frozen() && !input.disabled && input.offsetParent !== null ? input : null; }
+    var depth = 0;
+    function over(e) {
+      if (!attDragHasFiles(e)) return;
+      e.preventDefault(); e.stopPropagation();
+      if (!liveSlot()) { e.dataTransfer.dropEffect = 'none'; return; }
+      e.dataTransfer.dropEffect = 'copy';
+      if (e.type === 'dragenter') depth++;
+      zone.classList.add('mfDropOver');
+    }
+    zone.addEventListener('dragenter', over);
+    zone.addEventListener('dragover', over);
+    zone.addEventListener('dragleave', function (e) {
+      if (!attDragHasFiles(e)) return;
+      if (--depth <= 0) { depth = 0; zone.classList.remove('mfDropOver'); }
     });
-    // 삭제 × — 캡처 단계에서 먼저 기록(항목이 제거되기 전). 잠긴 섹션은 삭제 자체가 no-op이므로 기록하지 않음
-    list.addEventListener('click', function (e) {
-      var x = e.target.closest && e.target.closest('.x'), li = x && x.closest('li');
-      if (!li || li.closest('.elnLocked')) return;
-      var nm = li.querySelector('.nm'), isLink = li.classList.contains('elnLinkItem');
-      auditMod(li.closest('.cardBox'), isLink ? 'Link removed' : 'File removed', { detail: nm ? nm.textContent : '' });
-    }, true);
-    if (input) input.addEventListener('change', function () { addFiles(input.files); input.value = ''; });
-    drop.addEventListener('dragover', function (e) { e.preventDefault(); drop.classList.add('drag'); });
-    drop.addEventListener('dragleave', function () { drop.classList.remove('drag'); });
-    drop.addEventListener('drop', function (e) { e.preventDefault(); drop.classList.remove('drag'); addFiles(e.dataTransfer && e.dataTransfer.files); });
+    zone.addEventListener('drop', function (e) {
+      if (!attDragHasFiles(e)) return;
+      e.preventDefault(); e.stopPropagation();
+      depth = 0; zone.classList.remove('mfDropOver');
+      var el = liveSlot(); if (!el) return;
+      var dt = e.dataTransfer;
+      if (!dt.files || !dt.files.length) return;
+      var kept = attFilesOnly(dt);
+      if (!kept.length) { Swal.fire({ icon: 'warning', text: 'Folders cannot be attached. Please drop files.' }); return; }
+      if (kept.length === dt.files.length) el.files = dt.files;
+      else if (typeof DataTransfer === 'function') {
+        var ndt = new DataTransfer(); kept.forEach(function (f) { ndt.items.add(f); }); el.files = ndt.files;
+        Swal.fire({ icon: 'warning', text: 'Folders were skipped. Only files are attached.' });
+      } else { Swal.fire({ icon: 'warning', text: 'Folders cannot be attached. Please drop files.' }); return; }
+      el.dispatchEvent(new Event('change', { bubbles: true }));   // 네이티브 — Materialize 경로 칸 핸들러까지 닿게(운영과 같음)
+    });
   }
 
   /* ── 첨부 미리보기(요구사항 11) — 운영: 파일 서버 원본 → 문서 뷰어(Synap) 변환 → viewerUrl 을 iframe 으로(Tech Library renderSavedPreview 와 같은 흐름).
@@ -3299,14 +3391,7 @@
       var it = e.target.closest('li[data-i]'); if (!it) return;
       var i = +it.getAttribute('data-i'); if (i !== sel) select(i);
     });
-    dl.addEventListener('click', function () {
-      var v = att.vers[sel];
-      if (v.file) {   // 지금 올린 파일은 실제로 내려받기
-        var u = URL.createObjectURL(v.file); urls.push(u);
-        var a = document.createElement('a'); a.href = u; a.download = att.name; document.body.appendChild(a); a.click(); a.remove();
-      }
-      ELN.toast('Downloading ' + att.name + ' (v' + v.v + ').', 'info');
-    });
+    dl.addEventListener('click', function () { attDownload(att, att.vers[sel]); });   // 고른 버전을 내려받기(칩 아이콘과 같은 동작)
     if (up) {
       up.addEventListener('click', function () { if (attFrozen(li)) return; inp.click(); });
       inp.addEventListener('change', function () {
@@ -3318,8 +3403,9 @@
       });
     }
     var m = ELN.modal({ title: 'File Preview', icon: 'preview', size: 'xl', body: wrap, actions: [{ label: 'Close', type: '' }] });
-    if (m && m.el) {   // 닫히면 object URL·영상 타이머 정리
-      var obs = new MutationObserver(function () { if (!m.el.isConnected) { gen++; urls.forEach(function (u) { try { URL.revokeObjectURL(u); } catch (e) {} }); obs.disconnect(); } });
+    li.classList.add('on'); li.setAttribute('aria-pressed', 'true');   // 미리보기 중인 칩 표시(운영 tlPickChip.on)
+    if (m && m.el) {   // 닫히면 object URL·영상 타이머 정리 + 칩 선택 표시 해제
+      var obs = new MutationObserver(function () { if (!m.el.isConnected) { gen++; li.classList.remove('on'); li.removeAttribute('aria-pressed'); urls.forEach(function (u) { try { URL.revokeObjectURL(u); } catch (e) {} }); obs.disconnect(); } });
       obs.observe(document.body, { childList: true });
     }
     renderHead(); renderSide(); load();

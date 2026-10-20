@@ -568,12 +568,12 @@ body.elnApproved .elnTag{padding-right:11px;}   /* close 아이콘 자리 → �
 .cardBox.elnLocked .elnFmlToolbar,
 .cardBox.elnLocked .elnChemAdd,.cardBox.elnLocked .elnChemItemActions,.cardBox.elnLocked .elnChemDel,
 .cardBox.elnLocked .elnRelAdd,.cardBox.elnLocked .elnRelDel,
-.cardBox.elnLocked .elnAttachDrop,
+.cardBox.elnLocked .elnAttachBox .file-field,.cardBox.elnLocked .elnAttachItem .btn_deleteFile,
 .cardBox.elnLocked .elnDataTableTools .elnDataBtn,
 .cardBox.elnLocked .elnRelHint,
 .cardBox.elnLocked .elnTagAddRow,.cardBox.elnLocked .elnRecTags,.cardBox.elnLocked .elnTag i,
 .cardBox.elnLocked .note-editor .note-toolbar,.cardBox.elnLocked .note-editor .note-statusbar,
-.cardBox.elnLocked .elnAttachItem i.x,.cardBox.elnLocked .elnLinkItem i.x,.cardBox.elnLocked .elnChartGrip{display:none !important;}
+.cardBox.elnLocked .elnLinkItem i.x,.cardBox.elnLocked .elnChartGrip{display:none !important;}
 .cardBox.elnLocked .elnVizPick{pointer-events:none;}   /* Visualize as — 선택 상태는 보이되 변경 불가 */
 .cardBox.elnLocked i.elnIconPick{cursor:default;}
 .cardBox.elnLocked i.elnIconPick:hover{background:transparent;}
@@ -1023,31 +1023,43 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnRelAdd .aniInput{margin:0;}
 .elnRelAdd .hBtn{flex:0 0 auto;margin:0;}
 .elnRelHint{margin:-6px 0 10px;}   /* Project 선택 시 추가 줄 아래 안내(Linking a project does not grant access…) */
-.elnAttachDrop{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px dashed #d9cfc2;border-radius:10px;
-  cursor:pointer;color:#9b8c7e;font-size:12px;transition:all .15s;}
-.elnAttachDrop:hover,.elnAttachDrop.drag{border-color:#A47864;background:rgba(164,120,100,.06);color:#7a5240;}
-.elnAttachDrop > i{font-size:20px;color:#A47864;}
-.elnAttachDrop b{color:#A47864;}
-.elnAttachList,.elnLinkList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;}
-.elnAttachItem,.elnLinkItem{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;
+.elnLinkList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;}
+.elnLinkItem{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;
   background:rgba(0,0,0,.03);font-size:12px;}
-.elnAttachItem > i,.elnLinkItem a > i{font-size:17px;color:#A47864;flex:0 0 auto;}
-.elnAttachItem .nm,.elnLinkItem .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#3a2c24;}
-.elnAttachItem em{font-style:normal;font-size:10px;color:#9b8c7e;flex:0 0 auto;}
+.elnLinkItem a > i{font-size:17px;color:#A47864;flex:0 0 auto;}
+.elnLinkItem .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#3a2c24;}
 .elnLinkItem a{display:flex;align-items:center;gap:7px;flex:1;min-width:0;text-decoration:none;color:#3a2c24;}
 .elnLinkItem a:hover .nm{color:#A47864;text-decoration:underline;}
 .elnLinkItem a .go{font-size:13px;color:#9b8c7e;flex:0 0 auto;}
-.elnAttachItem .x,.elnLinkItem .x{font-size:15px;color:#c9bcae;cursor:pointer;flex:0 0 auto;}
-.elnAttachItem .x:hover,.elnLinkItem .x:hover{color:#d65a5a;}
-/* 첨부 행 — 클릭 = 미리보기. 버전 배지(표준 roundBox) · 올린 사람·날짜 · 크기 */
-.elnAttachItem{cursor:pointer;transition:background .15s;}
-.elnAttachItem:hover{background:rgba(164,120,100,.08);}
-.elnAttachItem:hover .nm{color:#7a5240;text-decoration:underline;}
-.elnAttachItem .nm{flex:0 1 auto;}
-.elnAttachItem .elnAttVer{flex:0 0 auto;font-size:11px;line-height:16px;padding:0 7px;margin-right:auto;font-weight:600;}
-.elnAttachItem em.elnAttBy{font-size:11px;}
-.elnAttachItem em.elnAttSz{min-width:52px;text-align:right;}
-body.elnApproved .elnAttachDrop,body.elnApproved .elnAttachItem i.x{display:none !important;}
+.elnLinkItem .x{font-size:15px;color:#c9bcae;cursor:pointer;flex:0 0 auto;}
+.elnLinkItem .x:hover{color:#d65a5a;}
+/* 첨부 = 운영 표준 업로드(input-field file-field) + file-area 칩. 칩 모양은 운영 TechLib 저장 첨부 칩
+   (origin/dev static/css/techlib/techlib.css #upSavedArea .tlPick*)을 ELN 이름으로 옮김 — --tl-* 값은 같은 색 그대로.
+   ELN 고유: 이름 뒤 버전 배지(v2). 드롭존 점선(mfDropZone·mfDropOver)은 mapis_lib common.css 표준 규칙 */
+.elnAttachBox{display:block;gap:0;}
+.elnAttachBox .file-field{margin-bottom:5px;}
+.elnAttachList .elnAttachItem{align-items:center;height:auto;padding:3px 8px;border:1px solid transparent;cursor:pointer;vertical-align:top;max-width:100%;box-sizing:border-box;}
+.elnAttachList .elnAttachItem:hover{background:color-mix(in srgb, var(--mocha25) 6%, white);}
+.elnAttachList .elnAttachItem:focus-visible{outline:2px solid #caa890;outline-offset:1px;}
+.elnAttachList .elnAttachItem.on{border-color:var(--mocha25);background:color-mix(in srgb, var(--mocha25) 10%, white);}
+.elnAttachList .elnAttNo{display:inline-flex;align-items:center;justify-content:center;flex:0 0 auto;
+  min-width:16px;height:16px;margin-right:4px;padding:0 3px;border-radius:3px;
+  font-size:11px;line-height:1;color:#8a7160;font-variant-numeric:tabular-nums;}
+.elnAttachList .elnAttachItem.on .elnAttNo{background:var(--mocha25);color:#fff;}
+.elnAttachList .elnAttNm{max-width:240px;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px;color:var(--main-text-color);}
+.elnAttachList .elnAttachItem.on .elnAttNm{color:#7a5240;}
+.elnAttachList .elnAttVer{flex:0 0 auto;margin-left:6px;font-size:10px;line-height:14px;padding:0 5px;font-weight:600;}
+.elnAttachList .elnAttActs{display:inline-flex;align-items:center;gap:3px;margin-left:8px;padding-left:7px;
+  border-left:1px solid var(--gray20);opacity:.45;transition:opacity .15s;}
+.elnAttachList .elnAttachItem:hover .elnAttActs,.elnAttachList .elnAttachItem:focus-within .elnAttActs{opacity:1;}
+.elnAttachList .elnAttActs i{font-size:15px;}
+.elnAttachList .elnAttDl{display:inline-flex;align-items:center;color:var(--gray45);line-height:1;}
+.elnAttachList .elnAttDl:hover{color:#8a5f4a;}
+/* 삭제 hover 빨강은 common.css `.fileChip .btn_deleteFile:hover` 가 준다 */
+.elnAttachList .elnAttActs .btn_deleteFile{color:var(--gray45);cursor:pointer;}
+.elnAttachList .elnAttDl:focus-visible,.elnAttachList .elnAttActs .btn_deleteFile:focus-visible{outline:2px solid #caa890;outline-offset:1px;border-radius:3px;}
+/* 잠금(승인 view·잠긴 섹션·번역 보기) = 운영 동결과 같이 업로드 컨트롤을 숨기고 삭제 아이콘을 뺀다. 미리보기·다운로드는 그대로 */
+body.elnApproved .elnAttachBox .file-field,body.elnApproved .elnAttachItem .btn_deleteFile{display:none !important;}
 
 /* ── 첨부 미리보기 모달(읽기전용 뷰어 + 버전 목록) ── */
 .elnPv{display:flex;flex-direction:column;gap:10px;}
@@ -1580,7 +1592,7 @@ body.elnTranslating #tab_ov{opacity:.45;pointer-events:none;transition:opacity .
 /* 번역 보기 = 읽기전용: 편집 도구 숨김(승인 view 규칙과 같은 대상). 값 잠금은 JS(trLock) */
 body.elnTranslated .elnModDel,body.elnTranslated .elnModDivider,body.elnTranslated .elnAddEnd,
 body.elnTranslated .elnTagAddRow,body.elnTranslated .elnTag i,body.elnTranslated .elnFmlToolbar,
-body.elnTranslated .elnAttachDrop,body.elnTranslated .elnAttachItem i.x,body.elnTranslated .elnChemAdd,body.elnTranslated .elnChemItemActions,
+body.elnTranslated .elnAttachBox .file-field,body.elnTranslated .elnAttachItem .btn_deleteFile,body.elnTranslated .elnChemAdd,body.elnTranslated .elnChemItemActions,
 body.elnTranslated .elnRelAdd,body.elnTranslated .elnRelHint,body.elnTranslated .elnRelDel,body.elnTranslated .elnPostitClose,
 body.elnTranslated .elnDataTableTools,body.elnTranslated .note-editor .note-toolbar,body.elnTranslated .note-editor .note-statusbar{display:none !important;}
 body.elnTranslated .elnTag{padding-right:11px;}

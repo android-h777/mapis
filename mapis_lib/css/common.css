@@ -5474,6 +5474,18 @@ table .aniInput .materialize-textarea {
 .file-field:hover .file-path-wrapper > .file-path {
 	border-bottom: 2px solid var(--orangetiger);
 }
+/* Drag & drop attachment zone — the whole attachment block, wired by _mfBindDrop.
+   ⚠ outline, not border: a border would shift the layout every time a drag enters.
+   드래그 첨부 드롭존 — 첨부 블록 전체. _mfBindDrop 이 붙인다.
+   ⚠ border 가 아니라 outline — border 면 드래그가 들어올 때마다 레이아웃이 밀린다. */
+.mfDropZone {
+	transition: background-color .12s ease, outline-color .12s ease;
+}
+.mfDropZone.mfDropOver {
+	background-color: rgba(164, 120, 100, .07);
+	outline: 2px dashed var(--mocha25);
+	outline-offset: 2px;
+}
 .file-area {
 	padding-left: 70px;
 }
