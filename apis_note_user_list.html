@@ -757,7 +757,7 @@
 			'<div class="row"><div class="col s12"><div class="pd10">' +
 			(all.length ? all.map(function(c){
 				return '<div><a href="javascript:;" class="link jsLinkNpi" data-code="' + esc(c) + '" title="' + esc(projKind(c)) + '">' + esc('[' + c + '] ' + (PROJ_TITLE[c] || '-')) + '</a></div>';
-			}).join('') + '<div class="font11 cGray mt10">Linking a project does not grant access to it.</div>' : '-') +
+			}).join('') : '-') +
 			'</div></div></div>';
 	}
 	function renderSummary(n){

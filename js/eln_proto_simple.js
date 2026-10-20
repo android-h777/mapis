@@ -1401,11 +1401,11 @@
         + '</div>'
         + '<div class="file-area elnAttachList"></div></div>';
       case 'related': return '<div class="elnRelBox">'
-        + '<div class="elnRelAdd"><div class="elnRelAddType"><select><option>Material</option><option>Project</option><option>Note</option><option>URL</option></select></div>'
+        + '<div class="elnRelAdd"><div class="elnRelAddType"><select><option>Material</option><option>Project</option><option>Lab Note</option><option>URL</option></select></div>'
         + '<div class="elnRelAddVal"></div>'
         + '<a href="javascript:;" class="waves-effect waves-light hBtn elnRelAddGo"><i class="material-symbols-outlined left">add</i><span class="label">Add</span></a></div>'
         + '<ul class="elnRelList">'
-        + '<li class="elnRelItem"><i class="material-symbols-outlined">science</i><span class="elnRelType">Material</span><a href="javascript:;" class="elnRelLink">[RM-0421] UV Photoinitiator</a><i class="material-symbols-outlined elnRelDel" title="Remove">close</i></li>'
+        + '<li class="elnRelItem fileChip" data-type="Material"><i class="material-symbols-outlined">science</i><span class="elnRelType">Material</span><a href="javascript:;" class="elnRelLink">[RM-0421] UV Photoinitiator</a><span class="elnRelActs"><i class="material-symbols-outlined elnRelDel btn_deleteFile" title="Remove">close</i></span></li>'
         + '</ul></div>';
       case 'chem': return '<div class="elnChemBox">'
         + '<ul class="elnChemList"></ul>'
@@ -2770,10 +2770,17 @@
     if (cur && document.querySelector('#tab_ov .elnRelList')) cur.projects = curProjectCodes();
   }
   // Project 항목 행(.elnRelItem) 생성 — 삭제 ×는 여기서 배선, 링크 클릭(프로젝트 상세)은 wireRelatedModule 위임
+  // Related Items 칩은 유형 순서(Project → Material → Lab Note → URL)로 — 제목 줄 없이 같은 유형끼리 붙어 보이게
+  var REL_ORDER = { Project: 0, Material: 1, 'Lab Note': 2, URL: 3 };
+  function relInsert(list, li) {
+    var r = REL_ORDER[li.getAttribute('data-type')]; if (r == null) r = 9;
+    var next = [].filter.call(list.children, function (x) { var o = REL_ORDER[x.getAttribute('data-type')]; return (o == null ? 9 : o) > r; })[0];
+    list.insertBefore(li, next || null);
+  }
   function relProjItem(code) {
-    var li = document.createElement('li'); li.className = 'elnRelItem'; li.setAttribute('data-proj', code);
+    var li = document.createElement('li'); li.className = 'elnRelItem fileChip'; li.setAttribute('data-proj', code); li.setAttribute('data-type', 'Project');
     li.innerHTML = '<i class="material-symbols-outlined">assignment</i><span class="elnRelType">Project</span>'
-      + '<a href="javascript:;" class="elnRelLink" data-proj="' + esc(code) + '">' + esc(projBracket(code)) + '</a><i class="material-symbols-outlined elnRelDel" title="Remove">close</i>';
+      + '<a href="javascript:;" class="elnRelLink" data-proj="' + esc(code) + '">' + esc(projBracket(code)) + '</a><span class="elnRelActs"><i class="material-symbols-outlined elnRelDel btn_deleteFile" title="Remove">close</i></span>';
     li.querySelector('.elnRelDel').addEventListener('click', function () { li.remove(); });
     return li;
   }
@@ -2930,8 +2937,15 @@
     });
     ul.classList.remove('elnNavPending');
   }
-  document.addEventListener('DOMContentLoaded', function () { setTimeout(playNavIntro, 0); });
-  window.addEventListener('load', playNavIntro);   // 안전장치: 혹시 앞 단계가 늦거나 실패해도 목차가 숨은 채로 남지 않게
+  // 다른 노트 링크(?code=)·Copy To 새 창(?copyFrom=)은 load 뒤(220/450ms)에 노트를 바꾸며 목차를 다시 만듦 → 그 뒤에 한 번만 등장
+  var NAV_INTRO_LATE = (function () {
+    try { var q = new URLSearchParams(location.search), c = q.get('code'); return !!q.get('copyFrom') || (!!c && c !== 'NT-2605-00142'); } catch (e) { return false; }
+  })();
+  if (NAV_INTRO_LATE) window.addEventListener('load', function () { setTimeout(playNavIntro, 650); });
+  else {
+    document.addEventListener('DOMContentLoaded', function () { setTimeout(playNavIntro, 0); });
+    window.addEventListener('load', playNavIntro);   // 안전장치: 혹시 앞 단계가 늦거나 실패해도 목차가 숨은 채로 남지 않게
+  }
 
   /* ── 좌측 목차 드래그 핸들 — 우측에 항상 옅게 보이는 6점 grip(drag_indicator). hover 시 진해지고 grab 커서.
      그 아이콘 = sortable handle. 평소에도 보여서 "드래그로 순서변경 가능"을 설명 없이 알림 ── */
@@ -3599,25 +3613,25 @@
     var list = scope.querySelector('.elnRelList');
     var row = scope.querySelector('.elnRelAdd');
     if (!list || !row) return;
-    var TYPE_ICON = { Material: 'science', Project: 'assignment', Note: 'description', URL: 'link' };
+    var TYPE_ICON = { Material: 'science', Project: 'assignment', 'Lab Note': 'description', URL: 'link' };
     // 타입별 후보 풀(프로토타입 목업) — Note는 기존 데이터 재사용. select2 data 항목: {id, text, code, title, sub}
     function poolFor(label) {
       var mk = function (code, title, sub) { return { id: code, text: '[' + code + '] ' + title, code: code, title: title, sub: sub, hay: title }; };
       if (label === 'Material') return [mk('RM-0421', 'UV Photoinitiator', 'Initiator'), mk('RM-0532', 'Acrylic Monomer', 'Monomer'), mk('RM-0210', 'Silica Filler (12 nm)', 'Filler'),
         mk('RM-0388', 'Silane Coupling Agent', 'Additive'), mk('RM-0145', 'Defoamer', 'Additive')];
-      if (label === 'Note') return LINEAGE_NOTES.map(function (n) { return mk(n.code, n.title, n.nb + ' · ' + toMdy(n.date)); });
+      if (label === 'Lab Note') return LINEAGE_NOTES.map(function (n) { return mk(n.code, n.title, n.nb + ' · ' + toMdy(n.date)); });
       return [];
     }
     function addRow(label, text, projCode) {
       var li;
       if (projCode) li = relProjItem(projCode);   // Project 항목: [CODE] Title, 클릭 시 프로젝트 상세
       else {
-        li = document.createElement('li'); li.className = 'elnRelItem';
+        li = document.createElement('li'); li.className = 'elnRelItem fileChip'; li.setAttribute('data-type', label);
         li.innerHTML = '<i class="material-symbols-outlined">' + TYPE_ICON[label] + '</i><span class="elnRelType">' + label + '</span>'
-          + '<a href="javascript:;" class="elnRelLink">' + esc(text) + '</a><i class="material-symbols-outlined elnRelDel" title="Remove">close</i>';
+          + '<a href="javascript:;" class="elnRelLink">' + esc(text) + '</a><span class="elnRelActs"><i class="material-symbols-outlined elnRelDel btn_deleteFile" title="Remove">close</i></span>';
         li.querySelector('.elnRelDel').addEventListener('click', function () { li.remove(); });
       }
-      list.appendChild(li);
+      relInsert(list, li);
       auditMod(list.closest('.cardBox'), 'Link added', { detail: label + ': ' + text });
     }
     // Project 항목 링크 클릭 → 프로젝트 상세(읽기전용·승인 상태에서도 조회 가능)
@@ -3640,13 +3654,10 @@
       var seedBefore = list.firstChild;
       RELATED_SEED.forEach(function (c) { list.insertBefore(relProjItem(c), seedBefore); });
     }
-    // 인라인 추가 줄: [Type select2(검색창 없음)] [Material/Note = select2 검색 | Project = autocomplete | URL = aniInput] [Add hBtn]
+    // 인라인 추가 줄: [Type select2(검색창 없음)] [Material/Lab Note = select2 검색 | Project = autocomplete | URL = aniInput] [Add hBtn]
     var typeSel = row.querySelector('.elnRelAddType select'), valBox = row.querySelector('.elnRelAddVal'), goBtn = row.querySelector('.elnRelAddGo');
     var urlInp = null, acInp = null, acPick = null;   // acPick = 자동완성에서 고른 항목 {code, text}
     // Project 선택 시에만 보이는 안내(추가 줄 아래) — 잠금·승인 때는 추가 줄과 함께 CSS 로 숨김
-    var projHint = document.createElement('div'); projHint.className = 'elnHint elnRelHint'; projHint.style.display = 'none';
-    projHint.textContent = 'Linking a project does not grant access to this note.';
-    row.parentNode.insertBefore(projHint, row.nextSibling);
     function curType() { return typeSel.value || 'Material'; }
     // 유형별 자동완성 후보 [{code, text}] — Project 는 이미 연결된 것 제외. 실구현: 유형별 검색 Ajax(프로젝트 getRelProjectListAjax 등)
     function acSource(label) {
@@ -3656,12 +3667,11 @@
       }
       return poolFor(label).map(function (p) { return { code: p.code, text: p.text }; });
     }
-    var AC_PH = { Project: 'Search project # (e.g., SN-26-0001) or title', Material: 'Search material # (e.g., RM-0421) or name', Note: 'Search note # (e.g., NT-2605-00131) or title' };
+    var AC_PH = { Project: 'Search project # (e.g., SN-26-0001) or title', Material: 'Search material # (e.g., RM-0421) or name', 'Lab Note': 'Search lab note # (e.g., NT-2605-00131) or title' };
     function buildValue() {   // 타입에 맞는 입력부 재구성(이전 autocomplete 정리)
       if (acInp && window.jQuery && jQuery(acInp).data('ui-autocomplete')) { try { jQuery(acInp).autocomplete('destroy'); } catch (e) {} }
       valBox.innerHTML = ''; urlInp = null; acInp = null; acPick = null;
       var label = curType();
-      projHint.style.display = label === 'Project' ? '' : 'none';
       if (label !== 'URL') {
         // Project·Material·Note 공통 = MAPIS 공통 부품: aniInput + jQuery UI autocomplete(공통 .ui-autocomplete 스킨, 운영 TechLib 퀵서치와 같은 방식). 표기 "[CODE] Title"
         var pa = document.createElement('div'); pa.className = 'aniInput';
@@ -5222,14 +5232,14 @@
   // Related Items 반영 — 기존 .elnRelItem 마크업 재사용
   function refRelHas(list, code) { return !!list.querySelector('[data-ref="' + code + '"]') || Array.prototype.some.call(list.querySelectorAll('.elnRelLink'), function (a) { return a.textContent.indexOf('[' + code + ']') === 0; }); }
   function refRelAdd(list, n) {
-    var li = document.createElement('li'); li.className = 'elnRelItem'; li.setAttribute('data-ref', n.code);
+    var li = document.createElement('li'); li.className = 'elnRelItem fileChip'; li.setAttribute('data-ref', n.code); li.setAttribute('data-type', 'Lab Note');
     // 유형 아이콘은 직접 추가한 Note와 동일(description). 권한 없음은 유형이 아니라 상태 → 우측 배지로.
     // 에디터 @참조에서 온 항목은 에디터가 원본 → 여기선 삭제(×) 없음, 에디터에서 지우면 자동 해제(refSyncRelated)
-    li.innerHTML = '<i class="material-symbols-outlined">description</i><span class="elnRelType">Note</span>'
+    li.innerHTML = '<i class="material-symbols-outlined">description</i><span class="elnRelType">Lab Note</span>'
       + '<a href="javascript:;" class="elnRelLink" data-code="' + esc(n.code) + '">' + esc('[' + n.code + '] ' + n.title) + '</a>'
       + (n.restricted ? '<span class="elnRelNoAccess"><i class="material-symbols-outlined">lock</i>No access</span>' : '')
       + '<span class="elnRelVia" title="Linked by an @mention in the Editor. Delete the mention there to unlink">Referenced in Editor</span>';
-    list.appendChild(li);
+    relInsert(list, li);
   }
   // 에디터에서 @참조 칩이 지워지면 Related의 해당 항목도 제거(다른 에디터에 같은 참조가 남아 있으면 유지)
   function refSyncRelated() {
@@ -5239,7 +5249,7 @@
       list.querySelectorAll('li[data-ref]').forEach(function (li) {
         var code = li.getAttribute('data-ref'); if (live[code]) return;
         li.remove();
-        ELN.audit.log({ section: sectionNameOf(list.closest('.cardBox')), action: 'Link removed', detail: 'Note: [' + code + '] (mention deleted in Editor)' });
+        ELN.audit.log({ section: sectionNameOf(list.closest('.cardBox')), action: 'Link removed', detail: 'Lab Note: [' + code + '] (mention deleted in Editor)' });
       });
     });
   }
