@@ -547,13 +547,7 @@ body.elnApproved .elnTag{padding-right:11px;}   /* close 아이콘 자리 → �
 .hBtn.hSign{color:#2e8c5c;border:2px solid #2e8c5c;}
 .hBtn.hSign::before{background-color:#2e8c5c;}
 
-/* ── Approval 카드: 데모 'View as' 탭(표준 결재 카드 규칙은 파일 끝 #card_approval 블록) ── */
-.elnSignSegLbl{color:#9a8b7e;margin-right:8px;}
-.elnSignTab{margin:0;}
-.elnSignTab ul{display:flex;margin:0;padding:0;}
-.elnSignTab li{flex:0 0 auto;}
-.elnSignTab .tabBg{transition:left .2s ease;}
-/* 섹션 선택 목록(Submit Sections · Share scope) — 테두리 박스 + 헤더 + 헤어라인 행 (fixedTable.hBorderTable 선 톤) */
+/* 섹션 선택 목록(Share scope · PDF 섹션) — 테두리 박스 + 헤더 + 헤어라인 행 (fixedTable.hBorderTable 선 톤) */
 .elnPickBox{border:1px solid var(--gray20);border-radius:5px;background:#fcfaf8;overflow:hidden;}
 .elnPickHd{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:38px;padding:0 12px;background:rgba(164,120,100,.07);border-bottom:1px solid var(--gray20);font-size:12px;color:#7a6757;}
 .elnPickHd label,.elnSignPickRow label{font-size:13px;color:#3a2c24;}
@@ -562,10 +556,7 @@ body.elnApproved .elnTag{padding-right:11px;}   /* close 아이콘 자리 → �
 .elnSignPickRow{display:flex;align-items:center;justify-content:space-between;gap:10px;min-height:40px;padding:0 12px;border-top:1px solid var(--gray20);}
 .elnSignPickRow:first-child{border-top:0;}
 
-/* ── 섹션 잠금(제출됨) — 값은 또렷하게 두고 편집 affordance만 숨김 ── */
-.elnLockBadge{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:#c08a3e;background:rgba(224,168,62,.12);border:1px solid rgba(224,168,62,.35);border-radius:9px;padding:2px 9px;white-space:nowrap;flex:0 0 auto;}
-.elnLockBadge.signed{color:#2e8c5c;background:rgba(58,170,111,.12);border-color:rgba(58,170,111,.3);}
-.elnLockBadge i{font-size:14px;}
+/* ── 섹션 잠금(노트 상신 중·승인 뒤 모든 섹션) — 값은 또렷하게 두고 편집 affordance만 숨김 ── */
 .cardBox.elnLocked .elnModDel,
 .cardBox.elnLocked .elnFmlToolbar,
 .cardBox.elnLocked .elnChemAdd,.cardBox.elnLocked .elnChemItemActions,.cardBox.elnLocked .elnChemDel,
@@ -591,7 +582,6 @@ body.elnApproved .elnTag{padding-right:11px;}   /* close 아이콘 자리 → �
 .cardBox.elnLocked .elnPostitClose,body.elnApproved .elnPostitClose{display:none !important;}
 .cardBox.elnLocked .elnPostitBar,.cardBox.elnLocked .elnPostitGrip,
 body.elnApproved .elnPostitBar,body.elnApproved .elnPostitGrip{cursor:default;}
-.leftAside .menuUl .menu-item .elnNavLock{margin-left:auto;font-size:15px;color:#c08a3e;flex:0 0 auto;}
 
 /* ── Errata ── */
 .elnErrataWrap{padding:0 20px 16px;}
@@ -1647,9 +1637,6 @@ a.elnNoteRef.restricted,.note-editable a.elnNoteRef.restricted{background:rgba(1
 #card_approval .elnApprHd .cardTit2{margin-bottom:0;}
 #card_approval .elnApprActs .hBtn{display:inline-flex;align-items:center;}
 #elnApprOverall:empty{display:none;}
-#card_approval .elnApprDemo{display:flex;align-items:center;justify-content:flex-end;gap:6px;margin:10px 0 8px;font-size:12px;color:#9a8b7e;}
-#card_approval .elnApprDemoLbl{font-weight:700;letter-spacing:.02em;color:#A47864;}
-#card_approval .elnApprDemo .elnSignSegLbl{margin-right:4px;}
 #card_approval .cardSubTit{margin-bottom:6px;}
 #card_approval table.appr-editor-mode td{vertical-align:middle;}
 #card_approval table.appr-editor-mode .select2-container{min-width:120px;}
@@ -1659,8 +1646,6 @@ a.elnNoteRef.restricted,.note-editable a.elnNoteRef.restricted{background:rgba(1
 #card_approval tr.elnApprSubHd td{background:var(--gray10, #f7f5f2);padding-top:8px;padding-bottom:8px;}
 #card_approval .elnApprSubLine{display:flex;align-items:center;flex-wrap:wrap;gap:6px 12px;font-size:13px;}
 #card_approval .elnApprSubNo{font-weight:700;color:#3a2c24;}
-#card_approval .elnApprSubSecs{color:#5a4a3e;}
-#card_approval .elnApprSubSecs b{font-weight:600;color:#9a8b7e;margin-right:6px;}
 #card_approval .elnApprSubMeta{color:#9a8b7e;font-size:12px;}
 /* Not Approved 선택 시 의견 필수 강조 — 운영 .aniInput.appr-required(input 용)를 textarea 에도 */
 #card_approval .aniInput.appr-required textarea{border-bottom-color:var(--viva);}
@@ -1669,4 +1654,3 @@ a.elnNoteRef.restricted,.note-editable a.elnNoteRef.restricted{background:rgba(1
 #card_approval .appr-empty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;padding:36px 16px;text-align:center;color:var(--main-hint-color, #9a8b7e);}
 #card_approval .appr-empty > i{font-size:34px;opacity:.4;}
 #card_approval .appr-empty .appr-empty-msg{margin:0;font-size:13px;line-height:1.6;}
-.elnApprStepNote{font-size:13px;color:#7a6757;margin-bottom:10px;line-height:1.5;}

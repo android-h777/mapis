@@ -740,7 +740,7 @@
       var pill = document.getElementById('elnHeadStatus');
       if (pill) { pill.className = 'roundBox ' + (NOTE_STATUS_PILL[n.status] || 'grey');
         pill.setAttribute('data-status', n.status); pill.textContent = NOTE_STATUS_TXT[n.status] || n.status; }
-      // 노트 상태 → 결재 상태 매핑. 전체 읽기전용은 완전 승인(ok)만, 결재중은 섹션별 잠금
+      // 노트 상태 → 결재 상태 매핑. 결재중(appr)의 전체 읽기전용은 이어지는 signoff.reset → soApply 가 건다
       var soSt = (n.status === 'ok' || n.status === 'done') ? 'ok' : ((n.status === 'appr' || n.status === 'review') ? 'appr' : 'ing');
       apprView = (soSt === 'ok'); setNoteApproved(apprView);
       ELN.audit.reset(n);   // Audit Trail은 노트별 — 전환한 노트의 이력으로 교체
@@ -1941,7 +1941,7 @@
     if (swap) swap.addEventListener('click', function (e) { e.preventDefault(); openTemplateSwitcher(); });
   });
 
-  /* ── Approval(공동서명) — 섹션 제출(submit) → 공동서명자 Sign/Reject. 제출된 섹션은 개별 잠금, 정정은 Errata ── */
+  /* ── Approval — 노트 전체 상신 → 결재자 Approved/Not Approved(운영 공통 결재와 같은 흐름). 상신 중·승인 뒤엔 모든 섹션 잠금, 정정은 Errata ── */
   var apprView = false;   // false=Edit / true=View(승인 모드)
   var SO_SEC = 'Approval';   // 감사로그 section명 (카드 제목과 동일)
   var SO_ROLES = ['Group Leader', 'Witness', 'Reviewer'];   // 결재선 Function(운영 appr-role-sel 자리)
@@ -1951,7 +1951,8 @@
   var SO_TYPE_STYLE = { REQ: 'mocha25 outline font12 fontM', APPR: 'green outline font12 fontM', REF: 'blue outline font12 fontM' };
   var SO_PEOPLE = ['Jim Quan', 'Aishwarya Venkatakrishnan', 'Min-ji Park', 'David Lee', 'Sarah Chen'];
   var SO_DEFAULT_CS = [{ type: 'APPR', name: 'Jim Quan', role: 'Group Leader' }, { type: 'APPR', name: 'Aishwarya Venkatakrishnan', role: 'Witness' }];
-  // cosigners[] = 결재선 편집표 행 {uid, type:'APPR'|'REF', role, name}. subs[]: {id, ids, names, requested, requester, reqComment, rejected, withdrawn, rows:[{type, name, role, status, signed, comment}]}
+  // cosigners[] = 결재선 편집표 행 {uid, type:'APPR'|'REF', role, name}. subs[]: {id, requested, requester, reqComment, rejected, withdrawn, rows:[{type, name, role, status, signed, comment}]}
+  // view: 운영은 로그인 사용자로 결정 컨트롤을 보임. 프로토타입은 작성자 화면만(결재자 화면은 운영 공통 모듈과 같아 'View as' 데모 탭 제거)
   var SO = { view: 'author', seq: 0, ruid: 0, cosigners: [], subs: [], overall: 'ing' };
   function soDefaultLine() { return SO_DEFAULT_CS.map(function (c) { return { uid: ++SO.ruid, type: c.type, name: c.name, role: c.role }; }); }
   SO.cosigners = soDefaultLine();
@@ -1970,32 +1971,16 @@
     return out;
   }
   function soActive() { return SO.subs.filter(function (s) { return !s.rejected && !s.withdrawn; }); }   // 반려·회수된 제출은 잠금·상태 계산에서 제외
-  function soLockInfo(id) {   // 이 섹션이 속한 유효 제출들의 잠금 표시 정보(없으면 null)
-    var subs = soActive().filter(function (s) { return s.ids.indexOf(id) >= 0; });
-    if (!subs.length) return null;
-    var all = true, names = [];
-    subs.forEach(function (s) { s.rows.forEach(function (r) {
-      if (!soIsAppr(r)) return;
-      if (r.status !== 'approved') all = false; else if (names.indexOf(r.name) < 0) names.push(r.name);
-    }); });
-    return { signed: all, text: all ? 'Approved · ' + names.join(', ') : 'Submitted ' + toMdy(subs[subs.length - 1].requested) };
-  }
+  // 결재 단위 = 노트 전체(부분 승인 없음). 유효 제출이 있으면 모든 섹션이 잠김 — 제출 뒤 추가한 모듈도 같이
+  function soLocked() { return soActive().length > 0; }
   function soPendingCount() {
     var n = 0;
     soActive().forEach(function (s) { s.rows.forEach(function (r) { if (soIsAppr(r) && r.status === 'pending') n++; }); });
     return n;
   }
-  function soOverall() {   // ing / appr / ok — 대기행 있으면 appr, 전원 승인+전 섹션 제출이면 ok, 일부만 승인이면 ing
-    var act = soActive();
-    if (!act.length) return 'ing';
-    if (soPendingCount()) return 'appr';
-    var all = soCards().every(function (c) { return !!soLockInfo(c.id); });
-    return all ? 'ok' : 'ing';
-  }
-  function soApprovedCount() {   // 전원 승인된 섹션 수 / 전체 섹션 수
-    var cards = soCards(), n = 0;
-    cards.forEach(function (c) { var i = soLockInfo(c.id); if (i && i.signed) n++; });
-    return { n: n, m: cards.length };
+  function soOverall() {   // ing / appr / ok — 유효 제출 없으면 ing, 대기행 있으면 appr, 전원 승인이면 ok
+    if (!soLocked()) return 'ing';
+    return soPendingCount() ? 'appr' : 'ok';
   }
 
   /* 섹션 잠금: 입력 readOnly/disabled, contenteditable=false, Summernote disable. 전역 view(elnApproved)가 건 잠금은 해제 시 건드리지 않음(data-elnlk 표식) */
@@ -2015,7 +2000,7 @@
     });
   }
   function soHasSn(el) { return window.jQuery && jQuery.fn && jQuery.fn.summernote && jQuery(el).next('.note-editor').length; }
-  function lockSection(card, info) {
+  function lockSection(card) {
     card.classList.add('elnLocked');
     soEach(card, 'input, textarea', function (el) { if (!el.readOnly) { el.readOnly = true; el.setAttribute('data-elnlk', '1'); } });
     soEach(card, 'select', function (el) { if (!el.disabled) { el.disabled = true; el.setAttribute('data-elnlk', '1'); } });
@@ -2025,24 +2010,9 @@
       if (v === 'true' || v === '') { el.setAttribute('contenteditable', 'false'); el.setAttribute('data-elnlk', '1'); }
     });
     card.querySelectorAll('.elnSummernote').forEach(function (el) { if (soHasSn(el)) { try { jQuery(el).summernote('disable'); } catch (e) {} } });
-    // 헤더 잠금 배지
-    var tit = card.querySelector('.cardTit2');
-    if (tit) {
-      var b = tit.querySelector('.elnLockBadge');
-      if (!b) {
-        b = document.createElement('span');
-        var w = tit.querySelector('.elnModTitleWrap');
-        if (w && w.nextSibling) tit.insertBefore(b, w.nextSibling); else tit.appendChild(b);
-      }
-      b.className = 'elnLockBadge' + (info && info.signed ? ' signed' : '');
-      b.innerHTML = '<i class="material-symbols-outlined">lock</i>' + esc(info ? info.text : 'Submitted');
-    }
-    // 좌측 목차: 자물쇠 아이콘(+드래그 핸들 CSS로 숨김)
+    // 노트 전체 결재라 섹션별 잠금 배지·목차 자물쇠는 두지 않음(상태는 헤더 알약·Approval 카드). 목차 드래그 핸들만 CSS로 숨김
     var li = document.querySelector('.leftAside .menuUl .menu-item[data-target="' + card.id + '"]');
-    if (li) {
-      li.classList.add('elnLockedNav');
-      if (!li.querySelector('.elnNavLock')) { var ni = document.createElement('i'); ni.className = 'material-symbols-outlined elnNavLock'; ni.textContent = 'lock'; li.appendChild(ni); }
-    }
+    if (li) li.classList.add('elnLockedNav');
     soEnsureErrataBar(card);
   }
   function unlockSection(card) {
@@ -2060,18 +2030,17 @@
       el.removeAttribute('data-elnlk');
     });
     if (!globalRo) soSelUiRestore(card);
-    var b = card.querySelector('.cardTit2 .elnLockBadge'); if (b) b.remove();
     var li = document.querySelector('.leftAside .menuUl .menu-item[data-target="' + card.id + '"]');
-    if (li) { li.classList.remove('elnLockedNav'); var ni = li.querySelector('.elnNavLock'); if (ni) ni.remove(); }
+    if (li) li.classList.remove('elnLockedNav');
     var wrap = card.querySelector(':scope > .elnErrataWrap');   // Errata 블록은 유지, 버튼/폼만 제거
     if (wrap) { var bar = wrap.querySelector('.elnErrataBar'); if (bar) bar.remove(); if (!wrap.querySelector('.elnErrata')) wrap.remove(); }
   }
   // 현재 제출 상태에 맞춰 모든 섹션 잠금/해제 동기
   function soRefreshLocks() {
+    var locked = soLocked();
     document.querySelectorAll('#tab_ov > .cardBox').forEach(function (c) {
       if (c.id === 'card_approval' || c.id === 'card_audit') return;
-      var info = soLockInfo(c.id);
-      if (info) lockSection(c, info); else if (c.classList.contains('elnLocked')) unlockSection(c);
+      if (locked) lockSection(c); else if (c.classList.contains('elnLocked')) unlockSection(c);
     });
   }
 
@@ -2128,14 +2097,15 @@
     if (!setHead) return;
     var st = soOverall();
     setHeadStatus(st);
-    // 전체 읽기전용 view는 완전 승인(ok)일 때만. 그 외 상태로 벗어나면 해제
-    var ro = document.body.classList.contains('elnApproved');
-    if (st === 'ok' && !ro) { apprView = true; setNoteApproved(true); }
-    else if (st !== 'ok' && ro) { apprView = false; setNoteApproved(false); }
+    // 전체 읽기전용 view = 상신 중(appr)·승인(ok). 노트 전체 결재라 결재 중에도 모듈 추가·저장 등 구조 변경까지 막음. 반려·회수(ing)면 해제
+    var ro = document.body.classList.contains('elnApproved'), want = st !== 'ing';
+    if (want && !ro) { apprView = true; setNoteApproved(true); }
+    else if (!want && ro) { apprView = false; setNoteApproved(false); }
     if (st === 'ok' && SO.overall !== 'ok') {
       // 서명 제출 경로(announce)·모듈 삭제 등 외부 경로 모두 전이 시 토스트 + 감사로그 1건 (reset 시드는 SO.overall을 먼저 맞춰 두므로 발생 안 함)
-      ELN.toast('All sections approved. The note is now approved and locked.', 'ok');
-      ELN.audit.log({ user: 'System', section: SO_SEC, action: 'Note approved', detail: 'All sections approved' });   // 시스템 이벤트 — 시드와 같은 귀속
+      //  announce === 'quiet' = 호출한 쪽이 직접 알림(Swal)을 띄우는 경로 → 토스트 생략, 감사로그만
+      if (announce !== 'quiet') ELN.toast('All approvers approved. The note is now approved and locked.', 'ok');
+      ELN.audit.log({ user: 'System', section: SO_SEC, action: 'Note approved', detail: 'All approvers approved' });   // 시스템 이벤트 — 시드와 같은 귀속
     }
     SO.overall = st;
   }
@@ -2144,18 +2114,25 @@
     var n = soPendingCount(), st = soOverall();
     if (n) { el.className = 'elnApprBadge pending'; el.innerHTML = '<i class="material-symbols-outlined">pending_actions</i>Awaiting ' + n + ' signature' + (n > 1 ? 's' : ''); }
     else if (st === 'ok') { el.className = 'elnApprBadge'; el.innerHTML = ''; }   // 완전 승인은 헤더 알약(Approved)과 중복 → 배지 숨김
-    else if (soActive().length) { var c = soApprovedCount(); el.className = 'elnApprBadge approved'; el.innerHTML = '<i class="material-symbols-outlined">verified</i>Approved ' + c.n + ' of ' + c.m + ' sections'; }
     else { el.className = 'elnApprBadge'; el.innerHTML = ''; }
   }
-  // 상신(Initiate) — 선택 섹션 + 상신 의견. 결재선(편집표)의 현재 행을 이 제출의 결재 행으로 복사
-  function soSubmit(ids, comment) {
-    var names = ids.map(function (id) { return sectionNameOf(soById(id)); });
-    SO.subs.push({ id: ++SO.seq, ids: ids, names: names, requested: ELN.audit.now(), requester: ELN.currentUser, reqComment: comment || '', rejected: false, withdrawn: false,
-      rows: SO.cosigners.filter(function (c) { return c.name; }).map(function (c) { return { type: c.type, name: c.name, role: c.role, status: 'pending', signed: '', comment: '' }; }) });
-    ELN.audit.log({ section: SO_SEC, action: 'Submitted', detail: names.join(', ') + (comment ? ': "' + comment + '"' : '') });
-    soApply(true, true);
-    var txt = ids.length + ' section' + (ids.length > 1 ? 's' : '') + ' submitted. Approval has been initiated successfully.';
-    if (typeof Swal !== 'undefined') Swal.fire({ icon: 'success', title: 'Submitted', text: txt });   // 운영 _doSubmitApproval 성공 알림
+  // Audit 상세: 'Submission N' + 의견(노트 전체 결재라 섹션 목록은 적지 않음)
+  function soSubDetail(s, comment) { return 'Submission ' + soSubNo(s) + (comment ? ': "' + comment + '"' : ''); }
+  // 상신(Initiate) — 노트 전체 + 상신 의견. 결재선(편집표)의 현재 행을 이 제출의 결재 행으로 복사
+  function soSubmit(comment) {
+    var s = { id: ++SO.seq, requested: ELN.audit.now(), requester: ELN.currentUser, reqComment: comment || '', rejected: false, withdrawn: false,
+      rows: SO.cosigners.filter(function (c) { return c.name; }).map(function (c) { return { type: c.type, name: c.name, role: c.role, status: 'pending', signed: '', comment: '' }; }) };
+    SO.subs.push(s);
+    ELN.audit.log({ section: SO_SEC, action: 'Submitted', detail: soSubDetail(s, comment) });
+    // 프로토타입: 결재자 화면이 없으므로 상신 즉시 결재선 전원 승인으로 처리(운영은 결재자가 각자 결정). 참조(REF) 행은 결정 없음
+    s.rows.forEach(function (r) {
+      if (!soIsAppr(r)) return;
+      r.status = 'approved'; r.signed = ELN.audit.now();
+      ELN.audit.log({ user: r.name, section: SO_SEC, action: 'Approved', detail: soSubDetail(s) });
+    });
+    soApply(true, 'quiet');   // → 노트 승인(ok): 헤더 알약·전체 읽기전용·'Note approved' 감사로그
+    var txt = 'Approval has been initiated and completed. The note is now approved and locked.';
+    if (typeof Swal !== 'undefined') Swal.fire({ icon: 'success', title: 'Approved', text: txt });   // 운영 _doSubmitApproval 성공 알림 자리
     else ELN.toast(txt, 'ok');
   }
   // 회수(Withdraw) — 요청자 본인 + 아직 아무 결정도 없는 제출만. 섹션 잠금 해제, 이력은 표에 'Withdrawal'로 남김
@@ -2165,25 +2142,17 @@
   }
   function soWithdraw(s) {
     s.withdrawn = true; s.withdrawnAt = ELN.audit.now();
-    ELN.audit.log({ section: SO_SEC, action: 'Withdrawn', detail: s.names.join(', ') });
+    ELN.audit.log({ section: SO_SEC, action: 'Withdrawn', detail: soSubDetail(s) });
     soApply(true, true);
-    ELN.toast('Approval withdrawn. The sections are unlocked for editing.', 'info');
+    ELN.toast('Approval withdrawn. The note is unlocked for editing.', 'info');
   }
   function soOpenWithdraw() {
-    var list = SO.subs.filter(soCanWithdraw);
-    if (!list.length) return;
-    if (typeof Swal === 'undefined') { soWithdraw(list[list.length - 1]); return; }
-    var o = { title: 'Withdraw Approval?', text: 'This will withdraw the approval request. No approver has taken action yet, so it can be safely withdrawn.',
-      icon: 'warning', showCancelButton: true, confirmButtonText: 'Confirm', cancelButtonText: 'Cancel' };   // 운영 bindWithdrawButton 문구
-    if (list.length > 1) {   // ELN: 진행 중 제출이 여럿이면 어느 제출인지 고름
-      o.input = 'select'; o.inputOptions = {};
-      list.forEach(function (s) { o.inputOptions[s.id] = 'Submission ' + soSubNo(s) + ': ' + s.names.join(', '); });
-      o.inputValue = String(list[list.length - 1].id);
-    }
-    Swal.fire(o).then(function (res) {
-      if (!res.isConfirmed) return;
-      var s = list.length > 1 ? soSubById(+res.value) : list[0];
-      if (s && soCanWithdraw(s)) soWithdraw(s);
+    var s = SO.subs.filter(soCanWithdraw)[0];   // 노트 전체 결재라 진행 중 제출은 많아야 하나
+    if (!s) return;
+    if (typeof Swal === 'undefined') { soWithdraw(s); return; }
+    Swal.fire({ title: 'Withdraw Approval?', text: 'This will withdraw the approval request. No approver has taken action yet, so it can be safely withdrawn.',
+      icon: 'warning', showCancelButton: true, confirmButtonText: 'Confirm', cancelButtonText: 'Cancel' }).then(function (res) {   // 운영 bindWithdrawButton 문구
+      if (res.isConfirmed && soCanWithdraw(s)) soWithdraw(s);
     });
   }
   function soSubNo(s) { return SO.subs.indexOf(s) + 1; }
@@ -2196,7 +2165,7 @@
     var comment = ta ? ta.value.trim() : '';
     reject = !!sel && sel.value === 'notapproved';
     if (reject && !comment) { soWarn('Comment Required', 'Please enter comments when selecting Not Approved.'); return; }
-    var detail = sub.names.join(', ') + (comment ? ': "' + comment + '"' : '');
+    var detail = soSubDetail(sub, comment);
     row.comment = comment; row.signed = ELN.audit.now();
     if (!reject) {
       row.status = 'approved';
@@ -2210,7 +2179,7 @@
     }
     var before = SO.overall;
     soApply(true, true);
-    if (reject) ELN.toast('Not approved. The sections are unlocked for editing.', 'warn');
+    if (reject) ELN.toast('Not approved. The note is unlocked for editing.', 'warn');
     else if (SO.overall !== 'ok' || before === 'ok') ELN.toast('Approved.', 'ok');
   }
   /* 결재선 편집표(운영 manual 모드 _buildApproverRowHtml) — 행 변경은 이후 상신분에만 적용(진행 중 제출의 결재 행은 그대로) */
@@ -2283,41 +2252,19 @@
   }
 
   /* 모달들 */
-  // Initiate Approval — ELN 단계: ① 제출 섹션 선택(soPickBox, 잠긴 섹션은 체크·비활성 'Submitted') → ② 표준 상신 의견(_showRequestCommentModal) → 상신.
-  //  두 모달은 차례로(앞 모달이 닫힌 뒤 다음을 엶) — 중첩 없음
+  // Initiate Approval — 운영 표준 그대로: 결재선 검증 → #apprRequestCommentModal(common.html approvalModal) 과 같은 구성
+  //  (send 아이콘 제목 + aniInput textarea + Submit(hViva)·Cancel(hGrey)) → 노트 전체 상신
   function soOpenInitiate() {
     var bad = soLineCheck();
     if (bad) { soWarn(bad[0], bad[1]); return; }
-    var cards = soCards();
-    if (!cards.some(function (c) { return !soLockInfo(c.id); })) { ELN.toast('No unsubmitted sections.', 'info'); return; }
-    var pb = soPickBox(cards.map(function (c) {
-      var locked = !!soLockInfo(c.id);
-      return { id: c.id, name: sectionNameOf(c), disabled: locked, checked: true, tag: locked ? 'Submitted' : '' };   // 미제출은 기본 전부 선택(= 노트 전체)
-    }));
+    if (soLocked()) return;
     var body = document.createElement('div');
-    var note = document.createElement('div'); note.className = 'elnApprStepNote';
-    note.textContent = 'Step 1 of 2. Select the sections to submit. Select all submits the whole note. Submitted sections are locked; corrections are added as Errata.';
-    body.appendChild(note); body.appendChild(pb.el);
-    ELN.modal({ title: 'Initiate Approval', icon: 'send', size: 'md', body: body, actions: [
-      { label: 'Next', type: 'hViva', icon: 'arrow_forward', onClick: function () {
-        var ids = pb.ids();
-        if (!ids.length) { ELN.toast('Select at least one section.', 'warn'); return true; }
-        setTimeout(function () { soOpenRequestComment(ids); }, 300);
-      } },
-      { label: 'Cancel', type: 'hGrey', icon: 'close' }
-    ] });
-  }
-  // 운영 #apprRequestCommentModal(common.html approvalModal) 과 같은 구성: send 아이콘 제목 + aniInput textarea + Submit(hViva)·Cancel(hGrey)
-  function soOpenRequestComment(ids) {
-    var names = ids.map(function (id) { return sectionNameOf(soById(id)); });
-    var body = document.createElement('div');
-    body.innerHTML = '<div class="elnApprStepNote">Step 2 of 2. ' + ids.length + ' section' + (ids.length > 1 ? 's' : '') + ': ' + esc(names.join(', ')) + '</div>'
-      + '<div class="aniInput"><textarea class="materialize-textarea" style="min-height:80px;" maxlength="500" placeholder="Enter your comment (optional)"></textarea><span class="focus-border"></span></div>';
+    body.innerHTML = '<div class="aniInput"><textarea class="materialize-textarea" style="min-height:80px;" maxlength="500" placeholder="Enter your comment (optional)"></textarea><span class="focus-border"></span></div>';
     var ta = body.querySelector('textarea');
     ELN.modal({ title: 'Initiate Approval', icon: 'send', size: 'sm', body: body, actions: [
       { label: 'Submit', type: 'hViva', icon: 'send', onClick: function () {
         var cm = ta.value.trim();
-        if (!soLineCheck()) setTimeout(function () { soSubmit(ids, cm); }, 280);   // 모달이 닫힌 뒤 상신(성공 Swal 이 모달 위에 겹치지 않게)
+        if (!soLineCheck() && !soLocked()) setTimeout(function () { soSubmit(cm); }, 280);   // 모달이 닫힌 뒤 상신(성공 Swal 이 모달 위에 겹치지 않게)
       } },
       { label: 'Cancel', type: 'hGrey', icon: 'close' }
     ] });
@@ -2338,9 +2285,7 @@
     if (!SO.subs.length) return ['grey', 'circle', 'Not Initiated'];
     if (soOverall() === 'ok') return ['green', 'check_circle', 'Approved'];
     if (soPendingCount()) return ['blue', 'play_circle', 'Pending'];
-    var last = SO.subs[SO.subs.length - 1];
-    if (last.withdrawn || last.rejected) return soSubState(last);
-    return ['green', 'check_circle', 'Partially Approved'];   // ELN: 일부 섹션만 승인
+    return soSubState(SO.subs[SO.subs.length - 1]);   // 유효 제출이 없으면 마지막 제출이 반려·회수된 상태
   }
   function soDate(ts) { return ts ? esc(toMdy(String(ts).slice(0, 10))) : '-'; }   // 운영 _formatDateUS(MM-DD-YYYY), 시각은 title
   function soDateCell(ts) { return '<td class="ac appr-timestamp"' + (ts ? ' title="' + esc(toMdy(ts)) + '"' : '') + '>' + soDate(ts) + '</td>'; }
@@ -2349,7 +2294,7 @@
   function renderSignoff() {
     var box = soById('elnSignBody'); if (!box) return;
     var au = SO.view === 'author';
-    var canInit = au && soCards().some(function (c) { return !soLockInfo(c.id); });   // 미제출 섹션이 남아 있으면 결재선 편집·상신 가능
+    var canInit = au && !soLocked();   // 유효 제출이 없을 때만 결재선 편집·상신(반려·회수 뒤 재상신)
     var canWd = au && SO.subs.some(soCanWithdraw);
     var cs = soCardState(), bd = soById('elnApprOverall');
     if (bd) { bd.className = 'roundBox ' + cs[0] + ' font12 pl10 pr10 fontR ml10'; bd.innerHTML = '<i class="material-symbols-outlined left font14 mr5">' + cs[1] + '</i>' + esc(cs[2]); }
@@ -2359,12 +2304,7 @@
         + '<a href="javascript:;" class="waves-effect waves-hColor hBtn hViva" data-act="init"><i class="material-symbols-outlined left">send</i><span class="label">Initiate Approval</span></a>' : '')
       + (canWd ? '<a href="javascript:;" class="waves-effect waves-hColor hBtn hViva" data-act="withdraw"><i class="material-symbols-outlined left">cancel</i>Withdraw Approval</a>' : '');
 
-    // 데모 전용: 운영은 로그인 사용자로 판단(본인 대기 행만 결정 입력)
-    var h = '<div class="elnApprDemo" title="Demo only. In MAPIS the controls follow the logged-in user."><span class="elnApprDemoLbl">Demo:</span><span class="elnSignSegLbl">View as</span>'
-      + '<div class="newAppleTab greenTab wd130pxType elnSignTab"><ul>'
-      + '<li class="waves-effect waves-hColor' + (au ? ' on' : '') + '" data-act="view" data-v="author">Author</li>'
-      + '<li class="waves-effect waves-hColor' + (au ? '' : ' on') + '" data-act="view" data-v="cosigner">Co-Signer</li>'
-      + '<div class="tabBg"></div></ul></div></div>';
+    var h = '';
     var both = canInit && SO.subs.length;
 
     // 결재선 편집표 — 운영 table.appr-editor-mode(Type | Function | Assignee | 삭제 td.action-col)
@@ -2394,7 +2334,6 @@
         var ss = soSubState(s), active = !s.rejected && !s.withdrawn;
         h += '<tr class="elnApprSubHd"><td colspan="7"><div class="elnApprSubLine"><span class="elnApprSubNo">Submission ' + soSubNo(s) + '</span>'
           + '<span class="roundBox ' + ss[0] + ' font12 pl10 pr10 fontR"><i class="material-symbols-outlined left font14 mr5">' + ss[1] + '</i>' + ss[2] + '</span>'
-          + '<span class="elnApprSubSecs"><b>Sections</b>' + esc(s.names.join(', ')) + '</span>'
           + (s.withdrawn ? '<span class="elnApprSubMeta">Withdrawn ' + soDate(s.withdrawnAt) + '</span>' : '') + '</div></td></tr>';
         h += '<tr class="tr-appr-req"><td class="ac">' + soTypeLabel('REQ') + '</td><td class="al font12">Author</td><td class="al">' + esc(s.requester || ELN.currentUser) + '</td>'
           + '<td class="ac">' + soDtlBadge('mocha25', 'Requested') + '</td><td><span>' + esc(s.reqComment || '') + '</span></td>' + soDateCell(s.requested) + '<td class="ac appr-save-btn-cell"></td></tr>';
@@ -2421,7 +2360,6 @@
       h += '<div class="appr-empty"><i class="material-symbols-outlined">inbox</i><p class="appr-empty-msg">No approval requests yet.</p></div>';
     }
     box.innerHTML = h;
-    soPlaceTabBg(box);
     soMountSelects(box);
   }
   // select2 부착(운영 [select2] 속성 셀렉트와 같은 부품): 짧은 목록은 검색창 없음, 담당자는 'User ID / Name' 검색
@@ -2438,23 +2376,12 @@
     });
     box.querySelectorAll('select[name="approvalStatus"]').forEach(function (sel) { S2.mount(sel, { minimumResultsForSearch: Infinity }); });
   }
-  // View-as 탭 pill 위치: 활성 li 기준(common.css .tabBg 기본 left:-2px)
-  function soPlaceTabBg(box) {
-    var on = box.querySelector('.elnSignTab li.on'), bg = box.querySelector('.elnSignTab .tabBg');
-    if (on && bg) bg.style.left = (on.offsetLeft - 2) + 'px';
-  }
   function initSignoff() {
     var box = soById('elnSignBody'), card = soById('card_approval'); if (!box || !card) return;
     card.addEventListener('click', function (e) {   // 헤더 액션바 + 본문 공용
       var t = e.target.closest('[data-act]'); if (!t || !card.contains(t)) return;
       var act = t.getAttribute('data-act');
-      if (act === 'view') {
-        var v = t.getAttribute('data-v'); if (v === SO.view) return;
-        box.querySelectorAll('.elnSignTab li').forEach(function (l) { l.classList.remove('on'); });
-        t.classList.add('on'); soPlaceTabBg(box);   // pill 슬라이드(CSS transition) 후 재렌더
-        setTimeout(function () { SO.view = v; renderSignoff(); }, 220);
-      }
-      else if (act === 'addRow') soAddRow();
+      if (act === 'addRow') soAddRow();
       else if (act === 'delRow') soDelRow(+t.closest('tr').getAttribute('data-uid'));
       else if (act === 'init') soOpenInitiate();
       else if (act === 'withdraw') soOpenWithdraw();
@@ -2480,21 +2407,20 @@
       SO.view = 'author'; SO.cosigners = soDefaultLine(); SO.subs = []; SO.overall = 'ing';
       document.querySelectorAll('#tab_ov > .cardBox > .elnErrataWrap').forEach(function (w) { w.remove(); });
       if (st === 'appr' || st === 'ok') {
-        var cards = soCards();
-        SO.subs.push({ id: ++SO.seq, ids: cards.map(function (c) { return c.id; }), names: cards.map(sectionNameOf), requested: '2026-10-12 09:30',
+        SO.subs.push({ id: ++SO.seq, requested: '2026-10-12 09:30',
           requester: ELN.currentUser, reqComment: 'Please review the v3 viscosity results.', rejected: false, withdrawn: false,
           rows: [{ type: 'APPR', name: 'Jim Quan', role: 'Group Leader', status: 'approved', signed: '2026-10-12 15:10', comment: 'Data verified.' },
             st === 'ok' ? { type: 'APPR', name: 'Aishwarya Venkatakrishnan', role: 'Witness', status: 'approved', signed: '2026-10-13 10:05', comment: '' }
                         : { type: 'APPR', name: 'Aishwarya Venkatakrishnan', role: 'Witness', status: 'pending', signed: '', comment: '' }] });
         SO.overall = soOverall();
         // 시드한 제출/서명에 맞는 감사 이력(시드 시각·사용자 사용 — 표는 ts 정렬이라 시간순 유지). 액션명은 실제 제출/서명 경로와 동일
-        var sd = SO.subs[0], sdNames = sd.names.join(', ');
-        ELN.audit.log({ ts: sd.requested, section: SO_SEC, action: 'Submitted', detail: sdNames + ': "' + sd.reqComment + '"' });
+        var sd = SO.subs[0];
+        ELN.audit.log({ ts: sd.requested, section: SO_SEC, action: 'Submitted', detail: soSubDetail(sd, sd.reqComment) });
         sd.rows.forEach(function (r) {
           if (r.status !== 'approved') return;
-          ELN.audit.log({ ts: r.signed, user: r.name, section: SO_SEC, action: 'Approved', detail: sdNames + (r.comment ? ': "' + r.comment + '"' : '') });
+          ELN.audit.log({ ts: r.signed, user: r.name, section: SO_SEC, action: 'Approved', detail: soSubDetail(sd, r.comment) });
         });
-        if (st === 'ok') ELN.audit.log({ ts: sd.rows[sd.rows.length - 1].signed, user: 'System', section: SO_SEC, action: 'Note approved', detail: 'All sections approved' });
+        if (st === 'ok') ELN.audit.log({ ts: sd.rows[sd.rows.length - 1].signed, user: 'System', section: SO_SEC, action: 'Note approved', detail: 'All approvers approved' });
       }
       soApply(true, false);   // 락·카드·배지 + 헤더 알약/전체 읽기전용 동기
     },
@@ -2529,7 +2455,7 @@
     if (!st) return;
     var m = (st === 'ok' || st === 'done') ? 'ok' : ((st === 'appr' || st === 'review') ? 'appr' : 'ing');
     setHeadStatus(m);
-    apprView = (m === 'ok'); setNoteApproved(apprView);   // 완전 승인만 전체 읽기전용(결재중은 섹션별 잠금)
+    apprView = (m === 'ok'); setNoteApproved(apprView);   // 결재중(appr)의 전체 읽기전용은 아래 signoff.reset → soApply 가 건다
     initNoteFmlFromOpener();   // 시드 전에 Formulation 표시 여부 확정 — 숨길 카드가 서명·감사 시드에 섞이지 않게(+80ms 호출은 중복 무해)
     if (ELN.signoff) ELN.signoff.reset(m);   // 모듈 생성 후 시드 + 섹션 잠금
   }
@@ -5084,15 +5010,15 @@
     });
     if (SO.subs.length) {
       var srows = [];
-      SO.subs.forEach(function (s) {   // 결재 현황표와 같은 열 순서 + ELN 'Sections'
-        var secs = 'Submission ' + soSubNo(s) + ' (' + soSubState(s)[2] + '): ' + s.names.join(', ');
+      SO.subs.forEach(function (s) {   // 결재 현황표와 같은 열 순서 + 제출 묶음(Submission N (상태))
+        var secs = 'Submission ' + soSubNo(s) + ' (' + soSubState(s)[2] + ')';
         srows.push(['Request', 'Author', s.requester || ELN.currentUser, 'Requested', s.reqComment || '', toMdy(String(s.requested).slice(0, 10)), secs]);
         s.rows.forEach(function (r) {
           var stl = !soIsAppr(r) || (r.status === 'pending' && (s.rejected || s.withdrawn)) ? '-' : (r.status === 'pending' ? 'In Progress' : (SO_ST[r.status] || SO_ST.pending)[1]);
           srows.push([SO_TYPE_LBL[r.type] || 'Approval', r.role || '-', r.name, stl, r.comment || '', r.signed && (r.status === 'approved' || r.status === 'notapproved') ? toMdy(String(r.signed).slice(0, 10)) : '-', secs]);
         });
       });
-      h += '<section class="sec"><h2><span class="no">' + (++n) + '</span>Approval</h2>' + pdfRows(['Type', 'Function', 'Assignee', 'Status', 'Comments', 'Date', 'Sections'], srows) + '</section>';
+      h += '<section class="sec"><h2><span class="no">' + (++n) + '</span>Approval</h2>' + pdfRows(['Type', 'Function', 'Assignee', 'Status', 'Comments', 'Date', 'Submission'], srows) + '</section>';
     }
     if (o.att) h += '<section class="sec"><h2><span class="no">' + (++n) + '</span>Attachments List</h2><p class="muted">File names and current versions only. Files are kept in MAPIS and are not embedded in this PDF.</p>'
       + pdfRows(['File', 'Version', 'Uploaded By', 'Date', 'Size'], pdfAttachRows(o.attCards)) + '</section>';
