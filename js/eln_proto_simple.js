@@ -294,6 +294,14 @@
     var save = document.getElementById('elnSaveBtn');
     if (save) {
       save.addEventListener('click', function () {
+        if (ELN.requireBasic && !ELN.requireBasic(false)) return;   // 저장 때 필수(*) 검사 — 운영 'Cannot Save'
+        // Creation Date 는 최초 저장 때 자동 입력(새 노트·복사본). 이미 있으면 그대로
+        if (createdPending()) {
+          var today = ELN.audit.now().slice(0, 10);
+          setCreatedDate(today);
+          var cur = (PROJECT_NOTES || []).filter(function (n) { return n.current; })[0];
+          if (cur) cur.created = today;   // 다른 노트로 갔다 돌아와도 유지
+        }
         ELN.toast('Note saved.', 'ok');
       });
     }
@@ -659,9 +667,9 @@
   //   노트마다 모듈 종류·개수가 달라 카드 수와 좌측 목차가 실제로 바뀜.
   var PROJECT_NOTES = [
     { code: 'NT-2604-00098', title: 'PSA Base Polymer Screening',                         date: '2026-04-12', status: 'done',   modules: ['fml','table','editor'] },
-    { code: 'NT-2604-00115', title: 'Tackifier Compatibility Study',                       date: '2026-04-28', status: 'done',   modules: ['fml','table','chem','related'] },
+    { code: 'NT-2604-00115', title: 'Tackifier Compatibility Study',                       date: '2026-04-28', status: 'done',   modules: ['fml','table','chem'] },
     { code: 'NT-2605-00131', title: 'Crosslinker Ratio Optimization',                      date: '2026-05-06', status: 'review', modules: ['fml','table','editor','attach'] },
-    { code: 'NT-2605-00142', title: 'UV-Curable PSA Viscosity Improvement (RGBOLED)',      date: '2026-05-15', status: 'ing', current: true, projects: ['SN-26-0031', 'PT-26-0021', 'TS-26-0205'], modules: ['fml','editor','table','chem','related','attach'] },
+    { code: 'NT-2605-00142', title: 'UV-Curable PSA Viscosity Improvement (RGBOLED)',      date: '2026-05-15', created: '2026-10-06', status: 'ing', current: true, projects: ['SN-26-0031', 'PT-26-0021', 'TS-26-0205'], modules: ['fml','editor','table','chem','attach'] },
     { code: 'NT-2605-00150', title: 'Pilot Coating Trial #1',                              date: '2026-05-22', status: 'ing',    modules: ['editor','attach'] },
     { code: 'NT-2606-00171', title: 'Mass-Production Validation Plan',                     date: '2026-06-03', status: 'draft',  modules: ['editor'] }
   ];
@@ -734,8 +742,9 @@
       var titIn = document.querySelector('.elnBasicTitle input');
       if (titIn) { titIn.value = n.title; titIn._auditPrev = n.title; }
       syncClonedRow(n);   // 복제 노트면 Basic Data에 'Cloned from' 링크, 아니면 제거
-      // Experiment Date도 전환 노트의 date로(로깅 없이 기준값 갱신)
-      if (n.date) setExpDate(n.date);
+      // Creation Date 도 전환 노트의 생성일로(created 가 없으면 date). 저장 전 복사본이면 빈 값
+      setCreatedDate(n.created || (n.clonedFrom ? '' : n.date));
+      setBusiness(n.biz || DEMO_BIZ);   // Primary Business·Segment·Others(로그 없음)
       // 헤더 상태 알약(노트 상태 어휘 → 색/라벨 직접 매핑)
       var pill = document.getElementById('elnHeadStatus');
       if (pill) { pill.className = 'roundBox ' + (NOTE_STATUS_PILL[n.status] || 'grey');
@@ -746,12 +755,12 @@
       ELN.audit.reset(n);   // Audit Trail은 노트별 — 전환한 노트의 이력으로 교체
       // 노트별 모듈 구성 적용(하드코딩 데모 노트만 — opener 노트는 modules 없음 → 콘텐츠 유지)
       if (ELN.signoff && ELN.signoff.clear) ELN.signoff.clear();   // 이전 노트의 제출 상태가 setFmlVisible/applyNoteModules의 refresh로 재계산(ok 재진입)되지 않게 비움
-      RELATED_SEED = projectsOf(n);   // 노트별 연결 프로젝트 — Related Items 의 Project 항목으로(로그 없이)
+      var projs = projectsOf(n);   // 노트별 연결 프로젝트 — Basic Data Related Items 의 Project 칩으로(로그 없이)
       ATTACH_SEED = (n.code === 'NT-2605-00142');   // 데모 노트로 돌아오면 첨부 시드 다시
       try {
-        if (n.modules) applyNoteModules(n.modules);
-        else { setFmlVisible(!!n.fml); setNoteProjects(RELATED_SEED); }   // opener 노트: 실제 fml 유무로 Formulation 카드만 동기화(리스트 마크와 일치), 기존 Related 의 Project 항목만 교체
-      } finally { RELATED_SEED = null; ATTACH_SEED = false; }
+        if (n.modules) { applyNoteModules(n.modules); resetBasicRelated(projs, n.code === 'NT-2605-00142'); }
+        else { setFmlVisible(!!n.fml); setNoteProjects(projs); }   // opener 노트: 실제 fml 유무로 Formulation 카드만 동기화(리스트 마크와 일치), Related 의 Project 칩만 교체
+      } finally { ATTACH_SEED = false; }
       if (soSt === 'ok') { apprView = true; setNoteApproved(true); }   // 모듈 재구성 뒤 새 입력들도 읽기전용
       if (ELN.signoff) ELN.signoff.reset(soSt);   // 공동서명 상태 시드 + 헤더 알약 동기(refresh)
       if (ELN.coedit) ELN.coedit.reset(code);     // 공동편집자·섹션 편집자 라벨·공유 현황 (결재 시드 뒤에 — 결재 잠금 섹션은 라벨 갱신 제외)
@@ -769,8 +778,8 @@
     // 노트 모듈 구성 적용 — 실제 모듈 시스템(addNoteModule/removeSection) 재사용.
     //  · basic(Overview)·approval: 고정 → 손대지 않음
     //  · fml(Formulation): 정적 리치카드 → 제거 대신 show/hide(제거 시 세션 내 복구 불가)
-    //  · editor/table/chem/related/attach: 동적 → 전부 제거 후 타깃 순서대로 재생성(순서·구성 정확)
-    var DYN_MOD_KEYS = ['editor', 'table', 'chem', 'related', 'attach'];
+    //  · editor/table/chem/attach: 동적 → 전부 제거 후 타깃 순서대로 재생성(순서·구성 정확). Related Items 는 Basic Data 안(resetBasicRelated)
+    var DYN_MOD_KEYS = ['editor', 'table', 'chem', 'attach'];
     function applyNoteModules(modules) {
       var article = document.getElementById('tab_ov'); if (!article) return;
       ELN.audit.mute++;   // 모듈 일괄 재구성 중엔 감사 로그 없음
@@ -1163,7 +1172,7 @@
         return;
       }
       seed('2026-10-06 09:12', 'Charles Kim', 'Basic Data', 'Note created', { detail: 'From template "Formulation"' });
-      seed('2026-10-06 09:20', 'Charles Kim', 'Basic Data', 'Field changed', { field: 'Note Title', before: 'PSA Viscosity Improvement', after: 'UV-Curable PSA Viscosity Improvement (RGBOLED)' });
+      seed('2026-10-06 09:20', 'Charles Kim', 'Basic Data', 'Field changed', { field: 'Title', before: 'PSA Viscosity Improvement', after: 'UV-Curable PSA Viscosity Improvement (RGBOLED)' });
       seed('2026-10-07 14:05', 'Charles Kim', 'Data Visualization', 'Module added', {});
       // 첨부 이력 = Attachments 시드(DEMO_ATTACH)와 같은 사람·시각
       seed('2026-10-07 15:40', 'Charles Kim', 'Attachments', 'File attached', { detail: 'Viscosity_Results.xlsx' });
@@ -1202,24 +1211,27 @@
       // Basic Data 텍스트 입력 변경 — 위임(나중에 추가된 input도 커버). 포커스 시 값 기록 → change 시 before/after
       var basic = document.getElementById('card_basic');
       if (basic) {
-        // 추적 대상: 텍스트·날짜(datepicker 텍스트) 입력 + select(Platform). 이전값은 요소별(_auditPrev)로 보관
+        // 추적 대상: 텍스트 입력 + select(Primary Business·Segment·Others). 이전값은 요소별(_auditPrev)로 보관.
+        //  Related Items 추가 줄(유형·검색칸)은 칩 추가·삭제로 따로 기록하므로 제외, Creation Date 는 사용자가 고치지 않음
         function isField(el) {
-          if (!el) return false;
+          if (!el || el.closest('.elnRelBox')) return false;
           if (el.tagName === 'SELECT') return true;
           if (el.tagName !== 'INPUT') return false;
-          if (el.classList.contains('select-dropdown')) return false;   // Materialize 표시용 input 제외
-          if (el.id === 'elnTagInput' || el.classList.contains('elnModTitle')) return false;
+          if (el.classList.contains('select-dropdown') || el.classList.contains('select2-search__field')) return false;   // Materialize·select2 표시용 input 제외
+          if (el.id === 'elnTagInput' || el.id === 'elnCreatedDate' || el.classList.contains('elnModTitle')) return false;
           return el.type === 'text';
         }
         function fieldName(el) {
-          if (el.id === 'elnPlatform') return 'Platform / Pre-NPC type';
-          if (el.id === 'elnPlatformName') return 'Platform / Pre-NPC name';
+          if (el.id === 'elnBizSegment') return 'Segment';   // Primary Business 와 같은 줄
           var row = el.closest('.elnBasicRow'), lab = row && row.querySelector('.elnBasicLabel');
           return lab ? lab.textContent.replace(/\*/g, '').trim() : (el.getAttribute('placeholder') || 'Field');
         }
-        // select는 옵션 텍스트로 기록
+        // select는 옵션 텍스트로 기록(다중은 쉼표로, 값 없음 = 빈 값)
         function fieldVal(el) {
-          if (el.tagName === 'SELECT') { var o = el.options[el.selectedIndex]; return o ? o.text : ''; }
+          if (el.tagName === 'SELECT') {
+            if (el.multiple) return [].filter.call(el.options, function (o) { return o.selected; }).map(function (o) { return o.text; }).join(', ');
+            var o = el.options[el.selectedIndex]; return o && o.value ? o.text : '';
+          }
           return el.value;
         }
         // 기준값이 아직 없는 필드만 채움 — 이미 기록된 기준값(로그 후 갱신값)이나 입력 중인 값은 덮지 않음
@@ -1233,8 +1245,9 @@
           ELN.audit.log({ section: sectionNameOf(basic), action: 'Field changed', field: fieldName(el), before: before, after: after });
           el._auditPrev = after;
         }
+        ELN.audit.fieldChanged = function (el) { if (isField(el)) logIfChanged(el); };   // select2(jQuery change 만 쏨) 필드용
+        ELN.audit.rebase = function (el) { if (el && isField(el)) el._auditPrev = fieldVal(el); };   // 프로그램적 값 설정 뒤 기준값만 갱신(로그 없음)
         basic.addEventListener('focusin', function (e) { if (isField(e.target) && e.target._auditPrev == null) e.target._auditPrev = fieldVal(e.target); });
-        // Experiment Date(Materialize datepicker)는 선택 후 닫힐 때 initExpDate 가 네이티브 change 를 발생시켜 이 리스너로 기록됨
         basic.addEventListener('change', function (e) { if (isField(e.target)) logIfChanged(e.target); });
         // 다른 DOMContentLoaded init(옵션 채움) 직후 + load 시점에 기준값 기록 (Materialize가 select를 숨겨 focusin이 안 올 수 있음)
         setTimeout(snapshot, 0);
@@ -1358,7 +1371,6 @@
     { key: 'table',    icon: 'insert_chart', title: 'Data Visualization', desc: 'Editable table + multi-series chart' },
     { key: 'chem',     icon: 'hexagon',     title: 'ChemStudio',         desc: 'Sketch a chemical structure' },
     { key: 'fml',      icon: 'science',     title: 'Formulation',        desc: 'Embed from formulator' },
-    { key: 'related',  icon: 'hub',         title: 'Related Items',      desc: 'Link materials · projects · notes · URLs' },
     { key: 'attach',   icon: 'attach_file', title: 'Attachments',        desc: 'Files & documents' }
   ];
 
@@ -1400,13 +1412,6 @@
         + '<div class="file-path-wrapper"><input type="text" class="file-path validate" placeholder="No file chosen" autocomplete="off" spellcheck="false"></div>'
         + '</div>'
         + '<div class="file-area elnAttachList"></div></div>';
-      case 'related': return '<div class="elnRelBox">'
-        + '<div class="elnRelAdd"><div class="elnRelAddType"><select><option>Material</option><option>Project</option><option>Lab Note</option><option>URL</option></select></div>'
-        + '<div class="elnRelAddVal"></div>'
-        + '<a href="javascript:;" class="waves-effect waves-light hBtn elnRelAddGo"><i class="material-symbols-outlined left">add</i><span class="label">Add</span></a></div>'
-        + '<ul class="elnRelList">'
-        + '<li class="elnRelItem fileChip" data-type="Material"><i class="material-symbols-outlined">science</i><span class="elnRelType">Material</span><a href="javascript:;" class="elnRelLink">[RM-0421] UV Photoinitiator</a><span class="elnRelActs"><i class="material-symbols-outlined elnRelDel btn_deleteFile" title="Remove">close</i></span></li>'
-        + '</ul></div>';
       case 'chem': return '<div class="elnChemBox">'
         + '<ul class="elnChemList"></ul>'
         + '<div class="elnChemEmptyLine"><i class="material-symbols-outlined">hexagon</i>No structures yet. Add one or more from ChemStudio.</div>'
@@ -1791,15 +1796,15 @@
   function loadMyTemplates() { try { return JSON.parse(localStorage.getItem(MY_TMPL_KEY) || '[]'); } catch (e) { return []; } }
   function saveMyTemplates(arr) { try { localStorage.setItem(MY_TMPL_KEY, JSON.stringify(arr)); } catch (e) {} }
   var STATIC_SECTION = { card_basic: 'overview', card_fml: 'formulation', card_concl: 'conclusion' };
-  var MODULE_KEYS = ['editor', 'table', 'fml', 'related', 'attach', 'chem'];
+  var MODULE_KEYS = ['editor', 'table', 'fml', 'attach', 'chem'];   // Related Items 는 2026-10-21 Basic Data 안으로(예전에 저장한 My Template 의 'related' 는 건너뜀)
   // Public 템플릿 정의(pop 측) — sections는 [{type,label}]
   var PUBLIC_TEMPLATES = [
     { key: 'empty',       icon: 'description', name: 'Blank',       sections: [{ type: 'overview', label: 'Overview' }] },
     { key: 'general',     icon: 'note',        name: 'General',     sections: [{ type: 'overview', label: 'Overview' }, { type: 'editor', label: 'Notes' }] },
     { key: 'formulation', icon: 'science',     name: 'Formulation', sections: [{ type: 'overview', label: 'Overview' }, { type: 'formulation', label: 'Formulation' }] },
     { key: 'experiment',  icon: 'labs',        name: 'Experiment',  sections: [{ type: 'overview', label: 'Overview' }, { type: 'table', label: 'Data Visualization' }] },
-    { key: 'analysis',    icon: 'analytics',   name: 'Analysis',    sections: [{ type: 'overview', label: 'Overview' }, { type: 'chem', label: 'ChemStudio' }, { type: 'related', label: 'Related Items' }] },
-    { key: 'report',      icon: 'summarize',   name: 'Full Report', sections: [{ type: 'overview', label: 'Overview' }, { type: 'formulation', label: 'Formulation' }, { type: 'table', label: 'Data Visualization' }, { type: 'chem', label: 'ChemStudio' }, { type: 'related', label: 'Related Items' }, { type: 'attach', label: 'Attachments' }] }
+    { key: 'analysis',    icon: 'analytics',   name: 'Analysis',    sections: [{ type: 'overview', label: 'Overview' }, { type: 'chem', label: 'ChemStudio' }] },
+    { key: 'report',      icon: 'summarize',   name: 'Full Report', sections: [{ type: 'overview', label: 'Overview' }, { type: 'formulation', label: 'Formulation' }, { type: 'table', label: 'Data Visualization' }, { type: 'chem', label: 'ChemStudio' }, { type: 'attach', label: 'Attachments' }] }
   ];
   function templateByKey(key) { return PUBLIC_TEMPLATES.concat(loadMyTemplates()).filter(function (t) { return t.key === key; })[0]; }
   function templateSections(key) { var t = templateByKey(key); return (t && t.sections) || []; }
@@ -1856,26 +1861,24 @@
     var tmpl = '';
     try { tmpl = new URLSearchParams(location.search).get('tmpl') || ''; } catch (e) {}
     if (!tmpl) return;
-    RELATED_SEED = initialProjects();   // 리스트가 project 를 넘긴 경우만 Related Items 에 Project 항목으로 시드
-    try { realizeTemplate(tmpl); } finally { RELATED_SEED = null; }
+    realizeTemplate(tmpl);   // Related Items(Basic Data 안) 프로젝트 시드는 initBasicRelated 가 함
   }
   document.addEventListener('DOMContentLoaded', initTemplate);  // initModuleSystem(elnAddEnd·addNoteModule) 이후 실행
   // 기본 배치 — 상세 진입 시 6개 모듈을 모두 깔아둠. fml은 정적 Formulation 카드(card_fml),
-  // 나머지 5개(editor/table/chem/related/attach)는 동적 추가. Conclusion은 없어진 모듈이라 제거.
+  // 나머지 4개(editor/table/chem/attach)는 동적 추가. Conclusion은 없어진 모듈이라 제거. Related Items 는 Basic Data 안(initBasicRelated)
   function initDefaultModules() {
     if (!document.getElementById('elnAddModule')) return;   // 상세 화면에서만
     // 템플릿 진입(?tmpl=)이면 initTemplate(realizeTemplate)이 구성을 정하므로 기본모듈을 깔지 않음
     try { if (new URLSearchParams(location.search).get('tmpl')) return; } catch (e) {}
     removeSection('card_concl');
-    RELATED_SEED = initialProjects();   // 데모 노트(NT-2605-00142)는 SN-26-0031·PT-26-0021·TS-26-0205 가 Related Items 에 Project 항목으로 보임
     ATTACH_SEED = isDemoEntry();        // 데모 노트는 Attachments 에 파일 서버 첨부 5건
     try {
-      ['editor', 'table', 'chem', 'related', 'attach'].forEach(function (key) {
+      ['editor', 'table', 'chem', 'attach'].forEach(function (key) {
         if (document.querySelector('#tab_ov [data-modtype="' + key + '"]')) return;   // 이미 있으면 skip
         var mt = MODULE_TYPES.filter(function (m) { return m.key === key; })[0];
         if (mt) addNoteModule(mt, null, true);   // silent
       });
-    } finally { RELATED_SEED = null; ATTACH_SEED = false; }
+    } finally { ATTACH_SEED = false; }
   }
   document.addEventListener('DOMContentLoaded', initDefaultModules);   // initTemplate 이후 실행
   // 두 구조가 완전히 동일한지(타입·라벨 순서까지) — 중복 저장 방지용
@@ -2255,6 +2258,7 @@
   // Initiate Approval — 운영 표준 그대로: 결재선 검증 → #apprRequestCommentModal(common.html approvalModal) 과 같은 구성
   //  (send 아이콘 제목 + aniInput textarea + Submit(hViva)·Cancel(hGrey)) → 노트 전체 상신
   function soOpenInitiate() {
+    if (ELN.requireBasic && !ELN.requireBasic(true)) return;   // 상신 때 필수(* + **) 검사 — 운영 'Cannot Initiate Approval'
     var bad = soLineCheck();
     if (bad) { soWarn(bad[0], bad[1]); return; }
     if (soLocked()) return;
@@ -2666,10 +2670,10 @@
     { c: 'TS-26-0218', t: 'High-Temp Silicone Encapsulant' }
   ];
 
-  /* 프로젝트 연결 — Related Items 모듈의 'Project' 항목(2026-10-16 변경: Basic Data 의 Associated Project·Primary·Stage 개념 제거).
+  /* 프로젝트 연결 — Related Items 의 'Project' 칩(2026-10-16: Associated Project·Primary·Stage 제거, 2026-10-21: Related Items 가 Basic Data 안으로).
      프로젝트 연결은 노트 메타데이터 — 노트 접근 권한과 무관. 상태는 DOM(li.elnRelItem[data-proj])이 원본 */
   var DEMO_PROJ = ['SN-26-0031', 'PT-26-0021', 'TS-26-0205'];   // NT-2605-00142 데모: NPI + 공정이관(NPT) + Tech Support — 리스트 시드와 동일
-  var RELATED_SEED = null;   // 지금 만들어지는 Related Items 모듈에 시드할 프로젝트 코드(null = 시드 안 함 — 사용자가 직접 추가한 모듈은 비어 있음)
+  var RELATED_SEED = null;   // wireRelatedModule 이 처음 배선할 때 시드할 프로젝트 코드(initBasicRelated 가 잠깐 채움, null = 시드 안 함)
   function projByCode(c) { return MAPIS_PROJECTS.filter(function (p) { return p.c === c; })[0] || null; }
   function projBracket(c) { var p = projByCode(c); return p ? '[' + c + '] ' + p.t : '[' + c + ']'; }
   function projectsOf(n) {
@@ -2718,42 +2722,141 @@
     (codes || []).forEach(function (c) { list.insertBefore(relProjItem(c), first); });
   }
 
-  /* Platform / Pre-NPC — MAPIS 프로젝트 번호가 없는 일(요구 1번). 운영에 마스터 목록이 없어 유형만 고르고 이름은 입력(사용자 2026-10-16).
-     이름 자동완성 = 다른 노트에서 이미 쓴 이름(실구현: 노트 테이블의 유형별 distinct 이름 + 사용 건수) → 같은 이름 재사용 */
-  var PLATFORM_USED = {
-    platform: [{ n: 'UV-Curable Adhesives', c: 6 }, { n: 'Silicone PSA', c: 4 }, { n: 'Clear Resin Systems', c: 2 }],
-    prenpc: [{ n: 'Low-Haze OCR Study', c: 3 }, { n: 'Flexible OLED Encapsulant', c: 1 }]
-  };
-  function initPlatform() {
-    var sel = document.getElementById('elnPlatform'), inp = document.getElementById('elnPlatformName');
-    if (!sel || !inp) return;
-    function syncName() {   // 유형 미지정이면 이름 칸 숨김(값은 비움)
-      var none = !sel.value;
-      inp.closest('.elnPlatName').style.display = none ? 'none' : '';
-      if (!none) inp.placeholder = 'Name (e.g., ' + PLATFORM_USED[sel.value][0].n + ')';
-      if (none && inp.value) {
-        inp.value = '';
-        setTimeout(function () { inp.dispatchEvent(new Event('change', { bubbles: true })); }, 0);   // 감사 기록 — 유형 변경 기록 다음 순서로
-      }
-    }
-    sel.addEventListener('change', syncName);
-    syncName();
-    if (!(window.jQuery && $.fn.autocomplete)) return;
-    $(inp).autocomplete({
-      minLength: 0, appendTo: 'body',
-      source: function (req, res) {
-        if (inp.readOnly || inp.disabled) { res([]); return; }   // 결재 잠금·승인 view(readOnly)에선 추천 없음 — 값 변경 차단
-        var q = (req.term || '').toLowerCase();
-        res((PLATFORM_USED[sel.value] || []).filter(function (x) { return x.n.toLowerCase().indexOf(q) >= 0; })
-          .map(function (x) { return { label: x.n, value: x.n, c: x.c }; }));
-      },
-      select: function (e, ui) { e.preventDefault(); if (inp.readOnly) return; inp.value = ui.item.value; inp.dispatchEvent(new Event('change', { bubbles: true })); }
-    }).on('focus', function () { if (!this.readOnly) $(this).autocomplete('search', this.value); });
-    $(inp).data('ui-autocomplete')._renderItem = function (ul, item) {   // 이름 + 사용 건수(text()로 — HTML 연결 금지)
-      return $('<li>').append($('<div>').text(item.label).append($('<span class="elnPlatUsed">').text(' · used in ' + item.c + ' note' + (item.c > 1 ? 's' : '')))).appendTo(ul);
-    };
+  /* Basic Data 의 Related Items(2026-10-21: 모듈에서 Basic Data 안으로). 추가 줄·칩 마크업은 예전 모듈 본문과 같음.
+     withSample = 데모 노트의 Material 예시 칩 1개 */
+  var REL_SAMPLE_LI = '<li class="elnRelItem fileChip" data-type="Material"><i class="material-symbols-outlined">science</i><span class="elnRelType">Material</span><a href="javascript:;" class="elnRelLink">[RM-0421] UV Photoinitiator</a><span class="elnRelActs"><i class="material-symbols-outlined elnRelDel btn_deleteFile" title="Remove">close</i></span></li>';
+  function relBoxHtml(withSample) {
+    return '<div class="elnRelBox">'
+      + '<div class="elnRelAdd"><div class="elnRelAddType"><select><option>Material</option><option>Project</option><option>Lab Note</option><option>URL</option></select></div>'
+      + '<div class="elnRelAddVal"></div>'
+      + '<a href="javascript:;" class="waves-effect waves-light hBtn elnRelAddGo"><i class="material-symbols-outlined left">add</i><span class="label">Add</span></a></div>'
+      + '<ul class="elnRelList">' + (withSample ? REL_SAMPLE_LI : '') + '</ul></div>';
   }
-  document.addEventListener('DOMContentLoaded', initPlatform);
+  function initBasicRelated() {
+    var box = document.getElementById('elnBasicRel'); if (!box) return;
+    box.innerHTML = relBoxHtml(isDemoEntry());
+    RELATED_SEED = initialProjects();   // 데모 노트 = 프로젝트 3개, 템플릿 새 노트 = 리스트가 넘긴 프로젝트만
+    try { wireRelatedModule(box); } finally { RELATED_SEED = null; }
+  }
+  document.addEventListener('DOMContentLoaded', initBasicRelated);
+  // 노트 전환 — 목록을 그 노트 것으로 다시 채움(프로젝트 칩 + 데모 노트만 예시 칩). 로그 없음
+  function resetBasicRelated(codes, withSample) {
+    var list = document.querySelector('#elnBasicRel .elnRelList'); if (!list) return;
+    list.innerHTML = withSample ? REL_SAMPLE_LI : '';
+    list.querySelectorAll('.elnRelDel').forEach(function (d) { d.addEventListener('click', function () { d.closest('.elnRelItem').remove(); }); });
+    setNoteProjects(codes);
+  }
+
+  /* Primary Business(단일) · Segment(Primary Business 에 딸린 것만) · Others(다중) — 사용자 2026-10-21.
+     운영 레퍼런스: CNPI/SNPI Basic 의 Business·Segment select2(fnSetOptionWithBU: Business 없으면 '(Please select a "Business" first)'),
+     FMEA Basic 의 Customer select2 multiple. 목록 = 운영 DEXIF BIZ 코드(07_techlib_business_dexif.sql 매핑)와 SGMNT(마이그레이션 sub_segment → segment) 이름 */
+  var ELN_BIZ = [
+    { c: 'COAT', n: 'Coatings', seg: ['HDC/WSC', 'RCL/PSA'] },
+    { c: 'EM', n: 'Electronic Materials', seg: ['Electronic Materials'] },
+    { c: 'HCARE', n: 'Healthcare', seg: ['Healthcare'] },
+    { c: 'INDL', n: 'Industrial', seg: ['Industrial', 'Sealants'] },
+    { c: 'PCARE', n: 'Personal Care', seg: ['Personal Care'] },
+    { c: 'UADD', n: 'Urethane Additives', seg: ['Rigid Molded Specialties Foam', 'Slabstock Foam'] },
+    { c: 'SADD', n: 'Specialty Additives', seg: ['CAS/PE', 'Process Industries/Agriculture'] },
+    { c: 'TRSL', n: 'Tire & Silanes', seg: ['Tire', 'Standard Silanes'] }
+  ];
+  // Site = 운영 TechLib 업로드와 같은 공통코드 lib_site(플랜트 마스터의 기술 사이트, div_tech_yn=Y). 표시는 운영 codeLabel 과 같은 '[코드] 이름'
+  var ELN_SITES = [['IT01', 'Itatiba'], ['MS01', 'Shanghai - China'], ['LV01', 'Leverkusen - DE'], ['AB01', 'Abingdon'], ['IN02', 'Bangalore R&D (Tech) Center'],
+    ['TE01', 'Termoli'], ['OT01', 'Ohta - Japan'], ['KP01', 'Hwaseong - Korea'], ['CHNC', 'Charlotte'], ['GART', 'Garrett'], ['PEAR', 'Pearl River - US'],
+    ['SVLL', 'Sistersville'], ['WTFD', 'Waterford']];
+  var DEMO_BIZ = { primary: 'COAT', segment: 'RCL/PSA', others: ['EM'], site: 'KP01' };   // 데모 노트: UV 경화 PSA(코팅 RCL/PSA) + 디스플레이용(Electronic Materials), 화성
+  function bizEls() { return { p: document.getElementById('elnBizPrimary'), s: document.getElementById('elnBizSegment'), o: document.getElementById('elnBizOthers'), t: document.getElementById('elnSite') }; }
+  // Segment 옵션 = 고른 Business 의 것만(운영 fnSetOptionWithBU 와 같은 규칙). 남길 값이 목록에 없으면 비움
+  function bizFillSegments(s, biz, keep) {
+    var b = ELN_BIZ.filter(function (x) { return x.c === biz; })[0];
+    s.innerHTML = b ? '<option value="">- Select -</option>' + b.seg.map(function (n) { return '<option value="' + esc(n) + '">' + esc(n) + '</option>'; }).join('')
+      : '<option value="">(Please select a "Business" first)</option>';
+    s.value = (b && b.seg.indexOf(keep) >= 0) ? keep : '';
+  }
+  // Others 에서 Primary 로 고른 Business 는 고를 수 없게(이미 골랐으면 뺌)
+  function bizSyncOthers(o, primary) {
+    [].forEach.call(o.options, function (op) { op.disabled = !!primary && op.value === primary; if (op.disabled) op.selected = false; });
+  }
+  function bizRefresh(e) { if (window.jQuery) [e.p, e.s, e.o, e.t].forEach(function (x) { if (x) jQuery(x).trigger('change.select2'); }); }
+  function bizApply(e, v) {   // 값 넣기(옵션 재구성 포함, 이벤트 없음)
+    e.p.value = v.primary || '';
+    bizFillSegments(e.s, e.p.value, v.segment || '');
+    [].forEach.call(e.o.options, function (op) { op.selected = (v.others || []).indexOf(op.value) >= 0; });
+    bizSyncOthers(e.o, e.p.value);
+    if (e.t) e.t.value = v.site || '';
+  }
+  // 프로그램적 설정(노트 전환·초기화) — 감사 기준값도 같이 갱신(로그 없음)
+  function setBusiness(v) {
+    var e = bizEls(); if (!e.p) return;
+    bizApply(e, v || {});
+    bizRefresh(e);
+    if (ELN.audit && ELN.audit.rebase) [e.p, e.s, e.o, e.t].forEach(ELN.audit.rebase);
+  }
+  function initBusiness() {
+    var e = bizEls(); if (!e.p || !e.s || !e.o || !e.t) return;
+    var opts = ELN_BIZ.map(function (b) { return '<option value="' + b.c + '">' + esc(b.n) + '</option>'; }).join('');
+    e.p.innerHTML = '<option value="">- Select -</option>' + opts;
+    e.o.innerHTML = opts;
+    e.t.innerHTML = '<option value="">- Select -</option>' + ELN_SITES.map(function (s) { return '<option value="' + s[0] + '">' + esc('[' + s[0] + '] ' + s[1]) + '</option>'; }).join('');
+    var q = null; try { q = new URLSearchParams(location.search); } catch (err) {}
+    bizApply(e, (q && q.get('tmpl')) ? {} : DEMO_BIZ);   // 템플릿 새 노트는 빈 값, 그 외(데모·기존 노트)는 데모 값
+    if (!S2.ready()) return;
+    S2.mount(e.p); S2.mount(e.s); S2.mount(e.o, { placeholder: 'Select other businesses' }); S2.mount(e.t);
+    var card = document.getElementById('card_basic');
+    // select2 는 jQuery change 만 쏨 → Basic Data 감사·Last edited 를 여기서 직접 구동
+    function changed(el) { if (ELN.audit && ELN.audit.fieldChanged) ELN.audit.fieldChanged(el); if (ELN.coedit && card) ELN.coedit.touch(card); }
+    jQuery(e.p).on('change', function () {
+      var before = e.s.value;
+      bizFillSegments(e.s, e.p.value, before); bizSyncOthers(e.o, e.p.value); bizRefresh(e);
+      changed(e.p); if (e.s.value !== before) changed(e.s); changed(e.o);
+    });
+    jQuery(e.s).on('change', function () { changed(e.s); });
+    jQuery(e.o).on('change', function () { changed(e.o); });
+    jQuery(e.t).on('change', function () { changed(e.t); });
+  }
+  document.addEventListener('DOMContentLoaded', initBusiness);
+
+  /* 필수 항목 검사 — 운영 au.checkRequiredFields(저장: data-required) · appr_util _check3_MandatoryFields(상신: data-required + data-required-appronly) 와 같은 규칙·알림.
+     Basic Data: * = 저장 때 필수(Title·Primary Business·Segment·Site·Related Items 1개 이상), ** = 상신 때 필수(Tags 1개 이상). Creation Date 는 저장 때 자동 */
+  function reqMissing(forApproval) {
+    var card = document.getElementById('card_basic'); if (!card) return [];
+    var out = [];
+    card.querySelectorAll('[data-required="true"]').forEach(function (el) {
+      if (!el.disabled && !String(el.value || '').trim()) out.push({ el: el, label: el.getAttribute('data-label') || 'Field' });
+    });
+    if (!card.querySelector('#elnBasicRel .elnRelItem')) out.push({ el: card.querySelector('#elnBasicRel .elnRelAddVal input') || card.querySelector('#elnBasicRel'), label: 'Related Items' });
+    if (forApproval && !card.querySelector('#elnTags .elnTag')) out.push({ el: document.getElementById('elnTagInput'), label: 'Tags' });
+    return out.filter(function (m) { return m.el; }).sort(function (a, b) { return a.el.compareDocumentPosition(b.el) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1; });   // 화면 순서
+  }
+  // 운영 au.markFieldInvalidRequired — 칸(과 aniInput 틀)에 .invalid-required, 값을 넣으면 해제
+  function reqMark(el) {
+    var wrap = el.closest('.aniInput');
+    el.classList.add('invalid-required'); if (wrap) wrap.classList.add('invalid-required');
+    function clear() {
+      var filled = el.id === 'elnTagInput' ? !!document.querySelector('#elnTags .elnTag') || !!el.value.trim()
+        : el.closest('#elnBasicRel') ? !!document.querySelector('#elnBasicRel .elnRelItem') || !!el.value.trim() : !!String(el.value || '').trim();
+      if (!filled) return;
+      el.classList.remove('invalid-required'); if (wrap) wrap.classList.remove('invalid-required');
+      el.removeEventListener('input', clear); el.removeEventListener('change', clear); if (window.jQuery) jQuery(el).off('change.invalidRequired');
+    }
+    el.addEventListener('input', clear); el.addEventListener('change', clear);
+    if (window.jQuery) jQuery(el).off('change.invalidRequired').on('change.invalidRequired', clear);   // select2 는 jQuery change
+  }
+  // 운영 au.buildMissingFieldsHtml 과 같은 내용: 'N required field(s) are missing.' + 안내 + 목록. 닫히면 첫 칸으로 스크롤
+  function reqAlert(list, title) {
+    list.forEach(function (m) { reqMark(m.el); });
+    var n = list.length;
+    var html = '<div><span class="orangetiger-text fontM">' + n + '</span> required ' + (n > 1 ? 'fields are' : 'field is') + ' missing.</div>Please fill out the required fields'
+      + '<div class="required-list-wrap hScroll"><ul>' + list.map(function (m) { return '<li>- ' + esc(m.label) + '</li>'; }).join('') + '</ul></div>';
+    var first = list[0].el;
+    if (typeof Swal === 'undefined') { ELN.toast(title + ': ' + list.map(function (m) { return m.label; }).join(', '), 'warn'); return; }
+    Swal.fire({ title: title, html: html, icon: 'warning', didClose: function () { try { first.scrollIntoView({ behavior: 'smooth', block: 'center' }); } catch (e) {} } });
+  }
+  ELN.requireBasic = function (forApproval) {   // true = 통과
+    var miss = reqMissing(forApproval);
+    if (miss.length) reqAlert(miss, forApproval ? 'Cannot Initiate Approval' : 'Cannot Save');
+    return !miss.length;
+  };
 
   // 프로젝트 상세 열기(조회) — Related Items 의 Project 항목 클릭
   function openProjectDetail(code) {
@@ -2763,28 +2866,26 @@
   }
 
   /* Stage / Task 행(과제 스케줄 위치)은 2026-10-16 제거 — PROJ_SCHEDULES·PROJECT_GANTT·initScheduleMeta 삭제 */
-  /* Experiment Date — Materialize datepicker, 표시 형식 MM-DD-YYYY(MAPIS 표준 mm-dd-yyyy). 이전 type=date 는 OS 로케일 형식으로 보였음 */
-  function initExpDate() {
-    var el = document.getElementById('elnExpDate'); if (!el || !(window.M && M.Datepicker)) return;
-    var m = /^(\d{2})-(\d{2})-(\d{4})$/.exec(el.value), def = m ? new Date(+m[3], +m[1] - 1, +m[2]) : null;
-    // 결재 잠금·승인 view(readOnly)에서는 열지 않음 — Materialize 의 click·keydown 핸들러보다 먼저 등록해 막음
-    ['click', 'keydown'].forEach(function (t) { el.addEventListener(t, function (e) { if (el.readOnly || el.disabled) e.stopImmediatePropagation(); }); });
-    // 감사 기준값은 init 전에 — setDefaultDate 가 init 중 네이티브 change 를 발생시키므로, 뒤에 두면 로드만으로 'Field changed' 가 기록됨.
-    // 날짜 선택 시에도 Materialize 가 네이티브 change 를 발생시켜 Basic Data 감사 리스너로 기록됨(별도 dispatch 불필요)
-    el._auditPrev = el.value;
-    M.Datepicker.init(el, {
-      format: 'mm-dd-yyyy', autoClose: true, container: document.body,
-      defaultDate: def, setDefaultDate: !!def
-    });
+  /* Creation Date — 사용자가 고치지 않음(읽기전용). 기존 노트 = 생성일, 새 노트(템플릿·Copy To) = 비워 두고 최초 Save 때 오늘 날짜(사용자 2026-10-21).
+     표시 MM-DD-YYYY, 비었을 때는 placeholder '(Auto-set on first save)'(운영 FMEA Revision Date 와 같은 방식) */
+  function setCreatedDate(iso) {
+    var el = document.getElementById('elnCreatedDate'); if (!el) return;
+    var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
+    el.value = m ? toMdy(m[0]) : '';
   }
-  document.addEventListener('DOMContentLoaded', initExpDate);
-  // 프로그램적 변경(노트 전환·Copy To) — iso 'YYYY-MM-DD' 를 표시 형식으로 넣고 감사 기준값도 같이 갱신(로그 없음)
-  function setExpDate(iso) {
-    var el = document.getElementById('elnExpDate'); if (!el) return;
-    var m = /^(\d{4})-(\d{2})-(\d{2})$/.exec(iso || ''), inst = (window.M && M.Datepicker) ? M.Datepicker.getInstance(el) : null;
-    if (inst && m) inst.setDate(new Date(+m[1], +m[2] - 1, +m[3]), true);
-    el.value = m ? toMdy(iso) : ''; el._auditPrev = el.value;
+  function createdPending() { var el = document.getElementById('elnCreatedDate'); return !!el && !el.value; }
+  function initCreatedDate() {
+    var q = null; try { q = new URLSearchParams(location.search); } catch (e) {}
+    if (!q) return;
+    if (q.get('tmpl')) { setCreatedDate(''); return; }   // 템플릿으로 만든 새 노트 — 아직 저장 전
+    var code = q.get('code') || '';
+    if (!code || code === 'NT-2605-00142') return;     // 데모 노트는 HTML 값(10-06-2026 = Audit 'Note created')
+    var n = null;
+    try { var op = window.opener; if (op && !op.closed && op.NOTES) n = op.NOTES.filter(function (x) { return x.code === code; })[0] || null; } catch (e2) {}
+    if (!n) n = PROJECT_NOTES.filter(function (x) { return x.code === code; })[0] || null;
+    if (n && n.date) setCreatedDate(n.date);
   }
+  document.addEventListener('DOMContentLoaded', initCreatedDate);
 
   /* ── 상위 노트(Derived from) 지정 — 모든 노트에서 검색 선택. 계보는 notebook/project와 무관, 부모만 따라감 ── */
   function setParentMeta(code) {
@@ -3653,10 +3754,9 @@
     // [주석 처리 2026-10-16] 현업 요청으로 에디터 @노트 참조 제외
     // if (ELN.noteRef) ELN.noteRef.fillRelated(list);   // 에디터에 이미 있는 @노트 참조를 새 Related 모듈에 반영
   }
-  // 모듈 본문 키별 추가 배선(첨부/Related)
+  // 모듈 본문 키별 추가 배선(첨부·ChemStudio·에디터·표). Related Items 는 Basic Data 안이라 initBasicRelated 가 배선
   function wireModuleBody(key, body) {
     if (key === 'attach') wireFileModule(body);
-    else if (key === 'related') wireRelatedModule(body);
     else if (key === 'chem') wireChemModule(body);
     else if (key === 'editor') wireEditorModule(body);
     else if (key === 'table') wireDataModule(body);
@@ -4136,8 +4236,6 @@
   var CE_ACCESS = ['Co-editor', 'Viewer'];   // UI 라벨 = Function (Commenter 폐지 → Viewer 로 이관)
   var CE = { people: [] };
 
-  function cePad(n) { return (n < 10 ? '0' : '') + n; }
-  function ceHhmm() { var d = new Date(); return cePad(d.getHours()) + ':' + cePad(d.getMinutes()); }
   function ceQueryCode() {   // ?tmpl=(New Note)은 새 노트 → 데모 시드(공동편집자·공유) 미적용
     try { var p = new URLSearchParams(location.search); return p.get('code') || (p.get('tmpl') ? 'NEW' : CE_DEMO); } catch (e) { return CE_DEMO; }
   }
@@ -4181,7 +4279,7 @@
     ELN.toast('Access removed for ' + name + '.', 'info');
   }
 
-  /* 섹션 카드 헤더: 'Last edited by NAME · HH:MM' */
+  /* 섹션 카드 헤더: 'Last edited by NAME · MM-DD-YYYY HH:mm'(운영 표준 표시 형식). data-ce-time 은 'YYYY-MM-DD HH:mm'(audit.now 와 같은 형식)으로 보관 */
   function ceLabelEl(card) {
     var tit = card.querySelector('.cardTit2'); if (!tit) return null;
     var el = tit.querySelector('.elnLastEdit');
@@ -4197,7 +4295,7 @@
     var u = card.getAttribute('data-ce-user');
     if (u) {
       el.className = 'elnLastEdit';
-      el.innerHTML = '<i class="material-symbols-outlined">edit</i><span>Last edited by <b>' + esc(u) + '</b> · ' + esc(card.getAttribute('data-ce-time') || '') + '</span>';
+      el.innerHTML = '<i class="material-symbols-outlined">edit</i><span>Last edited by <b>' + esc(u) + '</b> · ' + esc(toMdy(card.getAttribute('data-ce-time') || '')) + '</span>';
     } else { el.className = 'elnLastEdit empty'; el.innerHTML = ''; }
   }
   function ceSetEdited(card, user, time) {
@@ -4209,7 +4307,7 @@
   function ceTouch(card) {
     if (!card || card.id === 'card_approval' || card.id === 'card_audit') return;
     if (ceFrozen(card)) return;
-    ceSetEdited(card, ELN.currentUser, ceHhmm());
+    ceSetEdited(card, ELN.currentUser, ELN.audit.now());
   }
   function ceOnEdit(e) {
     var t = e.target; if (!t || !t.closest || t.closest('.elnErrataWrap')) return;
@@ -4388,15 +4486,17 @@
   }
 
   /* 노트별 초기화/시드 */
-  var CE_SEED_EDIT = { card_basic: ['Charles Kim', '09:20'], card_fml: ['David Lee', '10:42'],
-    editor: ['Charles Kim', '11:05'], table: ['Min-ji Park', '13:26'], chem: ['Charles Kim', '13:48'],
-    related: ['David Lee', '14:10'], attach: ['Charles Kim', '15:32'] };
+  // 데모 노트 섹션별 마지막 편집 — Audit 시드와 맞춤(Basic Data = Min-ji Park 태그 추가, Formulation = David Lee Crosslinker, Attachments = Min-ji Park SEM 첨부).
+  //  Audit 기록이 없는 섹션은 상신(10-12 09:30) 전 시각
+  var CE_SEED_EDIT = { card_basic: ['Min-ji Park', '2026-10-10 11:18'], card_fml: ['David Lee', '2026-10-08 10:42'],
+    editor: ['Charles Kim', '2026-10-11 11:05'], table: ['Min-ji Park', '2026-10-09 13:26'], chem: ['Charles Kim', '2026-10-09 13:48'],
+    attach: ['Min-ji Park', '2026-10-10 10:15'] };
   function ceReset(code) {
     var demo = !code || code === CE_DEMO;
     CE.people = ceSeedPeople(demo);
     document.querySelectorAll('#tab_ov > .cardBox').forEach(function (c) {
       if (c.id === 'card_approval' || c.id === 'card_audit') return;
-      var s = demo ? (CE_SEED_EDIT[c.id] || CE_SEED_EDIT[c.getAttribute('data-modtype')] || [ELN.currentUser, '09:12']) : null;
+      var s = demo ? (CE_SEED_EDIT[c.id] || CE_SEED_EDIT[c.getAttribute('data-modtype')] || [ELN.currentUser, '2026-10-06 09:12']) : null;
       ceSetEdited(c, s && s[0], s && s[1]);
     });
     ceRenderShareBtn();
@@ -4474,11 +4574,11 @@
   }
   // 입력 내용 비우기(Include entered data 해제 시) — 모듈별 '빈 상태'
   function cloneClearData(cards) {
-    setExpDate(CLONE_TODAY);   // CLONE_TODAY 는 내부 ISO — 화면엔 MM-DD-YYYY 로 표시
-    var pr = document.getElementById('elnPaperRef');
-    if (pr) { pr.value = ''; pr._auditPrev = ''; }
     cards.forEach(function (card) {
-      if (card.id === 'card_basic') return;
+      if (card.id === 'card_basic') {   // Related Items: 직접 추가한 링크 제거. Project 칩은 노트 메타(연결 프로젝트)라 유지. Business 분류도 유지
+        card.querySelectorAll('.elnRelItem').forEach(function (li) { if (!li.hasAttribute('data-proj')) li.remove(); });
+        return;
+      }
       card.querySelectorAll('.elnSummernote').forEach(function (el) {
         if (soHasSn(el)) { try { jQuery(el).summernote('code', ''); } catch (e) {} } else el.innerHTML = '';
       });
@@ -4495,10 +4595,6 @@
       } else if (t === 'chem') {
         card.querySelectorAll('.elnChemList').forEach(function (ul) { ul.innerHTML = ''; });
         var cb = card.querySelector('.elnChemBox'); if (cb) syncChemEmpty(cb);
-      } else if (t === 'related') {   // 직접 추가한 링크 제거. Project 항목은 노트 메타(연결 프로젝트)라 유지
-        card.querySelectorAll('.elnRelItem').forEach(function (li) {
-          if (!li.hasAttribute('data-proj')) li.remove();   // [주석 처리 2026-10-16] 현업 요청으로 에디터 @노트 참조 제외 — 예전엔 data-ref(@참조) 항목도 유지했음
-        });
       }
     });
   }
@@ -4508,7 +4604,7 @@
     var title = src.title + ' (copy)';
     var srcProjects = curProjectCodes();   // 연결 프로젝트는 노트 메타 — 섹션 제거 전에 확보해 복제본에 승계
     ELN.audit.mute++;   // 1~4단계(구성 변경·값 비우기)는 감사 로그 없음 — 이후 audit.reset(nn)이 새 이력을 시드
-    var all, kept, DYN = ['editor', 'table', 'chem', 'related', 'attach'], modules = [];
+    var all, kept, DYN = ['editor', 'table', 'chem', 'attach'], modules = [];
     try {
     // 1) 승인/잠금/편집잠금 상태를 먼저 초기화 — 새 노트는 항상 완전 편집 가능
     apprView = false; setNoteApproved(false);
@@ -4534,6 +4630,7 @@
     if (tit) tit.textContent = '[' + code + '] ' + title;
     var titIn = document.querySelector('.elnBasicTitle input');
     if (titIn) { titIn.value = title; titIn._auditPrev = title; }
+    setCreatedDate('');   // 저장 전 새 노트 — Creation Date 는 최초 Save 때
     var pill = document.getElementById('elnHeadStatus');
     if (pill) { pill.className = 'roundBox ' + NOTE_STATUS_PILL.ing; pill.setAttribute('data-status', 'ing'); pill.textContent = NOTE_STATUS_TXT.ing; }
     // 6) 노트 목록(맨 위) + 현재 노트 이동
@@ -4751,7 +4848,7 @@
       }
       c.querySelectorAll('.note-editable, .elnSummernoteFallback, .elnPostitBody, .elnDataTable th, .elnDataTable td').forEach(function (el) { trTextNodes(el, lang); });
     });
-    ['.elnBasicTitle input', '#elnPlatformName', '#elnPaperRef'].forEach(function (s) {
+    ['.elnBasicTitle input'].forEach(function (s) {
       var el = document.querySelector(s); if (el && el.value.trim()) trSetVal(el, 'value', trText(el.value, lang));
     });
   }
@@ -4913,11 +5010,19 @@
     return svg ? '<div class="chart">' + svg.outerHTML + '</div>' : '';
   }
   function pdfVal(sel) { var el = document.querySelector(sel); return el ? String(el.value || '').trim() : ''; }
+  function pdfSelText(sel) {   // select 의 고른 옵션 글자(다중은 쉼표, 값 없음은 빈 값)
+    var el = document.querySelector(sel); if (!el) return '';
+    return [].filter.call(el.options, function (o) { return o.selected && o.value; }).map(function (o) { return o.text; }).join(', ');
+  }
   function pdfBasic() {
-    var ps = document.getElementById('elnPlatform'), pt = ps && ps.value ? ps.options[ps.selectedIndex].text : '', pn = pdfVal('#elnPlatformName');
     var tags = [].slice.call(document.querySelectorAll('#elnTags .elnTag')).map(function (t) { return t.getAttribute('data-tag') || pdfTxt(t); });
-    return pdfKv([['Note Title', pdfVal('.elnBasicTitle input')], ['Experiment Date', pdfVal('#elnExpDate')],
-      ['Platform / Pre-NPC', pt ? pt + (pn ? ': ' + pn : '') : 'Not specified'], ['Paper Notebook Ref', pdfVal('#elnPaperRef')], ['Tags', tags.join(', ')]]);
+    var biz = pdfSelText('#elnBizPrimary'), seg = pdfSelText('#elnBizSegment');
+    var rel = [].slice.call(document.querySelectorAll('#elnBasicRel .elnRelItem')).map(function (li) {
+      return [pdfTxt(li.querySelector('.elnRelType')), pdfTxt(li.querySelector('.elnRelLink')) || pdfTxt(li)];
+    });
+    return pdfKv([['Title', pdfVal('.elnBasicTitle input')], ['Creation Date', pdfVal('#elnCreatedDate')],
+      ['Primary Business', biz ? biz + (seg ? ' · ' + seg : '') : ''], ['Other Business(es)', pdfSelText('#elnBizOthers')], ['Site', pdfSelText('#elnSite')], ['Tags', tags.join(', ')]])
+      + '<h3>Related Items</h3>' + pdfRows(['Type', 'Item'], rel);
   }
   function pdfFml(card) {
     var body = card.querySelector(':scope > .elnBasic'), h = '';
@@ -4950,11 +5055,6 @@
     if (t === 'chem') {
       return pdfRows(['Structure', 'Formula', 'CAS No.'], [].slice.call(card.querySelectorAll('.elnChemItem')).map(function (li) {
         var d = li._chemData || {}; return [d.name || pdfTxt(li.querySelector('.elnChemName2')), d.formula || '', d.cas || ''];
-      }));
-    }
-    if (t === 'related') {
-      return pdfRows(['Type', 'Item'], [].slice.call(card.querySelectorAll('.elnRelItem')).map(function (li) {
-        return [pdfTxt(li.querySelector('.elnRelType')), pdfTxt(li.querySelector('.elnRelLink')) || pdfTxt(li)];
       }));
     }
     var c = card.cloneNode(true); var tt = c.querySelector('.cardTit2'); if (tt) tt.remove();
@@ -5002,7 +5102,7 @@
     h += '<h1>' + esc('[' + src.code + '] ' + src.title) + '</h1>';
     h += '<table class="meta"><tr><th>Status</th><td>' + esc(st ? st.textContent.trim() : '') + '</td><th>Author</th><td>' + esc(ELN.currentUser) + '</td></tr>'
       + '<tr><th>Created</th><td>' + esc(toMdy(created) || '-') + '</td><th>Last Modified</th><td>' + esc(toMdy(modified) || '-') + '</td></tr>'
-      + '<tr><th>Experiment Date</th><td>' + esc(pdfVal('#elnExpDate') || '-') + '</td><th>Approval Line</th><td>' + esc(SO.cosigners.filter(function (c) { return c.name; }).map(function (c) { return c.name + ' (' + (c.role || '-') + (c.type === 'REF' ? ', Reference' : '') + ')'; }).join(', ') || '-') + '</td></tr></table>';
+      + '<tr><th>Primary Business</th><td>' + esc(pdfSelText('#elnBizPrimary') || '-') + '</td><th>Approval Line</th><td>' + esc(SO.cosigners.filter(function (c) { return c.name; }).map(function (c) { return c.name + ' (' + (c.role || '-') + (c.type === 'REF' ? ', Reference' : '') + ')'; }).join(', ') || '-') + '</td></tr></table>';
     var n = 0;
     all.forEach(function (c) {
       if (o.ids.indexOf(c.id) < 0) return;

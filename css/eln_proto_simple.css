@@ -204,15 +204,20 @@
 .elnBasicRow .elnBasicLabel{flex:0 0 16.6667%;justify-content:flex-end;text-align:right;margin:0;   /* text-align: 두 줄로 넘친 레이블도 줄마다 우측 정렬 */
   font-family:var(--font-main-l);font-size:13px;font-weight:400;color:var(--main-text-color);}
 .elnBasicRow > :not(.elnBasicLabel){flex:1 1 auto;min-width:0;margin:0;}  /* 값/입력 자리 = 남은 폭 */
-/* 값 자리 한 줄 묶음(Experiment Date·Platform / Pre-NPC·Paper Notebook Ref). Platform 유형 select 는 npdi와 동일 Materialize FormSelect 위젯 */
+/* 값 자리 한 줄 묶음(Creation Date · Primary Business + Segment · Others) */
 .elnSchedSel{display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-width:0;}
 .elnSchedField{min-width:0;}
-.elnSchedField.stage{flex:0 0 190px;}
 .elnSchedSel .select-wrapper{margin:0;width:100%;}
-.elnSchedSel .elnHdrW190{flex:0 0 190px;width:190px;}                    /* Experiment Date 고정폭 */
-.elnSchedSel .elnHdrW280{flex:0 0 280px;width:280px;}                    /* Paper Notebook Ref 고정폭 */
-.elnSchedField.elnPlatName{flex:0 0 280px;width:280px;}                  /* Platform / Pre-NPC 이름 입력(자동완성) */
-.ui-autocomplete .elnPlatUsed{color:#9b8c7e;font-size:12px;}             /* 자동완성: 사용 건수 */
+.elnSchedSel .elnHdrW190{flex:0 0 190px;width:190px;}                    /* Creation Date 고정폭(읽기전용) */
+.elnSchedField.elnBizField{flex:0 0 240px;width:240px;}                  /* Primary Business · Segment select2 */
+.elnSchedField.elnBizOthers{flex:0 1 500px;width:500px;}                 /* Others select2 multiple */
+.elnBizSubLbl{font-family:var(--font-main-l);font-size:13px;color:var(--main-text-color);margin-left:8px;}   /* 같은 줄의 'Segment' 레이블 = 행 레이블과 같은 글꼴 */
+.elnBasicRel{min-width:0;}                                                /* Basic Data 안 Related Items(추가 줄 + 칩 목록) */
+.elnBizSubLbl .essential{padding:0;margin-right:6px;}                    /* 행 레이블(gap 6px)과 같은 간격 */
+/* 필수 표시 구분(* 저장 때 / ** 상신 때) — Basic Data 맨 아래 오른쪽, 흐린 작은 글씨 */
+.elnReqLegend{display:flex;justify-content:flex-end;gap:16px;margin-top:14px;font-size:12px;color:#9b8c7e;}
+.elnReqLegend .essential{margin-right:3px;}
+#card_audit .elnAuditPlan{margin:10px 0 12px;}
 .elnInfoTip:hover{color:#A47864 !important;}
 .elnBasicRow .elnTagBox{padding:0;}                                     /* row 안에선 자체 패딩 불필요 */
 /* 메타: 아이콘 + 라벨/값 카드, 화면 폭에 맞춰 자동 흐름 */

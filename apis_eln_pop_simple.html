@@ -95,59 +95,53 @@
 				<div class="elnBasic">
 					<!-- Note 제목: 노트의 주인공. apis_npdi_pop의 Name 필드 양식(레이블+aniInput 한 줄) 차용 -->
 					<div class="elnBasicRow">
-						<label class="elnBasicLabel"><span class="essential">*</span>Note Title</label>
+						<label class="elnBasicLabel"><span class="essential">*</span>Title</label>
 						<div class="elnBasicTitle">
 							<div class="aniInput">
-								<input type="text" value="UV-Curable PSA Viscosity Improvement (RGBOLED)" class="browser-default fontR font14" placeholder="Enter note title">
+								<input type="text" value="UV-Curable PSA Viscosity Improvement (RGBOLED)" class="browser-default fontR font14" placeholder="Enter note title" data-required="true" data-label="Title">
 								<span class="focus-border"/>
 							</div>
 						</div>
 					</div>
 					<!-- status: Overview 드롭다운 제거 → 헤더 알약으로. category 제거. Author·Modified는 헤더 우측 상단 -->
 					<!-- 프로젝트 연결(NPI·NPT·TS)은 Related Items 모듈의 'Project' 항목으로 이동(2026-10-16). Primary·Stage 개념 제거 -->
-					<!-- Experiment Date — 실제 실험 수행일 -->
+					<!-- Creation Date — 최초 저장 때 자동으로 찍힘(사용자 2026-10-21). 운영 FMEA Revision Date 와 같은 읽기전용 aniInput + 자동 입력 안내 placeholder -->
 					<div class="elnBasicRow">
-						<label class="elnBasicLabel">Experiment Date</label>
+						<label class="elnBasicLabel"><span class="essential">*</span>Creation Date</label>
 						<div class="elnSchedSel">
 							<div class="aniInput elnHdrW190">
-								<input type="text" id="elnExpDate" class="datepicker browser-default fontR font14" value="10-08-2026" placeholder="MM-DD-YYYY" autocomplete="off">
+								<input type="text" id="elnCreatedDate" class="browser-default fontR font14" value="10-06-2026" placeholder="(Auto-set on first save)" readonly tabindex="-1" style="cursor:default;">
 								<span class="focus-border"/>
 							</div>
-							<span class="elnHint">Date the experiment was actually run</span>
 						</div>
 					</div>
-					<!-- Platform / Pre-NPC — 프로젝트 연결과 독립(배타 아님). MAPIS 프로젝트 번호가 없는 작업용 -->
+					<!-- Primary Business(단일) · Segment(Primary Business 에 딸린 것만) · Others(다중) — 운영 CNPI/SNPI Basic 의 Business·Segment select2,
+					     FMEA Customer 의 select2 multiple 과 같은 부품. 목록은 운영 DEXIF BIZ/SGMNT 코드(프로토타입은 목업, ELN_BIZ) -->
 					<div class="elnBasicRow">
-						<label class="elnBasicLabel">Platform / Pre-NPC</label>
+						<label class="elnBasicLabel"><span class="essential">*</span>Primary Business</label>
 						<div class="elnSchedSel">
-							<!-- 정해진 마스터 목록이 없어(운영에 코드 없음) 유형만 고르고 이름은 입력 — 다른 노트에서 쓴 이름을 자동완성으로 추천(같은 이름 재사용 → 검색·묶음) -->
-							<div class="elnSchedField stage">
-								<select id="elnPlatform">
-									<option value="">Not specified</option>
-									<option value="platform" selected>Platform Technology</option>
-									<option value="prenpc">Pre-NPC</option>
-								</select>
-							</div>
-							<div class="aniInput elnSchedField elnPlatName">
-								<input type="text" id="elnPlatformName" class="browser-default fontR font14" value="UV-Curable Adhesives" placeholder="Name (e.g., UV-Curable Adhesives)" autocomplete="off">
-								<span class="focus-border"/>
-							</div>
-							<span class="elnHint">For work without a MAPIS project # (before NPC)</span>
+							<div class="elnSchedField elnBizField"><select id="elnBizPrimary" class="browser-default" data-required="true" data-label="Primary Business"></select></div>
+							<span class="elnBizSubLbl"><span class="essential">*</span>Segment</span>
+							<div class="elnSchedField elnBizField"><select id="elnBizSegment" class="browser-default" data-required="true" data-label="Segment"></select></div>
 						</div>
 					</div>
-					<!-- Paper Notebook Ref -->
 					<div class="elnBasicRow">
-						<label class="elnBasicLabel">Paper Notebook Ref</label>
+						<label class="elnBasicLabel">Other Business(es)</label>
 						<div class="elnSchedSel">
-							<div class="aniInput elnHdrW280">
-								<input type="text" id="elnPaperRef" class="browser-default fontR font14" placeholder="e.g. Lab Book #3, p.42" value="Lab Book #3, p.42">
-								<span class="focus-border"/>
-							</div>
+							<div class="elnSchedField elnBizOthers"><select id="elnBizOthers" class="browser-default" multiple="multiple"></select></div>
+						</div>
+					</div>
+					<!-- Site — 운영 TechLib 업로드(techLibNewsub #mSite)와 같은 필드: 공통코드 lib_site(플랜트 마스터 기술 사이트), 표시 '[코드] 이름', select2, 저장 시 필수 -->
+					<div class="elnBasicRow">
+						<label class="elnBasicLabel"><span class="essential">*</span>Site</label>
+						<div class="elnSchedSel">
+							<div class="elnSchedField elnBizField"><select id="elnSite" class="browser-default" data-required="true" data-label="Site"></select></div>
 						</div>
 					</div>
 					<!-- Tags — Note와 동일 row 양식. 값 자리는 칩 + 입력 + 추천(멀티라인이라 상단 정렬) -->
+					<!-- Tags — 결재 상신 때만 필수(운영 data-required-appronly). 저장 시 필수(*)와 구분해 ** 로 표시 -->
 					<div class="elnBasicRow alignTop">
-						<label class="elnBasicLabel">Tags</label>
+						<label class="elnBasicLabel"><span class="essential">**</span>Tags</label>
 						<div class="elnTagBox">
 							<div class="elnTags" id="elnTags">
 								<span class="elnTag" data-tag="#viscosity">#viscosity<i class="material-symbols-outlined">close</i></span>
@@ -162,6 +156,13 @@
 							</div>
 						</div>
 					</div>
+					<!-- Related Items — 별도 모듈에서 Basic Data 안으로(사용자 2026-10-21). 추가 줄·칩 목록은 JS(initBasicRelated)가 채움 -->
+					<div class="elnBasicRow alignTop">
+						<label class="elnBasicLabel"><span class="essential">*</span>Related Items</label>
+						<div class="elnBasicRel" id="elnBasicRel"></div>
+					</div>
+					<!-- 필수 표시 구분: * = 저장할 때 필수, ** = 결재 상신할 때 필수 -->
+					<div class="elnReqLegend"><span><span class="essential">*</span>Required to save</span><span><span class="essential">**</span>Required to initiate approval</span></div>
 				</div>
 			</section>
 
@@ -266,6 +267,11 @@
 			<section class="cardBox animate__animated mt10" id="card_audit">
 				<div class="cardTit2"><i class="material-symbols-outlined left">manage_history</i>Audit Trail</div>
 				<div>
+					<!-- 운영 구현 위치 안내(사용자 2026-10-21): Audit Trail 은 노트 팝업이 아니라 별도 관리자 메뉴로. 운영 표준 안내 상자(.infoBox, fmeaList 검색 도움말과 같은 구성) -->
+					<div class="infoBox pd10 font14 elnAuditPlan">
+						<div class="fLine vCenter viva-text fontM"><i class="material-icons">admin_panel_settings</i><div class="ml5">Planned for the admin menu</div></div>
+						<div class="ml20 mt5">In MAPIS, the Audit Trail will be built inside a separate admin menu, not in this note pop-up. It is shown here only for the demo.</div>
+					</div>
 					<div class="inputArea">
 						<!-- 소제목 + 필터 한 줄(좌: 제목, 우: 필터) -->
 						<div class="elnAuditHead">
