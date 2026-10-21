@@ -2575,15 +2575,15 @@
   });
 
   /* ── Notebook(노트를 담는 폴더) — Basic Data 한 줄(사용자 2026-10-21). 디자인 = 리스트 요약 패널의 노트북 선택(openSummaryNbPicker)과 같음:
-     알약(색 점 + 이름 + ▾) → 누르면 노트북 목록 popover(No Notebook 맨 위 · 노트북 색 폴더 아이콘 · ✓ 현재 · 맨 끝 New Notebook…).
-     목록 = 리스트 NB 키와 같음. No Notebook 도 값(필수 표시 없음) ── */
+     알약(폴더 아이콘 + 이름 + ▾, 아이콘·색 = 그 노트북) → 누르면 노트북 목록 popover(Unfiled 맨 위 · 노트북 색 폴더 아이콘 · ✓ 현재 · 맨 끝 New Notebook…).
+     목록 = 리스트 NB 키와 같음. Unfiled 도 값(필수 표시 없음) ── */
   var NOTEBOOKS = [
-    { key: 'unfiled',   name: 'No Notebook',         icon: 'folder_off' },
+    { key: 'unfiled',   name: 'Unfiled',         icon: 'folder_off' },
     { key: 'rgboled',   name: 'RGBOLED Adhesive',    icon: 'folder_shared' },   // 내가 공유한 노트북(리스트 NB.rgboled.sharedWith)
     { key: 'foled',     name: 'Flexible OLED',       icon: 'folder' },
     { key: 'optical',   name: 'Optical Clear Resin', icon: 'folder' },
-    // 나에게 공유된 노트북(리스트 Shared with Me) — access = 내 권한. 아이콘 Co-editor = folder_supervised, Viewer = folder_eye
-    { key: 'customerA', name: 'Customer A Project',  icon: 'folder_supervised', owner: 'E. Han', access: 'Co-editor' },
+    // 나에게 공유된 노트북(리스트 Shared with Me) — access = 내 권한. 아이콘 Co-editor = folder_edit(폴더 + 연필 배지, .nbIcoEdit), Viewer = folder_eye
+    { key: 'customerA', name: 'Customer A Project',  icon: 'folder_edit', owner: 'E. Han', access: 'Co-editor' },
     { key: 'coatingT',  name: 'Silicone Coating Studies', icon: 'folder_eye', owner: 'H.S. Choi', access: 'Viewer' }   // 노트 하나만 공유받은 노트북
   ];
   function nbShared(key) { var n = NOTEBOOKS.filter(function (x) { return x.key === key; })[0]; return !!(n && n.owner); }   // 남이 공유해 준 노트북 = 보기 권한뿐
@@ -2593,7 +2593,10 @@
   function nbRender() {
     var el = document.getElementById('elnNbPick'); if (!el) return;
     el.setAttribute('data-nb', NB_CUR);
-    el.querySelector('.elnNbDot').style.background = nbColor(NB_CUR);
+    var ico = el.querySelector('.elnNbPickIco');   // 알약 앞 = 그 노트북의 폴더 아이콘(리스트 패널과 같은 아이콘 · 노트북 색)
+    var nbi = NOTEBOOKS.filter(function (x) { return x.key === NB_CUR; })[0];
+    var icn = (nbi && nbi.icon) || 'folder', ed = icn === 'folder_edit';   // folder_edit = 글꼴에 없는 '폴더 + 연필' → folder + .nbIcoEdit(리스트와 같음)
+    ico.textContent = ed ? 'folder' : icn; ico.classList.toggle('nbIcoEdit', ed); ico.style.color = nbColor(NB_CUR);
     el.querySelector('.nm').textContent = nbName(NB_CUR);
     var ro = nbShared(NB_CUR);   // 공유받은 노트북의 노트 = 다른 노트북으로 옮길 수 없음 → 값만
     el.classList.toggle('ro', ro);
@@ -2607,7 +2610,7 @@
     var card = document.getElementById('card_basic');
     ELN.audit.log({ section: sectionNameOf(card), action: 'Field changed', field: 'Notebook', before: nbName(prev), after: nbName(key) });
     if (ELN.coedit && card) ELN.coedit.touch(card);
-    ELN.toast(key === 'unfiled' ? 'Note removed from notebook.' : (prev === 'unfiled' ? 'Note filed to "' + nbName(key) + '".' : 'Moved to "' + nbName(key) + '".'), 'ok');
+    ELN.toast(key === 'unfiled' ? 'Moved to Unfiled.' : (prev === 'unfiled' ? 'Note filed to "' + nbName(key) + '".' : 'Moved to "' + nbName(key) + '".'), 'ok');
   }
   // 승인·결재 중(전체 읽기전용)·잠긴 섹션·번역 보기에서는 못 바꿈
   function nbFrozen() {
@@ -2629,17 +2632,16 @@
     ] });
     setTimeout(function () { inp.focus(); }, 60);
   }
-  // 노트북 목록 popover — 리스트 openSummaryNbPicker 와 같은 순서·내용(No Notebook 맨 위, 색 폴더 아이콘, ✓ 현재, 맨 끝 New Notebook…)
+  // 노트북 목록 popover — 리스트 openSummaryNbPicker 와 같은 순서·내용(Unfiled 맨 위, 색 폴더 아이콘, ✓ 현재, 맨 끝 New Notebook…)
   function openNbPicker(anchor) {
     var list = document.createElement('div'); list.className = 'elnNbPopList';
     // 노트를 넣을 수 있는 곳만 — 공유받은 노트북은 보기 권한뿐이라 뺀다(사용자 2026-10-21)
     var keys = NOTEBOOKS.filter(function (n) { return !n.owner; }).map(function (n) { return n.key; })
       .sort(function (a, b) { return a === 'unfiled' ? -1 : (b === 'unfiled' ? 1 : 0); });
+    // 리스트 좌측 패널과 같은 구성: 'MY NOTEBOOKS' 소제목(select2 그룹 제목 자리) 아래 Unfiled → 내 노트북
+    var gl = document.createElement('div'); gl.className = 'elnNbPopGrp'; gl.textContent = 'MY NOTEBOOKS'; list.appendChild(gl);
     keys.forEach(function (key) {
       var nb = NOTEBOOKS.filter(function (x) { return x.key === key; })[0];
-      if (key !== 'unfiled' && !list.querySelector('.elnNbPopGrp')) {   // No Notebook 아래 = 좌측 패널과 같은 'MY NOTEBOOKS' 소제목(select2 그룹 제목 자리)
-        var gl = document.createElement('div'); gl.className = 'elnNbPopGrp'; gl.textContent = 'MY NOTEBOOKS'; list.appendChild(gl);
-      }
       var it = document.createElement('div');
       it.className = 'elnNbPopItem' + (key === 'unfiled' ? ' unfiled' : '') + (key === NB_CUR ? ' cur' : '');
       var ic = document.createElement('i'); ic.className = 'material-symbols-outlined'; ic.textContent = nb.icon || 'folder';
@@ -2660,7 +2662,7 @@
     var el = document.getElementById('elnNbPick'); if (!el) return;
     var q = null; try { q = new URLSearchParams(location.search); } catch (e) {}
     var key = q ? q.get('nb') : null;
-    // 리스트가 넘긴 노트북(?nb=) → 없으면 새 노트(템플릿)는 No Notebook, 데모·기존 노트는 RGBOLED Adhesive
+    // 리스트가 넘긴 노트북(?nb=) → 없으면 새 노트(템플릿)는 Unfiled, 데모·기존 노트는 RGBOLED Adhesive
     NB_CUR = nbName(key) ? key : ((q && q.get('tmpl')) ? 'unfiled' : 'rgboled');
     var nbEntry = NB_CUR;   // 팝업에 들어온 노트북 — 아직 노트북을 정하지 않은 다른 노트로 바꿔 열 때 기본값
     nbRender();
@@ -4635,7 +4637,7 @@
       }
     });
   }
-  function doClone(selIds, include) {
+  function doClone(selIds, include, dataIds) {   // dataIds 가 있으면 섹션별 입력값 복사(없으면 include 하나로 전체)
     var src = cloneSource();
     var code = cloneNextCode();
     var title = src.title + ' (copy)';
@@ -4659,8 +4661,9 @@
       var t = c.getAttribute('data-modtype');
       if (c.id === 'card_fml') modules.unshift('fml'); else if (DYN.indexOf(t) >= 0) modules.push(t);
     });
-    // 4) 값 비우기
-    if (!include) cloneClearData(soCards());
+    // 4) 값 비우기 — 섹션별 선택이면 Include data 를 끈 섹션만
+    if (dataIds) cloneClearData(soCards().filter(function (c) { return dataIds.indexOf(c.id) < 0; }));
+    else if (!include) cloneClearData(soCards());
     } finally { ELN.audit.mute--; }
     // 5) 헤더·제목·상태
     var tit = document.querySelector('.popup header .statusTit .tit');
@@ -4675,7 +4678,8 @@
     var nn = { code: code, title: title, date: CLONE_TODAY, status: 'ing', current: true, modules: modules, projects: srcProjects,   // 선택 섹션과 무관하게 복제
       nb: NB_CUR,   // 복사본은 원본과 같은 노트북에서 시작
       clonedFrom: { code: src.code, title: src.title },
-      cloneDetail: 'Copied from ' + src.code + ': ' + nSec + ' section' + (nSec === 1 ? '' : 's') + ', data ' + (include ? 'included' : 'not included') };
+      cloneDetail: 'Copied from ' + src.code + ': ' + nSec + ' section' + (nSec === 1 ? '' : 's') + ', data '
+        + (dataIds ? 'in ' + kept.filter(function (c) { return dataIds.indexOf(c.id) >= 0; }).length + ' of ' + nSec : (include ? 'included' : 'not included')) };
     PROJECT_NOTES.forEach(function (x) { x.current = false; });
     PROJECT_NOTES.unshift(nn);
     CURRENT_CODE = code;
@@ -4703,29 +4707,55 @@
       return { key: t + '#' + cnt[t], card: c };
     });
   }
+  /* Copy To · Copy From 공용 섹션 표(사용자 2026-10-21) — 줄마다 Copy(새 노트·이 노트에 섹션 넣기) · Include data(입력값까지).
+     기본 = 전부 켬. Copy 를 끄면 그 줄 Include data 도 꺼지고 막힘. lock = 항상 들어가는 섹션(Basic Data), off = 고를 수 없음(이미 있는 Formulation).
+     표 = 운영 fixedTable hBorderTable(Share & Access 표와 같은 부품) */
+  function copySecTableHtml(rows) {   // rows: [{ id, name, lock, off, offNote }]
+    var cb = function (cls, on, dis) { return '<label class="elnCopySecCb"><input type="checkbox" class="filled-in ' + cls + '"' + (on ? ' checked' : '') + (dis ? ' disabled' : '') + '><span></span></label>'; };
+    return '<div class="fixedTable hBorderTable elnCopySecTbl"><table><thead><tr><th>Section</th><th class="ac" style="width:90px;">Copy</th><th class="ac" style="width:120px;">Include data</th></tr></thead><tbody>'
+      + rows.map(function (r) {
+        return '<tr data-id="' + esc(r.id) + '"' + (r.off ? ' class="off"' : '') + '>'
+          + '<td>' + esc(r.name) + (r.off && r.offNote ? ' <span class="elnCopySecNote">(' + esc(r.offNote) + ')</span>' : '') + '</td>'
+          + '<td class="ac"' + (r.lock ? ' title="Always copied"' : '') + '>' + cb('jsSecCopy', !r.off, r.lock || r.off) + '</td>'   // lock = 체크 고정(회색)만, 자물쇠 아이콘 없음(사용자 10-21)
+          + '<td class="ac">' + cb('jsSecData', !r.off, r.off) + '</td></tr>';
+      }).join('') + '</tbody></table></div>';
+  }
+  function wireCopySecTable(box) {
+    box.addEventListener('change', function (e) {
+      var c = e.target.closest && e.target.closest('.jsSecCopy'); if (!c) return;
+      var d = c.closest('tr').querySelector('.jsSecData');
+      d.disabled = !c.checked; d.checked = c.checked;   // 섹션을 빼면 입력값도 뺌, 다시 넣으면 기본(켬)으로
+    });
+  }
+  function readCopySecTable(box) {
+    return [].map.call(box.querySelectorAll('.elnCopySecTbl tbody tr'), function (tr) {
+      var c = tr.querySelector('.jsSecCopy'), d = tr.querySelector('.jsSecData');
+      return { id: tr.getAttribute('data-id'), copy: c.checked, data: c.checked && d.checked };
+    });
+  }
   function openCopyModal() {
     var src = cloneSource(), ks = copyKeys(soCards());
     var body = document.createElement('div'); body.className = 'elnCloneBody';
-    var h = '<div class="elnCloneSrc"><i class="material-symbols-outlined">description</i><span><b>' + esc(src.code) + '</b> · ' + esc(src.title) + '</span></div>'
-      + '<div class="elnReqLbl">Sections to Copy</div><div class="elnCloneSecs hScroll">';
-    ks.forEach(function (k) {   // Basic Data = 필수 섹션(삭제 불가) → 체크 고정. 섹션 체크는 구조, 값은 아래 Include entered data
-      var basic = k.card.id === 'card_basic';
-      h += '<label><input type="checkbox" class="filled-in' + (basic ? '' : ' jsCloneSec') + '" data-key="' + esc(k.key) + '" checked' + (basic ? ' disabled' : '') + '><span>' + esc(sectionNameOf(k.card)) + '</span></label>';
-    });
-    h += '</div><div class="elnCloneData"><label><input type="checkbox" class="filled-in" id="elnCloneData"><span>Include entered data (values, tables, text)</span></label></div>'
+    body.innerHTML = '<div class="elnCloneSrc"><i class="material-symbols-outlined">description</i><span><b>' + esc(src.code) + '</b> · ' + esc(src.title) + '</span></div>'
+      + '<div class="elnReqLbl">Sections to Copy</div>'
+      + copySecTableHtml(ks.map(function (k) { return { id: k.key, name: sectionNameOf(k.card), lock: k.card.id === 'card_basic' }; }))   // Basic Data = 필수 섹션 → Copy 잠금(입력값은 고를 수 있음)
       + '<div class="elnCloneInfo"><i class="material-symbols-outlined">info</i><span>A new note will be created in a new window. Unsaved changes on this page will not be copied. Signatures, Errata and Audit history are not copied.</span></div>';
-    body.innerHTML = h;
+    wireCopySecTable(body);
     ELN.modal({ title: 'Copy To', icon: 'content_copy', size: 'md', body: body, actions: [
       { label: 'Cancel', type: '' },
       { label: 'Copy', icon: 'content_copy', type: 'hViva', onClick: function () {
-        var keys = ['card_basic'].concat([].slice.call(body.querySelectorAll('.jsCloneSec')).filter(function (c) { return c.checked; }).map(function (c) { return c.getAttribute('data-key'); }));
-        var url = 'apis_eln_pop_simple.html?copyFrom=' + encodeURIComponent(src.code) + '&secs=' + encodeURIComponent(keys.join(',')) + '&data=' + (body.querySelector('#elnCloneData').checked ? 1 : 0);
+        var rows = readCopySecTable(body);
+        var keys = rows.filter(function (r) { return r.copy; }).map(function (r) { return r.id; });
+        if (keys.indexOf('card_basic') < 0) keys.unshift('card_basic');
+        var dkeys = rows.filter(function (r) { return r.data; }).map(function (r) { return r.id; });   // 입력값까지 복사할 섹션
+        var url = 'apis_eln_pop_simple.html?copyFrom=' + encodeURIComponent(src.code) + '&secs=' + encodeURIComponent(keys.join(',')) + '&dsecs=' + encodeURIComponent(dkeys.join(','));
         window.open(url, 'elnNoteCopy_' + Date.now(), 'width=1480,height=900,scrollbars=yes,resizable=yes');
       } }
     ] });
   }
   /* Copy 버튼 — Copy To / Copy From 메뉴(사용자 2026-10-21). Copy To 는 위 openCopyModal 그대로.
-     Copy From = 다른 노트를 골라 그 노트의 섹션을 이 노트 끝에 붙인다(Basic Data 는 이 노트 값 유지). 승인·결재 중이면 못 씀 */
+     Copy From = 다른 노트를 불러와 지금 화면을 덮어쓴다(사용자 10-21 "append 가 아니라 load 해서 덮어쓰기"). 섹션 표는 Copy To 와 같음(Basic Data 부터 전부).
+     이 노트의 번호·Title·Creation Date·Notebook·결재·Audit 은 그대로. 승인·결재 중이면 못 씀 */
   function openCopyMenu(anchor) {
     var frozen = document.body.classList.contains('elnApproved');
     var menu = document.createElement('div'); menu.className = 'elnCtxMenu';
@@ -4746,7 +4776,8 @@
     function add(n) {
       if (!n || !n.code || seen[n.code] || n.code === CURRENT_CODE) return;
       seen[n.code] = 1;
-      out.push({ code: n.code, title: n.title || '', date: n.date || '', modules: n.modules || (n.fml ? ['fml', 'table', 'editor'] : ['editor', 'attach']) });
+      out.push({ code: n.code, title: n.title || '', date: n.date || '', modules: n.modules || (n.fml ? ['fml', 'table', 'editor'] : ['editor', 'attach']),
+        biz: n.biz || null, projects: projectsOf(n) });   // Basic Data 덮어쓰기용(Business·Site·Related Items 의 프로젝트)
     }
     try { var op = window.opener; if (op && !op.closed && op.NOTES) op.NOTES.forEach(add); } catch (e) {}
     PROJECT_NOTES.forEach(add); LINEAGE_NOTES.forEach(add);
@@ -4758,21 +4789,19 @@
     body.innerHTML = '<div class="elnReqLbl">Source Note</div>'
       + '<div class="aniInput elnCopyFromSrch"><input type="text" class="browser-default" placeholder="Search lab note # or title (e.g., LN-2605-00118)" autocomplete="off"><span class="focus-border"></span></div>'
       + '<div class="elnCopyFromPicked"></div>'
-      + '<div class="elnCloneInfo"><i class="material-symbols-outlined">info</i><span>Selected sections are added to the end of this note. Basic Data of this note stays as it is. Signatures, Errata and Audit history are not copied.</span></div>';
+      + '<div class="elnCloneInfo"><i class="material-symbols-outlined">info</i><span>This note is overwritten with the selected sections of the source note. Note number, Title, Creation Date and Notebook stay. Signatures, Errata and Audit history are not copied.</span></div>';
     var inp = body.querySelector('input'), picked = body.querySelector('.elnCopyFromPicked');
-    function hasFml() { var f = document.getElementById('card_fml'); return !!f && f.style.display !== 'none'; }
-    function renderPicked() {   // 고른 노트 → 원본 줄 + 섹션 체크(Formulation 은 노트당 하나라 이미 있으면 막음) + 입력값 포함
+    function renderPicked() {   // 고른 노트 → 원본 줄 + 섹션 표(Copy To 와 같음: Basic Data 부터 전부, Copy · Include data, 기본 전부 켬, Basic Data Copy 고정)
       if (!pick) { picked.innerHTML = ''; return; }
-      var h = '<div class="elnCloneSrc"><i class="material-symbols-outlined">description</i><span><b>' + esc(pick.code) + '</b> · ' + esc(pick.title) + '</span></div>'
-        + '<div class="elnReqLbl">Sections to Copy</div><div class="elnCloneSecs hScroll">';
+      var rows = [{ id: 'basic', name: 'Basic Data', lock: true }];
       pick.modules.forEach(function (key, i) {
         var mt = MODULE_TYPES.filter(function (m) { return m.key === key; })[0]; if (!mt) return;
-        var dup = key === 'fml' && hasFml();
-        h += '<label' + (dup ? ' class="elnCopyFromDup" title="This note already has a Formulation section"' : '') + '><input type="checkbox" class="filled-in jsCopyFromSec" data-i="' + i + '"' + (dup ? ' disabled' : ' checked') + '><span>' + esc(mt.title) + (dup ? ' (already in this note)' : '') + '</span></label>';
+        rows.push({ id: String(i), name: mt.title });
       });
-      h += '</div><div class="elnCloneData"><label><input type="checkbox" class="filled-in" id="elnCopyFromData"><span>Include entered data (values, tables, text)</span></label></div>';
-      picked.innerHTML = h;
+      picked.innerHTML = '<div class="elnCloneSrc"><i class="material-symbols-outlined">description</i><span><b>' + esc(pick.code) + '</b> · ' + esc(pick.title) + '</span></div>'
+        + '<div class="elnReqLbl">Sections to Copy</div>' + copySecTableHtml(rows);
     }
+    wireCopySecTable(picked);
     if (window.jQuery && jQuery.fn.autocomplete) {   // Related Items 의 Lab Note 검색과 같은 부품(aniInput + jQuery UI autocomplete, "[CODE] Title")
       jQuery(inp).autocomplete({
         minLength: 0, appendTo: 'body',
@@ -4790,31 +4819,45 @@
       { label: 'Cancel', type: '' },
       { label: 'Copy', icon: 'content_copy', type: 'hViva', onClick: function () {
         if (!pick) { ELN.toast('Select a source note first.', 'warn'); return true; }   // 모달 유지
-        var keys = [].slice.call(body.querySelectorAll('.jsCopyFromSec')).filter(function (c) { return c.checked; }).map(function (c) { return pick.modules[+c.getAttribute('data-i')]; });
-        if (!keys.length) { ELN.toast('Select at least one section.', 'warn'); return true; }
-        copyFromApply(pick, keys, body.querySelector('#elnCopyFromData').checked);
+        var rows = readCopySecTable(body), basic = rows.filter(function (r) { return r.id === 'basic'; })[0];
+        var items = rows.filter(function (r) { return r.id !== 'basic' && r.copy; }).map(function (r) { return { key: pick.modules[+r.id], data: r.data }; });
+        copyFromApply(pick, items, !!(basic && basic.data));
       } }
     ] });
     setTimeout(function () { try { inp.focus(); } catch (e) {} }, 120);
   }
-  // 고른 섹션을 이 노트 끝(Approval 위)에 만든다. 입력값을 빼면 모듈별 빈 상태로(Copy To 와 같은 cloneClearData)
-  function copyFromApply(src, keys, include) {
-    var made = [];
+  // 덮어쓰기 — 지금 섹션(Basic Data·Approval·Audit 제외)을 모두 걷어내고 원본에서 고른 섹션을 원본 순서대로 다시 만든다.
+  // Include data 를 끈 섹션은 모듈별 빈 상태로(Copy To 와 같은 cloneClearData). Basic Data 는 섹션 유지, Include data 면 원본 값(Business·Site·Related Items)으로
+  function copyFromApply(src, items, basicData) {   // items: [{ key, data }]
+    var made = [], blank = [], nData = 0, DYN = ['editor', 'table', 'chem', 'attach'];
+    var article = document.getElementById('tab_ov');
     ELN.audit.mute++;
     try {
-      keys.forEach(function (key) {
-        var mt = MODULE_TYPES.filter(function (m) { return m.key === key; })[0]; if (!mt) return;
-        if (key === 'fml') { addNoteModule(mt, null, true); made.push(document.getElementById('card_fml')); return; }
-        addNoteModule(mt, null, true); made.push(document.getElementById('card_mod_' + modSeq));
+      if (article) article.querySelectorAll('.cardBox[data-modtype]').forEach(function (card) {
+        if (DYN.indexOf(card.getAttribute('data-modtype')) >= 0) removeSection(card.id);
       });
-      made = made.filter(Boolean);
-      if (!include) cloneClearData(made);
+      setFmlVisible(false);
+      if (basicData) { setBusiness(src.biz || DEMO_BIZ); resetBasicRelated(src.projects || [], false); }
+      items.forEach(function (it) {
+        var mt = MODULE_TYPES.filter(function (m) { return m.key === it.key; })[0]; if (!mt) return;
+        addNoteModule(mt, null, true);
+        var card = it.key === 'fml' ? document.getElementById('card_fml') : document.getElementById('card_mod_' + modSeq);
+        if (!card) return;
+        made.push(card);
+        if (it.data) nData++; else blank.push(card);
+      });
+      if (blank.length) cloneClearData(blank);
     } finally { ELN.audit.mute--; }
-    if (!made.length) return;
-    ELN.audit.log({ section: 'Note', action: 'Copied from', detail: src.code + ': ' + made.length + ' section' + (made.length === 1 ? '' : 's') + ', data ' + (include ? 'included' : 'not included') });
-    if (ELN.coedit) made.forEach(function (c) { ELN.coedit.touch(c); });
-    made[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
-    ELN.toast('Copied ' + made.length + ' section' + (made.length === 1 ? '' : 's') + ' from ' + src.code + '. Save to keep them.', 'ok');
+    if (typeof refreshDividers === 'function') { try { refreshDividers(); } catch (e) {} }
+    if (ELN.signoff) ELN.signoff.refresh();
+    var ul = document.querySelector('.leftAside .menuUl');   // 목차 active = Basic Data(노트 전환과 같음)
+    if (ul) { ul.querySelectorAll('.menu-item').forEach(function (m) { m.classList.remove('active'); });
+      var f = ul.querySelector('.menu-item[data-target="card_basic"]'); if (f) f.classList.add('active'); }
+    ELN.audit.log({ section: 'Note', action: 'Copied from', detail: src.code + ': ' + made.length + ' section' + (made.length === 1 ? '' : 's') + ', data in ' + nData + ' of ' + made.length
+      + ', Basic Data ' + (basicData ? 'replaced' : 'kept') });
+    if (ELN.coedit) made.concat(basicData ? [document.getElementById('card_basic')] : []).forEach(function (c) { if (c) ELN.coedit.touch(c); });
+    try { window.scrollTo({ top: 0, behavior: 'smooth' }); } catch (e) { window.scrollTo(0, 0); }
+    ELN.toast('Loaded ' + src.code + ' into this note (not saved yet).', 'ok');
   }
   document.addEventListener('DOMContentLoaded', function () {
     var cb = document.getElementById('elnCopyBtn'); if (cb) cb.addEventListener('click', function () { openCopyMenu(cb); });
@@ -4825,8 +4868,12 @@
     var from = q.get('copyFrom'); if (!from) return;
     function run() {
       var raw = q.get('secs') || 'all', all = raw === 'all', keys = raw.split(',');   // 리스트에서 열면 secs=all(전체 섹션)
-      var ids = copyKeys(soCards()).filter(function (k) { return k.card.id !== 'card_basic' && (all || keys.indexOf(k.key) >= 0); }).map(function (k) { return k.card.id; });
-      doClone(ids, q.get('data') === '1');
+      var ks = copyKeys(soCards());
+      var ids = ks.filter(function (k) { return k.card.id !== 'card_basic' && (all || keys.indexOf(k.key) >= 0); }).map(function (k) { return k.card.id; });
+      // dsecs = 입력값까지 복사할 섹션(팝업 Copy To 의 섹션 표). 없으면 예전 방식 data=0|1(리스트 New Note 의 Copy From)
+      var dsecs = q.has('dsecs') ? (q.get('dsecs') || '').split(',') : null;
+      var dataIds = dsecs ? ks.filter(function (k) { return dsecs.indexOf(k.key) >= 0; }).map(function (k) { return k.card.id; }) : null;
+      doClone(ids, q.get('data') === '1', dataIds);
       var t = q.get('title');   // 리스트가 넘긴 원본 제목(데모 노트 밖의 노트) → 복사본 제목 보정
       if (t) {
         var nt = t + ' (copy)', ht = document.querySelector('.popup header .statusTit .tit'), ti = document.querySelector('.elnBasicTitle input');

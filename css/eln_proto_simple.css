@@ -212,12 +212,18 @@
 .elnCreatedVal{color:var(--main-text-color);line-height:30px;}           /* Creation Date = 고칠 수 없는 값이라 글자만(입력칸 없음) */
 .elnCreatedVal.empty{color:#b3a596;}                                      /* 저장 전 '(Auto-set on first save)' */
 .elnSchedField.elnBizField{flex:0 0 240px;width:240px;}                  /* Primary Business · Site select2 */
-/* Basic Data Notebook = 리스트 요약 패널의 노트북 선택(.elnSumNbPick 알약: 색 점 + 이름 + ▾)과 같음. 리스트 #elnSummary 덮어쓰기와 같은 값만 더함 */
+/* Basic Data Notebook = 리스트 요약 패널의 노트북 선택(.elnSumNbPick 알약: 폴더 아이콘 + 이름 + ▾)과 같음. 리스트 #elnSummary 덮어쓰기와 같은 값만 더함 */
 #card_basic .elnSumNbPick{white-space:nowrap;gap:4px;height:22px;margin:0 0 0 -5px;font-size:14px;}
 #card_basic .elnSumNbPick:focus-visible{color:#A47864;outline:none;}
 /* 승인·번역 보기·잠긴 섹션 = 못 바꿈 → 값만(바탕·▾ 없음) */
 body.elnApproved #card_basic .elnSumNbPick,body.elnTranslated #card_basic .elnSumNbPick,#card_basic.elnLocked .elnSumNbPick,#card_basic .elnSumNbPick.ro{cursor:default;background:transparent;}
-body.elnApproved #card_basic .elnSumNbPick i,body.elnTranslated #card_basic .elnSumNbPick i,#card_basic.elnLocked .elnSumNbPick i,#card_basic .elnSumNbPick.ro i{display:none;}
+body.elnApproved #card_basic .elnSumNbPick .nbCaret,body.elnTranslated #card_basic .elnSumNbPick .nbCaret,#card_basic.elnLocked .elnSumNbPick .nbCaret,#card_basic .elnSumNbPick.ro .nbCaret{display:none;}   /* ▾ 만 숨김(폴더 아이콘은 그대로) */
+#card_basic .elnSumNbPick i.elnNbPickIco{font-size:17px;margin-right:3px;font-variation-settings:'FILL' 1;}   /* 알약 앞 폴더 아이콘(색 = 노트북 색, JS) */
+/* Co-editor 로 공유받은 노트북 아이콘 = folder + 오른쪽 아래 작은 연필(리스트 .nbIcoEdit 와 같은 값) */
+.nbIcoEdit{position:relative;}
+.nbIcoEdit::after{content:'edit';position:absolute;right:-.2em;bottom:-.1em;font-family:'Material Symbols Outlined';font-size:.62em;line-height:1;font-weight:normal;font-style:normal;
+  letter-spacing:normal;text-transform:none;white-space:nowrap;font-feature-settings:'liga';font-variation-settings:'FILL' 1;
+  text-shadow:1px 0 0 #fff,-1px 0 0 #fff,0 1px 0 #fff,0 -1px 0 #fff,1px 1px 0 #fff,-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff;}
 #card_basic .elnSumNbPick.ro:hover{color:inherit;}   /* 공유받은 노트북의 노트 = 옮길 수 없음 */
 .elnBizOthers{min-width:0;}                                               /* Other Business(es) select2 multiple — 행의 값 자리 폭 전체(.elnBasicRow > :not(label) flex:1) */
 .elnBasicRel{min-width:0;}                                                /* Basic Data 안 Related Items(추가 줄 + 칩 목록) */
@@ -788,6 +794,7 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 /* 노트북 선택 목록 다듬기(select2 틀 유지, 리스트와 같은 값) — 위아래 여백 · 'MY NOTEBOOKS' 소제목(리스트 좌측 패널 그룹 제목 톤) · New Notebook… = 동작이라 모카색 */
 .elnNbPopList{padding:4px 0;}
 .elnNbPopGrp{margin-top:4px;padding:8px 16px 2px;border-top:1px solid var(--gray20);font-size:10px;line-height:16px;color:#b3a596;letter-spacing:.05em;}
+.elnNbPopGrp:first-child{margin-top:0;border-top:0;padding-top:4px;}   /* 목록 맨 위 소제목 = 선 없음 */
 .elnNbPopItem.new,.elnNbPopItem.new > i{color:var(--main-color);}
 /* Unfiled(No Notebook) — 표준 메뉴 항목 + 흐린 글자만 */
 .elnNbPopItem.unfiled > i{color:#b3a596;}
@@ -804,8 +811,6 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
   border:2px solid transparent;box-shadow:0 0 0 1px rgba(0,0,0,.08) inset;transition:transform .12s,box-shadow .12s;}
 .elnNbSw:hover{transform:scale(1.18);}
 .elnNbSw.on{border-color:#fff;box-shadow:0 0 0 2px #3a2c24;}   /* 선택 = 흰 간격 + 진한 외곽 링(또렷) */
-/* 노트북 색 점(요약·픽커 등) */
-.elnNbDot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:0 0 auto;margin-right:6px;}
 /* danger 버튼 — mapis .hBtn 아웃라인 idiom(색+테두리+::before 틴트)을 빨강으로 */
 .hBtn.elnDanger{color:#c0392b;border:1px solid rgba(192,57,43,.7);}
 .hBtn.elnDanger::before{background-color:rgba(192,57,43,.08);}
@@ -1577,15 +1582,18 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions,body.elnApprov
 .elnCloneSrc{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:8px;background:rgba(164,120,100,.07);color:#5a4438;font-size:13px;line-height:1.5;margin-bottom:14px;}
 .elnCloneSrc i{font-size:18px;color:#A47864;flex:0 0 auto;}
 .elnReqLbl{font-size:12px;font-weight:600;color:#7a5240;margin:4px 0 6px;}
-.elnCloneSecs{display:grid;grid-template-columns:1fr 1fr;gap:8px 14px;margin-bottom:12px;max-height:200px;overflow:auto;}
-.elnCloneSecs label,.elnCloneData label{color:#3a2c24;font-size:13px;}
-.elnCloneData{padding:10px 0;margin-bottom:10px;border-top:1px solid #efe7db;border-bottom:1px solid #efe7db;}
+/* 섹션 표(Copy To · Copy From 공용) — 운영 fixedTable hBorderTable, 줄마다 Copy · Include data 체크(글자 없는 Materialize 체크 → 칸 가운데) */
+.elnCopySecTbl{margin:0 0 12px;max-height:260px;overflow-y:auto;}
+.elnCopySecTbl td{vertical-align:middle;}
+.elnCopySecTbl label.elnCopySecCb{display:inline-flex;vertical-align:middle;}
+.elnCopySecTbl label.elnCopySecCb [type="checkbox"] + span:not(.lever){padding-left:20px;height:20px;line-height:20px;}
+.elnCopySecTbl tr.off td:first-child{color:#b3a596;}   /* 고를 수 없는 줄(이미 있는 Formulation) */
+.elnCopySecNote{font-size:12px;color:#b3a596;}
 .elnCloneInfo{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:8px;background:rgba(164,120,100,.07);color:#7a5240;font-size:12px;line-height:1.5;}
 .elnCloneInfo i{font-size:16px;color:#A47864;flex:0 0 auto;margin-top:1px;}
 /* Copy From — 원본 노트 검색(aniInput) 아래에 고른 노트·섹션이 펼쳐진다 */
 .elnCopyFromSrch{margin-bottom:14px;}
 .elnCopyFromPicked:empty{display:none;}
-.elnCloneSecs label.elnCopyFromDup{color:#b3a596;cursor:default;}   /* 이미 이 노트에 있는 Formulation(노트당 하나) — 고를 수 없음 */
 /* Copy 메뉴 아이콘 = content_copy + 오른쪽 아래 작은 화살표(Copy To ↗ 나감 / Copy From ↙ 들어옴). 배지 바탕은 항목 바탕과 같게(hover 포함) */
 .elnCopyIco{position:relative;display:inline-flex;flex:0 0 auto;width:20px;height:20px;}
 .elnCtxMenuItem .elnCopyIco > i.badge{position:absolute;right:-4px;bottom:-3px;font-size:13px;font-weight:700;line-height:13px;border-radius:50%;background:#fff;}
