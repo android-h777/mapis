@@ -2582,8 +2582,10 @@
     { key: 'rgboled',   name: 'RGBOLED Adhesive',    icon: 'folder_shared' },   // 내가 공유한 노트북(리스트 NB.rgboled.sharedWith)
     { key: 'foled',     name: 'Flexible OLED',       icon: 'folder' },
     { key: 'optical',   name: 'Optical Clear Resin', icon: 'folder' },
-    { key: 'customerA', name: 'Customer A Project',  icon: 'folder_shared' }   // 나에게 공유된 노트북(리스트 Shared with Me 그룹)
+    { key: 'customerA', name: 'Customer A Project',  icon: 'folder_eye', owner: 'E. Han' },   // 나에게 공유된 노트북(리스트 Shared with Me 그룹, 보기 권한 = 눈 아이콘)
+    { key: 'coatingT',  name: 'Silicone Coating Studies', icon: 'folder_eye', owner: 'H.S. Choi' }   // 노트 하나만 공유받은 노트북(리스트 Shared with Me)
   ];
+  function nbShared(key) { var n = NOTEBOOKS.filter(function (x) { return x.key === key; })[0]; return !!(n && n.owner); }   // 남이 공유해 준 노트북 = 보기 권한뿐
   var NB_CUR = 'rgboled';   // 이 노트의 노트북 키
   function nbName(key) { var n = NOTEBOOKS.filter(function (x) { return x.key === key; })[0]; return n ? n.name : ''; }
   function nbColor(key) { return key === 'unfiled' ? '#b3a596' : '#A47864'; }   // 리스트 NB_GROUP_COLOR(my·unfiled 그룹 기본색)와 같음
@@ -2592,6 +2594,9 @@
     el.setAttribute('data-nb', NB_CUR);
     el.querySelector('.elnNbDot').style.background = nbColor(NB_CUR);
     el.querySelector('.nm').textContent = nbName(NB_CUR);
+    var ro = nbShared(NB_CUR);   // 공유받은 노트북의 노트 = 다른 노트북으로 옮길 수 없음 → 값만
+    el.classList.toggle('ro', ro);
+    el.title = ro ? 'Shared with you (view only)' : 'Move to another notebook';
   }
   // 노트북 바꾸기 — Audit(Field changed Notebook) · Last edited · 안내(리스트와 같은 뜻의 문구)
   function nbMove(key) {
@@ -2605,7 +2610,7 @@
   // 승인·결재 중(전체 읽기전용)·잠긴 섹션·번역 보기에서는 못 바꿈
   function nbFrozen() {
     var b = document.body.classList, card = document.getElementById('card_basic');
-    return b.contains('elnApproved') || b.contains('elnTranslated') || !!(card && card.classList.contains('elnLocked'));
+    return b.contains('elnApproved') || b.contains('elnTranslated') || !!(card && card.classList.contains('elnLocked')) || nbShared(NB_CUR);
   }
   function openNewNotebook() {   // 리스트 New Notebook 창과 같은 구성(이름 하나, aniInput) — 빈 이름은 'Untitled Notebook', 만들면 바로 이 노트를 그 노트북으로
     var wrap = document.createElement('div'); wrap.className = 'aniInput';
@@ -2625,9 +2630,14 @@
   // 노트북 목록 popover — 리스트 openSummaryNbPicker 와 같은 순서·내용(No Notebook 맨 위, 색 폴더 아이콘, ✓ 현재, 맨 끝 New Notebook…)
   function openNbPicker(anchor) {
     var list = document.createElement('div'); list.className = 'elnNbPopList';
-    var keys = NOTEBOOKS.map(function (n) { return n.key; }).sort(function (a, b) { return a === 'unfiled' ? -1 : (b === 'unfiled' ? 1 : 0); });
+    // 노트를 넣을 수 있는 곳만 — 공유받은 노트북은 보기 권한뿐이라 뺀다(사용자 2026-10-21)
+    var keys = NOTEBOOKS.filter(function (n) { return !n.owner; }).map(function (n) { return n.key; })
+      .sort(function (a, b) { return a === 'unfiled' ? -1 : (b === 'unfiled' ? 1 : 0); });
     keys.forEach(function (key) {
       var nb = NOTEBOOKS.filter(function (x) { return x.key === key; })[0];
+      if (key !== 'unfiled' && !list.querySelector('.elnNbPopGrp')) {   // No Notebook 아래 = 좌측 패널과 같은 'MY NOTEBOOKS' 소제목(select2 그룹 제목 자리)
+        var gl = document.createElement('div'); gl.className = 'elnNbPopGrp'; gl.textContent = 'MY NOTEBOOKS'; list.appendChild(gl);
+      }
       var it = document.createElement('div');
       it.className = 'elnNbPopItem' + (key === 'unfiled' ? ' unfiled' : '') + (key === NB_CUR ? ' cur' : '');
       var ic = document.createElement('i'); ic.className = 'material-symbols-outlined'; ic.textContent = nb.icon || 'folder';

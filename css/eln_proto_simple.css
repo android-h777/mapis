@@ -216,8 +216,9 @@
 #card_basic .elnSumNbPick{white-space:nowrap;gap:4px;height:22px;margin:0 0 0 -5px;font-size:14px;}
 #card_basic .elnSumNbPick:focus-visible{color:#A47864;outline:none;}
 /* 승인·번역 보기·잠긴 섹션 = 못 바꿈 → 값만(바탕·▾ 없음) */
-body.elnApproved #card_basic .elnSumNbPick,body.elnTranslated #card_basic .elnSumNbPick,#card_basic.elnLocked .elnSumNbPick{cursor:default;background:transparent;}
-body.elnApproved #card_basic .elnSumNbPick i,body.elnTranslated #card_basic .elnSumNbPick i,#card_basic.elnLocked .elnSumNbPick i{display:none;}
+body.elnApproved #card_basic .elnSumNbPick,body.elnTranslated #card_basic .elnSumNbPick,#card_basic.elnLocked .elnSumNbPick,#card_basic .elnSumNbPick.ro{cursor:default;background:transparent;}
+body.elnApproved #card_basic .elnSumNbPick i,body.elnTranslated #card_basic .elnSumNbPick i,#card_basic.elnLocked .elnSumNbPick i,#card_basic .elnSumNbPick.ro i{display:none;}
+#card_basic .elnSumNbPick.ro:hover{color:inherit;}   /* 공유받은 노트북의 노트 = 옮길 수 없음 */
 .elnBizOthers{min-width:0;}                                               /* Other Business(es) select2 multiple — 행의 값 자리 폭 전체(.elnBasicRow > :not(label) flex:1) */
 .elnBasicRel{min-width:0;}                                                /* Basic Data 안 Related Items(추가 줄 + 칩 목록) */
 #card_audit .elnAuditPlan{margin:10px 0 12px;}
@@ -783,7 +784,11 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnNbPopList{display:flex;flex-direction:column;min-width:230px;}
 .elnNbPopItem > i{font-size:20px;color:var(--main-color);font-variation-settings:'FILL' 1;} /* 픽커·메뉴 아이콘도 fill */
 .elnNbPopItem .chk{margin-left:auto;font-size:20px;color:#000;}   /* 현재 선택 = select2/Materialize 선택 항목과 같은 우측 체크 */
-.elnNbPopItem.new{border-top:1px solid var(--gray20);}
+.elnNbPopItem.new{border-top:1px solid var(--gray20);margin-top:4px;}
+/* 노트북 선택 목록 다듬기(select2 틀 유지, 리스트와 같은 값) — 위아래 여백 · 'MY NOTEBOOKS' 소제목(리스트 좌측 패널 그룹 제목 톤) · New Notebook… = 동작이라 모카색 */
+.elnNbPopList{padding:4px 0;}
+.elnNbPopGrp{margin-top:4px;padding:8px 16px 2px;border-top:1px solid var(--gray20);font-size:10px;line-height:16px;color:#b3a596;letter-spacing:.05em;}
+.elnNbPopItem.new,.elnNbPopItem.new > i{color:var(--main-color);}
 /* Unfiled(No Notebook) — 표준 메뉴 항목 + 흐린 글자만 */
 .elnNbPopItem.unfiled > i{color:#b3a596;}
 .elnNbPopItem.unfiled span{color:#8a7d6f;}

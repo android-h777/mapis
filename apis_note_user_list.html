@@ -81,18 +81,74 @@
 	.elnCopyFrom .hBtn{flex:0 0 auto;margin:0;}
 	.elnCopyFromInfo{font-size:12px;color:#9b8c7e;}
 	.ui-autocomplete .elnCopyFromNb{margin-left:10px;font-size:12px;color:#9b8c7e;}
+	/* 노트북 popover(요약 노트북 선택 · ⋯ 메뉴) = 팝업(css/eln_proto_simple.css)과 같은 MAPIS 표준 메뉴 스킨(사용자 2026-10-21 "디자인이 다르다").
+	   흰 바탕 · radius 0 · 머티리얼 2단 그림자 · 항목 32px · hover = 모카 70% 틴트 · 현재 = 90% 틴트 + 검정 ✓ (select2 목록과 같은 모양).
+	   css/eln_proto.css 는 옛 화면과 같이 쓰므로 이 페이지에서만 덮어쓴다 */
+	.elnPopover{border:0;border-radius:0;padding:0;color:#000;font-size:14px;
+		box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12),0 1px 5px 0 rgba(0,0,0,.2);}
+	.elnNbPopItem{gap:10px;box-sizing:border-box;min-height:32px;padding:5px 16px;line-height:22px;font-size:14px;color:#000;border:0;border-radius:0;}
+	.elnNbPopItem:hover,.elnNbPopItem.unfiled:hover{background-color:color-mix(in oklch,var(--mocha25,#A47864),white 70%);}
+	.elnNbPopItem.cur{background-color:color-mix(in oklch,var(--mocha25,#A47864),white 90%);}
+	.elnNbPopItem.cur:hover{background-color:color-mix(in oklch,var(--mocha25,#A47864),white 70%);}
+	.elnNbPopItem > i{font-size:20px;}
+	.elnNbPopItem .chk{font-size:20px;color:#000;}
+	.elnNbPopItem.new{margin-top:0;padding-top:5px;border-top:1px solid var(--gray20,#E0E0E0);color:#000;font-weight:400;}
+	.elnNbPopItem.unfiled{border:0;background:transparent;margin-bottom:0;}
+	.elnNbColorRow{padding:10px 16px 11px;margin-bottom:0;border-bottom:1px solid var(--gray20,#E0E0E0);}
+	/* 노트북 선택 목록 다듬기(select2 틀 유지, 팝업과 같은 값) — 위아래 여백 · 'MY NOTEBOOKS' 소제목(좌측 패널 그룹 제목과 같은 톤) · New Notebook… = 동작이라 모카색 */
+	.elnNbPopList{padding:4px 0;}
+	.elnNbPopGrp{margin-top:4px;padding:8px 16px 2px;border-top:1px solid var(--gray20,#E0E0E0);font-size:10px;line-height:16px;color:#b3a596;letter-spacing:.05em;}
+	.elnNbPopItem.new,.elnNbPopItem.new > i{color:var(--mocha25,#A47864);}
+	.elnNbPopItem.new{margin-top:4px;}
+	/* 공유받은 노트북의 노트 = 옮길 수 없음 → 값만(바탕·▾ 없음) */
+	.elnSumNbPick.ro{cursor:default;background:transparent;}
+	.elnSumNbPick.ro:hover{color:inherit;}
 	/* 노트북 ⋯ 메뉴 정보 줄(Sharing · Shared By) — Color 줄과 같은 라벨 + 글 */
 	.elnNbInfoRow{gap:3px;}
 	.elnNbInfoRow .tx{font-size:13px;color:#3a2c24;line-height:1.45;}
-	/* 노트북 공유 창 — People with access(공유 중인 사람 칩, × = 해제) */
-	.elnShareWho{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:4px 0 12px;}
-	.elnShareWho .lb{font-size:12px;color:#9b8c7e;margin-right:4px;}
-	.elnShareChip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 4px 0 3px;border-radius:14px;background:rgba(164,120,100,.10);font-size:13px;color:#3a2c24;}
-	.elnShareChip .elnUserAv{width:22px;height:22px;font-size:10px;}
-	.elnShareChip .elnNbShareRevoke{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;color:#9b8c7e;}
-	.elnShareChip .elnNbShareRevoke:hover{background:rgba(164,120,100,.18);color:#7a5240;}
-	.elnShareChip .elnNbShareRevoke i{font-size:16px;}
-	.elnShareWho:empty{display:none;}
+	/* 노트북 공유 창 = 팝업 Share & Access(css/eln_proto_simple.css .elnShBar · .elnShForm · .elnAccTbl)와 같은 모양.
+	   위 바(노트북 이름 + Add People) · 표 위로 펼치는 폼(연한 바탕 + 얇은 테두리, 좌측 강조 막대 없음) · 접근 표 */
+	.elnNbShBar{display:flex;align-items:center;justify-content:space-between;gap:10px;margin:0 0 10px;}
+	.elnNbShBar .cardSubTit{margin:0;}
+	.elnNbShForm{border:1px solid #e3d9cb;border-radius:10px;background:rgba(164,120,100,.04);padding:12px 16px 4px;margin:0 0 12px;}
+	.elnNbShForm .tit{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:600;color:#7a5240;margin:0 0 10px;}
+	.elnNbShForm .tit i{font-size:18px;color:#A47864;}
+	.elnNbShForm .fRow{display:flex;align-items:center;gap:12px;margin:0 0 14px;}
+	.elnNbShForm .lbl{flex:0 0 80px;text-align:right;font-size:13px;color:#3a2c24;}   /* 레이블 오른쪽 정렬(팝업 폼과 같음) */
+	.elnNbShForm .req{color:#BE3455;margin-right:3px;}
+	.elnNbShForm .hint{font-size:12px;color:#9b8c7e;margin-left:8px;}
+	.elnNbShForm label.ok{font-size:13px;line-height:1.4;}
+	.elnNbShForm .btns{display:flex;justify-content:flex-end;gap:8px;padding:4px 0 10px;}
+	.elnNbShForm .hBtn.disabled{opacity:.45;pointer-events:none;}
+	/* People = select2 다중 선택(운영 common.css .select2-selection--multiple)과 같은 상자 — 연한 바탕 · 아래 선 · 그림자 칩 + × */
+	.elnPplBox{flex:1 1 auto;min-width:0;min-height:26px;display:flex;flex-wrap:wrap;align-items:center;gap:4px 6px;padding:2px 6px 3px;cursor:text;
+		background:rgba(164,119,100,.05);border-bottom:1px solid #A47864;border-radius:5px 5px 0 0;}
+	.elnPplBox:focus-within{border-bottom-color:#E07B39;}
+	.elnPplBox > span{display:contents;}
+	.elnPplBox input{flex:1 1 120px;min-width:120px;height:22px !important;margin:0 !important;padding:0 !important;border:0 !important;box-shadow:none !important;background:transparent;font-size:13px;outline:0;}
+	.elnPplChip{display:inline-flex;align-items:center;height:19px;line-height:20px;padding:0 8px 0 0;background:#fff;border-radius:4px;font-size:14px;color:#000;
+		box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12),0 1px 5px 0 rgba(0,0,0,.2);}
+	.elnPplChip .x{color:#A47864;padding:0 6px 0 7px;font-size:14px;line-height:19px;}
+	.elnPplChip .x:hover{color:#BE3455;}
+	.ui-autocomplete .elnAcTeam{margin-left:10px;font-size:12px;color:#9b8c7e;}
+	/* Function 배지 — 팝업 표의 roundBox mocha25(Owner, 채움) / outline stone25(Viewer, 테두리)와 같은 값 */
+	.elnFnBadge{display:inline-block;box-sizing:border-box;height:16px;padding:0 20px;border:1px solid #A89A8E;border-radius:10px;color:#A89A8E;font-size:13px;line-height:14px;}
+	.elnFnBadge.own{background:#A47864;border-color:#A47864;color:#fff;}
+	#elnNbShareModal{max-width:680px;}   /* 팝업 Share & Access(lg)와 같은 너비 */
+	/* 접근 표 — 운영 fixedTable hBorderTable(팝업 표 계산값): 위 2px · 아래 1px 올리브 선, 머리 = 올리브 글자 가운데, 칸 사이 옅은 세로선 · 행 사이 옅은 선.
+	   삭제는 행 hover 때만(운영 td.action-col 과 같은 동작) */
+	.elnNbShTbl{width:100%;border-collapse:collapse;border-top:2px solid #9B8B50;border-bottom:1px solid #9B8B50;}
+	.elnNbShTbl th{font-size:14px;font-weight:400;font-family:var(--font-main-m,'Roboto-Medium'),sans-serif;color:#9B8B50;text-align:center;padding:5px;height:31px;border-bottom:1px solid #9B8B50;background:#fff;}
+	.elnNbShTbl td{font-size:14px;font-family:var(--font-main-l,'Roboto-Light'),sans-serif;color:#424242;padding:5px 8px;height:31px;border-bottom:1px solid #eee;border-right:1px solid #eee;vertical-align:middle;}
+	.elnNbShTbl td:last-child{border-right:0;}
+	.elnNbShTbl tr:last-child td{border-bottom:0;}
+	.elnNbShTbl .ac{text-align:center;}
+	.elnNbShTbl .uid{color:#9b8c7e;font-size:12px;}
+	.elnNbShTbl .lock{font-size:18px;color:#b3a596;vertical-align:middle;cursor:default;}
+	.elnNbShTbl .rm{visibility:hidden;color:#9b8c7e;display:inline-flex;}
+	.elnNbShTbl .rm i{font-size:20px;}
+	.elnNbShTbl tr:hover .rm{visibility:visible;}
+	.elnNbShTbl .rm:hover{color:#BE3455;}
 	</style>
 </head>
 <body>
@@ -193,10 +249,13 @@
 				</div>
 				<!-- Shared with Me = 남이 나에게 공유한 노트북(apis_eln_list 의 Shared Notebooks 그룹을 다시 넣음, 2026-10-21). 레이블은 'Shared with Me'(사용자 10-21: 내가 공유한 노트북도
 				     My Notebooks 에 공유 아이콘으로 있어 'Shared Notebooks' 는 헷갈림). 이름·삭제·색 변경 없음, ⋯ 메뉴는 공유 정보(Shared By) + Remove(내 목록에서 빼기)만.
-				     한때 주석 처리했다가 같은 날 다시 보이게(사용자 2026-10-21). 이 안에서만 드래그 정렬 -->
+				     한때 주석 처리했다가 같은 날 다시 보이게(사용자 2026-10-21). 이 안에서만 드래그 정렬.
+				     아이콘 = folder_eye(보기 권한으로 받은 노트북) — 내가 공유한 노트북의 folder_shared(사람)와 헷갈리지 않게(사용자 10-21) -->
 				<div class="elnNbGrpLabel">SHARED WITH ME</div>
 				<div class="elnNbGroup" data-group="shared">
-					<div class="elnNbItem" data-nb="customerA"><i class="material-symbols-outlined fill">folder_shared</i><span class="nm">Customer A Project</span><span class="ct">4</span></div>
+					<div class="elnNbItem" data-nb="customerA"><i class="material-symbols-outlined fill">folder_eye</i><span class="nm">Customer A Project</span><span class="ct">4</span></div>
+					<!-- 노트 하나만 공유받은 노트북 — 나머지 노트는 잠금 행. 개수 = 볼 수 있는 노트 수 -->
+					<div class="elnNbItem" data-nb="coatingT"><i class="material-symbols-outlined fill">folder_eye</i><span class="nm">Silicone Coating Studies</span><span class="ct">1</span></div>
 				</div>
 				<a href="javascript:;" id="elnNewNotebook" class="waves-effect waves-light hBtn elnNbNewBtn"><i class="material-symbols-outlined left">create_new_folder</i><span class="label">New Notebook</span></a>
 			</aside>
@@ -508,7 +567,8 @@
 		{ id:'hwcho',  name:'H.W. Cho',  team:'Adhesives R&D' },
 		{ id:'ksyoon', name:'K.S. Yoon', team:'Analysis' },
 		{ id:'jwseo',  name:'J.W. Seo',  team:'RGBOLED Adhesive' },
-		{ id:'ehan',   name:'E. Han',    team:'Customer A Project' }
+		{ id:'ehan',   name:'E. Han',    team:'Customer A Project' },
+		{ id:'hschoi', name:'H.S. Choi', team:'Coating Team' }
 	];
 	var shareTmplName = '', shareSent = {};
 	function renderShareList(q){
@@ -541,46 +601,93 @@
 		setTimeout(function(){ try{ document.getElementById('elnShareSearch').focus(); }catch(e){} }, 120);
 	}
 
-	/* ── 노트북 공유(내 노트북 → 동료) — ⋯ 메뉴 'Share…' 로 여는 창(2026-10-21). 동료 표 모양은 위 공유 창과 같음.
-	   위 'People with access' = 지금 공유 중인 사람(× = 공유 해제). 공유 대상이 있으면 패널 아이콘 folder_shared.
+	/* ── 노트북 공유(내 노트북 → 동료) — ⋯ 메뉴 'Share…' 로 여는 창(2026-10-21).
+	   구성 = 팝업 Share & Access 와 같음(사용자 10-21 "pop_simple 사람 추가 참고"): 오른쪽 위 Add People → 표 위로 펼치는 폼
+	   (People 다중 · Function = Viewer 고정 · 정보보호 확인 · Share/Cancel, 중첩 모달 없음), 아래 접근 표(Owner 행 자물쇠 · 공유 행 hover 시 삭제).
+	   People 칸 = select2 다중처럼 보이는 칩 입력 + jQuery UI autocomplete(리스트엔 select2 가 없어 공통 .ui-autocomplete 를 씀). 공유 대상이 있으면 패널 아이콘 folder_shared.
 	   [운영 구현] 노트북을 공유하면 그 노트북에 속한 노트 전부에 공유 대상의 Viewer 권한을 준다(사용자 2026-10-21).
 	   공유 해제 = 그 Viewer 권한 회수. 프로토타입은 권한을 따로 다루지 않는다 ── */
-	var nbShareKey = null;
+	var NB_ME = { id:'jpkim', name:'J.P. Kim' };   // 이 리스트의 내 노트 작성자 = 노트북 주인(Owner 행)
+	var nbShareKey = null, nbPicked = [];
 	function userById(id){ return ELN_USERS.filter(function(u){ return u.id === id; })[0]; }
-	function userInitials(name){ return name.replace(/[^A-Za-z.\s]/g,'').split(/[.\s]+/).filter(Boolean).map(function(p){ return p[0]; }).slice(0,2).join('').toUpperCase(); }   // 'J.W. Seo' → 'JW'(옛 리스트와 같은 규칙)
 	function sharedNames(key){ return (NB[key].sharedWith || []).map(function(id){ var u = userById(id); return u ? u.name : id; }); }
-	function renderNbShare(q){
-		var ids = NB[nbShareKey].sharedWith || [];
-		// 공유 중인 사람이 없으면 이 줄 자체를 비워 숨김(⋯ 메뉴 Sharing 줄과 같은 규칙)
-		document.getElementById('elnNbShareWho').innerHTML = ids.length ? '<span class="lb">People with access</span>' + ids.map(function(id){
-			var u = userById(id); if(!u) return '';
-			return '<span class="elnShareChip"><span class="elnUserAv">'+esc(userInitials(u.name))+'</span>'+esc(u.name)
-				+ '<a href="javascript:;" class="elnNbShareRevoke" data-id="'+esc(u.id)+'" title="Stop sharing"><i class="material-symbols-outlined">close</i></a></span>';
-		}).join('') : '';
-		var ql = (q||'').toLowerCase();
-		var matches = ELN_USERS.filter(function(u){ return (u.name+' '+u.team+' '+u.id).toLowerCase().indexOf(ql)>=0; });
-		document.getElementById('elnNbShareList').innerHTML = matches.length ? matches.map(function(u){
-			return '<tr><td class="al">'+esc(u.name)+'</td><td class="al">'+esc(u.team)+'</td>'
-				+ '<td class="ac">'+(ids.indexOf(u.id) >= 0
-					? '<i class="material-symbols-outlined elnSentIco" title="Shared">check_circle</i>'
-					: '<a href="javascript:;" class="waves-effect waves-light hBtn hSmall elnNbShareSend" data-id="'+esc(u.id)+'"><i class="material-symbols-outlined left">send</i><span class="label">Send</span></a>')
-				+ '</td></tr>';
-		}).join('') : '<tr><td colspan="3" class="al elnTblEmpty">No colleagues match.</td></tr>';
-		if(typeof initAllHBorderTableOverlays === 'function') initAllHBorderTableOverlays(document.getElementById('elnNbShareBody'));
+	function isoMdy(iso){ return String(iso || '').replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$2-$3-$1'); }
+	// 접근 표 — Owner(나) 맨 위 자물쇠, 공유 대상 = Viewer 배지 · 공유한 날 · 삭제(행 hover 때만)
+	function renderNbShareTable(){
+		var nb = NB[nbShareKey], at = nb.sharedAt || {};
+		var nameCell = function(name, id){ return '<b>'+esc(name)+'</b> <span class="uid">('+esc(id)+')</span>'; };
+		document.getElementById('elnNbShTbody').innerHTML =
+			'<tr class="own"><td>'+nameCell(NB_ME.name, NB_ME.id)+'</td><td><span class="elnFnBadge own">Owner</span></td><td>-</td>'
+			+ '<td class="ac"><i class="material-symbols-outlined lock" title="Owner of this notebook. Cannot be removed.">lock</i></td></tr>'
+			+ (nb.sharedWith || []).map(function(id){
+				var u = userById(id); if(!u) return '';
+				return '<tr><td>'+nameCell(u.name, u.id)+'</td><td><span class="elnFnBadge">Viewer</span></td><td>'+esc(isoMdy(at[id]) || '-')+'</td>'
+					+ '<td class="ac"><a href="javascript:;" class="rm" data-id="'+esc(u.id)+'" title="Stop sharing"><i class="material-symbols-outlined">delete</i></a></td></tr>';
+			}).join('');
+	}
+	// Add People 폼의 고른 사람(칩 — select2 다중의 선택 칩과 같은 모양, × 로 빼기)
+	function renderNbPicked(){
+		document.getElementById('elnNbPplChips').innerHTML = nbPicked.map(function(id){
+			var u = userById(id); return '<span class="elnPplChip"><a href="javascript:;" class="x" data-id="'+esc(id)+'" title="Remove">×</a>'+esc(u ? u.name : id)+'</span>';
+		}).join('');
+	}
+	function syncNbShareGo(){ var ok = document.getElementById('elnNbShOk'), go = document.getElementById('elnNbShGo'); if(ok && go) go.classList.toggle('disabled', !ok.checked); }   // 정보보호 확인 전엔 Share 비활성(팝업과 같음)
+	function showNbShareForm(show){
+		document.getElementById('elnNbShForm').style.display = show ? '' : 'none';
+		document.getElementById('elnNbShAdd').style.display = show ? 'none' : '';   // 폼이 열려 있는 동안 Add People 숨김(팝업과 같음)
+		if(!show) return;
+		nbPicked = []; renderNbPicked();
+		document.getElementById('elnNbShOk').checked = false; syncNbShareGo();
+		setTimeout(function(){ try{ document.getElementById('elnNbPplInput').focus(); }catch(e){} }, 60);
 	}
 	function openShareNotebook(key){
 		if(!NB[key]) return;
-		nbShareKey = key;
+		nbShareKey = key; nbPicked = [];
 		document.getElementById('elnNbShareBody').innerHTML =
-			'<div class="cardSubTit">Share “'+esc(NB[key].name)+'”</div>'
-			+ '<div class="elnShareWho" id="elnNbShareWho"></div>'
-			+ '<div class="aniInput elnShareSrch"><input type="text" class="browser-default" id="elnNbShareSearch" placeholder="Search colleagues…" autocomplete="off"><span class="focus-border"></span></div>'
-			+ '<div class="elnTblWrap"><table class="fixedTable hBorderTable vMiddle mg10">'
-			+ '<thead><tr><th class="al">Colleague</th><th class="al">Team</th><th class="ac elnShareColAct">Send</th></tr></thead>'
-			+ '<tbody id="elnNbShareList"></tbody></table></div>';
-		renderNbShare('');
+			'<div class="elnNbShBar"><div class="cardSubTit">'+esc(NB[key].name)+'</div>'
+			+ '<a href="javascript:;" id="elnNbShAdd" class="waves-effect waves-light hBtn"><i class="material-symbols-outlined left">person_add</i><span class="label">Add People</span></a></div>'
+			+ '<div class="elnNbShForm" id="elnNbShForm" style="display:none;">'
+			+   '<div class="tit"><i class="material-symbols-outlined">person_add</i>Add People</div>'
+			+   '<div class="fRow"><div class="lbl"><span class="req">*</span>People</div>'
+			+     '<div class="elnPplBox" id="elnNbPplBox"><span id="elnNbPplChips"></span><input type="text" id="elnNbPplInput" class="browser-default" placeholder="User ID / Name" autocomplete="off"></div></div>'
+			+   '<div class="fRow"><div class="lbl">Function</div><div><span class="elnFnBadge">Viewer</span><span class="hint">Can view every note in this notebook</span></div></div>'
+			+   '<div class="fRow"><div class="lbl"></div><label class="ok"><input type="checkbox" class="filled-in" id="elnNbShOk"><span>I have checked this complies with the company information security policy.</span></label></div>'
+			+   '<div class="btns"><a href="javascript:;" id="elnNbShGo" class="waves-effect waves-light hBtn hViva disabled"><i class="material-symbols-outlined left">share</i><span class="label">Share</span></a>'
+			+   '<a href="javascript:;" id="elnNbShCancel" class="waves-effect hBtn hGrey"><i class="material-symbols-outlined left">close</i><span class="label">Cancel</span></a></div>'
+			+ '</div>'
+			+ '<table class="elnNbShTbl"><thead><tr><th style="width:42%;">Name</th><th style="width:20%;">Function</th><th>Since</th><th class="ac" style="width:56px;"></th></tr></thead><tbody id="elnNbShTbody"></tbody></table>';
+		renderNbShareTable();
+		wireNbPplInput();
 		M.Modal.getInstance(document.getElementById('elnNbShareModal')).open();
-		setTimeout(function(){ try{ document.getElementById('elnNbShareSearch').focus(); }catch(e){} }, 120);
+	}
+	// People 입력 — 공통 jQuery UI autocomplete. 후보 = 아직 공유 안 했고 고르지 않은 동료, 'Name (ID)' + 팀(흐리게). 빈칸에서 Backspace = 마지막 칩 빼기
+	function wireNbPplInput(){
+		var inp = document.getElementById('elnNbPplInput');
+		inp.addEventListener('keydown', function(e){ if(e.key === 'Backspace' && !inp.value && nbPicked.length){ nbPicked.pop(); renderNbPicked(); } });
+		if(!(window.jQuery && jQuery.fn.autocomplete)) return;
+		jQuery(inp).autocomplete({
+			minLength: 0, appendTo: 'body',
+			source: function(req, res){
+				var q = (req.term || '').toLowerCase(), have = NB[nbShareKey].sharedWith || [];
+				res(ELN_USERS.filter(function(u){ return have.indexOf(u.id) < 0 && nbPicked.indexOf(u.id) < 0 && (u.name + ' ' + u.id + ' ' + u.team).toLowerCase().indexOf(q) >= 0; })
+					.map(function(u){ return { label: u.name + ' (' + u.id + ')', value: u.id, team: u.team }; }));
+			},
+			focus: function(e){ e.preventDefault(); },
+			select: function(e, ui){ e.preventDefault(); nbPicked.push(ui.item.value); inp.value = ''; renderNbPicked(); }
+		}).on('focus', function(){ jQuery(this).autocomplete('search', this.value); });
+		jQuery(inp).data('ui-autocomplete')._renderItem = function(ul, item){
+			return jQuery('<li>').append(jQuery('<div>').text(item.label).append(jQuery('<span class="elnAcTeam">').text(item.team))).appendTo(ul);
+		};
+	}
+	function nbShareGo(){
+		var go = document.getElementById('elnNbShGo'); if(go.classList.contains('disabled')) return;
+		if(!nbPicked.length){ ELN.toast('Choose at least one person to share with.', 'warn'); return; }
+		var nb = NB[nbShareKey]; nb.sharedWith = nb.sharedWith || []; nb.sharedAt = nb.sharedAt || {};
+		var d = new Date(), iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+		var names = nbPicked.map(function(id){ if(nb.sharedWith.indexOf(id) < 0) nb.sharedWith.push(id); nb.sharedAt[id] = iso; return userById(id).name; });
+		ELN.toast('Shared “' + nb.name + '” with ' + names.join(', ') + '.', 'ok');
+		if(jQuery(document.getElementById('elnNbPplInput')).data('ui-autocomplete')) jQuery('#elnNbPplInput').autocomplete('close');
+		showNbShareForm(false); renderNbShareTable(); syncShareIcon(nbShareKey);
 	}
 	// 공유 대상이 생기거나 다 빠지면 아이콘 folder_shared ↔ folder (패널·헤더·노트 행)
 	function syncShareIcon(key){
@@ -594,15 +701,13 @@
 		if(curSearch){ runSearch(curSearch); if(keep) reselectByCode(keep); }
 		else { renderNotes(curNbKey); applyView(); if(keep) reselectByCode(keep); }
 	}
-	function nbShareSet(id, on){
+	// 공유 해제(표의 삭제) — 바로 빼고 안내(확인 창은 중첩 모달이 되므로 쓰지 않음, 다시 Add People 로 되돌릴 수 있음)
+	function nbShareRemove(id){
 		var nb = NB[nbShareKey], u = userById(id); if(!nb || !u) return;
-		var ids = nb.sharedWith = nb.sharedWith || [];
-		var i = ids.indexOf(id);
-		if(on && i < 0) ids.push(id); else if(!on && i >= 0) ids.splice(i, 1); else return;
-		ELN.toast(on ? 'Shared “' + nb.name + '” with ' + u.name + '.' : 'Stopped sharing with ' + u.name + '.', 'ok');
-		syncShareIcon(nbShareKey);
-		var s = document.getElementById('elnNbShareSearch');
-		renderNbShare(s ? s.value : '');
+		var i = (nb.sharedWith || []).indexOf(id); if(i < 0) return;
+		nb.sharedWith.splice(i, 1); if(nb.sharedAt) delete nb.sharedAt[id];
+		ELN.toast('Stopped sharing with ' + u.name + '.', 'ok');
+		renderNbShareTable(); syncShareIcon(nbShareKey);
 	}
 
 	// 노트북별 노트셋 (요약·계보 데이터 포함, 데모 목업)
@@ -613,7 +718,7 @@
 		]},
 		// history = parent 링크로 계산(저장 X). rgboled는 분기 트리: 098 ├118(├142 └097) └072
 		// sharedWith = 내가 이 노트북을 공유한 동료(ELN_USERS id). 있으면 아이콘 folder_shared
-		rgboled: { name:'RGBOLED Adhesive', icon:'folder_shared', sharedWith:['jwseo','hwcho'], notes:[
+		rgboled: { name:'RGBOLED Adhesive', icon:'folder_shared', sharedWith:['jwseo','hwcho'], sharedAt:{ jwseo:'2026-06-02', hwcho:'2026-06-10' }, notes:[
 			{code:'LN-2605-00142', title:'UV-Curable PSA Viscosity Improvement (RGBOLED)', st:'ing', ver:'v3', cat:'Formulation', fml:'FML-EM-2208', tags:['#viscosity','#RGBOLED'], author:'J.P. Kim', date:'2026-05-28', parent:'LN-2605-00118'},
 			{code:'LN-2605-00118', title:'Viscosity Modifier ratio tuning (v2)', st:'appr', ver:'v2', cat:'Formulation', fml:'FML-EM-2207', tags:['#viscosity'], author:'J.P. Kim', date:'2026-05-27', parent:'LN-2605-00098'},
 			{code:'LN-2605-00097', title:'Cure rate vs UV dose: condition sweep', st:'ok', ver:'v1', cat:'Formulation', fml:'', tags:['#UVcure'], author:'J.P. Kim', date:'2026-05-24', parent:'LN-2605-00118'},
@@ -630,8 +735,13 @@
 			{code:'LN-2603-00120', title:'Haze reduction: final formulation', st:'ok', ver:'v3', cat:'Formulation', fml:'FML-OC-3310', tags:['#haze'], author:'M.J. Lee', date:'2026-03-28'},
 			{code:'LN-2603-00088', title:'Yellowing aging test (85°C/85%RH)', st:'ing', ver:'v1', cat:'Formulation', fml:'FML-OC-3308', tags:['#aging'], author:'M.J. Lee', date:'2026-03-12'}
 		]},
-		// owner = 나에게 공유한 사람(Shared with Me 그룹), sharedOn = 공유받은 날
-		customerA: { name:'Customer A Project', icon:'folder_shared', owner:'ehan', sharedOn:'2026-05-10', notes:[
+		// 노트 하나만 공유받은 노트북(사용자 2026-10-21) — 공유받은 노트만 보이고, 나머지 노트는 잠금 행(검색의 권한 없는 노트와 같은 행, Request Access).
+		// 잠긴 노트는 아래 RESTRICTED(Coating Team) 를 이 노트북에 붙인다. All Notes·개수에는 볼 수 있는 노트만
+		coatingT: { name:'Silicone Coating Studies', icon:'folder_eye', owner:'hschoi', sharedOn:'2026-07-20', notes:[
+			{code:'LN-2607-00298', title:'Release force vs cure temperature', st:'ok', ver:'v1', cat:'Formulation', fml:'', tags:['#silicone','#release'], author:'H.S. Choi', date:'2026-07-18', biz:'COAT', site:'LV01'}
+		]},
+		// owner = 나에게 공유한 사람(Shared with Me 그룹), sharedOn = 공유받은 날. 아이콘 folder_eye(보기 권한) — 내가 공유한 folder_shared 와 구분
+		customerA: { name:'Customer A Project', icon:'folder_eye', owner:'ehan', sharedOn:'2026-05-10', notes:[
 			{code:'LN-2605-00301', title:'Customer A: OCR spec review', st:'ing', ver:'', cat:'General', fml:'', tags:['#customerA'], author:'J.P. Kim', date:'2026-05-30'},
 			{code:'LN-2605-00288', title:'Adhesion to PET film', st:'ok', ver:'v2', cat:'Formulation', fml:'FML-CA-4410', tags:['#adhesion'], author:'J.P. Kim', date:'2026-05-26'},
 			{code:'LN-2605-00270', title:'Cost-down reformulation', st:'appr', ver:'v1', cat:'Formulation', fml:'FML-CA-4408', tags:['#costdown'], author:'J.P. Kim', date:'2026-05-20'},
@@ -698,6 +808,8 @@
 		{ code:'LN-2608-00045', title:'Silicone adhesive peel strength study', st:'ok', author:'D.H. Jung', team:'Adhesives Pilot Team', date:'2026-08-03', tags:['#silicone','#peel'], project:'PT-26-0034', biz:'SADD', site:'WTFD' },
 		{ code:'LN-2609-00019', title:'Barrier coating pinhole analysis', st:'appr', author:'Y.R. Kwon', team:'Barrier Film Team', date:'2026-09-02', tags:['#barrier','#coating'], project:'CN-26-0112', projects:['SN-26-0047'], biz:'EM', site:'MS01' }
 	].map(function(n){ n.restricted = true; n.projects = mergeProjects(n.project, n.projects); delete n.project; return n; });
+	// 노트 하나만 공유받은 노트북(coatingT)의 나머지 노트 = 같은 팀(Coating Team)의 권한 없는 노트 → 그 노트북 안에 잠금 행으로
+	NB.coatingT.notes = NB.coatingT.notes.concat(RESTRICTED.filter(function(n){ return n.team === 'Coating Team'; }));
 	var reqSent = {};   // 접근 요청 보낸 노트(code→1) — 페이지가 열려 있는 동안 유지
 
 	var curNbKey = 'all', curFilter = 'all', curNotes = [], curView = 'list', curSummaryNote = null, curSearch = null;
@@ -708,6 +820,7 @@
 		if(key === 'all'){
 			Object.keys(NB).forEach(function(k){
 				NB[k].notes.forEach(function(n){
+					if(n.restricted) return;   // All Notes = 볼 수 있는 노트만(공유받은 노트북의 잠긴 노트는 그 노트북·검색에서만 잠금 행으로)
 					arr.push(Object.assign({ _nb:k, _nbName:NB[k].name, _nbIcon:NB[k].icon }, n));
 				});
 			});
@@ -947,7 +1060,10 @@
 			'<div class="row subPjInfo">'+
 				sumRow('Status', '<span class="elnSumSt st-'+esc(n.st)+'">'+esc(s.t)+'</span>')+
 				sumRow('Note #', esc(n.code))+
-				sumRow('Notebook', '<span class="elnSumNbPick" title="Move to another notebook"><span class="elnNbDot" style="background:'+nbColor(n._nb)+'"></span>'+esc(nbName)+'<i class="material-symbols-outlined">expand_more</i></span>')+
+				// 남이 공유해 준 노트북(Shared with Me)의 노트는 보기 권한뿐 — 다른 노트북으로 옮길 수 없어 값만(ro, ▾ 없음)
+				(nbGroupOf(n._nb) === 'shared'
+					? sumRow('Notebook', '<span class="elnSumNbPick ro" title="Shared with you (view only)"><span class="elnNbDot" style="background:'+nbColor(n._nb)+'"></span>'+esc(nbName)+'</span>')
+					: sumRow('Notebook', '<span class="elnSumNbPick" title="Move to another notebook"><span class="elnNbDot" style="background:'+nbColor(n._nb)+'"></span>'+esc(nbName)+'<i class="material-symbols-outlined">expand_more</i></span>'))+
 				sumRow('Author', esc(n.author))+
 				sumRow('Creation Date', esc(fmtDate(n.created || n.date)))+   // 팝업 Basic Data 의 Creation Date(최초 저장일)
 				sumRow('Modified', esc(fmtDate(n.date)))+
@@ -1276,7 +1392,7 @@
 			var key = item.getAttribute('data-nb');
 			var ct = item.querySelector('.ct'); if(!ct) return;
 			if(key === 'all') ct.textContent = getNotes('all').length;
-			else if(NB[key]) ct.textContent = NB[key].notes.length;
+			else if(NB[key]) ct.textContent = NB[key].notes.filter(function(n){ return !n.restricted; }).length;   // 볼 수 있는 노트 수
 		});
 	}
 	// 이름수정 모달
@@ -1420,7 +1536,9 @@
 		var u = userById(nb.owner);
 		var menu = document.createElement('div'); menu.className = 'elnNbPopList';
 		var since = String(nb.sharedOn || '').replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$2-$3-$1');   // MM-DD-YYYY
-		menu.appendChild(nbInfoRow('Shared By', [(u ? u.name + ' (' + u.team + ')' : nb.owner)].concat(since ? ['Since ' + since] : [])));   // 그룹 이름(Shared with Me)과 겹치지 않게 '누가'만
+		var lockedN = nb.notes.filter(function(n){ return n.restricted; }).length, openN = nb.notes.length - lockedN;   // 노트 일부만 공유받았으면 몇 개인지
+		menu.appendChild(nbInfoRow('Shared By', [(u ? u.name + ' (' + u.team + ')' : nb.owner)].concat(since ? ['Since ' + since] : [])
+			.concat(lockedN ? [openN + ' of ' + nb.notes.length + ' notes shared with you'] : [])));   // 그룹 이름(Shared with Me)과 겹치지 않게 '누가'만
 		var el = document.createElement('div'); el.className = 'elnNbPopItem danger';
 		el.innerHTML = '<i class="material-symbols-outlined">person_remove</i><span>Remove</span>';
 		el.addEventListener('click', function(){ ref.close(); removeSharedNotebook(key); });
@@ -1509,11 +1627,16 @@
 	function openSummaryNbPicker(anchor, note){
 		if(!note) return;
 		var list = document.createElement('div'); list.className = 'elnNbPopList';
-		var keys = Object.keys(NB).slice().sort(function(a, b){ return a === 'unfiled' ? -1 : (b === 'unfiled' ? 1 : 0); });
+		// 노트를 넣을 수 있는 곳만 — 남이 공유해 준 노트북(Shared with Me)은 보기 권한뿐이라 뺀다(사용자 2026-10-21)
+		var keys = Object.keys(NB).filter(function(k){ return nbGroupOf(k) !== 'shared'; })
+			.sort(function(a, b){ return a === 'unfiled' ? -1 : (b === 'unfiled' ? 1 : 0); });
 		keys.forEach(function(key){
 			var nb = NB[key];
+			if(key !== 'unfiled' && !list.querySelector('.elnNbPopGrp')){   // No Notebook 아래 = 좌측 패널과 같은 'MY NOTEBOOKS' 소제목(select2 그룹 제목 자리)
+				var gl = document.createElement('div'); gl.className = 'elnNbPopGrp'; gl.textContent = 'MY NOTEBOOKS'; list.appendChild(gl);
+			}
 			var it = document.createElement('div');
-			it.className = 'elnNbPopItem' + (key === 'unfiled' ? ' unfiled' : '');
+			it.className = 'elnNbPopItem' + (key === 'unfiled' ? ' unfiled' : '') + (key === note._nb ? ' cur' : '');   // cur = 현재 노트북(팝업 픽커와 같은 옅은 바탕)
 			var ic = document.createElement('i'); ic.className = 'material-symbols-outlined'; ic.textContent = nb.icon || 'folder';
 			if(key !== 'unfiled') ic.style.color = nbColor(key); // 노트북 색
 			var nm = document.createElement('span'); nm.textContent = nb.name;
@@ -1596,18 +1719,24 @@
 		document.getElementById('elnShareBody').addEventListener('input', function(e){
 			if(e.target && e.target.id === 'elnShareSearch') renderShareList(e.target.value);
 		});
-		// 노트북 공유 모달 — Send = 공유, 칩 × = 공유 해제, 검색 = 필터
+		// 노트북 공유 모달 — Add People(폼 열기) · Share · Cancel · 고른 칩 × · 표 삭제 · 정보보호 확인
 		$('#elnNbShareModal').modal({
 			onOpenStart: function(){ $('header, .menuAside, .contArea').addClass('modalBlur'); },
-			onCloseStart: function(){ $('header, .menuAside, .contArea').removeClass('modalBlur'); }
+			onCloseStart: function(){ $('header, .menuAside, .contArea').removeClass('modalBlur'); if(jQuery('#elnNbPplInput').data('ui-autocomplete')) jQuery('#elnNbPplInput').autocomplete('close'); }
 		});
 		document.getElementById('elnNbShareBody').addEventListener('click', function(e){
-			var send = e.target.closest('.elnNbShareSend'), rv = e.target.closest('.elnNbShareRevoke');
-			if(send) nbShareSet(send.getAttribute('data-id'), true);
-			else if(rv) nbShareSet(rv.getAttribute('data-id'), false);
+			var t = e.target;
+			if(t.closest('#elnNbShAdd')){ showNbShareForm(true); return; }
+			if(t.closest('#elnNbShCancel')){ showNbShareForm(false); return; }
+			if(t.closest('#elnNbShGo')){ nbShareGo(); return; }
+			var x = t.closest('.elnPplChip .x');
+			if(x){ var i = nbPicked.indexOf(x.getAttribute('data-id')); if(i >= 0) nbPicked.splice(i, 1); renderNbPicked(); return; }
+			var rm = t.closest('.elnNbShTbl .rm');
+			if(rm){ nbShareRemove(rm.getAttribute('data-id')); return; }
+			if(t.closest('#elnNbPplBox')){ var inp = document.getElementById('elnNbPplInput'); if(inp) inp.focus(); }   // 칩 상자 어디를 눌러도 입력으로(select2 다중과 같음)
 		});
-		document.getElementById('elnNbShareBody').addEventListener('input', function(e){
-			if(e.target && e.target.id === 'elnNbShareSearch') renderNbShare(e.target.value);
+		document.getElementById('elnNbShareBody').addEventListener('change', function(e){
+			if(e.target && e.target.id === 'elnNbShOk') syncNbShareGo();
 		});
 		// 노트 리스트 행 틸트 비활성 — 엔진(.mainList li) 핸들러보다 늦게 바인딩되어 인라인 transform 을 상쇄
 		$(document).on('mousemove mouseleave', '.elnNotePanel .mainList li', function(){ this.style.transform = ''; });
@@ -1616,6 +1745,7 @@
 
 		renderNotes(curNbKey);
 		applyView();
+		refreshNbCounts();   // 패널 개수를 데이터로(HTML 숫자 대신) — 공유받은 노트북의 잠긴 노트는 빼고 센다
 		// 초기 활성 노트북(All Notes) 아이콘 fill 모드
 		var _initOn = document.querySelector('.elnNbItem.on > i'); if(_initOn) _initOn.classList.add('fill');
 		// 노트북 항목에 hover ⋯(Rename/Delete) 부착
@@ -1712,7 +1842,7 @@
 				return;
 			}
 			var nbPick = e.target.closest('.elnSumNbPick');
-			if(nbPick){ openSummaryNbPicker(nbPick, curSummaryNote); return; }
+			if(nbPick){ if(!nbPick.classList.contains('ro')) openSummaryNbPicker(nbPick, curSummaryNote); return; }
 			var tagc = e.target.closest('.jsSumTag');
 			if(tagc){ searchByTag(tagc.getAttribute('data-tag')); return; }
 		});
