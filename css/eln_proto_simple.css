@@ -209,7 +209,8 @@
 .elnSchedSel{display:flex;align-items:center;gap:12px;flex-wrap:wrap;min-width:0;}
 .elnSchedField{min-width:0;}
 .elnSchedSel .select-wrapper{margin:0;width:100%;}
-.elnSchedSel .elnHdrW190{flex:0 0 190px;width:190px;}                    /* Creation Date 고정폭(읽기전용) */
+.elnCreatedVal{color:var(--main-text-color);line-height:30px;}           /* Creation Date = 고칠 수 없는 값이라 글자만(입력칸 없음) */
+.elnCreatedVal.empty{color:#b3a596;}                                      /* 저장 전 '(Auto-set on first save)' */
 .elnSchedField.elnBizField{flex:0 0 240px;width:240px;}                  /* Primary Business · Site select2 */
 /* Basic Data Notebook = 리스트 요약 패널의 노트북 선택(.elnSumNbPick 알약: 색 점 + 이름 + ▾)과 같음. 리스트 #elnSummary 덮어쓰기와 같은 값만 더함 */
 #card_basic .elnSumNbPick{white-space:nowrap;gap:4px;height:22px;margin:0 0 0 -5px;font-size:14px;}
@@ -273,12 +274,14 @@ body.elnApproved #card_basic .elnSumNbPick i,body.elnTranslated #card_basic .eln
 .elnTagAddRow{display:flex;align-items:center;gap:14px;}
 .elnTagAddRow .aniInput{flex:0 0 auto;width:240px;}
 .elnTagAddRow .elnRecTags{flex:1 1 auto;min-width:0;margin-top:0;}
-/* 태그 추천 칩(Recommended) — 적용된 태그와 구분: 점선+'+'아이콘(클릭=추가), hover 시 채움 */
-.elnRecTags{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px;}
-.elnRecLabel{display:inline-flex;align-items:center;gap:3px;font-size:13px;font-weight:600;color:#9b8c7e;text-transform:uppercase;letter-spacing:.03em;}
-.elnRecLabel > i{font-size:15px;color:#5a7d9a;}   /* 추천 칩 색(블루)과 맞춰 '추천' 신호 */
-.elnRecChip{display:inline-flex;align-items:center;gap:2px;font-size:13px;color:#5a7d9a;background:rgba(90,125,154,.08);border:1px dashed #c2d0db;border-radius:13px;padding:2px 9px 2px 5px;cursor:pointer;transition:color .15s,background .15s,border-color .15s;}
-.elnRecChip:hover{color:#fff;background:#5a7d9a;border-color:#5a7d9a;}
+/* 태그 추천 — 운영 TechLib 등록 화면의 AI 추천(AI Suggested Keywords·Abstract)과 같은 레이블·칩(2026-10-21 사용자 "통일성").
+   레이블 = .tlAiSugHead(auto_awesome + 문구, Medium 13px, AI 색), 칩 = .tlRecChip(AI 색 점선 + '+', hover 채움).
+   AI 색 = 운영 common.css --ai-solid(#6C4BD8). 프로토타입 mapis_lib/common.css 엔 아직 없어 기본값으로 받는다 */
+.elnRecTags{--eln-ai:var(--ai-solid,#6C4BD8);display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:10px;line-height:normal;}
+.elnRecLabel{display:inline-flex;align-items:center;gap:4px;font-size:13px;font-family:var(--font-main-m);color:var(--eln-ai);line-height:normal;margin-right:4px;}
+.elnRecLabel > i{font-size:15px;}
+.elnRecChip{display:inline-flex;align-items:center;gap:2px;font-size:13px;color:var(--eln-ai);background:color-mix(in srgb,var(--eln-ai) 8%,transparent);border:1px dashed color-mix(in srgb,var(--eln-ai) 30%,white);border-radius:13px;padding:2px 10px 2px 5px;cursor:pointer;transition:color .15s,background .15s,border-color .15s;}
+.elnRecChip:hover{color:#fff;background:var(--eln-ai);border-color:var(--eln-ai);}
 .elnRecChip i{font-size:14px;}
 .elnRecEmpty{font-size:13px;color:#b3a596;font-style:italic;}
 
@@ -1574,6 +1577,13 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions,body.elnApprov
 .elnCloneData{padding:10px 0;margin-bottom:10px;border-top:1px solid #efe7db;border-bottom:1px solid #efe7db;}
 .elnCloneInfo{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:8px;background:rgba(164,120,100,.07);color:#7a5240;font-size:12px;line-height:1.5;}
 .elnCloneInfo i{font-size:16px;color:#A47864;flex:0 0 auto;margin-top:1px;}
+/* Copy From — 원본 노트 검색(aniInput) 아래에 고른 노트·섹션이 펼쳐진다 */
+.elnCopyFromSrch{margin-bottom:14px;}
+.elnCopyFromPicked:empty{display:none;}
+.elnCloneSecs label.elnCopyFromDup{color:#b3a596;cursor:default;}   /* 이미 이 노트에 있는 Formulation(노트당 하나) — 고를 수 없음 */
+/* Copy 메뉴에서 못 쓰는 항목(승인·결재 중 노트의 Copy From) */
+.elnCtxMenuItem.disabled{cursor:default;opacity:.45;}
+.elnCtxMenuItem.disabled:hover{background:transparent;}
 
 /* ── 요구 14: Export PDF 모달(Copy To 모달 양식 재사용) + 생성 중 버튼 ── */
 .elnPdfOpts{display:flex;flex-direction:column;gap:8px;padding:10px 0;margin:12px 0 10px;border-top:1px solid #efe7db;border-bottom:1px solid #efe7db;}

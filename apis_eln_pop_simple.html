@@ -77,7 +77,8 @@
 				</ul>
 		</section>
 		<section class="btnArea">
-			<div><a href="javascript:;" id="elnCopyTo" class="waves-effect waves-light hBtn hViola" title="Create a new note from the current one (opens in a new window)"><i class="material-symbols-outlined left">file_copy</i><span class="label">Copy To</span></a></div>
+			<!-- Copy — 누르면 Copy To(이 노트로 새 노트, 기능 그대로) / Copy From(다른 노트의 섹션을 이 노트로 가져오기) 선택(사용자 2026-10-21) -->
+			<div><a href="javascript:;" id="elnCopyBtn" class="waves-effect waves-light hBtn hViola" title="Copy this note to a new note, or copy sections from another note"><i class="material-symbols-outlined left">file_copy</i><span class="label">Copy</span></a></div>
 			<div><a href="javascript:;" id="elnSaveTemplate" class="waves-effect waves-light hBtn mt10" title="Save this note's section structure as a reusable template (no data)"><i class="material-symbols-outlined left">bookmark_add</i><span class="label">Save Template</span></a></div>
 			<!-- 요구 14: Export PDF — 옵션 모달 → 인쇄용 미리보기 새 창 + print(Save as PDF). 승인·잠금 노트에서도 사용 가능 -->
 			<div><a href="javascript:;" id="elnExportPdf" class="waves-effect waves-light hBtn mt10" title="Export this note as a PDF (reference copy, not a controlled copy)"><i class="material-symbols-outlined left">picture_as_pdf</i><span class="label">Export PDF</span></a></div>
@@ -113,14 +114,11 @@
 					</div>
 					<!-- status: Overview 드롭다운 제거 → 헤더 알약으로. category 제거. Author·Modified는 헤더 우측 상단 -->
 					<!-- 프로젝트 연결(NPI·NPT·TS)은 Related Items 모듈의 'Project' 항목으로 이동(2026-10-16). Primary·Stage 개념 제거 -->
-					<!-- Creation Date — 최초 저장 때 자동으로 찍힘(사용자 2026-10-21). 운영 FMEA Revision Date 와 같은 읽기전용 aniInput + 자동 입력 안내 placeholder -->
+					<!-- Creation Date — 최초 저장 때 자동으로 찍힘(사용자 2026-10-21). 고칠 수 없는 값이라 입력칸 없이 글자로(사용자 2026-10-21), 저장 전엔 흐린 '(Auto-set on first save)' -->
 					<div class="elnBasicRow">
 						<label class="elnBasicLabel"><span class="essential">*</span>Creation Date</label>
 						<div class="elnSchedSel">
-							<div class="aniInput elnHdrW190">
-								<input type="text" id="elnCreatedDate" class="browser-default fontR font14" value="10-06-2026" placeholder="(Auto-set on first save)" readonly tabindex="-1" style="cursor:default;">
-								<span class="focus-border"/>
-							</div>
+							<span id="elnCreatedDate" class="elnCreatedVal fontR font14" data-date="10-06-2026">10-06-2026</span>
 						</div>
 					</div>
 					<!-- Primary Business(단일) · Other Business(es)(다중, 행 폭 전체) — 운영 CNPI/SNPI Basic 의 Business select2,

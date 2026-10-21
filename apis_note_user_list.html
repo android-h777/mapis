@@ -544,7 +544,9 @@
 	}
 
 	/* ── 노트북 공유(내 노트북 → 동료) — ⋯ 메뉴 'Share…' 로 여는 창(2026-10-21). 동료 표 모양은 위 공유 창과 같음.
-	   위 'People with access' = 지금 공유 중인 사람(× = 공유 해제). 공유 대상이 있으면 패널 아이콘 folder_shared ── */
+	   위 'People with access' = 지금 공유 중인 사람(× = 공유 해제). 공유 대상이 있으면 패널 아이콘 folder_shared.
+	   [운영 구현] 노트북을 공유하면 그 노트북에 속한 노트 전부에 공유 대상의 Viewer 권한을 준다(사용자 2026-10-21).
+	   공유 해제 = 그 Viewer 권한 회수. 프로토타입은 권한을 따로 다루지 않는다 ── */
 	var nbShareKey = null;
 	function userById(id){ return ELN_USERS.filter(function(u){ return u.id === id; })[0]; }
 	function userInitials(name){ return name.replace(/[^A-Za-z.\s]/g,'').split(/[.\s]+/).filter(Boolean).map(function(p){ return p[0]; }).slice(0,2).join('').toUpperCase(); }   // 'J.W. Seo' → 'JW'(옛 리스트와 같은 규칙)

@@ -857,9 +857,9 @@
     var box = document.getElementById('elnRecTags');
     if (!box) return;
     box.innerHTML = '';
-    // 선두 레이블 — 이 칩들이 '추천 태그'임을 명시(클릭=추가)
+    // 선두 레이블 — 운영 TechLib AI 추천 레이블(auto_awesome + 'AI Suggested …')과 같은 틀, 문구는 'AI Suggested'(사용자 2026-10-21). 클릭=추가
     var lab = document.createElement('span'); lab.className = 'elnRecLabel';
-    lab.innerHTML = '<i class="material-symbols-outlined">auto_awesome</i>Recommended';
+    lab.innerHTML = '<i class="material-symbols-outlined">auto_awesome</i>AI Suggested';
     box.appendChild(lab);
     var recs = recommendTags(6);
     if (!recs.length) {
@@ -1218,7 +1218,7 @@
           if (el.tagName === 'SELECT') return true;
           if (el.tagName !== 'INPUT') return false;
           if (el.classList.contains('select-dropdown') || el.classList.contains('select2-search__field')) return false;   // Materialize·select2 표시용 input 제외
-          if (el.id === 'elnTagInput' || el.id === 'elnCreatedDate' || el.classList.contains('elnModTitle')) return false;
+          if (el.id === 'elnTagInput' || el.classList.contains('elnModTitle')) return false;
           return el.type === 'text';
         }
         function fieldName(el) {
@@ -2882,14 +2882,17 @@
   }
 
   /* Stage / Task 행(과제 스케줄 위치)은 2026-10-16 제거 — PROJ_SCHEDULES·PROJECT_GANTT·initScheduleMeta 삭제 */
-  /* Creation Date — 사용자가 고치지 않음(읽기전용). 기존 노트 = 생성일, 새 노트(템플릿·Copy To) = 비워 두고 최초 Save 때 오늘 날짜(사용자 2026-10-21).
-     표시 MM-DD-YYYY, 비었을 때는 placeholder '(Auto-set on first save)'(운영 FMEA Revision Date 와 같은 방식) */
+  /* Creation Date — 사용자가 고치지 않음. 기존 노트 = 생성일, 새 노트(템플릿·Copy To) = 비워 두고 최초 Save 때 오늘 날짜(사용자 2026-10-21).
+     고칠 수 없는 값이라 입력칸이 아닌 글자(span)로 보인다(사용자 2026-10-21). 표시 MM-DD-YYYY, 비었을 때는 흐린 '(Auto-set on first save)' */
   function setCreatedDate(iso) {
     var el = document.getElementById('elnCreatedDate'); if (!el) return;
     var m = /^(\d{4})-(\d{2})-(\d{2})/.exec(iso || '');
-    el.value = m ? toMdy(m[0]) : '';
+    el.setAttribute('data-date', m ? toMdy(m[0]) : '');
+    el.textContent = m ? toMdy(m[0]) : '(Auto-set on first save)';
+    el.classList.toggle('empty', !m);
   }
-  function createdPending() { var el = document.getElementById('elnCreatedDate'); return !!el && !el.value; }
+  function createdText() { var el = document.getElementById('elnCreatedDate'); return el ? (el.getAttribute('data-date') || '') : ''; }
+  function createdPending() { return !!document.getElementById('elnCreatedDate') && !createdText(); }
   function initCreatedDate() {
     var q = null; try { q = new URLSearchParams(location.search); } catch (e) {}
     if (!q) return;
@@ -4709,8 +4712,99 @@
       } }
     ] });
   }
+  /* Copy 버튼 — Copy To / Copy From 메뉴(사용자 2026-10-21). Copy To 는 위 openCopyModal 그대로.
+     Copy From = 다른 노트를 골라 그 노트의 섹션을 이 노트 끝에 붙인다(Basic Data 는 이 노트 값 유지). 승인·결재 중이면 못 씀 */
+  function openCopyMenu(anchor) {
+    var frozen = document.body.classList.contains('elnApproved');
+    var menu = document.createElement('div'); menu.className = 'elnCtxMenu';
+    [{ icon: 'file_copy', label: 'Copy To', run: openCopyModal },
+     { icon: 'input', label: 'Copy From', run: openCopyFromModal, off: frozen }].forEach(function (a) {
+      var it = document.createElement('div'); it.className = 'elnCtxMenuItem' + (a.off ? ' disabled' : '');
+      it.innerHTML = '<i class="material-symbols-outlined">' + a.icon + '</i><span>' + a.label + '</span>';
+      if (a.off) it.title = 'Not available on an approved or in-approval note';
+      it.addEventListener('click', function () { if (a.off) return; ref.close(); a.run(); });
+      menu.appendChild(it);
+    });
+    var ref = ELN.popover({ anchor: anchor, content: menu });
+  }
+  // Copy From 후보 = 리스트(opener) 노트 + 데모 노트(같은 과제·계보), 지금 노트 제외. 섹션 구성은 아는 노트만 그대로, 모르는 노트는 목업(배합 있으면 Formulation 포함)
+  function copyFromPool() {
+    var seen = {}, out = [];
+    function add(n) {
+      if (!n || !n.code || seen[n.code] || n.code === CURRENT_CODE) return;
+      seen[n.code] = 1;
+      out.push({ code: n.code, title: n.title || '', date: n.date || '', modules: n.modules || (n.fml ? ['fml', 'table', 'editor'] : ['editor', 'attach']) });
+    }
+    try { var op = window.opener; if (op && !op.closed && op.NOTES) op.NOTES.forEach(add); } catch (e) {}
+    PROJECT_NOTES.forEach(add); LINEAGE_NOTES.forEach(add);
+    return out;
+  }
+  function openCopyFromModal() {
+    var pool = copyFromPool(), pick = null;
+    var body = document.createElement('div'); body.className = 'elnCloneBody';
+    body.innerHTML = '<div class="elnReqLbl">Source Note</div>'
+      + '<div class="aniInput elnCopyFromSrch"><input type="text" class="browser-default" placeholder="Search lab note # or title (e.g., LN-2605-00118)" autocomplete="off"><span class="focus-border"></span></div>'
+      + '<div class="elnCopyFromPicked"></div>'
+      + '<div class="elnCloneInfo"><i class="material-symbols-outlined">info</i><span>Selected sections are added to the end of this note. Basic Data of this note stays as it is. Signatures, Errata and Audit history are not copied.</span></div>';
+    var inp = body.querySelector('input'), picked = body.querySelector('.elnCopyFromPicked');
+    function hasFml() { var f = document.getElementById('card_fml'); return !!f && f.style.display !== 'none'; }
+    function renderPicked() {   // 고른 노트 → 원본 줄 + 섹션 체크(Formulation 은 노트당 하나라 이미 있으면 막음) + 입력값 포함
+      if (!pick) { picked.innerHTML = ''; return; }
+      var h = '<div class="elnCloneSrc"><i class="material-symbols-outlined">description</i><span><b>' + esc(pick.code) + '</b> · ' + esc(pick.title) + '</span></div>'
+        + '<div class="elnReqLbl">Sections to Copy</div><div class="elnCloneSecs hScroll">';
+      pick.modules.forEach(function (key, i) {
+        var mt = MODULE_TYPES.filter(function (m) { return m.key === key; })[0]; if (!mt) return;
+        var dup = key === 'fml' && hasFml();
+        h += '<label' + (dup ? ' class="elnCopyFromDup" title="This note already has a Formulation section"' : '') + '><input type="checkbox" class="filled-in jsCopyFromSec" data-i="' + i + '"' + (dup ? ' disabled' : ' checked') + '><span>' + esc(mt.title) + (dup ? ' (already in this note)' : '') + '</span></label>';
+      });
+      h += '</div><div class="elnCloneData"><label><input type="checkbox" class="filled-in" id="elnCopyFromData"><span>Include entered data (values, tables, text)</span></label></div>';
+      picked.innerHTML = h;
+    }
+    if (window.jQuery && jQuery.fn.autocomplete) {   // Related Items 의 Lab Note 검색과 같은 부품(aniInput + jQuery UI autocomplete, "[CODE] Title")
+      jQuery(inp).autocomplete({
+        minLength: 0, appendTo: 'body',
+        source: function (req, res) {
+          var q = (req.term || '').toLowerCase();
+          res(pool.filter(function (n) { return (n.code + ' ' + n.title).toLowerCase().indexOf(q) >= 0; })
+            .map(function (n) { return { label: '[' + n.code + '] ' + n.title, value: n.code }; }));
+        },
+        focus: function (e) { e.preventDefault(); },
+        select: function (e, ui) { e.preventDefault(); inp.value = ui.item.label; pick = pool.filter(function (n) { return n.code === ui.item.value; })[0] || null; renderPicked(); }
+      }).on('focus', function () { if (!pick) jQuery(this).autocomplete('search', this.value); });
+    }
+    inp.addEventListener('input', function () { pick = null; renderPicked(); });   // 직접 고쳐 쓰면 선택 해제
+    ELN.modal({ title: 'Copy From', icon: 'input', size: 'md', body: body, actions: [
+      { label: 'Cancel', type: '' },
+      { label: 'Copy', icon: 'input', type: 'hViva', onClick: function () {
+        if (!pick) { ELN.toast('Select a source note first.', 'warn'); return true; }   // 모달 유지
+        var keys = [].slice.call(body.querySelectorAll('.jsCopyFromSec')).filter(function (c) { return c.checked; }).map(function (c) { return pick.modules[+c.getAttribute('data-i')]; });
+        if (!keys.length) { ELN.toast('Select at least one section.', 'warn'); return true; }
+        copyFromApply(pick, keys, body.querySelector('#elnCopyFromData').checked);
+      } }
+    ] });
+    setTimeout(function () { try { inp.focus(); } catch (e) {} }, 120);
+  }
+  // 고른 섹션을 이 노트 끝(Approval 위)에 만든다. 입력값을 빼면 모듈별 빈 상태로(Copy To 와 같은 cloneClearData)
+  function copyFromApply(src, keys, include) {
+    var made = [];
+    ELN.audit.mute++;
+    try {
+      keys.forEach(function (key) {
+        var mt = MODULE_TYPES.filter(function (m) { return m.key === key; })[0]; if (!mt) return;
+        if (key === 'fml') { addNoteModule(mt, null, true); made.push(document.getElementById('card_fml')); return; }
+        addNoteModule(mt, null, true); made.push(document.getElementById('card_mod_' + modSeq));
+      });
+      made = made.filter(Boolean);
+      if (!include) cloneClearData(made);
+    } finally { ELN.audit.mute--; }
+    if (!made.length) return;
+    ELN.audit.log({ section: 'Note', action: 'Copied from', detail: src.code + ': ' + made.length + ' section' + (made.length === 1 ? '' : 's') + ', data ' + (include ? 'included' : 'not included') });
+    if (ELN.coedit) made.forEach(function (c) { ELN.coedit.touch(c); });
+    made[0].scrollIntoView({ behavior: 'smooth', block: 'start' });
+    ELN.toast('Copied ' + made.length + ' section' + (made.length === 1 ? '' : 's') + ' from ' + src.code + '. Save to keep them.', 'ok');
+  }
   document.addEventListener('DOMContentLoaded', function () {
-    var cb = document.getElementById('elnCopyTo'); if (cb) cb.addEventListener('click', openCopyModal);
+    var cb = document.getElementById('elnCopyBtn'); if (cb) cb.addEventListener('click', function () { openCopyMenu(cb); });
   });
   // 새 창 진입(?copyFrom=코드&secs=키목록&data=0|1) — 시드(결재·공동편집, load+60~220ms)가 끝난 뒤 원본 노트를 맞추고 복사 변환을 한 번만 실행
   window.addEventListener('load', function () {
@@ -4979,7 +5073,7 @@
   // 번역 중 기록을 읽거나 바꾸는 동작(Export·Copy·Share·Save·결재 등) → 먼저 원문으로 복귀(캡처 단계라 각 버튼 핸들러보다 앞섬)
   document.addEventListener('click', function (e) {
     if (TR.lang === 'en' && !TR.pending) return;
-    var t = e.target && e.target.closest && e.target.closest('#elnExportPdf, #elnCopyTo, #elnSaveTemplate, #elnShareBtn, #elnSaveBtn, #elnAddModule, #card_approval [data-act], .elnAddEnd, .elnModDivider');
+    var t = e.target && e.target.closest && e.target.closest('#elnExportPdf, #elnCopyBtn, #elnSaveTemplate, #elnShareBtn, #elnSaveBtn, #elnAddModule, #card_approval [data-act], .elnAddEnd, .elnModDivider');
     if (!t) return;
     trSet('en', true);
     ELN.toast('Switched back to the original. Translations are view only.', 'info');
@@ -5044,7 +5138,7 @@
       return [pdfTxt(li.querySelector('.elnRelType')), (pdfTxt(li.querySelector('.elnRelLink')) || pdfTxt(li)) + (pl ? ' · Plant ' + pdfTxt(pl) : '')];
     });
     // 화면 순서와 같게: 기본 항목 → Related Items 표 → Tags(맨 아래)
-    return pdfKv([['Notebook', nbName(NB_CUR)], ['Title', pdfVal('.elnBasicTitle input')], ['Creation Date', pdfVal('#elnCreatedDate')],
+    return pdfKv([['Notebook', nbName(NB_CUR)], ['Title', pdfVal('.elnBasicTitle input')], ['Creation Date', createdText()],
       ['Primary Business', pdfSelText('#elnBizPrimary')], ['Other Business(es)', pdfSelText('#elnBizOthers')], ['Site', pdfSelText('#elnSite')]])
       + '<h3>Related Items</h3>' + pdfRows(['Type', 'Item'], rel)
       + pdfKv([['Tags', tags.join(', ')]]);
