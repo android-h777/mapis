@@ -811,13 +811,14 @@
   function addTag(text) {
     text = text.trim();
     if (!text) return;
-    if (text[0] !== '#') text = '#' + text;
+    text = text.replace(/^#+/, '').trim();   // '#' 없이 낱말로 저장('#viscosity' 로 쳐도 'viscosity')
+    if (!text) return;
     var wrap = document.getElementById('elnTags');
     if (!wrap) return;
     var existing = Array.prototype.some.call(wrap.children, function (c) {
       return c.dataset && c.dataset.tag === text;
     });
-    if (existing) { ELN.toast('Tag already exists.', 'warn'); return; }
+    if (existing) { ELN.toast('Keyword already exists.', 'warn'); return; }
     var chip = document.createElement('span');
     chip.className = 'elnTag';
     chip.dataset.tag = text;
@@ -827,8 +828,8 @@
     icon.textContent = 'close';
     chip.appendChild(icon);
     wrap.appendChild(chip);
-    ELN.audit.log({ section: sectionNameOf(document.getElementById('card_basic')), action: 'Tag added', detail: text });
-    ELN.toast('Tag ' + text + ' added', 'ok');
+    ELN.audit.log({ section: sectionNameOf(document.getElementById('card_basic')), action: 'Keyword added', detail: text });
+    ELN.toast('Keyword ' + text + ' added', 'ok');
     renderRecommended();   // 추가된 태그는 추천에서 제외
   }
 
@@ -836,10 +837,11 @@
      실구현: (1) 노트 본문 TF-IDF로 희소 키워드 추출(흔한 단어 자동 배제),
      (2) 태그 DB co-occurrence로 통제어휘 랭킹, (3) 선택적 LLM 의미추천.
      프로토타입은 (2)통제어휘 + (3)필드파생을 목업으로 시뮬레이션. */
-  var TAG_VOCAB = ['#PSA', '#silicone', '#UVcure', '#adhesive', '#crosslinker', '#viscosity',
-    '#RGBOLED', '#OLED', '#coating', '#optical', '#reliability', '#lowtemp', '#masstransfer', '#CoC', '#customerA'];
+  // 태그 값 = 낱말 그대로('#' 없음 — 운영 TechLib Keywords 와 같은 형식, 사용자 2026-10-21)
+  var TAG_VOCAB = ['PSA', 'silicone', 'UVcure', 'adhesive', 'crosslinker', 'viscosity',
+    'RGBOLED', 'OLED', 'coating', 'optical', 'reliability', 'lowtemp', 'masstransfer', 'CoC', 'customerA'];
   // 이 노트의 구조화 필드(카테고리·formulation·재료·프로젝트)에서 파생된 강추천(목업)
-  var DERIVED_TAGS = ['#PSA', '#silicone', '#UVcure', '#adhesive', '#crosslinker', '#reliability'];
+  var DERIVED_TAGS = ['PSA', 'silicone', 'UVcure', 'adhesive', 'crosslinker', 'reliability'];
 
   function currentTags() {
     var wrap = document.getElementById('elnTags');
@@ -888,8 +890,8 @@
         if (e.target.tagName === 'I') {
           var t = e.target.parentNode.dataset.tag;
           e.target.parentNode.remove();
-          ELN.audit.log({ section: sectionNameOf(document.getElementById('card_basic')), action: 'Tag removed', detail: t });
-          ELN.toast('Tag ' + t + ' removed', 'info');
+          ELN.audit.log({ section: sectionNameOf(document.getElementById('card_basic')), action: 'Keyword removed', detail: t });
+          ELN.toast('Keyword ' + t + ' removed', 'info');
           renderRecommended();   // 제거된 태그는 다시 추천 가능
         }
       });
@@ -1186,7 +1188,7 @@
       seed('2026-10-08 10:12', 'Charles Kim', 'Basic Data', 'Access granted', { detail: 'David Lee, Min-ji Park · Co-editor · Entire note' + POL });
       seed('2026-10-08 10:42', 'David Lee', 'Formulation', 'Field changed', { field: 'Crosslinker (wt%)', before: '1.8', after: '2.2' });
       seed('2026-10-09 16:30', 'Charles Kim', 'Basic Data', 'Access granted', { detail: 'Jim Quan · Viewer · Entire note' + POL });
-      seed('2026-10-10 11:18', 'Min-ji Park', 'Basic Data', 'Tag added', { detail: '#viscosity' });   // 편집은 Co-editor 만(Viewer 는 조회)
+      seed('2026-10-10 11:18', 'Min-ji Park', 'Basic Data', 'Keyword added', { detail: 'viscosity' });   // 편집은 Co-editor 만(Viewer 는 조회)
       seed('2026-10-10 14:05', 'Charles Kim', 'Formulation, Data Visualization', 'Access granted', { detail: 'Sarah Chen · Viewer · Formulation, Data Visualization' + POL });
     }
     // 초기 로드 노트 — ?code 가 없거나 LN-2605-00142면 전체 데모 시드(null), 그 외는 전환 때와 같은 '생성 기록만' 시드
@@ -2856,7 +2858,7 @@
     card.querySelectorAll('[data-required="true"]').forEach(function (el) {
       if (!el.disabled && !String(el.value || '').trim()) out.push({ el: el, label: el.getAttribute('data-label') || 'Field' });
     });
-    if (forApproval && !card.querySelector('#elnTags .elnTag')) out.push({ el: document.getElementById('elnTagInput'), label: 'Tags' });
+    if (forApproval && !card.querySelector('#elnTags .elnTag')) out.push({ el: document.getElementById('elnTagInput'), label: 'Keywords' });
     return out.filter(function (m) { return m.el; }).sort(function (a, b) { return a.el.compareDocumentPosition(b.el) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1; });   // 화면 순서
   }
   // 운영 au.markFieldInvalidRequired — 칸(과 aniInput 틀)에 .invalid-required, 값을 넣으면 해제
@@ -5201,7 +5203,7 @@
     return pdfKv([['Notebook', nbName(NB_CUR)], ['Title', pdfVal('.elnBasicTitle input')], ['Creation Date', createdText()],
       ['Primary Business', pdfSelText('#elnBizPrimary')], ['Other Business(es)', pdfSelText('#elnBizOthers')], ['Site', pdfSelText('#elnSite')]])
       + '<h3>Related Items</h3>' + pdfRows(['Type', 'Item'], rel)
-      + pdfKv([['Tags', tags.join(', ')]]);
+      + pdfKv([['Keywords', tags.join(', ')]]);
   }
   function pdfFml(card) {
     var body = card.querySelector(':scope > .elnBasic'), h = '';

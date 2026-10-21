@@ -145,18 +145,18 @@
 						<label class="elnBasicLabel">Related Items</label>
 						<div class="elnBasicRel" id="elnBasicRel"></div>
 					</div>
-					<!-- Tags — Basic Data 맨 아래(사용자 2026-10-21). 값 자리는 칩 + 입력 + 추천(멀티라인이라 상단 정렬).
+					<!-- Keywords(화면 이름 — 운영 TechLib Keywords 와 같은 개념·이름, 값은 '#' 없는 낱말. 내부 id 는 elnTags 그대로) — Basic Data 맨 아래(사용자 2026-10-21). 값 자리는 칩 + 입력 + 추천(멀티라인이라 상단 정렬).
 					     결재 상신 때만 필수(운영 data-required-appronly), 표시는 다른 필수와 같은 * 하나 -->
 					<div class="elnBasicRow alignTop">
-						<label class="elnBasicLabel"><span class="essential">*</span>Tags</label>
+						<label class="elnBasicLabel"><span class="essential">*</span>Keywords</label>
 						<div class="elnTagBox">
 							<div class="elnTags" id="elnTags">
-								<span class="elnTag" data-tag="#viscosity">#viscosity<i class="material-symbols-outlined">close</i></span>
-								<span class="elnTag" data-tag="#RGBOLED">#RGBOLED<i class="material-symbols-outlined">close</i></span>
+								<span class="elnTag" data-tag="viscosity">viscosity<i class="material-symbols-outlined">close</i></span>
+								<span class="elnTag" data-tag="RGBOLED">RGBOLED<i class="material-symbols-outlined">close</i></span>
 							</div>
 							<div class="elnTagAddRow">
 								<div class="aniInput">
-									<input type="text" id="elnTagInput" class="browser-default fontR font14" placeholder="Add a tag, then Enter">
+									<input type="text" id="elnTagInput" class="browser-default fontR font14" placeholder="Add a keyword, then Enter">
 									<span class="focus-border"/>
 								</div>
 								<div class="elnRecTags" id="elnRecTags"><!-- Recommended: JS 렌더 --></div>
