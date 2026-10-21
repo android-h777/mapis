@@ -4704,7 +4704,7 @@
   function openCopyModal() {
     var src = cloneSource(), ks = copyKeys(soCards());
     var body = document.createElement('div'); body.className = 'elnCloneBody';
-    var h = '<div class="elnCloneSrc"><i class="material-symbols-outlined">file_copy</i><span><b>' + esc(src.code) + '</b> · ' + esc(src.title) + '</span></div>'
+    var h = '<div class="elnCloneSrc"><i class="material-symbols-outlined">description</i><span><b>' + esc(src.code) + '</b> · ' + esc(src.title) + '</span></div>'
       + '<div class="elnReqLbl">Sections to Copy</div><div class="elnCloneSecs hScroll">';
     ks.forEach(function (k) {   // Basic Data = 필수 섹션(삭제 불가) → 체크 고정. 섹션 체크는 구조, 값은 아래 Include entered data
       var basic = k.card.id === 'card_basic';
@@ -4713,9 +4713,9 @@
     h += '</div><div class="elnCloneData"><label><input type="checkbox" class="filled-in" id="elnCloneData"><span>Include entered data (values, tables, text)</span></label></div>'
       + '<div class="elnCloneInfo"><i class="material-symbols-outlined">info</i><span>A new note will be created in a new window. Unsaved changes on this page will not be copied. Signatures, Errata and Audit history are not copied.</span></div>';
     body.innerHTML = h;
-    ELN.modal({ title: 'Copy To', icon: 'file_copy', size: 'md', body: body, actions: [
+    ELN.modal({ title: 'Copy To', icon: 'content_copy', size: 'md', body: body, actions: [
       { label: 'Cancel', type: '' },
-      { label: 'Copy', icon: 'file_copy', type: 'hViva', onClick: function () {
+      { label: 'Copy', icon: 'content_copy', type: 'hViva', onClick: function () {
         var keys = ['card_basic'].concat([].slice.call(body.querySelectorAll('.jsCloneSec')).filter(function (c) { return c.checked; }).map(function (c) { return c.getAttribute('data-key'); }));
         var url = 'apis_eln_pop_simple.html?copyFrom=' + encodeURIComponent(src.code) + '&secs=' + encodeURIComponent(keys.join(',')) + '&data=' + (body.querySelector('#elnCloneData').checked ? 1 : 0);
         window.open(url, 'elnNoteCopy_' + Date.now(), 'width=1480,height=900,scrollbars=yes,resizable=yes');
@@ -4727,10 +4727,11 @@
   function openCopyMenu(anchor) {
     var frozen = document.body.classList.contains('elnApproved');
     var menu = document.createElement('div'); menu.className = 'elnCtxMenu';
-    [{ icon: 'file_copy', label: 'Copy To', run: openCopyModal },
-     { icon: 'input', label: 'Copy From', run: openCopyFromModal, off: frozen }].forEach(function (a) {
+    // 아이콘(사용자 10-21 "화살표만 반대인 비슷한 아이콘") = Copy 버튼과 같은 content_copy + 작은 화살표 배지: Copy To ↗(나감) / Copy From ↙(들어옴)
+    [{ arrow: 'north_east', label: 'Copy To', run: openCopyModal },
+     { arrow: 'south_west', label: 'Copy From', run: openCopyFromModal, off: frozen }].forEach(function (a) {
       var it = document.createElement('div'); it.className = 'elnCtxMenuItem' + (a.off ? ' disabled' : '');
-      it.innerHTML = '<i class="material-symbols-outlined">' + a.icon + '</i><span>' + a.label + '</span>';
+      it.innerHTML = '<span class="elnCopyIco"><i class="material-symbols-outlined">content_copy</i><i class="material-symbols-outlined badge">' + a.arrow + '</i></span><span>' + a.label + '</span>';
       if (a.off) it.title = 'Not available on an approved or in-approval note';
       it.addEventListener('click', function () { if (a.off) return; ref.close(); a.run(); });
       menu.appendChild(it);
@@ -4783,9 +4784,9 @@
       }).on('focus', function () { if (!pick) jQuery(this).autocomplete('search', this.value); });
     }
     inp.addEventListener('input', function () { pick = null; renderPicked(); });   // 직접 고쳐 쓰면 선택 해제
-    ELN.modal({ title: 'Copy From', icon: 'input', size: 'md', body: body, actions: [
+    ELN.modal({ title: 'Copy From', icon: 'content_copy', size: 'md', body: body, actions: [
       { label: 'Cancel', type: '' },
-      { label: 'Copy', icon: 'input', type: 'hViva', onClick: function () {
+      { label: 'Copy', icon: 'content_copy', type: 'hViva', onClick: function () {
         if (!pick) { ELN.toast('Select a source note first.', 'warn'); return true; }   // 모달 유지
         var keys = [].slice.call(body.querySelectorAll('.jsCopyFromSec')).filter(function (c) { return c.checked; }).map(function (c) { return pick.modules[+c.getAttribute('data-i')]; });
         if (!keys.length) { ELN.toast('Select at least one section.', 'warn'); return true; }

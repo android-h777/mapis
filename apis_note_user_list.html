@@ -742,10 +742,11 @@
 		]},
 		// owner = 나에게 공유한 사람(Shared with Me 그룹), sharedOn = 공유받은 날. 아이콘 folder_eye(보기 권한) — 내가 공유한 folder_shared 와 구분
 		customerA: { name:'Customer A Project', icon:'folder_eye', owner:'ehan', sharedOn:'2026-05-10', notes:[
-			{code:'LN-2605-00301', title:'Customer A: OCR spec review', st:'ing', ver:'', cat:'General', fml:'', tags:['#customerA'], author:'J.P. Kim', date:'2026-05-30'},
-			{code:'LN-2605-00288', title:'Adhesion to PET film', st:'ok', ver:'v2', cat:'Formulation', fml:'FML-CA-4410', tags:['#adhesion'], author:'J.P. Kim', date:'2026-05-26'},
-			{code:'LN-2605-00270', title:'Cost-down reformulation', st:'appr', ver:'v1', cat:'Formulation', fml:'FML-CA-4408', tags:['#costdown'], author:'J.P. Kim', date:'2026-05-20'},
-			{code:'LN-2605-00255', title:'Kickoff meeting notes', st:'ok', ver:'', cat:'General', fml:'', tags:['#kickoff'], author:'J.P. Kim', date:'2026-05-12'}
+			// 작성자 = 노트북 주인 E. Han(공유받은 노트북이라 내 노트가 아님)
+			{code:'LN-2605-00301', title:'Customer A: OCR spec review', st:'ing', ver:'', cat:'General', fml:'', tags:['#customerA'], author:'E. Han', date:'2026-05-30'},
+			{code:'LN-2605-00288', title:'Adhesion to PET film', st:'ok', ver:'v2', cat:'Formulation', fml:'FML-CA-4410', tags:['#adhesion'], author:'E. Han', date:'2026-05-26'},
+			{code:'LN-2605-00270', title:'Cost-down reformulation', st:'appr', ver:'v1', cat:'Formulation', fml:'FML-CA-4408', tags:['#costdown'], author:'E. Han', date:'2026-05-20'},
+			{code:'LN-2605-00255', title:'Kickoff meeting notes', st:'ok', ver:'', cat:'General', fml:'', tags:['#kickoff'], author:'E. Han', date:'2026-05-12'}
 		]}
 	};
 
@@ -1850,7 +1851,8 @@
 		// New Note(노트 레벨) → 시작 템플릿 픽커 먼저. All Notes 뷰면 노트북 미지정으로 시작
 		var b = document.getElementById('elnNewNote');
 		if(b) b.addEventListener('click', function(){
-			openTemplatePicker(curNbKey === 'all' ? '' : curNbKey);
+			// 공유받은 노트북(보기 권한)엔 내 노트를 넣을 수 없음 → All Notes 처럼 노트북 미지정으로 시작
+			openTemplatePicker((curNbKey === 'all' || nbGroupOf(curNbKey) === 'shared') ? '' : curNbKey);
 		});
 
 		var nbBtn = document.getElementById('elnNewNotebook');

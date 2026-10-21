@@ -1586,6 +1586,11 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions,body.elnApprov
 .elnCopyFromSrch{margin-bottom:14px;}
 .elnCopyFromPicked:empty{display:none;}
 .elnCloneSecs label.elnCopyFromDup{color:#b3a596;cursor:default;}   /* 이미 이 노트에 있는 Formulation(노트당 하나) — 고를 수 없음 */
+/* Copy 메뉴 아이콘 = content_copy + 오른쪽 아래 작은 화살표(Copy To ↗ 나감 / Copy From ↙ 들어옴). 배지 바탕은 항목 바탕과 같게(hover 포함) */
+.elnCopyIco{position:relative;display:inline-flex;flex:0 0 auto;width:20px;height:20px;}
+.elnCtxMenuItem .elnCopyIco > i.badge{position:absolute;right:-4px;bottom:-3px;font-size:13px;font-weight:700;line-height:13px;border-radius:50%;background:#fff;}
+.elnCtxMenuItem:hover .elnCopyIco > i.badge{background:color-mix(in oklch,var(--main-color),white 70%);}
+.elnCtxMenuItem.disabled:hover .elnCopyIco > i.badge{background:#fff;}
 /* Copy 메뉴에서 못 쓰는 항목(승인·결재 중 노트의 Copy From) */
 .elnCtxMenuItem.disabled{cursor:default;opacity:.45;}
 .elnCtxMenuItem.disabled:hover{background:transparent;}
