@@ -68,6 +68,13 @@
 	#elnSummary .elnSumNbPick{white-space:nowrap;gap:4px;height:22px;margin:0 0 0 -5px;vertical-align:middle;}   /* 노트북 이름이 두 줄로 꺾이지 않게 */
 	#elnSummary .subPjInfo > .col:nth-child(odd){clear:left;}   /* 라벨 칸은 항상 새 줄에서 — 값 칸이 조금 높아도(노트북 픽커) 행이 어긋나지 않게 */
 	#elnSummary .jsLinkNpi{font-size:14px;line-height:1.8;}   /* 프로젝트 링크 = subPjInfo .val 과 같은 글자 크기 */
+	/* New Note 창의 Copy From 줄: [노트 검색(남은 폭)] [Include entered data] [Copy] — 가운데 정렬 */
+	.elnCopyFrom{display:flex;align-items:center;gap:16px;margin:4px 0 6px;}
+	.elnCopyFrom .elnCopyFromSearch{flex:1 1 auto;min-width:0;margin:0;}
+	.elnCopyFrom .elnCopyFromData{flex:0 0 auto;font-size:13px;}
+	.elnCopyFrom .hBtn{flex:0 0 auto;margin:0;}
+	.elnCopyFromInfo{font-size:12px;color:#9b8c7e;}
+	.ui-autocomplete .elnCopyFromNb{margin-left:10px;font-size:12px;color:#9b8c7e;}
 	</style>
 </head>
 <body>
@@ -400,13 +407,56 @@
 		if(!list.length) return '<div class="elnTblEmpty">'+emptyMsg+'</div>';
 		return '<div class="elnAddPickGrid'+(scroll?' elnPickScroll':'')+'">' + list.map(function(t){ return tmplCardHtml(t, custom); }).join('') + '</div>';
 	}
+	/* ── Copy From — 기존 노트를 골라 새 노트로 시작(요구 7 원문 "Copy from", 사용자 2026-10-21).
+	   팝업 Copy To 와 같은 복사(새 창, 저장 전 복사본: ?copyFrom=코드&secs=all&data=0|1&title=). 검색은 리스트 공통 jQuery UI 자동완성 */
+	var copyFromPick = null;   // 고른 노트 {code, title}
+	function copyFromHtml(){
+		return '<div class="cardSubTit">Copy From an Existing Note</div>'
+			+ '<div class="elnCopyFrom">'
+			+ '<div class="aniInput elnCopyFromSearch"><input type="text" id="elnCopyFromInp" class="browser-default" placeholder="Search note # or title (e.g., LN-2605-00142)" autocomplete="off"><span class="focus-border"></span></div>'
+			+ '<label class="elnCopyFromData"><input type="checkbox" class="filled-in" id="elnCopyFromData"><span>Include entered data (values, tables, text)</span></label>'
+			+ '<a href="javascript:;" id="elnCopyFromGo" class="waves-effect waves-light hBtn hViva"><i class="material-symbols-outlined left">file_copy</i><span class="label">Copy</span></a>'
+			+ '</div>'
+			+ '<div class="elnCopyFromInfo">A copy opens in a new window and is not saved until you save it. Signatures, Errata and Audit history are not copied.</div>';
+	}
+	function wireCopyFrom(){
+		var inp = document.getElementById('elnCopyFromInp'), go = document.getElementById('elnCopyFromGo');
+		if(!inp || !go) return;
+		copyFromPick = null;
+		$(inp).autocomplete({
+			minLength: 0, appendTo: 'body',
+			source: function(req, resp){
+				var q = (req.term || '').toLowerCase();
+				resp(getNotes('all').filter(function(n){ return (n.code + ' ' + n.title).toLowerCase().indexOf(q) >= 0; }).slice(0, 30)
+					.map(function(n){ return { label: '[' + n.code + '] ' + n.title, value: n.code, title: n.title, nb: n._nbName }; }));
+			},
+			focus: function(e){ e.preventDefault(); },
+			select: function(e, ui){ e.preventDefault(); inp.value = ui.item.label; copyFromPick = { code: ui.item.value, title: ui.item.title }; }
+		}).on('focus', function(){ if(!copyFromPick) $(this).autocomplete('search', this.value); })
+		.autocomplete('instance')._renderItem = function(ul, item){   // 제목은 text()로(HTML 주입 방지), 노트북 이름은 흐리게
+			return $('<li>').append($('<div>').text(item.label).append($('<span class="elnCopyFromNb">').text(item.nb || ''))).appendTo(ul);
+		};
+		inp.addEventListener('input', function(){ copyFromPick = null; });   // 직접 고쳐 쓰면 선택 해제
+		inp.addEventListener('keydown', function(e){ if(e.key === 'Enter' && copyFromPick){ e.preventDefault(); go.click(); } });
+		go.addEventListener('click', function(){
+			if(!copyFromPick){ ELN.toast('Select a note to copy from first.', 'warn'); return; }
+			var data = document.getElementById('elnCopyFromData').checked ? 1 : 0;
+			var q = [];
+			if(tmplPickerNb) q.push('nb=' + encodeURIComponent(tmplPickerNb));
+			q.push('copyFrom=' + encodeURIComponent(copyFromPick.code), 'secs=all', 'data=' + data, 'title=' + encodeURIComponent(copyFromPick.title));
+			M.Modal.getInstance(document.getElementById('elnTmplModal')).close();
+			window.open('apis_eln_pop_simple.html?' + q.join('&'), 'elnNoteCopy_' + Date.now(), 'width=1480,height=900,scrollbars=yes,resizable=yes');
+		});
+	}
 	function openTemplatePicker(nb){
 		tmplPickerNb = nb || '';
 		var mine = loadMyTemplates();
 		document.getElementById('elnTmplBody').innerHTML =
-			'<div class="cardSubTit">Public Templates</div>' + tmplGridHtml(ELN_TEMPLATES, false, '', true)
+			copyFromHtml()
+			+ '<div class="cardSubTit mt30">Public Templates</div>' + tmplGridHtml(ELN_TEMPLATES, false, '', true)
 			+ '<div class="cardSubTit mt30">My Templates</div>' + tmplGridHtml(mine, true, 'No custom templates yet. Save a note’s structure as a template from the note editor.');
 		wirePickTilt(document.getElementById('elnTmplBody'));
+		wireCopyFrom();
 		M.Modal.getInstance(document.getElementById('elnTmplModal')).open();
 	}
 

@@ -369,11 +369,11 @@
     'FML-EM-2208': {
       code: 'FML-EM-2208', name: 'OLED Adhesive Silicone PSA', proj: 'SN-26-0031', ver: 'v3', sys: 'EM Formulator', sync: '2026-05-27',
       rows: [
-        { name: 'Silicone PSA Base', code: 'RM-S1042', wt: 62.0, role: 'Base', note: '' },
-        { name: 'Solvent (Toluene)', code: 'RM-T55', wt: 30.0, role: 'Solvent', note: '' },
-        { name: 'Viscosity Modifier', code: 'RM-V210', wt: 4.0, role: 'Modifier', note: '↑ +1.5 vs v2' },
-        { name: 'Crosslinker', code: 'RM-X07', wt: 2.5, role: 'Crosslinker', note: '' },
-        { name: 'UV Photoinitiator', code: 'RM-P318', wt: 1.5, role: 'Initiator', note: '' }
+        { name: 'Silicone PSA Base', code: '103104', wt: 62.0, role: 'Base', note: '' },
+        { name: 'Solvent (Toluene)', code: '11931', wt: 30.0, role: 'Solvent', note: '' },
+        { name: 'Viscosity Modifier', code: '102210', wt: 4.0, role: 'Modifier', note: '↑ +1.5 vs v2' },
+        { name: 'Crosslinker', code: '12807', wt: 2.5, role: 'Crosslinker', note: '' },
+        { name: 'UV Photoinitiator', code: '103318', wt: 1.5, role: 'Initiator', note: '' }
       ],
       metrics: [
         { k: 'NV (solids)', v: '38.5 %' }, { k: 'VOC', v: '312 g/L' },
@@ -384,11 +384,11 @@
     'FML-EM-2207': {
       code: 'FML-EM-2207', name: 'OLED Adhesive Silicone PSA', proj: 'SN-26-0031', ver: 'v2', sys: 'EM Formulator', sync: '2026-05-19',
       rows: [
-        { name: 'Silicone PSA Base', code: 'RM-S1042', wt: 63.5, role: 'Base', note: '' },
-        { name: 'Solvent (Toluene)', code: 'RM-T55', wt: 30.0, role: 'Solvent', note: '' },
-        { name: 'Viscosity Modifier', code: 'RM-V210', wt: 2.5, role: 'Modifier', note: '' },
-        { name: 'Crosslinker', code: 'RM-X07', wt: 2.5, role: 'Crosslinker', note: '' },
-        { name: 'UV Photoinitiator', code: 'RM-P318', wt: 1.5, role: 'Initiator', note: '' }
+        { name: 'Silicone PSA Base', code: '103104', wt: 63.5, role: 'Base', note: '' },
+        { name: 'Solvent (Toluene)', code: '11931', wt: 30.0, role: 'Solvent', note: '' },
+        { name: 'Viscosity Modifier', code: '102210', wt: 2.5, role: 'Modifier', note: '' },
+        { name: 'Crosslinker', code: '12807', wt: 2.5, role: 'Crosslinker', note: '' },
+        { name: 'UV Photoinitiator', code: '103318', wt: 1.5, role: 'Initiator', note: '' }
       ],
       metrics: [
         { k: 'NV (solids)', v: '39.1 %' }, { k: 'VOC', v: '318 g/L' },
@@ -399,10 +399,10 @@
     'FML-PA-3310': {
       code: 'FML-PA-3310', name: 'Silsoft Preservative Acrylic Base', proj: 'PT-26-0021', ver: 'v1', sys: 'PA Formulator', sync: '2026-05-30',
       rows: [
-        { name: 'Acrylic Base', code: 'RM-A220', wt: 70.0, role: 'Base', note: '' },
-        { name: 'Tackifier', code: 'RM-TK9', wt: 18.0, role: 'Tackifier', note: '' },
-        { name: 'Plasticizer', code: 'RM-PL3', wt: 8.0, role: 'Plasticizer', note: '' },
-        { name: 'Curing Agent', code: 'RM-C12', wt: 4.0, role: 'Curing', note: '' }
+        { name: 'Acrylic Base', code: '104220', wt: 70.0, role: 'Base', note: '' },
+        { name: 'Tackifier', code: '14109', wt: 18.0, role: 'Tackifier', note: '' },
+        { name: 'Plasticizer', code: '14303', wt: 8.0, role: 'Plasticizer', note: '' },
+        { name: 'Curing Agent', code: '14012', wt: 4.0, role: 'Curing', note: '' }
       ],
       metrics: [
         { k: 'NV (solids)', v: '45.0 %' }, { k: 'VOC', v: '280 g/L' },
@@ -414,11 +414,11 @@
     'FML-EM-2215': {
       code: 'FML-EM-2215', name: 'OLED Lamination Adhesive', proj: 'CN-26-0064', ver: 'v2', sys: 'EM Formulator', sync: '2026-06-03',
       rows: [
-        { name: 'Silicone PSA Base', code: 'RM-S1042', wt: 58.0, role: 'Base', note: '' },
-        { name: 'Solvent (Toluene)', code: 'RM-T55', wt: 33.0, role: 'Solvent', note: '' },
-        { name: 'Viscosity Modifier', code: 'RM-V210', wt: 5.0, role: 'Modifier', note: '' },
-        { name: 'Crosslinker', code: 'RM-X07', wt: 3.0, role: 'Crosslinker', note: '' },
-        { name: 'UV Photoinitiator', code: 'RM-P318', wt: 1.0, role: 'Initiator', note: '' }
+        { name: 'Silicone PSA Base', code: '103104', wt: 58.0, role: 'Base', note: '' },
+        { name: 'Solvent (Toluene)', code: '11931', wt: 33.0, role: 'Solvent', note: '' },
+        { name: 'Viscosity Modifier', code: '102210', wt: 5.0, role: 'Modifier', note: '' },
+        { name: 'Crosslinker', code: '12807', wt: 3.0, role: 'Crosslinker', note: '' },
+        { name: 'UV Photoinitiator', code: '103318', wt: 1.0, role: 'Initiator', note: '' }
       ],
       metrics: [
         { k: 'NV (solids)', v: '36.2 %' }, { k: 'VOC', v: '335 g/L' },
@@ -429,10 +429,10 @@
     'FML-PA-3318': {
       code: 'FML-PA-3318', name: 'OCR Acrylic Resin', proj: 'CN-26-0090', ver: 'v1', sys: 'PA Formulator', sync: '2026-06-05',
       rows: [
-        { name: 'Acrylic Base', code: 'RM-A220', wt: 74.0, role: 'Base', note: '' },
-        { name: 'Tackifier', code: 'RM-TK9', wt: 14.0, role: 'Tackifier', note: '' },
-        { name: 'Plasticizer', code: 'RM-PL3', wt: 7.0, role: 'Plasticizer', note: '' },
-        { name: 'Curing Agent', code: 'RM-C12', wt: 5.0, role: 'Curing', note: '' }
+        { name: 'Acrylic Base', code: '104220', wt: 74.0, role: 'Base', note: '' },
+        { name: 'Tackifier', code: '14109', wt: 14.0, role: 'Tackifier', note: '' },
+        { name: 'Plasticizer', code: '14303', wt: 7.0, role: 'Plasticizer', note: '' },
+        { name: 'Curing Agent', code: '14012', wt: 5.0, role: 'Curing', note: '' }
       ],
       metrics: [
         { k: 'NV (solids)', v: '48.3 %' }, { k: 'VOC', v: '255 g/L' },
@@ -443,10 +443,10 @@
     'FML-EM-2221': {
       code: 'FML-EM-2221', name: 'UV Conformal Coating', proj: 'CN-26-0112', ver: 'v1', sys: 'EM Formulator', sync: '2026-06-09',
       rows: [
-        { name: 'Silicone PSA Base', code: 'RM-S1042', wt: 66.0, role: 'Base', note: '' },
-        { name: 'Solvent (Toluene)', code: 'RM-T55', wt: 26.0, role: 'Solvent', note: '' },
-        { name: 'Crosslinker', code: 'RM-X07', wt: 3.5, role: 'Crosslinker', note: '' },
-        { name: 'UV Photoinitiator', code: 'RM-P318', wt: 4.5, role: 'Initiator', note: '' }
+        { name: 'Silicone PSA Base', code: '103104', wt: 66.0, role: 'Base', note: '' },
+        { name: 'Solvent (Toluene)', code: '11931', wt: 26.0, role: 'Solvent', note: '' },
+        { name: 'Crosslinker', code: '12807', wt: 3.5, role: 'Crosslinker', note: '' },
+        { name: 'UV Photoinitiator', code: '103318', wt: 4.5, role: 'Initiator', note: '' }
       ],
       metrics: [
         { k: 'NV (solids)', v: '41.0 %' }, { k: 'VOC', v: '290 g/L' },
@@ -2700,7 +2700,7 @@
   }
   // Project 항목 행(.elnRelItem) 생성 — 삭제 ×는 여기서 배선, 링크 클릭(프로젝트 상세)은 wireRelatedModule 위임
   // Related Items 칩은 유형 순서(Project → Material → Lab Note → URL)로 — 제목 줄 없이 같은 유형끼리 붙어 보이게
-  var REL_ORDER = { Project: 0, Material: 1, 'Lab Note': 2, URL: 3 };
+  var REL_ORDER = { Project: 0, Material: 1, 'Lab Note': 2 };   // URL 유형은 2026-10-21 제외
   function relInsert(list, li) {
     var r = REL_ORDER[li.getAttribute('data-type')]; if (r == null) r = 9;
     var next = [].filter.call(list.children, function (x) { var o = REL_ORDER[x.getAttribute('data-type')]; return (o == null ? 9 : o) > r; })[0];
@@ -2723,13 +2723,40 @@
 
   /* Basic Data 의 Related Items(2026-10-21: 모듈에서 Basic Data 안으로). 추가 줄·칩 마크업은 예전 모듈 본문과 같음.
      withSample = 데모 노트의 Material 예시 칩 1개 */
-  var REL_SAMPLE_LI = '<li class="elnRelItem fileChip" data-type="Material"><i class="material-symbols-outlined">science</i><span class="elnRelType">Material</span><a href="javascript:;" class="elnRelLink">[RM-0421] UV Photoinitiator</a><span class="elnRelActs"><i class="material-symbols-outlined elnRelDel btn_deleteFile" title="Remove">close</i></span></li>';
+  /* 자재(원료) = 운영 DEXIF 자재 마스터 규칙: DB 의 MATERIAL_ID 는 18자리 0 채움, 화면·검색은 앞 0 을 뗀 값, 표시 '[자재ID] 자재명'(getDexifMatMasterAjax).
+     자재마다 Plant 가 여러 개(getDexifMatPlantByIdAjax) → Related Items 검색 대상은 '자재 + Plant' 조합. Plant 표시 '[코드] 이름'(Plant 마스터 = ELN_SITES).
+     목업: 사용자가 준 운영 자재 마스터 예시(10-21, mat · mat_descr) 중 5~6자리 ID 의 정상 행. Plant 짝은 프로토타입 가정 */
+  function matDisp(id) { return String(id || '').replace(/^0+/, '') || '0'; }
+  function matPad(id) { return ('000000000000000000' + String(id)).slice(-18); }
+  var ELN_MAT_PLANT = [
+    ['30565', '1,6-HEXANEDIOL DIACRYLATE, 067230', ['KP01', 'WTFD']], ['14808', '2,4-Dihydroxybenzophenone', ['KP01', 'OT01']],
+    ['165227', '(N-BUTYL)-3-APTM SILANE/STL DR/190KG', ['SVLL', 'WTFD']], ['49024', '067131-SIPERNAT 160  P. SILICA', ['LV01']],
+    ['30395', '10 MICRON MINUSIL  50 lb BAG, 06230', ['WTFD']], ['15044', 'KF96H-10,000', ['OT01', 'KP01']],
+    ['126440', 'LSR 2640 P-A/Drum/200KG', ['KP01', 'WTFD']], ['126442', 'LSR 2640 P-B/Drum/200KG', ['KP01', 'WTFD']],
+    ['126425', 'LSR 2640 P B', ['KP01']], ['129944', '1,2-EPOXY-4-VINYLCYCLOHEXANE (VCHO)', ['WTFD']],
+    ['96566', '1,2,4-TRIVINYLCYCLOHEXANE/DRUM/172KG', ['SVLL']], ['118599', 'Y-19152 LITES/DRUM/191.59 KGS', ['SVLL']],
+    ['168385', 'FLUORO TRIMER/TOTE/908KG', ['WTFD']], ['146850', '10% CERIUM OCT - PAIL /50KG', ['LV01']],
+    ['173312', '1,3-PROPANEDIOL/DRUM/200KG', ['IT01']], ['130404', '1,2,4-Triazole', ['LV01', 'KP01']]
+  ].map(function (r) { return { id: matPad(r[0]), desc: r[1], plants: r[2] }; });
+  function plantLabel(code) { var s = (typeof ELN_SITES !== 'undefined' ? ELN_SITES : []).filter(function (x) { return x[0] === code; })[0]; return '[' + code + '] ' + (s ? s[1] : code); }
+  function matText(m) { return '[' + matDisp(m.id) + '] ' + m.desc; }
+  // Material 칩 안쪽: 유형 · [자재ID] 자재명 · Plant 라벨 · 삭제
+  function relMatInner(id18, desc, plant) {
+    return '<i class="material-symbols-outlined">science</i><span class="elnRelType">Material</span>'
+      + '<a href="javascript:;" class="elnRelLink" title="' + esc('[' + matDisp(id18) + '] ' + desc) + '">' + esc('[' + matDisp(id18) + '] ' + desc) + '</a>'
+      + '<span class="roundBox outline stone25 elnRelPlant" title="Plant">' + esc(plantLabel(plant)) + '</span>'
+      + '<span class="elnRelActs"><i class="material-symbols-outlined elnRelDel btn_deleteFile" title="Remove">close</i></span>';
+  }
+  function relSampleLi() {   // 데모 노트 예시 칩: UV 경화 PSA 의 아크릴 모노머(HDDA) @ 화성(KP01)
+    var m = ELN_MAT_PLANT.filter(function (x) { return matDisp(x.id) === '30565'; })[0];
+    return '<li class="elnRelItem fileChip" data-type="Material" data-mat="' + m.id + '" data-plant="KP01">' + relMatInner(m.id, m.desc, 'KP01') + '</li>';
+  }
   function relBoxHtml(withSample) {
     return '<div class="elnRelBox">'
-      + '<div class="elnRelAdd"><div class="elnRelAddType"><select><option>Material</option><option>Project</option><option>Lab Note</option><option>URL</option></select></div>'
+      + '<div class="elnRelAdd"><div class="elnRelAddType"><select><option>Material</option><option>Project</option><option>Lab Note</option></select></div>'
       + '<div class="elnRelAddVal"></div>'
       + '<a href="javascript:;" class="waves-effect waves-light hBtn elnRelAddGo"><i class="material-symbols-outlined left">add</i><span class="label">Add</span></a></div>'
-      + '<ul class="elnRelList">' + (withSample ? REL_SAMPLE_LI : '') + '</ul></div>';
+      + '<ul class="elnRelList">' + (withSample ? relSampleLi() : '') + '</ul></div>';
   }
   function initBasicRelated() {
     var box = document.getElementById('elnBasicRel'); if (!box) return;
@@ -2741,7 +2768,7 @@
   // 노트 전환 — 목록을 그 노트 것으로 다시 채움(프로젝트 칩 + 데모 노트만 예시 칩). 로그 없음
   function resetBasicRelated(codes, withSample) {
     var list = document.querySelector('#elnBasicRel .elnRelList'); if (!list) return;
-    list.innerHTML = withSample ? REL_SAMPLE_LI : '';
+    list.innerHTML = withSample ? relSampleLi() : '';
     list.querySelectorAll('.elnRelDel').forEach(function (d) { d.addEventListener('click', function () { d.closest('.elnRelItem').remove(); }); });
     setNoteProjects(codes);
   }
@@ -3225,12 +3252,6 @@
       addFileItem(list, a.name, 0, a.vers.map(function (v) { return { v: v.v, size: v.size, by: v.by, ts: v.ts, file: null }; }), null);
     });
   }
-  function normalizeUrl(u) {
-    u = (u || '').trim();
-    if (!u) return '';
-    if (!/^https?:\/\//i.test(u)) u = 'https://' + u;
-    return u;
-  }
   function addUrlItem(listEl, url) {
     var li = document.createElement('li'); li.className = 'elnLinkItem';
     var a = document.createElement('a'); a.href = url; a.target = '_blank'; a.rel = 'noopener noreferrer';
@@ -3622,26 +3643,41 @@
     var list = scope.querySelector('.elnRelList');
     var row = scope.querySelector('.elnRelAdd');
     if (!list || !row) return;
-    var TYPE_ICON = { Material: 'science', Project: 'assignment', 'Lab Note': 'description', URL: 'link' };
+    var TYPE_ICON = { Material: 'science', Project: 'assignment', 'Lab Note': 'description' };
     // 타입별 후보 풀(프로토타입 목업) — Note는 기존 데이터 재사용. select2 data 항목: {id, text, code, title, sub}
     function poolFor(label) {
       var mk = function (code, title, sub) { return { id: code, text: '[' + code + '] ' + title, code: code, title: title, sub: sub, hay: title }; };
-      if (label === 'Material') return [mk('RM-0421', 'UV Photoinitiator', 'Initiator'), mk('RM-0532', 'Acrylic Monomer', 'Monomer'), mk('RM-0210', 'Silica Filler (12 nm)', 'Filler'),
-        mk('RM-0388', 'Silane Coupling Agent', 'Additive'), mk('RM-0145', 'Defoamer', 'Additive')];
+      if (label === 'Material') {   // 자재 + Plant 조합 하나하나가 후보. 검색어는 자재 ID(0 채움 포함)·자재명·Plant 코드·이름
+        var out = [];
+        ELN_MAT_PLANT.forEach(function (m) {
+          m.plants.forEach(function (pl) {
+            var pll = plantLabel(pl);
+            out.push({ code: m.id + '|' + pl, text: matText(m), plant: pl, plantLbl: pll, hay: m.id + ' ' + matText(m) + ' ' + pll });
+          });
+        });
+        return out;
+      }
       if (label === 'Lab Note') return LINEAGE_NOTES.map(function (n) { return mk(n.code, n.title, n.nb + ' · ' + toMdy(n.date)); });
       return [];
     }
-    function addRow(label, text, projCode) {
-      var li;
+    // mat = { id: 18자리 자재 ID, desc, plant } — Material 칩은 자재 + Plant 라벨
+    function addRow(label, text, projCode, mat) {
+      var li, detail = label + ': ' + text;
       if (projCode) li = relProjItem(projCode);   // Project 항목: [CODE] Title, 클릭 시 프로젝트 상세
       else {
         li = document.createElement('li'); li.className = 'elnRelItem fileChip'; li.setAttribute('data-type', label);
-        li.innerHTML = '<i class="material-symbols-outlined">' + TYPE_ICON[label] + '</i><span class="elnRelType">' + label + '</span>'
-          + '<a href="javascript:;" class="elnRelLink">' + esc(text) + '</a><span class="elnRelActs"><i class="material-symbols-outlined elnRelDel btn_deleteFile" title="Remove">close</i></span>';
+        if (mat) {
+          li.setAttribute('data-mat', mat.id); li.setAttribute('data-plant', mat.plant);
+          li.innerHTML = relMatInner(mat.id, mat.desc, mat.plant);
+          detail += ' · Plant ' + plantLabel(mat.plant);
+        } else {
+          li.innerHTML = '<i class="material-symbols-outlined">' + TYPE_ICON[label] + '</i><span class="elnRelType">' + label + '</span>'
+            + '<a href="javascript:;" class="elnRelLink">' + esc(text) + '</a><span class="elnRelActs"><i class="material-symbols-outlined elnRelDel btn_deleteFile" title="Remove">close</i></span>';
+        }
         li.querySelector('.elnRelDel').addEventListener('click', function () { li.remove(); });
       }
       relInsert(list, li);
-      auditMod(list.closest('.cardBox'), 'Link added', { detail: label + ': ' + text });
+      auditMod(list.closest('.cardBox'), 'Link added', { detail: detail });
     }
     // Project 항목 링크 클릭 → 프로젝트 상세(읽기전용·승인 상태에서도 조회 가능)
     list.addEventListener('click', function (e) {
@@ -3652,8 +3688,8 @@
     list.addEventListener('click', function (e) {
       var d = e.target.closest && e.target.closest('.elnRelDel'), li = d && d.closest('.elnRelItem');
       if (!li || li.closest('.elnLocked') || document.body.classList.contains('elnApproved')) return;
-      var ty = li.querySelector('.elnRelType'), lk = li.querySelector('.elnRelLink');
-      auditMod(li.closest('.cardBox'), 'Link removed', { detail: (ty ? ty.textContent + ': ' : '') + (lk ? lk.textContent : '') });
+      var ty = li.querySelector('.elnRelType'), lk = li.querySelector('.elnRelLink'), pl = li.querySelector('.elnRelPlant');
+      auditMod(li.closest('.cardBox'), 'Link removed', { detail: (ty ? ty.textContent + ': ' : '') + (lk ? lk.textContent : '') + (pl ? ' · Plant ' + pl.textContent : '') });
     }, true);
     list.querySelectorAll('.elnRelDel').forEach(function (d) {                 // 샘플 행 삭제 배선
       d.addEventListener('click', function () { d.closest('.elnRelItem').remove(); });
@@ -3663,10 +3699,9 @@
       var seedBefore = list.firstChild;
       RELATED_SEED.forEach(function (c) { list.insertBefore(relProjItem(c), seedBefore); });
     }
-    // 인라인 추가 줄: [Type select2(검색창 없음)] [Material/Lab Note = select2 검색 | Project = autocomplete | URL = aniInput] [Add hBtn]
+    // 인라인 추가 줄: [Type select2(검색창 없음)] [검색 aniInput + 자동완성] [Add hBtn]. 유형 = Material · Project · Lab Note(URL 은 2026-10-21 제외)
     var typeSel = row.querySelector('.elnRelAddType select'), valBox = row.querySelector('.elnRelAddVal'), goBtn = row.querySelector('.elnRelAddGo');
-    var urlInp = null, acInp = null, acPick = null;   // acPick = 자동완성에서 고른 항목 {code, text}
-    // Project 선택 시에만 보이는 안내(추가 줄 아래) — 잠금·승인 때는 추가 줄과 함께 CSS 로 숨김
+    var acInp = null, acPick = null;   // acPick = 자동완성에서 고른 항목 {code, text}
     function curType() { return typeSel.value || 'Material'; }
     // 유형별 자동완성 후보 [{code, text}] — Project 는 이미 연결된 것 제외. 실구현: 유형별 검색 Ajax(프로젝트 getRelProjectListAjax 등)
     function acSource(label) {
@@ -3674,15 +3709,14 @@
         var have = curProjectCodes();
         return MAPIS_PROJECTS.filter(function (p) { return have.indexOf(p.c) < 0; }).map(function (p) { return { code: p.c, text: '[' + p.c + '] ' + p.t }; });
       }
-      return poolFor(label).map(function (p) { return { code: p.code, text: p.text }; });
+      return poolFor(label).map(function (p) { return { code: p.code, text: p.text, plantLbl: p.plantLbl, hay: p.hay }; });
     }
-    var AC_PH = { Project: 'Search project # (e.g., SN-26-0001) or title', Material: 'Search material # (e.g., RM-0421) or name', 'Lab Note': 'Search lab note # (e.g., LN-2605-00131) or title' };
+    var AC_PH = { Project: 'Search project # (e.g., SN-26-0001) or title', Material: 'Search material # or name, or plant (e.g., 126440, LSR 2640, KP01)', 'Lab Note': 'Search lab note # (e.g., LN-2605-00131) or title' };
     function buildValue() {   // 타입에 맞는 입력부 재구성(이전 autocomplete 정리)
       if (acInp && window.jQuery && jQuery(acInp).data('ui-autocomplete')) { try { jQuery(acInp).autocomplete('destroy'); } catch (e) {} }
-      valBox.innerHTML = ''; urlInp = null; acInp = null; acPick = null;
+      valBox.innerHTML = ''; acInp = null; acPick = null;
       var label = curType();
-      if (label !== 'URL') {
-        // Project·Material·Note 공통 = MAPIS 공통 부품: aniInput + jQuery UI autocomplete(공통 .ui-autocomplete 스킨, 운영 TechLib 퀵서치와 같은 방식). 표기 "[CODE] Title"
+        // Project·Material·Lab Note 공통 = MAPIS 공통 부품: aniInput + jQuery UI autocomplete(공통 .ui-autocomplete 스킨, 운영 TechLib 퀵서치와 같은 방식). 표기 "[CODE] Title"
         var pa = document.createElement('div'); pa.className = 'aniInput';
         acInp = document.createElement('input'); acInp.type = 'text'; acInp.className = 'browser-default'; acInp.autocomplete = 'off';
         acInp.placeholder = AC_PH[label] || 'Search';
@@ -3693,36 +3727,34 @@
             minLength: 0, appendTo: 'body',
             source: function (req, res) {
               var q = (req.term || '').toLowerCase();
-              res(acSource(curType()).filter(function (it) { return it.text.toLowerCase().indexOf(q) >= 0; })
-                .map(function (it) { return { label: it.text, value: it.code }; }));
+              res(acSource(curType()).filter(function (it) { return (it.hay || it.text).toLowerCase().indexOf(q) >= 0; })
+                .map(function (it) { return { label: it.text, value: it.code, plantLbl: it.plantLbl }; }));
             },
             focus: function (e) { e.preventDefault(); },
-            select: function (e, ui) { e.preventDefault(); acInp.value = ui.item.label; acPick = { code: ui.item.value, text: ui.item.label }; }
+            select: function (e, ui) { e.preventDefault(); acInp.value = ui.item.label + (ui.item.plantLbl ? ' · ' + ui.item.plantLbl : ''); acPick = { code: ui.item.value, text: ui.item.label }; }
           }).on('focus', function () { if (!acPick) $(this).autocomplete('search', this.value); });
-          $(acInp).data('ui-autocomplete')._renderItem = function (ul, item) { return $('<li>').append($('<div>').text(item.label)).appendTo(ul); };   // 제목은 text()로(HTML 연결 금지)
+          // 제목은 text()로(HTML 연결 금지). Material 은 Plant 를 흐리게 덧붙임('[자재ID] 자재명  [Plant] 이름')
+          $(acInp).data('ui-autocomplete')._renderItem = function (ul, item) {
+            var $d = $('<div>').text(item.label);
+            if (item.plantLbl) $d.append($('<span class="elnAcPlant">').text(item.plantLbl));
+            return $('<li>').append($d).appendTo(ul);
+          };
         }
         acInp.addEventListener('input', function () { acPick = null; });   // 직접 고쳐 쓰면 선택 해제
         acInp.addEventListener('keydown', function (e) { if (e.key === 'Enter' && acPick) { e.preventDefault(); goAdd(); } });
-      } else {
-        var ani = document.createElement('div'); ani.className = 'aniInput';
-        urlInp = document.createElement('input'); urlInp.type = 'text'; urlInp.className = 'browser-default'; urlInp.placeholder = 'Paste a URL';
-        var fb = document.createElement('span'); fb.className = 'focus-border';
-        ani.appendChild(urlInp); ani.appendChild(fb); valBox.appendChild(ani);
-        urlInp.addEventListener('keydown', function (e) { if (e.key === 'Enter') { e.preventDefault(); goAdd(); } });
-      }
     }
     function goAdd() {
       var label = curType();
       if (row.closest('.elnLocked') || document.body.classList.contains('elnApproved')) return;   // 잠금 중엔 무동작(CSS 도 숨김)
-      if (label === 'URL') {
-        var u = normalizeUrl(urlInp && urlInp.value); if (!u) { ELN.toast('Enter a URL first.', 'warn'); return; }
-        addRow('URL', u); urlInp.value = ''; ELN.toast('Link added.', 'ok');
-        return;
-      }
       if (!acPick) { ELN.toast('Select a ' + label.toLowerCase() + ' first.', 'warn'); return; }
       if (label === 'Project') {
         if (curProjectCodes().indexOf(acPick.code) >= 0) { ELN.toast('Project already linked.', 'warn'); return; }
         addRow('Project', projBracket(acPick.code), acPick.code); ELN.toast('Project linked.', 'ok');
+      } else if (label === 'Material') {   // code = '18자리 자재 ID|Plant' — 같은 자재라도 Plant 가 다르면 따로 연결
+        var mp = acPick.code.split('|'), mid = mp[0], mpl = mp[1];
+        if (list.querySelector('.elnRelItem[data-mat="' + mid + '"][data-plant="' + mpl + '"]')) { ELN.toast('This material is already linked for this plant.', 'warn'); return; }
+        var mm = ELN_MAT_PLANT.filter(function (x) { return x.id === mid; })[0];
+        addRow('Material', acPick.text, null, { id: mid, desc: mm ? mm.desc : acPick.text, plant: mpl }); ELN.toast('Material linked.', 'ok');
       } else { addRow(label, acPick.text); ELN.toast(label + ' linked.', 'ok'); }
       acInp.value = ''; acPick = null;
     }
@@ -5000,7 +5032,8 @@
   function pdfBasic() {
     var tags = [].slice.call(document.querySelectorAll('#elnTags .elnTag')).map(function (t) { return t.getAttribute('data-tag') || pdfTxt(t); });
     var rel = [].slice.call(document.querySelectorAll('#elnBasicRel .elnRelItem')).map(function (li) {
-      return [pdfTxt(li.querySelector('.elnRelType')), pdfTxt(li.querySelector('.elnRelLink')) || pdfTxt(li)];
+      var pl = li.querySelector('.elnRelPlant');   // Material = 자재 + Plant
+      return [pdfTxt(li.querySelector('.elnRelType')), (pdfTxt(li.querySelector('.elnRelLink')) || pdfTxt(li)) + (pl ? ' · Plant ' + pdfTxt(pl) : '')];
     });
     // 화면 순서와 같게: 기본 항목 → Related Items 표 → Tags(맨 아래)
     return pdfKv([['Title', pdfVal('.elnBasicTitle input')], ['Creation Date', pdfVal('#elnCreatedDate')],

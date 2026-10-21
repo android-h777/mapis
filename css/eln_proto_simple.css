@@ -200,6 +200,7 @@
 .elnBasicRow{display:flex;align-items:center;gap:12px;margin:4px 2px 18px;}
 .elnBasicRow.alignTop{align-items:flex-start;}                          /* Tags 등 멀티라인 값: 레이블을 첫 줄에 맞춤 */
 .elnBasicRow.alignTop .elnBasicLabel{padding-top:5px;}
+.elnBasicRow.elnRelRow .elnBasicLabel{padding-top:8px;}   /* Related Items: 레이블 글자를 첫 줄(유형 select2 · 검색칸 · Add 버튼, 가운데 정렬)의 가운데 선에 맞춤 */
 /* 레이블 폰트/크기/두께/색 = npdi 폼 레이블(.inputArea .row .col, body 상속)과 동일: 13px·light·normal·main-text */
 .elnBasicRow .elnBasicLabel{flex:0 0 16.6667%;justify-content:flex-end;text-align:right;margin:0;   /* text-align: 두 줄로 넘친 레이블도 줄마다 우측 정렬 */
   font-family:var(--font-main-l);font-size:13px;font-weight:400;color:var(--main-text-color);}
@@ -1012,12 +1013,16 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnRelType{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#b3a596;flex:0 0 auto;}
 .elnRelNoAccess{flex:0 0 auto;display:inline-flex;align-items:center;gap:2px;font-size:11px;font-weight:600;color:#7b8189;background:rgba(154,160,166,.18);border-radius:8px;padding:1px 7px 1px 4px;margin-right:6px;}
 .elnRelNoAccess i{font-size:13px;}
-.elnRelLink{color:#2f6fb0;text-decoration:none;flex:0 1 auto;max-width:240px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.elnRelLink{color:#2f6fb0;text-decoration:none;flex:0 1 auto;max-width:340px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .elnRelLink:hover{color:#A47864;text-decoration:underline;}   /* 팝업 링크 공통 규칙(=Basic Data Project 링크): 파랑 → hover 모카+밑줄 */
+/* Material 칩의 Plant 라벨(표준 roundBox outline stone25 — 테두리형) — 자재명 뒤 작은 알약 */
+.elnRelItem .elnRelPlant{flex:0 0 auto;font-size:11px;line-height:16px;padding:0 7px;white-space:nowrap;}
+/* 자재 자동완성: Plant 를 흐리게 덧붙임 */
+.ui-autocomplete .elnAcPlant{margin-left:10px;font-size:12px;color:#9b8c7e;}
 /* 삭제 hover 빨강은 common.css `.fileChip .btn_deleteFile:hover` 가 준다 */
 .elnRelDel{font-size:15px;color:var(--gray45);cursor:pointer;flex:0 0 auto;}
 /* Related Items 인라인 추가 줄: [Type select2] [검색 select2 | URL aniInput] [Add hBtn] */
-.elnRelAdd{display:flex;align-items:flex-end;gap:12px;margin:0 0 12px;}
+.elnRelAdd{display:flex;align-items:center;gap:12px;margin:0 0 12px;}   /* 가운데 정렬 — Add 버튼(30px)이 select2·검색칸(25px)보다 커도 세 개의 가운데 선이 같게 */
 .elnRelAdd .elnRelAddType{flex:0 0 130px;}
 .elnRelAdd .elnRelAddVal{flex:1 1 auto;min-width:0;}
 .elnRelAdd .aniInput{margin:0;}
