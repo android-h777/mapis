@@ -2579,10 +2579,10 @@
      목록 = 리스트 NB 키와 같음. No Notebook 도 값(필수 표시 없음) ── */
   var NOTEBOOKS = [
     { key: 'unfiled',   name: 'No Notebook',         icon: 'folder_off' },
-    { key: 'rgboled',   name: 'RGBOLED Adhesive',    icon: 'folder' },
+    { key: 'rgboled',   name: 'RGBOLED Adhesive',    icon: 'folder_shared' },   // 내가 공유한 노트북(리스트 NB.rgboled.sharedWith)
     { key: 'foled',     name: 'Flexible OLED',       icon: 'folder' },
     { key: 'optical',   name: 'Optical Clear Resin', icon: 'folder' },
-    { key: 'customerA', name: 'Customer A Project',  icon: 'folder_shared' }
+    { key: 'customerA', name: 'Customer A Project',  icon: 'folder' }
   ];
   var NB_CUR = 'rgboled';   // 이 노트의 노트북 키
   function nbName(key) { var n = NOTEBOOKS.filter(function (x) { return x.key === key; })[0]; return n ? n.name : ''; }

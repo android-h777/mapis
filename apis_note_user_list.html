@@ -81,6 +81,18 @@
 	.elnCopyFrom .hBtn{flex:0 0 auto;margin:0;}
 	.elnCopyFromInfo{font-size:12px;color:#9b8c7e;}
 	.ui-autocomplete .elnCopyFromNb{margin-left:10px;font-size:12px;color:#9b8c7e;}
+	/* 노트북 ⋯ 메뉴 정보 줄(Sharing · Shared With You) — Color 줄과 같은 라벨 + 글 */
+	.elnNbInfoRow{gap:3px;}
+	.elnNbInfoRow .tx{font-size:13px;color:#3a2c24;line-height:1.45;}
+	/* 노트북 공유 창 — People with access(공유 중인 사람 칩, × = 해제) */
+	.elnShareWho{display:flex;flex-wrap:wrap;align-items:center;gap:6px 8px;margin:4px 0 12px;}
+	.elnShareWho .lb{font-size:12px;color:#9b8c7e;margin-right:4px;}
+	.elnShareChip{display:inline-flex;align-items:center;gap:6px;height:28px;padding:0 4px 0 3px;border-radius:14px;background:rgba(164,120,100,.10);font-size:13px;color:#3a2c24;}
+	.elnShareChip .elnUserAv{width:22px;height:22px;font-size:10px;}
+	.elnShareChip .elnNbShareRevoke{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;color:#9b8c7e;}
+	.elnShareChip .elnNbShareRevoke:hover{background:rgba(164,120,100,.18);color:#7a5240;}
+	.elnShareChip .elnNbShareRevoke i{font-size:16px;}
+	.elnShareNone{font-size:13px;color:#b3a596;}
 	</style>
 </head>
 <body>
@@ -174,11 +186,20 @@
 				<div class="elnNbGrpLabel" style="margin-top:4px;">MY NOTEBOOKS</div>
 				<!-- My Notebooks — 이 안에서만 드래그 정렬 -->
 				<div class="elnNbGroup" data-group="my">
-					<div class="elnNbItem" data-nb="rgboled"><i class="material-symbols-outlined fill">folder</i><span class="nm">RGBOLED Adhesive</span><span class="ct">6</span></div>
+					<!-- 내가 공유한 노트북 = 아이콘만 folder_shared(공유 정보·공유하기는 ⋯ 메뉴) -->
+					<div class="elnNbItem" data-nb="rgboled"><i class="material-symbols-outlined fill">folder_shared</i><span class="nm">RGBOLED Adhesive</span><span class="ct">6</span></div>
 					<div class="elnNbItem" data-nb="foled"><i class="material-symbols-outlined fill">folder</i><span class="nm">Flexible OLED</span><span class="ct">3</span></div>
 					<div class="elnNbItem" data-nb="optical"><i class="material-symbols-outlined fill">folder</i><span class="nm">Optical Clear Resin</span><span class="ct">2</span></div>
+					<!-- Shared Notebooks 를 다시 켜면 이 줄은 지우고 아래 그룹의 customerA 를 쓴다 -->
 					<div class="elnNbItem" data-nb="customerA"><i class="material-symbols-outlined fill">folder</i><span class="nm">Customer A Project</span><span class="ct">4</span></div>
 				</div>
+				<!-- Shared Notebooks = 남이 나에게 공유한 노트북(apis_eln_list 의 그룹을 다시 넣음, 2026-10-21). 이름·삭제·색 변경 없음, ⋯ 메뉴는 공유 정보 + Remove(내 목록에서 빼기)만.
+				     빠질 수 있어 코드만 넣고 주석 처리(사용자 2026-10-21). 켜려면: 이 주석을 풀고, 위 My Notebooks 의 customerA 줄을 지우고, NB.customerA 의 owner·sharedOn 주석을 푼다
+				<div class="elnNbGrpLabel">SHARED NOTEBOOKS</div>
+				<div class="elnNbGroup" data-group="shared">
+					<div class="elnNbItem" data-nb="customerA"><i class="material-symbols-outlined fill">folder_shared</i><span class="nm">Customer A Project</span><span class="ct">4</span></div>
+				</div>
+				-->
 				<a href="javascript:;" id="elnNewNotebook" class="waves-effect waves-light hBtn elnNbNewBtn"><i class="material-symbols-outlined left">create_new_folder</i><span class="label">New Notebook</span></a>
 			</aside>
 
@@ -288,6 +309,15 @@
 			<div class="closeBtns modal-close"><i class="material-icons">close</i></div>
 		</div>
 		<div class="modal-content" id="elnShareBody"><!-- JS 렌더 --></div>
+	</div>
+
+	<!-- 노트북 공유 모달 — ⋯ 메뉴 Share… (공유 중인 사람 + 동료 퀵서치) -->
+	<div id="elnNbShareModal" class="modal elnShareModal">
+		<div class="modal-header mochaBg">
+			<h5><i class="material-icons left">share</i>Share Notebook</h5>
+			<div class="closeBtns modal-close"><i class="material-icons">close</i></div>
+		</div>
+		<div class="modal-content" id="elnNbShareBody"><!-- JS 렌더 --></div>
 	</div>
 
 	<script>
@@ -513,6 +543,67 @@
 		setTimeout(function(){ try{ document.getElementById('elnShareSearch').focus(); }catch(e){} }, 120);
 	}
 
+	/* ── 노트북 공유(내 노트북 → 동료) — ⋯ 메뉴 'Share…' 로 여는 창(2026-10-21). 동료 표 모양은 위 공유 창과 같음.
+	   위 'People with access' = 지금 공유 중인 사람(× = 공유 해제). 공유 대상이 있으면 패널 아이콘 folder_shared ── */
+	var nbShareKey = null;
+	function userById(id){ return ELN_USERS.filter(function(u){ return u.id === id; })[0]; }
+	function userInitials(name){ return name.replace(/[^A-Za-z.\s]/g,'').split(/[.\s]+/).filter(Boolean).map(function(p){ return p[0]; }).slice(0,2).join('').toUpperCase(); }   // 'J.W. Seo' → 'JW'(옛 리스트와 같은 규칙)
+	function sharedNames(key){ return (NB[key].sharedWith || []).map(function(id){ var u = userById(id); return u ? u.name : id; }); }
+	function renderNbShare(q){
+		var ids = NB[nbShareKey].sharedWith || [];
+		document.getElementById('elnNbShareWho').innerHTML = '<span class="lb">People with access</span>' + (ids.length ? ids.map(function(id){
+			var u = userById(id); if(!u) return '';
+			return '<span class="elnShareChip"><span class="elnUserAv">'+esc(userInitials(u.name))+'</span>'+esc(u.name)
+				+ '<a href="javascript:;" class="elnNbShareRevoke" data-id="'+esc(u.id)+'" title="Stop sharing"><i class="material-symbols-outlined">close</i></a></span>';
+		}).join('') : '<span class="elnShareNone">Only you</span>');
+		var ql = (q||'').toLowerCase();
+		var matches = ELN_USERS.filter(function(u){ return (u.name+' '+u.team+' '+u.id).toLowerCase().indexOf(ql)>=0; });
+		document.getElementById('elnNbShareList').innerHTML = matches.length ? matches.map(function(u){
+			return '<tr><td class="al">'+esc(u.name)+'</td><td class="al">'+esc(u.team)+'</td>'
+				+ '<td class="ac">'+(ids.indexOf(u.id) >= 0
+					? '<i class="material-symbols-outlined elnSentIco" title="Shared">check_circle</i>'
+					: '<a href="javascript:;" class="waves-effect waves-light hBtn hSmall elnNbShareSend" data-id="'+esc(u.id)+'"><i class="material-symbols-outlined left">send</i><span class="label">Send</span></a>')
+				+ '</td></tr>';
+		}).join('') : '<tr><td colspan="3" class="al elnTblEmpty">No colleagues match.</td></tr>';
+		if(typeof initAllHBorderTableOverlays === 'function') initAllHBorderTableOverlays(document.getElementById('elnNbShareBody'));
+	}
+	function openShareNotebook(key){
+		if(!NB[key]) return;
+		nbShareKey = key;
+		document.getElementById('elnNbShareBody').innerHTML =
+			'<div class="cardSubTit">Share “'+esc(NB[key].name)+'”</div>'
+			+ '<div class="elnShareWho" id="elnNbShareWho"></div>'
+			+ '<div class="aniInput elnShareSrch"><input type="text" class="browser-default" id="elnNbShareSearch" placeholder="Search colleagues…" autocomplete="off"><span class="focus-border"></span></div>'
+			+ '<div class="elnTblWrap"><table class="fixedTable hBorderTable vMiddle mg10">'
+			+ '<thead><tr><th class="al">Colleague</th><th class="al">Team</th><th class="ac elnShareColAct">Send</th></tr></thead>'
+			+ '<tbody id="elnNbShareList"></tbody></table></div>';
+		renderNbShare('');
+		M.Modal.getInstance(document.getElementById('elnNbShareModal')).open();
+		setTimeout(function(){ try{ document.getElementById('elnNbShareSearch').focus(); }catch(e){} }, 120);
+	}
+	// 공유 대상이 생기거나 다 빠지면 아이콘 folder_shared ↔ folder (패널·헤더·노트 행)
+	function syncShareIcon(key){
+		var nb = NB[key]; if(!nb || nb.owner) return;
+		var icon = (nb.sharedWith && nb.sharedWith.length) ? 'folder_shared' : 'folder';
+		if(nb.icon === icon) return;
+		nb.icon = icon;
+		var ic = document.querySelector('.elnNbItem[data-nb="' + key + '"] > i'); if(ic) ic.textContent = icon;
+		if(curNbKey === key){ var hi = document.getElementById('nbIcon'); if(hi) hi.textContent = icon; }
+		var keep = curSummaryNote && curSummaryNote.code;   // 노트 행의 노트북 아이콘(_nbIcon)도 새로
+		if(curSearch){ runSearch(curSearch); if(keep) reselectByCode(keep); }
+		else { renderNotes(curNbKey); applyView(); if(keep) reselectByCode(keep); }
+	}
+	function nbShareSet(id, on){
+		var nb = NB[nbShareKey], u = userById(id); if(!nb || !u) return;
+		var ids = nb.sharedWith = nb.sharedWith || [];
+		var i = ids.indexOf(id);
+		if(on && i < 0) ids.push(id); else if(!on && i >= 0) ids.splice(i, 1); else return;
+		ELN.toast(on ? 'Shared “' + nb.name + '” with ' + u.name + '.' : 'Stopped sharing with ' + u.name + '.', 'ok');
+		syncShareIcon(nbShareKey);
+		var s = document.getElementById('elnNbShareSearch');
+		renderNbShare(s ? s.value : '');
+	}
+
 	// 노트북별 노트셋 (요약·계보 데이터 포함, 데모 목업)
 	var NB = {
 		unfiled: { name:'No Notebook', icon:'folder_off', notes:[
@@ -520,7 +611,8 @@
 			{code:'LN-2606-00004', title:'Lab meeting memo: June experiment planning', st:'ok', ver:'', cat:'General', fml:'', tags:[], author:'J.P. Kim', date:'2026-05-31'}
 		]},
 		// history = parent 링크로 계산(저장 X). rgboled는 분기 트리: 098 ├118(├142 └097) └072
-		rgboled: { name:'RGBOLED Adhesive', icon:'folder', notes:[
+		// sharedWith = 내가 이 노트북을 공유한 동료(ELN_USERS id). 있으면 아이콘 folder_shared
+		rgboled: { name:'RGBOLED Adhesive', icon:'folder_shared', sharedWith:['jwseo','hwcho'], notes:[
 			{code:'LN-2605-00142', title:'UV-Curable PSA Viscosity Improvement (RGBOLED)', st:'ing', ver:'v3', cat:'Formulation', fml:'FML-EM-2208', tags:['#viscosity','#RGBOLED'], author:'J.P. Kim', date:'2026-05-28', parent:'LN-2605-00118'},
 			{code:'LN-2605-00118', title:'Viscosity Modifier ratio tuning (v2)', st:'appr', ver:'v2', cat:'Formulation', fml:'FML-EM-2207', tags:['#viscosity'], author:'J.P. Kim', date:'2026-05-27', parent:'LN-2605-00098'},
 			{code:'LN-2605-00097', title:'Cure rate vs UV dose: condition sweep', st:'ok', ver:'v1', cat:'Formulation', fml:'', tags:['#UVcure'], author:'J.P. Kim', date:'2026-05-24', parent:'LN-2605-00118'},
@@ -537,7 +629,8 @@
 			{code:'LN-2603-00120', title:'Haze reduction: final formulation', st:'ok', ver:'v3', cat:'Formulation', fml:'FML-OC-3310', tags:['#haze'], author:'M.J. Lee', date:'2026-03-28'},
 			{code:'LN-2603-00088', title:'Yellowing aging test (85°C/85%RH)', st:'ing', ver:'v1', cat:'Formulation', fml:'FML-OC-3308', tags:['#aging'], author:'M.J. Lee', date:'2026-03-12'}
 		]},
-		customerA: { name:'Customer A Project', icon:'folder', notes:[
+		// owner = 나에게 공유한 사람(Shared Notebooks 그룹), sharedOn = 공유받은 날 — 그룹 주석 처리 중이라 같이 주석(켤 때 icon:'folder_shared' 로)
+		customerA: { name:'Customer A Project', icon:'folder', /* owner:'ehan', sharedOn:'2026-05-10', */ notes:[
 			{code:'LN-2605-00301', title:'Customer A: OCR spec review', st:'ing', ver:'', cat:'General', fml:'', tags:['#customerA'], author:'J.P. Kim', date:'2026-05-30'},
 			{code:'LN-2605-00288', title:'Adhesion to PET film', st:'ok', ver:'v2', cat:'Formulation', fml:'FML-CA-4410', tags:['#adhesion'], author:'J.P. Kim', date:'2026-05-26'},
 			{code:'LN-2605-00270', title:'Cost-down reformulation', st:'appr', ver:'v1', cat:'Formulation', fml:'FML-CA-4408', tags:['#costdown'], author:'J.P. Kim', date:'2026-05-20'},
@@ -1228,7 +1321,7 @@
 		});
 	}
 	/* ── 노트북 색상(혼합: 그룹 기본 + 개별 덮어쓰기). 색은 NB[key].color에 저장 ── */
-	var NB_GROUP_COLOR = { my:'#A47864', unfiled:'#b3a596' }; // 그룹 기본색
+	var NB_GROUP_COLOR = { my:'#A47864', shared:'#A47864', unfiled:'#b3a596' }; // 그룹 기본색(Shared 도 My 와 같음)
 	// 큐레이션 빠른 팔레트 10색 — PANTONE 2025·2026 혼합(첫=mocha25=그룹 기본). mocha/cfblue/tendril/viola/rose + willow/sea26/blue26/choco/stone
 	var NB_PALETTE = ['#A47864','#7391C8','#8ca571','#a893bd','#D19C97','#9B8B50','#89BDD3','#4D677D','#56443F','#A89A8E'];
 	// 확장 팔레트 = mpm_materialize.css에서 추출한 머티리얼 색(패밀리 × lighten-5~darken-4). [이름, [10shade]]
@@ -1254,7 +1347,7 @@
 		["GREY",['#FAFAFA','#F5F5F5','#EEEEEE','#E0E0E0','#BDBDBD','#9E9E9E','#757575','#616161','#424242','#212121']],
 		["BLACK",['#000000']]
 	];
-	function nbGroupOf(key){ return (key === 'unfiled') ? 'unfiled' : 'my'; }
+	function nbGroupOf(key){ if(key === 'unfiled') return 'unfiled'; return (NB[key] && NB[key].owner) ? 'shared' : 'my'; }   // owner 있음 = 남이 공유해 준 노트북
 	function nbColor(key){ return (NB[key] && NB[key].color) || NB_GROUP_COLOR[nbGroupOf(key)] || '#A47864'; }
 	// 좌측 패널 항목의 폴더 아이콘에 색 반영(직속 i만 — ⋯ 아이콘 제외)
 	function applyNbColor(item){
@@ -1274,8 +1367,9 @@
 		else if(curSummaryNote && curSummaryNote._nb === key) renderSummary(curSummaryNote);            // 요약 점 갱신
 		ELN.toast(color ? 'Notebook color updated.' : 'Color reset to group default.', 'ok');
 	}
-	// ⋯ 클릭 → Color 스와치 + Rename/Delete 팝오버
+	// ⋯ 클릭 → Color 스와치 + Sharing(공유 정보) + Share…/Rename/Delete 팝오버. 남이 공유해 준 노트북은 공유 정보 + Remove 만
 	function openNbMenu(anchor, key){
+		if(nbGroupOf(key) === 'shared'){ openSharedNbMenu(anchor, key); return; }
 		var menu = document.createElement('div'); menu.className = 'elnNbPopList';
 		// Color: 큐레이션 10색(첫=그룹 기본) + materialize 전체(항상 표시·세로 스크롤). 기본색 클릭 = override 해제
 		var cur = NB[key] && NB[key].color;
@@ -1298,7 +1392,10 @@
 		crow.appendChild(sw);
 		// materialize 전체 — 항상 표시, 세로 스크롤
 		menu.appendChild(crow);
-		[['edit', 'Rename', renameNotebook], ['delete', 'Delete', deleteNotebook]].forEach(function(row){
+		// Sharing: 지금 공유 중인 사람(없으면 Only you). 공유하기·해제는 Share… 창에서
+		var names = sharedNames(key);
+		menu.appendChild(nbInfoRow('Sharing', [names.length ? 'Shared with ' + names.join(', ') : 'Only you']));
+		[['person_add', 'Share…', openShareNotebook], ['edit', 'Rename', renameNotebook], ['delete', 'Delete', deleteNotebook]].forEach(function(row){
 			var el = document.createElement('div'); el.className = 'elnNbPopItem' + (row[0] === 'delete' ? ' danger' : '');
 			var ic = document.createElement('i'); ic.className = 'material-symbols-outlined'; ic.textContent = row[0];
 			var nm = document.createElement('span'); nm.textContent = row[1];
@@ -1307,6 +1404,48 @@
 			menu.appendChild(el);
 		});
 		var ref = ELN.popover({ anchor: anchor, content: menu, width: 260 }); // 큐레이션 10색·머티리얼 10/행을 한 줄에 수용
+	}
+	// ⋯ 메뉴의 정보 줄(라벨 + 글 몇 줄) — Color 줄과 같은 모양
+	function nbInfoRow(label, lines){
+		var row = document.createElement('div'); row.className = 'elnNbColorRow elnNbInfoRow';
+		var lb = document.createElement('span'); lb.className = 'lb'; lb.textContent = label; row.appendChild(lb);
+		lines.forEach(function(t){ var s = document.createElement('span'); s.className = 'tx'; s.textContent = t; row.appendChild(s); });
+		return row;
+	}
+	/* ── Shared Notebooks(남이 나에게 공유한 노트북) — 이름·삭제·색 변경 없음. ⋯ = 공유 정보 + Remove(내 목록에서 빼기)만.
+	   그룹은 지금 주석 처리(사용자 2026-10-21 "빠질 수 있어 코드만") — HTML·NB.customerA 주석을 풀면 동작 ── */
+	function openSharedNbMenu(anchor, key){
+		var nb = NB[key]; if(!nb) return;
+		var u = userById(nb.owner);
+		var menu = document.createElement('div'); menu.className = 'elnNbPopList';
+		var since = String(nb.sharedOn || '').replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$2-$3-$1');   // MM-DD-YYYY
+		menu.appendChild(nbInfoRow('Shared With You', ['Owner: ' + (u ? u.name + ' (' + u.team + ')' : nb.owner)].concat(since ? ['Since ' + since] : [])));
+		var el = document.createElement('div'); el.className = 'elnNbPopItem danger';
+		el.innerHTML = '<i class="material-symbols-outlined">person_remove</i><span>Remove</span>';
+		el.addEventListener('click', function(){ ref.close(); removeSharedNotebook(key); });
+		menu.appendChild(el);
+		var ref = ELN.popover({ anchor: anchor, content: menu, width: 260 });
+	}
+	// Remove = 내 Shared Notebooks 에서만 뺌(노트북·노트는 주인에게 그대로)
+	function removeSharedNotebook(key){
+		var nb = NB[key]; if(!nb) return;
+		var u = userById(nb.owner);
+		ELN.modal({
+			title: 'Remove Shared Notebook', icon: 'person_remove',
+			body: 'Remove "' + nb.name + '" from your Shared Notebooks? The notebook and its notes stay with ' + (u ? u.name : 'the owner') + '. You will need to be shared again to see it.',
+			actions: [
+				{ label: 'Remove', type: 'elnDanger', onClick: function(){
+					delete NB[key];
+					var item = document.querySelector('.elnNbItem[data-nb="' + key + '"]'); if(item) item.remove();
+					refreshNbCounts();
+					ELN.toast('Removed "' + nb.name + '" from Shared Notebooks.', 'ok');
+					if(curNbKey === key){ var all = document.querySelector('.elnNbItem.elnNbAll'); if(all) all.click(); }
+					else if(curSearch) runSearch(curSearch);
+					else if(curNbKey === 'all'){ renderNotes('all'); applyView(); }
+				} },
+				{ label: 'Cancel', type: 'hGrey' }
+			]
+		});
 	}
 	// 항목에 ⋯ 버튼 부착(시스템 항목 제외). 카운트엔 hasMore 표식 → hover 시 스왑
 	function decorateNbItem(item){
@@ -1453,6 +1592,19 @@
 		});
 		document.getElementById('elnShareBody').addEventListener('input', function(e){
 			if(e.target && e.target.id === 'elnShareSearch') renderShareList(e.target.value);
+		});
+		// 노트북 공유 모달 — Send = 공유, 칩 × = 공유 해제, 검색 = 필터
+		$('#elnNbShareModal').modal({
+			onOpenStart: function(){ $('header, .menuAside, .contArea').addClass('modalBlur'); },
+			onCloseStart: function(){ $('header, .menuAside, .contArea').removeClass('modalBlur'); }
+		});
+		document.getElementById('elnNbShareBody').addEventListener('click', function(e){
+			var send = e.target.closest('.elnNbShareSend'), rv = e.target.closest('.elnNbShareRevoke');
+			if(send) nbShareSet(send.getAttribute('data-id'), true);
+			else if(rv) nbShareSet(rv.getAttribute('data-id'), false);
+		});
+		document.getElementById('elnNbShareBody').addEventListener('input', function(e){
+			if(e.target && e.target.id === 'elnNbShareSearch') renderNbShare(e.target.value);
 		});
 		// 노트 리스트 행 틸트 비활성 — 엔진(.mainList li) 핸들러보다 늦게 바인딩되어 인라인 transform 을 상쇄
 		$(document).on('mousemove mouseleave', '.elnNotePanel .mainList li', function(){ this.style.transform = ''; });
