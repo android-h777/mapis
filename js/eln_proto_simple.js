@@ -666,12 +666,12 @@
   //   'fml'=정적 Formulation 리치카드(show/hide로 보존), 나머지는 addNoteModule로 동적 재생성.
   //   노트마다 모듈 종류·개수가 달라 카드 수와 좌측 목차가 실제로 바뀜.
   var PROJECT_NOTES = [
-    { code: 'NT-2604-00098', title: 'PSA Base Polymer Screening',                         date: '2026-04-12', status: 'done',   modules: ['fml','table','editor'] },
-    { code: 'NT-2604-00115', title: 'Tackifier Compatibility Study',                       date: '2026-04-28', status: 'done',   modules: ['fml','table','chem'] },
-    { code: 'NT-2605-00131', title: 'Crosslinker Ratio Optimization',                      date: '2026-05-06', status: 'review', modules: ['fml','table','editor','attach'] },
-    { code: 'NT-2605-00142', title: 'UV-Curable PSA Viscosity Improvement (RGBOLED)',      date: '2026-05-15', created: '2026-10-06', status: 'ing', current: true, projects: ['SN-26-0031', 'PT-26-0021', 'TS-26-0205'], modules: ['fml','editor','table','chem','attach'] },
-    { code: 'NT-2605-00150', title: 'Pilot Coating Trial #1',                              date: '2026-05-22', status: 'ing',    modules: ['editor','attach'] },
-    { code: 'NT-2606-00171', title: 'Mass-Production Validation Plan',                     date: '2026-06-03', status: 'draft',  modules: ['editor'] }
+    { code: 'LN-2604-00098', title: 'PSA Base Polymer Screening',                         date: '2026-04-12', status: 'done',   modules: ['fml','table','editor'] },
+    { code: 'LN-2604-00115', title: 'Tackifier Compatibility Study',                       date: '2026-04-28', status: 'done',   modules: ['fml','table','chem'] },
+    { code: 'LN-2605-00131', title: 'Crosslinker Ratio Optimization',                      date: '2026-05-06', status: 'review', modules: ['fml','table','editor','attach'] },
+    { code: 'LN-2605-00142', title: 'UV-Curable PSA Viscosity Improvement (RGBOLED)',      date: '2026-05-15', created: '2026-10-06', status: 'ing', current: true, projects: ['SN-26-0031', 'PT-26-0021', 'TS-26-0205'], modules: ['fml','editor','table','chem','attach'] },
+    { code: 'LN-2605-00150', title: 'Pilot Coating Trial #1',                              date: '2026-05-22', status: 'ing',    modules: ['editor','attach'] },
+    { code: 'LN-2606-00171', title: 'Mass-Production Validation Plan',                     date: '2026-06-03', status: 'draft',  modules: ['editor'] }
   ];
   // 노트 상태 표기는 결재 상태 하나로 통일(사용자 2026-10-16: "뭐든 하나로") — In Progress → In Approval → Approved.
   // 옛 키(done/review/draft)는 데이터 호환용으로만 남기고 같은 세 문구로 표시
@@ -756,9 +756,9 @@
       // 노트별 모듈 구성 적용(하드코딩 데모 노트만 — opener 노트는 modules 없음 → 콘텐츠 유지)
       if (ELN.signoff && ELN.signoff.clear) ELN.signoff.clear();   // 이전 노트의 제출 상태가 setFmlVisible/applyNoteModules의 refresh로 재계산(ok 재진입)되지 않게 비움
       var projs = projectsOf(n);   // 노트별 연결 프로젝트 — Basic Data Related Items 의 Project 칩으로(로그 없이)
-      ATTACH_SEED = (n.code === 'NT-2605-00142');   // 데모 노트로 돌아오면 첨부 시드 다시
+      ATTACH_SEED = (n.code === 'LN-2605-00142');   // 데모 노트로 돌아오면 첨부 시드 다시
       try {
-        if (n.modules) { applyNoteModules(n.modules); resetBasicRelated(projs, n.code === 'NT-2605-00142'); }
+        if (n.modules) { applyNoteModules(n.modules); resetBasicRelated(projs, n.code === 'LN-2605-00142'); }
         else { setFmlVisible(!!n.fml); setNoteProjects(projs); }   // opener 노트: 실제 fml 유무로 Formulation 카드만 동기화(리스트 마크와 일치), Related 의 Project 칩만 교체
       } finally { ATTACH_SEED = false; }
       if (soSt === 'ok') { apprView = true; setNoteApproved(true); }   // 모듈 재구성 뒤 새 입력들도 읽기전용
@@ -974,15 +974,15 @@
 
   /* ── Task6: History = parent 포인터로 계산하는 파생 트리(분기 지원) ──
      apis_eln_list.html과 동일 모델. 계보를 배열로 저장하지 않고 각 노트의 parent만 두고
-     트리를 유도한다(git 커밋 그래프식). 데이터는 list의 RGBOLED 노트북 서브트리(NT-코드)와 일치. */
+     트리를 유도한다(git 커밋 그래프식). 데이터는 list의 RGBOLED 노트북 서브트리(LN-코드)와 일치. */
   var LINEAGE_NOTES = [
-    { code: 'NT-2605-00098', title: 'Initial trial: spec not met',                     st: 'ok', ver: 'v1', date: '2026-05-21', nb: 'Flexible OLED',      project: 'SN-26-0018' },
-    { code: 'NT-2605-00118', title: 'Viscosity Modifier ratio tuning (v2)',           st: 'appr', ver: 'v2', date: '2026-05-27', parent: 'NT-2605-00098', nb: 'RGBOLED Adhesive',   project: 'SN-26-0031' },
-    { code: 'NT-2605-00097', title: 'Cure rate vs UV dose: condition sweep',           st: 'ok',   ver: 'v1', date: '2026-05-24', parent: 'NT-2605-00118', nb: 'RGBOLED Adhesive',   project: 'SN-26-0031' },
-    { code: 'NT-2605-00072', title: 'Crosslinker screening for adhesion',             st: 'ing',  ver: '',   date: '2026-05-15', parent: 'NT-2605-00098', nb: 'Crosslinker Studies', project: 'SN-26-0031' },
-    { code: 'NT-2605-00142', title: 'UV-Curable PSA Viscosity Improvement (RGBOLED)', st: 'ing',  ver: 'v3', date: '2026-05-28', parent: 'NT-2605-00118', nb: 'RGBOLED Adhesive',   project: 'SN-26-0031' }
+    { code: 'LN-2605-00098', title: 'Initial trial: spec not met',                     st: 'ok', ver: 'v1', date: '2026-05-21', nb: 'Flexible OLED',      project: 'SN-26-0018' },
+    { code: 'LN-2605-00118', title: 'Viscosity Modifier ratio tuning (v2)',           st: 'appr', ver: 'v2', date: '2026-05-27', parent: 'LN-2605-00098', nb: 'RGBOLED Adhesive',   project: 'SN-26-0031' },
+    { code: 'LN-2605-00097', title: 'Cure rate vs UV dose: condition sweep',           st: 'ok',   ver: 'v1', date: '2026-05-24', parent: 'LN-2605-00118', nb: 'RGBOLED Adhesive',   project: 'SN-26-0031' },
+    { code: 'LN-2605-00072', title: 'Crosslinker screening for adhesion',             st: 'ing',  ver: '',   date: '2026-05-15', parent: 'LN-2605-00098', nb: 'Crosslinker Studies', project: 'SN-26-0031' },
+    { code: 'LN-2605-00142', title: 'UV-Curable PSA Viscosity Improvement (RGBOLED)', st: 'ing',  ver: 'v3', date: '2026-05-28', parent: 'LN-2605-00118', nb: 'RGBOLED Adhesive',   project: 'SN-26-0031' }
   ];
-  var CURRENT_CODE = 'NT-2605-00142';  // 지금 보고 있는 노트(헤더 [NT-2605-00142]와 일치)
+  var CURRENT_CODE = 'LN-2605-00142';  // 지금 보고 있는 노트(헤더 [LN-2605-00142]와 일치)
   var newVerSeq = 3;                   // 현재 v3 → "New version"은 v4부터
 
   function lineageIndex() { var idx = {}; LINEAGE_NOTES.forEach(function (n) { idx[n.code] = n; }); return idx; }
@@ -1050,7 +1050,7 @@
       e.preventDefault();
       newVerSeq += 1;
       var ver = 'v' + newVerSeq;
-      var code = 'NT-2605-00' + (142 + newVerSeq - 3);  // 데모용 신규 코드(143, 144 …)
+      var code = 'LN-2605-00' + (142 + newVerSeq - 3);  // 데모용 신규 코드(00143, 00144 …) — 노트 번호 = LN-(YYMM)-(5자리 순번)
       LINEAGE_NOTES.push({
         code: code, title: 'New version (draft)', st: 'ing', ver: ver,
         date: '2026-05-29', parent: CURRENT_CODE, _new: true
@@ -1160,13 +1160,13 @@
       for (var k in extra) o[k] = extra[k];
       LOG.push(o);
     }
-    // 노트별 목업 이력 — note 없음 = 처음 열린 노트(NT-2605-00142) 전체 시드, 그 외 노트는 생성 기록만
+    // 노트별 목업 이력 — note 없음 = 처음 열린 노트(LN-2605-00142) 전체 시드, 그 외 노트는 생성 기록만
     function seedFor(note) {
       if (note && note.clonedFrom) {   // 복제된 노트 — 생성 기록 1건(현재 시각)
         seed(stamp(), ELN.currentUser, 'Basic Data', 'Note created', { detail: note.cloneDetail || ('Copied from ' + note.clonedFrom.code) });
         return;
       }
-      if (note && note.code !== 'NT-2605-00142') {
+      if (note && note.code !== 'LN-2605-00142') {
         var d = note.date || '2026-10-01';
         seed(d + ' 09:00', 'Charles Kim', 'Basic Data', 'Note created', { detail: note.code + (note.title ? ': ' + note.title : '') });
         return;
@@ -1189,11 +1189,11 @@
       seed('2026-10-10 11:18', 'Min-ji Park', 'Basic Data', 'Tag added', { detail: '#viscosity' });   // 편집은 Co-editor 만(Viewer 는 조회)
       seed('2026-10-10 14:05', 'Charles Kim', 'Formulation, Data Visualization', 'Access granted', { detail: 'Sarah Chen · Viewer · Formulation, Data Visualization' + POL });
     }
-    // 초기 로드 노트 — ?code 가 없거나 NT-2605-00142면 전체 데모 시드(null), 그 외는 전환 때와 같은 '생성 기록만' 시드
+    // 초기 로드 노트 — ?code 가 없거나 LN-2605-00142면 전체 데모 시드(null), 그 외는 전환 때와 같은 '생성 기록만' 시드
     function initialNote() {
       var code = '';
       try { code = new URLSearchParams(location.search).get('code') || ''; } catch (e) {}
-      if (!code || code === 'NT-2605-00142') return null;
+      if (!code || code === 'LN-2605-00142') return null;
       var n = null;
       try {
         var op = window.opener;
@@ -2672,7 +2672,7 @@
 
   /* 프로젝트 연결 — Related Items 의 'Project' 칩(2026-10-16: Associated Project·Primary·Stage 제거, 2026-10-21: Related Items 가 Basic Data 안으로).
      프로젝트 연결은 노트 메타데이터 — 노트 접근 권한과 무관. 상태는 DOM(li.elnRelItem[data-proj])이 원본 */
-  var DEMO_PROJ = ['SN-26-0031', 'PT-26-0021', 'TS-26-0205'];   // NT-2605-00142 데모: NPI + 공정이관(NPT) + Tech Support — 리스트 시드와 동일
+  var DEMO_PROJ = ['SN-26-0031', 'PT-26-0021', 'TS-26-0205'];   // LN-2605-00142 데모: NPI + 공정이관(NPT) + Tech Support — 리스트 시드와 동일
   var RELATED_SEED = null;   // wireRelatedModule 이 처음 배선할 때 시드할 프로젝트 코드(initBasicRelated 가 잠깐 채움, null = 시드 안 함)
   function projByCode(c) { return MAPIS_PROJECTS.filter(function (p) { return p.c === c; })[0] || null; }
   function projBracket(c) { var p = projByCode(c); return p ? '[' + c + '] ' + p.t : '[' + c + ']'; }
@@ -2685,7 +2685,7 @@
     var p = null; try { p = new URLSearchParams(location.search); } catch (e) {}
     var code = p ? (p.get('code') || '') : '', pj = p ? (p.get('project') || '') : '';
     if (p && p.get('tmpl')) return pj ? [pj] : [];   // 새 노트(템플릿)는 프로젝트 없이 시작 — 리스트가 project 를 넘기면 그것만
-    if (!code || code === 'NT-2605-00142') return DEMO_PROJ.slice();
+    if (!code || code === 'LN-2605-00142') return DEMO_PROJ.slice();
     if (pj) return [pj];
     return projectsOf(PROJECT_NOTES.filter(function (n) { return n.code === code; })[0]);
   }
@@ -2879,7 +2879,7 @@
     if (!q) return;
     if (q.get('tmpl')) { setCreatedDate(''); return; }   // 템플릿으로 만든 새 노트 — 아직 저장 전
     var code = q.get('code') || '';
-    if (!code || code === 'NT-2605-00142') return;     // 데모 노트는 HTML 값(10-06-2026 = Audit 'Note created')
+    if (!code || code === 'LN-2605-00142') return;     // 데모 노트는 HTML 값(10-06-2026 = Audit 'Note created')
     var n = null;
     try { var op = window.opener; if (op && !op.closed && op.NOTES) n = op.NOTES.filter(function (x) { return x.code === code; })[0] || null; } catch (e2) {}
     if (!n) n = PROJECT_NOTES.filter(function (x) { return x.code === code; })[0] || null;
@@ -2966,7 +2966,7 @@
   }
   // 다른 노트 링크(?code=)·Copy To 새 창(?copyFrom=)은 load 뒤(220/450ms)에 노트를 바꾸며 목차를 다시 만듦 → 그 뒤에 한 번만 등장
   var NAV_INTRO_LATE = (function () {
-    try { var q = new URLSearchParams(location.search), c = q.get('code'); return !!q.get('copyFrom') || (!!c && c !== 'NT-2605-00142'); } catch (e) { return false; }
+    try { var q = new URLSearchParams(location.search), c = q.get('code'); return !!q.get('copyFrom') || (!!c && c !== 'LN-2605-00142'); } catch (e) { return false; }
   })();
   if (NAV_INTRO_LATE) window.addEventListener('load', function () { setTimeout(playNavIntro, 650); });
   else {
@@ -3221,7 +3221,7 @@
   }
   function attFrozen(li) { var b = document.body.classList; return b.contains('elnApproved') || b.contains('elnTranslated') || !!li.closest('.elnLocked'); }   // 번역 보기 중에도 읽기 전용
 
-  // 데모 노트(NT-2605-00142) 첨부 시드 — 파일 서버에 이미 올라가 있는 파일들(목업). ATTACH_SEED 가 켜진 동안 만들어지는 Attachments 모듈에만
+  // 데모 노트(LN-2605-00142) 첨부 시드 — 파일 서버에 이미 올라가 있는 파일들(목업). ATTACH_SEED 가 켜진 동안 만들어지는 Attachments 모듈에만
   var ATTACH_SEED = false;
   var DEMO_ATTACH = [
     { name: 'Viscosity_Results.xlsx', vers: [
@@ -3236,7 +3236,7 @@
     var p = null; try { p = new URLSearchParams(location.search); } catch (e) {}
     if (p && p.get('tmpl')) return false;
     var code = p ? (p.get('code') || '') : '';
-    return !code || code === 'NT-2605-00142';
+    return !code || code === 'LN-2605-00142';
   }
   function seedAttachments(list) {
     DEMO_ATTACH.forEach(function (a) {
@@ -3515,7 +3515,7 @@
     pg.innerHTML = '<div class="elnPvPage">'
       + '<div class="dh"><span>MAPIS R&amp;D · Test Report</span><span>TR-2610-0087</span></div>'
       + '<h3>Test Report: UV-Curable PSA for RGBOLED</h3>'
-      + '<table class="kv"><tr><th>Note</th><td>[NT-2605-00142] UV-Curable PSA Viscosity Improvement (RGBOLED)</td></tr><tr><th>Author</th><td>Charles Kim</td></tr><tr><th>Test Date</th><td>10-08-2026</td></tr><tr><th>Lab</th><td>Adhesives Lab 2, Building C</td></tr></table>'
+      + '<table class="kv"><tr><th>Note</th><td>[LN-2605-00142] UV-Curable PSA Viscosity Improvement (RGBOLED)</td></tr><tr><th>Author</th><td>Charles Kim</td></tr><tr><th>Test Date</th><td>10-08-2026</td></tr><tr><th>Lab</th><td>Adhesives Lab 2, Building C</td></tr></table>'
       + '<h4>1. Objective</h4><p>Confirm that lowering the formulation viscosity to the 3,500 to 5,000 cP window keeps peel strength and optical clarity within the RGBOLED customer specification.</p>'
       + '<h4>2. Test Conditions</h4><table class="tb"><tr><th>Item</th><th>Condition</th></tr><tr><td>UV Source</td><td>LED 395 nm, 1,200 mJ/cm²</td></tr><tr><td>Substrate</td><td>PET 50 µm / Glass</td></tr><tr><td>Coat Thickness</td><td>25 µm (dry)</td></tr><tr><td>Conditioning</td><td>23 °C, 50% RH, 24 h</td></tr></table>'
       + '<h4>3. Results</h4><table class="tb"><tr><th>Property</th><th>Spec</th><th>Result</th><th>Judgment</th></tr><tr><td>180° Peel (N/25 mm)</td><td>≥ 12.0</td><td>14.6</td><td>Pass</td></tr><tr><td>Transmittance (%)</td><td>≥ 99.0</td><td>99.3</td><td>Pass</td></tr><tr><td>Haze (%)</td><td>≤ 0.5</td><td>0.28</td><td>Pass</td></tr><tr><td>Holding Power (h)</td><td>≥ 72</td><td>&gt; 96</td><td>Pass</td></tr></table>'
@@ -3537,7 +3537,7 @@
     var S = genericName ? [
       '<div class="sl t"><h2>' + esc(genericName.replace(/\.[^.]+$/, '').replace(/[_-]+/g, ' ')) + '</h2><p>' + esc(genericName) + '</p></div>'
     ] : [
-      '<div class="sl t"><h2>Scale-up Review: Pilot Line 2</h2><p>UV-Curable PSA (RGBOLED) · [NT-2605-00142]</p><p class="by">Min-ji Park · 10-09-2026</p></div>',
+      '<div class="sl t"><h2>Scale-up Review: Pilot Line 2</h2><p>UV-Curable PSA (RGBOLED) · [LN-2605-00142]</p><p class="by">Min-ji Park · 10-09-2026</p></div>',
       '<div class="sl"><h3>Key Results: Lab vs Pilot</h3><div class="two"><ul><li>Viscosity held within 3,500 to 5,000 cP at 12 m/min</li><li>Peel strength 14.6 N/25 mm on pilot, 14.9 in lab</li><li>No coating streaks after die gap set to 80 µm</li></ul>'
         + '<svg viewBox="0 0 220 140"><g font-size="9" fill="#8a7b6e" text-anchor="middle"><text x="55" y="134">Viscosity</text><text x="160" y="134">Peel</text></g>'
         + '<rect x="30" y="30" width="22" height="92" fill="#A47864"/><rect x="58" y="38" width="22" height="84" fill="#d9c3b4"/><rect x="135" y="22" width="22" height="100" fill="#A47864"/><rect x="163" y="26" width="22" height="96" fill="#d9c3b4"/>'
@@ -3694,7 +3694,7 @@
       }
       return poolFor(label).map(function (p) { return { code: p.code, text: p.text }; });
     }
-    var AC_PH = { Project: 'Search project # (e.g., SN-26-0001) or title', Material: 'Search material # (e.g., RM-0421) or name', 'Lab Note': 'Search lab note # (e.g., NT-2605-00131) or title' };
+    var AC_PH = { Project: 'Search project # (e.g., SN-26-0001) or title', Material: 'Search material # (e.g., RM-0421) or name', 'Lab Note': 'Search lab note # (e.g., LN-2605-00131) or title' };
     function buildValue() {   // 타입에 맞는 입력부 재구성(이전 autocomplete 정리)
       if (acInp && window.jQuery && jQuery(acInp).data('ui-autocomplete')) { try { jQuery(acInp).autocomplete('destroy'); } catch (e) {} }
       valBox.innerHTML = ''; urlInp = null; acInp = null; acPick = null;
@@ -4222,7 +4222,7 @@
 
   /* ── 공동편집자(Co-editors) + 공유(Share) — 동시 편집은 다루지 않음(번갈아 편집, 저장은 노트 전체): 섹션별 마지막 편집자 표시 + 감사 기록 ──
      상태는 모두 프로토타입 메모리(CE). 실구현에서는 서버의 노트 참여자/공유 레코드로 대체. */
-  var CE_DEMO = 'NT-2605-00142';
+  var CE_DEMO = 'LN-2605-00142';
   var CE_SEED_EDITORS = ['David Lee', 'Min-ji Park'];   // 공동편집자 ≠ 서명자(Aishwarya=Witness)
   // 사용자 ID — 운영 형식 '이름.성' 소문자(예: Kim, Jinpyeong → jinpyeong.kim). 하이픈은 제거(Min-ji Park → minji.park)
   function userId(name) {
@@ -4529,7 +4529,8 @@
   var CLONE_SEQ = 0;
   function cloneNextCode() {
     var code;
-    do { CLONE_SEQ++; code = 'NT-2610-' + ('00000' + (187 + CLONE_SEQ)).slice(-5); }
+    // 노트 번호 = LN-(YYMM)-(5자리 순번) — 사용자 2026-10-21
+    do { CLONE_SEQ++; code = 'LN-2610-' + ('00000' + (187 + CLONE_SEQ)).slice(-5); }
     while (PROJECT_NOTES.some(function (n) { return n.code === code; }));
     return code;
   }
@@ -5234,12 +5235,12 @@
   //   · 삽입된 링크에 마우스를 올리면 요약 카드(권한 없으면 번호·제목만) · Related Items 자동 반영
   //   실제 구현 시: search = 노트 검색 API(권한 필터 포함), 카드 = 노트 요약 API, 링크 저장 = 본문 HTML의 data-code + note_link 테이블.
   var NOTE_EXTRA = [
-    { code: 'NT-2606-00203', title: 'Coating Trial #2',                         author: 'Tom Reyes',   date: '2026-06-26', status: 'ing' },
-    { code: 'NT-2606-00219', title: 'Peel Strength Round Robin',                author: 'Min-ji Park', date: '2026-06-30', status: 'done' },
-    { code: 'NT-2607-00311', title: 'Silicone Release Coating',                 author: 'H.S. Choi',   date: '2026-07-14', status: 'ok', restricted: true, team: 'Coating Team' },
-    { code: 'NT-2608-00045', title: 'Silicone adhesive peel strength study',    author: 'D.H. Jung',   date: '2026-08-03', status: 'ok', restricted: true, team: 'Adhesives Pilot Team' }
+    { code: 'LN-2606-00203', title: 'Coating Trial #2',                         author: 'Tom Reyes',   date: '2026-06-26', status: 'ing' },
+    { code: 'LN-2606-00219', title: 'Peel Strength Round Robin',                author: 'Min-ji Park', date: '2026-06-30', status: 'done' },
+    { code: 'LN-2607-00311', title: 'Silicone Release Coating',                 author: 'H.S. Choi',   date: '2026-07-14', status: 'ok', restricted: true, team: 'Coating Team' },
+    { code: 'LN-2608-00045', title: 'Silicone adhesive peel strength study',    author: 'D.H. Jung',   date: '2026-08-03', status: 'ok', restricted: true, team: 'Adhesives Pilot Team' }
   ];
-  var NOTE_AUTHOR = { 'NT-2605-00131': 'S.Y. Park', 'NT-2604-00115': 'Min-ji Park' };   // 프로젝트 노트 중 타인 작성분
+  var NOTE_AUTHOR = { 'LN-2605-00131': 'S.Y. Park', 'LN-2604-00115': 'Min-ji Park' };   // 프로젝트 노트 중 타인 작성분
   function refDir() {
     var out = [], seen = {};
     PROJECT_NOTES.forEach(function (n) {
