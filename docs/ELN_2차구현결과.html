@@ -65,7 +65,7 @@ code{font-family:Consolas,monospace;font-size:12px;background:var(--soft);paddin
 
 <div class="sum">
   <div class="c"><b>19</b>완료</div>
-  <div class="c"><b>5</b>확인 필요</div>
+  <div class="c"><b>4</b>확인 필요</div>
 </div>
 <div class="legend">
   <span><span class="badge ok">완료</span> 구현 + 화면 확인</span>
@@ -78,7 +78,7 @@ code{font-family:Consolas,monospace;font-size:12px;background:var(--soft);paddin
   <colgroup><col style="width:92px"><col style="width:200px"><col><col style="width:150px"></colgroup>
   <tr><th>상태</th><th>항목</th><th>남은 일</th><th>필요한 것</th></tr>
   <tr><td><span class="badge">확인 필요</span></td><td class="f">실험일 기록</td><td>Experiment Date(1차 1번, 원문 Must "Date of Experiment")를 자동 입력되는 Creation Date 로 바꿈. 실험한 날을 따로 남길 필요가 없는지 확인</td><td class="nt">질문 B1</td></tr>
-  <tr><td><span class="badge">확인 필요</span></td><td class="f">Related Items 필수</td><td>저장할 때 1개 이상 필수로 함. Platform / Pre-NPC 칸이 없어져, 프로젝트가 없는 노트도 Material · Lab Note 중 하나는 연결해야 저장됨</td><td class="nt">질문 B2</td></tr>
+  <tr><td><span class="badge ok">결정</span></td><td class="f">Related Items 필수</td><td>10-21 결정: 필수 아님(선택). 프로젝트가 없는 노트도 그대로 저장 · 상신 가능</td><td class="nt">질문 B2 → 답변 받음</td></tr>
   <tr><td><span class="badge">확인 필요</span></td><td class="f">Business · Site 목록</td><td>운영 공통 목록(DEXIF Business, TechLib Site)을 그대로 씀. ELN 전용 목록이 필요한지</td><td class="nt">질문 B3</td></tr>
   <tr><td><span class="badge">확인 필요</span></td><td class="f">제출 후 섹션 추가</td><td>부분 승인을 없애면서 1차 3번의 "제출 후 섹션 추가"는 제외. 제출 뒤 보완은 Errata 로만</td><td class="nt">질문 B4</td></tr>
   <tr><td><span class="badge">확인 필요</span></td><td class="f">Audit Trail 관리자 메뉴</td><td>노트 팝업이 아닌 별도 관리자 메뉴로 옮길 예정. 메뉴 위치 · 볼 수 있는 사람 · 검색 조건 설계</td><td class="nt">질문 B5</td></tr>
@@ -94,7 +94,7 @@ code{font-family:Consolas,monospace;font-size:12px;background:var(--soft);paddin
   <tr><td class="no">2</td><td class="f">Business</td><td class="rq">Primary Business 는 하나만 고르는 드롭다운 · Others 는 여러 개 고르는 select2 multiple(좌우로 최대한) · Segment 는 빼기</td><td><b>Primary Business</b>: 하나 선택(select2)<br><b>Other Business(es)</b>: 여러 개 선택(select2 multiple), 행 폭 전체. Primary 로 고른 Business 는 고를 수 없음</td><td><span class="badge ok">완료</span></td><td class="nt">운영 CNPI · SNPI Basic 의 Business, FMEA Customer(다중)와 같은 부품. 목록은 운영 Business 8개 이름. Segment 는 한 번 넣었다가 같은 날 제외</td></tr>
   <tr><td class="no">3</td><td class="f">Site</td><td class="rq">TechLib 의 Site 와 똑같이</td><td>운영 TechLib 업로드 화면의 Site 와 같은 목록 13개, "[코드] 이름" 표시(예: [KP01] Hwaseong - Korea), select2</td><td><span class="badge ok">완료</span></td><td class="nt">TechLib 의 Region 자동 표시는 넣지 않음</td></tr>
   <tr><td class="no">4</td><td class="f">Related Items 위치</td><td class="rq">모듈에서 빼고 Basic Data 안으로</td><td>Basic Data 의 한 줄(추가 줄 + 칩 목록). 유형은 Material · Project · Lab Note(URL 제외). Add Module 목록 · 템플릿(Analysis · Full Report) · 왼쪽 목차에서 빠짐<br>Copy To(데이터 미포함이면 프로젝트 칩만 유지) · 노트 전환 · PDF(Basic Data 안 표) · Audit(섹션 = Basic Data) 모두 맞춤<br>첫 줄(유형 · 검색칸 · Add 버튼)은 가운데 정렬, 레이블 높이도 같은 선</td><td><span class="badge ok">완료</span></td><td class="nt">예전에 저장한 My Template 의 Related Items 는 건너뜀</td></tr>
-  <tr><td class="no">5</td><td class="f">필수 표시 · 검사</td><td class="rq">Basic Data 는 모두 필수(Other Business(es) 제외) · 태그는 결재할 때만 필수 · 표시는 * 하나</td><td>저장할 때 필수: Title · Creation Date(자동) · Primary Business · Site · Related Items(1개 이상)<br>결재 상신할 때 필수: 위 항목 + Tags(1개 이상). 표시는 모두 <b>*</b> 하나(처음엔 ** 로 구분했다가 하나로)<br>빠지면 "Cannot Save" / "Cannot Initiate Approval" 창에 빠진 항목 목록, 칸은 빨갛게 표시되고 값을 넣으면 풀림</td><td><span class="badge ok">완료</span></td><td class="nt">운영 저장 검사(data-required) · 상신 검사(data-required-appronly)와 같은 규칙 · 같은 알림 문구</td></tr>
+  <tr><td class="no">5</td><td class="f">필수 표시 · 검사</td><td class="rq">Basic Data 는 모두 필수(Other Business(es) · Related Items 제외) · 태그는 결재할 때만 필수 · 표시는 * 하나</td><td>저장할 때 필수: Title · Creation Date(자동) · Primary Business · Site. Related Items 는 선택(처음엔 1개 이상 필수였다가 뺌)<br>결재 상신할 때 필수: 위 항목 + Tags(1개 이상). 표시는 모두 <b>*</b> 하나(처음엔 ** 로 구분했다가 하나로)<br>빠지면 "Cannot Save" / "Cannot Initiate Approval" 창에 빠진 항목 목록, 칸은 빨갛게 표시되고 값을 넣으면 풀림</td><td><span class="badge ok">완료</span></td><td class="nt">운영 저장 검사(data-required) · 상신 검사(data-required-appronly)와 같은 규칙 · 같은 알림 문구</td></tr>
   <tr><td class="no">6</td><td class="f">Last edited 날짜</td><td class="rq">카드 오른쪽 위 Last edited 에 시각만 있음 → 날짜도</td><td>"Last edited by 이름 · MM-DD-YYYY HH:mm". 데모 노트의 섹션별 마지막 편집자 · 시각을 Audit 기록과 맞춤</td><td><span class="badge ok">완료</span></td><td class="nt"></td></tr>
   <tr><td class="no">7</td><td class="f">Audit Trail 안내</td><td class="rq">Audit Trail 은 별도 관리자 메뉴로 갈 예정 · 섹션 안에 도움말로 강조</td><td>Audit Trail 카드 맨 위에 "Planned for the admin menu" 안내 상자(운영 표준 안내 상자 모양). 기능은 시연용으로 그대로 둠</td><td><span class="badge ok">완료</span></td><td class="nt">1차 4번 위치 변경 예정</td></tr>
   <tr class="grp"><td colspan="6">10-20 ~ 10-21 · 결재</td></tr>
@@ -122,7 +122,7 @@ code{font-family:Consolas,monospace;font-size:12px;background:var(--soft);paddin
   <tr><th>No</th><th>항목</th><th>바뀐 규칙</th><th>비고</th></tr>
   <tr><td class="no">1</td><td class="f">결재 단위</td><td>섹션별이 아니라 <b>노트 전체</b>를 한 번에 상신 · 승인. 상신 중에는 노트 전체를 고칠 수 없고, 고치려면 회수(결재자 결정 전) 또는 반려 후 다시 상신. 다시 올리면 현황표에 Submission 2 로 쌓임</td><td class="nt">운영 공통 결재 모듈과 같은 단위</td></tr>
   <tr><td class="no">2</td><td class="f">제출 후 보완</td><td>제출 · 승인된 노트에는 섹션을 더할 수 없고, 정정 · 보완은 Errata(사유 필수, 원문 불변)로만</td><td class="nt">1차 3번 "섹션 추가" 제외</td></tr>
-  <tr><td class="no">3</td><td class="f">필수 시점</td><td>저장할 때: Title · Primary Business · Site · Related Items 1개 이상. 결재 상신할 때: 저장 필수 + Tags 1개 이상</td><td class="nt">질문 B2</td></tr>
+  <tr><td class="no">3</td><td class="f">필수 시점</td><td>저장할 때: Title · Primary Business · Site. 결재 상신할 때: 저장 필수 + Tags 1개 이상. Related Items 는 선택</td><td class="nt">B2 답변(10-21)</td></tr>
   <tr><td class="no">4</td><td class="f">생성일</td><td>사용자가 입력하지 않음. 최초 저장 시각을 생성일로 기록</td><td class="nt">질문 B1</td></tr>
   <tr><td class="no">5</td><td class="f">Audit Trail 열람</td><td>노트 팝업이 아닌 관리자 메뉴에서 보는 것으로 예정(기록 자체는 지금처럼 자동)</td><td class="nt">질문 B5</td></tr>
 </table></div>
@@ -144,7 +144,7 @@ code{font-family:Consolas,monospace;font-size:12px;background:var(--soft);paddin
   <colgroup><col style="width:44px"><col style="width:170px"><col style="width:26%"><col><col style="width:22%"></colgroup>
   <tr><th>No</th><th>항목</th><th>지금 동작</th><th>질문</th><th>선택지 (예)</th></tr>
   <tr><td class="no">B1</td><td class="f">실험일</td><td>Creation Date 만 있음(최초 저장 때 자동)</td><td>1차 요구의 "Date of Experiment"(Must)는 생성일로 충분한가요, 실험한 날을 따로 입력해야 하나요?</td><td class="nt">생성일로 충분 / 실험일 칸 다시 추가</td></tr>
-  <tr><td class="no">B2</td><td class="f">Related Items 필수</td><td>저장할 때 1개 이상 필수</td><td>프로젝트 번호가 없는 노트(예전 Platform / Pre-NPC 용도)도 무언가 하나는 연결해야 하나요?</td><td class="nt">필수 유지 / 선택으로 / 결재 때만 필수</td></tr>
+  <tr><td class="no">B2</td><td class="f">Related Items 필수</td><td>선택(필수 아님)</td><td>프로젝트 번호가 없는 노트(예전 Platform / Pre-NPC 용도)도 무언가 하나는 연결해야 하나요? <b>10-21 답변: 필수 아님 → 반영함</b></td><td class="nt">필수 유지 / 선택으로 / 결재 때만 필수</td></tr>
   <tr><td class="no">B3</td><td class="f">Business · Site 목록</td><td>운영 공통 목록 그대로(Business 8 · Site 13)</td><td>ELN 에서도 같은 목록을 쓰면 되나요? R&amp;D 전용 Site 나 Business 가 더 필요한가요?</td><td class="nt">공통 목록 / ELN 전용 목록</td></tr>
   <tr><td class="no">B4</td><td class="f">제출 후 섹션 추가</td><td>안 됨(Errata 로 보완)</td><td>1차 요구 3번의 "제출 후 섹션 추가"가 다시 필요해지면 노트를 새 버전으로 열어 고치는 방식이 맞나요?</td><td class="nt">Errata 로 충분 / 새 버전으로 수정</td></tr>
   <tr><td class="no">B5</td><td class="f">Audit Trail 관리자 메뉴</td><td>노트 팝업 맨 아래에 있음(시연용)</td><td>관리자 메뉴에서 누가(관리자만 / QA 포함) 어떤 조건(노트 · 사용자 · 기간 · 동작)으로 보나요? 작성자는 자기 노트 기록을 볼 수 있나요?</td><td class="nt">관리자만 / 관리자 + QA / 작성자도 자기 노트</td></tr>

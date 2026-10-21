@@ -2825,14 +2825,14 @@
   document.addEventListener('DOMContentLoaded', initBusiness);
 
   /* 필수 항목 검사 — 운영 au.checkRequiredFields(저장: data-required) · appr_util _check3_MandatoryFields(상신: data-required + data-required-appronly) 와 같은 규칙·알림.
-     Basic Data: 저장 때 필수 = Title·Primary Business·Site·Related Items 1개 이상, 상신 때 필수 = 위 + Tags 1개 이상(표시는 모두 * 하나). Creation Date 는 저장 때 자동 */
+     Basic Data: 저장 때 필수 = Title·Primary Business·Site, 상신 때 필수 = 위 + Tags 1개 이상(표시는 모두 * 하나). Creation Date 는 저장 때 자동.
+     Related Items 는 선택(사용자 2026-10-21 — 처음엔 1개 이상 필수였다가 뺌) */
   function reqMissing(forApproval) {
     var card = document.getElementById('card_basic'); if (!card) return [];
     var out = [];
     card.querySelectorAll('[data-required="true"]').forEach(function (el) {
       if (!el.disabled && !String(el.value || '').trim()) out.push({ el: el, label: el.getAttribute('data-label') || 'Field' });
     });
-    if (!card.querySelector('#elnBasicRel .elnRelItem')) out.push({ el: card.querySelector('#elnBasicRel .elnRelAddVal input') || card.querySelector('#elnBasicRel'), label: 'Related Items' });
     if (forApproval && !card.querySelector('#elnTags .elnTag')) out.push({ el: document.getElementById('elnTagInput'), label: 'Tags' });
     return out.filter(function (m) { return m.el; }).sort(function (a, b) { return a.el.compareDocumentPosition(b.el) & Node.DOCUMENT_POSITION_FOLLOWING ? -1 : 1; });   // 화면 순서
   }
@@ -2841,8 +2841,7 @@
     var wrap = el.closest('.aniInput');
     el.classList.add('invalid-required'); if (wrap) wrap.classList.add('invalid-required');
     function clear() {
-      var filled = el.id === 'elnTagInput' ? !!document.querySelector('#elnTags .elnTag') || !!el.value.trim()
-        : el.closest('#elnBasicRel') ? !!document.querySelector('#elnBasicRel .elnRelItem') || !!el.value.trim() : !!String(el.value || '').trim();
+      var filled = el.id === 'elnTagInput' ? !!document.querySelector('#elnTags .elnTag') || !!el.value.trim() : !!String(el.value || '').trim();
       if (!filled) return;
       el.classList.remove('invalid-required'); if (wrap) wrap.classList.remove('invalid-required');
       el.removeEventListener('input', clear); el.removeEventListener('change', clear); if (window.jQuery) jQuery(el).off('change.invalidRequired');
