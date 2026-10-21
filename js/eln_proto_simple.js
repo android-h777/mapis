@@ -2582,8 +2582,9 @@
     { key: 'rgboled',   name: 'RGBOLED Adhesive',    icon: 'folder_shared' },   // 내가 공유한 노트북(리스트 NB.rgboled.sharedWith)
     { key: 'foled',     name: 'Flexible OLED',       icon: 'folder' },
     { key: 'optical',   name: 'Optical Clear Resin', icon: 'folder' },
-    { key: 'customerA', name: 'Customer A Project',  icon: 'folder_eye', owner: 'E. Han' },   // 나에게 공유된 노트북(리스트 Shared with Me 그룹, 보기 권한 = 눈 아이콘)
-    { key: 'coatingT',  name: 'Silicone Coating Studies', icon: 'folder_eye', owner: 'H.S. Choi' }   // 노트 하나만 공유받은 노트북(리스트 Shared with Me)
+    // 나에게 공유된 노트북(리스트 Shared with Me) — access = 내 권한. 아이콘 Co-editor = folder_supervised, Viewer = folder_eye
+    { key: 'customerA', name: 'Customer A Project',  icon: 'folder_supervised', owner: 'E. Han', access: 'Co-editor' },
+    { key: 'coatingT',  name: 'Silicone Coating Studies', icon: 'folder_eye', owner: 'H.S. Choi', access: 'Viewer' }   // 노트 하나만 공유받은 노트북
   ];
   function nbShared(key) { var n = NOTEBOOKS.filter(function (x) { return x.key === key; })[0]; return !!(n && n.owner); }   // 남이 공유해 준 노트북 = 보기 권한뿐
   var NB_CUR = 'rgboled';   // 이 노트의 노트북 키
@@ -2596,7 +2597,8 @@
     el.querySelector('.nm').textContent = nbName(NB_CUR);
     var ro = nbShared(NB_CUR);   // 공유받은 노트북의 노트 = 다른 노트북으로 옮길 수 없음 → 값만
     el.classList.toggle('ro', ro);
-    el.title = ro ? 'Shared with you (view only)' : 'Move to another notebook';
+    var nbo = NOTEBOOKS.filter(function (x) { return x.key === NB_CUR; })[0];
+    el.title = ro ? 'Shared with you (' + (nbo && nbo.access === 'Co-editor' ? 'co-editor' : 'view only') + ')' : 'Move to another notebook';
   }
   // 노트북 바꾸기 — Audit(Field changed Notebook) · Last edited · 안내(리스트와 같은 뜻의 문구)
   function nbMove(key) {

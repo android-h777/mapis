@@ -134,6 +134,11 @@
 	/* Function 배지 — 팝업 표의 roundBox mocha25(Owner, 채움) / outline stone25(Viewer, 테두리)와 같은 값 */
 	.elnFnBadge{display:inline-block;box-sizing:border-box;height:16px;padding:0 20px;border:1px solid #A89A8E;border-radius:10px;color:#A89A8E;font-size:13px;line-height:14px;}
 	.elnFnBadge.own{background:#A47864;border-color:#A47864;color:#fff;}
+	.elnFnBadge.co{border-color:#7391C8;color:#7391C8;}   /* Co-editor = 팝업 roundBox outline cfblue25 */
+	/* Function 고르기 — 운영 라디오(with-gap mocha25) 두 개 + 고른 값의 뜻 */
+	.elnNbShFn{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+	.elnNbShFn label span{font-size:13px;color:#3a2c24;}
+	.elnNbShFn .hint{margin-left:0;}
 	#elnNbShareModal{max-width:680px;}   /* 팝업 Share & Access(lg)와 같은 너비 */
 	/* 접근 표 — 운영 fixedTable hBorderTable(팝업 표 계산값): 위 2px · 아래 1px 올리브 선, 머리 = 올리브 글자 가운데, 칸 사이 옅은 세로선 · 행 사이 옅은 선.
 	   삭제는 행 hover 때만(운영 td.action-col 과 같은 동작) */
@@ -253,7 +258,8 @@
 				     아이콘 = folder_eye(보기 권한으로 받은 노트북) — 내가 공유한 노트북의 folder_shared(사람)와 헷갈리지 않게(사용자 10-21) -->
 				<div class="elnNbGrpLabel">SHARED WITH ME</div>
 				<div class="elnNbGroup" data-group="shared">
-					<div class="elnNbItem" data-nb="customerA"><i class="material-symbols-outlined fill">folder_eye</i><span class="nm">Customer A Project</span><span class="ct">4</span></div>
+					<!-- Co-editor 로 공유받은 노트북 = folder_supervised(사람 배지), Viewer = folder_eye(눈 배지) -->
+					<div class="elnNbItem" data-nb="customerA"><i class="material-symbols-outlined fill">folder_supervised</i><span class="nm">Customer A Project</span><span class="ct">4</span></div>
 					<!-- 노트 하나만 공유받은 노트북 — 나머지 노트는 잠금 행. 개수 = 볼 수 있는 노트 수 -->
 					<div class="elnNbItem" data-nb="coatingT"><i class="material-symbols-outlined fill">folder_eye</i><span class="nm">Silicone Coating Studies</span><span class="ct">1</span></div>
 				</div>
@@ -603,12 +609,15 @@
 
 	/* ── 노트북 공유(내 노트북 → 동료) — ⋯ 메뉴 'Share…' 로 여는 창(2026-10-21).
 	   구성 = 팝업 Share & Access 와 같음(사용자 10-21 "pop_simple 사람 추가 참고"): 오른쪽 위 Add People → 표 위로 펼치는 폼
-	   (People 다중 · Function = Viewer 고정 · 정보보호 확인 · Share/Cancel, 중첩 모달 없음), 아래 접근 표(Owner 행 자물쇠 · 공유 행 hover 시 삭제).
+	   (People 다중 · Function = Viewer / Co-editor · 정보보호 확인 · Share/Cancel, 중첩 모달 없음), 아래 접근 표(Owner 행 자물쇠 · 공유 행 hover 시 삭제).
 	   People 칸 = select2 다중처럼 보이는 칩 입력 + jQuery UI autocomplete(리스트엔 select2 가 없어 공통 .ui-autocomplete 를 씀). 공유 대상이 있으면 패널 아이콘 folder_shared.
-	   [운영 구현] 노트북을 공유하면 그 노트북에 속한 노트 전부에 공유 대상의 Viewer 권한을 준다(사용자 2026-10-21).
-	   공유 해제 = 그 Viewer 권한 회수. 프로토타입은 권한을 따로 다루지 않는다 ── */
+	   [운영 구현] 노트북을 공유하면 그 노트북에 속한 노트 전부에 공유 대상의 권한을 준다 — 공유할 때 고른 Function(Viewer 또는 Co-editor)
+	   (사용자 2026-10-21: 처음엔 Viewer 만, 같은 날 Co-editor 도). 공유 해제 = 그 권한 회수. 프로토타입은 권한을 따로 다루지 않는다 ── */
 	var NB_ME = { id:'jpkim', name:'J.P. Kim' };   // 이 리스트의 내 노트 작성자 = 노트북 주인(Owner 행)
 	var nbShareKey = null, nbPicked = [];
+	// Function = Viewer / Co-editor(사용자 10-21 "Co-editor 로도"). 팝업 Share & Access 의 Function 과 같은 두 값
+	var NB_FN_HINT = { 'Viewer':'Can view every note in this notebook', 'Co-editor':'Can view and edit every note in this notebook' };
+	function nbShareFn(){ var r = document.querySelector('input[name="elnNbShFn"]:checked'); return r ? r.value : 'Viewer'; }
 	function userById(id){ return ELN_USERS.filter(function(u){ return u.id === id; })[0]; }
 	function sharedNames(key){ return (NB[key].sharedWith || []).map(function(id){ var u = userById(id); return u ? u.name : id; }); }
 	function isoMdy(iso){ return String(iso || '').replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$2-$3-$1'); }
@@ -621,7 +630,8 @@
 			+ '<td class="ac"><i class="material-symbols-outlined lock" title="Owner of this notebook. Cannot be removed.">lock</i></td></tr>'
 			+ (nb.sharedWith || []).map(function(id){
 				var u = userById(id); if(!u) return '';
-				return '<tr><td>'+nameCell(u.name, u.id)+'</td><td><span class="elnFnBadge">Viewer</span></td><td>'+esc(isoMdy(at[id]) || '-')+'</td>'
+				var fn = (nb.sharedFn && nb.sharedFn[id]) || 'Viewer';   // 공유할 때 고른 Function(Viewer / Co-editor)
+				return '<tr><td>'+nameCell(u.name, u.id)+'</td><td><span class="elnFnBadge'+(fn === 'Co-editor' ? ' co' : '')+'">'+esc(fn)+'</span></td><td>'+esc(isoMdy(at[id]) || '-')+'</td>'
 					+ '<td class="ac"><a href="javascript:;" class="rm" data-id="'+esc(u.id)+'" title="Stop sharing"><i class="material-symbols-outlined">delete</i></a></td></tr>';
 			}).join('');
 	}
@@ -637,6 +647,8 @@
 		document.getElementById('elnNbShAdd').style.display = show ? 'none' : '';   // 폼이 열려 있는 동안 Add People 숨김(팝업과 같음)
 		if(!show) return;
 		nbPicked = []; renderNbPicked();
+		var rv = document.querySelector('input[name="elnNbShFn"][value="Viewer"]'); if(rv) rv.checked = true;   // 기본 = Viewer
+		document.getElementById('elnNbShFnHint').textContent = NB_FN_HINT.Viewer;
 		document.getElementById('elnNbShOk').checked = false; syncNbShareGo();
 		setTimeout(function(){ try{ document.getElementById('elnNbPplInput').focus(); }catch(e){} }, 60);
 	}
@@ -650,7 +662,10 @@
 			+   '<div class="tit"><i class="material-symbols-outlined">person_add</i>Add People</div>'
 			+   '<div class="fRow"><div class="lbl"><span class="req">*</span>People</div>'
 			+     '<div class="elnPplBox" id="elnNbPplBox"><span id="elnNbPplChips"></span><input type="text" id="elnNbPplInput" class="browser-default" placeholder="User ID / Name" autocomplete="off"></div></div>'
-			+   '<div class="fRow"><div class="lbl">Function</div><div><span class="elnFnBadge">Viewer</span><span class="hint">Can view every note in this notebook</span></div></div>'
+			+   '<div class="fRow"><div class="lbl"><span class="req">*</span>Function</div><div class="elnNbShFn">'
+			+     '<label><input type="radio" name="elnNbShFn" value="Viewer" class="with-gap mocha25" checked><span>Viewer</span></label>'
+			+     '<label><input type="radio" name="elnNbShFn" value="Co-editor" class="with-gap mocha25"><span>Co-editor</span></label>'
+			+     '<span class="hint" id="elnNbShFnHint">'+NB_FN_HINT.Viewer+'</span></div></div>'
 			+   '<div class="fRow"><div class="lbl"></div><label class="ok"><input type="checkbox" class="filled-in" id="elnNbShOk"><span>I have checked this complies with the company information security policy.</span></label></div>'
 			+   '<div class="btns"><a href="javascript:;" id="elnNbShGo" class="waves-effect waves-light hBtn hViva disabled"><i class="material-symbols-outlined left">share</i><span class="label">Share</span></a>'
 			+   '<a href="javascript:;" id="elnNbShCancel" class="waves-effect hBtn hGrey"><i class="material-symbols-outlined left">close</i><span class="label">Cancel</span></a></div>'
@@ -682,10 +697,11 @@
 	function nbShareGo(){
 		var go = document.getElementById('elnNbShGo'); if(go.classList.contains('disabled')) return;
 		if(!nbPicked.length){ ELN.toast('Choose at least one person to share with.', 'warn'); return; }
-		var nb = NB[nbShareKey]; nb.sharedWith = nb.sharedWith || []; nb.sharedAt = nb.sharedAt || {};
+		var nb = NB[nbShareKey]; nb.sharedWith = nb.sharedWith || []; nb.sharedAt = nb.sharedAt || {}; nb.sharedFn = nb.sharedFn || {};
+		var fn = nbShareFn();
 		var d = new Date(), iso = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
-		var names = nbPicked.map(function(id){ if(nb.sharedWith.indexOf(id) < 0) nb.sharedWith.push(id); nb.sharedAt[id] = iso; return userById(id).name; });
-		ELN.toast('Shared “' + nb.name + '” with ' + names.join(', ') + '.', 'ok');
+		var names = nbPicked.map(function(id){ if(nb.sharedWith.indexOf(id) < 0) nb.sharedWith.push(id); nb.sharedAt[id] = iso; nb.sharedFn[id] = fn; return userById(id).name; });
+		ELN.toast('Shared “' + nb.name + '” with ' + names.join(', ') + ' as ' + fn + '.', 'ok');
 		if(jQuery(document.getElementById('elnNbPplInput')).data('ui-autocomplete')) jQuery('#elnNbPplInput').autocomplete('close');
 		showNbShareForm(false); renderNbShareTable(); syncShareIcon(nbShareKey);
 	}
@@ -705,7 +721,7 @@
 	function nbShareRemove(id){
 		var nb = NB[nbShareKey], u = userById(id); if(!nb || !u) return;
 		var i = (nb.sharedWith || []).indexOf(id); if(i < 0) return;
-		nb.sharedWith.splice(i, 1); if(nb.sharedAt) delete nb.sharedAt[id];
+		nb.sharedWith.splice(i, 1); if(nb.sharedAt) delete nb.sharedAt[id]; if(nb.sharedFn) delete nb.sharedFn[id];
 		ELN.toast('Stopped sharing with ' + u.name + '.', 'ok');
 		renderNbShareTable(); syncShareIcon(nbShareKey);
 	}
@@ -718,7 +734,7 @@
 		]},
 		// history = parent 링크로 계산(저장 X). rgboled는 분기 트리: 098 ├118(├142 └097) └072
 		// sharedWith = 내가 이 노트북을 공유한 동료(ELN_USERS id). 있으면 아이콘 folder_shared
-		rgboled: { name:'RGBOLED Adhesive', icon:'folder_shared', sharedWith:['jwseo','hwcho'], sharedAt:{ jwseo:'2026-06-02', hwcho:'2026-06-10' }, notes:[
+		rgboled: { name:'RGBOLED Adhesive', icon:'folder_shared', sharedWith:['jwseo','hwcho'], sharedAt:{ jwseo:'2026-06-02', hwcho:'2026-06-10' }, sharedFn:{ jwseo:'Co-editor', hwcho:'Viewer' }, notes:[
 			{code:'LN-2605-00142', title:'UV-Curable PSA Viscosity Improvement (RGBOLED)', st:'ing', ver:'v3', cat:'Formulation', fml:'FML-EM-2208', tags:['#viscosity','#RGBOLED'], author:'J.P. Kim', date:'2026-05-28', parent:'LN-2605-00118'},
 			{code:'LN-2605-00118', title:'Viscosity Modifier ratio tuning (v2)', st:'appr', ver:'v2', cat:'Formulation', fml:'FML-EM-2207', tags:['#viscosity'], author:'J.P. Kim', date:'2026-05-27', parent:'LN-2605-00098'},
 			{code:'LN-2605-00097', title:'Cure rate vs UV dose: condition sweep', st:'ok', ver:'v1', cat:'Formulation', fml:'', tags:['#UVcure'], author:'J.P. Kim', date:'2026-05-24', parent:'LN-2605-00118'},
@@ -737,11 +753,12 @@
 		]},
 		// 노트 하나만 공유받은 노트북(사용자 2026-10-21) — 공유받은 노트만 보이고, 나머지 노트는 잠금 행(검색의 권한 없는 노트와 같은 행, Request Access).
 		// 잠긴 노트는 아래 RESTRICTED(Coating Team) 를 이 노트북에 붙인다. All Notes·개수에는 볼 수 있는 노트만
-		coatingT: { name:'Silicone Coating Studies', icon:'folder_eye', owner:'hschoi', sharedOn:'2026-07-20', notes:[
+		coatingT: { name:'Silicone Coating Studies', icon:'folder_eye', owner:'hschoi', sharedOn:'2026-07-20', access:'Viewer', notes:[
 			{code:'LN-2607-00298', title:'Release force vs cure temperature', st:'ok', ver:'v1', cat:'Formulation', fml:'', tags:['#silicone','#release'], author:'H.S. Choi', date:'2026-07-18', biz:'COAT', site:'LV01'}
 		]},
-		// owner = 나에게 공유한 사람(Shared with Me 그룹), sharedOn = 공유받은 날. 아이콘 folder_eye(보기 권한) — 내가 공유한 folder_shared 와 구분
-		customerA: { name:'Customer A Project', icon:'folder_eye', owner:'ehan', sharedOn:'2026-05-10', notes:[
+		// owner = 나에게 공유한 사람(Shared with Me 그룹), sharedOn = 공유받은 날, access = 내 권한(Viewer / Co-editor).
+		// 아이콘: Viewer = folder_eye(눈), Co-editor = folder_supervised(사람 배지) — 같은 자리 배지로 짝, 내가 공유한 folder_shared(폴더 안 사람)와 구분(사용자 10-21)
+		customerA: { name:'Customer A Project', icon:'folder_supervised', owner:'ehan', sharedOn:'2026-05-10', access:'Co-editor', notes:[
 			// 작성자 = 노트북 주인 E. Han(공유받은 노트북이라 내 노트가 아님)
 			{code:'LN-2605-00301', title:'Customer A: OCR spec review', st:'ing', ver:'', cat:'General', fml:'', tags:['#customerA'], author:'E. Han', date:'2026-05-30'},
 			{code:'LN-2605-00288', title:'Adhesion to PET film', st:'ok', ver:'v2', cat:'Formulation', fml:'FML-CA-4410', tags:['#adhesion'], author:'E. Han', date:'2026-05-26'},
@@ -1063,7 +1080,7 @@
 				sumRow('Note #', esc(n.code))+
 				// 남이 공유해 준 노트북(Shared with Me)의 노트는 보기 권한뿐 — 다른 노트북으로 옮길 수 없어 값만(ro, ▾ 없음)
 				(nbGroupOf(n._nb) === 'shared'
-					? sumRow('Notebook', '<span class="elnSumNbPick ro" title="Shared with you (view only)"><span class="elnNbDot" style="background:'+nbColor(n._nb)+'"></span>'+esc(nbName)+'</span>')
+					? sumRow('Notebook', '<span class="elnSumNbPick ro" title="Shared with you ('+(NB[n._nb].access === 'Co-editor' ? 'co-editor' : 'view only')+')"><span class="elnNbDot" style="background:'+nbColor(n._nb)+'"></span>'+esc(nbName)+'</span>')
 					: sumRow('Notebook', '<span class="elnSumNbPick" title="Move to another notebook"><span class="elnNbDot" style="background:'+nbColor(n._nb)+'"></span>'+esc(nbName)+'<i class="material-symbols-outlined">expand_more</i></span>'))+
 				sumRow('Author', esc(n.author))+
 				sumRow('Creation Date', esc(fmtDate(n.created || n.date)))+   // 팝업 Basic Data 의 Creation Date(최초 저장일)
@@ -1539,6 +1556,7 @@
 		var since = String(nb.sharedOn || '').replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$2-$3-$1');   // MM-DD-YYYY
 		var lockedN = nb.notes.filter(function(n){ return n.restricted; }).length, openN = nb.notes.length - lockedN;   // 노트 일부만 공유받았으면 몇 개인지
 		menu.appendChild(nbInfoRow('Shared By', [(u ? u.name + ' (' + u.team + ')' : nb.owner)].concat(since ? ['Since ' + since] : [])
+			.concat(['Your access: ' + (nb.access || 'Viewer')])   // 내 권한(Viewer / Co-editor)
 			.concat(lockedN ? [openN + ' of ' + nb.notes.length + ' notes shared with you'] : [])));   // 그룹 이름(Shared with Me)과 겹치지 않게 '누가'만
 		var el = document.createElement('div'); el.className = 'elnNbPopItem danger';
 		el.innerHTML = '<i class="material-symbols-outlined">person_remove</i><span>Remove</span>';
@@ -1738,6 +1756,7 @@
 		});
 		document.getElementById('elnNbShareBody').addEventListener('change', function(e){
 			if(e.target && e.target.id === 'elnNbShOk') syncNbShareGo();
+			if(e.target && e.target.name === 'elnNbShFn') document.getElementById('elnNbShFnHint').textContent = NB_FN_HINT[e.target.value] || '';   // 고른 Function 의 뜻
 		});
 		// 노트 리스트 행 틸트 비활성 — 엔진(.mainList li) 핸들러보다 늦게 바인딩되어 인라인 transform 을 상쇄
 		$(document).on('mousemove mouseleave', '.elnNotePanel .mainList li', function(){ this.style.transform = ''; });
