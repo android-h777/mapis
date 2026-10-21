@@ -115,21 +115,17 @@
 							</div>
 						</div>
 					</div>
-					<!-- Primary Business(단일) · Segment(Primary Business 에 딸린 것만) · Others(다중) — 운영 CNPI/SNPI Basic 의 Business·Segment select2,
-					     FMEA Customer 의 select2 multiple 과 같은 부품. 목록은 운영 DEXIF BIZ/SGMNT 코드(프로토타입은 목업, ELN_BIZ) -->
+					<!-- Primary Business(단일) · Other Business(es)(다중, 행 폭 전체) — 운영 CNPI/SNPI Basic 의 Business select2,
+					     FMEA Customer 의 select2 multiple 과 같은 부품. 목록은 운영 DEXIF BIZ 코드(프로토타입은 목업, ELN_BIZ). Segment 는 2026-10-21 제외 -->
 					<div class="elnBasicRow">
 						<label class="elnBasicLabel"><span class="essential">*</span>Primary Business</label>
 						<div class="elnSchedSel">
 							<div class="elnSchedField elnBizField"><select id="elnBizPrimary" class="browser-default" data-required="true" data-label="Primary Business"></select></div>
-							<span class="elnBizSubLbl"><span class="essential">*</span>Segment</span>
-							<div class="elnSchedField elnBizField"><select id="elnBizSegment" class="browser-default" data-required="true" data-label="Segment"></select></div>
 						</div>
 					</div>
 					<div class="elnBasicRow">
 						<label class="elnBasicLabel">Other Business(es)</label>
-						<div class="elnSchedSel">
-							<div class="elnSchedField elnBizOthers"><select id="elnBizOthers" class="browser-default" multiple="multiple"></select></div>
-						</div>
+						<div class="elnBizOthers"><select id="elnBizOthers" class="browser-default" multiple="multiple"></select></div>
 					</div>
 					<!-- Site — 운영 TechLib 업로드(techLibNewsub #mSite)와 같은 필드: 공통코드 lib_site(플랜트 마스터 기술 사이트), 표시 '[코드] 이름', select2, 저장 시 필수 -->
 					<div class="elnBasicRow">
@@ -138,10 +134,15 @@
 							<div class="elnSchedField elnBizField"><select id="elnSite" class="browser-default" data-required="true" data-label="Site"></select></div>
 						</div>
 					</div>
-					<!-- Tags — Note와 동일 row 양식. 값 자리는 칩 + 입력 + 추천(멀티라인이라 상단 정렬) -->
-					<!-- Tags — 결재 상신 때만 필수(운영 data-required-appronly). 저장 시 필수(*)와 구분해 ** 로 표시 -->
+					<!-- Related Items — 별도 모듈에서 Basic Data 안으로(사용자 2026-10-21). 추가 줄·칩 목록은 JS(initBasicRelated)가 채움 -->
 					<div class="elnBasicRow alignTop">
-						<label class="elnBasicLabel"><span class="essential">**</span>Tags</label>
+						<label class="elnBasicLabel"><span class="essential">*</span>Related Items</label>
+						<div class="elnBasicRel" id="elnBasicRel"></div>
+					</div>
+					<!-- Tags — Basic Data 맨 아래(사용자 2026-10-21). 값 자리는 칩 + 입력 + 추천(멀티라인이라 상단 정렬).
+					     결재 상신 때만 필수(운영 data-required-appronly), 표시는 다른 필수와 같은 * 하나 -->
+					<div class="elnBasicRow alignTop">
+						<label class="elnBasicLabel"><span class="essential">*</span>Tags</label>
 						<div class="elnTagBox">
 							<div class="elnTags" id="elnTags">
 								<span class="elnTag" data-tag="#viscosity">#viscosity<i class="material-symbols-outlined">close</i></span>
@@ -156,13 +157,6 @@
 							</div>
 						</div>
 					</div>
-					<!-- Related Items — 별도 모듈에서 Basic Data 안으로(사용자 2026-10-21). 추가 줄·칩 목록은 JS(initBasicRelated)가 채움 -->
-					<div class="elnBasicRow alignTop">
-						<label class="elnBasicLabel"><span class="essential">*</span>Related Items</label>
-						<div class="elnBasicRel" id="elnBasicRel"></div>
-					</div>
-					<!-- 필수 표시 구분: * = 저장할 때 필수, ** = 결재 상신할 때 필수 -->
-					<div class="elnReqLegend"><span><span class="essential">*</span>Required to save</span><span><span class="essential">**</span>Required to initiate approval</span></div>
 				</div>
 			</section>
 

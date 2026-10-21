@@ -744,7 +744,7 @@
       syncClonedRow(n);   // 복제 노트면 Basic Data에 'Cloned from' 링크, 아니면 제거
       // Creation Date 도 전환 노트의 생성일로(created 가 없으면 date). 저장 전 복사본이면 빈 값
       setCreatedDate(n.created || (n.clonedFrom ? '' : n.date));
-      setBusiness(n.biz || DEMO_BIZ);   // Primary Business·Segment·Others(로그 없음)
+      setBusiness(n.biz || DEMO_BIZ);   // Primary Business·Other Business(es)·Site(로그 없음)
       // 헤더 상태 알약(노트 상태 어휘 → 색/라벨 직접 매핑)
       var pill = document.getElementById('elnHeadStatus');
       if (pill) { pill.className = 'roundBox ' + (NOTE_STATUS_PILL[n.status] || 'grey');
@@ -1211,7 +1211,7 @@
       // Basic Data 텍스트 입력 변경 — 위임(나중에 추가된 input도 커버). 포커스 시 값 기록 → change 시 before/after
       var basic = document.getElementById('card_basic');
       if (basic) {
-        // 추적 대상: 텍스트 입력 + select(Primary Business·Segment·Others). 이전값은 요소별(_auditPrev)로 보관.
+        // 추적 대상: 텍스트 입력 + select(Primary Business·Other Business(es)·Site). 이전값은 요소별(_auditPrev)로 보관.
         //  Related Items 추가 줄(유형·검색칸)은 칩 추가·삭제로 따로 기록하므로 제외, Creation Date 는 사용자가 고치지 않음
         function isField(el) {
           if (!el || el.closest('.elnRelBox')) return false;
@@ -1222,7 +1222,6 @@
           return el.type === 'text';
         }
         function fieldName(el) {
-          if (el.id === 'elnBizSegment') return 'Segment';   // Primary Business 와 같은 줄
           var row = el.closest('.elnBasicRow'), lab = row && row.querySelector('.elnBasicLabel');
           return lab ? lab.textContent.replace(/\*/g, '').trim() : (el.getAttribute('placeholder') || 'Field');
         }
@@ -2258,7 +2257,7 @@
   // Initiate Approval — 운영 표준 그대로: 결재선 검증 → #apprRequestCommentModal(common.html approvalModal) 과 같은 구성
   //  (send 아이콘 제목 + aniInput textarea + Submit(hViva)·Cancel(hGrey)) → 노트 전체 상신
   function soOpenInitiate() {
-    if (ELN.requireBasic && !ELN.requireBasic(true)) return;   // 상신 때 필수(* + **) 검사 — 운영 'Cannot Initiate Approval'
+    if (ELN.requireBasic && !ELN.requireBasic(true)) return;   // 상신 때 필수(저장 필수 + Tags) 검사 — 운영 'Cannot Initiate Approval'
     var bad = soLineCheck();
     if (bad) { soWarn(bad[0], bad[1]); return; }
     if (soLocked()) return;
@@ -2747,40 +2746,25 @@
     setNoteProjects(codes);
   }
 
-  /* Primary Business(단일) · Segment(Primary Business 에 딸린 것만) · Others(다중) — 사용자 2026-10-21.
-     운영 레퍼런스: CNPI/SNPI Basic 의 Business·Segment select2(fnSetOptionWithBU: Business 없으면 '(Please select a "Business" first)'),
-     FMEA Basic 의 Customer select2 multiple. 목록 = 운영 DEXIF BIZ 코드(07_techlib_business_dexif.sql 매핑)와 SGMNT(마이그레이션 sub_segment → segment) 이름 */
+  /* Primary Business(단일) · Other Business(es)(다중) — 사용자 2026-10-21(Segment 는 같은 날 제외).
+     운영 레퍼런스: CNPI/SNPI Basic 의 Business select2, FMEA Basic 의 Customer select2 multiple. 목록 = 운영 DEXIF BIZ 코드(07_techlib_business_dexif.sql 매핑) */
   var ELN_BIZ = [
-    { c: 'COAT', n: 'Coatings', seg: ['HDC/WSC', 'RCL/PSA'] },
-    { c: 'EM', n: 'Electronic Materials', seg: ['Electronic Materials'] },
-    { c: 'HCARE', n: 'Healthcare', seg: ['Healthcare'] },
-    { c: 'INDL', n: 'Industrial', seg: ['Industrial', 'Sealants'] },
-    { c: 'PCARE', n: 'Personal Care', seg: ['Personal Care'] },
-    { c: 'UADD', n: 'Urethane Additives', seg: ['Rigid Molded Specialties Foam', 'Slabstock Foam'] },
-    { c: 'SADD', n: 'Specialty Additives', seg: ['CAS/PE', 'Process Industries/Agriculture'] },
-    { c: 'TRSL', n: 'Tire & Silanes', seg: ['Tire', 'Standard Silanes'] }
+    { c: 'COAT', n: 'Coatings' }, { c: 'EM', n: 'Electronic Materials' }, { c: 'HCARE', n: 'Healthcare' }, { c: 'INDL', n: 'Industrial' },
+    { c: 'PCARE', n: 'Personal Care' }, { c: 'UADD', n: 'Urethane Additives' }, { c: 'SADD', n: 'Specialty Additives' }, { c: 'TRSL', n: 'Tire & Silanes' }
   ];
   // Site = 운영 TechLib 업로드와 같은 공통코드 lib_site(플랜트 마스터의 기술 사이트, div_tech_yn=Y). 표시는 운영 codeLabel 과 같은 '[코드] 이름'
   var ELN_SITES = [['IT01', 'Itatiba'], ['MS01', 'Shanghai - China'], ['LV01', 'Leverkusen - DE'], ['AB01', 'Abingdon'], ['IN02', 'Bangalore R&D (Tech) Center'],
     ['TE01', 'Termoli'], ['OT01', 'Ohta - Japan'], ['KP01', 'Hwaseong - Korea'], ['CHNC', 'Charlotte'], ['GART', 'Garrett'], ['PEAR', 'Pearl River - US'],
     ['SVLL', 'Sistersville'], ['WTFD', 'Waterford']];
-  var DEMO_BIZ = { primary: 'COAT', segment: 'RCL/PSA', others: ['EM'], site: 'KP01' };   // 데모 노트: UV 경화 PSA(코팅 RCL/PSA) + 디스플레이용(Electronic Materials), 화성
-  function bizEls() { return { p: document.getElementById('elnBizPrimary'), s: document.getElementById('elnBizSegment'), o: document.getElementById('elnBizOthers'), t: document.getElementById('elnSite') }; }
-  // Segment 옵션 = 고른 Business 의 것만(운영 fnSetOptionWithBU 와 같은 규칙). 남길 값이 목록에 없으면 비움
-  function bizFillSegments(s, biz, keep) {
-    var b = ELN_BIZ.filter(function (x) { return x.c === biz; })[0];
-    s.innerHTML = b ? '<option value="">- Select -</option>' + b.seg.map(function (n) { return '<option value="' + esc(n) + '">' + esc(n) + '</option>'; }).join('')
-      : '<option value="">(Please select a "Business" first)</option>';
-    s.value = (b && b.seg.indexOf(keep) >= 0) ? keep : '';
-  }
-  // Others 에서 Primary 로 고른 Business 는 고를 수 없게(이미 골랐으면 뺌)
+  var DEMO_BIZ = { primary: 'COAT', others: ['EM'], site: 'KP01' };   // 데모 노트: UV 경화 PSA(Coatings) + 디스플레이용(Electronic Materials), 화성
+  function bizEls() { return { p: document.getElementById('elnBizPrimary'), o: document.getElementById('elnBizOthers'), t: document.getElementById('elnSite') }; }
+  // Other Business(es) 에서 Primary 로 고른 Business 는 고를 수 없게(이미 골랐으면 뺌)
   function bizSyncOthers(o, primary) {
     [].forEach.call(o.options, function (op) { op.disabled = !!primary && op.value === primary; if (op.disabled) op.selected = false; });
   }
-  function bizRefresh(e) { if (window.jQuery) [e.p, e.s, e.o, e.t].forEach(function (x) { if (x) jQuery(x).trigger('change.select2'); }); }
-  function bizApply(e, v) {   // 값 넣기(옵션 재구성 포함, 이벤트 없음)
+  function bizRefresh(e) { if (window.jQuery) [e.p, e.o, e.t].forEach(function (x) { if (x) jQuery(x).trigger('change.select2'); }); }
+  function bizApply(e, v) {   // 값 넣기(이벤트 없음)
     e.p.value = v.primary || '';
-    bizFillSegments(e.s, e.p.value, v.segment || '');
     [].forEach.call(e.o.options, function (op) { op.selected = (v.others || []).indexOf(op.value) >= 0; });
     bizSyncOthers(e.o, e.p.value);
     if (e.t) e.t.value = v.site || '';
@@ -2790,10 +2774,10 @@
     var e = bizEls(); if (!e.p) return;
     bizApply(e, v || {});
     bizRefresh(e);
-    if (ELN.audit && ELN.audit.rebase) [e.p, e.s, e.o, e.t].forEach(ELN.audit.rebase);
+    if (ELN.audit && ELN.audit.rebase) [e.p, e.o, e.t].forEach(ELN.audit.rebase);
   }
   function initBusiness() {
-    var e = bizEls(); if (!e.p || !e.s || !e.o || !e.t) return;
+    var e = bizEls(); if (!e.p || !e.o || !e.t) return;
     var opts = ELN_BIZ.map(function (b) { return '<option value="' + b.c + '">' + esc(b.n) + '</option>'; }).join('');
     e.p.innerHTML = '<option value="">- Select -</option>' + opts;
     e.o.innerHTML = opts;
@@ -2801,23 +2785,21 @@
     var q = null; try { q = new URLSearchParams(location.search); } catch (err) {}
     bizApply(e, (q && q.get('tmpl')) ? {} : DEMO_BIZ);   // 템플릿 새 노트는 빈 값, 그 외(데모·기존 노트)는 데모 값
     if (!S2.ready()) return;
-    S2.mount(e.p); S2.mount(e.s); S2.mount(e.o, { placeholder: 'Select other businesses' }); S2.mount(e.t);
+    S2.mount(e.p); S2.mount(e.o, { placeholder: 'Select other businesses' }); S2.mount(e.t);
     var card = document.getElementById('card_basic');
     // select2 는 jQuery change 만 쏨 → Basic Data 감사·Last edited 를 여기서 직접 구동
     function changed(el) { if (ELN.audit && ELN.audit.fieldChanged) ELN.audit.fieldChanged(el); if (ELN.coedit && card) ELN.coedit.touch(card); }
     jQuery(e.p).on('change', function () {
-      var before = e.s.value;
-      bizFillSegments(e.s, e.p.value, before); bizSyncOthers(e.o, e.p.value); bizRefresh(e);
-      changed(e.p); if (e.s.value !== before) changed(e.s); changed(e.o);
+      bizSyncOthers(e.o, e.p.value); bizRefresh(e);
+      changed(e.p); changed(e.o);   // Primary 로 고른 Business 가 Others 에 있었으면 빠진 것까지 기록(바뀐 게 없으면 기록 안 됨)
     });
-    jQuery(e.s).on('change', function () { changed(e.s); });
     jQuery(e.o).on('change', function () { changed(e.o); });
     jQuery(e.t).on('change', function () { changed(e.t); });
   }
   document.addEventListener('DOMContentLoaded', initBusiness);
 
   /* 필수 항목 검사 — 운영 au.checkRequiredFields(저장: data-required) · appr_util _check3_MandatoryFields(상신: data-required + data-required-appronly) 와 같은 규칙·알림.
-     Basic Data: * = 저장 때 필수(Title·Primary Business·Segment·Site·Related Items 1개 이상), ** = 상신 때 필수(Tags 1개 이상). Creation Date 는 저장 때 자동 */
+     Basic Data: 저장 때 필수 = Title·Primary Business·Site·Related Items 1개 이상, 상신 때 필수 = 위 + Tags 1개 이상(표시는 모두 * 하나). Creation Date 는 저장 때 자동 */
   function reqMissing(forApproval) {
     var card = document.getElementById('card_basic'); if (!card) return [];
     var out = [];
@@ -5017,13 +4999,14 @@
   }
   function pdfBasic() {
     var tags = [].slice.call(document.querySelectorAll('#elnTags .elnTag')).map(function (t) { return t.getAttribute('data-tag') || pdfTxt(t); });
-    var biz = pdfSelText('#elnBizPrimary'), seg = pdfSelText('#elnBizSegment');
     var rel = [].slice.call(document.querySelectorAll('#elnBasicRel .elnRelItem')).map(function (li) {
       return [pdfTxt(li.querySelector('.elnRelType')), pdfTxt(li.querySelector('.elnRelLink')) || pdfTxt(li)];
     });
+    // 화면 순서와 같게: 기본 항목 → Related Items 표 → Tags(맨 아래)
     return pdfKv([['Title', pdfVal('.elnBasicTitle input')], ['Creation Date', pdfVal('#elnCreatedDate')],
-      ['Primary Business', biz ? biz + (seg ? ' · ' + seg : '') : ''], ['Other Business(es)', pdfSelText('#elnBizOthers')], ['Site', pdfSelText('#elnSite')], ['Tags', tags.join(', ')]])
-      + '<h3>Related Items</h3>' + pdfRows(['Type', 'Item'], rel);
+      ['Primary Business', pdfSelText('#elnBizPrimary')], ['Other Business(es)', pdfSelText('#elnBizOthers')], ['Site', pdfSelText('#elnSite')]])
+      + '<h3>Related Items</h3>' + pdfRows(['Type', 'Item'], rel)
+      + pdfKv([['Tags', tags.join(', ')]]);
   }
   function pdfFml(card) {
     var body = card.querySelector(':scope > .elnBasic'), h = '';
