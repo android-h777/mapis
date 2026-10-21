@@ -68,6 +68,12 @@
 	#elnSummary .elnSumNbPick{white-space:nowrap;gap:4px;height:22px;margin:0 0 0 -5px;vertical-align:middle;}   /* 노트북 이름이 두 줄로 꺾이지 않게 */
 	#elnSummary .subPjInfo > .col:nth-child(odd){clear:left;}   /* 라벨 칸은 항상 새 줄에서 — 값 칸이 조금 높아도(노트북 픽커) 행이 어긋나지 않게 */
 	#elnSummary .jsLinkNpi{font-size:14px;line-height:1.8;}   /* 프로젝트 링크 = subPjInfo .val 과 같은 글자 크기 */
+	/* 요약 Related Items 한 줄: 유형(작은 대문자, 팝업 칩의 유형 글자와 같은 톤) + 이름 + Material 의 Plant 라벨 */
+	#elnSummary .elnSumRel{display:flex;align-items:center;gap:8px;font-size:14px;line-height:1.8;min-width:0;}
+	#elnSummary .elnSumRel .ty{flex:0 0 58px;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#b3a596;}
+	#elnSummary .elnSumRel .nm{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}   /* 긴 자재명은 말줄임(전체는 툴팁) — Plant 라벨은 같은 줄 유지 */
+	/* Plant 라벨 = 팝업의 표준 roundBox outline grey 와 같은 모양(이 페이지 mpm_common.css 에는 outline 색 변형이 없어 직접 지정) */
+	#elnSummary .elnSumPlant{flex:0 0 auto;font-size:11px;line-height:16px;padding:0 7px;white-space:nowrap;color:#A89A8E;background:#fff;border:1px solid #A89A8E;}
 	/* New Note 창의 Copy From 줄: [노트 검색(남은 폭)] [Include entered data] [Copy] — 가운데 정렬 */
 	.elnCopyFrom{display:flex;align-items:center;gap:16px;margin:4px 0 6px;}
 	.elnCopyFrom .elnCopyFromSearch{flex:1 1 auto;min-width:0;margin:0;}
@@ -237,8 +243,15 @@
 				<div class="row">
 					<div class="col s2 tit">Author</div>
 					<div class="col s4"><select id="srchAuthor"></select></div>
-					<div class="col s2 tit">Project # / NPI</div>
-					<div class="col s4"><div class="aniInput"><input type="text" class="browser-default" id="srchProj" placeholder="Project # or name (e.g. SN-26-0031 or RGBOLED)" autocomplete="off"><span class="focus-border"></span></div></div>
+					<div class="col s2 tit">Related Items</div>
+					<div class="col s4"><div class="aniInput"><input type="text" class="browser-default" id="srchProj" placeholder="Project or material # / name (e.g. SN-26-0031, 30565)" autocomplete="off"><span class="focus-border"></span></div></div>
+				</div>
+				<!-- 팝업 Basic Data 의 Primary Business · Site 로 거르기(2026-10-21) -->
+				<div class="row">
+					<div class="col s2 tit">Primary Business</div>
+					<div class="col s4"><select id="srchBiz"></select></div>
+					<div class="col s2 tit">Site</div>
+					<div class="col s4"><select id="srchSite"></select></div>
 				</div>
 				<div class="row">
 					<div class="col s2 tit">Attachments</div>
@@ -548,9 +561,21 @@
 	};
 	// 노트북의 프로젝트 = 새 노트의 '기본값'일 뿐. 시드 시점에 각 노트의 project 로 복사하고, 이후 노트 이동은 project 를 바꾸지 않음
 	var NB_PROJECT = { rgboled:'SN-26-0031', foled:'CN-26-0064', optical:'PT-25-0182', customerA:'CN-26-0090' };
+	/* Basic Data(팝업과 같은 항목, 2026-10-21) — Primary Business · Other Business(es) · Site. 노트북 기본값 + 노트별 덮어쓰기(n.biz/others/site).
+	   이름표 = 팝업과 같은 운영 DEXIF BIZ 코드 · lib_site(Plant) 코드 */
+	var ELN_BIZ_NAME = { COAT:'Coatings', EM:'Electronic Materials', HCARE:'Healthcare', INDL:'Industrial', PCARE:'Personal Care', UADD:'Urethane Additives', SADD:'Specialty Additives', TRSL:'Tire & Silanes' };
+	var ELN_SITE_NAME = { IT01:'Itatiba', MS01:'Shanghai - China', LV01:'Leverkusen - DE', AB01:'Abingdon', IN02:'Bangalore R&D (Tech) Center', TE01:'Termoli', OT01:'Ohta - Japan',
+		KP01:'Hwaseong - Korea', CHNC:'Charlotte', GART:'Garrett', PEAR:'Pearl River - US', SVLL:'Sistersville', WTFD:'Waterford' };
+	var NB_BASIC = { unfiled:{ biz:'COAT', others:[], site:'KP01' }, rgboled:{ biz:'COAT', others:['EM'], site:'KP01' }, foled:{ biz:'EM', others:[], site:'KP01' },
+		optical:{ biz:'EM', others:['COAT'], site:'KP01' }, customerA:{ biz:'COAT', others:[], site:'KP01' } };
+	function noteBasic(n){ var d = (!n.restricted && NB_BASIC[n._nb]) || {}; return { biz: n.biz || d.biz || '', others: n.others || d.others || [], site: n.site || d.site || '' }; }
+	function siteLabel(c){ return c ? '[' + c + '] ' + (ELN_SITE_NAME[c] || c) : ''; }
+	// Related Items 의 Material 표시: '[자재ID] 자재명'(운영 DEXIF, 앞 0 뗀 값) + Plant '[코드] 이름'
+	function matLabel(m){ return '[' + m.mat + '] ' + m.desc; }
 	// projects = 노트에 연결된 프로젝트 코드(Primary 개념 없음 — 단순 연관 항목)
 	var NOTE_EXTRA = {
-		'LN-2605-00142': { projects:['PT-26-0021','TS-26-0205'], attach:[
+		// materials = Related Items 의 Material(자재+Plant, 팝업 Basic Data 와 같은 데모 칩)
+		'LN-2605-00142': { projects:['PT-26-0021','TS-26-0205'], materials:[{ mat:'30565', desc:'1,6-HEXANEDIOL DIACRYLATE, 067230', plant:'KP01' }], attach:[
 			{ name:'test_result.pdf',  text:'…viscosity 4,520 cP at 25°C, cure 96%, haze 0.8%, all specs met…' },
 			{ name:'raw_data.xlsx',    text:'…shear rate sweep, viscosity vs. temperature (15-45°C)…' } ] },
 		'LN-2605-00118': { attach:[ { name:'modifier_ratio.xlsx', text:'…2.5 wt% modifier gave viscosity 3,980 cP, below the 4,200 cP target…' } ] },
@@ -574,10 +599,10 @@
 	});
 	// 권한 없는 타팀 노트(검색 결과에만 노출, 노트북/All Notes 에는 절대 포함 X). 행에는 번호·제목·작성자·날짜만 — 태그/첨부는 매칭에만 쓰고 노출 금지
 	var RESTRICTED = [
-		{ code:'LN-2607-00311', title:'Silicone Release Coating', st:'ok', author:'H.S. Choi', team:'Coating Team', date:'2026-07-14', tags:['#silicone','#release'], project:'SN-26-0047', attach:[{name:'release_force.pdf', text:'…release force 12 g/in…'}] },
-		{ code:'LN-2606-00276', title:'Viscosity control of hard coat resin', st:'ing', author:'H.S. Choi', team:'Coating Team', date:'2026-06-20', tags:['#viscosity','#hardcoat'], project:'SN-26-0031', projects:['PT-26-0021'] },
-		{ code:'LN-2608-00045', title:'Silicone adhesive peel strength study', st:'ok', author:'D.H. Jung', team:'Adhesives Pilot Team', date:'2026-08-03', tags:['#silicone','#peel'], project:'PT-26-0034' },
-		{ code:'LN-2609-00019', title:'Barrier coating pinhole analysis', st:'appr', author:'Y.R. Kwon', team:'Barrier Film Team', date:'2026-09-02', tags:['#barrier','#coating'], project:'CN-26-0112', projects:['SN-26-0047'] }
+		{ code:'LN-2607-00311', title:'Silicone Release Coating', st:'ok', author:'H.S. Choi', team:'Coating Team', date:'2026-07-14', tags:['#silicone','#release'], project:'SN-26-0047', biz:'COAT', site:'LV01', attach:[{name:'release_force.pdf', text:'…release force 12 g/in…'}] },
+		{ code:'LN-2606-00276', title:'Viscosity control of hard coat resin', st:'ing', author:'H.S. Choi', team:'Coating Team', date:'2026-06-20', tags:['#viscosity','#hardcoat'], project:'SN-26-0031', projects:['PT-26-0021'], biz:'COAT', site:'LV01' },
+		{ code:'LN-2608-00045', title:'Silicone adhesive peel strength study', st:'ok', author:'D.H. Jung', team:'Adhesives Pilot Team', date:'2026-08-03', tags:['#silicone','#peel'], project:'PT-26-0034', biz:'SADD', site:'WTFD' },
+		{ code:'LN-2609-00019', title:'Barrier coating pinhole analysis', st:'appr', author:'Y.R. Kwon', team:'Barrier Film Team', date:'2026-09-02', tags:['#barrier','#coating'], project:'CN-26-0112', projects:['SN-26-0047'], biz:'EM', site:'MS01' }
 	].map(function(n){ n.restricted = true; n.projects = mergeProjects(n.project, n.projects); delete n.project; return n; });
 	var reqSent = {};   // 접근 요청 보낸 노트(code→1) — 페이지가 열려 있는 동안 유지
 
@@ -741,8 +766,10 @@
 				sumRow('Author', esc(n.author)) +
 				sumRow('Team', esc(n.team)) +
 				sumRow('Modified', esc(fmtDate(n.date))) +
+				sumRow('Primary Business', esc(ELN_BIZ_NAME[noteBasic(n).biz] || '')) +   // 기본 정보(분류)는 권한 없어도 보임
+				sumRow('Site', esc(siteLabel(noteBasic(n).site))) +
 			'</div>' +
-			projLinksHtml(n) +
+			relItemsHtml(n) +
 			'<div class="elnNoAccess"><i class="material-symbols-outlined">lock</i>' +
 				'<div class="t">You don\'t have access to this note.</div>' +
 				'<div class="d">Ask ' + esc(n.author) + ' for access. Content, attachments and tags stay hidden until approved.</div>' +
@@ -800,15 +827,17 @@
 	function projKind(code){ return code.indexOf('PT-') === 0 ? 'NPT' : (code.indexOf('TS-') === 0 ? 'TS' : 'NPI'); }
 	// 표준 서머리 한 행: col s6 라벨 + col s6 val (techlib/composition fnSetSummary 와 동일 구조). 값 없으면 '-'
 	function sumRow(k, vHtml){ return '<div class="col s6">' + esc(k) + '</div><div class="col s6 val">' + (vHtml || '-') + '</div>'; }
-	// Related Projects — '[CODE] Title' 링크 목록. 클릭=프로젝트 상세(jsLinkNpi). 없으면 '-'
-	function projLinksHtml(n){
-		var all = noteProjectsAll(n);
-		return '<div class="subTit mt20 ml10">Related Projects</div>' +
-			'<div class="row"><div class="col s12"><div class="pd10">' +
-			(all.length ? all.map(function(c){
-				return '<div><a href="javascript:;" class="link jsLinkNpi" data-code="' + esc(c) + '" title="' + esc(projKind(c)) + '">' + esc('[' + c + '] ' + (PROJ_TITLE[c] || '-')) + '</a></div>';
-			}).join('') : '-') +
-			'</div></div></div>';
+	// Related Items(팝업 Basic Data 와 같은 이름·순서) — 유형 표시 + Project '[CODE] Title' 링크(클릭=프로젝트 상세, jsLinkNpi)
+	//  + Material '[자재ID] 자재명' · Plant 라벨. 권한 없는 노트는 프로젝트(메타데이터)만. 없으면 '-'
+	function relItemsHtml(n){
+		var rows = noteProjectsAll(n).map(function(c){
+			return '<div class="elnSumRel"><span class="ty">Project</span><a href="javascript:;" class="link jsLinkNpi" data-code="' + esc(c) + '" title="' + esc(projKind(c)) + '">' + esc('[' + c + '] ' + (PROJ_TITLE[c] || '-')) + '</a></div>';
+		});
+		if(!n.restricted) (n.materials || []).forEach(function(m){
+			rows.push('<div class="elnSumRel"><span class="ty">Material</span><span class="nm" title="' + esc(matLabel(m)) + '">' + esc(matLabel(m)) + '</span><span class="roundBox elnSumPlant" title="Plant">' + esc(siteLabel(m.plant)) + '</span></div>');
+		});
+		return '<div class="subTit mt20 ml10">Related Items</div>' +
+			'<div class="row"><div class="col s12"><div class="pd10">' + (rows.length ? rows.join('') : '-') + '</div></div></div>';
 	}
 	function renderSummary(n){
 		if(n && n.restricted){ renderRestrictedSummary(n); return; }
@@ -816,6 +845,7 @@
 		var sum = document.getElementById('elnSummary');
 		var s = stByKey(n.st);
 		var nbName = n._nbName || NB[curNbKey].name;
+		var nb = noteBasic(n);
 		var chipsHtml = (n.tags||[]).map(function(t){ return '<span class="roundBox jsSumTag" data-tag="'+esc(t)+'" title="Search this tag">'+esc(t)+'</span>'; }).join('');
 		sum.classList.remove('empty');
 		sum.innerHTML =
@@ -825,10 +855,14 @@
 				sumRow('Note #', esc(n.code))+
 				sumRow('Notebook', '<span class="elnSumNbPick" title="Move to another notebook"><span class="elnNbDot" style="background:'+nbColor(n._nb)+'"></span>'+esc(nbName)+'<i class="material-symbols-outlined">expand_more</i></span>')+
 				sumRow('Author', esc(n.author))+
+				sumRow('Creation Date', esc(fmtDate(n.created || n.date)))+   // 팝업 Basic Data 의 Creation Date(최초 저장일)
 				sumRow('Modified', esc(fmtDate(n.date)))+
+				sumRow('Primary Business', esc(ELN_BIZ_NAME[nb.biz] || ''))+
+				sumRow('Other Business(es)', esc(nb.others.map(function(c){ return ELN_BIZ_NAME[c] || c; }).join(', ')))+
+				sumRow('Site', esc(siteLabel(nb.site)))+
 				sumRow('Formulation', n.fml ? esc(n.fml) : '')+
 			'</div>'+
-			projLinksHtml(n)+
+			relItemsHtml(n)+
 			'<div class="subTit mt20 ml10">Modules</div>'+
 			'<div class="row"><div class="col s12"><div class="techlibKws pd10">'+noteHeaders(n).map(function(h){ return '<span class="roundBox">'+esc(h)+'</span>'; }).join('')+'</div></div></div>'+
 			'<div class="subTit mt20 ml10">Tags</div>'+
@@ -1013,9 +1047,14 @@
 		if(c.author && c.author !== 'all' && n.author !== c.author) return false;
 		if(c.proj){
 			var prx = globRegex(c.proj);
-			// 노트에 연결된 프로젝트의 코드/제목 어디든 일치하면 통과(권한 없는 노트도 프로젝트 메타데이터는 매칭 허용)
-			if(!noteProjectsAll(n).some(function(code){ return prx.test(projLabel(code)); })) return false;
+			// Related Items: 프로젝트 코드/제목 또는 Material '[자재ID] 자재명'·Plant 어디든 일치하면 통과
+			// (권한 없는 노트는 프로젝트 메타데이터만 매칭 — 자재는 본문 정보라 제외)
+			var relOk = noteProjectsAll(n).some(function(code){ return prx.test(projLabel(code)); })
+				|| (!n.restricted && (n.materials || []).some(function(m){ return prx.test(matLabel(m) + ' ' + siteLabel(m.plant)); }));
+			if(!relOk) return false;
 		}
+		if(c.biz && c.biz !== 'all' && noteBasic(n).biz !== c.biz) return false;
+		if(c.site && c.site !== 'all' && noteBasic(n).site !== c.site) return false;
 		// 구조 조건: 실제 구현은 ChemStudio 통합검색이 SEQ_CHEMDRAW 를 돌려주고, 노트는 ChemStudio 모듈에 연결된 구조로 매칭.
 		// 권한 없는 노트는 본문(구조) 비공개이므로 구조로는 매칭하지 않는다.
 		if(c.struct){
@@ -1060,7 +1099,9 @@
 		}
 		if(c.notebook && c.notebook !== 'all') p.push(critChip('folder', 'Notebook', (NB[c.notebook] && NB[c.notebook].name) || c.notebook));
 		if(c.author && c.author !== 'all') p.push(critChip('person', 'Author', c.author));
-		if(c.proj) p.push(critChip('lightbulb', 'Project # / NPI', c.proj));
+		if(c.proj) p.push(critChip('hub', 'Related Items', c.proj));
+		if(c.biz && c.biz !== 'all') p.push(critChip('business_center', 'Primary Business', ELN_BIZ_NAME[c.biz] || c.biz));
+		if(c.site && c.site !== 'all') p.push(critChip('location_on', 'Site', siteLabel(c.site)));
 		if(c.struct) p.push(critChip('hexagon', 'Structure', c.struct));
 		if(c.attach) p.push(critChip('attach_file', 'Attachments', 'Included'));
 		if(!p.length) return '';
@@ -1108,6 +1149,9 @@
 		Object.keys(seen).sort().forEach(function(a){ opt(auSel, a, a); });
 		opt(nbSel, 'all', 'All notebooks');
 		Object.keys(NB).forEach(function(k){ opt(nbSel, k, NB[k].name); });
+		var bzSel = document.getElementById('srchBiz'), siSel = document.getElementById('srchSite');
+		opt(bzSel, 'all', 'All businesses'); Object.keys(ELN_BIZ_NAME).forEach(function(c){ opt(bzSel, c, ELN_BIZ_NAME[c]); });
+		opt(siSel, 'all', 'All sites'); Object.keys(ELN_SITE_NAME).forEach(function(c){ opt(siSel, c, siteLabel(c)); });
 		$('#elnSrchModal select').formSelect({ dropdownOptions: { container: document.body } });
 	}
 	function gatherSearch(){
@@ -1118,6 +1162,8 @@
 			notebook: document.getElementById('srchNotebook').value,
 			author: document.getElementById('srchAuthor').value,
 			proj: document.getElementById('srchProj').value.trim(),
+			biz: document.getElementById('srchBiz').value,
+			site: document.getElementById('srchSite').value,
 			struct: document.getElementById('srchStruct').value.trim(),
 			attach: document.getElementById('srchAttach').checked
 		};
@@ -1552,7 +1598,7 @@
 		});
 		$(document).on('click', '#srchReset', function(){
 			$('#srchKeyword, #srchTags, #srchProj, #srchStruct').val('');
-			$('#srchStatus, #srchNotebook, #srchAuthor').val('all');
+			$('#srchStatus, #srchNotebook, #srchAuthor, #srchBiz, #srchSite').val('all');
 			document.getElementById('srchAttach').checked = false;
 			$('#elnSrchModal select').formSelect({ dropdownOptions: { container: document.body } });
 		});

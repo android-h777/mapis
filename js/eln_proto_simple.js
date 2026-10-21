@@ -167,7 +167,8 @@
      · 사람 = 운영은 getUserNameAjax 다중 select2('User ID / Name') → 프로토타입은 같은 옵션에 로컬 data(미니 데이터)
      · 짧은 단일 목록 = auSelect 기본값 {dropdownAutoWidth:true, minimumResultsForSearch:10}(검색창 없음)
      · 세련됨은 select2 공식 훅(templateResult/templateSelection) 안에서만 — 구조·박스·칩·키보드는 표준 그대로
-     · 모달 안에서는 dropdownParent = 모달(.modal): Materialize 포커스 트랩 안에 있어야 검색창 입력이 유지됨 */
+     · 목록은 운영 auSelect 와 같이 body 에 붙임(dropdownParent 지정 안 함). 모달(.modal, overflow:hidden) 안에 붙이면
+       모달 경계에서 목록이 잘렸음(ChemStudio Add Existing, 2026-10-21) — body 로 붙여도 z-index 1100(모달 1003 위)·검색어 입력 유지 확인 */
   var S2 = (function () {
     var $ = window.jQuery;
     function ready() { return !!($ && $.fn && $.fn.select2); }
@@ -215,8 +216,6 @@
       // 이미 Materialize FormSelect 가 씌워졌으면 걷어냄(이중 렌더 방지) + 이후 일괄 init 에서 제외
       if (window.M && M.FormSelect) { var fi = M.FormSelect.getInstance(sel); if (fi) fi.destroy(); }
       sel.classList.add('browser-default');
-      var back = sel.closest && sel.closest('.modal');
-      if (back && !o.dropdownParent) o.dropdownParent = $(back);
       if (sel.multiple) o.closeOnSelect = false;   // auSelect 와 동일: 다중은 선택 후 열린 채 유지
       var $s = $(sel).select2(o);
       // 다중: 열린 채 유지하면 select2 가 검색어를 남겨 목록이 걸러진 채 굳음 → 고르면 검색칸 비우고 전체 목록으로(운영 techLibList 와 같은 처리)
@@ -2744,7 +2743,7 @@
   function relMatInner(id18, desc, plant) {
     return '<i class="material-symbols-outlined">science</i><span class="elnRelType">Material</span>'
       + '<a href="javascript:;" class="elnRelLink" title="' + esc('[' + matDisp(id18) + '] ' + desc) + '">' + esc('[' + matDisp(id18) + '] ' + desc) + '</a>'
-      + '<span class="roundBox outline stone25 elnRelPlant" title="Plant">' + esc(plantLabel(plant)) + '</span>'
+      + '<span class="roundBox outline grey elnRelPlant" title="Plant">' + esc(plantLabel(plant)) + '</span>'
       + '<span class="elnRelActs"><i class="material-symbols-outlined elnRelDel btn_deleteFile" title="Remove">close</i></span>';
   }
   function relSampleLi() {   // 데모 노트 예시 칩: UV 경화 PSA 의 아크릴 모노머(HDDA) @ 화성(KP01)
