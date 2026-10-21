@@ -2582,7 +2582,7 @@
     { key: 'rgboled',   name: 'RGBOLED Adhesive',    icon: 'folder_shared' },   // 내가 공유한 노트북(리스트 NB.rgboled.sharedWith)
     { key: 'foled',     name: 'Flexible OLED',       icon: 'folder' },
     { key: 'optical',   name: 'Optical Clear Resin', icon: 'folder' },
-    { key: 'customerA', name: 'Customer A Project',  icon: 'folder' }
+    { key: 'customerA', name: 'Customer A Project',  icon: 'folder_shared' }   // 나에게 공유된 노트북(리스트 Shared with Me 그룹)
   ];
   var NB_CUR = 'rgboled';   // 이 노트의 노트북 키
   function nbName(key) { var n = NOTEBOOKS.filter(function (x) { return x.key === key; })[0]; return n ? n.name : ''; }

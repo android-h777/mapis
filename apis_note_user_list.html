@@ -81,7 +81,7 @@
 	.elnCopyFrom .hBtn{flex:0 0 auto;margin:0;}
 	.elnCopyFromInfo{font-size:12px;color:#9b8c7e;}
 	.ui-autocomplete .elnCopyFromNb{margin-left:10px;font-size:12px;color:#9b8c7e;}
-	/* 노트북 ⋯ 메뉴 정보 줄(Sharing · Shared With You) — Color 줄과 같은 라벨 + 글 */
+	/* 노트북 ⋯ 메뉴 정보 줄(Sharing · Shared By) — Color 줄과 같은 라벨 + 글 */
 	.elnNbInfoRow{gap:3px;}
 	.elnNbInfoRow .tx{font-size:13px;color:#3a2c24;line-height:1.45;}
 	/* 노트북 공유 창 — People with access(공유 중인 사람 칩, × = 해제) */
@@ -92,7 +92,7 @@
 	.elnShareChip .elnNbShareRevoke{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;border-radius:50%;color:#9b8c7e;}
 	.elnShareChip .elnNbShareRevoke:hover{background:rgba(164,120,100,.18);color:#7a5240;}
 	.elnShareChip .elnNbShareRevoke i{font-size:16px;}
-	.elnShareNone{font-size:13px;color:#b3a596;}
+	.elnShareWho:empty{display:none;}
 	</style>
 </head>
 <body>
@@ -190,16 +190,14 @@
 					<div class="elnNbItem" data-nb="rgboled"><i class="material-symbols-outlined fill">folder_shared</i><span class="nm">RGBOLED Adhesive</span><span class="ct">6</span></div>
 					<div class="elnNbItem" data-nb="foled"><i class="material-symbols-outlined fill">folder</i><span class="nm">Flexible OLED</span><span class="ct">3</span></div>
 					<div class="elnNbItem" data-nb="optical"><i class="material-symbols-outlined fill">folder</i><span class="nm">Optical Clear Resin</span><span class="ct">2</span></div>
-					<!-- Shared Notebooks 를 다시 켜면 이 줄은 지우고 아래 그룹의 customerA 를 쓴다 -->
-					<div class="elnNbItem" data-nb="customerA"><i class="material-symbols-outlined fill">folder</i><span class="nm">Customer A Project</span><span class="ct">4</span></div>
 				</div>
-				<!-- Shared Notebooks = 남이 나에게 공유한 노트북(apis_eln_list 의 그룹을 다시 넣음, 2026-10-21). 이름·삭제·색 변경 없음, ⋯ 메뉴는 공유 정보 + Remove(내 목록에서 빼기)만.
-				     빠질 수 있어 코드만 넣고 주석 처리(사용자 2026-10-21). 켜려면: 이 주석을 풀고, 위 My Notebooks 의 customerA 줄을 지우고, NB.customerA 의 owner·sharedOn 주석을 푼다
-				<div class="elnNbGrpLabel">SHARED NOTEBOOKS</div>
+				<!-- Shared with Me = 남이 나에게 공유한 노트북(apis_eln_list 의 Shared Notebooks 그룹을 다시 넣음, 2026-10-21). 레이블은 'Shared with Me'(사용자 10-21: 내가 공유한 노트북도
+				     My Notebooks 에 공유 아이콘으로 있어 'Shared Notebooks' 는 헷갈림). 이름·삭제·색 변경 없음, ⋯ 메뉴는 공유 정보(Shared By) + Remove(내 목록에서 빼기)만.
+				     한때 주석 처리했다가 같은 날 다시 보이게(사용자 2026-10-21). 이 안에서만 드래그 정렬 -->
+				<div class="elnNbGrpLabel">SHARED WITH ME</div>
 				<div class="elnNbGroup" data-group="shared">
 					<div class="elnNbItem" data-nb="customerA"><i class="material-symbols-outlined fill">folder_shared</i><span class="nm">Customer A Project</span><span class="ct">4</span></div>
 				</div>
-				-->
 				<a href="javascript:;" id="elnNewNotebook" class="waves-effect waves-light hBtn elnNbNewBtn"><i class="material-symbols-outlined left">create_new_folder</i><span class="label">New Notebook</span></a>
 			</aside>
 
@@ -553,11 +551,12 @@
 	function sharedNames(key){ return (NB[key].sharedWith || []).map(function(id){ var u = userById(id); return u ? u.name : id; }); }
 	function renderNbShare(q){
 		var ids = NB[nbShareKey].sharedWith || [];
-		document.getElementById('elnNbShareWho').innerHTML = '<span class="lb">People with access</span>' + (ids.length ? ids.map(function(id){
+		// 공유 중인 사람이 없으면 이 줄 자체를 비워 숨김(⋯ 메뉴 Sharing 줄과 같은 규칙)
+		document.getElementById('elnNbShareWho').innerHTML = ids.length ? '<span class="lb">People with access</span>' + ids.map(function(id){
 			var u = userById(id); if(!u) return '';
 			return '<span class="elnShareChip"><span class="elnUserAv">'+esc(userInitials(u.name))+'</span>'+esc(u.name)
 				+ '<a href="javascript:;" class="elnNbShareRevoke" data-id="'+esc(u.id)+'" title="Stop sharing"><i class="material-symbols-outlined">close</i></a></span>';
-		}).join('') : '<span class="elnShareNone">Only you</span>');
+		}).join('') : '';
 		var ql = (q||'').toLowerCase();
 		var matches = ELN_USERS.filter(function(u){ return (u.name+' '+u.team+' '+u.id).toLowerCase().indexOf(ql)>=0; });
 		document.getElementById('elnNbShareList').innerHTML = matches.length ? matches.map(function(u){
@@ -631,8 +630,8 @@
 			{code:'LN-2603-00120', title:'Haze reduction: final formulation', st:'ok', ver:'v3', cat:'Formulation', fml:'FML-OC-3310', tags:['#haze'], author:'M.J. Lee', date:'2026-03-28'},
 			{code:'LN-2603-00088', title:'Yellowing aging test (85°C/85%RH)', st:'ing', ver:'v1', cat:'Formulation', fml:'FML-OC-3308', tags:['#aging'], author:'M.J. Lee', date:'2026-03-12'}
 		]},
-		// owner = 나에게 공유한 사람(Shared Notebooks 그룹), sharedOn = 공유받은 날 — 그룹 주석 처리 중이라 같이 주석(켤 때 icon:'folder_shared' 로)
-		customerA: { name:'Customer A Project', icon:'folder', /* owner:'ehan', sharedOn:'2026-05-10', */ notes:[
+		// owner = 나에게 공유한 사람(Shared with Me 그룹), sharedOn = 공유받은 날
+		customerA: { name:'Customer A Project', icon:'folder_shared', owner:'ehan', sharedOn:'2026-05-10', notes:[
 			{code:'LN-2605-00301', title:'Customer A: OCR spec review', st:'ing', ver:'', cat:'General', fml:'', tags:['#customerA'], author:'J.P. Kim', date:'2026-05-30'},
 			{code:'LN-2605-00288', title:'Adhesion to PET film', st:'ok', ver:'v2', cat:'Formulation', fml:'FML-CA-4410', tags:['#adhesion'], author:'J.P. Kim', date:'2026-05-26'},
 			{code:'LN-2605-00270', title:'Cost-down reformulation', st:'appr', ver:'v1', cat:'Formulation', fml:'FML-CA-4408', tags:['#costdown'], author:'J.P. Kim', date:'2026-05-20'},
@@ -1394,9 +1393,9 @@
 		crow.appendChild(sw);
 		// materialize 전체 — 항상 표시, 세로 스크롤
 		menu.appendChild(crow);
-		// Sharing: 지금 공유 중인 사람(없으면 Only you). 공유하기·해제는 Share… 창에서
+		// Sharing: 지금 공유 중인 사람 — 공유 안 했으면 줄 자체를 안 보임(사용자 2026-10-21). 공유하기·해제는 Share… 창에서
 		var names = sharedNames(key);
-		menu.appendChild(nbInfoRow('Sharing', [names.length ? 'Shared with ' + names.join(', ') : 'Only you']));
+		if(names.length) menu.appendChild(nbInfoRow('Sharing', ['Shared with ' + names.join(', ')]));
 		[['person_add', 'Share…', openShareNotebook], ['edit', 'Rename', renameNotebook], ['delete', 'Delete', deleteNotebook]].forEach(function(row){
 			var el = document.createElement('div'); el.className = 'elnNbPopItem' + (row[0] === 'delete' ? ' danger' : '');
 			var ic = document.createElement('i'); ic.className = 'material-symbols-outlined'; ic.textContent = row[0];
@@ -1414,33 +1413,35 @@
 		lines.forEach(function(t){ var s = document.createElement('span'); s.className = 'tx'; s.textContent = t; row.appendChild(s); });
 		return row;
 	}
-	/* ── Shared Notebooks(남이 나에게 공유한 노트북) — 이름·삭제·색 변경 없음. ⋯ = 공유 정보 + Remove(내 목록에서 빼기)만.
-	   그룹은 지금 주석 처리(사용자 2026-10-21 "빠질 수 있어 코드만") — HTML·NB.customerA 주석을 풀면 동작 ── */
+	/* ── Shared with Me(남이 나에게 공유한 노트북) — 이름·삭제·색 변경 없음. ⋯ = 공유 정보(Shared By) + Remove(내 목록에서 빼기)만.
+	   (한때 주석 처리했다가 같은 날 다시 보이게 — 사용자 2026-10-21) ── */
 	function openSharedNbMenu(anchor, key){
 		var nb = NB[key]; if(!nb) return;
 		var u = userById(nb.owner);
 		var menu = document.createElement('div'); menu.className = 'elnNbPopList';
 		var since = String(nb.sharedOn || '').replace(/^(\d{4})-(\d{2})-(\d{2})$/, '$2-$3-$1');   // MM-DD-YYYY
-		menu.appendChild(nbInfoRow('Shared With You', ['Owner: ' + (u ? u.name + ' (' + u.team + ')' : nb.owner)].concat(since ? ['Since ' + since] : [])));
+		menu.appendChild(nbInfoRow('Shared By', [(u ? u.name + ' (' + u.team + ')' : nb.owner)].concat(since ? ['Since ' + since] : [])));   // 그룹 이름(Shared with Me)과 겹치지 않게 '누가'만
 		var el = document.createElement('div'); el.className = 'elnNbPopItem danger';
 		el.innerHTML = '<i class="material-symbols-outlined">person_remove</i><span>Remove</span>';
 		el.addEventListener('click', function(){ ref.close(); removeSharedNotebook(key); });
 		menu.appendChild(el);
 		var ref = ELN.popover({ anchor: anchor, content: menu, width: 260 });
 	}
-	// Remove = 내 Shared Notebooks 에서만 뺌(노트북·노트는 주인에게 그대로)
+	// Remove = 내 Shared with Me 에서만 뺌(노트북·노트는 주인에게 그대로)
 	function removeSharedNotebook(key){
 		var nb = NB[key]; if(!nb) return;
 		var u = userById(nb.owner);
 		ELN.modal({
 			title: 'Remove Shared Notebook', icon: 'person_remove',
-			body: 'Remove "' + nb.name + '" from your Shared Notebooks? The notebook and its notes stay with ' + (u ? u.name : 'the owner') + '. You will need to be shared again to see it.',
+			body: 'Remove "' + nb.name + '" from Shared with Me? The notebook and its notes stay with ' + (u ? u.name : 'the owner') + '. You will need to be shared again to see it.',
 			actions: [
 				{ label: 'Remove', type: 'elnDanger', onClick: function(){
 					delete NB[key];
 					var item = document.querySelector('.elnNbItem[data-nb="' + key + '"]'); if(item) item.remove();
+					var grp = document.querySelector('.elnNbGroup[data-group="shared"]');   // 다 빠지면 그룹 제목까지 숨김(빈 제목만 남지 않게)
+					if(grp && !grp.querySelector('.elnNbItem')){ grp.style.display = 'none'; var gl = grp.previousElementSibling; if(gl && gl.classList.contains('elnNbGrpLabel')) gl.style.display = 'none'; }
 					refreshNbCounts();
-					ELN.toast('Removed "' + nb.name + '" from Shared Notebooks.', 'ok');
+					ELN.toast('Removed "' + nb.name + '" from Shared with Me.', 'ok');
 					if(curNbKey === key){ var all = document.querySelector('.elnNbItem.elnNbAll'); if(all) all.click(); }
 					else if(curSearch) runSearch(curSearch);
 					else if(curNbKey === 'all'){ renderNotes('all'); applyView(); }
