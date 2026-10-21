@@ -17,6 +17,10 @@
 
     <!-- ELN 전용 자원(로컬) — 스택 무관 self-contained -->
     <link rel="stylesheet" type="text/css" href="css/eln_proto.css">
+    <!-- 검색 창 select2(운영 snpiList 와 같은 부품) — 라이브러리 + 리스트용 운영 스킨(css/eln_list_s2.css) -->
+    <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="css/eln_list_s2.css">
+    <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/mpm_select2.js"></script>
     <script defer src="js/eln_proto.js"></script>
   <script defer src="/_vercel/insights/script.js"></script>
 	<style>
@@ -112,6 +116,32 @@
 		text-shadow:1px 0 0 #fff,-1px 0 0 #fff,0 1px 0 #fff,0 -1px 0 #fff,1px 1px 0 #fff,-1px -1px 0 #fff,1px -1px 0 #fff,-1px 1px 0 #fff;}
 	.elnSumNbPick.ro{cursor:default;background:transparent;}
 	.elnSumNbPick.ro:hover{color:inherit;}
+	/* 배치 = 운영 리스트와 같음: 왼쪽 칸(제목·버튼 줄 + 노트북 패널·노트 목록) | 오른쪽 요약(제목 줄과 같은 높이에서 시작).
+	   여백 = 운영 typeList(mpm_common .typeList .rightSection: top 20 · 왼쪽과 30 간격, 목록 카드 아래 끝 = 본문 아래 끝)와 같게 */
+	.elnWsCols{display:flex;gap:30px;height:calc(100vh - 66px);}
+	.elnWsMain{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;}
+	.elnWsMain > .elnListWrap{flex:1 1 auto;height:auto;min-height:0;}
+	.elnWsCols > #elnSummary{flex:0 0 auto;margin-top:20px;}
+	/* 검색 창 맨 위 와일드카드 안내 = 운영 common.css .infoBox(리스트 css 에 없어 같은 값으로) */
+	.infoBox{padding:10px;border:1px solid #E1E1EF;border-radius:5px;margin-bottom:10px;}
+	#elnSrchModal .srchOptBox .select2-container{vertical-align:middle;}
+	/* 검색 결과 위 Search criteria 줄 = 운영 TechLib(techlib.css .tlActiveFilters · .tlStackChip · .tlFacetChip · .tlKwChip) 값 그대로.
+	   검색어 = 알약 칩(⊕), 필터 = 각진 '이름: 값' 칩, 칩마다 × = 그 조건만 빼고 다시 조회, 끝에 Reset criteria */
+	.elnCritRow{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin:0 0 10px;padding:8px 12px;
+		border:1px dashed color-mix(in srgb,#BBAA91 55%,white);border-radius:10px;background:rgba(164,120,100,.05);}
+	.elnCritRow .lead{display:flex;align-items:center;gap:4px;font-family:var(--font-main-m);font-size:13px;color:#8a7160;margin-right:5px;}
+	.elnCritRow .lead i{font-size:16px;color:#A47864;}
+	.elnCritChip{display:inline-flex;align-items:center;gap:5px;padding:0 12px;height:22px;border:1px solid #e1e1e1;border-radius:10px;font-size:12px;background:#fff;}
+	.elnCritChip.kw{color:#56443F;}
+	.elnCritChip.kw > i:first-child{font-size:14px;color:#A47864;}
+	.elnCritChip.facet{border-radius:4px;}
+	.elnCritChip .fk{font-size:12px;color:#A89A8E;}
+	.elnCritChip .fk::after{content:':';}
+	.elnCritChip .fv{font-family:var(--font-main-m);color:#56443F;}
+	.elnCritChip .del{font-size:14px;color:color-mix(in srgb,#A89A8E 90%,white);cursor:pointer;}
+	.elnCritChip .del:hover{color:var(--viva);}
+	.elnCritRow .reset{margin-left:6px;font-size:12px;color:#A47864;text-decoration:underline;}
+	.elnCritRow .reset:hover{color:var(--viva);}
 	/* 공유받은 노트북 ⋯ 메뉴의 공유 정보 — 이름표(흐림) · 값 두 칸 격자, 아래 구분선 뒤 Remove */
 	.elnNbKv{display:grid;grid-template-columns:auto 1fr;align-items:center;gap:8px 16px;padding:12px 16px;border-bottom:1px solid var(--gray20,#E0E0E0);}
 	.elnNbKv .k{font-size:12px;color:#9b8c7e;white-space:nowrap;}
@@ -240,11 +270,12 @@
   </aside>
 
 	<!-- 본문: 통합 화면 (좌 노트북 네비 | 중 노트목록 | 우 요약+계보). 좌측 'All Notes'=전체 최근순, 노트북=그 노트북. List·Chem·Formulation 뷰 전환 -->
+	<!-- 배치 = 운영 리스트(snpiList 등)와 같음(사용자 2026-10-21): 왼쪽 칸 = 제목·버튼 줄 + (노트북 패널 | 노트 목록), 오른쪽 = 요약(맨 위부터) -->
 	<article class="contArea elnWsArea">
+	<div class="elnWsCols">
+	<div class="elnWsMain">
 		<section class="mainTitArea elnWsTitArea">
 			<div class="mainTit">Lab Note List</div>
-				</ul>
-			</div>
 			<div class="elnHeadRight">
 				<!-- ELN 전용 검색(헤더 통합검색과 별개) — 옵션 모달 -->
 				<div><a href="javascript:;" id="elnSearchBtn" class="waves-effect waves-light hBtn"><i class="material-symbols-outlined left">search</i><span class="label">Search</span></a></div>
@@ -285,10 +316,9 @@
 			<div class="elnNotePanel cardBox2">
 				<div class="elnNotePanelHead">
 					<div class="pt"><i class="material-symbols-outlined fill" id="nbIcon">stacks</i><span id="nbName">All Notes</span></div>
-					<!-- 검색 결과 모드: 무엇으로 검색했는지(기준) + 타이틀 옆 Clear 버튼 -->
-					<span id="elnSrchCrit" class="elnSrchCrit" style="display:none;"></span>
-					<a href="javascript:;" id="elnSrchClear" class="elnSrchClear" style="display:none;"><i class="material-symbols-outlined">filter_alt_off</i>Clear filters</a>
 				</div>
+				<!-- 검색 결과 모드: Search criteria 줄(운영 TechLib 과 같은 칩 줄 — 칩 × = 그 조건만 빼기, Reset criteria = 검색 끝내기) -->
+				<div class="elnCritRow" id="elnCritRow" style="display:none;"></div>
 
 				<!-- List 뷰 -->
 				<div class="typeList type4" id="elnListView">
@@ -308,7 +338,9 @@
 				</div>
 			</div>
 
-			<!-- 우: 선택 노트 요약 + 계보 -->
+			</div><!-- /.elnListWrap -->
+	</div><!-- /.elnWsMain -->
+			<!-- 우: 선택 노트 요약 + 계보 — 제목 줄과 같은 높이에서 시작(아래 </div> = .elnWsCols 닫기) -->
 			<aside class="elnSummary cardBox typeList empty" id="elnSummary">
 				<div class="elnSumPlaceholder"><i class="material-symbols-outlined">touch_app</i>Select a note to see its summary &amp; lineage</div>
 			</aside>
@@ -317,25 +349,34 @@
 	</article>
 
 
-	<!-- ELN 검색 모달 — apis_note_list 동일(srchOptBox: 라벨 좌측 표준 레이아웃) -->
-	<div id="elnSrchModal" class="modal elnSrchModal">
+	<!-- ELN 검색 모달 — 운영 snpiList 검색 창 구성(사용자 2026-10-21): 폭 800 · 맨 위 와일드카드 안내 · srchOptBox 한 줄 두 칸 · select2(상태·태그 다중)
+	     · Saved Searches · 버튼은 Search 하나(조건 초기화는 결과 위 Search criteria 줄의 Reset criteria).
+	     Tags 는 TechLib Keywords 처럼 있는 태그 중에서 고르기(정확일치라 자유 입력 X) -->
+	<div id="elnSrchModal" class="modal elnSrchModal" style="width:800px;">
 		<div class="modal-header mochaBg">
-			<h5><i class="material-icons left">search</i>Search Notes</h5>
+			<h5><i class="material-icons left">search</i>Search</h5>
 			<div class="closeBtns modal-close"><i class="material-icons">close</i></div>
 		</div>
 		<div class="modal-content">
+			<div class="infoBox pd10 font14">
+				<div class="fLine vCenter mocha25-text fontM"><i class="material-icons">info</i><div class="ml5 fLine vCenter">Wildcards Available for Searching</div></div>
+				<div class="ml20 mt5 fLine" style="justify-content:flex-start;gap:20px;">
+					<span><kbd>*</kbd> : Matches 0 or more characters</span>
+					<span><kbd>?</kbd> : Matches exactly one character</span>
+				</div>
+			</div>
 			<div class="srchOptBox">
 				<div class="row">
 					<div class="col s2 tit">Keyword</div>
-					<div class="col s10"><div class="aniInput"><input type="text" class="browser-default" id="srchKeyword" placeholder="Title or code…  (use * ?)" autocomplete="off"><span class="focus-border"></span></div></div>
+					<div class="col s10"><div class="aniInput"><input type="text" class="browser-default" id="srchKeyword" placeholder="Title or note #" autocomplete="off"><span class="focus-border"></span></div></div>
 				</div>
 				<div class="row">
 					<div class="col s2 tit">Tags</div>
-					<div class="col s10"><div class="aniInput"><input type="text" class="browser-default" id="srchTags" placeholder="e.g. #viscosity  (use * ?)" autocomplete="off"><span class="focus-border"></span></div></div>
+					<div class="col s10"><select id="srchTags" multiple="multiple" data-placeholder="All"></select></div>
 				</div>
 				<div class="row">
 					<div class="col s2 tit">Status</div>
-					<div class="col s4"><select id="srchStatus"></select></div>
+					<div class="col s4"><select id="srchStatus" multiple="multiple" data-placeholder="All"></select></div>
 					<div class="col s2 tit">Notebook</div>
 					<div class="col s4"><select id="srchNotebook"></select></div>
 				</div>
@@ -360,13 +401,10 @@
 					<div class="col s2 tit">Structure</div>
 					<div class="col s10 elnSrchStruct"><div class="aniInput"><input type="text" class="browser-default" id="srchStruct" placeholder="Formula, name or CAS-No (e.g., C8H8, Styrene, 100-42-5)" autocomplete="off"><span class="focus-border"></span></div><a href="javascript:;" class="waves-effect hBtn hGrey hSmall" id="srchDrawStruct"><i class="material-symbols-outlined left">draw</i><span class="label">Draw Structure</span></a></div>
 				</div>
-				<div class="row">
-					<div class="col s12"><div class="elnSrchHint"><i class="material-symbols-outlined">tips_and_updates</i><span><b>*</b> matches any characters, <b>?</b> matches a single one. Leave a field blank to ignore it.</span></div></div>
-				</div>
 			</div>
+			<div class="dashSaveArea" id="elnSaveArea"></div>
 			<div class="btnArea">
-				<a href="javascript:;" class="waves-effect hBtn hGrey wd100px" id="srchReset"><i class="material-icons left">refresh</i><span class="label">Reset</span></a>
-				<a href="javascript:;" class="waves-effect waves-light hBtn hViva wd100px ml10" id="srchGo"><i class="material-icons left">search</i><span class="label">Search</span></a>
+				<a href="javascript:;" class="waves-effect waves-light hBtn hViva" id="srchGo"><i class="material-icons left">search</i><span class="label">Search</span></a>
 			</div>
 		</div>
 	</div>
@@ -1284,10 +1322,8 @@
 			if(!kwOk && c.attach && !n.restricted) kwOk = !!attachHit(n, c.keyword);   // 첨부 본문 포함 옵션: 권한 없는 노트는 본문 매칭 금지
 			if(!kwOk) return false;
 		}
-		if(c.tags){
-			var rx = globRegex(c.tags);
-			if(!(n.tags || []).some(function(t){ return rx.test(t); })) return false;
-		}
+		var tg = critArr(c.tags);   // 태그 = 있는 태그 중에서 고른 것(정확일치, 여러 개면 OR — 운영 TechLib Keywords 와 같음)
+		if(tg.length && !(n.tags || []).some(function(t){ return tg.indexOf(t) >= 0; })) return false;
 		if(c.author && c.author !== 'all' && n.author !== c.author) return false;
 		if(c.proj){
 			var prx = globRegex(c.proj);
@@ -1305,7 +1341,8 @@
 			if(n.restricted) return false;
 			if(!chemObjsFor(n).some(function(ch){ return chemMatchesText(ch, c.struct); })) return false;
 		}
-		if(c.status && c.status !== 'all' && n.st !== c.status) return false;
+		var sts = critArr(c.status);   // 상태 다중 선택(OR)
+		if(sts.length && sts.indexOf(n.st) < 0) return false;
 		if(c.notebook && c.notebook !== 'all'){ if(n.restricted || n._nb !== c.notebook) return false; }   // 타팀 노트는 내 노트북에 속하지 않음
 		return true;
 	}
@@ -1325,32 +1362,43 @@
 		}
 		return out + esc(text.slice(last));
 	}
-	// 검색 조건 → 필드별 칩 HTML(헤더에 "어떤 필드로 어떻게 검색했는지" 한눈에 표시)
-	// 각 칩 = 아이콘 + 필드라벨(k) + 값(v). status는 색 점(dot)으로 상태 직관화.
-	function critChip(icon, label, value){
-		return '<span class="elnSrchCritChip"><i class="material-symbols-outlined">' + icon + '</i>' +
-			'<span class="k">' + label + '</span><span class="v">' + esc(value) + '</span></span>';
+	/* 검색 결과 위 Search criteria 줄 — 운영 TechLib renderFilterRow 와 같은 모양(사용자 2026-10-21).
+	   검색어 = 알약 칩(⊕ 값), 필터 = 각진 '이름: 값' 칩. 칩마다 × = 그 조건만 빼고 바로 다시 조회, 끝에 Reset criteria(= 검색 끝내기) */
+	function critArr(v){ return Array.isArray(v) ? v : (v && v !== 'all' ? [v] : []); }   // 예전 문자열 값(저장 검색·태그 칩)도 배열로
+	function critChips(c){
+		var out = [];
+		function facet(k, label, val, v){ out.push({ k:k, v:v, html:'<span class="elnCritChip facet"><span class="fk">' + esc(label) + '</span><span class="fv">' + esc(val) + '</span>' }); }
+		if(c.keyword) out.push({ k:'keyword', html:'<span class="elnCritChip kw"><i class="material-symbols-outlined">add_circle_outline</i>' + esc(c.keyword) });
+		critArr(c.tags).forEach(function(t){ facet('tags', 'Tag', t, t); });
+		critArr(c.status).forEach(function(s){ facet('status', 'Status', stByKey(s).t, s); });
+		if(c.notebook && c.notebook !== 'all') facet('notebook', 'Notebook', (NB[c.notebook] && NB[c.notebook].name) || c.notebook);
+		if(c.author && c.author !== 'all') facet('author', 'Author', c.author);
+		if(c.proj) facet('proj', 'Related Items', c.proj);
+		if(c.biz && c.biz !== 'all') facet('biz', 'Primary Business', ELN_BIZ_NAME[c.biz] || c.biz);
+		if(c.site && c.site !== 'all') facet('site', 'Site', siteLabel(c.site));
+		if(c.struct) facet('struct', 'Structure', c.struct);
+		if(c.attach) facet('attach', 'Attachments', 'Included');
+		return out;
 	}
-	function describeCriteria(c){
-		var DOT = { blue:'#4a90d9', green:'#3aaa6f', red:'#d65a5a', orange:'#d9953f', viola:'#a893bd' };   // viola = In Approval
-		var p = [];
-		if(c.keyword) p.push(critChip('search', 'Keyword', c.keyword));
-		if(c.tags) p.push(critChip('sell', 'Tag', c.tags));
-		if(c.status && c.status !== 'all'){
-			var s = stByKey(c.status);
-			p.push('<span class="elnSrchCritChip"><span class="dot" style="background:' + (DOT[s.cls] || '#9b8c7e') + ';"></span>' +
-				'<span class="k">Status</span><span class="v">' + esc(s.t) + '</span></span>');
-		}
-		if(c.notebook && c.notebook !== 'all') p.push(critChip('folder', 'Notebook', (NB[c.notebook] && NB[c.notebook].name) || c.notebook));
-		if(c.author && c.author !== 'all') p.push(critChip('person', 'Author', c.author));
-		if(c.proj) p.push(critChip('hub', 'Related Items', c.proj));
-		if(c.biz && c.biz !== 'all') p.push(critChip('business_center', 'Primary Business', ELN_BIZ_NAME[c.biz] || c.biz));
-		if(c.site && c.site !== 'all') p.push(critChip('location_on', 'Site', siteLabel(c.site)));
-		if(c.struct) p.push(critChip('hexagon', 'Structure', c.struct));
-		if(c.attach) p.push(critChip('attach_file', 'Attachments', 'Included'));
-		if(!p.length) return '';
-		// 리딩 라벨 — 이 줄이 "적용된 검색 필터"임을 명시(검색 결과 요약과 혼동 방지)
-		return '<span class="lead"><i class="material-symbols-outlined">filter_alt</i>Filtered by</span>' + p.join('');
+	function renderCritRow(c){
+		var row = document.getElementById('elnCritRow'); if(!row) return;
+		var chips = critChips(c);
+		row.innerHTML = '<span class="lead"><i class="material-symbols-outlined">filter_alt</i>Search criteria</span>'
+			+ chips.map(function(ch){
+				return ch.html + '<i class="material-icons del" role="button" tabindex="0" title="Remove this criterion" data-k="' + esc(ch.k) + '"' + (ch.v != null ? ' data-v="' + esc(ch.v) + '"' : '') + '>close</i></span>';
+			}).join('')
+			+ '<a href="javascript:;" class="reset" title="Clear every criterion">Reset criteria</a>';
+		row.style.display = '';
+	}
+	// 칩 × — 그 조건만 뺀 새 조건으로 다시 조회. 남은 조건이 없으면 검색을 끝냄(All Notes)
+	function removeCrit(k, v){
+		var c = Object.assign({}, curSearch || {});
+		if(k === 'tags' || k === 'status') c[k] = critArr(c[k]).filter(function(x){ return x !== v; });
+		else if(k === 'attach') c.attach = false;
+		else c[k] = (k === 'notebook' || k === 'author' || k === 'biz' || k === 'site') ? 'all' : '';
+		if(!critChips(c).length){ clearSearch(); return; }
+		applySearchForm(c);   // 검색 창도 같은 조건으로(다시 열면 맞게 보임)
+		runSearch(c);
 	}
 	// 검색 실행: 전체에서 조건 필터 → '검색 결과' 모드로 중앙 리스트 렌더(노트북 선택 해제, 항상 List 뷰)
 	function runSearch(c){
@@ -1363,8 +1411,7 @@
 		document.getElementById('nbName').textContent = 'Search results';
 		setNbIco(document.getElementById('nbIcon'), 'search');
 		document.getElementById('nbIcon').style.color = ''; // 검색 헤더 아이콘은 기본색
-		var clr = document.getElementById('elnSrchClear'); if(clr) clr.style.display = '';
-		var crit = document.getElementById('elnSrchCrit'); if(crit){ var d = describeCriteria(c); crit.innerHTML = d; crit.style.display = d ? '' : 'none'; }
+		renderCritRow(c);
 		curView = 'list';
 		renderNoteList(curNotes, true);
 		applyView();
@@ -1378,7 +1425,9 @@
 	// 태그 칩 클릭 → 그 태그만으로 즉시 검색(모달 없이 결과 렌더)
 	function searchByTag(tag){
 		if(!tag) return;
-		runSearch({ keyword: '', tags: tag, status: 'all', notebook: 'all' });
+		var c = { keyword: '', tags: [tag], status: [], notebook: 'all' };
+		applySearchForm(c);
+		runSearch(c);
 	}
 	// 검색 모달(정적 #elnSrchModal — apis_note_list 표준 srchOptBox 레이아웃). prefill = keyword 선반영
 	function fillSearchSelects(){
@@ -1387,7 +1436,11 @@
 		var nbSel = document.getElementById('srchNotebook');
 		var auSel = document.getElementById('srchAuthor');
 		if(!stSel || stSel.options.length) return;   // 1회만
-		opt(stSel, 'all', 'Any status'); ST.forEach(function(x){ opt(stSel, x.k, x.t); });
+		ST.forEach(function(x){ opt(stSel, x.k, x.t); });   // 다중 선택 — 비우면 All(placeholder)
+		// Tags = 내가 볼 수 있는 노트에 붙은 태그 목록(권한 없는 노트의 태그는 보여 주지 않음)
+		var tgSel = document.getElementById('srchTags'), tseen = {};
+		getNotes('all').forEach(function(n){ (n.tags || []).forEach(function(t){ tseen[t] = 1; }); });
+		Object.keys(tseen).sort(function(a, b){ return a.toLowerCase() < b.toLowerCase() ? -1 : 1; }).forEach(function(t){ opt(tgSel, t, t); });
 		opt(auSel, 'all', 'All authors');
 		var seen = {}; getNotes('all').concat(RESTRICTED).forEach(function(n){ seen[n.author] = 1; });
 		Object.keys(seen).sort().forEach(function(a){ opt(auSel, a, a); });
@@ -1396,13 +1449,31 @@
 		var bzSel = document.getElementById('srchBiz'), siSel = document.getElementById('srchSite');
 		opt(bzSel, 'all', 'All businesses'); Object.keys(ELN_BIZ_NAME).forEach(function(c){ opt(bzSel, c, ELN_BIZ_NAME[c]); });
 		opt(siSel, 'all', 'All sites'); Object.keys(ELN_SITE_NAME).forEach(function(c){ opt(siSel, c, siteLabel(c)); });
-		$('#elnSrchModal select').formSelect({ dropdownOptions: { container: document.body } });
+		// 운영 snpiList 와 같은 select2(단일 = 짧은 목록이라 검색칸 없음, 다중 = placeholder 'All'). 목록은 body 에 붙임
+		if($.fn.select2){
+			$('#srchNotebook, #srchAuthor, #srchBiz, #srchSite').select2({ width:'100%', minimumResultsForSearch: Infinity });
+			$('#srchStatus').select2({ width:'100%', placeholder:'All', closeOnSelect:false });
+			$('#srchTags').select2({ width:'100%', placeholder:'All', closeOnSelect:false });
+		}
+	}
+	// 조건 → 검색 창(저장 검색 불러오기 · 태그 칩 · 칩 × 뒤 동기화)
+	function applySearchForm(c){
+		fillSearchSelects();
+		c = c || {};
+		$('#srchKeyword').val(c.keyword || ''); $('#srchProj').val(c.proj || ''); $('#srchStruct').val(c.struct || '');
+		$('#srchTags').val(critArr(c.tags)).trigger('change.select2');
+		$('#srchStatus').val(critArr(c.status)).trigger('change.select2');
+		$('#srchNotebook').val(c.notebook || 'all').trigger('change.select2');
+		$('#srchAuthor').val(c.author || 'all').trigger('change.select2');
+		$('#srchBiz').val(c.biz || 'all').trigger('change.select2');
+		$('#srchSite').val(c.site || 'all').trigger('change.select2');
+		document.getElementById('srchAttach').checked = !!c.attach;
 	}
 	function gatherSearch(){
 		return {
 			keyword: document.getElementById('srchKeyword').value.trim(),
-			tags: document.getElementById('srchTags').value.trim(),
-			status: document.getElementById('srchStatus').value,
+			tags: $('#srchTags').val() || [],
+			status: $('#srchStatus').val() || [],
 			notebook: document.getElementById('srchNotebook').value,
 			author: document.getElementById('srchAuthor').value,
 			proj: document.getElementById('srchProj').value.trim(),
@@ -1852,8 +1923,7 @@
 			if(!item) return;
 			// 노트북 선택은 검색 결과 모드를 빠져나감(Clear 숨김)
 			curSearch = null;
-			var _clr = document.getElementById('elnSrchClear'); if(_clr) _clr.style.display = 'none';
-			var _crit = document.getElementById('elnSrchCrit'); if(_crit) _crit.style.display = 'none';
+			var _crit = document.getElementById('elnCritRow'); if(_crit) _crit.style.display = 'none';   // Search criteria 줄 숨김
 			document.querySelectorAll('.elnNbItem').forEach(function(n){ n.classList.remove('on'); var _i = n.querySelector('i'); if(_i) _i.classList.remove('fill'); });
 			item.classList.add('on');
 			var _ai = item.querySelector('i'); if(_ai) _ai.classList.add('fill'); // 활성 노트북 아이콘 fill 모드
@@ -1935,17 +2005,18 @@
 			runSearch(gatherSearch());
 			M.Modal.getInstance(document.getElementById('elnSrchModal')).close();
 		});
-		$(document).on('click', '#srchReset', function(){
-			$('#srchKeyword, #srchTags, #srchProj, #srchStruct').val('');
-			$('#srchStatus, #srchNotebook, #srchAuthor, #srchBiz, #srchSite').val('all');
-			document.getElementById('srchAttach').checked = false;
-			$('#elnSrchModal select').formSelect({ dropdownOptions: { container: document.body } });
-		});
+		// 저장 검색(Saved Searches) — 운영 snpiList 의 공용 부품 자리. 프로토타입은 glass_engine.js initSavedSearch(브라우저 저장)
+		fillSearchSelects();
+		if(window.initSavedSearch) initSavedSearch({ key:'savedSearch_eln', area:'#elnSaveArea', collect:gatherSearch, apply:applySearchForm });
+		// Search criteria 줄 — 칩 × = 그 조건 빼기, Reset criteria = 검색 끝내기(키보드 Enter/Space 도)
+		$(document).on('click', '#elnCritRow .del', function(){ removeCrit(this.getAttribute('data-k'), this.getAttribute('data-v')); });
+		$(document).on('keydown', '#elnCritRow .del', function(e){ if(e.key === 'Enter' || e.key === ' '){ e.preventDefault(); removeCrit(this.getAttribute('data-k'), this.getAttribute('data-v')); } });
+		$(document).on('click', '#elnCritRow .reset', function(){ applySearchForm({}); clearSearch(); });
 		// 구조식 검색 — ChemStudio(chemDraw) 편집기를 새 창으로 열어 질의 구조를 그림(팝업 ChemStudio 모듈과 같은 창 이름)
 		$(document).on('click', '#srchDrawStruct', function(){
 			window.open('chemDraw/apis_chemDraw_list.html', 'apisChemStudio', 'width=1920,height=960,scrollbars=yes,resizable=yes');
 		});
-		$(document).on('keydown', '#srchKeyword, #srchTags, #srchProj, #srchStruct', function(e){
+		$(document).on('keydown', '#srchKeyword, #srchProj, #srchStruct', function(e){
 			if(e.key === 'Enter'){
 				if(this.id === 'srchStruct' && $('.ui-autocomplete:visible .ui-state-active').length) return;   // 자동완성 항목 선택 중의 Enter 는 선택만
 				e.preventDefault(); $('#srchGo').click();
@@ -1963,9 +2034,6 @@
 		}).autocomplete('instance')._renderItem = function(ul, item){
 			return $('<li>').append($('<div>').text(item.label)).appendTo(ul);
 		};
-		// 검색 결과 헤더의 Clear → All Notes 복귀
-		var srchClear = document.getElementById('elnSrchClear');
-		if(srchClear) srchClear.addEventListener('click', clearSearch);
 	});
 	</script>
 </body>

@@ -1,0 +1,55 @@
+/* ELN 리스트(apis_note_user_list) 검색 창용 select2 스킨 — 운영 common.css(mapis_lib/css/common.css 6411~6700)의 select2 부분만 옮김.
+   리스트는 옛 css/mpm_common.css 를 쓰고 mapis_lib/css/common.css 는 안 불러오므로, 스킨이 쓰는 변수 중 리스트에 없는 것만 여기서 정의한다.
+   Materialize formSelect(.select-dropdown) 규칙은 리스트의 다른 선택칸 모양이 바뀌지 않게 옮기지 않았다(2026-10-21) */
+:root{
+	--main-color:#A47864;                 /* mocha25 */
+	--main-highlight-color:var(--viva);
+	--font-main:'Roboto-Regular','SUIT-Regular','NotoSansJP-Regular','NotoSansSC-Regular','NotoSansTC-Regular',sans-serif;
+	--font-main-l:'Roboto-Light','SUIT-Light','NotoSansJP-Light','NotoSansSC-Light','NotoSansTC-Light',sans-serif;
+}
+@keyframes diagonal-open{0%{opacity:0;transform:scale(.7,.5);}100%{opacity:1;transform:scale(1,1);}}
+
+.select2{width:100% !important;}
+.select2-container{z-index:1000;}
+.select2-container--open{z-index:1100;}
+.select2-container--open .select2-dropdown{animation:diagonal-open 150ms cubic-bezier(0.165,0.84,0.44,1) forwards;transform-origin:left top;}
+.select2-container--open .select2-dropdown--above{transform-origin:left bottom;}
+
+/* 단일 선택 */
+.select2-container--default .select2-selection--single{background-color:transparent;height:25px !important;line-height:25px !important;font-size:14px !important;
+	border-bottom:1px solid var(--main-color) !important;margin:0 !important;text-overflow:ellipsis !important;padding-right:20px !important;border:none;border-radius:0;
+	transition:background .3s cubic-bezier(0.165,0.84,0.44,1);}
+.select2-container--default.select2-container--focus .select2-selection--single,
+.select2-container--default.select2-container--open .select2-selection--single{border-bottom:1px solid var(--orangetiger) !important;}
+.select2-container--default .select2-selection--single .select2-selection__arrow b,
+.select2-container--default.select2-container--open .select2-selection--single .select2-selection__arrow b{border-width:5px 5px 0 5px;border-color:var(--main-highlight-color) transparent transparent transparent;}
+.select2-container--default .select2-selection--single .select2-selection__rendered{padding:0;line-height:25px;color:#000;font-family:var(--font-main);}
+.select2-container--default .select2-selection--single .select2-selection__arrow{height:25px;}
+.select2-container--default:not(.select2-container--disabled):hover .select2-selection--single{background-color:rgba(164,119,100,.05);}
+
+/* 목록 */
+.select2-dropdown{border:none;border-radius:0;box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12),0 1px 5px 0 rgba(0,0,0,.2);z-index:1000;}
+.select2-container--default .select2-search--dropdown .select2-search__field{border-bottom:1px dashed var(--orangetiger) !important;border:none;outline:none;}
+.select2-results__option{line-height:22px;padding:5px 10px 5px 16px;min-height:32px;}
+.select2-container--default .select2-results>.select2-results__options{max-height:400px;}
+.select2-container--default .select2-results__option--highlighted.select2-results__option--selectable{background-color:color-mix(in oklch,var(--main-color),white 70%) !important;color:#000;}
+.select2-container--default .select2-results__option--selected{background-color:color-mix(in oklch,var(--main-color),white 90%);position:relative;}
+.select2-container--default .select2-results__option{overflow:hidden;color:#000;}
+.select2-container--default .select2-results__option--disabled{color:#bbb;cursor:not-allowed;}
+.select2-container--default .select2-results__option--selected:before{content:"check";font-family:'Material Symbols Outlined';float:right;font-size:1.5em;color:#000;padding-right:0;padding-left:10px;}
+.select2-container--default .select2-results__option--selected:after{content:"";position:absolute;left:0;top:0;bottom:0;width:4px;background-color:var(--main-color);}
+
+/* 다중 선택 */
+.select2-container .select2-search--inline .select2-search__field{font-size:13px;font-family:var(--font-main-l);font-weight:normal;margin-top:0;margin-bottom:2.5px;line-height:20px;vertical-align:middle;}
+.select2-container--default .select2-selection--multiple{background-color:rgba(164,119,100,.05);border:none;border-bottom:1px solid var(--main-color) !important;outline:0;border-radius:0;
+	border-top-left-radius:5px;border-top-right-radius:5px;padding-bottom:0;min-height:25px;line-height:25px;display:block;overflow:hidden;}
+.select2-container--default .select2-selection--multiple .select2-selection__rendered{display:inline;}
+.select2-container--default.select2-container--focus .select2-selection--multiple{border:none;border-bottom:1px solid var(--orangetiger) !important;outline:0;}
+.select2-container--default .select2-selection--multiple .select2-selection__choice{line-height:20px;height:19px;background-color:transparent;
+	box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12),0 1px 5px 0 rgba(0,0,0,.2);border:none;margin-top:3px;margin-bottom:0;vertical-align:top;padding-left:17px;font-family:var(--font-main);}
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove{color:var(--main-color);border-right:none;padding-left:7px;font-size:14px;font-weight:normal;}
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover,
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove:focus{background-color:transparent;color:var(--viva);}
+.select2-container--default .select2-selection--multiple .select2-selection__choice__display{color:#000;font-size:14px;}
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove:hover ~ .select2-selection__choice__display,
+.select2-container--default .select2-selection--multiple .select2-selection__choice__remove:focus ~ .select2-selection__choice__display{color:var(--viva);}

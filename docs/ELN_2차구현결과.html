@@ -64,7 +64,7 @@ code{font-family:Consolas,monospace;font-size:12px;background:var(--soft);paddin
 </header>
 
 <div class="sum">
-  <div class="c"><b>29</b>완료</div>
+  <div class="c"><b>31</b>완료</div>
   <div class="c"><b>4</b>확인 필요</div>
 </div>
 <div class="legend">
@@ -123,6 +123,8 @@ code{font-family:Consolas,monospace;font-size:12px;background:var(--soft);paddin
   <tr><td class="no">27</td><td class="f">노트 하나만 공유받았을 때</td><td class="rq">노트를 Viewer 로 공유받으면 그 노트의 노트북을 Shared with Me 에 보이고, 그 안에서 공유받은 노트만 보이고 나머지는 잠금</td><td>예시 노트북 <b>Silicone Coating Studies</b>(H.S. Choi): 공유받은 노트 1개는 보통 행, 나머지 2개는 1차 10번 "권한 없는 노트"와 같은 잠금 행(번호 · 제목 · 작성자 · 날짜만, Ask to Share). 패널 개수 · All Notes 에는 볼 수 있는 노트만. ⋯ 메뉴에 Notes "1 of 3 shared"</td><td><span class="badge ok">완료</span></td><td class="nt">1차 10번 잠금 행은 원래 검색 결과에만 나오게 했음 — 이제 공유받은 노트북 안에도 나옴</td></tr>
   <tr><td class="no">28</td><td class="f">권한 없는 노트 요청</td><td class="rq">"Request Access" 는 결재를 타는 것처럼 보임. 실제로는 알림 · 메일만 보내고 받은 사람이 Share 하는 것 · 요약의 버튼은 폭을 줄이고 높이를 키워 일반 버튼처럼</td><td>버튼 = <b>Ask to Share</b>(알림 아이콘), 보낸 뒤 <b>Owner Notified</b>. 창 = 원본 노트 · Owner, 메시지(선택), 안내 "주인이 알림과 메일을 받고 Share &amp; Access 에서 공유" › Send. 요약 패널 안내는 "Ask … to share it with you." 한 줄(승인 표현 · 숨김 안내 없앰)<br>요약 패널 버튼 = 일반 크기 버튼(글자 폭만큼, 가운데), 노트 행 버튼은 작은 버튼 그대로</td><td><span class="badge ok">완료</span></td><td class="nt">운영: 요청 = 알림 + 메일, 공유는 노트 주인이 Share &amp; Access 에서(결재 없음)</td></tr>
   <tr><td class="no">29</td><td class="f">노트 행 선택 움직임</td><td class="rq">리스트에서 노트를 누르면 떠오르는 움직임 빼기</td><td>선택한 노트 행이 2px 떠오르던 움직임을 없앰. 선택 표시(옅은 유리 바탕 · 테두리)는 그대로</td><td><span class="badge ok">완료</span></td><td class="nt">공용 css/mpm_common.css 는 그대로, 리스트 페이지에서만 덮어씀</td></tr>
+  <tr><td class="no">30</td><td class="f">리스트 검색</td><td class="rq">검색 창은 일반 모듈(Standard NPI 등) 표준대로 · Tags 와 결과 위 조건 줄은 TechLib 표준대로</td><td>검색 창 = 운영 Standard NPI 검색 창 구성: 맨 위 와일드카드 안내(* · ?), 한 줄 두 칸, 고르는 칸은 select2(Status 는 다중), 아래 <b>Saved Searches</b>(이름 붙여 저장 · 칩 = 불러오기), 버튼은 Search 하나<br><b>Tags</b> = TechLib Keywords 처럼 있는 태그 중에서 고르는 다중 선택(정확일치, 여러 개면 OR) · 요약의 태그 칩을 누르면 그 태그로 검색<br>결과 위 = TechLib <b>Search criteria</b> 줄: 검색어는 알약 칩, 필터는 '이름: 값' 칩, 칩마다 × = 그 조건만 빼고 다시 조회, 끝에 Reset criteria</td><td><span class="badge ok">완료</span></td><td class="nt">저장 검색은 프로토타입에서 브라우저 저장(운영 = 공용 저장 검색 부품)</td></tr>
+  <tr><td class="no">31</td><td class="f">리스트 배치</td><td class="rq">다른 리스트 화면처럼 · 버튼은 가운데 패널 위로 · 오른쪽 요약은 위로</td><td>운영 리스트(Standard NPI 등)와 같은 배치: 제목 · 버튼(Search · New Note) 줄은 노트북 패널 · 노트 목록 위에만, 오른쪽 요약 패널은 제목 줄 높이에서 시작</td><td><span class="badge ok">완료</span></td><td class="nt"></td></tr>
 </table></div>
 
 <!-- ───────────────────────── 2. 프로세스 ───────────────────────── -->
