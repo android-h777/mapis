@@ -211,6 +211,12 @@
 .elnSchedSel .select-wrapper{margin:0;width:100%;}
 .elnSchedSel .elnHdrW190{flex:0 0 190px;width:190px;}                    /* Creation Date 고정폭(읽기전용) */
 .elnSchedField.elnBizField{flex:0 0 240px;width:240px;}                  /* Primary Business · Site select2 */
+/* Basic Data Notebook = 리스트 요약 패널의 노트북 선택(.elnSumNbPick 알약: 색 점 + 이름 + ▾)과 같음. 리스트 #elnSummary 덮어쓰기와 같은 값만 더함 */
+#card_basic .elnSumNbPick{white-space:nowrap;gap:4px;height:22px;margin:0 0 0 -5px;font-size:14px;}
+#card_basic .elnSumNbPick:focus-visible{color:#A47864;outline:none;}
+/* 승인·번역 보기·잠긴 섹션 = 못 바꿈 → 값만(바탕·▾ 없음) */
+body.elnApproved #card_basic .elnSumNbPick,body.elnTranslated #card_basic .elnSumNbPick,#card_basic.elnLocked .elnSumNbPick{cursor:default;background:transparent;}
+body.elnApproved #card_basic .elnSumNbPick i,body.elnTranslated #card_basic .elnSumNbPick i,#card_basic.elnLocked .elnSumNbPick i{display:none;}
 .elnBizOthers{min-width:0;}                                               /* Other Business(es) select2 multiple — 행의 값 자리 폭 전체(.elnBasicRow > :not(label) flex:1) */
 .elnBasicRel{min-width:0;}                                                /* Basic Data 안 Related Items(추가 줄 + 칩 목록) */
 #card_audit .elnAuditPlan{margin:10px 0 12px;}

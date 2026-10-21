@@ -744,6 +744,7 @@
       // Creation Date 도 전환 노트의 생성일로(created 가 없으면 date). 저장 전 복사본이면 빈 값
       setCreatedDate(n.created || (n.clonedFrom ? '' : n.date));
       setBusiness(n.biz || DEMO_BIZ);   // Primary Business·Other Business(es)·Site(로그 없음)
+      if (ELN.notebook) ELN.notebook.switchTo(n);   // Notebook 도 노트별(떠나는 노트에 보관, 처음 여는 노트는 진입 노트북)
       // 헤더 상태 알약(노트 상태 어휘 → 색/라벨 직접 매핑)
       var pill = document.getElementById('elnHeadStatus');
       if (pill) { pill.className = 'roundBox ' + (NOTE_STATUS_PILL[n.status] || 'grey');
@@ -2573,8 +2574,9 @@
     });
   });
 
-  /* ── Notebook 지정(No Notebook → 노트북 선택) — Overview 메타 클릭 → popover ── */
-  // 워크스페이스(apis_eln_list.html)의 NB 키와 동일하게 유지(프로토타입 목업 데이터)
+  /* ── Notebook(노트를 담는 폴더) — Basic Data 한 줄(사용자 2026-10-21). 디자인 = 리스트 요약 패널의 노트북 선택(openSummaryNbPicker)과 같음:
+     알약(색 점 + 이름 + ▾) → 누르면 노트북 목록 popover(No Notebook 맨 위 · 노트북 색 폴더 아이콘 · ✓ 현재 · 맨 끝 New Notebook…).
+     목록 = 리스트 NB 키와 같음. No Notebook 도 값(필수 표시 없음) ── */
   var NOTEBOOKS = [
     { key: 'unfiled',   name: 'No Notebook',         icon: 'folder_off' },
     { key: 'rgboled',   name: 'RGBOLED Adhesive',    icon: 'folder' },
@@ -2582,78 +2584,85 @@
     { key: 'optical',   name: 'Optical Clear Resin', icon: 'folder' },
     { key: 'customerA', name: 'Customer A Project',  icon: 'folder_shared' }
   ];
-
-  function setNotebookMeta(name) {
-    var v = document.getElementById('elnNbMeta');
-    if (!v) return;
-    v.setAttribute('data-nb', name);
-    v.classList.toggle('empty', name === 'No Notebook');
-    var link = v.querySelector('.elnNbLink');
-    if (link) link.textContent = name;
+  var NB_CUR = 'rgboled';   // 이 노트의 노트북 키
+  function nbName(key) { var n = NOTEBOOKS.filter(function (x) { return x.key === key; })[0]; return n ? n.name : ''; }
+  function nbColor(key) { return key === 'unfiled' ? '#b3a596' : '#A47864'; }   // 리스트 NB_GROUP_COLOR(my·unfiled 그룹 기본색)와 같음
+  function nbRender() {
+    var el = document.getElementById('elnNbPick'); if (!el) return;
+    el.setAttribute('data-nb', NB_CUR);
+    el.querySelector('.elnNbDot').style.background = nbColor(NB_CUR);
+    el.querySelector('.nm').textContent = nbName(NB_CUR);
   }
-
-  function openNotebookPicker(anchor) {
-    var v = document.getElementById('elnNbMeta');
-    var cur = v ? (v.getAttribute('data-nb') || '') : '';
+  // 노트북 바꾸기 — Audit(Field changed Notebook) · Last edited · 안내(리스트와 같은 뜻의 문구)
+  function nbMove(key) {
+    var prev = NB_CUR; if (prev === key) return;
+    NB_CUR = key; nbRender();
+    var card = document.getElementById('card_basic');
+    ELN.audit.log({ section: sectionNameOf(card), action: 'Field changed', field: 'Notebook', before: nbName(prev), after: nbName(key) });
+    if (ELN.coedit && card) ELN.coedit.touch(card);
+    ELN.toast(key === 'unfiled' ? 'Note removed from notebook.' : (prev === 'unfiled' ? 'Note filed to "' + nbName(key) + '".' : 'Moved to "' + nbName(key) + '".'), 'ok');
+  }
+  // 승인·결재 중(전체 읽기전용)·잠긴 섹션·번역 보기에서는 못 바꿈
+  function nbFrozen() {
+    var b = document.body.classList, card = document.getElementById('card_basic');
+    return b.contains('elnApproved') || b.contains('elnTranslated') || !!(card && card.classList.contains('elnLocked'));
+  }
+  function openNewNotebook() {   // 리스트 New Notebook 창과 같은 구성(이름 하나, aniInput) — 빈 이름은 'Untitled Notebook', 만들면 바로 이 노트를 그 노트북으로
+    var wrap = document.createElement('div'); wrap.className = 'aniInput';
+    var inp = document.createElement('input'); inp.type = 'text'; inp.className = 'browser-default'; inp.placeholder = 'Notebook name';
+    var fb = document.createElement('span'); fb.className = 'focus-border';
+    wrap.appendChild(inp); wrap.appendChild(fb);
+    ELN.modal({ title: 'New Notebook', icon: 'create_new_folder', size: 'sm', body: wrap, actions: [
+      { label: 'Create', type: 'hViva', icon: 'create_new_folder', onClick: function () {
+        var name = (inp.value || '').trim() || 'Untitled Notebook';
+        var nb = { key: 'nb' + NOTEBOOKS.length, name: name, icon: 'folder' };
+        NOTEBOOKS.push(nb); nbMove(nb.key);
+      } },
+      { label: 'Cancel' }
+    ] });
+    setTimeout(function () { inp.focus(); }, 60);
+  }
+  // 노트북 목록 popover — 리스트 openSummaryNbPicker 와 같은 순서·내용(No Notebook 맨 위, 색 폴더 아이콘, ✓ 현재, 맨 끝 New Notebook…)
+  function openNbPicker(anchor) {
     var list = document.createElement('div'); list.className = 'elnNbPopList';
-    NOTEBOOKS.forEach(function (nb) {
+    var keys = NOTEBOOKS.map(function (n) { return n.key; }).sort(function (a, b) { return a === 'unfiled' ? -1 : (b === 'unfiled' ? 1 : 0); });
+    keys.forEach(function (key) {
+      var nb = NOTEBOOKS.filter(function (x) { return x.key === key; })[0];
       var it = document.createElement('div');
-      it.className = 'elnNbPopItem' + (nb.key === 'unfiled' ? ' unfiled' : '') + (nb.name === cur ? ' cur' : ''); // 흐림 = 임시 보관소, cur = 현재 선택
-      var ic = document.createElement('i'); ic.className = 'material-symbols-outlined fill'; ic.textContent = nb.icon;
+      it.className = 'elnNbPopItem' + (key === 'unfiled' ? ' unfiled' : '') + (key === NB_CUR ? ' cur' : '');
+      var ic = document.createElement('i'); ic.className = 'material-symbols-outlined'; ic.textContent = nb.icon || 'folder';
+      if (key !== 'unfiled') ic.style.color = nbColor(key);   // 노트북 색
       var nm = document.createElement('span'); nm.textContent = nb.name;
       it.appendChild(ic); it.appendChild(nm);
-      if (nb.name === cur) {
-        var chk = document.createElement('i');
-        chk.className = 'material-symbols-outlined fill chk'; chk.textContent = 'check';
-        it.appendChild(chk);
-      }
-      it.addEventListener('click', function () {
-        ref.close();
-        if (nb.name === cur) return;
-        var wasUnfiled = cur === 'No Notebook';
-        setNotebookMeta(nb.name);
-        ELN.toast(nb.name === 'No Notebook' ? 'Note removed from notebook.'
-          : (wasUnfiled ? 'Note filed to "' + nb.name + '".' : 'Note moved to "' + nb.name + '".'), 'ok');
-      });
+      if (key === NB_CUR) { var chk = document.createElement('i'); chk.className = 'material-symbols-outlined chk'; chk.textContent = 'check'; it.appendChild(chk); }
+      it.addEventListener('click', function () { ref.close(); nbMove(key); });
       list.appendChild(it);
     });
-    // New notebook… — list 화면의 New Notebook 모달 패턴 재사용
     var nw = document.createElement('div'); nw.className = 'elnNbPopItem new';
-    nw.innerHTML = '<i class="material-symbols-outlined">create_new_folder</i><span>New notebook</span>';
-    nw.addEventListener('click', function () {
-      ref.close();
-      var inp = document.createElement('input');
-      inp.type = 'text'; inp.className = 'browser-default'; inp.placeholder = 'Notebook name';
-      ELN.modal({
-        title: 'New Notebook', icon: 'create_new_folder', size: 'sm', body: inp,
-        actions: [
-          { label: 'Cancel' },
-          { label: 'Create', type: 'hViva', onClick: function () {
-            var name = (inp.value || '').trim() || 'Untitled Notebook';
-            NOTEBOOKS.push({ key: 'nb' + NOTEBOOKS.length, name: name, icon: 'folder' });
-            setNotebookMeta(name);
-            ELN.toast('Notebook "' + name + '" created. Note filed.', 'ok');
-          } }
-        ]
-      });
-      setTimeout(function () { inp.focus(); }, 60);
-    });
+    nw.innerHTML = '<i class="material-symbols-outlined">create_new_folder</i><span>New Notebook…</span>';
+    nw.addEventListener('click', function () { ref.close(); openNewNotebook(); });
     list.appendChild(nw);
     var ref = ELN.popover({ anchor: anchor, content: list });
   }
-
-  function initNotebookMeta() {
-    var v = document.getElementById('elnNbMeta');
-    if (!v) return; // 상세 화면에서만
-    // 워크스페이스에서 ?nb= 로 진입 — No Notebook이면 'No Notebook' 상태로 시작
-    var key = null;
-    try { key = new URLSearchParams(location.search).get('nb'); } catch (e) {}
-    var nb = NOTEBOOKS.filter(function (n) { return n.key === key; })[0];
-    setNotebookMeta(nb ? nb.name : (v.getAttribute('data-nb') || 'RGBOLED Adhesive'));
-    var chg = v.querySelector('.elnNbChange');
-    if (chg) chg.addEventListener('click', function (e) { e.preventDefault(); openNotebookPicker(chg); });   // 값은 무이벤트(plain text), swap만 dropdown 픽커
+  function initNotebook() {
+    var el = document.getElementById('elnNbPick'); if (!el) return;
+    var q = null; try { q = new URLSearchParams(location.search); } catch (e) {}
+    var key = q ? q.get('nb') : null;
+    // 리스트가 넘긴 노트북(?nb=) → 없으면 새 노트(템플릿)는 No Notebook, 데모·기존 노트는 RGBOLED Adhesive
+    NB_CUR = nbName(key) ? key : ((q && q.get('tmpl')) ? 'unfiled' : 'rgboled');
+    var nbEntry = NB_CUR;   // 팝업에 들어온 노트북 — 아직 노트북을 정하지 않은 다른 노트로 바꿔 열 때 기본값
+    nbRender();
+    // 노트 전환(selectNote) — 떠나는 노트의 노트북을 그 노트에 보관하고, 여는 노트의 값으로(로그 없이)
+    ELN.notebook = { switchTo: function (n) {
+      var leaving = PROJECT_NOTES.filter(function (x) { return x.current; })[0];
+      if (leaving) leaving.nb = NB_CUR;
+      NB_CUR = (n.nb && nbName(n.nb)) ? n.nb : nbEntry; nbRender();
+    } };
+    function open() { if (!nbFrozen()) openNbPicker(el); }
+    el.addEventListener('click', open);
+    el.addEventListener('keydown', function (e) { if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); } });
   }
-  document.addEventListener('DOMContentLoaded', initNotebookMeta);
+  document.addEventListener('DOMContentLoaded', initNotebook);
 
   /* ── Associated Project # (NPI, NPT, TS) — MAPIS 프로젝트 디렉터리(목업). MAPIS에서 프로젝트 번호 = NPI 번호.
         유형: SN/CN = NPI, PT = NPT, TS = Tech Support. c = 코드, t = 제목 ── */
@@ -4649,6 +4658,7 @@
     // 6) 노트 목록(맨 위) + 현재 노트 이동
     var nSec = kept.length;
     var nn = { code: code, title: title, date: CLONE_TODAY, status: 'ing', current: true, modules: modules, projects: srcProjects,   // 선택 섹션과 무관하게 복제
+      nb: NB_CUR,   // 복사본은 원본과 같은 노트북에서 시작
       clonedFrom: { code: src.code, title: src.title },
       cloneDetail: 'Copied from ' + src.code + ': ' + nSec + ' section' + (nSec === 1 ? '' : 's') + ', data ' + (include ? 'included' : 'not included') };
     PROJECT_NOTES.forEach(function (x) { x.current = false; });
@@ -5034,7 +5044,7 @@
       return [pdfTxt(li.querySelector('.elnRelType')), (pdfTxt(li.querySelector('.elnRelLink')) || pdfTxt(li)) + (pl ? ' · Plant ' + pdfTxt(pl) : '')];
     });
     // 화면 순서와 같게: 기본 항목 → Related Items 표 → Tags(맨 아래)
-    return pdfKv([['Title', pdfVal('.elnBasicTitle input')], ['Creation Date', pdfVal('#elnCreatedDate')],
+    return pdfKv([['Notebook', nbName(NB_CUR)], ['Title', pdfVal('.elnBasicTitle input')], ['Creation Date', pdfVal('#elnCreatedDate')],
       ['Primary Business', pdfSelText('#elnBizPrimary')], ['Other Business(es)', pdfSelText('#elnBizOthers')], ['Site', pdfSelText('#elnSite')]])
       + '<h3>Related Items</h3>' + pdfRows(['Type', 'Item'], rel)
       + pdfKv([['Tags', tags.join(', ')]]);

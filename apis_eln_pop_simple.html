@@ -93,6 +93,14 @@
 			<section class="cardBox animate__animated mt10" id="card_basic">
 				<div class="cardTit2"><i class="material-symbols-outlined left">inventory_2</i>Basic Data</div>
 				<div class="elnBasic">
+					<!-- Notebook — 노트를 담는 폴더(2026-10-21, 맨 위: 사용자 "Title 보다 위로"). 디자인 = 리스트 요약 패널의 노트북 선택과 같은 알약(색 점 + 이름 + ▾),
+					     누르면 노트북 목록(No Notebook 맨 위 · ✓ 현재 · 맨 끝 New Notebook…). No Notebook 도 값이라 필수 표시 없음. 처음 값 = 리스트가 넘긴 ?nb= -->
+					<div class="elnBasicRow">
+						<label class="elnBasicLabel">Notebook</label>
+						<div class="elnSchedSel">
+							<span class="elnSumNbPick" id="elnNbPick" role="button" tabindex="0" title="Move to another notebook"><span class="elnNbDot"></span><span class="nm"></span><i class="material-symbols-outlined">expand_more</i></span>
+						</div>
+					</div>
 					<!-- Note 제목: 노트의 주인공. apis_npdi_pop의 Name 필드 양식(레이블+aniInput 한 줄) 차용 -->
 					<div class="elnBasicRow">
 						<label class="elnBasicLabel"><span class="essential">*</span>Title</label>

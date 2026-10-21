@@ -64,7 +64,7 @@ code{font-family:Consolas,monospace;font-size:12px;background:var(--soft);paddin
 </header>
 
 <div class="sum">
-  <div class="c"><b>19</b>완료</div>
+  <div class="c"><b>20</b>완료</div>
   <div class="c"><b>4</b>확인 필요</div>
 </div>
 <div class="legend">
@@ -90,7 +90,7 @@ code{font-family:Consolas,monospace;font-size:12px;background:var(--soft);paddin
   <colgroup><col style="width:34px"><col style="width:150px"><col style="width:24%"><col><col style="width:70px"><col style="width:17%"></colgroup>
   <tr><th>No</th><th>항목</th><th>요청</th><th>구현 내용</th><th>상태</th><th>비고</th></tr>
   <tr class="grp"><td colspan="6">10-21 · Basic Data</td></tr>
-  <tr><td class="no">1</td><td class="f">Basic Data 항목 정리</td><td class="rq">Note Title → Title · Experiment Date → Creation Date(최초 저장 때 자동), 오른쪽 도움말 삭제 · Platform / Pre-NPC 삭제 · Paper Notebook Ref 삭제</td><td>순서: Title · Creation Date · Primary Business · Other Business(es) · Site · Related Items · Tags(맨 아래)<br><b>Creation Date</b>: 사용자가 고칠 수 없음. 기존 노트는 생성일, 새 노트(템플릿 · Copy To)는 비어 있다가 처음 Save 할 때 오늘 날짜. 비어 있을 때 "(Auto-set on first save)" 표시</td><td><span class="badge ok">완료</span></td><td class="nt">운영 FMEA 의 Revision Date(읽기 전용 + 자동 입력 안내)와 같은 방식. 1차 1번 변경</td></tr>
+  <tr><td class="no">1</td><td class="f">Basic Data 항목 정리</td><td class="rq">Note Title → Title · Experiment Date → Creation Date(최초 저장 때 자동), 오른쪽 도움말 삭제 · Platform / Pre-NPC 삭제 · Paper Notebook Ref 삭제</td><td>순서: Notebook · Title · Creation Date · Primary Business · Other Business(es) · Site · Related Items · Tags(맨 아래)<br><b>Creation Date</b>: 사용자가 고칠 수 없음. 기존 노트는 생성일, 새 노트(템플릿 · Copy To)는 비어 있다가 처음 Save 할 때 오늘 날짜. 비어 있을 때 "(Auto-set on first save)" 표시</td><td><span class="badge ok">완료</span></td><td class="nt">운영 FMEA 의 Revision Date(읽기 전용 + 자동 입력 안내)와 같은 방식. 1차 1번 변경</td></tr>
   <tr><td class="no">2</td><td class="f">Business</td><td class="rq">Primary Business 는 하나만 고르는 드롭다운 · Others 는 여러 개 고르는 select2 multiple(좌우로 최대한) · Segment 는 빼기</td><td><b>Primary Business</b>: 하나 선택(select2)<br><b>Other Business(es)</b>: 여러 개 선택(select2 multiple), 행 폭 전체. Primary 로 고른 Business 는 고를 수 없음</td><td><span class="badge ok">완료</span></td><td class="nt">운영 CNPI · SNPI Basic 의 Business, FMEA Customer(다중)와 같은 부품. 목록은 운영 Business 8개 이름. Segment 는 한 번 넣었다가 같은 날 제외</td></tr>
   <tr><td class="no">3</td><td class="f">Site</td><td class="rq">TechLib 의 Site 와 똑같이</td><td>운영 TechLib 업로드 화면의 Site 와 같은 목록 13개, "[코드] 이름" 표시(예: [KP01] Hwaseong - Korea), select2</td><td><span class="badge ok">완료</span></td><td class="nt">TechLib 의 Region 자동 표시는 넣지 않음</td></tr>
   <tr><td class="no">4</td><td class="f">Related Items 위치</td><td class="rq">모듈에서 빼고 Basic Data 안으로</td><td>Basic Data 의 한 줄(추가 줄 + 칩 목록). 유형은 Material · Project · Lab Note(URL 제외). Add Module 목록 · 템플릿(Analysis · Full Report) · 왼쪽 목차에서 빠짐<br>Copy To(데이터 미포함이면 프로젝트 칩만 유지) · 노트 전환 · PDF(Basic Data 안 표) · Audit(섹션 = Basic Data) 모두 맞춤<br>첫 줄(유형 · 검색칸 · Add 버튼)은 가운데 정렬, 레이블 높이도 같은 선</td><td><span class="badge ok">완료</span></td><td class="nt">예전에 저장한 My Template 의 Related Items 는 건너뜀</td></tr>
@@ -113,6 +113,7 @@ code{font-family:Consolas,monospace;font-size:12px;background:var(--soft);paddin
   <tr><td class="no">17</td><td class="f">리스트 반영</td><td class="rq">리스트에도 Basic Data 수정사항 반영</td><td>요약 패널에 Creation Date · Primary Business · Other Business(es) · Site, "Related Projects" → <b>Related Items</b>(유형 표시, Material 은 Plant 라벨)<br>검색 창에 Primary Business · Site 거르기, "Project # / NPI" → <b>Related Items</b>(프로젝트 · 자재 번호 · 이름 · Plant 로 검색)</td><td><span class="badge ok">완료</span></td><td class="nt">권한 없는 노트는 Business · Site(분류)만 보이고 자재는 안 보임</td></tr>
   <tr><td class="no">18</td><td class="f">모달 안 선택 목록 잘림</td><td class="rq">ChemStudio Add Existing 창에서 select 를 열면 모달 경계에서 잘림</td><td>select2 목록을 운영 auSelect 처럼 화면(body)에 붙여 모달 밖으로도 보이게. ChemStudio · Share &amp; Access · Link Formulations 등 모달 안 선택 목록 모두 해당</td><td><span class="badge ok">완료</span></td><td class="nt">검색어 입력 · 선택 동작 그대로 확인</td></tr>
   <tr><td class="no">19</td><td class="f">+ Row · + Series 위치</td><td class="rq">+ Row, + Series 같은 버튼은 운영 표준처럼 오른쪽 정렬</td><td>Data Visualization 의 + Row · + Series 를 오른쪽 정렬(운영 FMEA ".fLine.hFlexEnd" 방식), 붙여넣기 안내 문구는 왼쪽에 둠</td><td><span class="badge ok">완료</span></td><td class="nt"></td></tr>
+  <tr><td class="no">20</td><td class="f">Notebook</td><td class="rq">옛 팝업에 있던 노트북(폴더) 지정 필드가 빠짐 → 다시 넣기</td><td>Basic Data 맨 위(Title 위)에 <b>Notebook</b>. 모양은 리스트 요약 패널의 노트북 선택과 같은 알약(색 점 + 이름 + ▾), 누르면 노트북 목록(No Notebook 맨 위 · ✓ 현재 · 맨 끝 "New Notebook…" = 이름 입력 → 만들고 바로 이동). 처음 값은 리스트가 넘긴 노트북, 템플릿 새 노트는 No Notebook<br>바꾸면 Audit "Field changed Notebook" · 안내("Moved to …"), PDF Basic Data 에도 표시. 승인 뒤·번역 보기에서는 값만 보임</td><td><span class="badge ok">완료</span></td><td class="nt">No Notebook 도 값이라 필수 표시 없음</td></tr>
 </table></div>
 
 <!-- ───────────────────────── 2. 프로세스 ───────────────────────── -->
