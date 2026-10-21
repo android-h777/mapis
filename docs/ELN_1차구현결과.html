@@ -133,15 +133,15 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
 
   <tr class="grp"><td colspan="6">1단계 · 기록 신뢰성</td></tr>
   <tr data-tip="t1"><td class="no">1</td><td class="f">헤더 필드</td><td class="rq">헤더에 실험 날짜, Platform tech / Pre-NPC 선택(MAPIS NPC 번호가 없는 과제), 연관 NPI 번호(여러 개), 종이 노트·페이지 참조<span class="nice">Nice</span></td><td>Basic Data에 Experiment Date(MAPIS 표준 날짜 선택기, MM-DD-YYYY 표시), Platform / Pre-NPC, Paper Notebook Ref. 추가. NPI 번호(여러 개)는 Related Items의 Project 항목으로 연결</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">NPI 별도 칸은 만들지 않음(MAPIS에선 NPI 번호 = 프로젝트 코드). 프로젝트(NPI, NPT, TS 모두)는 Related Items에 Project 항목으로 여러 개 동등하게 연결. Primary 프로젝트, Basic Data의 Associated Project # 칸, Stage/Task 칸은 제거(2026-10-16 결정). Platform/Pre-NPC는 프로젝트와 공존 가능. 운영에 Platform·Pre-NPC 마스터 목록이 없어 유형(Platform Technology / Pre-NPC)만 고르고 이름은 입력, 다른 노트에서 쓴 이름은 자동완성으로 추천(사용자 결정). 날짜는 MAPIS 표준 MM-DD-YYYY로 표시. 종이 노트 참조는 Nice였으나 구현 부담이 작아 포함.</td></tr>
-  <tr data-tip="t2"><td class="no">2</td><td class="f">Co-Signer 서명</td><td class="rq">작성자가 Co-Signer(서명자)를 직접 선택</td><td>MAPIS 표준 결재 UI(FMEA와 같음). 작성자가 Add Row로 결재선(Type · Function · Assignee) 지정 → Initiate Approval: 상신 의견 › Submit으로 노트 전체 상신. 운영에서는 결재자가 Approved / Not Approved(의견 필수)를 정하고, 결정 전에는 Withdraw Approval로 회수. 카드 상태 배지(Not Initiated / Pending / Approved / Rejected)와 헤더 배지로 진행 표시</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">카드 이름은 "Sign-off"로 바꾸지 않고 기존 "Approval" 유지(사용자 혼동 방지). 결재선 편집표 · 현황표 · 버튼은 운영 표준 결재(appr_util.js, FMEA 방식)와 같은 형식으로 통일(2026-10-19 결정). 섹션 단위 제출(부분 승인)은 현업 의견으로 제거, 결재 단위는 노트 전체(2026-10-20 결정). 프로토타입은 결재자 화면 없이 상신 즉시 승인 완료로 처리.</td></tr>
-  <tr data-tip="t3"><td class="no">3</td><td class="f">제출 후 잠금 · Errata</td><td class="rq">ELN 제출 후에도 섹션 추가와 Errata(정정) 가능</td><td>상신하면 노트 전체가 읽기 전용(편집·삭제·섹션 추가 차단), 반려·회수 시 해제. 상신 후·승인 후에도 Errata(사유 필수) 추가 가능</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">리뷰에서 키보드·드래그·이미지 드롭으로 잠금을 우회하는 경로가 발견돼 보강. Errata는 승인 후에도 허용(원문 불변, 정정만 추가). 원문의 "제출 후 섹션 추가"는 부분 승인을 전제로 한 것이라, 부분 승인 제거(2026-10-20)와 함께 제외. 제출 뒤 보완은 Errata로.</td></tr>
+  <tr data-tip="t2"><td class="no">2</td><td class="f">Co-Signer 서명</td><td class="rq">작성자가 Co-Signer(서명자)를 직접 선택</td><td>MAPIS 표준 결재 UI(FMEA와 같음). 작성자가 Add Row로 결재선(Type · Function · Assignee) 지정 → Initiate Approval: 제출할 섹션 선택 › 상신 의견 › 제출 → 현재 결재자가 Approved / Not Approved(의견 필수) › Submit. 결정 전에는 Withdraw Approval로 회수. 카드 상태 배지(Not Initiated / Pending / Approved / Rejected)와 헤더 배지로 진행 표시</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">카드 이름은 "Sign-off"로 바꾸지 않고 기존 "Approval" 유지(사용자 혼동 방지). 결재선 편집표 · 현황표 · 버튼은 운영 표준 결재(appr_util.js, FMEA 방식)와 같은 형식으로 통일(2026-10-19 결정). ELN 전용은 섹션 단위 제출 · 잠금, 반려 시 잠금 해제, 승인 후 Errata, "Approved n of m sections" 표시만.</td></tr>
+  <tr data-tip="t3"><td class="no">3</td><td class="f">제출 후 잠금 · Errata</td><td class="rq">ELN 제출 후에도 섹션 추가와 Errata(정정) 가능</td><td>제출 섹션은 편집·삭제 모두 차단, 반려 시 해제, 전체 승인 시 노트 전체 읽기 전용. 승인 후에도 Errata(사유 필수) 추가 가능</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">리뷰에서 키보드·드래그·이미지 드롭으로 잠금을 우회하는 경로가 발견돼 보강. Errata는 승인 후에도 허용(원문 불변, 정정만 추가).</td></tr>
   <tr data-tip="t4"><td class="no">4</td><td class="f">Audit Trail</td><td class="rq">Audit Trail 기능</td><td>시각·사용자·섹션·동작·변경 전→후 표와 Section/User 필터. 헤더부터 에디터·표·첨부·결재까지 대부분의 변경을 기록</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">섹션 내부 변경(표·첨부·에디터 등)까지 기록하도록 범위 확장(사용자 요청). 노트 전환·복제 같은 프로그램 일괄 변경은 기록 제외.</td></tr>
 
   <tr class="grp"><td colspan="6">2단계 · 협업 · 검색</td></tr>
   <tr data-tip="t5"><td class="no">5</td><td class="f">공동 편집자</td><td class="rq">공동 편집자 추가, 공동 편집 노트에서 수정한 사람 이름 표시, 편집자별 변경 추적</td><td>헤더 Share 버튼(공유 아이콘 + 인원 수 배지)의 Share &amp; Access 창에서 Co-editor 추가(공유와 한 곳에서 관리). 섹션별 Last edited by 표시, 변경은 Audit Trail로 추적. 승인된 노트에는 Co-editor 추가 불가</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">동시 편집은 다루지 않음. 원문에 동시 편집 요구가 없고, Co-editor는 번갈아 편집하는 개념. 섹션 잠금은 섹션별 저장을 전제해 노트 단위 저장과 맞지 않아 제외(사용자 결정). 공동편집자와 서명자는 다른 사람으로 구성. 헤더 아바타 대신 Share 버튼 하나(개인정보 사유로 사진·아바타 미사용).</td></tr>
   <tr data-tip="t6"><td class="no">6</td><td class="f">공유</td><td class="rq">규정 준수 하에 노트·섹션을 다른 사용자와 공유 (예: R&amp;D ↔ Process Technology 스케일업 협업)</td><td>Share &amp; Access 창(공동 편집자와 같은 창). 접근 인원 표에서 Function(배지)·Scope 확인, 행에 마우스를 올리면 Edit·Remove 표시(Remove는 확인 창 후 회수). Add People(또는 Edit)을 누르면 같은 창의 표 위에 입력 폼이 펼쳐져 대상·Function(Co-editor/Viewer)·범위·정보보호 확인 입력(모달을 겹쳐 띄우지 않음). Viewer만 섹션 단위 공유 가능. 정보보호 확인은 Audit Trail에 함께 기록</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">공동 편집자와 공유를 한 모달로 통합: 공유 권한 Edit과 Co-editor가 같은 개념이라 하나로 정리(사용자 결정). Function은 Co-editor/Viewer 두 단계(코멘트 기능이 없어 Commenter 제외). 정보보호 확인 체크는 원문 "under compliance"의 해석(운영에 없는 요소)이며, 감사 근거가 남도록 Audit 기록에 포함(사용자 결정). Co-editor는 항상 전체 노트, 섹션 공유는 Viewer만(원문 "sections" 공유 = 보여 주는 범위). 승인된 노트도 Viewer 공유 허용. 공유는 프로젝트 연결과 무관. 입력 폼은 현업 요청으로 중첩 모달 대신 표 위에 펼침(2026-10-16). 공유 사유(Reason) 입력칸은 제거(2026-10-16): 원문은 "규정 준수 하에"만 요구하고, 사유는 자체 해석으로 넣은 칸이었으며 화면 어디에도 쓰이지 않음.</td></tr>
   <tr data-tip="t7"><td class="no">7</td><td class="f">노트 복제</td><td class="rq">기존 실험을 복제해서 시작 (Copy from)</td><td>왼쪽 버튼 영역(Save Template 위)의 Copy To 버튼 › 복사할 섹션 + Include entered data 선택 › Copy 하면 새 창에 저장 전 복사본 생성(새 번호). 원래 창은 그대로. 저장하면 리스트에 표시</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">운영 FMEA 'Copy To'와 같은 이름·위치·흐름(새 창, 저장 전). 'Clone' 대신 'Copy'로 용어 통일. 원문은 "Copy from"뿐이고 위치 지정이 없어 Copy To는 노트 팝업에만 둠(리스트 요약 패널의 Copy To는 2026-10-16 제거). Sections to Copy는 섹션 구성, Include entered data는 값. Basic Data는 필수 섹션이라 항상 포함(체크 고정). Related Items를 복사하면 연결 프로젝트(Project 항목)는 데이터 선택과 무관하게 남음(노트 메타데이터). 승인된 노트를 복사해도 새 노트는 편집 가능.</td></tr>
-  <tr data-tip="t8"><td class="no">8</td><td class="f">노트 상호참조</td><td class="rq">같은·다른 작성자의 ELN 실험을 상호참조로 삽입, 관련 실험 링크 추가</td><td>Related Items에서 관련 노트(Lab Note)를 검색해 링크로 추가<br>에디터 @ 노트 참조<span class="badge">보류</span> 현업 요청으로 꺼 둠</td><td class="s"><span class="badge wip">일부 보류</span></td><td class="nt">관련 실험 링크(원문 "Link to add related Experiment")는 Related Items의 Lab Note 항목으로 제공. 에디터 @ 참조(자동완성, 칩 링크, 요약 카드)는 Summernote 기본 기능(hint)으로 구현까지 마쳤으나, 현업 요청으로 2026-10-16 끔. 코드는 주석으로 남겨 두어 다시 켤 수 있음.</td></tr>
+  <tr data-tip="t8"><td class="no">8</td><td class="f">노트 상호참조</td><td class="rq">같은·다른 작성자의 ELN 실험을 상호참조로 삽입, 관련 실험 링크 추가</td><td>Related Items에서 관련 노트(Note)를 검색해 링크로 추가<br>에디터 @ 노트 참조<span class="badge">보류</span> 현업 요청으로 꺼 둠</td><td class="s"><span class="badge wip">일부 보류</span></td><td class="nt">관련 실험 링크(원문 "Link to add related Experiment")는 Related Items의 Note 항목으로 제공. 에디터 @ 참조(자동완성, 칩 링크, 요약 카드)는 Summernote 기본 기능(hint)으로 구현까지 마쳤으나, 현업 요청으로 2026-10-16 끔. 코드는 주석으로 남겨 두어 다시 켤 수 있음.</td></tr>
   <tr data-tip="t9"><td class="no">9</td><td class="f">검색 확장</td><td class="rq">작성자·프로젝트명·NPI 번호 등으로 검색, 첨부파일(Office·텍스트 형식) 내용까지 검색<span class="nice">Nice</span></td><td>저자, Project # / NPI, 첨부 본문 검색(일치 문장 강조) 구현<br>구조식 검색: Formula / Name / CAS-No 자동완성 입력 + Draw Structure(ChemStudio 열기)</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">"NPI 번호 검색"은 프로젝트 코드·이름 검색으로 통일(노트에 연결된 프로젝트 모두 대상). 구조식 검색은 ChemStudio와 연계: ChemStudio에 이미 통합 검색(Formula / 이름 / CAS-No)이 있고, 노트의 ChemStudio 모듈에 연결된 구조로 노트를 찾음(2026-10-19 입력칸 추가, 프로토타입은 목업 구조 목록).</td></tr>
   <tr data-tip="t10"><td class="no">10</td><td class="f">권한 없는 노트 검색</td><td class="rq">읽기 권한이 없는 ELN도 검색 (허용되면 기본 정보만 표시)</td><td>검색 결과에 자물쇠 행(번호·제목·저자·날짜)만 표시, 클릭 시 접근 불가 요약과 Request Access(사유 필수)</td><td class="s"><span class="badge ok">구현 완료</span></td><td class="nt">프로젝트 등 기본 정보로는 검색되되 본문·태그·첨부는 비노출(원문 "show just the basic data if allowed").</td></tr>
 
@@ -167,9 +167,7 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <li>날짜 표시를 MAPIS 표준 MM-DD-YYYY로 통일(운영 형식 MM-dd-yyyy). Experiment Date는 표준 날짜 선택기 사용(전에는 PC 언어에 따라 형식이 달라짐)</li>
   <li>리스트 오른쪽 요약 패널을 MAPIS 표준 요약 형식으로 변경(Tech Library·Composition 리스트와 같음): 제목 링크, 라벨/값 행, 소제목(Related Projects · Modules · Tags), 상태는 색 글자, 패널 폭 확대</li>
   <li>Formulation 섹션은 노트당 하나: 지운 뒤 Add Module로 다시 고르면 원래 섹션이 복원됨(빈 섹션이 새로 생기지 않음)</li>
-  <li>Related Items 추가 줄을 MAPIS 표준 입력으로 통일: Material · Project · Lab Note는 같은 입력칸 + 공통 자동완성, URL은 일반 입력칸</li>
-  <li>Related Items 항목을 첨부와 같은 MAPIS 표준 칩으로 가로 배치(2026-10-20): 유형 순서(Project → Material → Lab Note → URL)로 정렬, 삭제 ×는 칩 오른쪽(마우스를 올리면 진하게). 유형 이름 Note → Lab Note. "Linking a project does not grant access" 안내 문구는 팝업·리스트에서 제거</li>
-  <li>Audit Trail 표는 최대 높이 300px, 넘치면 표 안에서 스크롤(머리글 고정)</li>
+  <li>Related Items 추가 줄을 MAPIS 표준 입력으로 통일: Material · Project · Note는 같은 입력칸 + 공통 자동완성, URL은 일반 입력칸</li>
   <li>Share &amp; Access 표를 MAPIS 표준 형식으로: Function 배지(Owner 채움 · Co-editor 파란 테두리 · Viewer 회색 테두리), 행에 마우스를 올릴 때만 Edit · Remove 아이콘 표시, Remove는 확인 창(Confirm / Cancel) 후 회수</li>
   <li>리스트: 선택된 행에 마우스를 올려도 아래로 밀리지 않음(2px 이동 제거), New Notebook 버튼은 일반 버튼 형식</li>
 </ul></div>
@@ -191,14 +189,14 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <colgroup><col style="width:170px"><col><col style="width:34%"></colgroup>
   <tr><th>항목</th><th>정할 것</th><th>지금 구현(기본안)</th></tr>
   <tr><td class="f">1. Platform / Pre-NPC 이름</td><td>운영에 목록이 없음. 관리 목록(공통코드, 관리 주체 지정)으로 둘지, 자유 입력으로 둘지</td><td class="cur">유형(Platform Technology / Pre-NPC) 선택 + 이름 입력, 다른 노트에서 쓴 이름 자동완성</td></tr>
-  <tr><td class="f">1. 프로젝트 연결</td><td>2026-10-16 결정: Primary 프로젝트 개념과 Basic Data의 Associated Project # (NPI, NPT, TS) 칸을 없앰. 프로젝트는 Related Items의 Project 항목으로만 연결</td><td class="cur">Related Items › Project: 프로젝트 번호나 이름으로 검색, [코드] 이름으로 표시, 클릭하면 프로젝트가 열림. 데모 노트는 프로젝트 3개 연결</td></tr>
+  <tr><td class="f">1. 프로젝트 연결</td><td>2026-10-16 결정: Primary 프로젝트 개념과 Basic Data의 Associated Project # (NPI, NPT, TS) 칸을 없앰. 프로젝트는 Related Items의 Project 항목으로만 연결</td><td class="cur">Related Items › Project: 프로젝트 번호나 이름으로 검색, [코드] 이름으로 표시, 클릭하면 프로젝트가 열림. 안내 "Linking a project does not grant access to this note." 데모 노트는 프로젝트 3개 연결</td></tr>
   <tr><td class="f">1. Stage / Task</td><td>2026-10-16 결정: Stage(Task) 칸 제거. Primary 프로젝트를 기준으로 하던 칸이라 함께 없앰</td><td class="cur">없음</td></tr>
   <tr><td class="f">1. 날짜 형식</td><td>2026-10-16 결정: 날짜는 MAPIS 표준 MM-DD-YYYY로 표시(운영 MM-dd-yyyy)</td><td class="cur">화면의 날짜 모두 MM-DD-YYYY. Experiment Date는 표준 날짜 선택기</td></tr>
-  <tr><td class="f">2. 결재 UI</td><td>2026-10-19 결정: 결재 UI를 MAPIS 표준 결재(FMEA 방식)로 통일. 2026-10-20 결정: 부분 승인(섹션 단위 제출) 제거, 노트 전체 결재. 결재자 화면은 운영 공통 모듈과 같아 시연용 View as 탭 제거</td><td class="cur">Approval 카드: 상태 배지 + Add Row · Initiate Approval, Approval Line 편집표(Type · Function · Assignee), Approval Status 현황표(Type · Function · Assignee · Status · Comments · Date, 상신마다 Submission 행). 프로토타입은 상신 즉시 승인 완료</td></tr>
+  <tr><td class="f">2. 결재 UI</td><td>2026-10-19 결정: 결재 UI를 MAPIS 표준 결재(FMEA 방식)로 통일, ELN 전용은 섹션 단위 제출·잠금·Errata만</td><td class="cur">Approval 카드: 상태 배지 + Add Row · Initiate Approval · Withdraw Approval, Approval Line 편집표(Type · Function · Assignee), Approval Status 현황표(Type · Function · Assignee · Status · Comments · Date · Submit, 제출마다 Submission 행에 섹션 목록)</td></tr>
   <tr><td class="f">6. 공유 입력 화면</td><td>2026-10-16 결정: 모달 위에 모달을 겹쳐 띄우지 않음(현업 요청)</td><td class="cur">Share &amp; Access 창 안에서 Add People(또는 행의 Edit 연필)을 누르면 접근 인원 표 위에 입력 폼이 펼쳐짐. 저장하면 폼이 접히고 표가 갱신됨</td></tr>
   <tr><td class="f">6. 공유 사유(Reason) 입력</td><td>2026-10-16 결정: Share 사유(Reason) 입력칸 제거. 원문은 "규정 준수 하에 공유"만 요구하고, 사유는 자체 해석으로 넣은 칸이었으며 화면 어디에도 쓰이지 않음</td><td class="cur">정보보호 규정 확인 체크만 필수(체크 전엔 Share · Save 비활성). Audit 기록 끝에 "Security policy acknowledged"</td></tr>
   <tr><td class="f">7. 리스트의 Copy To</td><td>2026-10-16 결정: 리스트 요약 패널의 Copy To 제거. 원문(Copy from)에 위치 지정이 없어 노트 팝업에만 둠</td><td class="cur">노트 팝업 Copy To: 섹션 선택 + Include entered data, 새 창에서 열림</td></tr>
-  <tr><td class="f">8. 에디터 @ 노트 참조</td><td>2026-10-16 결정: 현업 요청으로 끔. 코드는 주석으로 남겨 다시 켤 수 있음</td><td class="cur">관련 노트는 Related Items의 Lab Note 항목으로 연결</td></tr>
+  <tr><td class="f">8. 에디터 @ 노트 참조</td><td>2026-10-16 결정: 현업 요청으로 끔. 코드는 주석으로 남겨 다시 켤 수 있음</td><td class="cur">관련 노트는 Related Items의 Note 항목으로 연결</td></tr>
   <tr><td class="f">9. 구조식 검색</td><td>2026-10-16 결정: 화학 검색 엔진 대신 ChemStudio와 연계. 노트의 ChemStudio 모듈에 연결된 구조로 노트를 찾음</td><td class="cur">검색 창에 Formula / Name / CAS-No 자동완성 입력칸(2026-10-19 추가) + Draw Structure 버튼이 ChemStudio를 엶</td></tr>
   <tr><td class="f">12. SharePoint 작업 문서</td><td>2026-10-16 결정: 계속 검토하되 이번 프로토타입에는 반영하지 않음</td><td class="cur">없음(조사 결과는 12번 상세에 정리)</td></tr>
   <tr><td class="f">노트 팝업 Note List</td><td>2026-10-16 결정: Note List 버튼과 패널 제거(Primary 프로젝트의 노트를 Stage별로 보여 주던 기능)</td><td class="cur">없음</td></tr>
@@ -234,13 +232,13 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
     </ol></figcaption>
   </figure>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/01_projadd.png" alt="Related Items의 프로젝트 추가 자동완성"><span class="mk" style="left:1.5%;top:42.3%">①</span><span class="mk" style="left:12.4%;top:56.2%">②</span><span class="mk" style="left:91.1%;top:40.8%">③</span></div>
-    <figcaption><div class="lb">프로젝트 연결 (Related Items › Project 항목, MAPIS 공통 부품)</div><ol class="cl"><li><b>①</b> Related Items 추가 줄에서 유형을 Project로 고름. 네 유형(Material · Project · Lab Note · URL) 모두 같은 MAPIS 표준 입력칸(URL은 일반 입력, 나머지는 공통 자동완성)</li><li><b>②</b> 프로젝트 번호나 이름을 입력하면(그림: PT-26) 공통 자동완성 목록. 표시는 MAPIS 표준 [코드] 이름(예: [PT-26-0034] Low Viscosity Binder Gel T)</li><li><b>③</b> 고르고 Add 하면 Project 칩이 추가되고 Audit Trail에 기록. 칩의 이름을 클릭하면 프로젝트 화면이 열림</li></ol></figcaption>
+    <div class="shot"><img src="img/eln/01_projadd.png" alt="Related Items의 프로젝트 추가 자동완성"><span class="mk" style="left:1.9%;top:15.3%">①</span><span class="mk" style="left:14.5%;top:32.0%">②</span><span class="mk" style="left:92.0%;top:13.8%">③</span><span class="mk" style="left:1.9%;top:35.3%">④</span></div>
+    <figcaption><div class="lb">프로젝트 연결 (Related Items › Project 항목, MAPIS 공통 부품)</div><ol class="cl"><li><b>①</b> Related Items 추가 줄에서 유형을 Project로 고름. 네 유형(Material · Project · Note · URL) 모두 같은 MAPIS 표준 입력칸(URL은 일반 입력, 나머지는 공통 자동완성)</li><li><b>②</b> 프로젝트 번호나 이름을 입력하면(그림: PT-26) 공통 자동완성 목록. 표시는 MAPIS 표준 [코드] 이름(예: [PT-26-0034] Low Viscosity Binder Gel T)</li><li><b>③</b> 고르고 Add 하면 Project 항목이 추가되고 Audit Trail에 기록. 항목을 클릭하면 프로젝트 화면이 열림</li><li><b>④</b> 유형이 Project일 때 추가 줄 아래 안내 "Linking a project does not grant access to this note."(그림에서는 자동완성 목록에 일부 가려짐)</li></ol></figcaption>
   </figure>
   <div class="tt-pair">
     <figure class="tt-fig">
-      <div class="shot"><img src="img/eln/01_list_summary.png" alt="리스트 요약 패널"><span class="mk" style="left:1.5%;top:8.7%">①</span><span class="mk" style="left:1.5%;top:30.8%">②</span><span class="mk" style="left:1.5%;top:49.9%">③</span><span class="mk" style="left:1.5%;top:74.3%">④</span></div>
-      <figcaption><div class="lb">리스트 요약 패널 (MAPIS 표준 요약 형식)</div><ol class="cl"><li><b>①</b> 제목 링크: [노트 번호] 제목</li><li><b>②</b> 라벨/값 행: Status(색 글자) · Note # · Notebook · Author · Modified · Formulation</li><li><b>③</b> Related Projects: 연결된 프로젝트를 [코드] 이름 링크로 표시(클릭하면 프로젝트가 열림). 연결해도 노트 접근 권한은 생기지 않음(안내 문구는 2026-10-20 제거)</li><li><b>④</b> Modules · Tags</li></ol></figcaption>
+      <div class="shot"><img src="img/eln/01_list_summary.png" alt="리스트 요약 패널"><span class="mk" style="left:3.8%;top:5.8%">①</span><span class="mk" style="left:4.0%;top:18.5%">②</span><span class="mk" style="left:5.8%;top:53.3%">③</span><span class="mk" style="left:5.8%;top:67.4%">④</span><span class="mk" style="left:3.8%;top:75.2%">⑤</span></div>
+      <figcaption><div class="lb">리스트 요약 패널 (MAPIS 표준 요약 형식)</div><ol class="cl"><li><b>①</b> 제목 링크: [노트 번호] 제목</li><li><b>②</b> 라벨/값 행: Status(색 글자) · Note # · Notebook · Author · Modified · Formulation</li><li><b>③</b> Related Projects: 연결된 프로젝트를 [코드] 이름 링크로 표시(클릭하면 프로젝트가 열림)</li><li><b>④</b> "Linking a project does not grant access to it." 연결해도 접근 권한은 생기지 않음</li><li><b>⑤</b> Modules · Tags</li></ol></figcaption>
     </figure>
     <div></div>
   </div>
@@ -269,29 +267,44 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <div class="tt-req">"Author chooses Co-Signers"</div>
   <div class="tt-cap">화면</div>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/02_approval_before.png" alt="Approval 카드, 상신 전"><span class="mk" style="left:9.4%;top:18.6%">①</span><span class="mk" style="left:76.7%;top:18.6%">②</span><span class="mk" style="left:85.5%;top:18.6%">③</span><span class="mk" style="left:1.5%;top:39.9%">④</span><span class="mk" style="left:94.4%;top:74.6%">⑤</span></div>
-    <figcaption><div class="lb">상신 전</div><ol class="cl">
+    <div class="shot"><img src="img/eln/02_approval_before.png" alt="Approval 카드, 작성자 화면, 상신 전"><span class="mk" style="left:20.4%;top:15.4%">①</span><span class="mk" style="left:76.4%;top:15.4%">②</span><span class="mk" style="left:99.2%;top:15.4%">③</span><span class="mk" style="left:67.6%;top:32.4%">④</span><span class="mk" style="left:36.1%;top:50.4%">⑤</span><span class="mk" style="left:98.6%;top:79.0%">⑥</span></div>
+    <figcaption><div class="lb">상신 전 (작성자 화면)</div><ol class="cl">
       <li><b>①</b> 카드 전체 상태 배지: Not Initiated(상신 전) › Pending › Approved / Rejected</li>
       <li><b>②</b> Add Row: 결재선에 행 추가</li>
-      <li><b>③</b> Initiate Approval: 상신 의견 › Submit으로 노트 전체 상신</li>
-      <li><b>④</b> 결재선 편집표: Type(Approval / Reference) · Function(Group Leader / Witness / Reviewer) · Assignee. 같은 담당자를 두 번 고르면 경고</li>
-      <li><b>⑤</b> 행에 마우스를 올리면 삭제 아이콘 표시, 확인 창 후 삭제</li>
+      <li><b>③</b> Initiate Approval: 제출할 섹션 선택 › 상신 의견 › 제출</li>
+      <li><b>④</b> Demo: View as Author / Co-Signer: 시연용 전환 탭(운영에서는 로그인 사용자에 따라 결정)</li>
+      <li><b>⑤</b> 결재선 편집표: Type(Approval / Reference) · Function(Group Leader / Witness / Reviewer) · Assignee. 같은 담당자를 두 번 고르면 경고</li>
+      <li><b>⑥</b> 행에 마우스를 올리면 삭제 아이콘 표시, 확인 창 후 삭제</li>
     </ol></figcaption>
   </figure>
   <div class="tt-pair">
     <figure class="tt-fig">
-      <div class="shot"><img src="img/eln/02_approval_comment.png" alt="Initiate Approval, 상신 의견"><span class="mk" style="left:4.1%;top:50.0%">①</span><span class="mk" style="left:48.8%;top:81.0%">②</span></div>
-      <figcaption><div class="lb">Initiate Approval: 상신 의견 (운영 표준과 같은 창)</div><ol class="cl"><li><b>①</b> 의견 입력(선택, 500자까지)</li><li><b>②</b> Submit: 노트 전체 상신. 섹션 선택 단계 없음(부분 승인 제거, 2026-10-20)</li></ol></figcaption>
+      <div class="shot"><img src="img/eln/02_approval_sections.png" alt="Initiate Approval 1단계, 섹션 선택"><span class="mk" style="left:4.0%;top:29.7%">①</span><span class="mk" style="left:73.0%;top:38.5%">②</span><span class="mk" style="left:61.8%;top:90.6%">③</span></div>
+      <figcaption><div class="lb">Initiate Approval 1단계: 섹션 선택 (ELN 전용)</div><ol class="cl"><li><b>①</b> Select all: 전부 고르면 노트 전체 제출</li><li><b>②</b> 이미 제출된 섹션은 Submitted로 표시되고 고를 수 없음</li><li><b>③</b> Next</li></ol></figcaption>
     </figure>
-    <div></div>
+    <figure class="tt-fig">
+      <div class="shot"><img src="img/eln/02_approval_comment.png" alt="Initiate Approval 2단계, 상신 의견"><span class="mk" style="left:4.1%;top:58.4%">①</span><span class="mk" style="left:48.8%;top:84.2%">②</span></div>
+      <figcaption><div class="lb">2단계: 상신 의견</div><ol class="cl"><li><b>①</b> 의견 입력(선택, 500자까지). 위에 고른 섹션 목록 표시</li><li><b>②</b> Submit › 확인 창 › 제출. 고른 섹션은 잠김</li></ol></figcaption>
+    </figure>
   </div>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/02_approval_initiated.png" alt="Approval 카드, 상신 후 승인 완료"><span class="mk" style="left:9.4%;top:13.9%">①</span><span class="mk" style="left:1.5%;top:43.4%">②</span><span class="mk" style="left:1.5%;top:56.6%">③</span><span class="mk" style="left:39.5%;top:68.7%">④</span></div>
-    <figcaption><div class="lb">상신 후 (프로토타입: 즉시 승인 완료)</div><ol class="cl">
-      <li><b>①</b> 상태 배지 Approved. 헤더 상태도 Approved, 노트 전체 읽기 전용</li>
-      <li><b>②</b> Approval Status 표(Type · Function · Assignee · Status · Comments · Date): 상신마다 Submission 행(반려·회수 뒤 다시 상신하면 Submission 2)</li>
-      <li><b>③</b> Request 행: 작성자(Charles Kim)의 상신 의견과 날짜</li>
-      <li><b>④</b> 결재자 행: 프로토타입은 결재자 화면 없이 상신 즉시 전원 Approved로 처리. 운영에서는 결재자가 각자 Approved / Not Approved(의견 필수)를 정하고, 결정 전에는 작성자가 Withdraw Approval로 회수</li>
+    <div class="shot"><img src="img/eln/02_approval_initiated.png" alt="Approval 카드, 작성자 화면, 상신 후"><span class="mk" style="left:18.7%;top:7.5%">①</span><span class="mk" style="left:74.0%;top:2.9%">②</span><span class="mk" style="left:99.2%;top:7.5%">③</span><span class="mk" style="left:33.7%;top:71.3%">④</span><span class="mk" style="left:68.7%;top:78.0%">⑤</span></div>
+    <figcaption><div class="lb">상신 후 (작성자 화면, 2개 섹션 제출)</div><ol class="cl">
+      <li><b>①</b> 상태 배지 Pending</li>
+      <li><b>②</b> Initiate Approval: 아직 제출하지 않은 섹션을 이어서 제출 가능</li>
+      <li><b>③</b> Withdraw Approval: 결재자 결정 전 회수, 제출한 섹션 잠금 해제</li>
+      <li><b>④</b> Approval Status 표(Type · Function · Assignee · Status · Comments · Date · Submit): 제출마다 Submission 행(상태, Sections 목록)</li>
+      <li><b>⑤</b> Request 행: 작성자(Charles Kim)의 상신 의견과 날짜</li>
+    </ol></figcaption>
+  </figure>
+  <figure class="tt-fig">
+    <div class="shot"><img src="img/eln/02_approval_cosigner.png" alt="Approval 카드, 서명자 화면"><span class="mk" style="left:86.9%;top:24.1%">①</span><span class="mk" style="left:39.9%;top:70.3%">②</span><span class="mk" style="left:38.5%;top:82.2%">③</span><span class="mk" style="left:78.5%;top:82.2%">④</span><span class="mk" style="left:90.6%;top:82.2%">⑤</span></div>
+    <figcaption><div class="lb">결재 중 (Co-Signer 화면, ?st=appr)</div><ol class="cl">
+      <li><b>①</b> Demo: View as Co-Signer 탭</li>
+      <li><b>②</b> Jim Quan: Approved, 의견 "Data verified.", 날짜 기록</li>
+      <li><b>③</b> 현재 결재자(Aishwarya) 행: Approved / Not Approved 선택</li>
+      <li><b>④</b> Comments 입력(Not Approved면 필수)</li>
+      <li><b>⑤</b> Submit: 결정 확정. Not Approved면 제출 섹션 잠금 해제, 전원 승인이면 섹션 승인</li>
     </ol></figcaption>
   </figure>
   <figure class="tt-fig">
@@ -301,13 +314,14 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <div class="tt-cap">시연 순서</div>
   <ol class="tt-steps">
     <li>Approval 카드에서 <b>Add Row</b>로 결재선 확인 · 수정</li>
-    <li><b>Initiate Approval</b> › 상신 의견 › Submit › 승인 완료 확인(헤더 Approved, 노트 전체 읽기 전용)</li>
-    <li>결재 중인 노트를 보려면 주소 뒤에 <b>?st=appr</b>(헤더 In Approval, Awaiting 배지)</li>
+    <li><b>Initiate Approval</b> › 섹션 선택 › Next › 상신 의견 › Submit (결정 전에는 Withdraw Approval로 회수 가능)</li>
+    <li>Demo: View as <b>Co-Signer</b> 탭 › 현재 결재자 행에서 Approved(또는 Not Approved + 의견) › Submit</li>
+    <li>헤더 상태와 Awaiting 배지가 바뀌는 것 확인. 결재 중인 노트를 바로 보려면 주소 뒤에 <b>?st=appr</b></li>
   </ol>
   <div class="tt-cap">계획 대비 변경</div>
-  <ul class="tt-l"><li>카드 이름을 "Sign-off"로 바꾸지 않고 기존 <b>Approval</b> 유지</li><li>결재 UI를 MAPIS 표준 결재(FMEA 방식)로 통일(2026-10-19 결정). Co-Signer 칩, Add Co-Signer 창, Submit Sections / Submit All 버튼, Sections | Role | Co-Signer | Decision 표를 Add Row 결재선 편집표, Initiate Approval, Withdraw Approval, 표준 Approval Status 표로 교체</li><li>부분 승인(섹션 단위 제출 · 섹션별 잠금 배지 · 목차 자물쇠 · "Approved n of m sections")은 현업 의견으로 제거, 결재 단위는 노트 전체(2026-10-20 결정). 결재자 화면은 운영 공통 모듈과 같아 시연용 View as Author / Co-Signer 탭도 제거하고, 프로토타입은 상신 즉시 승인 완료로 처리</li></ul>
+  <ul class="tt-l"><li>카드 이름을 "Sign-off"로 바꾸지 않고 기존 <b>Approval</b> 유지</li><li>결재 UI를 MAPIS 표준 결재(FMEA 방식)로 통일(2026-10-19 결정). Co-Signer 칩, Add Co-Signer 창, Submit Sections / Submit All 버튼, Sections | Role | Co-Signer | Decision 표를 Add Row 결재선 편집표, Initiate Approval, Withdraw Approval, 표준 Approval Status 표로 교체. ELN 전용은 섹션 단위 제출 · 잠금, 반려 시 잠금 해제, 승인 후 Errata, "Approved n of m sections" 표시만 유지</li></ul>
   <div class="tt-cap">운영 구현 시 고려</div>
-  <ul class="tt-l"><li>화면과 결재 단위가 운영 표준 결재 카드(appr_util.js)와 같아 공통 모듈을 그대로 사용 가능. 저장은 기존 MAPIS 결재 기능과 같은 행 형태(결재 모듈 TS09_APPR). 섹션별 결재를 위한 서버 로직은 필요 없음</li></ul>
+  <ul class="tt-l"><li>화면은 운영 표준 결재 카드(appr_util.js)와 같은 구조라 재사용 가능. 저장은 기존 MAPIS 결재 기능과 같은 행 형태(결재 모듈 TS09_APPR) + 제출별 섹션 목록(ELN 전용)</li></ul>
 </template>
 
 <template id="t3">
@@ -316,10 +330,11 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <div class="tt-req">"Add additional sections and Errata after ELN Submission"</div>
   <div class="tt-cap">화면</div>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/03_locked_editor.png" alt="결재 중 잠긴 Editor 카드"><span class="mk" style="left:1.5%;top:47.6%">①</span><span class="mk" style="left:88.9%;top:85.0%">②</span></div>
-    <figcaption><div class="lb">결재 중 (?st=appr, 노트 전체 잠김)</div><ol class="cl">
-      <li><b>①</b> 본문은 읽기 전용(편집·삭제·드래그·키보드 입력 차단). 모든 섹션이 같이 잠기고 Add Module · Save도 숨김. 상태는 헤더(In Approval)와 Approval 카드에만 표시(섹션별 잠금 배지 · 목차 자물쇠는 2026-10-20 제거)</li>
-      <li><b>②</b> <b>Errata</b> 버튼: 잠긴 섹션에도 정정 추가 가능</li>
+    <div class="shot"><img src="img/eln/03_locked_editor.png" alt="제출되어 잠긴 Editor 카드"><span class="mk" style="left:48.3%;top:7.4%">①</span><span class="mk" style="left:2.6%;top:24.3%">②</span><span class="mk" style="left:85.3%;top:90.6%">③</span></div>
+    <figcaption><div class="lb">제출 후 (잠긴 섹션)</div><ol class="cl">
+      <li><b>①</b> 🔒 "Submitted 10-12-2026 09:30" 배지: 이 섹션은 제출되어 잠김(편집·삭제·드래그·키보드 입력 차단)</li>
+      <li><b>②</b> 본문 영역은 읽기 전용</li>
+      <li><b>③</b> <b>Errata</b> 버튼: 잠긴 섹션에도 정정 추가 가능</li>
     </ol></figcaption>
   </figure>
   <div class="tt-pair">
@@ -330,15 +345,16 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
     <div></div>
   </div>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/03_errata_block.png" alt="승인된 Basic Data와 Errata 블록"><span class="mk" style="left:18.1%;top:26.5%">①</span><span class="mk" style="left:3.2%;top:73.9%">②</span></div>
+    <div class="shot"><img src="img/eln/03_errata_block.png" alt="승인된 Basic Data와 Errata 블록"><span class="mk" style="left:56.5%;top:5.7%">①</span><span class="mk" style="left:27.0%;top:28.7%">②</span><span class="mk" style="left:2.4%;top:86.1%">③</span></div>
     <figcaption><div class="lb">승인 후</div><ol class="cl">
-      <li><b>①</b> 본문은 원문 그대로(Experiment Date 10-08-2026) 보존</li>
-      <li><b>②</b> <b>Errata #1</b> 블록: 일시·작성자·정정 내용·Reason이 원문 아래에 추가됨 (원문은 수정되지 않음)</li>
+      <li><b>①</b> 초록 배지 "Approved · Jim Quan, Aishwarya…": 승인 완료 섹션</li>
+      <li><b>②</b> 본문은 원문 그대로(Experiment Date 10-08-2026) 보존</li>
+      <li><b>③</b> <b>Errata #1</b> 블록: 일시·작성자·정정 내용·Reason이 원문 아래에 추가됨 (원문은 수정되지 않음)</li>
     </ol></figcaption>
   </figure>
   <div class="tt-cap">시연 순서</div>
   <ol class="tt-steps">
-    <li>?st=appr 노트(결재 중)에서 섹션 편집 시도 › 막힘 확인</li>
+    <li>?st=appr 노트에서 제출된(잠긴) 섹션을 편집 시도 › 막힘 확인</li>
     <li>승인 완료 노트의 섹션에서 Errata 클릭</li>
     <li>Correction·Reason 입력 › Save › Errata #1 블록 확인</li>
   </ol>
@@ -352,11 +368,11 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <div class="tt-req">"Audit Trail feature"</div>
   <div class="tt-cap">화면</div>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/04_audit.png" alt="Audit Trail 카드의 Change History"><span class="mk" style="left:58.5%;top:15.5%">①</span><span class="mk" style="left:52.1%;top:24.4%">②</span><span class="mk" style="left:96.0%;top:72.7%">③</span><span class="mk" style="left:42.7%;top:57.8%">④</span><span class="mk" style="left:1.5%;top:90.3%">⑤</span></div>
+    <div class="shot"><img src="img/eln/04_audit.png" alt="Audit Trail 카드의 Change History"><span class="mk" style="left:58.1%;top:9.3%">①</span><span class="mk" style="left:70.8%;top:15.5%">②</span><span class="mk" style="left:63.5%;top:68.5%">③</span><span class="mk" style="left:41.8%;top:20.2%">④</span><span class="mk" style="left:31.5%;top:95.4%">⑤</span></div>
     <figcaption><ol class="cl">
       <li><b>①</b> Section / User 필터: 섹션이나 사용자로 좁혀 보기</li>
-      <li><b>②</b> 표 열: Date/Time · User · Section · Action · Change(변경 전→후. 예: Crosslinker (wt%): <s>1.8</s> › 2.2)</li>
-      <li><b>③</b> 표는 최대 높이 300px, 기록이 많으면 표 안에서 스크롤(머리글 고정)</li>
+      <li><b>②</b> 표 열: Date/Time · User · Section · Action · Change(변경 전→후)</li>
+      <li><b>③</b> 변경 전→후 표시 예: Crosslinker (wt%): <s>1.8</s> › 2.2 (David Lee, Formulation)</li>
       <li><b>④</b> 결재·Errata·공유 이력도 같은 표에 기록(그림: Submitted, Approved, Note approved, Errata added, Access granted. 권한 변경·회수는 Access changed / Access removed)</li>
       <li><b>⑤</b> 하단 문구: "Entries are recorded automatically and cannot be edited or deleted."</li>
     </ol></figcaption>
@@ -482,7 +498,7 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
     <figcaption><div class="lb">복사 직후 새 창의 헤더</div><ol class="cl"><li><b>①</b> 새 번호 NT-2610-00188, 제목 뒤에 "(copy)". 저장 전의 복사본</li><li><b>②</b> 상태는 In Progress (편집 가능)</li><li>원래 창은 그대로 유지됨(복사본은 새 창에서 열림)</li></ol></figcaption>
   </figure>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/07_clone_basic.png" alt="복사된 노트의 연결 프로젝트"><span class="mk" style="left:1.5%;top:75.2%">①</span></div>
+    <div class="shot"><img src="img/eln/07_clone_basic.png" alt="복사된 노트의 연결 프로젝트"><span class="mk" style="left:1.8%;top:51.4%">①</span></div>
     <figcaption><div class="lb">복사된 연결 프로젝트</div><ol class="cl"><li><b>①</b> Related Items의 Project 항목(연결 프로젝트)이 그대로 복사됨. 그림은 Include entered data를 끄고 복사한 경우로, Material 항목은 빠지고 Project 항목만 남음</li><li>원본 노트 링크는 화면에 두지 않음(복사본이 원본과 연결될 필요 없음). 출처는 Audit Trail 첫 기록 "Note created · Copied from …"에만 남음</li></ol></figcaption>
   </figure>
   <div class="tt-cap">시연 순서</div>
@@ -497,16 +513,16 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <div class="tt-req">"Insert cross-references to other ELN experiments by same author / by other authors." · "Link to add related Experiment"</div>
   <div class="tt-cap">화면</div>
   <figure class="tt-fig">
-    <div class="shot"><img src="img/eln/08_related.png" alt="Related Items 카드"><span class="mk" style="left:1.5%;top:42.3%">①</span><span class="mk" style="left:1.5%;top:64.2%">②</span><span class="mk" style="left:24.2%;top:78.1%">③</span><span class="mk" style="left:50.7%;top:78.7%">④</span></div>
+    <div class="shot"><img src="img/eln/08_related.png" alt="Related Items 카드"><span class="mk" style="left:1.9%;top:23.7%">①</span><span class="mk" style="left:2.7%;top:38.6%">②</span><span class="mk" style="left:2.7%;top:88.3%">③</span><span class="mk" style="left:94.0%;top:88.3%">④</span></div>
     <figcaption><div class="lb">Related Items</div><ol class="cl">
-      <li><b>①</b> 추가 줄: 유형(Material / Project / Lab Note / URL)을 고르고 검색. 네 유형 모두 같은 MAPIS 표준 입력칸(URL은 일반 입력, 나머지는 공통 자동완성)</li>
-      <li><b>②</b> 항목은 첨부와 같은 MAPIS 표준 칩으로 가로로 이어지고, 유형 순서(Project → Material → Lab Note → URL)로 정렬. PROJECT 칩은 [코드] 이름, 클릭하면 프로젝트 화면이 열림(1번)</li>
-      <li><b>③</b> LAB NOTE 칩(NT-2605-00098): 유형 Lab Note로 검색해 관련 실험(노트)을 직접 연결한 항목</li>
-      <li><b>④</b> × 로 항목 삭제(칩에 마우스를 올리면 진하게)</li>
+      <li><b>①</b> 추가 줄: 유형(Material / Project / Note / URL)을 고르고 검색. 네 유형 모두 같은 MAPIS 표준 입력칸(URL은 일반 입력, 나머지는 공통 자동완성)</li>
+      <li><b>②</b> PROJECT 항목: [코드] 이름, 클릭하면 프로젝트 화면이 열림(1번)</li>
+      <li><b>③</b> NOTE 항목(NT-2605-00072): 유형 Note로 검색해 관련 실험(노트)을 직접 연결한 항목</li>
+      <li><b>④</b> × 로 항목 삭제</li>
     </ol></figcaption>
   </figure>
   <div class="tt-cap">시연 순서</div>
-  <ol class="tt-steps"><li>Related Items에서 유형 Lab Note 선택 › 노트 번호나 제목으로 검색 › Add</li><li>추가된 LAB NOTE 칩이 Material 칩 뒤에 들어가는 것 확인</li></ol>
+  <ol class="tt-steps"><li>Related Items에서 유형 Note 선택 › 노트 번호나 제목으로 검색 › Add</li><li>추가된 NOTE 항목 확인</li></ol>
   <div class="tt-cap">계획 대비 변경</div>
   <ul class="tt-l"><li>에디터 @ 노트 참조(자동완성, 칩 링크, 마우스 오버 요약 카드, Related Items 자동 추가)는 구현까지 마쳤으나 현업 요청으로 끔(2026-10-16). 코드는 주석으로 남겨 다시 켤 수 있음</li></ul>
   <div class="tt-cap">운영 구현 시 고려</div>
@@ -603,7 +619,7 @@ table.dec td.cur{color:var(--ink2);font-size:12px}
   <div class="tt-cap">시연 순서</div>
   <ol class="tt-steps"><li>Attachments 카드에서 파일 클릭(Excel·PDF·PPT·이미지·동영상)</li><li>Versions에서 v1 보기</li><li>Upload New Version › 버전 증가와 Audit Trail 기록 확인</li></ol>
   <div class="tt-cap">계획 대비 변경</div>
-  <ul class="tt-l"><li>운영 미리보기는 Tech Library와 같은 Synap 문서 뷰어(PPT도 PDF 변환 없이 직접 표시). 프로토타입 화면은 목업. 잠긴 섹션·승인·번역 보기 중에는 미리보기·다운로드만 가능</li><li>첨부 목록은 MAPIS 표준 형식(2026-10-20): File 버튼 + 파일 칩(순번 · 이름 · 버전 · 다운로드 · 삭제), 블록 전체가 드롭 영역이고 파일을 끌 때만 점선 표시. 칩을 누르면 미리보기, 삭제는 확인 창</li></ul>
+  <ul class="tt-l"><li>운영 미리보기는 Tech Library와 같은 Synap 문서 뷰어(PPT도 PDF 변환 없이 직접 표시). 프로토타입 화면은 목업. 잠긴 섹션·승인·번역 보기 중에는 미리보기·다운로드만 가능</li></ul>
 </template>
 <template id="t12">
   <div class="tt-h">12. SharePoint 작업 문서 <span>검토 중</span></div>
