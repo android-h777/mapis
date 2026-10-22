@@ -1179,7 +1179,7 @@
       // 첨부 이력 = Attachments 시드(DEMO_ATTACH)와 같은 사람·시각
       seed('2026-10-07 15:40', 'Charles Kim', 'Attachments', 'File attached', { detail: 'Viscosity_Results.xlsx' });
       seed('2026-10-08 17:20', 'Charles Kim', 'Attachments', 'File attached', { detail: 'Test_Report_RGBOLED.pdf' });
-      seed('2026-10-09 11:05', 'David Lee', 'Attachments', 'File version added', { detail: 'Viscosity_Results.xlsx: v1 → v2' });
+      // seed('2026-10-09 11:05', 'David Lee', 'Attachments', 'File version added', { detail: 'Viscosity_Results.xlsx: v1 → v2' });   // [원복용] 버전
       seed('2026-10-09 13:30', 'Min-ji Park', 'Attachments', 'File attached', { detail: 'Scale-up_Review.pptx' });
       seed('2026-10-10 09:45', 'David Lee', 'Attachments', 'File attached', { detail: 'Coating_Line.mp4' });
       seed('2026-10-10 10:15', 'Min-ji Park', 'Attachments', 'File attached', { detail: 'SEM_Surface.png' });
@@ -3192,17 +3192,18 @@
     rm.addEventListener('click', function (e) { e.preventDefault(); if (li.closest('.elnLocked')) return; li.remove(); });   // 잠긴 섹션은 no-op
     return rm;
   }
-  // 첨부 항목 — li._att = { name, vers:[{ v, size, by, ts, file? }] } (마지막 = 현재 버전). 파일 서버 보관·버전 누적을 목업
-  // vers 생략 = 지금 사용자가 올린 v1
+  // 첨부 항목 — li._att = { name, vers:[{ v, size, by, ts, file? }] }. 버전 개념은 뺐으므로 vers 는 늘 1건(데이터 모양만 유지 — 원복 대비)
+  // vers 생략 = 지금 사용자가 올린 파일
   // 칩 = 운영 TechLib 저장 첨부 칩(techLibNewsub.js renderSavedFiles: fileChip tlPickChip) 형태
-  //   [순번(2건 이상일 때만)] 이름 + 버전 배지(ELN 고유) | 다운로드 · 삭제(맨 끝). 칩 본문 클릭 = 미리보기.
-  //   올린 사람·날짜·크기는 칩 툴팁(title)으로
+  //   [순번(2건 이상일 때만)] 이름 | 다운로드 · 삭제(맨 끝). 올린 사람·날짜·크기는 칩 툴팁(title)으로
+  // 한 건 = .elnAttRow [칩 한 줄 + 바로 아래 미리보기(.elnAttPv)] — 여러 건이면 칩1 → 미리보기1 → 칩2 → 미리보기2 … 위에서 아래로
   function addFileItem(listEl, name, size, vers, file) {
+    var row = document.createElement('div'); row.className = 'elnAttRow';
     var li = document.createElement('span'); li.className = 'fileChip elnAttachItem';
-    li.setAttribute('role', 'button'); li.tabIndex = 0;
+    // li.setAttribute('role', 'button'); li.tabIndex = 0;   // [원복용] 칩 클릭 = 미리보기 창
     li._att = { name: name, vers: vers || [{ v: 1, size: size, by: ELN.currentUser, ts: ELN.audit.now(), file: file || null }] };
     var nm = document.createElement('span'); nm.className = 'nm elnAttNm'; nm.textContent = name;
-    var vb = document.createElement('span'); vb.className = 'roundBox outline mocha25 elnAttVer';
+    // var vb = document.createElement('span'); vb.className = 'roundBox outline mocha25 elnAttVer';   // [원복용] 버전 배지
     var acts = document.createElement('span'); acts.className = 'elnAttActs';
     var dl = document.createElement('a'); dl.className = 'elnAttDl'; dl.href = 'javascript:;'; dl.title = 'Download';
     dl.setAttribute('aria-label', 'Download attachment');
@@ -3210,17 +3211,42 @@
     var del = document.createElement('i'); del.className = 'material-icons tiny btn_deleteFile'; del.textContent = 'close';
     del.setAttribute('role', 'button'); del.tabIndex = 0; del.title = 'Delete'; del.setAttribute('aria-label', 'Delete attachment');
     acts.appendChild(dl); acts.appendChild(del);
-    li.appendChild(nm); li.appendChild(vb); li.appendChild(acts);
-    listEl.appendChild(li);
+    li.appendChild(nm); /* li.appendChild(vb); */ li.appendChild(acts);
+    var pv = document.createElement('div'); pv.className = 'elnAttPv';
+    row.appendChild(li); row.appendChild(pv);
+    listEl.appendChild(row);
     attRefresh(li);
     attRenumber(listEl);
+    attInlinePreview(li, pv);
     return li;
   }
   function attCur(att) { return att.vers[att.vers.length - 1]; }
-  function attRefresh(li) {   // 칩 표시(버전 배지) + 툴팁(올린 사람·날짜·크기) = 현재 버전
+  function attRefresh(li) {   // 툴팁(올린 사람·날짜·크기)
     var c = attCur(li._att);
-    li.querySelector('.elnAttVer').textContent = 'v' + c.v;
-    li.title = li._att.name + ' (v' + c.v + ')\nUploaded by ' + c.by + ' on ' + toMdy(String(c.ts).slice(0, 10)) + ' · ' + fmtFileSize(c.size) + '\nClick to preview.';
+    // li.querySelector('.elnAttVer').textContent = 'v' + c.v;   // [원복용] 버전 배지
+    li.title = li._att.name + '\nUploaded by ' + c.by + ' on ' + toMdy(String(c.ts).slice(0, 10)) + ' · ' + fmtFileSize(c.size);
+  }
+  // 파일명 아래 바로 보이는 미리보기 — 운영: 문서 뷰어(Synap) viewerUrl iframe / 프로토타입: "Preparing preview…" 뒤 형식별 목업(pvRender)
+  function attInlinePreview(li, pv) {
+    var att = li._att, ext = pvExt(att.name), kind = PV_KIND[ext] || '';
+    var stage = pvEl('div', 'elnPvStage hScroll');
+    pv.appendChild(stage);
+    // 실제 문서 뷰어(Synap)가 아니라 시연용 임시 뷰어라는 표시 — 운영 구현 때 빼고 viewerUrl iframe 으로
+    pv.appendChild(pvEl('span', 'elnPvMock', '<i class="material-symbols-outlined">science</i>Prototype viewer (mock)'));
+    pv.querySelector('.elnPvMock').title = 'Stand-in for the demo. Production shows the file in the MAPIS document viewer.';
+    li._pvUrls = [];
+    stage.innerHTML = '<div class="elnPvWait"><i class="material-symbols-outlined">hourglass_top</i>Preparing preview…</div>';
+    setTimeout(function () {
+      if (!stage.isConnected) return;
+      stage.innerHTML = '';
+      try { pvRender(stage, att, attCur(att), kind, ext, li._pvUrls); }
+      catch (e) { stage.innerHTML = '<div class="elnPvWait"><i class="material-symbols-outlined">error</i>Preview failed. Download the file to open it.</div>'; }
+      if (kind === 'image' || kind === 'video' || !kind) pv.classList.add('fit');   // 이미지·영상·미리보기 없음 = 높이를 내용에 맞춤
+    }, 450 + Math.round(Math.random() * 350));
+  }
+  function attRemoveRow(li) {   // 칩 + 미리보기를 함께 지움(실제 파일 object URL 정리)
+    (li._pvUrls || []).forEach(function (u) { try { URL.revokeObjectURL(u); } catch (e) {} });
+    var row = li.closest('.elnAttRow'); (row || li).remove();
   }
   // 순번은 첨부가 둘 이상일 때만(운영 tlPickNo 규칙) — 추가·삭제 때마다 다시 매김
   function attRenumber(listEl) {
@@ -3240,9 +3266,9 @@
       var a = document.createElement('a'); a.href = u; a.download = att.name; document.body.appendChild(a); a.click(); a.remove();
       setTimeout(function () { try { URL.revokeObjectURL(u); } catch (e) {} }, 4000);
     }
-    ELN.toast('Downloading ' + att.name + ' (v' + v.v + ').', 'info');
+    ELN.toast('Downloading ' + att.name + '.', 'info');
   }
-  // 같은 이름 재업로드 / Upload New Version → 다음 버전으로 쌓음(이전 버전 보관) + Audit
+  /* [원복용] 버전 — 같은 이름 재업로드 / Upload New Version → 다음 버전으로 쌓음(이전 버전 보관) + Audit
   function attAddVersion(li, f) {
     var att = li._att, prev = attCur(att).v;
     att.vers.push({ v: prev + 1, size: f.size, by: ELN.currentUser, ts: ELN.audit.now(), file: f });
@@ -3254,14 +3280,16 @@
     var key = String(name).toLowerCase();
     return Array.prototype.filter.call(list.querySelectorAll('.elnAttachItem'), function (li) { return li._att && li._att.name.toLowerCase() === key; })[0] || null;
   }
+  */
   function attFrozen(li) { var b = document.body.classList; return b.contains('elnApproved') || b.contains('elnTranslated') || !!li.closest('.elnLocked'); }   // 번역 보기 중에도 읽기 전용
 
   // 데모 노트(LN-2605-00142) 첨부 시드 — 파일 서버에 이미 올라가 있는 파일들(목업). ATTACH_SEED 가 켜진 동안 만들어지는 Attachments 모듈에만
   var ATTACH_SEED = false;
   var DEMO_ATTACH = [
     { name: 'Viscosity_Results.xlsx', vers: [
-      { v: 1, size: 42188, by: 'Charles Kim', ts: '2026-10-07 15:40' },
-      { v: 2, size: 47321, by: 'David Lee', ts: '2026-10-09 11:05' }] },
+      { v: 1, size: 47321, by: 'Charles Kim', ts: '2026-10-07 15:40' }
+      // [원복용] 버전 시드 — v1 size 42188 · , { v: 2, size: 47321, by: 'David Lee', ts: '2026-10-09 11:05' }
+      ] },
     { name: 'Test_Report_RGBOLED.pdf', vers: [{ v: 1, size: 1887436, by: 'Charles Kim', ts: '2026-10-08 17:20' }] },
     { name: 'Scale-up_Review.pptx', vers: [{ v: 1, size: 4823450, by: 'Min-ji Park', ts: '2026-10-09 13:30' }] },
     { name: 'Coating_Line.mp4', vers: [{ v: 1, size: 40055603, by: 'David Lee', ts: '2026-10-10 09:45' }] },
@@ -3301,28 +3329,22 @@
       if (!files || !files.length) return;
       var fcard = list.closest('.cardBox');
       if (frozen()) return;   // 잠긴 섹션(업로드 컨트롤도 CSS 로 숨김)
-      var added = 0, lastVer = null;
+      var added = 0;
       Array.prototype.forEach.call(files, function (f) {
-        var same = attFindByName(list, f.name);   // 같은 이름 = 새 버전으로 쌓음(이전 버전 보관)
-        if (same) { lastVer = { name: same._att.name, v: attAddVersion(same, f) }; return; }
-        addFileItem(list, f.name, f.size, null, f); added++;
+        // [원복용] 같은 이름 = 새 버전으로 쌓음 — var same = attFindByName(list, f.name); if (same) { attAddVersion(same, f); return; }
+        addFileItem(list, f.name, f.size, null, f); added++;   // 같은 이름도 새 첨부로
         auditMod(fcard, 'File attached', { detail: f.name });
       });
-      var vers = files.length - added;
-      if (!added && vers === 1) ELN.toast(lastVer.name + ' uploaded as v' + lastVer.v + '. Previous versions are kept.', 'ok');
-      else ELN.toast((added ? added + ' file' + (added > 1 ? 's' : '') + ' attached' : '')
-        + (added && vers ? ', ' : '') + (vers ? vers + ' new version' + (vers > 1 ? 's' : '') + ' added' : '') + '.', 'ok');
+      ELN.toast(added + ' file' + (added > 1 ? 's' : '') + ' attached.', 'ok');
     }
-    // 칩: 본문 클릭(Enter/Space) = 읽기전용 미리보기 · 다운로드 아이콘 = 현재 버전 내려받기 · 삭제 아이콘 = 확인 후 제거(운영 techLibNewsub.js 칩 핸들러와 같은 갈래)
+    // 칩: 다운로드 아이콘 = 내려받기 · 삭제 아이콘 = 확인 후 제거(운영 techLibNewsub.js 칩 핸들러와 같은 갈래). 미리보기는 칩 아래에 늘 보임
     function onChip(e) {
       if (e.type === 'keydown' && e.key !== ' ' && e.key !== 'Enter') return;
       var li = e.target.closest && e.target.closest('.elnAttachItem');
       if (!li || !li._att) return;
       if (e.target.closest('.elnAttDl')) { e.preventDefault(); e.stopPropagation(); attDownload(li._att, attCur(li._att)); return; }
       if (e.target.closest('.btn_deleteFile')) { e.preventDefault(); e.stopPropagation(); attConfirmDelete(li); return; }
-      if (e.target.closest('.elnAttActs')) return;   // 동작 구역(아이콘 사이 여백 포함)은 제외
-      e.preventDefault();
-      openFilePreview(li);
+      // [원복용] 칩 본문 클릭 = 미리보기 창 — if (e.target.closest('.elnAttActs')) return; e.preventDefault(); openFilePreview(li);
     }
     list.addEventListener('click', onChip);
     list.addEventListener('keydown', onChip);
@@ -3337,9 +3359,9 @@
     Swal.fire({ titleText: 'Delete the file?', icon: 'question', showCancelButton: true, confirmButtonText: 'Confirm', cancelButtonText: 'Cancel' })
       .then(function (r) {
         if (!(r && r.isConfirmed) || !li.isConnected || attFrozen(li)) return;
-        var list = li.parentNode, card = li.closest('.cardBox');
+        var list = li.closest('.elnAttachList'), card = li.closest('.cardBox');
         auditMod(card, 'File removed', { detail: li._att.name });
-        li.remove();
+        attRemoveRow(li);
         attRenumber(list);
         ELN.toast('Deletion complete', 'ok');
       });
@@ -3394,13 +3416,14 @@
 
   /* ── 첨부 미리보기(요구사항 11) — 운영: 파일 서버 원본 → 문서 뷰어(Synap) 변환 → viewerUrl 을 iframe 으로(Tech Library renderSavedPreview 와 같은 흐름).
      프로토타입: "Preparing preview…" 후 형식별 목업 렌더(시드 파일) / 지금 올린 이미지·영상·PDF·텍스트는 실제 파일을 그대로 표시.
-     읽기전용 — 수정은 Download → PC 에서 편집 → Upload New Version(같은 이름 재업로드도 동일)으로 새 버전을 쌓는다. ── */
+     읽기전용 · 파일명 바로 아래에 늘 보임(attInlinePreview). 버전 없음 — 고친 파일은 새 첨부로 올림. ── */
   var PV_KIND = { xls: 'sheet', xlsx: 'sheet', csv: 'sheet', pdf: 'doc', doc: 'doc', docx: 'doc', hwp: 'doc', txt: 'doc', ppt: 'slide', pptx: 'slide',
     png: 'image', jpg: 'image', jpeg: 'image', gif: 'image', bmp: 'image', webp: 'image', tif: 'image', mp4: 'video', mov: 'video', webm: 'video', avi: 'video' };
   var PV_TYPE = { sheet: 'Excel Workbook', doc: 'Document', slide: 'PowerPoint Presentation', image: 'Image', video: 'Video' };
   function pvExt(name) { return (String(name).split('.').pop() || '').toLowerCase(); }
   function pvEl(tag, cls, html) { var e = document.createElement(tag); if (cls) e.className = cls; if (html != null) e.innerHTML = html; return e; }
 
+  /* [원복용] 미리보기 창(칩 클릭 → File Preview 모달 + 버전 목록 · Upload New Version). 되살리면 attAddVersion·onChip 주석도 함께 풀 것
   function openFilePreview(li) {
     var att = li._att, ext = pvExt(att.name), kind = PV_KIND[ext] || '';
     var sel = att.vers.length - 1, gen = 0, urls = [];
@@ -3480,6 +3503,7 @@
     }
     renderHead(); renderSide(); load();
   }
+  */
 
   // 형식별 렌더 — 지금 올린 실제 파일(이미지·영상·PDF·텍스트·CSV)은 원본 그대로, 그 외는 문서 뷰어 화면 목업
   function pvRender(stage, att, v, kind, ext, urls) {
@@ -3499,7 +3523,7 @@
       return;
     }
     var seeded = DEMO_ATTACH.some(function (a) { return a.name === att.name; });   // 데모 파일의 새 버전(오피스 형식)도 같은 목업 내용으로
-    if (kind === 'sheet') stage.appendChild(seeded ? pvViscositySheet(v.v) : pvSheet([['Sample ID', 'Value', 'Unit', 'Remarks'], ['S-01', '1.24', 'mPa·s', ''], ['S-02', '1.31', 'mPa·s', ''], ['S-03', '1.18', 'mPa·s', '']], ['Sheet1'], null));
+    if (kind === 'sheet') stage.appendChild(seeded ? pvViscositySheet(2 /* [원복용] v.v */) : pvSheet([['Sample ID', 'Value', 'Unit', 'Remarks'], ['S-01', '1.24', 'mPa·s', ''], ['S-02', '1.31', 'mPa·s', ''], ['S-03', '1.18', 'mPa·s', '']], ['Sheet1'], null));
     else if (kind === 'doc') stage.appendChild(pvDocPages(seeded ? null : att.name));
     else if (kind === 'slide') stage.appendChild(pvSlides(seeded ? null : att.name));
     else if (kind === 'image') stage.appendChild(pvSemImage());
@@ -5265,8 +5289,8 @@
     cards.forEach(function (c) {
       c.querySelectorAll('.elnAttachItem').forEach(function (li) {
         var a = li._att;
-        if (a && a.vers && a.vers.length) { var v = a.vers[a.vers.length - 1]; rows.push([a.name, 'v' + v.v, v.by, toMdy(String(v.ts).slice(0, 10)), fmtFileSize(v.size)]); }
-        else rows.push([pdfTxt(li.querySelector('.nm')) || pdfTxt(li), '-', '-', '-', 'Link']);
+        if (a && a.vers && a.vers.length) { var v = a.vers[a.vers.length - 1]; rows.push([a.name, /* [원복용] 'v' + v.v, */ v.by, toMdy(String(v.ts).slice(0, 10)), fmtFileSize(v.size)]); }
+        else rows.push([pdfTxt(li.querySelector('.nm')) || pdfTxt(li), /* '-', */ '-', '-', 'Link']);
       });
     });
     return rows;
@@ -5301,8 +5325,8 @@
       });
       h += '<section class="sec"><h2><span class="no">' + (++n) + '</span>Approval</h2>' + pdfRows(['Type', 'Function', 'Assignee', 'Status', 'Comments', 'Date', 'Submission'], srows) + '</section>';
     }
-    if (o.att) h += '<section class="sec"><h2><span class="no">' + (++n) + '</span>Attachments List</h2><p class="muted">File names and current versions only. Files are kept in MAPIS and are not embedded in this PDF.</p>'
-      + pdfRows(['File', 'Version', 'Uploaded By', 'Date', 'Size'], pdfAttachRows(o.attCards)) + '</section>';
+    if (o.att) h += '<section class="sec"><h2><span class="no">' + (++n) + '</span>Attachments List</h2><p class="muted">File names only. Files are kept in MAPIS and are not embedded in this PDF.</p>'
+      + pdfRows(['File', /* [원복용] 'Version', */ 'Uploaded By', 'Date', 'Size'], pdfAttachRows(o.attCards)) + '</section>';
     if (o.audit) {
       var arows = ent.sort(function (a, b) { return a.ts < b.ts ? 1 : a.ts > b.ts ? -1 : 0; }).map(function (e) { return [toMdy(e.ts), e.user, e.section || '-', e.action, pdfAuditChange(e)]; });
       h += '<section class="sec audit"><h2><span class="no">' + (++n) + '</span>Audit Trail</h2>' + pdfRows(['Date / Time', 'User', 'Section', 'Action', 'Change'], arows) + '</section>';
@@ -5364,7 +5388,7 @@
     var opts = document.createElement('div'); opts.className = 'elnPdfOpts';
     opts.innerHTML = '<label><input type="checkbox" class="filled-in" id="elnPdfAudit"><span>Include Audit Trail</span></label>'
       + '<div><label><input type="checkbox" class="filled-in" id="elnPdfAtt"' + (attCards.length ? ' checked' : ' disabled') + '><span>Include Attachments List</span></label>'
-      + '<span class="elnPdfHint">' + (attCards.length ? 'File names and versions only. Files are not embedded.' : 'This note has no Attachments section.') + '</span></div>';
+      + '<span class="elnPdfHint">' + (attCards.length ? 'File names only. Files are not embedded.' : 'This note has no Attachments section.') + '</span></div>';
     body.appendChild(opts);
     var info = document.createElement('div'); info.className = 'elnCloneInfo';
     info.innerHTML = '<i class="material-symbols-outlined">verified_user</i><span>Every page carries the footer <b>"Exported by ' + esc(ELN.currentUser) + ' on ' + esc(toMdy(stamp)) + ' · Not a controlled copy"</b>. '

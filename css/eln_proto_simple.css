@@ -1063,7 +1063,8 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnLinkItem .x:hover{color:#d65a5a;}
 /* 첨부 = 운영 표준 업로드(input-field file-field) + file-area 칩. 칩 모양은 운영 TechLib 저장 첨부 칩
    (origin/dev static/css/techlib/techlib.css #upSavedArea .tlPick*)을 ELN 이름으로 옮김 — --tl-* 값은 같은 색 그대로.
-   ELN 고유: 이름 뒤 버전 배지(v2). 드롭존 점선(mfDropZone·mfDropOver)은 mapis_lib common.css 표준 규칙 */
+   ELN 고유: 한 건 = 칩 한 줄 + 바로 아래 미리보기(.elnAttRow > .elnAttPv). 버전 배지(.elnAttVer)는 [원복용]으로 남겨 둠.
+   드롭존 점선(mfDropZone·mfDropOver)은 mapis_lib common.css 표준 규칙 */
 .elnAttachBox{display:block;gap:0;}
 .elnAttachBox .file-field{margin-bottom:5px;}
 .elnAttachList .elnAttachItem{align-items:center;height:auto;padding:3px 8px;border:1px solid transparent;cursor:pointer;vertical-align:top;max-width:100%;box-sizing:border-box;}
@@ -1088,6 +1089,29 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnAttachList .elnAttDl:focus-visible,.elnAttachList .elnAttActs .btn_deleteFile:focus-visible{outline:2px solid #caa890;outline-offset:1px;border-radius:3px;}
 /* 잠금(승인 view·잠긴 섹션·번역 보기) = 운영 동결과 같이 업로드 컨트롤을 숨기고 삭제 아이콘을 뺀다. 미리보기·다운로드는 그대로 */
 body.elnApproved .elnAttachBox .file-field,body.elnApproved .elnAttachItem .btn_deleteFile{display:none !important;}
+/* 파일명 → 미리보기 → 파일명 → 미리보기 … 위에서 아래로. 문서·표·슬라이드 = 높이 고정 + 안에서 스크롤, 이미지·영상 = 내용 높이(.fit) */
+/* 파일 간 경계 = 가까움으로 묶기: 칩 ↔ 자기 미리보기 6px, 파일 ↔ 다음 파일 26px.
+   미리보기 틀 = 파일 칩 틀(운영 common.css .fileChip: 테두리 없음 · 머티리얼 그림자 · 둥근 5px)과 같게 */
+.elnAttRow{display:block;}
+.elnAttRow + .elnAttRow{margin-top:26px;}
+.elnAttRow > .elnAttachItem{margin-bottom:6px;}
+.elnAttRow .elnAttPv .elnPvStage{border:0;border-radius:5px;
+  box-shadow:0 2px 2px 0 rgba(0,0,0,.14),0 3px 1px -2px rgba(0,0,0,.12),0 1px 5px 0 rgba(0,0,0,.2);}
+.elnAttachList .elnAttRow > .elnAttachItem{cursor:default;}
+.elnAttPv{position:relative;height:420px;margin-top:1px;}
+.elnAttPv .elnPvStage{height:100%;box-sizing:border-box;}
+.elnAttPv.fit{height:auto;}
+.elnAttPv.fit .elnPvStage{height:auto;overflow:hidden;}
+.elnAttPv.fit .elnPvWait{height:auto;padding:30px 0;}
+.elnAttPv.fit .elnPvImg{min-height:0;}   /* 모달용 min-height:100% 가 내용 높이 상자에선 화면 높이로 늘어남 */
+.elnAttPv .elnPvImg img{max-height:420px;}
+.elnAttPv.fit .elnPvVideo{height:auto;}
+.elnAttPv.fit .elnPvVideo video{max-height:440px;}
+/* 시연용 임시 뷰어 표시 — 실제 문서 뷰어(Synap)가 아님 */
+.elnPvMock{position:absolute;top:8px;right:16px;z-index:2;display:inline-flex;align-items:center;gap:4px;
+  font-size:11px;font-weight:600;line-height:18px;color:#8a5a2b;background:rgba(255,248,236,.94);
+  border:1px dashed #d9b48a;border-radius:10px;padding:0 8px 0 5px;cursor:help;}
+.elnPvMock i{font-size:14px;}
 
 /* ── 첨부 미리보기 모달(읽기전용 뷰어 + 버전 목록) ── */
 .elnPv{display:flex;flex-direction:column;gap:10px;}
