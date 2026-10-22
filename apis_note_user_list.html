@@ -14,6 +14,7 @@
     <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-ui-1.14.1.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/apis_util.js"></script>
     <script type="text/javascript" charset="utf-8" src="js/glass_engine.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/saved_search.js"></script>
 
     <!-- ELN 전용 자원(로컬) — 스택 무관 self-contained -->
     <link rel="stylesheet" type="text/css" href="css/eln_proto.css">
@@ -58,7 +59,7 @@
 	.elnNoAccess .d{font-size:12px;line-height:1.5;margin-bottom:14px;}
 	/* 우측 요약: MAPIS 표준 서머리(cardBox > cardTit + row.subPjInfo + subTit, techlib/composition 동일).
 	   공용 .elnSummary 가 flex 컬럼이라 표준 .row 가 내용 폭으로 줄어듦 → 블록 흐름으로. 높이는 표준처럼 내용만큼(빈 상태만 전체 높이 가운데 안내) */
-	#elnSummary:not(.empty){display:block;padding:20px;align-self:flex-start;max-height:100%;}
+	#elnSummary:not(.empty){display:block;padding:20px;align-self:flex-start;max-height:calc(100% - 20px);}
 	#elnSummary{width:clamp(420px, 36vw, 620px);}   /* 가운데 목록(flex:1)은 줄고 요약은 넓게 — techlib 리스트 비율에 가깝게(공용 384px 고정을 이 페이지만 덮음) */
 	/* 상태 = techlib Classification 처럼 색 글자(표준 서머리엔 박스 없음). 'blue' 등 Materialize 색 클래스와 겹치지 않게 별도 클래스 */
 	.elnSumSt{font-family:'Roboto-Medium';}
@@ -967,7 +968,7 @@
 				var tagLine = document.createElement('div'); tagLine.className = 'elnNoteTags';
 				n.tags.forEach(function(t){
 					var a = document.createElement('a'); a.href = 'javascript:;'; a.className = 'elnTagLink';
-					a.textContent = t; a.title = 'Search this tag'; a.setAttribute('data-tag', t);
+					a.textContent = t; a.title = 'Search this keyword'; a.setAttribute('data-tag', t);
 					tagLine.appendChild(a);
 				});
 				meta.appendChild(tagLine);
@@ -1125,7 +1126,7 @@
 		var s = stByKey(n.st);
 		var nbName = n._nbName || NB[curNbKey].name;
 		var nb = noteBasic(n);
-		var chipsHtml = (n.tags||[]).map(function(t){ return '<span class="roundBox jsSumTag" data-tag="'+esc(t)+'" title="Search this tag">'+esc(t)+'</span>'; }).join('');
+		var chipsHtml = (n.tags||[]).map(function(t){ return '<span class="roundBox jsSumTag" data-tag="'+esc(t)+'" title="Search this keyword">'+esc(t)+'</span>'; }).join('');
 		sum.classList.remove('empty');
 		sum.innerHTML =
 			'<div class="cardTit"><span class="link jsSumOpen" data-tip="Open note" data-tip-pos="bottom">'+esc('['+n.code+'] '+n.title)+'</span></div>'+
@@ -1399,8 +1400,8 @@
 		if(k === 'tags' || k === 'status') c[k] = critArr(c[k]).filter(function(x){ return x !== v; });
 		else if(k === 'attach') c.attach = false;
 		else c[k] = (k === 'notebook' || k === 'author' || k === 'biz' || k === 'site') ? 'all' : '';
+		applySearchForm(c);   // 검색 창도 같은 조건으로(다시 열면 맞게 보임) — 마지막 칩을 지운 경우도
 		if(!critChips(c).length){ clearSearch(); return; }
-		applySearchForm(c);   // 검색 창도 같은 조건으로(다시 열면 맞게 보임)
 		runSearch(c);
 	}
 	// 검색 실행: 전체에서 조건 필터 → '검색 결과' 모드로 중앙 리스트 렌더(노트북 선택 해제, 항상 List 뷰)
@@ -1447,8 +1448,7 @@
 		opt(auSel, 'all', 'All authors');
 		var seen = {}; getNotes('all').concat(RESTRICTED).forEach(function(n){ seen[n.author] = 1; });
 		Object.keys(seen).sort().forEach(function(a){ opt(auSel, a, a); });
-		opt(nbSel, 'all', 'All notebooks');
-		Object.keys(NB).forEach(function(k){ opt(nbSel, k, NB[k].name); });
+		fillSearchNbSelect();
 		var bzSel = document.getElementById('srchBiz'), siSel = document.getElementById('srchSite');
 		opt(bzSel, 'all', 'All businesses'); Object.keys(ELN_BIZ_NAME).forEach(function(c){ opt(bzSel, c, ELN_BIZ_NAME[c]); });
 		opt(siSel, 'all', 'All sites'); Object.keys(ELN_SITE_NAME).forEach(function(c){ opt(siSel, c, siteLabel(c)); });
@@ -1458,6 +1458,17 @@
 			$('#srchStatus').select2({ width:'100%', placeholder:'All', closeOnSelect:false });
 			$('#srchTags').select2({ width:'100%', placeholder:'All', closeOnSelect:false });
 		}
+	}
+	// Notebook 목록 — 창을 열 때마다 다시 채움(그 자리에서 만든·이름 바꾼·지운 노트북 반영). 고른 값이 없어졌으면 All
+	function fillSearchNbSelect(){
+		var nbSel = document.getElementById('srchNotebook'); if(!nbSel) return;
+		var cur = nbSel.value || 'all';
+		nbSel.innerHTML = '';
+		function opt(value, label){ var o = document.createElement('option'); o.value = value; o.textContent = label; nbSel.appendChild(o); }
+		opt('all', 'All notebooks');
+		Object.keys(NB).forEach(function(k){ opt(k, NB[k].name); });
+		nbSel.value = NB[cur] ? cur : 'all';
+		if($(nbSel).data('select2')) $(nbSel).trigger('change.select2');
 	}
 	// 조건 → 검색 창(저장 검색 불러오기 · 태그 칩 · 칩 × 뒤 동기화)
 	function applySearchForm(c){
@@ -1488,6 +1499,7 @@
 	}
 	function openSearchModal(prefill){
 		fillSearchSelects();
+		fillSearchNbSelect();
 		if(prefill) document.getElementById('srchKeyword').value = prefill;
 		M.Modal.getInstance(document.getElementById('elnSrchModal')).open();
 		setTimeout(function(){ try{ document.getElementById('srchKeyword').focus(); }catch(e){} }, 120);
@@ -2005,10 +2017,11 @@
 		if(elnSearchBtn) elnSearchBtn.addEventListener('click', function(){ openSearchModal(''); });
 		// 검색 모달 — Search/Reset/Enter
 		$(document).on('click', '#srchGo', function(){
-			runSearch(gatherSearch());
+			var c = gatherSearch();
+			if(critChips(c).length) runSearch(c); else clearSearch();   // 조건 없이 Search = 검색 끝내기(All Notes)
 			M.Modal.getInstance(document.getElementById('elnSrchModal')).close();
 		});
-		// 저장 검색(Saved Searches) — 운영 snpiList 의 공용 부품 자리. 프로토타입은 glass_engine.js initSavedSearch(브라우저 저장)
+		// 저장 검색(Saved Searches) — 운영 snpiList 의 공용 부품 자리. 프로토타입은 js/saved_search.js initSavedSearch(브라우저 저장)
 		fillSearchSelects();
 		if(window.initSavedSearch) initSavedSearch({ key:'savedSearch_eln', area:'#elnSaveArea', collect:gatherSearch, apply:applySearchForm });
 		// Search criteria 줄 — 칩 × = 그 조건 빼기, Reset criteria = 검색 끝내기(키보드 Enter/Space 도)
