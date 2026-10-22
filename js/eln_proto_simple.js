@@ -140,8 +140,11 @@
     } else {                                            // 좌측 Add module 버튼: 앵커 기준(기존 위치 유지)
       var r = opts.anchor.getBoundingClientRect();
       x = Math.min(Math.max(8, r.left), window.innerWidth - w - 8);
-      y = r.bottom + 6;
-      if (y + h > window.innerHeight - 8) { y = Math.max(8, r.top - h - 6); pop.classList.add('above'); }
+      if (opts.above && r.top - h - 6 >= 8) { y = r.top - h - 6; pop.classList.add('above'); }   // 위로 펼치기 요청(공간 있을 때만)
+      else {
+        y = r.bottom + 6;
+        if (y + h > window.innerHeight - 8) { y = Math.max(8, r.top - h - 6); pop.classList.add('above'); }
+      }
     }
     pop.style.left = x + 'px'; pop.style.top = y + 'px';
     function close() {
@@ -2624,7 +2627,7 @@
     var inp = document.createElement('input'); inp.type = 'text'; inp.className = 'browser-default'; inp.placeholder = 'Notebook name';
     var fb = document.createElement('span'); fb.className = 'focus-border';
     wrap.appendChild(inp); wrap.appendChild(fb);
-    ELN.modal({ title: 'New Notebook', icon: 'create_new_folder', size: 'sm', body: wrap, actions: [
+    ELN.modal({ title: 'Add Notebook', icon: 'create_new_folder', size: 'sm', body: wrap, actions: [
       { label: 'Create', type: 'hViva', icon: 'create_new_folder', onClick: function () {
         var name = (inp.value || '').trim() || 'Untitled Notebook';
         var nb = { key: 'nb' + NOTEBOOKS.length, name: name, icon: 'folder' };
@@ -2655,7 +2658,7 @@
       list.appendChild(it);
     });
     var nw = document.createElement('div'); nw.className = 'elnNbPopItem new';
-    nw.innerHTML = '<i class="material-symbols-outlined">create_new_folder</i><span>New Notebook…</span>';
+    nw.innerHTML = '<i class="material-symbols-outlined">create_new_folder</i><span>Add Notebook…</span>';
     nw.addEventListener('click', function () { ref.close(); openNewNotebook(); });
     list.appendChild(nw);
     var ref = ELN.popover({ anchor: anchor, content: list });
@@ -4784,17 +4787,22 @@
      이 노트의 번호·Title·Creation Date·Notebook·결재·Audit 은 그대로. 승인·결재 중이면 못 씀 */
   function openCopyMenu(anchor) {
     var frozen = document.body.classList.contains('elnApproved');
-    var menu = document.createElement('div'); menu.className = 'elnCtxMenu';
+    var menu = document.createElement('div'); menu.className = 'elnCtxMenu elnCopyMenu';
     // 아이콘(사용자 10-21 "화살표만 반대인 비슷한 아이콘") = Copy 버튼과 같은 content_copy + 작은 화살표 배지: Copy To ↗(나감) / Copy From ↙(들어옴)
     [{ arrow: 'north_east', label: 'Copy To', run: openCopyModal },
      { arrow: 'south_west', label: 'Copy From', run: openCopyFromModal, off: frozen }].forEach(function (a) {
       var it = document.createElement('div'); it.className = 'elnCtxMenuItem' + (a.off ? ' disabled' : '');
-      it.innerHTML = '<span class="elnCopyIco"><i class="material-symbols-outlined">content_copy</i><i class="material-symbols-outlined badge">' + a.arrow + '</i></span><span>' + a.label + '</span>';
+      it.innerHTML = '<span class="elnCopyIco"><i class="material-symbols-outlined">content_copy</i><i class="material-symbols-outlined badge">' + a.arrow + '</i></span><span class="elnCopyLbl">' + a.label + '</span>';
       if (a.off) it.title = 'Not available on an approved or in-approval note';
       it.addEventListener('click', function () { if (a.off) return; ref.close(); a.run(); });
       menu.appendChild(it);
     });
-    var ref = ELN.popover({ anchor: anchor, content: menu });
+    // 메뉴를 Copy 버튼과 한 몸처럼: 버튼 폭 · 버튼의 실제 글자색/테두리색(계산값)을 그대로 씀
+    var cs = getComputedStyle(anchor);
+    var ref = ELN.popover({ anchor: anchor, content: menu, width: anchor.offsetWidth, above: true });   // 버튼 위가 비어 있어 위로 펼침
+    ref.el.classList.add('elnCopyPop');
+    ref.el.style.setProperty('--copy-c', cs.color);
+    ref.el.style.setProperty('--copy-b', cs.borderTopColor);
   }
   // Copy From 후보 = 리스트(opener) 노트 + 데모 노트(같은 과제·계보), 지금 노트 제외. 섹션 구성은 아는 노트만 그대로, 모르는 노트는 목업(배합 있으면 Formulation 포함)
   function copyFromPool() {

@@ -120,7 +120,7 @@
 	/* 배치 = 운영 리스트와 같음: 왼쪽 칸(제목·버튼 줄 + 노트북 패널·노트 목록) | 오른쪽 요약(제목 줄과 같은 높이에서 시작).
 	   여백 = 운영 typeList(mpm_common .typeList .rightSection: top 20 · 왼쪽과 30 간격, 목록 카드 아래 끝 = 본문 아래 끝)와 같게 */
 	.elnWsCols{display:flex;gap:30px;height:calc(100vh - 66px);}
-	.elnWsMain{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;}
+	.viva-text{color:#bb2649 !important;}   /* 운영 common.css 와 같은 값(이 페이지는 mpm_common 만 불러옴) — 제목 옆 Total 숫자 */	.elnWsMain{flex:1 1 auto;min-width:0;display:flex;flex-direction:column;}
 	.elnWsMain > .elnListWrap{flex:1 1 auto;height:auto;min-height:0;}
 	.elnWsCols > #elnSummary{flex:0 0 auto;margin-top:20px;}
 	/* 검색 창 맨 위 와일드카드 안내 = 운영 common.css .infoBox(리스트 css 에 없어 같은 값으로) */
@@ -276,11 +276,12 @@
 	<div class="elnWsCols">
 	<div class="elnWsMain">
 		<section class="mainTitArea elnWsTitArea">
-			<div class="mainTit">Lab Note List</div>
+			<!-- 운영 snpiList 제목 줄과 같게: 제목 + Total(검색 중엔 Total | Filtered) · Create(hBlue) → Search(hViva) -->
+			<div class="mainTit">Lab Note List<span class="ml20 fontR font14"><span id="lbl_listCnt" class="dpInlineBlock"></span></span></div>
 			<div class="elnHeadRight">
+				<div><a href="javascript:;" id="elnNewNote" class="waves-effect waves-light hBtn hBlue" title="Create a new lab note"><i class="material-icons left">add</i><span class="label">Create</span></a></div>
 				<!-- ELN 전용 검색(헤더 통합검색과 별개) — 옵션 모달 -->
-				<div><a href="javascript:;" id="elnSearchBtn" class="waves-effect waves-light hBtn"><i class="material-symbols-outlined left">search</i><span class="label">Search</span></a></div>
-				<div><a href="javascript:;" id="elnNewNote" class="waves-effect waves-light hBtn hViva"><i class="material-symbols-outlined left">note_add</i><span class="label">New Note</span></a></div>
+				<div><a href="javascript:;" id="elnSearchBtn" class="waves-effect waves-light hBtn hViva"><i class="material-icons left">search</i><span class="label">Search</span></a></div>
 			</div>
 		</section>
 		<div class="elnListWrap">
@@ -310,7 +311,7 @@
 					<!-- 노트 하나만 공유받은 노트북 — 나머지 노트는 잠금 행. 개수 = 볼 수 있는 노트 수 -->
 					<div class="elnNbItem" data-nb="coatingT"><i class="material-symbols-outlined fill">folder_eye</i><span class="nm">Silicone Coating Studies</span><span class="ct">1</span></div>
 				</div>
-				<a href="javascript:;" id="elnNewNotebook" class="waves-effect waves-light hBtn elnNbNewBtn"><i class="material-symbols-outlined left">create_new_folder</i><span class="label">New Notebook</span></a>
+				<a href="javascript:;" id="elnNewNotebook" class="waves-effect waves-light hBtn elnNbNewBtn"><i class="material-symbols-outlined left">create_new_folder</i><span class="label">Add Notebook</span></a>
 			</aside>
 
 			<!-- 중: 노트 목록 (뷰 전환: List·Chem·Formulation) -->
@@ -922,9 +923,18 @@
 	}
 
 	// 노트 배열을 중앙 리스트에 렌더 — 노트북 뷰·검색 결과 공용. showNb=제목 위 노트북 라벨 표시 여부
+	// 제목 옆 개수 — 운영 snpiList 와 같은 문구: 평소 "Total: N", 검색 중 "Total: 전체 | Filtered: 결과"(숫자 viva 색)
+	function updateListCnt(notes){
+		var el = document.getElementById('lbl_listCnt'); if(!el) return;
+		var viva = function(x){ return '<span class="viva-text">' + x + '</span>'; };
+		el.innerHTML = curNbKey === '__search__'
+			? 'Total: <span>' + getNotes('all').length + '</span> | Filtered: ' + viva(notes.length)
+			: 'Total: ' + viva(notes.length);
+	}
 	function renderNoteList(notes, showNb){
 		var ul = document.getElementById('noteListUl');
 		ul.innerHTML = '';
+		updateListCnt(notes);
 		if(!notes.length){
 			var empty = document.createElement('li');
 			empty.className = 'elnListEmpty';
@@ -1784,13 +1794,13 @@
 			list.appendChild(it);
 		});
 		var nw = document.createElement('div'); nw.className = 'elnNbPopItem new';
-		nw.innerHTML = '<i class="material-symbols-outlined">create_new_folder</i><span>New Notebook…</span>';
+		nw.innerHTML = '<i class="material-symbols-outlined">create_new_folder</i><span>Add Notebook…</span>';
 		nw.addEventListener('click', function(){
 			ref.close();
 			var inp = document.createElement('input');
 			inp.type = 'text'; inp.className = 'browser-default'; inp.placeholder = 'Notebook name';
 			ELN.modal({
-				title: 'New Notebook', icon: 'create_new_folder', body: aniWrap(inp),
+				title: 'Add Notebook', icon: 'create_new_folder', body: aniWrap(inp),
 				actions: [
 					{ label: 'Create', type: 'hViva', onClick: function(){
 						var name = (inp.value || '').trim() || 'Untitled Notebook';
@@ -1997,7 +2007,7 @@
 			var inp = document.createElement('input');
 			inp.type = 'text'; inp.className = 'browser-default'; inp.placeholder = 'Notebook name';
 			ELN.modal({
-				title: 'New Notebook', icon: 'create_new_folder', body: aniWrap(inp),
+				title: 'Add Notebook', icon: 'create_new_folder', body: aniWrap(inp),
 				actions: [
 					{ label: 'Create', type: 'hViva', onClick: function(){
 						var name = (inp.value || '').trim() || 'Untitled Notebook';

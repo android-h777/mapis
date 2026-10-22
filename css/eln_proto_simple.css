@@ -1620,6 +1620,17 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions,body.elnApprov
 .elnCopyFromPicked:empty{display:none;}
 /* Copy 메뉴 아이콘 = content_copy + 오른쪽 아래 작은 화살표(Copy To ↗ 나감 / Copy From ↙ 들어옴). 배지 바탕은 항목 바탕과 같게(hover 포함) */
 .elnCopyIco{position:relative;display:inline-flex;flex:0 0 auto;width:20px;height:20px;}
+.elnCtxMenuItem .elnCopyLbl{font-size:13px;}   /* Copy To / Copy From 레이블만 한 단계 작게(메뉴 기본 14px) */
+/* Copy 메뉴 = Copy 버튼(hBtn)과 같은 틀: 버튼 폭 · 같은 테두리색 · 둥근 모서리 · 같은 그림자 · 버튼 글자색. 색은 JS 가 버튼 계산값으로 --copy-c/--copy-b 에 넣음 */
+.elnPopover.elnCopyPop{border:1px solid var(--copy-b,rgba(164,119,100,.7));border-radius:15px;background:#fff;padding:4px 0;
+  box-shadow:0 8px 20px rgba(60,40,30,.20),0 2px 6px rgba(0,0,0,.12);}   /* 떠 있는 메뉴라 버튼보다 진한 그림자(아래 버튼과 구분) */
+.elnCopyPop .elnCtxMenu{min-width:0;}
+.elnCopyPop .elnCtxMenuItem{min-height:30px;padding:4px 10px;gap:8px;color:var(--copy-c,#a47764);font-family:'Roboto-Regular';}
+.elnCopyPop .elnCtxMenuItem i{color:var(--copy-c,#a47764);}
+.elnCopyPop .elnCtxMenuItem:hover{background:color-mix(in srgb,var(--copy-c,#a47764) 10%,white);}
+.elnCopyPop .elnCtxMenuItem:hover .elnCopyIco > i.badge{background:color-mix(in srgb,var(--copy-c,#a47764) 10%,white);}
+.elnCopyPop .elnCtxMenuItem.disabled:hover{background:transparent;}
+.elnCopyPop .elnCtxMenuItem.disabled:hover .elnCopyIco > i.badge{background:#fff;}
 .elnCtxMenuItem .elnCopyIco > i.badge{position:absolute;right:-4px;bottom:-3px;font-size:13px;font-weight:700;line-height:13px;border-radius:50%;background:#fff;}
 .elnCtxMenuItem:hover .elnCopyIco > i.badge{background:color-mix(in oklch,var(--main-color),white 70%);}
 .elnCtxMenuItem.disabled:hover .elnCopyIco > i.badge{background:#fff;}
