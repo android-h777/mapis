@@ -1,6 +1,6 @@
 /* MAPIS ELN — Reaction 모듈 엔진(분자식 파싱·분자량·원자 수지·화학량론 계산·반응식 SVG/PNG).
    계산 함수(parseFormula·formulaWeight·balance·compute)는 DOM 을 쓰지 않는 순수 함수 → node 에서도 그대로 시험 가능.
-   DOM 을 쓰는 것은 schemeSvg(DOMParser·글자 폭 측정)·toPng(Image·canvas) 둘뿐. 화면 표시 형식(소수 자리)은 UI(eln_proto_simple.js) 몫. */
+   DOM 을 쓰는 것은 schemeSvg(DOMParser·글자 폭 측정)·toPng(Image·canvas)·inlineSvg(화면에 넣을 요소) 셋뿐. 화면 표시 형식(소수 자리)은 UI(eln_proto_simple.js) 몫. */
 (function (root) {
   'use strict';
 
@@ -96,17 +96,23 @@
 
   function num(x) { if (x == null || x === '') return null; var n = Number(x); return isFinite(n) ? n : null; }
 
-  /* 화학량론 — model.rows[i] = { role:'reactant'|'product'|'reagent', formula, coef, mass(g), mmol, volume(mL), density(g/mL),
-     basis:'mass'|'mmol'|'volume'(반응물에서 마지막으로 입력한 칸), actual(생성물 실측 g) }.
-     반환: { rows:[{ mw, coef, mass, mmol, volume, equiv, theoMmol, theoMass, yieldPct }], limiting: 행 index(-1 = 없음) }.
-     · 반응물: basis 칸에서 나머지를 유도(mass↔mmol 은 MW, mass↔volume 은 밀도)
-     · 한계 반응물 = mmol 이 있는 반응물 중 mmol/coef 최소(0 포함). equiv = (mmol/coef) / (한계 mmol/한계 coef)
-     · 생성물 이론 mmol = 한계 mmol / 한계 coef × 생성물 coef, 이론 질량 = 이론 mmol × MW / 1000, 수율 = 실측 / 이론 × 100 */
+  /* 화학량론 — model.rows[i] = { role:'reactant'|'product'|'reagent'|'solvent', formula, coef, mass(g), mmol, volume(mL), density(g/mL),
+     basis:'mass'|'mmol'|'volume'(반응물에서 마지막으로 입력한 칸), actual(생성물 실측 g), limit(반응물: 사용자가 한계 반응물로 지정) }.
+     반환: { rows:[{ mw, coef, mass, mmol, volume, equiv, theoMmol, theoMass, yieldPct }], limiting: 계산 기준 행 index(-1 = 없음),
+             auto: 가장 먼저 떨어지는 반응물 index, pinned: 지정 행 index(-1 = 자동), short:[먼저 떨어지는 반응물 index](지정일 때만),
+             totalVolume(mL), solventVolume(mL), volumeExcluded:[부피를 모르는 반응물 index], molarity(M) }.
+     · 반응물: basis 칸에서 나머지를 유도(mass↔mmol 은 MW, mass↔volume 은 밀도). 용매: 부피만
+     · 한계 반응물 = 지정이 있으면 그 행(양을 아직 안 넣었으면 -1), 없으면 mmol 이 있는 반응물 중 mmol/coef 최소(0 포함).
+       equiv = (mmol/coef) / (한계 mmol/한계 coef) — 지정한 행보다 먼저 떨어지는 반응물은 1 미만이 되고 short 에 들어감
+     · 생성물 이론 mmol = 한계 mmol / 한계 coef × 생성물 coef, 이론 질량 = 이론 mmol × MW / 1000, 수율 = 실측 / 이론 × 100
+     · 총 부피 = 용매 부피 + 부피가 있는 반응물(밀도로 유도 포함). 양(질량·mmol)은 있는데 부피를 모르는 반응물(밀도·분자식 없음)은 빼고 volumeExcluded 에.
+       몰 농도 = 한계 반응물 mmol / 총 부피 mL (= mol/L) */
   function compute(model) {
     var rows = (model && model.rows) || [], out = [];
     rows.forEach(function (r) {
       var o = { mw: r.role === 'reagent' ? null : formulaWeight(r.formula), coef: coefOf(r.coef), mass: null, mmol: null, volume: null,
         equiv: null, theoMmol: null, theoMass: null, yieldPct: null };
+      if (r.role === 'solvent') o.volume = num(r.volume);
       if (r.role === 'reactant') {
         var d = num(r.density), basis = r.basis || 'mass';
         if (d != null && d <= 0) d = null;
@@ -125,13 +131,17 @@
       }
       out.push(o);
     });
-    var lim = -1, best = Infinity;
+    var auto = -1, autoBest = Infinity, pinned = -1;
     rows.forEach(function (r, i) {
       var o = out[i];
-      if (r.role !== 'reactant' || o.mmol == null || o.mmol < 0 || !(o.coef > 0)) return;   // 0 mmol 은 입력한 값이므로 한계 후보(빈칸 = null 만 제외)
+      if (r.role !== 'reactant' || !(o.coef > 0)) return;
+      if (r.limit && pinned < 0) pinned = i;
+      if (o.mmol == null || o.mmol < 0) return;   // 0 mmol 은 입력한 값이므로 한계 후보(빈칸 = null 만 제외)
       var per = o.mmol / o.coef;
-      if (per < best) { best = per; lim = i; }
+      if (per < autoBest) { autoBest = per; auto = i; }
     });
+    var lim = auto, best = autoBest;
+    if (pinned >= 0) { lim = out[pinned].mmol != null && out[pinned].mmol >= 0 ? pinned : -1; best = lim >= 0 ? out[pinned].mmol / out[pinned].coef : Infinity; }
     if (lim >= 0) {
       rows.forEach(function (r, i) {
         var o = out[i];
@@ -147,7 +157,22 @@
       var o = out[i], act = num(r.actual);
       if (r.role === 'product' && act != null && o.theoMass > 0) o.yieldPct = act / o.theoMass * 100;
     });
-    return { rows: out, limiting: lim };
+    var short = [];
+    if (pinned >= 0 && lim >= 0) rows.forEach(function (r, i) { if (r.role === 'reactant' && out[i].equiv != null && out[i].equiv < 1 - 1e-9) short.push(i); });
+    var tv = 0, sv = 0, excl = [];
+    rows.forEach(function (r, i) {
+      var o = out[i];
+      if (r.role === 'solvent') { if (o.volume != null) { tv += o.volume; sv += o.volume; } }
+      else if (r.role === 'reactant') { if (o.volume != null) tv += o.volume; else if (o.mass > 0 || o.mmol > 0) excl.push(i); }   // 양은 있는데 부피를 모름(밀도·분자식 없음)
+    });
+    var molarity = lim >= 0 && tv > 0 ? out[lim].mmol / tv : null;
+    return { rows: out, limiting: lim, auto: auto, pinned: pinned, short: short, totalVolume: tv, solventVolume: sv, volumeExcluded: excl, molarity: molarity };
+  }
+  // 목표 몰 농도(M)를 맞추는 용매 부피 합(mL) — 한계 반응물 mmol / M − 용매가 아닌 부피. 한계 반응물이 없거나 M ≤ 0 이면 null, 음수 = 반응물 부피만으로 이미 묽음
+  function solventFor(calc, molarity) {
+    if (!calc || calc.limiting < 0 || !(molarity > 0)) return null;
+    var mmol = calc.rows[calc.limiting].mmol; if (!(mmol > 0)) return null;
+    return mmol / molarity - (calc.totalVolume - calc.solventVolume);
   }
 
   /* ════ 여기부터 DOM 사용 ════ */
@@ -201,6 +226,12 @@
     });
   }
 
+  /* style 속성 정리 — 선언 하나씩. 외부 자원(url·image-set·@import)·CSS 이스케이프(\72 = r 처럼 글자를 숨김)·넘침/위치/커서 선언은 버리고
+     그리기 선언(fill·stroke·font …)은 남김. RDKit·Ketcher 그림은 선을 style 속성으로 그리므로 통째로 지우면 구조가 망가짐 */
+  var BAD_DECL = /\\|url\s*\(|image|@|expression|binding|behavior|^\s*(overflow|position|cursor|content)\s*:/i;
+  function cleanStyle(v) { return String(v).split(';').filter(function (d) { return d.trim() && !BAD_DECL.test(d); }).join(';'); }
+  var LOCAL_URL = /^\s*url\(\s*(['"]?)#[\w.:-]+\1\s*\)\s*$/i;   // 속성 값 전체가 url(#id) 하나일 때만 참조로 인정
+
   /* 구조 SVG 문자열 → 바깥 SVG 안에 넣을 안전한 <svg> 요소. XML 머리말·script·foreignObject·on* 속성·외부 참조 제거,
      viewBox 가 없으면 width/height 로 만들고, id 는 구조마다 접두어를 붙여 서로 겹치지 않게 한다. 못 읽으면 null */
   function sanitizeStructure(svgStr, prefix) {
@@ -218,17 +249,24 @@
       Array.prototype.slice.call(n.attributes).forEach(function (a) {
         var nm = a.name, v = a.value;
         if (/^on/i.test(nm)) { n.removeAttribute(nm); return; }
-        if (nm === 'href' || nm === 'xlink:href') {
-          if (v.charAt(0) === '#') { if (ids[v.slice(1)]) n.setAttribute(nm, '#' + ids[v.slice(1)]); }
+        if (a.localName === 'href') {   // 접두어 무관(xlink:href·foo:href)
+          if (v.charAt(0) === '#') { if (ids[v.slice(1)]) n.setAttribute(nm, '#' + ids[v.slice(1)]); else n.removeAttribute(nm); }   // 구조 밖 id(다른 카드·페이지 SVG) 참조 금지
           else if (!/^data:image\//i.test(v)) n.removeAttribute(nm);   // 외부 참조 금지(img·canvas 에서 그려지지 않음)
           return;
         }
         if (nm === 'id' && ids[v]) { n.setAttribute('id', ids[v]); return; }
-        if (v.indexOf('url(') >= 0) n.setAttribute(nm, v.replace(/url\(\s*['"]?#([^'")\s]+)['"]?\s*\)/g, function (all2, id) { return ids[id] ? 'url(#' + ids[id] + ')' : 'none'; }));
+        if (nm === 'style') { var cs = cleanStyle(v); if (cs) n.setAttribute(nm, cs); else n.removeAttribute(nm); return; }
+        if (/url|\\/i.test(v)) {   // 대소문자·이스케이프 무관: 값 전체가 url(#id) 이면 접두어만 바꾸고, 그 밖은 속성째 버림
+          if (LOCAL_URL.test(v)) { var id0 = v.replace(/^[^#]*#([\w.:-]+)[\s\S]*$/, '$1'); if (ids[id0]) n.setAttribute(nm, 'url(#' + ids[id0] + ')'); else n.removeAttribute(nm); }
+          else n.removeAttribute(nm);
+        }
       });
     });
-    Array.prototype.slice.call(svg.querySelectorAll('style')).forEach(function (st) {   // @import 제거 + id 참조 접두어
-      st.textContent = st.textContent.replace(/@import[^;]*;?/g, '').replace(/#([A-Za-z_][\w-]*)/g, function (m0, id) { return ids[id] ? '#' + ids[id] : m0; });
+    // 구조 뿌리의 style(overflow:visible 등)·transform·filter·mask·clip-path 제거 — 칸(overflow="hidden")을 덮거나 옮기거나 칸 밖에 그리지 못하게
+    ['style', 'transform', 'filter', 'mask', 'clip-path'].forEach(function (k) { svg.removeAttribute(k); });
+    Array.prototype.slice.call(svg.querySelectorAll('style')).forEach(function (st) {   // 이스케이프 든 글은 통째로 버림, @import·외부 url() 제거 + id 참조 접두어(내보내기 <img>·canvas 용 — 화면 inlineSvg 는 <style> 자체를 버림)
+      if (/\\/.test(st.textContent)) { st.textContent = ''; return; }
+      st.textContent = st.textContent.replace(/@import[^;]*;?/gi, '').replace(/url\(\s*(?!['"]?\s*#)[^)]*\)?/gi, 'none').replace(/image-set\(/gi, 'none(').replace(/#([A-Za-z_][\w-]*)/g, function (m0, id) { return ids[id] ? '#' + ids[id] : m0; });
     });
     var vb = svg.getAttribute('viewBox'), w = parseFloat(svg.getAttribute('width')), h = parseFloat(svg.getAttribute('height'));
     var box = vb ? vb.trim().split(/[\s,]+/).map(Number) : null;
@@ -239,23 +277,30 @@
     return { el: svg, w: box[2], h: box[3] };
   }
 
-  /* 반응식 SVG — model = { rows:[{role, name, formula, coef, svg}], conditions }.
+  /* 반응식 SVG — model = { rows:[{role, name, formula, coef, svg, tag, rid}], conditions }.
      반응물(+로 이음) → 화살표(위 = 시약 이름 ', ' 로, 아래 = 조건) → 생성물. 구조 아래 이름·분자식, coef ≠ 1 이면 구조 앞에 숫자.
+     tag(R1·P1 …)가 있으면 이름 첫 줄 앞에 역할 색 작은 태그(속성으로만 칠함 — 페이지 CSS 없이 PNG·PDF 에도 그대로).
+     opts.link = 화면용: 구조 블록마다 <g class="elnRxnSch" data-rid> + 투명 바탕판(hover 때 CSS 가 옅게 칠함), 이름 아래 양 줄
+                 <text class="elnRxnAmt">(행의 amt 글자, lim 이면 "Limiting"), 화살표 묶음 <g class="elnRxnArrow">(조건이 비면 "Add conditions"),
+                 아래 26px = 블록 도구 막대 자리. 내보내기는 link 없이.
+     opts.idp = 구조 id 접두어 앞에 붙일 문자열(화면에 인라인으로 넣을 때 카드끼리 id 가 겹치지 않게).
      흰 바탕·산세리프·내용 크기. 외부 참조가 없어 <img> 와 canvas 에서 똑같이 그려짐. 그릴 구조가 없으면 '' */
+  var ROLE_C = { reactant: '#A47B67', product: '#7592ca' };   // 표 Role 칩(roundBox mocha25·cfblue25)과 같은 색
   function schemeSvg(model, opts) {
     opts = opts || {};
     var rows = (model && model.rows) || [];
     var reac = rows.filter(function (r) { return r.role === 'reactant'; });
     var prod = rows.filter(function (r) { return r.role === 'product'; });
-    var reag = rows.filter(function (r) { return r.role === 'reagent' && String(r.name || '').trim(); }).map(function (r) { return String(r.name).trim(); });
+    var reag = rows.filter(function (r) { return (r.role === 'reagent' || r.role === 'solvent') && String(r.name || '').trim(); }).map(function (r) { return String(r.name).trim(); });   // 화살표 위: 시약, 용매 순(행 순서)
     if (!reac.length && !prod.length) return '';
-    var SH_MAX = opts.structH || 150, SW_MAX = 300, PAD = 18, GAP = 14, NAME_PX = 12, F_PX = 11.5, COEF_PX = 20, PLUS_PX = 22, LBL_PX = 12;
+    var SH_MAX = opts.structH || 150, SW_MAX = 300, PAD = 18, GAP = 14, NAME_PX = 12, F_PX = 11.5, COEF_PX = 20, PLUS_PX = 22, LBL_PX = 12, TAG_PX = 10.5, AMT_PX = 10.5;
+    var idp = String(opts.idp || '').replace(/[^\w-]/g, '');
     var serializer = typeof XMLSerializer !== 'undefined' ? new XMLSerializer() : null;
     var seq = 0, maxText = 1;   // 구조 아래 글자 줄 수(이름 1~2줄 + 분자식) 최댓값 — 그림 높이를 내용에 맞춤
     // 모든 구조에 같은 배율 하나 — Ketcher SVG 는 결합 길이 단위가 같아서, 구조마다 칸에 맞춰 줄이면 큰 분자만 글자·선이 작아진다.
     // 배율 = 가장 큰 구조가 SH_MAX × SW_MAX 칸에 들어가는 값. 줄 높이 SH = 배율 적용 뒤 가장 높은 구조
     var sts = {};
-    reac.concat(prod).forEach(function (r, i) { sts[i] = serializer ? sanitizeStructure(r.svg, 'rx' + (++seq) + '_') : null; r.__rxnIdx = i; });
+    reac.concat(prod).forEach(function (r, i) { sts[i] = serializer ? sanitizeStructure(r.svg, idp + 'rx' + (++seq) + '_') : null; r.__rxnIdx = i; });
     var K = Infinity;
     Object.keys(sts).forEach(function (i) { var st = sts[i]; if (st) K = Math.min(K, SH_MAX / st.h, SW_MAX / st.w); });
     if (!isFinite(K)) K = 1;
@@ -264,13 +309,19 @@
     function block(r) {   // 구조 하나(그림 + 이름 + 분자식)의 크기와 그리기 함수
       var st = sts[r.__rxnIdx]; delete r.__rxnIdx;
       var sw = st ? st.w * K : 90, sh = st ? st.h * K : SH;
-      var lines = wrapName(r.name || '(unnamed)', NAME_PX, 200);
+      var tag = r.tag ? String(r.tag) : '', tagW = tag ? Math.ceil(textW(tag, TAG_PX, true)) + 8 : 0, tagSp = tag ? tagW + 5 : 0;
+      var rc = ROLE_C[r.role] || '#7a6a5e';
+      var lines = wrapName(r.name || '(unnamed)', NAME_PX, 200 - tagSp);
       var fw = r.formula ? formulaWidth(r.formula, F_PX) : 0;
-      var tw = Math.max.apply(null, lines.map(function (l) { return textW(l, NAME_PX, true); }).concat([fw]));
+      var lw = lines.map(function (l, i) { return textW(l, NAME_PX, true) + (i ? 0 : tagSp); });   // 첫 줄은 태그 폭 포함
+      var tw = Math.max.apply(null, lw.concat([fw]));
       var coef = coefOf(r.coef), cs = coef !== 1 ? fmtCoef(coef) : '';
       var cw = cs ? textW(cs, COEF_PX, true) + 8 : 0;
-      var bodyW = Math.max(sw, tw);
-      maxText = Math.max(maxText, lines.length + (r.formula ? 1 : 0));
+      // 화면용(link): 이름 아래 양 줄(r.amt, 한계면 r.lim) 한 줄을 늘 비워 둠 — 입력 중에는 화면 쪽이 글자만 바꿈(넓어지면 다시 그림)
+      var amt = opts.link ? String(r.amt || '') : '', limTxt = opts.link && r.lim ? (amt ? ' · ' : '') + 'Limiting' : '';
+      var aw = opts.link ? textW(amt, AMT_PX) + textW(limTxt, AMT_PX, true) : 0;
+      var bodyW = Math.max(sw, tw, aw);
+      maxText = Math.max(maxText, lines.length + (r.formula ? 1 : 0) + (opts.link ? 1 : 0));
       return {
         w: cw + bodyW,
         draw: function (x, top) {
@@ -287,8 +338,24 @@
               + '<text x="' + cx + '" y="' + (mid + 5) + '" font-size="13" fill="#9b8c7e" text-anchor="middle">No structure</text>';
           }
           var ty = sy + SH + 16;
-          lines.forEach(function (l, i) { h += '<text x="' + cx + '" y="' + (ty + i * 15) + '" font-size="' + NAME_PX + '" font-weight="bold" text-anchor="middle">' + xesc(l) + '</text>'; });
+          lines.forEach(function (l, i) {
+            if (i === 0 && tag) {   // [R1] 이름 — 태그 + 첫 줄을 한 덩어리로 가운데 정렬. 옅은 역할색 바탕(13%) + 역할색 글자, 테두리·그림자 없음
+              var lx = cx - lw[0] / 2;
+              h += '<rect x="' + lx + '" y="' + (ty - 11) + '" width="' + tagW + '" height="15" rx="3.5" fill="' + rc + '" fill-opacity="0.13"/>'
+                + '<text x="' + (lx + tagW / 2) + '" y="' + (ty + 0.3) + '" font-size="' + TAG_PX + '" font-weight="bold" fill="' + rc + '" text-anchor="middle">' + xesc(tag) + '</text>'
+                + '<text x="' + (lx + tagSp) + '" y="' + ty + '" font-size="' + NAME_PX + '" font-weight="bold" text-anchor="start">' + xesc(l) + '</text>';
+            } else h += '<text x="' + cx + '" y="' + (ty + i * 15) + '" font-size="' + NAME_PX + '" font-weight="bold" text-anchor="middle">' + xesc(l) + '</text>';
+          });
           if (r.formula) h += '<text x="' + cx + '" y="' + (ty + lines.length * 15 + 1) + '" font-size="' + F_PX + '" fill="#5a3e30" text-anchor="middle">' + formulaTspans(r.formula, F_PX) + '</text>';
+          if (opts.link && r.rid != null) {   // 화면용 연결 블록 — 바탕판(투명, hover 때 CSS 가 fill-opacity 를 올림)이 블록 전체를 hover 영역으로 만듦
+            var ay = ty + lines.length * 15 + (r.formula ? 16 : 0) + 1;
+            h += '<text class="elnRxnAmt" data-rid="' + xesc(r.rid) + '" data-w="' + Math.ceil(bodyW) + '" x="' + cx + '" y="' + ay + '" font-size="' + AMT_PX + '" fill="#9b8c7e" text-anchor="middle">'
+              + xesc(amt) + (limTxt ? '<tspan fill="' + rc + '" font-weight="bold">' + xesc(limTxt) + '</tspan>' : '') + '</text>';
+            var by = ay + 6;
+            h = '<g class="elnRxnSch" data-rid="' + xesc(r.rid) + '" data-role="' + xesc(r.role) + '">'
+              + '<rect class="elnRxnPlate" x="' + (x - 6) + '" y="' + (top - 6) + '" width="' + (cw + bodyW + 12) + '" height="' + (by - top + 6) + '" rx="10" fill="' + rc + '" fill-opacity="0"/>'
+              + h + '</g>';
+          }
           return h;
         }
       };
@@ -306,15 +373,18 @@
     items.push({ kind: 'arrow', w: arrowW + GAP * 2 });
     pushSide(prod);
     var nameH = 15 * maxText + 6, top = PAD + (reagTxt ? 4 : 0);
-    var H = Math.round(top + SH + nameH + PAD), x = PAD, mid = top + SH / 2, body = '';
+    var H = Math.round(top + SH + nameH + PAD + (opts.link ? 26 : 0)), x = PAD, mid = top + SH / 2, body = '';   // 화면용: 아래에 블록 도구 막대 자리
     items.forEach(function (it) {
       if (it.kind === 'plus') body += '<text x="' + (x + it.w / 2) + '" y="' + (mid + PLUS_PX * 0.35) + '" font-size="' + PLUS_PX + '" text-anchor="middle">+</text>';
       else if (it.kind === 'arrow') {
-        var x1 = x + GAP, x2 = x + it.w - GAP, ax = (x1 + x2) / 2;
-        body += '<line x1="' + x1 + '" y1="' + mid + '" x2="' + (x2 - 9) + '" y2="' + mid + '" stroke="#2b211b" stroke-width="1.6"/>'
+        var x1 = x + GAP, x2 = x + it.w - GAP, ax = (x1 + x2) / 2, ab = '';
+        ab += '<line x1="' + x1 + '" y1="' + mid + '" x2="' + (x2 - 9) + '" y2="' + mid + '" stroke="#2b211b" stroke-width="1.6"/>'
           + '<polygon points="' + x2 + ',' + mid + ' ' + (x2 - 11) + ',' + (mid - 5) + ' ' + (x2 - 11) + ',' + (mid + 5) + '" fill="#2b211b"/>';
-        if (reagTxt) body += '<text x="' + ax + '" y="' + (mid - 9) + '" font-size="' + LBL_PX + '" text-anchor="middle">' + xesc(reagTxt) + '</text>';
-        if (condTxt) body += '<text x="' + ax + '" y="' + (mid + 20) + '" font-size="' + LBL_PX + '" fill="#5a3e30" text-anchor="middle">' + xesc(condTxt) + '</text>';
+        if (reagTxt) ab += '<text x="' + ax + '" y="' + (mid - 9) + '" font-size="' + LBL_PX + '" text-anchor="middle">' + xesc(reagTxt) + '</text>';
+        if (condTxt) ab += '<text x="' + ax + '" y="' + (mid + 20) + '" font-size="' + LBL_PX + '" fill="#5a3e30" text-anchor="middle">' + xesc(condTxt) + '</text>';
+        else if (opts.link) ab += '<text class="elnRxnCondPh" x="' + ax + '" y="' + (mid + 20) + '" font-size="' + LBL_PX + '" fill="#c9bcae" text-anchor="middle">Add conditions</text>';
+        // 화면용: 화살표 묶음(투명 판 = 클릭 영역, 클릭하면 Conditions 칸으로)
+        body += opts.link ? '<g class="elnRxnArrow"><rect x="' + x1 + '" y="' + (mid - 26) + '" width="' + (x2 - x1) + '" height="54" fill="#fff" fill-opacity="0"/>' + ab + '</g>' : ab;
       } else body += it.draw(x, top);
       x += it.w;
     });
@@ -347,7 +417,40 @@
     });
   }
 
-  var api = { parseFormula: parseFormula, formulaWeight: formulaWeight, balance: balance, compute: compute, schemeSvg: schemeSvg, toPng: toPng };
+  /* 반응식 SVG 문자열 → 문서에 바로 넣을 <svg> 요소(화면 hover 연결용). <img> 와 달리 문서 안에서 살아 있으므로 한 번 더 걸러 냄:
+     SVG 그림 요소 허용 목록 밖(script·style·foreignObject·a·animate/set·metadata …)은 통째로 제거 — <style> 은 페이지 전체에 먹고,
+     <a>·<set> 은 클릭·속성 바꾸기 경로라서. on* 속성, '#'·data:image 가 아닌 href, javascript: 값, 외부 url(…) 도 제거. 못 읽으면 null */
+  var SVG_NS = 'http://www.w3.org/2000/svg';
+  var SAFE_EL = /^(svg|g|path|rect|circle|ellipse|line|polyline|polygon|text|tspan|defs|clipPath|mask|linearGradient|radialGradient|stop|pattern|symbol|use|marker|title|desc|image)$/;
+  function inlineSvg(svgString) {
+    if (!svgString || typeof DOMParser === 'undefined' || typeof document === 'undefined') return null;
+    var doc;
+    try { doc = new DOMParser().parseFromString(String(svgString), 'image/svg+xml'); } catch (e) { return null; }
+    var svg = doc && doc.documentElement;
+    if (!svg || svg.namespaceURI !== SVG_NS || svg.localName !== 'svg' || doc.getElementsByTagName('parsererror').length) return null;
+    [svg].concat(Array.prototype.slice.call(svg.querySelectorAll('*'))).forEach(function (n) {
+      if (n !== svg && !svg.contains(n)) return;   // 이미 지운 조상 아래
+      if (n.namespaceURI !== SVG_NS || !SAFE_EL.test(n.localName)) { n.parentNode.removeChild(n); return; }
+      // 구조 그림 안(안쪽 <svg> 와 그 아래) = 밖에서 온 것: class·data-* 는 버림(가짜 elnRxnSch 블록으로 다른 행을 강조·클릭시키거나 페이지 CSS 를 끌어오지 못하게)
+      var own = n === svg ? null : n.localName === 'svg' ? n : n.parentElement && n.parentElement.closest('svg');
+      var inStruct = !!own && own !== svg;
+      if (inStruct && n.localName === 'svg') ['style', 'transform', 'filter', 'mask', 'clip-path'].forEach(function (k) { n.removeAttribute(k); });
+      Array.prototype.slice.call(n.attributes).forEach(function (a) {
+        var nm = a.name, v = a.value;
+        if (/^on/i.test(nm) || /javascript:|vbscript:/i.test(v.replace(/[\s\u0000-\u001f]+/g, ''))) { n.removeAttribute(nm); return; }
+        if (inStruct && (nm === 'class' || /^data-/i.test(nm))) { n.removeAttribute(nm); return; }
+        if (a.localName === 'href') {
+          if (!(v.charAt(0) === '#' || (n.localName === 'image' && /^data:image\//i.test(v)))) n.removeAttribute(nm);
+          return;
+        }
+        if (nm === 'style') { var cs = cleanStyle(v); if (cs) n.setAttribute(nm, cs); else n.removeAttribute(nm); return; }
+        if (/url|\\/i.test(v) && !LOCAL_URL.test(v)) n.removeAttribute(nm);   // url(#id) 하나뿐인 값만 남김(대문자 URL(·이스케이프·닫히지 않은 url( 포함 차단)
+      });
+    });
+    return document.importNode(svg, true);
+  }
+
+  var api = { parseFormula: parseFormula, formulaWeight: formulaWeight, balance: balance, compute: compute, solventFor: solventFor, schemeSvg: schemeSvg, toPng: toPng, inlineSvg: inlineSvg };
   if (typeof module !== 'undefined' && module.exports) module.exports = api;
   root.ElnReaction = api;
 })(typeof window !== 'undefined' ? window : this);

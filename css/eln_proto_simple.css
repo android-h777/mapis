@@ -1351,12 +1351,52 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions,body.elnApprov
 
 .elnChemCasTxt{margin-left:6px;color:#9b8c7e;}
 
-/* ── Reaction 모듈 — 반응식 미리보기(<img>) + 조건 + 화학량론 표(운영 fixedTable hBorderTable) + 점검 칩(roundBox outline) ── */
+/* ── Reaction 모듈 — 반응식 미리보기(거른 인라인 SVG) + 조건 + 화학량론 표(운영 fixedTable hBorderTable) + 점검 칩(roundBox outline) ── */
 /* 도구(+ Reactant · + Product · + Reagent · Export)는 JS 가 헤더 아래 .elnFmlToolbar 로 옮김 — ChemStudio 와 같은 자리 */
 .elnRxnTools,.elnRxnAddBtns{display:flex;gap:8px;flex-wrap:wrap;}
 .elnRxnBox{padding:2px 2px 4px;}
 .elnRxnScheme{margin-bottom:12px;padding:10px;border:1px solid #ece4d8;border-radius:12px;background:#fff;overflow-x:auto;text-align:center;}
-.elnRxnImg{display:inline-block;max-width:100%;height:auto;vertical-align:top;}
+.elnRxnSvg{display:inline-block;max-width:100%;vertical-align:top;}
+.elnRxnSvg > svg{display:block;max-width:100%;height:auto;}
+/* 반응식 ↔ 표 연결 — 색은 역할 하나만(표 Role 칩 mocha25 #A47B67 · cfblue25 #7592ca). 태그 R1/P1 = 옅은 역할색 바탕 + 역할색 글자, 테두리·그림자 없음 */
+.elnRxnTag{display:inline-block;margin-right:6px;padding:0 4px;border-radius:3.5px;font-size:10.5px;line-height:15px;font-weight:700;vertical-align:1px;
+  color:#A47B67;background:color-mix(in srgb, #A47B67 13%, white);}
+.elnRxnTag.product{color:#7592ca;background:color-mix(in srgb, #7592ca 13%, white);}
+/* hover 강조 — 한 블록만 또렷 + 옅은 바탕판, 나머지는 흐리게. 표 행도 같은 옅은 역할색. 150ms, 반복 애니메이션 없음 */
+.elnRxnSch{cursor:grab;transition:opacity .15s ease;}
+/* 반응식에서 끌기 — 끄는 블록은 그림자만, 놓을 자리 = 역할색 세로 선. 화살표 묶음 = Conditions 칸으로(빈 조건 안내는 화면만) */
+.elnRxnScheme{position:relative;}
+.elnRxnSch.drag{cursor:grabbing;opacity:.88;filter:drop-shadow(0 6px 12px rgba(60,40,30,.2));}
+.elnRxnSch.drag.out{opacity:.4;}   /* 칸 밖 = 놓으면 취소 */
+.elnRxnSvg{user-select:none;-webkit-user-select:none;}   /* 끌기 시작할 때 이름 글자가 선택되지 않게 */
+.elnRxnDropLine{z-index:2;}
+.elnRxnSch.drag .elnRxnPlate{fill-opacity:.1;}
+body.elnRxnDragging,body.elnRxnDragging *{cursor:grabbing !important;user-select:none;}
+.elnRxnDropLine{position:absolute;width:3px;margin-left:-1.5px;border-radius:2px;background:#A47B67;pointer-events:none;}
+.elnRxnDropLine.product{background:#7592ca;}
+.elnRxnArrow{cursor:pointer;}
+.elnRxnCondPh{transition:fill .15s ease;}
+.elnRxnArrow:hover .elnRxnCondPh{fill:#A47864;}
+.cardBox.elnLocked .elnRxnCondPh,body.elnApproved .elnRxnCondPh,body.elnTranslated .elnRxnCondPh{display:none;}
+.cardBox.elnLocked .elnRxnArrow,body.elnApproved .elnRxnArrow,body.elnTranslated .elnRxnArrow{cursor:default;}
+/* 블록 도구 막대 — 흰 알약, 아이콘 22px 원형 hover(역할색 옅은 바탕) */
+.elnRxnBar{position:absolute;z-index:3;display:flex;align-items:center;gap:2px;height:28px;padding:0 4px;box-sizing:border-box;background:#fff;border:1px solid #e6ddd0;border-radius:14px;box-shadow:0 2px 8px rgba(60,40,30,.12);white-space:nowrap;}
+.elnRxnBar i{width:22px;height:22px;line-height:22px;font-size:16px;text-align:center;border-radius:11px;color:#7a6a5e;cursor:pointer;user-select:none;transition:background-color .15s,color .15s;}
+.elnRxnBar i:hover{background:color-mix(in srgb, #A47B67 12%, white);color:#A47B67;}
+.elnRxnBar.product i:hover{background:color-mix(in srgb, #7592ca 12%, white);color:#7592ca;}
+.elnRxnBar i.on{color:#A47B67;}
+.elnRxnBar i.off{opacity:.35;pointer-events:none;}
+.elnRxnBar i[data-a="del"]:hover{background:#fbeaea;color:#d65a5a;}
+.elnRxnBarCoef{display:inline-flex;align-items:center;margin-right:2px;padding-right:3px;border-right:1px solid #eee5da;}
+.elnRxnBarCoef b{min-width:18px;text-align:center;font-size:12.5px;font-weight:700;color:#3a2c24;font-variant-numeric:tabular-nums;}
+.elnRxnPlate{transition:fill-opacity .15s ease;}
+.elnRxnBox.elnRxnLinking .elnRxnSch{opacity:.35;}
+.elnRxnBox.elnRxnLinking .elnRxnSch.on{opacity:1;}
+.elnRxnSch.on .elnRxnPlate{fill-opacity:.1;}
+.elnRxnTable tr.elnRxnRow > td{transition:background-color .15s ease;}
+.elnRxnTable tr.elnRxnHl.reactant > td{background-color:color-mix(in srgb, #A47B67 10%, white);}
+.elnRxnTable tr.elnRxnHl.product > td{background-color:color-mix(in srgb, #7592ca 10%, white);}
+.cardBox.elnLocked .elnRxnSch,body.elnApproved .elnRxnSch,body.elnTranslated .elnRxnSch{cursor:default;}
 .elnRxnCondRow{margin:4px 2px 6px;}
 .elnRxnCondRow .elnBasicLabel{flex:0 0 auto;}
 .elnRxnTblWrap{margin:8px 0 10px;}
@@ -1369,6 +1409,25 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions,body.elnApprov
 .elnRxnFm sub{font-size:.78em;}
 /* 한계 반응물 — 이름 뒤 작은 배지(Data Visualization 표 머리 배지와 같은 모양) */
 .elnRxnTable tr.elnRxnLim .elnRxnNm::after{content:'Limiting';margin-left:6px;font-size:9px;font-weight:700;color:#fff;background:#A47864;border-radius:4px;padding:1px 5px;vertical-align:middle;letter-spacing:.3px;}
+.elnRxnTable tr.elnRxnLimMan .elnRxnNm::after{content:'Limiting · Manual';}
+/* 한계 반응물 지정 — Equiv 칸 왼쪽 동그라미(라디오처럼 하나만). 숫자는 오른쪽 정렬 그대로 */
+.elnRxnLimBtn{float:left;margin:1px 8px 0 0;font-size:17px;line-height:1;color:#d6cabd;cursor:pointer;user-select:none;transition:color .15s;}
+.elnRxnLimBtn:hover{color:#A47864;}
+.elnRxnLimBtn.on{color:#A47864;}
+.elnRxnLimBtn.man{color:#7a5240;}
+.elnRxnTable tr.elnRxnShort [data-o="equiv"]{color:#d9822b;font-weight:700;}   /* 지정한 한계보다 먼저 떨어짐(1 미만) */
+.cardBox.elnLocked .elnRxnLimBtn,body.elnApproved .elnRxnLimBtn,body.elnTranslated .elnRxnLimBtn{pointer-events:none;}
+.cardBox.elnLocked .elnRxnLimBtn:not(.on),body.elnApproved .elnRxnLimBtn:not(.on),body.elnTranslated .elnRxnLimBtn:not(.on){visibility:hidden;}
+/* 총 부피 · 몰 농도 요약 줄 — 표와 점검 칩 사이 */
+.elnRxnSum{display:flex;flex-wrap:wrap;align-items:center;gap:6px 24px;margin:0 2px 10px;font-size:13px;color:#3a2c24;}
+.elnRxnSumItem{display:inline-flex;align-items:center;gap:6px;}
+.elnRxnSumLbl{color:#7a6a5e;}
+.elnRxnSumItem b{font-variant-numeric:tabular-nums;}
+.elnRxnSumU{color:#9b8c7e;}
+.elnRxnIn.elnRxnMol{width:84px;min-width:0;}
+.elnRxnIn.elnRxnMol[readonly]{background:#faf7f3;color:#7a6a5e;}
+.elnRxnSumNote{font-size:12px;color:#9b8c7e;}
+.elnRxnSumNote:empty{display:none;}
 .elnRxnRole,.elnRxnWarn{line-height:20px;padding:0 8px;}
 .elnRxnWarn{margin-top:2px;}
 .elnRxnIn{width:100%;min-width:72px;box-sizing:border-box;height:28px;margin:0;padding:0 7px;border:1px solid #e6ddd0;border-radius:6px;background:#fff;font-size:13px;color:#3a2c24;}
@@ -1390,9 +1449,10 @@ div.elnRxnTheo{margin-bottom:3px;}
 .elnRxnRoleBtn{cursor:pointer;display:inline-flex;align-items:center;}
 .elnRxnRoleBtn i{font-size:16px;margin:0 -4px 0 2px;}
 .elnRxnRoleMenu .elnCtxMenuItem i{width:18px;font-size:16px;}
-.elnRxnTable tr.elnRxnDragging{opacity:.45;}
-body.elnRxnDragActive,body.elnRxnDragActive *{cursor:grabbing !important;user-select:none;}
-.elnRxnDropLine{position:fixed;height:3px;background:#bb2649;border-radius:2px;box-shadow:0 0 0 2px rgba(187,38,73,.18);z-index:1200;pointer-events:none;}
+.elnRxnSortPh{background:rgba(164,120,100,.18);visibility:visible !important;}   /* sortable 자리 표시 — elnSortPhMenu 와 같은 톤 */
+.elnRxnTable tr.ui-sortable-helper{background:#fff;box-shadow:0 4px 12px rgba(60,40,30,.16);}
+/* 역할별 tbody 사이 구분선 — 공통 표의 행 구분선(tr + tr td 위쪽 1px #ddd)이 tbody 경계에선 안 그어지므로 같은 선을 이어 줌 */
+.elnRxnTable tbody + tbody > tr:first-child > td{border-top:1px solid #ddd;}
 .cardBox.elnLocked .elnRxnDragTd i,body.elnApproved .elnRxnDragTd i,body.elnTranslated .elnRxnDragTd i{visibility:hidden;pointer-events:none;}
 .cardBox.elnLocked .elnRxnRoleBtn,body.elnApproved .elnRxnRoleBtn,body.elnTranslated .elnRxnRoleBtn{cursor:default;pointer-events:none;}
 .cardBox.elnLocked .elnRxnRoleBtn i,body.elnApproved .elnRxnRoleBtn i,body.elnTranslated .elnRxnRoleBtn i{display:none;}
