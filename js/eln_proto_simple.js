@@ -1428,8 +1428,7 @@
       case 'reaction': return '<div class="elnRxnBox">'
         + '<div class="elnRxnTools">'
         + '<span class="elnRxnAddBtns">'
-        + '<a href="javascript:;" class="waves-effect waves-light hBtn elnRxnAddReac" title="Pick a reactant structure in ChemStudio"><i class="material-symbols-outlined left">add</i>Reactant</a>'
-        + '<a href="javascript:;" class="waves-effect waves-light hBtn elnRxnAddProd" title="Pick a product structure in ChemStudio"><i class="material-symbols-outlined left">add</i>Product</a>'
+        + '<a href="javascript:;" class="waves-effect waves-light hBtn elnRxnAddStr" title="Pick reactants and products in ChemStudio"><i class="material-symbols-outlined left">add</i>Add Structure</a>'
         + '<a href="javascript:;" class="waves-effect waves-light hBtn elnRxnAddReag" title="Add a reagent, catalyst or solvent by name"><i class="material-symbols-outlined left">add</i>Reagent</a>'
         + '</span>'
         + '<a href="javascript:;" class="waves-effect waves-light hBtn elnRxnExport" title="Export the reaction as an image or PDF"><i class="material-symbols-outlined left">download</i>Export</a>'
@@ -1439,7 +1438,7 @@
         + '<div class="elnBasicRow elnRxnCondRow"><label class="elnBasicLabel">Conditions</label>'
         + '<div class="aniInput"><input type="text" class="browser-default elnRxnCond" placeholder="e.g., 80 °C, 2 h, N2" autocomplete="off" spellcheck="false"><span class="focus-border"></span></div></div>'
         + '<div class="fixedTable hBorderTable vMiddle hScroll elnRxnTblWrap" style="display:none;"><table class="elnRxnTable">'
-        + '<thead><tr><th>Role</th><th>Name</th><th>MW (g/mol)</th><th>Coef.</th><th title="Equivalents relative to the limiting reagent, adjusted for coefficients">Equiv</th><th>Mass (g)</th><th>mmol</th><th>Density (g/mL)</th><th>Volume (mL)</th><th class="elnRxnDelCol"></th></tr></thead>'
+        + '<thead><tr><th class="elnRxnDragCol"></th><th>Role</th><th>Name</th><th>MW (g/mol)</th><th>Coef.</th><th title="Equivalents relative to the limiting reagent, adjusted for coefficients">Equiv</th><th>Mass (g)</th><th>mmol</th><th>Density (g/mL)</th><th>Volume (mL)</th><th class="elnRxnDelCol"></th></tr></thead>'
         + '<tbody></tbody></table></div>'
         + '<div class="elnRxnChecks"></div>'
         + '</div>';
@@ -4285,13 +4284,16 @@
   var RXN_ROLE_CLS = { reactant: 'mocha25', product: 'cfblue25', reagent: 'stone25' };
   var RXN_ORDER = { reactant: 0, reagent: 1, product: 2 };
   var RXN_FIELD = { coef: 'Coef.', mass: 'Mass (g)', mmol: 'mmol', density: 'Density (g/mL)', volume: 'Volume (mL)', actual: 'Actual (g)', name: 'Name', amount: 'Amount' };
-  var rxnPending = null;   // 고르기 창을 연 카드·역할 { box, role } — 받은 구조는 여기로
+  var rxnPending = null;   // 고르기 창을 연 카드 { box } — 받은 구조는 여기로(역할은 고르기 창이 메시지로 보냄)
   var rxnSeq = 0;
 
   function rxnState(box) { if (!box._rxn) box._rxn = { rows: [], conditions: '' }; return box._rxn; }
   function rxnCard(box) { return box.closest('.cardBox'); }
   function rxnFrozen(box) { var b = document.body.classList, c = rxnCard(box); return b.contains('elnApproved') || b.contains('elnTranslated') || !!(c && c.classList.contains('elnLocked')); }   // 승인·결재 잠금·번역 보기 = 읽기 전용
-  function rxnSorted(st) { return st.rows.slice().sort(function (a, b) { return (RXN_ORDER[a.role] - RXN_ORDER[b.role]) || (a.id - b.id); }); }   // 표·그림 순서: 반응물 → 시약 → 생성물(같은 역할은 추가 순)
+  function rxnSorted(st) {   // 표·그림 순서: 반응물 → 시약 → 생성물, 같은 역할 안에서는 rows 배열 순서(추가 순, 끌어서 바꾸면 그 순서)
+    return st.rows.map(function (r, i) { return { r: r, i: i }; }).sort(function (a, b) { return (RXN_ORDER[a.r.role] - RXN_ORDER[b.r.role]) || (a.i - b.i); }).map(function (x) { return x.r; });
+  }
+  function rxnRoleOf(d) { return d && (d.role === 'reactant' || d.role === 'product') ? d.role : 'reactant'; }   // 고르기 창이 보낸 역할(없거나 잘못되면 reactant — 옛 고르기 창)
   function rxnFix(v, d) { return v == null || !isFinite(v) ? '' : v.toFixed(d); }
   function rxnNum(s) {   // 입력칸 숫자(쉼표 허용). 빈칸 = null, 숫자가 아니거나 음수 = NaN(칸에 invalid 표시)
     s = String(s == null ? '' : s).replace(/,/g, '').trim();
@@ -4333,8 +4335,7 @@
     var box = body.querySelector('.elnRxnBox'); if (!box) return;
     rxnState(box);
     var tools = box.querySelector('.elnRxnTools');   // addNoteModule 이 헤더 툴바로 옮겨도 리스너·box 참조는 그대로
-    tools.querySelector('.elnRxnAddReac').addEventListener('click', function () { rxnOpenPicker(box, 'reactant'); });
-    tools.querySelector('.elnRxnAddProd').addEventListener('click', function () { rxnOpenPicker(box, 'product'); });
+    tools.querySelector('.elnRxnAddStr').addEventListener('click', function () { rxnOpenPicker(box); });
     tools.querySelector('.elnRxnAddReag').addEventListener('click', function () { rxnAddReagent(box); });
     var exp = tools.querySelector('.elnRxnExport');
     exp.addEventListener('click', function () { rxnExportMenu(box, exp); });
@@ -4369,8 +4370,15 @@
       el._rxnBefore = el.value;
     });
     tbody.addEventListener('click', function (e) {
-      var del = e.target.closest('.elnRxnDel'); if (!del || rxnFrozen(box)) return;
+      if (rxnFrozen(box)) return;
+      var rb = e.target.closest('.elnRxnRoleBtn');
+      if (rb) { var r0 = rxnRowOf(box, rb); if (r0) rxnRoleMenu(box, r0, rb); return; }
+      var del = e.target.closest('.elnRxnDel'); if (!del) return;
       var row = rxnRowOf(box, del); if (row) rxnRemove(box, row);
+    });
+    tbody.addEventListener('mousedown', function (e) {   // 끌기 손잡이
+      var h = e.target.closest('.elnRxnDrag'); if (!h || e.button !== 0 || rxnFrozen(box)) return;
+      var row = rxnRowOf(box, h); if (row) { e.preventDefault(); rxnDragStart(box, row, e); }
     });
     rxnRender(box);
   }
@@ -4380,14 +4388,14 @@
   }
 
   // ChemStudio 고르기 창 — 전용 창 이름(apisChemPick)을 써서 이미 열려 있으면 그 창을 재사용(ChemStudio 모듈·헤더 버튼의 apisChemStudio 와 별개)
-  function rxnOpenPicker(box, role) {
+  function rxnOpenPicker(box) {
     if (rxnFrozen(box)) return;
-    rxnPending = { box: box, role: role };
+    rxnPending = { box: box };
     var w = null;
     try { w = window.open(RXN_PICK_URL, 'apisChemPick', 'width=1520,height=880,scrollbars=yes,resizable=yes'); } catch (e) { w = null; }
     if (!w) { ELN.toast('Allow pop-ups to open ChemStudio.', 'warn'); return; }
     try { w.focus(); } catch (e2) {}
-    ELN.toast('Pick a structure in ChemStudio to add it as ' + role + '.', 'info');
+    ELN.toast('Pick reactants and products in ChemStudio.', 'info');
     if (location.origin !== 'https://mapis-murex.vercel.app') ELN.toast('The ChemStudio picker sends structures only to the demo site (mapis-murex.vercel.app).', 'warn');   // 다른 주소에서는 고르기 창이 보내도 받지 못함
   }
   // 고르기 창 → 노트. 출처·형식이 맞는 메시지만, 고르기 창을 연 카드가 있을 때만 받음. 처리 뒤 id 가 있으면 pick-ack 로 결과를 돌려줌
@@ -4398,7 +4406,7 @@
     var res;
     if (!d.item || typeof d.item !== 'object') res = { ok: false, reason: 'Invalid structure data.' };
     else if (!rxnPending || !document.body.contains(rxnPending.box)) res = { ok: false, reason: 'Open the picker from a Reaction section first.' };
-    else res = rxnReceiveEx(d.item, rxnPending.box, rxnPending.role);
+    else res = rxnReceiveEx(d.item, rxnPending.box, rxnRoleOf(d));
     if (typeof d.id === 'string' && d.id.length <= 100 && e.source) {
       try {
         var ack = { type: 'chemstudio:pick-ack', version: 1, id: d.id, ok: !!res.ok };
@@ -4407,12 +4415,11 @@
       } catch (e3) {}
     }
   });
-  // 구조 1건 추가 — item = { seq, name, cas, formula, svg }. card 생략 = 고르기 창을 연 카드(없으면 첫 Reaction 카드), role 생략 = 그때 역할(없으면 reactant)
+  // 구조 1건 추가 — item = { seq, name, cas, formula, svg }. card 생략 = 고르기 창을 연 카드(없으면 첫 Reaction 카드), role 은 'reactant'|'product'(그 외·생략 = reactant)
   function rxnReceive(item, card, role) { return rxnReceiveEx(item, card, role).ok; }   // 시험용 true/false
   function rxnReceiveEx(item, card, role) {   // → { ok, reason }
     var box = card ? (card.classList && card.classList.contains('elnRxnBox') ? card : card.querySelector && card.querySelector('.elnRxnBox')) : null;
     if (!box) box = rxnPending && document.body.contains(rxnPending.box) ? rxnPending.box : document.querySelector('#tab_ov .elnRxnBox');
-    if (!role) role = rxnPending && rxnPending.box === box ? rxnPending.role : 'reactant';
     if (role !== 'product') role = 'reactant';
     if (!item || typeof item !== 'object') return { ok: false, reason: 'Invalid structure data.' };
     if (!box) return { ok: false, reason: 'Open the picker from a Reaction section first.' };
@@ -4442,6 +4449,54 @@
     if (row.role === 'reagent') auditMod(rxnCard(box), 'Reagent removed', { detail: String(row.name || '').trim() || undefined });
     else auditMod(rxnCard(box), 'Structure removed', { detail: RXN_ROLE[row.role] + ': ' + row.name + (row.formula ? ' (' + row.formula + ')' : '') });
   }
+  // 역할 바꾸기(반응물 ↔ 생성물) — 입력한 값은 행에 그대로 두고 표·그림·점검만 다시
+  function rxnRoleMenu(box, row, anchor) {
+    var menu = document.createElement('div'); menu.className = 'elnCtxMenu elnRxnRoleMenu';
+    ['reactant', 'product'].forEach(function (k) {
+      var it = document.createElement('div'); it.className = 'elnCtxMenuItem' + (row.role === k ? ' on' : '');
+      it.innerHTML = '<i class="material-symbols-outlined">' + (row.role === k ? 'check' : '') + '</i><span>' + RXN_ROLE[k] + '</span>';
+      it.addEventListener('click', function () { ref.close(); rxnSetRole(box, row, k); });
+      menu.appendChild(it);
+    });
+    var ref = ELN.popover({ anchor: anchor, content: menu, width: 140 });
+  }
+  function rxnSetRole(box, row, role) {
+    if (rxnFrozen(box) || row.role === role || (role !== 'reactant' && role !== 'product') || row.role === 'reagent') return;
+    var before = row.role; row.role = role;
+    rxnRender(box);
+    auditMod(rxnCard(box), 'Role changed', { field: row.name, before: RXN_ROLE[before], after: RXN_ROLE[role] });
+  }
+  // 행 끌어 순서 바꾸기 — 같은 역할 묶음 안에서만(표는 반응물 → 시약 → 생성물로 묶여 있음). 놓은 자리에 가로선, 놓을 때 rows 순서 반영
+  function rxnDragStart(box, row, e0) {
+    var tbody = box.querySelector('.elnRxnTable tbody');
+    var trs = [].slice.call(tbody.querySelectorAll('tr[data-id]')).filter(function (t) { return t.classList.contains(row.role); });
+    var src = tbody.querySelector('tr[data-id="' + row.id + '"]'); if (!src || trs.length < 2) return;
+    var line = document.createElement('div'); line.className = 'elnRxnDropLine'; document.body.appendChild(line);
+    src.classList.add('elnRxnDragging'); document.body.classList.add('elnRxnDragActive');
+    var slot = trs.indexOf(src);   // 0..trs.length = 이 자리 앞에 놓음
+    function pos(y) {
+      var k = trs.length;
+      for (var i = 0; i < trs.length; i++) { var r = trs[i].getBoundingClientRect(); if (y < r.top + r.height / 2) { k = i; break; } }
+      slot = k;
+      var ref = k < trs.length ? trs[k].getBoundingClientRect() : trs[trs.length - 1].getBoundingClientRect(), tb = tbody.getBoundingClientRect();
+      line.style.left = tb.left + 'px'; line.style.width = tb.width + 'px';
+      line.style.top = ((k < trs.length ? ref.top : ref.bottom) - 1) + 'px';
+    }
+    function mv(ev) { pos(ev.clientY); }
+    function up() {
+      document.removeEventListener('mousemove', mv); document.removeEventListener('mouseup', up);
+      line.remove(); src.classList.remove('elnRxnDragging'); document.body.classList.remove('elnRxnDragActive');
+      var st = rxnState(box), grp = rxnSorted(st).filter(function (r) { return r.role === row.role; });
+      var from = grp.indexOf(row), to = slot > from ? slot - 1 : slot;   // 빼고 나서의 자리
+      if (from < 0 || to === from || rxnFrozen(box)) return;
+      var order = grp.slice(); order.splice(from, 1); order.splice(to, 0, row);
+      var at = 0; st.rows = st.rows.map(function (r) { return r.role === row.role ? order[at++] : r; });   // 같은 역할 칸에만 새 순서를 채움
+      rxnRender(box);
+      auditMod(rxnCard(box), 'Structure moved', { detail: rxnLabel(row) });
+    }
+    document.addEventListener('mousemove', mv); document.addEventListener('mouseup', up);
+    pos(e0.clientY);
+  }
   // 빈 상태로(Copy 의 Include data 해제 등)
   function rxnClear(box) {
     box._rxn = { rows: [], conditions: '' };
@@ -4470,7 +4525,10 @@
   function rxnRowEl(r) {
     var tr = document.createElement('tr');
     tr.setAttribute('data-id', r.id); tr.className = 'elnRxnRow ' + r.role;
-    var role = '<td><span class="roundBox outline ' + RXN_ROLE_CLS[r.role] + ' font12 elnRxnRole">' + RXN_ROLE[r.role] + '</span></td>';
+    var drag = '<td class="ac elnRxnDragTd"><i class="material-symbols-outlined elnRxnDrag" title="Drag to reorder">drag_indicator</i></td>';
+    var role = drag + (r.role === 'reagent'
+      ? '<td><span class="roundBox outline ' + RXN_ROLE_CLS[r.role] + ' font12 elnRxnRole">' + RXN_ROLE[r.role] + '</span></td>'
+      : '<td><span class="roundBox outline ' + RXN_ROLE_CLS[r.role] + ' font12 elnRxnRole elnRxnRoleBtn" title="Change role">' + RXN_ROLE[r.role] + '<i class="material-symbols-outlined">arrow_drop_down</i></span></td>');
     var del = '<td class="ac"><i class="material-symbols-outlined elnRxnDel" title="Remove">close</i></td>';
     if (r.role === 'reagent') {
       tr.innerHTML = role + '<td>' + rxnIn('name', 'Reagent name', r.name, 'elnRxnTxt') + '</td><td></td><td></td><td></td>'

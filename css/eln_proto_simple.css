@@ -1383,6 +1383,19 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions,body.elnApprov
 div.elnRxnTheo{margin-bottom:3px;}
 .elnRxnDel{display:inline-block;vertical-align:middle;font-size:18px;color:#c9bcae;cursor:pointer;transition:color .15s;}
 .elnRxnDel:hover{color:#d65a5a;}
+.elnRxnTable th.elnRxnDragCol{width:26px;padding-left:4px;padding-right:0;}
+.elnRxnTable td.elnRxnDragTd{padding-left:4px;padding-right:0;}
+.elnRxnDrag{display:inline-block;vertical-align:middle;font-size:18px;color:#c9bcae;cursor:grab;user-select:none;transition:color .15s;}
+.elnRxnDrag:hover{color:#A47864;}
+.elnRxnRoleBtn{cursor:pointer;display:inline-flex;align-items:center;}
+.elnRxnRoleBtn i{font-size:16px;margin:0 -4px 0 2px;}
+.elnRxnRoleMenu .elnCtxMenuItem i{width:18px;font-size:16px;}
+.elnRxnTable tr.elnRxnDragging{opacity:.45;}
+body.elnRxnDragActive,body.elnRxnDragActive *{cursor:grabbing !important;user-select:none;}
+.elnRxnDropLine{position:fixed;height:3px;background:#bb2649;border-radius:2px;box-shadow:0 0 0 2px rgba(187,38,73,.18);z-index:1200;pointer-events:none;}
+.cardBox.elnLocked .elnRxnDragTd i,body.elnApproved .elnRxnDragTd i,body.elnTranslated .elnRxnDragTd i{visibility:hidden;pointer-events:none;}
+.cardBox.elnLocked .elnRxnRoleBtn,body.elnApproved .elnRxnRoleBtn,body.elnTranslated .elnRxnRoleBtn{cursor:default;pointer-events:none;}
+.cardBox.elnLocked .elnRxnRoleBtn i,body.elnApproved .elnRxnRoleBtn i,body.elnTranslated .elnRxnRoleBtn i{display:none;}
 .elnRxnChecks{display:flex;flex-wrap:wrap;gap:6px;}
 .elnRxnChecks:empty{display:none;}
 .elnRxnChip{line-height:22px;padding:0 10px;}
