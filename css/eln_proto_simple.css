@@ -1455,7 +1455,8 @@ body.elnRxnDragging,body.elnRxnDragging *{cursor:grabbing !important;user-select
 /* 폭: Name 이 남는 폭을 다 가짐(긴 이름), 숫자 칸은 내용만큼(입력 84px) */
 .elnRxnTable th{width:1%;}
 .elnRxnTable th.elnRxnNameCol{width:auto;min-width:240px;}
-.elnRxnTable td.elnRxnEqTd{min-width:96px;}   /* 숫자 + 아래 한계 반응물 글자("Limiting · fixed  Auto") */
+.elnRxnTable td.elnRxnEqTd{min-width:96px;text-align:right;}   /* Equiv 입력 + 아래 한계 반응물 글자("Limiting · fixed  Auto") */
+.elnRxnIn.elnRxnEqLim{border-color:transparent;background:transparent;box-shadow:none;}   /* 한계 반응물의 Equiv = 늘 1.00(입력 아님) */
 .elnRxnTable td .elnRxnIn.num:not(.sm){width:84px;}
 .elnRxnIn{width:100%;min-width:72px;box-sizing:border-box;height:28px;margin:0;padding:0 7px;border:1px solid #e6ddd0;border-radius:6px;background:#fff;font-size:13px;color:#3a2c24;}
 .elnRxnIn.num{text-align:right;font-variant-numeric:tabular-nums;}

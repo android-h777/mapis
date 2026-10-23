@@ -1445,7 +1445,7 @@
         + '<div class="elnChemEmptyLine elnRxnEmpty"><i class="material-symbols-outlined">experiment</i><span>No structures yet. Add reactants and products from ChemStudio.</span>'
         + '<a href="javascript:;" class="waves-effect waves-light hBtn elnRxnEmptyAdd"><i class="material-symbols-outlined left">add</i>Reagent or Solvent</a></div>'
         + '<div class="fixedTable hBorderTable vMiddle hScroll elnRxnTblWrap" style="display:none;"><table class="elnRxnTable">'
-        + '<thead><tr><th class="elnRxnDragCol"></th><th>Role</th><th class="elnRxnNameCol">Name</th><th>MW (g/mol)</th><th>Coef.</th><th title="Equivalents relative to the limiting reagent, adjusted for coefficients. Click a circle to set the limiting reagent.">Equiv</th><th>Mass (g)</th><th>mmol</th><th>Density (g/mL)</th><th>Volume (mL)</th><th class="elnRxnDelCol"></th></tr></thead>'
+        + '<thead><tr><th class="elnRxnDragCol"></th><th>Role</th><th class="elnRxnNameCol">Name</th><th>MW (g/mol)</th><th title="Leave blank for 100 %. Mass and volume are what you weigh; mmol is the pure amount.">Purity (%)</th><th>Coef.</th><th title="Equivalents relative to the limiting reagent, adjusted for coefficients. Type an Equiv to calculate the amount from the limiting reagent.">Equiv</th><th>Mass (g)</th><th>mmol</th><th>Density (g/mL)</th><th>Volume (mL)</th><th class="elnRxnDelCol"></th></tr></thead>'
         + '</table></div>'
         + '<div class="elnRxnSum" style="display:none;">'   // 총 부피 · 몰 농도(입력하면 용매 부피를 역산)
         + '<span class="elnRxnSumItem" title="Solvents plus reactants with a known volume"><span class="elnRxnSumLbl">Total volume</span><b data-o="tv"></b><span class="elnRxnSumU">mL</span></span>'
@@ -4304,7 +4304,7 @@
   var RXN_ROLE = { reactant: 'Reactant', product: 'Product', reagent: 'Reagent', solvent: 'Solvent' };
   var RXN_ROLE_CLS = { reactant: 'mocha25', product: 'cfblue25', reagent: 'stone25', solvent: 'tendril25' };
   var RXN_ORDER = { reactant: 0, reagent: 1, solvent: 2, product: 3 };
-  var RXN_FIELD = { coef: 'Coef.', mass: 'Mass (g)', mmol: 'mmol', density: 'Density (g/mL)', volume: 'Volume (mL)', actual: 'Actual (g)', name: 'Name', amount: 'Amount' };
+  var RXN_FIELD = { coef: 'Coef.', equiv: 'Equiv', purity: 'Purity (%)', mass: 'Mass (g)', mmol: 'mmol', density: 'Density (g/mL)', volume: 'Volume (mL)', actual: 'Actual (g)', name: 'Name', amount: 'Amount' };
   var RXN_ROLES = ['reactant', 'reagent', 'solvent', 'product'];   // 표 tbody 순서(= RXN_ORDER)
   var rxnPending = null;   // 고르기 창을 연 카드 { box } — 받은 구조는 여기로(역할은 고르기 창이 메시지로 보냄)
   var rxnPtrDown = false;   // 지금 마우스 · 펜 버튼이 눌려 있는지(조건 칸 blur 뒤 다시 그리기를 클릭 끝까지 미룰 때)
@@ -4335,7 +4335,7 @@
     var st = rxnState(box), rows = rxnSorted(st), tags = rxnTags(rows);
     return { rows: rows.map(function (r) {
       return { role: r.role, name: rxnIsText(r) ? String(r.name || '').trim() : rxnLabel(r), formula: r.formula, svg: r.svg, coef: r.coef, mass: r.mass, mmol: r.mmol, volume: r.volume,
-        density: r.density, basis: r.basis, actual: r.actual, limit: st.limitId === r.id, tag: tags[r.id] || '', rid: r.id };
+        density: r.density, purity: r.purity, equiv: r.equiv, basis: r.basis, actual: r.actual, limit: st.limitId === r.id, tag: tags[r.id] || '', rid: r.id };
     }), conditions: st.conditions, src: rows };
   }
   // 역할 태그 { 행 id: 'R1' | 'P1' … } — 화면 순서(rxnSorted)로 번호. 시약 행은 태그 없음 → 끌기·역할 바꾸기 뒤 다시 매김
@@ -4359,7 +4359,7 @@
     if (calc.limiting >= 0) out.push({ cls: 'mocha25', text: 'Limiting reagent: ' + model.rows[calc.limiting].name + (calc.pinned >= 0 ? ' (set manually)' : '') });
     else if (calc.pinned >= 0) out.push({ cls: 'orange', text: 'Limiting reagent: ' + model.rows[calc.pinned].name + ' (set manually, enter its amount)' });
     calc.short.forEach(function (i) {   // 지정한 한계 반응물보다 먼저 떨어지는 반응물
-      out.push({ cls: 'orange', text: model.rows[i].name + ' runs out first (' + rxnFix(calc.rows[i].equiv, 2) + ' equiv)' });
+      out.push({ cls: 'orange', text: model.rows[i].name + ' is below 1 equiv (' + rxnFix(calc.rows[i].equiv, 2) + '), so it runs out before ' + model.rows[calc.limiting].name });
     });
     model.rows.forEach(function (r, i) {
       if (r.role !== 'product') return;
@@ -4424,12 +4424,12 @@
         if (f === 'name') { rxnOrigLine(box, row); rxnRefresh(box, el); }   // 반응식 · 점검 칩의 이름도 바로(칸 자체는 건드리지 않음)
         return;
       }
-      var v = rxnNum(el.value), bad = v !== v || (f === 'coef' && v === 0);   // NaN 이거나 coef 0
+      var v = rxnNum(el.value), bad = v !== v || (f === 'coef' && v === 0) || (f === 'purity' && (v === 0 || v > 100));   // NaN, coef 0, 순도 0 · 100 초과
       el.classList.toggle('invalid', bad);
       if (f === 'coef') row.coef = bad || v == null ? 1 : v;   // 빈칸·잘못된 값 = 1
       else {
         row[f] = bad ? null : v;
-        if (f === 'mass' || f === 'mmol' || f === 'volume') row.basis = f;   // 마지막으로 친 칸이 기준(나머지는 유도)
+        if (f === 'mass' || f === 'mmol' || f === 'volume' || f === 'equiv') row.basis = f;   // 마지막으로 친 칸이 기준(나머지는 유도, equiv = 한계 반응물 기준)
       }
       rxnRefresh(box, el);
     });
@@ -4760,9 +4760,16 @@
   function rxnSetLimit(box, row) {
     if (rxnFrozen(box) || row.role !== 'reactant') return;
     var st = rxnState(box), off = st.limitId === row.id;
+    var fixed = '';
+    if (!off && row.basis === 'equiv') {   // Equiv 로 넣은 행을 기준으로 삼으면 서로 물고 도니, 지금 계산된 mmol 을 직접 넣은 값으로 바꿔 둠
+      var m0 = rxnModel(box), c0 = ElnReaction.compute(m0), k = m0.src.indexOf(row), mm = k >= 0 ? c0.rows[k].mmol : null;
+      if (mm == null) { ELN.toast('Enter an amount for ' + rxnLabel(row) + ' first (Mass, mmol or Volume).', 'warn'); return; }   // 기준이 없으면 Equiv 로는 양을 알 수 없음
+      row.mmol = mm; row.basis = 'mmol'; fixed = rxnFix(mm, 2);
+      var mi = box.querySelector('tr[data-id="' + row.id + '"] input[data-f="mmol"]'); if (mi) mi.value = fixed;
+    }
     st.limitId = off ? null : row.id;
     rxnRefresh(box, null);
-    auditMod(rxnCard(box), 'Limiting reagent set', { detail: off ? 'Auto (first to run out)' : rxnLabel(row) });
+    auditMod(rxnCard(box), 'Limiting reagent set', { detail: off ? 'Auto (first to run out)' : rxnLabel(row) + (fixed ? ' (amount fixed at ' + fixed + ' mmol)' : '') });
   }
   // 목표 몰 농도 → 용매 부피 역산. 용매 부피 합이 있으면 그 비율대로 나누고, 모두 비었으면 첫 용매에 전부
   function rxnSetMolarity(box, inp) {
@@ -4888,13 +4895,13 @@
       + opts.map(function (k) { return '<option value="' + k + '"' + (k === r.role ? ' selected' : '') + '>' + RXN_ROLE[k] + '</option>'; }).join('') + '</select></td>';
     var del = '<td class="ac"><i class="material-symbols-outlined elnRxnDel" title="Remove">close</i></td>';
     if (r.role === 'reagent') {
-      tr.innerHTML = role + '<td>' + rxnIn('name', 'Reagent name', r.name, 'elnRxnTxt') + '</td><td></td><td></td><td></td>'
+      tr.innerHTML = role + '<td>' + rxnIn('name', 'Reagent name', r.name, 'elnRxnTxt') + '</td><td></td><td></td><td></td><td></td>'
         + '<td colspan="4">' + rxnIn('amount', 'Amount (e.g., 10 ppm Pt)', r.amount, 'elnRxnTxt') + '</td>' + del;
       return tr;
     }
     var vol = '<td>' + rxnIn('volume', '', r.volume, 'num') + '</td>';   // 저장값 그대로(역할 바꾸기·몰 농도 역산은 소수 둘째 자리로 저장)
     if (r.role === 'solvent' && r.text) {   // 이름 용매: 이름 + 부피
-      tr.innerHTML = role + '<td>' + rxnIn('name', 'Solvent name', r.name, 'elnRxnTxt') + '</td><td></td><td></td><td></td><td></td><td></td><td></td>' + vol + del;
+      tr.innerHTML = role + '<td>' + rxnIn('name', 'Solvent name', r.name, 'elnRxnTxt') + '</td><td></td><td></td><td></td><td></td><td></td><td></td><td></td>' + vol + del;
       return tr;
     }
     // 이름은 고칠 수 있음(구조만 ChemStudio 에서 가져옴). 고쳤으면 분자식 아래에 ChemStudio 원래 이름 + Reset 이 늘 보임
@@ -4904,19 +4911,20 @@
         : '<span class="roundBox outline orange font12 elnRxnWarn" title="ChemStudio sent no formula, so MW, amounts and the atom balance are not available for this structure.">No formula</span>')
       + '<div class="elnRxnOrig"' + (rxnRenamed(r) ? '' : ' hidden') + '>ChemStudio name: <span>' + esc(r.csName || '') + '</span><a href="javascript:;" class="elnRxnReset">Reset</a></div></td>';
     if (r.role === 'solvent') {   // ChemStudio 구조를 용매로: 이름·분자식·MW + 부피(반응식에서는 화살표 위 이름)
-      tr.innerHTML = role + nameTd + '<td class="ar" data-o="mw"></td><td></td><td></td><td></td><td></td><td></td>' + vol + del;
+      tr.innerHTML = role + nameTd + '<td class="ar" data-o="mw"></td><td></td><td></td><td></td><td></td><td></td><td></td>' + vol + del;
       return tr;
     }
     var coef = '<td>' + rxnIn('coef', '1', r.coef === 1 ? '1' : r.coef, 'num sm') + '</td>';
-    if (r.role === 'reactant') {   // Equiv 칸 앞 동그라미 = 한계 반응물 지정(라디오처럼 하나만)
-      tr.innerHTML = role + nameTd + '<td class="ar" data-o="mw"></td>' + coef
-        + '<td class="ar elnRxnEqTd"><span data-o="equiv"></span><div class="elnRxnLimCtl"></div></td>'   // 숫자 아래 = 한계 반응물 글자 버튼(rxnRefresh 가 채움)
+    if (r.role === 'reactant') {   // Purity(비면 100 %) · Equiv 입력(치면 한계 반응물 기준으로 양 계산) + 아래 한계 반응물 글자 버튼(rxnRefresh 가 채움)
+      tr.innerHTML = role + nameTd + '<td class="ar" data-o="mw"></td>'
+        + '<td>' + rxnIn('purity', '100', r.purity, 'num sm') + '</td>' + coef
+        + '<td class="elnRxnEqTd">' + rxnIn('equiv', '', r.basis === 'equiv' ? r.equiv : null, 'num sm') + '<div class="elnRxnLimCtl"></div></td>'
         + '<td>' + rxnIn('mass', '', r.basis === 'mass' ? r.mass : null, 'num') + '</td>'
         + '<td>' + rxnIn('mmol', '', r.basis === 'mmol' ? r.mmol : null, 'num') + '</td>'
         + '<td>' + rxnIn('density', '', r.density, 'num') + '</td>'
         + '<td>' + rxnIn('volume', '', r.basis === 'volume' ? r.volume : null, 'num') + '</td>' + del;
     } else {   // 생성물: 질량 칸 = 이론 질량(읽기 전용) + 실측 입력 + 수율, mmol 칸 = 이론 mmol
-      tr.innerHTML = role + nameTd + '<td class="ar" data-o="mw"></td>' + coef + '<td></td>'
+      tr.innerHTML = role + nameTd + '<td class="ar" data-o="mw"></td><td></td>' + coef + '<td></td>'
         + '<td><div class="elnRxnTheo" data-o="theoMass"></div>' + rxnIn('actual', 'Actual (g)', r.actual, 'num') + '<div class="elnRxnYield" data-o="yield"></div></td>'
         + '<td class="ar"><span class="elnRxnTheo" data-o="theoMmol"></span></td><td></td><td></td>' + del;
     }
@@ -4939,11 +4947,19 @@
         if (lc && lc.getAttribute('data-st') !== st0) {
           lc.setAttribute('data-st', st0);
           lc.innerHTML = st0 === 'off' ? '<a href="javascript:;" class="elnRxnLimSet" title="Use this reactant as the basis for Equiv and the theoretical yield">Set limiting</a>'
-            : st0 === 'auto' ? '<span class="elnRxnLimTag" title="Chosen automatically: this reactant runs out first">Limiting · auto</span>'
+            : st0 === 'auto' ? '<span class="elnRxnLimTag" title="Chosen automatically: of the reactants with an entered amount, this one runs out first">Limiting · auto</span>'
             : '<span class="elnRxnLimTag fixed">Limiting · fixed</span><a href="javascript:;" class="elnRxnLimAuto" title="Let the reactant that runs out first be the limiting reagent">Auto</a>';
         }
         tr.classList.toggle('elnRxnShort', calc.short.indexOf(i) >= 0);
-        out('equiv', rxnFix(o.equiv, 2));
+        // Equiv 칸 — 한계 반응물은 늘 1.00(입력 막음), 나머지는 친 값(basis equiv) 또는 계산값
+        var eq = tr.querySelector('input[data-f="equiv"]');
+        if (eq) {
+          var isLim = i === calc.limiting || i === calc.pinned;   // 지정했지만 양이 아직 없는 행도 Equiv 는 칠 수 없음(기준이므로)
+          eq.readOnly = isLim || rxnFrozen(box);
+          eq.classList.toggle('elnRxnEqLim', isLim);
+          eq.title = isLim ? 'The limiting reagent is the basis (1.00)' : 'Type an Equiv to calculate this amount from the limiting reagent';
+          if (r.basis !== 'equiv' || isLim) put('equiv', o.equiv, 2);
+        }
         if (r.basis !== 'mass') put('mass', o.mass, 3);
         if (r.basis !== 'mmol') put('mmol', o.mmol, 2);
         if (r.basis !== 'volume') put('volume', o.volume, 2);
@@ -5060,16 +5076,17 @@
     if (!model.rows.length) return '<p class="muted">No structures.</p>';
     var rows = model.src.map(function (r, i) {
       var o = calc.rows[i];
-      if (r.role === 'reagent') return [RXN_ROLE[r.role], rxnLabel(r), '', '', '', String(r.amount || '').trim(), '', '', ''];
-      if (r.role === 'solvent' && r.text) return [RXN_ROLE[r.role], rxnLabel(r), '', '', '', '', '', '', rxnFix(o.volume, 2)];
+      if (r.role === 'reagent') return [RXN_ROLE[r.role], rxnLabel(r), '', '', '', '', String(r.amount || '').trim(), '', '', ''];
+      if (r.role === 'solvent' && r.text) return [RXN_ROLE[r.role], rxnLabel(r), '', '', '', '', '', '', '', rxnFix(o.volume, 2)];
       var nm = rxnLabel(r) + (r.formula ? ' (' + r.formula + ')' : ' (no formula)') + (rxnRenamed(r) ? ' · ChemStudio: ' + r.csName : '');
-      if (r.role === 'solvent') return [RXN_ROLE[r.role], nm, o.mw != null ? rxnFix(o.mw, 2) : 'n/a', '', '', '', '', '', rxnFix(o.volume, 2)];
+      if (r.role === 'solvent') return [RXN_ROLE[r.role], nm, o.mw != null ? rxnFix(o.mw, 2) : 'n/a', '', '', '', '', '', '', rxnFix(o.volume, 2)];
       if (r.role === 'product') {
         var ms = o.theoMass != null ? rxnFix(o.theoMass, 3) + ' theor.' : '';
         if (r.actual != null) ms += (ms ? ' / ' : '') + rxnFix(r.actual, 3) + ' actual' + (o.yieldPct != null ? ' (' + rxnFix(o.yieldPct, 1) + ' %)' : '');
-        return [RXN_ROLE[r.role], nm, o.mw != null ? rxnFix(o.mw, 2) : 'n/a', String(o.coef), '', ms, o.theoMmol != null ? rxnFix(o.theoMmol, 2) + ' theor.' : '', '', ''];
+        return [RXN_ROLE[r.role], nm, o.mw != null ? rxnFix(o.mw, 2) : 'n/a', '', String(o.coef), '', ms, o.theoMmol != null ? rxnFix(o.theoMmol, 2) + ' theor.' : '', '', ''];
       }
-      return [RXN_ROLE[r.role] + (i === calc.pinned ? ' (limiting, manual)' : i === calc.limiting ? ' (limiting)' : ''), nm, o.mw != null ? rxnFix(o.mw, 2) : 'n/a', String(o.coef), rxnFix(o.equiv, 2),
+      return [RXN_ROLE[r.role] + (i === calc.pinned ? ' (limiting, manual)' : i === calc.limiting ? ' (limiting)' : ''), nm, o.mw != null ? rxnFix(o.mw, 2) : 'n/a',
+        o.purity != null && o.purity < 1 ? rxnFix(o.purity * 100, 1) : '', String(o.coef), rxnFix(o.equiv, 2),
         rxnFix(o.mass, 3), rxnFix(o.mmol, 2), r.density != null ? String(r.density) : '', rxnFix(o.volume, 2)];
     });
     var checks = rxnChecks(model, calc).map(function (c) { return c.text; });
@@ -5081,7 +5098,7 @@
     }
     return (svg ? '<div class="rxnimg"><img alt="Reaction scheme" src="data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg) + '"></div>' : '')
       + (kv.length ? pdfKv(kv) : '')
-      + pdfRows(['Role', 'Name', 'MW (g/mol)', 'Coef.', 'Equiv', 'Mass (g)', 'mmol', 'Density (g/mL)', 'Volume (mL)'], rows)
+      + pdfRows(['Role', 'Name', 'MW (g/mol)', 'Purity (%)', 'Coef.', 'Equiv', 'Mass (g)', 'mmol', 'Density (g/mL)', 'Volume (mL)'], rows)
       + (checks.length ? '<p class="checks"><b>Checks:</b> ' + esc(checks.join(' · ')) + '</p>' : '');
   }
   // Reaction 만 담은 인쇄용 미리보기 — 노트 PDF 와 같은 껍데기·CSS(pdfShell·pdfCss), 사용자가 Save as PDF

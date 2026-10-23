@@ -97,13 +97,16 @@
   function num(x) { if (x == null || x === '') return null; var n = Number(x); return isFinite(n) ? n : null; }
 
   /* 화학량론 — model.rows[i] = { role:'reactant'|'product'|'reagent'|'solvent', formula, coef, mass(g), mmol, volume(mL), density(g/mL),
-     basis:'mass'|'mmol'|'volume'(반응물에서 마지막으로 입력한 칸), actual(생성물 실측 g), limit(반응물: 사용자가 한계 반응물로 지정) }.
+     purity(%, 비면 100), equiv(basis 'equiv' 일 때 친 값),
+     basis:'mass'|'mmol'|'volume'|'equiv'(반응물에서 마지막으로 입력한 칸), actual(생성물 실측 g), limit(반응물: 사용자가 한계 반응물로 지정) }.
      반환: { rows:[{ mw, coef, mass, mmol, volume, equiv, theoMmol, theoMass, yieldPct }], limiting: 계산 기준 행 index(-1 = 없음),
-             auto: 가장 먼저 떨어지는 반응물 index, pinned: 지정 행 index(-1 = 자동), short:[먼저 떨어지는 반응물 index](지정일 때만),
+             auto: 가장 먼저 떨어지는 반응물 index, pinned: 지정 행 index(-1 = 자동), short:[한계 반응물보다 먼저 떨어지는 반응물 index],
              totalVolume(mL), solventVolume(mL), volumeExcluded:[부피를 모르는 반응물 index], molarity(M) }.
-     · 반응물: basis 칸에서 나머지를 유도(mass↔mmol 은 MW, mass↔volume 은 밀도). 용매: 부피만
-     · 한계 반응물 = 지정이 있으면 그 행(양을 아직 안 넣었으면 -1), 없으면 mmol 이 있는 반응물 중 mmol/coef 최소(0 포함).
-       equiv = (mmol/coef) / (한계 mmol/한계 coef) — 지정한 행보다 먼저 떨어지는 반응물은 1 미만이 되고 short 에 들어감
+     · 반응물: basis 칸에서 나머지를 유도(mass↔mmol 은 MW 와 순도, mass↔volume 은 밀도). 질량 · 부피 = 저울에 다는 양(순도 포함 그대로),
+       mmol = 실제 반응하는 양 = 질량 × 순도 / MW. 용매: 부피만
+     · 한계 반응물 = 지정이 있으면 그 행(양을 아직 안 넣었으면 -1), 없으면 직접 양을 넣은 반응물(basis 가 equiv 가 아닌 것) 중 mmol/coef 최소(0 포함).
+       basis 'equiv' 행은 한계 반응물 기준으로 mmol = equiv × 한계 mmol/한계 coef × 자기 coef(한계 후보에서 빠짐 — 서로 물고 돌지 않게)
+       equiv = (mmol/coef) / (한계 mmol/한계 coef) — 1 미만(지정 · equiv 입력으로 생김)은 short 에 들어감
      · 생성물 이론 mmol = 한계 mmol / 한계 coef × 생성물 coef, 이론 질량 = 이론 mmol × MW / 1000, 수율 = 실측 / 이론 × 100
      · 총 부피 = 용매 부피 + 부피가 있는 반응물(밀도로 유도 포함). 양(질량·mmol)은 있는데 부피를 모르는 반응물(밀도·분자식 없음)은 빼고 volumeExcluded 에.
        몰 농도 = 한계 반응물 mmol / 총 부피 mL (= mol/L) */
@@ -114,19 +117,21 @@
         equiv: null, theoMmol: null, theoMass: null, yieldPct: null };
       if (r.role === 'solvent') o.volume = num(r.volume);
       if (r.role === 'reactant') {
-        var d = num(r.density), basis = r.basis || 'mass';
+        var d = num(r.density), basis = r.basis || 'mass', p = num(r.purity);
         if (d != null && d <= 0) d = null;
+        p = p != null && p > 0 && p <= 100 ? p / 100 : 1;   // 순도 0 초과 ~ 100 % 만, 그 밖 · 빈칸 = 100 %
+        o.purity = p; o.d = d;
         if (basis === 'mmol') {
           o.mmol = num(r.mmol);
-          if (o.mmol != null && o.mw) o.mass = o.mmol * o.mw / 1000;
+          if (o.mmol != null && o.mw) o.mass = o.mmol * o.mw / 1000 / p;
         } else if (basis === 'volume') {
           o.volume = num(r.volume);
           if (o.volume != null && d != null) o.mass = o.volume * d;
-          if (o.mass != null && o.mw) o.mmol = o.mass / o.mw * 1000;
-        } else {
+          if (o.mass != null && o.mw) o.mmol = o.mass * p / o.mw * 1000;
+        } else if (basis === 'mass') {
           o.mass = num(r.mass);
-          if (o.mass != null && o.mw) o.mmol = o.mass / o.mw * 1000;
-        }
+          if (o.mass != null && o.mw) o.mmol = o.mass * p / o.mw * 1000;
+        }   // basis 'equiv' = 한계 반응물이 정해진 뒤 아래에서
         if (basis !== 'volume' && o.mass != null && d != null) o.volume = o.mass / d;
       }
       out.push(o);
@@ -136,12 +141,19 @@
       var o = out[i];
       if (r.role !== 'reactant' || !(o.coef > 0)) return;
       if (r.limit && pinned < 0) pinned = i;
-      if (o.mmol == null || o.mmol < 0) return;   // 0 mmol 은 입력한 값이므로 한계 후보(빈칸 = null 만 제외)
+      if (r.basis === 'equiv' || o.mmol == null || o.mmol < 0) return;   // 0 mmol 은 입력한 값이므로 한계 후보(빈칸 = null · equiv 입력 행만 제외)
       var per = o.mmol / o.coef;
       if (per < autoBest) { autoBest = per; auto = i; }
     });
     var lim = auto, best = autoBest;
-    if (pinned >= 0) { lim = out[pinned].mmol != null && out[pinned].mmol >= 0 ? pinned : -1; best = lim >= 0 ? out[pinned].mmol / out[pinned].coef : Infinity; }
+    if (pinned >= 0) { lim = rows[pinned].basis !== 'equiv' && out[pinned].mmol != null && out[pinned].mmol >= 0 ? pinned : -1; best = lim >= 0 ? out[pinned].mmol / out[pinned].coef : Infinity; }
+    if (lim >= 0) rows.forEach(function (r, i) {   // equiv 로 넣은 반응물 — 한계 반응물에서 mmol, 거기서 질량(순도) · 부피(밀도)
+      var o = out[i], e = num(r.equiv);
+      if (r.role !== 'reactant' || r.basis !== 'equiv' || e == null || i === lim) return;
+      o.mmol = e * best * o.coef;
+      if (o.mw) o.mass = o.mmol * o.mw / 1000 / o.purity;
+      if (o.mass != null && o.d != null) o.volume = o.mass / o.d;
+    });
     if (lim >= 0) {
       rows.forEach(function (r, i) {
         var o = out[i];
@@ -158,7 +170,8 @@
       if (r.role === 'product' && act != null && o.theoMass > 0) o.yieldPct = act / o.theoMass * 100;
     });
     var short = [];
-    if (pinned >= 0 && lim >= 0) rows.forEach(function (r, i) { if (r.role === 'reactant' && out[i].equiv != null && out[i].equiv < 1 - 1e-9) short.push(i); });
+    if (lim >= 0) rows.forEach(function (r, i) { if (r.role === 'reactant' && i !== lim && out[i].equiv != null && out[i].equiv < 1 - 1e-9) short.push(i); });
+    out.forEach(function (o) { delete o.d; });   // 계산용 밀도는 결과에서 뺌(purity 는 남김 — 화면 · PDF 가 씀)
     var tv = 0, sv = 0, excl = [];
     rows.forEach(function (r, i) {
       var o = out[i];
