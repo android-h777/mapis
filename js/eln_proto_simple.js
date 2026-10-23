@@ -671,7 +671,7 @@
     { code: 'LN-2604-00098', title: 'PSA Base Polymer Screening',                         date: '2026-04-12', status: 'done',   modules: ['fml','table','editor'] },
     { code: 'LN-2604-00115', title: 'Tackifier Compatibility Study',                       date: '2026-04-28', status: 'done',   modules: ['fml','table','chem'] },
     { code: 'LN-2605-00131', title: 'Crosslinker Ratio Optimization',                      date: '2026-05-06', status: 'review', modules: ['fml','table','editor','attach'] },
-    { code: 'LN-2605-00142', title: 'UV-Curable PSA Viscosity Improvement (RGBOLED)',      date: '2026-05-15', created: '2026-10-06', status: 'ing', current: true, projects: ['SN-26-0031', 'PT-26-0021', 'TS-26-0205'], modules: ['fml','editor','table','chem','attach'] },
+    { code: 'LN-2605-00142', title: 'UV-Curable PSA Viscosity Improvement (RGBOLED)',      date: '2026-05-15', created: '2026-10-06', status: 'ing', current: true, projects: ['SN-26-0031', 'PT-26-0021', 'TS-26-0205'], modules: ['fml','editor','table','chem','reaction','attach'] },
     { code: 'LN-2605-00150', title: 'Pilot Coating Trial #1',                              date: '2026-05-22', status: 'ing',    modules: ['editor','attach'] },
     { code: 'LN-2606-00171', title: 'Mass-Production Validation Plan',                     date: '2026-06-03', status: 'draft',  modules: ['editor'] }
   ];
@@ -782,7 +782,7 @@
     //  · basic(Overview)·approval: 고정 → 손대지 않음
     //  · fml(Formulation): 정적 리치카드 → 제거 대신 show/hide(제거 시 세션 내 복구 불가)
     //  · editor/table/chem/attach: 동적 → 전부 제거 후 타깃 순서대로 재생성(순서·구성 정확). Related Items 는 Basic Data 안(resetBasicRelated)
-    var DYN_MOD_KEYS = ['editor', 'table', 'chem', 'attach'];
+    var DYN_MOD_KEYS = ['editor', 'table', 'chem', 'reaction', 'attach'];
     function applyNoteModules(modules) {
       var article = document.getElementById('tab_ov'); if (!article) return;
       ELN.audit.mute++;   // 모듈 일괄 재구성 중엔 감사 로그 없음
@@ -1374,7 +1374,8 @@
     { key: 'editor',   icon: 'edit_note',   title: 'Editor',             desc: 'Rich text: text, tables, images' },
     { key: 'table',    icon: 'insert_chart', title: 'Data Visualization', desc: 'Editable table + multi-series chart' },
     { key: 'chem',     icon: 'hexagon',     title: 'ChemStudio',         desc: 'Sketch a chemical structure' },
-    { key: 'fml',      icon: 'science',     title: 'Formulation',        desc: 'Embed from formulator' },
+    { key: 'reaction', icon: 'experiment',  title: 'Reaction',           desc: 'Reaction scheme with stoichiometry' },
+    { key: 'fml',     icon: 'science',     title: 'Formulation',        desc: 'Embed from formulator' },
     { key: 'attach',   icon: 'attach_file', title: 'Attachments',        desc: 'Files & documents' }
   ];
 
@@ -1423,6 +1424,25 @@
         + '<a href="javascript:;" class="waves-effect waves-light hBtn elnChemOpen"><i class="material-symbols-outlined left">add</i>Add New</a>'
         + '<a href="javascript:;" class="waves-effect waves-light hBtn elnChemLink"><i class="material-symbols-outlined left">library_add</i>Add Existing</a>'
         + '</div></div>';
+      // Reaction: 도구(추가 3종 + Export)는 addNoteModule 이 헤더 툴바로 옮김. 반응식 → 조건 → 화학량론 표 → 점검 칩 순
+      case 'reaction': return '<div class="elnRxnBox">'
+        + '<div class="elnRxnTools">'
+        + '<span class="elnRxnAddBtns">'
+        + '<a href="javascript:;" class="waves-effect waves-light hBtn elnRxnAddReac" title="Pick a reactant structure in ChemStudio"><i class="material-symbols-outlined left">add</i>Reactant</a>'
+        + '<a href="javascript:;" class="waves-effect waves-light hBtn elnRxnAddProd" title="Pick a product structure in ChemStudio"><i class="material-symbols-outlined left">add</i>Product</a>'
+        + '<a href="javascript:;" class="waves-effect waves-light hBtn elnRxnAddReag" title="Add a reagent, catalyst or solvent by name"><i class="material-symbols-outlined left">add</i>Reagent</a>'
+        + '</span>'
+        + '<a href="javascript:;" class="waves-effect waves-light hBtn elnRxnExport" title="Export the reaction as an image or PDF"><i class="material-symbols-outlined left">download</i>Export</a>'
+        + '</div>'
+        + '<div class="elnRxnScheme" style="display:none;"><img class="elnRxnImg" alt="Reaction scheme"></div>'
+        + '<div class="elnChemEmptyLine elnRxnEmpty"><i class="material-symbols-outlined">experiment</i>No structures yet. Add reactants and products from ChemStudio.</div>'
+        + '<div class="elnBasicRow elnRxnCondRow"><label class="elnBasicLabel">Conditions</label>'
+        + '<div class="aniInput"><input type="text" class="browser-default elnRxnCond" placeholder="e.g., 80 °C, 2 h, N2" autocomplete="off" spellcheck="false"><span class="focus-border"></span></div></div>'
+        + '<div class="fixedTable hBorderTable vMiddle hScroll elnRxnTblWrap" style="display:none;"><table class="elnRxnTable">'
+        + '<thead><tr><th>Role</th><th>Name</th><th>MW (g/mol)</th><th>Coef.</th><th title="Equivalents relative to the limiting reagent, adjusted for coefficients">Equiv</th><th>Mass (g)</th><th>mmol</th><th>Density (g/mL)</th><th>Volume (mL)</th><th class="elnRxnDelCol"></th></tr></thead>'
+        + '<tbody></tbody></table></div>'
+        + '<div class="elnRxnChecks"></div>'
+        + '</div>';
       default: return '<div class="elnModText">…</div>';
     }
   }
@@ -1654,10 +1674,10 @@
     body.querySelectorAll('textarea').forEach(autoGrowTextarea);   // 추가된 textarea 초기 높이
 
     // 모듈 add 컨트롤(Add New/Add Existing/Add Item/Link…) → 제목 아래 별도 툴바(우측 정렬). Formulation 카드(.elnFmlToolbar)와 동일
-    var addCtl = body.querySelector('.elnChemAdd, .elnFmlLink');
+    var addCtl = body.querySelector('.elnChemAdd, .elnFmlLink, .elnRxnTools');
     if (addCtl) {
       var modToolbar = document.createElement('div');
-      modToolbar.className = 'elnFmlToolbar';
+      modToolbar.className = 'elnFmlToolbar' + (addCtl.classList.contains('elnRxnTools') ? ' elnRxnToolbar' : '');   // Reaction 툴바는 잠금 중에도 Export 를 남김(CSS)
       modToolbar.appendChild(addCtl);
       sec.appendChild(modToolbar);
     }
@@ -1800,7 +1820,7 @@
   function loadMyTemplates() { try { return JSON.parse(localStorage.getItem(MY_TMPL_KEY) || '[]'); } catch (e) { return []; } }
   function saveMyTemplates(arr) { try { localStorage.setItem(MY_TMPL_KEY, JSON.stringify(arr)); } catch (e) {} }
   var STATIC_SECTION = { card_basic: 'overview', card_fml: 'formulation', card_concl: 'conclusion' };
-  var MODULE_KEYS = ['editor', 'table', 'fml', 'attach', 'chem'];   // Related Items 는 2026-10-21 Basic Data 안으로(예전에 저장한 My Template 의 'related' 는 건너뜀)
+  var MODULE_KEYS = ['editor', 'table', 'fml', 'attach', 'chem', 'reaction'];   // Related Items 는 2026-10-21 Basic Data 안으로(예전에 저장한 My Template 의 'related' 는 건너뜀)
   // Public 템플릿 정의(pop 측) — sections는 [{type,label}]
   var PUBLIC_TEMPLATES = [
     { key: 'empty',       icon: 'description', name: 'Blank',       sections: [{ type: 'overview', label: 'Overview' }] },
@@ -1877,7 +1897,7 @@
     removeSection('card_concl');
     ATTACH_SEED = isDemoEntry();        // 데모 노트는 Attachments 에 파일 서버 첨부 5건
     try {
-      ['editor', 'table', 'chem', 'attach'].forEach(function (key) {
+      ['editor', 'table', 'chem', 'reaction', 'attach'].forEach(function (key) {
         if (document.querySelector('#tab_ov [data-modtype="' + key + '"]')) return;   // 이미 있으면 skip
         var mt = MODULE_TYPES.filter(function (m) { return m.key === key; })[0];
         if (mt) addNoteModule(mt, null, true);   // silent
@@ -3825,6 +3845,7 @@
   function wireModuleBody(key, body) {
     if (key === 'attach') wireFileModule(body);
     else if (key === 'chem') wireChemModule(body);
+    else if (key === 'reaction') wireReactionModule(body);
     else if (key === 'editor') wireEditorModule(body);
     else if (key === 'table') wireDataModule(body);
   }
@@ -4254,6 +4275,337 @@
     S2.mount(sel, { data: data, placeholder: 'Search structure name or formula', minimumResultsForSearch: 0, templateResult: S2.T.chem });
   }
 
+  /* ── Reaction 모듈 — 반응식(ChemStudio 구조) + 화학량론 표 + 점검(원자 수지·한계 반응물·이론 수율·수율).
+     계산·그림은 js/eln_reaction.js(window.ElnReaction). 구조는 ChemStudio 체험 서버의 고르기 창(?mode=pick)이 postMessage 로 보냄.
+     · 고르기 창은 Referer 로 출처를 확인하므로 noopener/noreferrer 를 붙이지 않음(로컬에서 열면 서버가 거절할 수 있음 — 허용 출처는 vercel 사이트)
+     · 상태는 페이지 메모리(box._rxn)뿐 — 다른 모듈과 같이 저장하지 않음. 구조 SVG 는 innerHTML 로 넣지 않고 <img src=data:> 로만 그림 ── */
+  var RXN_ORIGIN = 'https://apistest.kccworld.co.kr';
+  var RXN_PICK_URL = RXN_ORIGIN + '/login/chemStudioGuest?mode=pick';
+  var RXN_ROLE = { reactant: 'Reactant', product: 'Product', reagent: 'Reagent' };
+  var RXN_ROLE_CLS = { reactant: 'mocha25', product: 'cfblue25', reagent: 'stone25' };
+  var RXN_ORDER = { reactant: 0, reagent: 1, product: 2 };
+  var RXN_FIELD = { coef: 'Coef.', mass: 'Mass (g)', mmol: 'mmol', density: 'Density (g/mL)', volume: 'Volume (mL)', actual: 'Actual (g)', name: 'Name', amount: 'Amount' };
+  var rxnPending = null;   // 고르기 창을 연 카드·역할 { box, role } — 받은 구조는 여기로
+  var rxnSeq = 0;
+
+  function rxnState(box) { if (!box._rxn) box._rxn = { rows: [], conditions: '' }; return box._rxn; }
+  function rxnCard(box) { return box.closest('.cardBox'); }
+  function rxnFrozen(box) { var b = document.body.classList, c = rxnCard(box); return b.contains('elnApproved') || b.contains('elnTranslated') || !!(c && c.classList.contains('elnLocked')); }   // 승인·결재 잠금·번역 보기 = 읽기 전용
+  function rxnSorted(st) { return st.rows.slice().sort(function (a, b) { return (RXN_ORDER[a.role] - RXN_ORDER[b.role]) || (a.id - b.id); }); }   // 표·그림 순서: 반응물 → 시약 → 생성물(같은 역할은 추가 순)
+  function rxnFix(v, d) { return v == null || !isFinite(v) ? '' : v.toFixed(d); }
+  function rxnNum(s) {   // 입력칸 숫자(쉼표 허용). 빈칸 = null, 숫자가 아니거나 음수 = NaN(칸에 invalid 표시)
+    s = String(s == null ? '' : s).replace(/,/g, '').trim();
+    if (!s) return null;
+    var n = Number(s); return isFinite(n) && n >= 0 ? n : NaN;
+  }
+  function rxnLabel(r) { return r.role === 'reagent' ? (String(r.name || '').trim() || 'Reagent') : r.name; }
+  // 엔진 입력(계산·그림 공용) — 화면 순서대로
+  function rxnModel(box) {
+    var st = rxnState(box), rows = rxnSorted(st);
+    return { rows: rows.map(function (r) {
+      return { role: r.role, name: r.name, formula: r.formula, svg: r.svg, coef: r.coef, mass: r.mass, mmol: r.mmol, volume: r.volume, density: r.density, basis: r.basis, actual: r.actual };
+    }), conditions: st.conditions, src: rows };
+  }
+  // 점검 칩 목록 [{cls, text}] — 화면 칩·PDF 줄 공용
+  function rxnChecks(model, calc) {
+    var out = [], reac = [], prod = [];
+    model.rows.forEach(function (r) { if (r.role === 'reactant') reac.push(r); else if (r.role === 'product') prod.push(r); });
+    if (reac.length && prod.length) {
+      var bal = ElnReaction.balance(reac, prod);
+      if (bal.unknown.length) out.push({ cls: 'orange', text: 'Balance: n/a (no formula: ' + bal.unknown.join(', ') + ')' });
+      else if (bal.ok) out.push({ cls: 'green', text: 'Balanced' });
+      else out.push({ cls: 'orange', text: 'Unbalanced: ' + Object.keys(bal.diff).map(function (el) {   // 생성물 − 반응물
+        var d = Math.round(bal.diff[el] * 1000) / 1000; return el + ' ' + (d > 0 ? '+' : '') + d;
+      }).join(', ') });
+    }
+    if (calc.limiting >= 0) out.push({ cls: 'mocha25', text: 'Limiting reagent: ' + model.rows[calc.limiting].name });
+    model.rows.forEach(function (r, i) {
+      if (r.role !== 'product') return;
+      var o = calc.rows[i], who = prod.length > 1 ? ' (' + r.name + ')' : '';
+      if (o.theoMass != null) out.push({ cls: 'mocha25', text: 'Theoretical yield' + who + ': ' + rxnFix(o.theoMass, 3) + ' g' });
+      if (o.yieldPct != null) out.push({ cls: o.yieldPct > 100 ? 'orange' : 'mocha25', text: 'Yield' + who + ': ' + rxnFix(o.yieldPct, 1) + ' %' });
+    });
+    return out;
+  }
+  function rxnSchemeSvg(box) { return ElnReaction.schemeSvg(rxnModel(box)); }
+
+  function wireReactionModule(body) {
+    var box = body.querySelector('.elnRxnBox'); if (!box) return;
+    rxnState(box);
+    var tools = box.querySelector('.elnRxnTools');   // addNoteModule 이 헤더 툴바로 옮겨도 리스너·box 참조는 그대로
+    tools.querySelector('.elnRxnAddReac').addEventListener('click', function () { rxnOpenPicker(box, 'reactant'); });
+    tools.querySelector('.elnRxnAddProd').addEventListener('click', function () { rxnOpenPicker(box, 'product'); });
+    tools.querySelector('.elnRxnAddReag').addEventListener('click', function () { rxnAddReagent(box); });
+    var exp = tools.querySelector('.elnRxnExport');
+    exp.addEventListener('click', function () { rxnExportMenu(box, exp); });
+    // 조건 — 화살표 아래 글자. 감사 로그는 바뀐 채로 칸을 떠날 때 1건
+    var cond = box.querySelector('.elnRxnCond');
+    cond.addEventListener('focus', function () { cond._rxnBefore = cond.value; });
+    cond.addEventListener('input', function () { rxnState(box).conditions = cond.value; rxnRenderScheme(box); });
+    cond.addEventListener('change', function () {
+      if (cond.value !== cond._rxnBefore) auditMod(rxnCard(box), 'Value edited', { field: 'Conditions', before: cond._rxnBefore || '', after: cond.value });
+      cond._rxnBefore = cond.value;
+    });
+    // 표 입력 — 위임. input = 값 반영·재계산, change = 감사 로그
+    var tbody = box.querySelector('.elnRxnTable tbody');
+    tbody.addEventListener('focusin', function (e) { var el = e.target.closest('input[data-f]'); if (el) el._rxnBefore = el.value; });
+    tbody.addEventListener('input', function (e) {
+      var el = e.target.closest('input[data-f]'); if (!el || rxnFrozen(box)) return;
+      var row = rxnRowOf(box, el), f = el.getAttribute('data-f'); if (!row) return;
+      if (f === 'name' || f === 'amount') { row[f] = el.value; if (f === 'name') rxnRenderScheme(box); return; }
+      var v = rxnNum(el.value), bad = v !== v || (f === 'coef' && v === 0);   // NaN 이거나 coef 0
+      el.classList.toggle('invalid', bad);
+      if (f === 'coef') row.coef = bad || v == null ? 1 : v;   // 빈칸·잘못된 값 = 1
+      else {
+        row[f] = bad ? null : v;
+        if (f === 'mass' || f === 'mmol' || f === 'volume') row.basis = f;   // 마지막으로 친 칸이 기준(나머지는 유도)
+      }
+      rxnRefresh(box, el);
+    });
+    tbody.addEventListener('change', function (e) {
+      var el = e.target.closest('input[data-f]'); if (!el) return;
+      var row = rxnRowOf(box, el), f = el.getAttribute('data-f');
+      if (row && el.value !== el._rxnBefore) auditMod(rxnCard(box), 'Value edited', { field: rxnLabel(row) + ' · ' + (RXN_FIELD[f] || f), before: el._rxnBefore || '', after: el.value });
+      el._rxnBefore = el.value;
+    });
+    tbody.addEventListener('click', function (e) {
+      var del = e.target.closest('.elnRxnDel'); if (!del || rxnFrozen(box)) return;
+      var row = rxnRowOf(box, del); if (row) rxnRemove(box, row);
+    });
+    rxnRender(box);
+  }
+  function rxnRowOf(box, el) {
+    var tr = el.closest('tr[data-id]'), id = tr ? +tr.getAttribute('data-id') : -1;
+    return rxnState(box).rows.filter(function (r) { return r.id === id; })[0] || null;
+  }
+
+  // ChemStudio 고르기 창 — 전용 창 이름(apisChemPick)을 써서 이미 열려 있으면 그 창을 재사용(ChemStudio 모듈·헤더 버튼의 apisChemStudio 와 별개)
+  function rxnOpenPicker(box, role) {
+    if (rxnFrozen(box)) return;
+    rxnPending = { box: box, role: role };
+    var w = null;
+    try { w = window.open(RXN_PICK_URL, 'apisChemPick', 'width=1520,height=880,scrollbars=yes,resizable=yes'); } catch (e) { w = null; }
+    if (!w) { ELN.toast('Allow pop-ups to open ChemStudio.', 'warn'); return; }
+    try { w.focus(); } catch (e2) {}
+    ELN.toast('Pick a structure in ChemStudio to add it as ' + role + '.', 'info');
+    if (location.origin !== 'https://mapis-murex.vercel.app') ELN.toast('The ChemStudio picker sends structures only to the demo site (mapis-murex.vercel.app).', 'warn');   // 다른 주소에서는 고르기 창이 보내도 받지 못함
+  }
+  // 고르기 창 → 노트. 출처·형식이 맞는 메시지만, 고르기 창을 연 카드가 있을 때만 받음. 처리 뒤 id 가 있으면 pick-ack 로 결과를 돌려줌
+  window.addEventListener('message', function (e) {
+    if (e.origin !== RXN_ORIGIN) return;
+    var d = e.data;
+    if (!d || typeof d !== 'object' || d.type !== 'chemstudio:pick' || d.version !== 1) return;
+    var res;
+    if (!d.item || typeof d.item !== 'object') res = { ok: false, reason: 'Invalid structure data.' };
+    else if (!rxnPending || !document.body.contains(rxnPending.box)) res = { ok: false, reason: 'Open the picker from a Reaction section first.' };
+    else res = rxnReceiveEx(d.item, rxnPending.box, rxnPending.role);
+    if (typeof d.id === 'string' && d.id.length <= 100 && e.source) {
+      try {
+        var ack = { type: 'chemstudio:pick-ack', version: 1, id: d.id, ok: !!res.ok };
+        if (!res.ok) ack.reason = res.reason;
+        e.source.postMessage(ack, e.origin);
+      } catch (e3) {}
+    }
+  });
+  // 구조 1건 추가 — item = { seq, name, cas, formula, svg }. card 생략 = 고르기 창을 연 카드(없으면 첫 Reaction 카드), role 생략 = 그때 역할(없으면 reactant)
+  function rxnReceive(item, card, role) { return rxnReceiveEx(item, card, role).ok; }   // 시험용 true/false
+  function rxnReceiveEx(item, card, role) {   // → { ok, reason }
+    var box = card ? (card.classList && card.classList.contains('elnRxnBox') ? card : card.querySelector && card.querySelector('.elnRxnBox')) : null;
+    if (!box) box = rxnPending && document.body.contains(rxnPending.box) ? rxnPending.box : document.querySelector('#tab_ov .elnRxnBox');
+    if (!role) role = rxnPending && rxnPending.box === box ? rxnPending.role : 'reactant';
+    if (role !== 'product') role = 'reactant';
+    if (!item || typeof item !== 'object') return { ok: false, reason: 'Invalid structure data.' };
+    if (!box) return { ok: false, reason: 'Open the picker from a Reaction section first.' };
+    if (rxnFrozen(box)) { ELN.toast('This section is read-only.', 'warn'); return { ok: false, reason: 'This Reaction section is read-only.' }; }
+    var formula = String(item.formula == null ? '' : item.formula).trim();
+    var name = String(item.name == null ? '' : item.name).trim() || formula || 'Structure';
+    var row = { id: ++rxnSeq, role: role, name: name, formula: formula, cas: String(item.cas || ''), seq: item.seq, svg: typeof item.svg === 'string' ? item.svg : '',
+      coef: 1, mass: null, mmol: null, density: null, volume: null, basis: 'mass', actual: null };
+    rxnState(box).rows.push(row);
+    rxnRender(box);
+    ELN.toast('Added "' + name + '" as ' + role + '.', 'ok');
+    auditMod(rxnCard(box), 'Structure added', { detail: RXN_ROLE[role] + ': ' + name + (formula ? ' (' + formula + ')' : ' (no formula)') });
+    return { ok: true };
+  }
+  function rxnAddReagent(box) {
+    if (rxnFrozen(box)) return;
+    var row = { id: ++rxnSeq, role: 'reagent', name: '', amount: '' };
+    rxnState(box).rows.push(row);
+    rxnRender(box);
+    auditMod(rxnCard(box), 'Reagent added');
+    var inp = box.querySelector('tr[data-id="' + row.id + '"] input[data-f="name"]'); if (inp) inp.focus();
+  }
+  function rxnRemove(box, row) {
+    var st = rxnState(box);
+    st.rows = st.rows.filter(function (r) { return r !== row; });
+    rxnRender(box);
+    if (row.role === 'reagent') auditMod(rxnCard(box), 'Reagent removed', { detail: String(row.name || '').trim() || undefined });
+    else auditMod(rxnCard(box), 'Structure removed', { detail: RXN_ROLE[row.role] + ': ' + row.name + (row.formula ? ' (' + row.formula + ')' : '') });
+  }
+  // 빈 상태로(Copy 의 Include data 해제 등)
+  function rxnClear(box) {
+    box._rxn = { rows: [], conditions: '' };
+    var cond = box.querySelector('.elnRxnCond'); if (cond) cond.value = '';
+    rxnRender(box);
+  }
+
+  // 전체 다시 그리기(행 추가·삭제) — 표 행을 새로 만들고 값 채움
+  function rxnRender(box) {
+    var st = rxnState(box), tbody = box.querySelector('.elnRxnTable tbody');
+    tbody.innerHTML = '';
+    rxnSorted(st).forEach(function (r) { tbody.appendChild(rxnRowEl(r)); });
+    box.querySelector('.elnRxnTblWrap').style.display = st.rows.length ? '' : 'none';
+    // 다시 만든 입력칸도 잠금 상태를 따름(lockSection·setNoteApproved 는 그때 있던 칸만 잠금)
+    var card = rxnCard(box);
+    if (card && card.classList.contains('elnLocked')) tbody.querySelectorAll('input').forEach(function (el) { el.readOnly = true; el.setAttribute('data-elnlk', '1'); });
+    else if (rxnFrozen(box)) tbody.querySelectorAll('input').forEach(function (el) { el.readOnly = true; });
+    box._rxnKey = null;   // 표를 다시 그릴 때는 그림도 반드시 다시
+    rxnRefresh(box, null);
+    if (typeof initAllHBorderTableOverlays === 'function') { try { initAllHBorderTableOverlays(); } catch (e) {} }
+  }
+  function rxnIn(f, ph, val, cls) {
+    return '<input type="text" class="browser-default elnRxnIn' + (cls ? ' ' + cls : '') + '" data-f="' + f + '"' + (ph ? ' placeholder="' + esc(ph) + '"' : '')
+      + ' value="' + esc(val == null ? '' : val) + '" autocomplete="off" spellcheck="false">';
+  }
+  function rxnRowEl(r) {
+    var tr = document.createElement('tr');
+    tr.setAttribute('data-id', r.id); tr.className = 'elnRxnRow ' + r.role;
+    var role = '<td><span class="roundBox outline ' + RXN_ROLE_CLS[r.role] + ' font12 elnRxnRole">' + RXN_ROLE[r.role] + '</span></td>';
+    var del = '<td class="ac"><i class="material-symbols-outlined elnRxnDel" title="Remove">close</i></td>';
+    if (r.role === 'reagent') {
+      tr.innerHTML = role + '<td>' + rxnIn('name', 'Reagent name', r.name, 'elnRxnTxt') + '</td><td></td><td></td><td></td>'
+        + '<td colspan="4">' + rxnIn('amount', 'Amount (e.g., 10 ppm Pt)', r.amount, 'elnRxnTxt') + '</td>' + del;
+      return tr;
+    }
+    var nameTd = '<td><div class="elnRxnNm">' + esc(r.name) + '</div>'
+      + (r.formula ? '<div class="elnRxnFm">' + chemFormulaHtml(r.formula) + '</div>'
+        : '<span class="roundBox outline orange font12 elnRxnWarn" title="ChemStudio sent no formula, so MW, amounts and the atom balance are not available for this structure.">No formula</span>') + '</td>';
+    var coef = '<td>' + rxnIn('coef', '1', r.coef === 1 ? '1' : r.coef, 'num sm') + '</td>';
+    if (r.role === 'reactant') {
+      tr.innerHTML = role + nameTd + '<td class="ar" data-o="mw"></td>' + coef + '<td class="ar" data-o="equiv"></td>'
+        + '<td>' + rxnIn('mass', '', r.basis === 'mass' ? r.mass : null, 'num') + '</td>'
+        + '<td>' + rxnIn('mmol', '', r.basis === 'mmol' ? r.mmol : null, 'num') + '</td>'
+        + '<td>' + rxnIn('density', '', r.density, 'num') + '</td>'
+        + '<td>' + rxnIn('volume', '', r.basis === 'volume' ? r.volume : null, 'num') + '</td>' + del;
+    } else {   // 생성물: 질량 칸 = 이론 질량(읽기 전용) + 실측 입력 + 수율, mmol 칸 = 이론 mmol
+      tr.innerHTML = role + nameTd + '<td class="ar" data-o="mw"></td>' + coef + '<td></td>'
+        + '<td><div class="elnRxnTheo" data-o="theoMass"></div>' + rxnIn('actual', 'Actual (g)', r.actual, 'num') + '<div class="elnRxnYield" data-o="yield"></div></td>'
+        + '<td class="ar"><span class="elnRxnTheo" data-o="theoMmol"></span></td><td></td><td></td>' + del;
+    }
+    return tr;
+  }
+  // 값만 갱신(입력 중 포커스 유지) — 유도 칸·MW·Equiv·이론값·수율, 점검 칩, 반응식. skip = 지금 치고 있는 칸
+  function rxnRefresh(box, skip) {
+    var model = rxnModel(box), calc = ElnReaction.compute(model), tbody = box.querySelector('.elnRxnTable tbody');
+    model.src.forEach(function (r, i) {
+      var tr = tbody.querySelector('tr[data-id="' + r.id + '"]'), o = calc.rows[i]; if (!tr || r.role === 'reagent') return;
+      function out(k, txt) { var el = tr.querySelector('[data-o="' + k + '"]'); if (el) el.textContent = txt; }
+      function put(f, v, d) { var el = tr.querySelector('input[data-f="' + f + '"]'); if (el && el !== skip) { el.value = rxnFix(v, d); el.classList.remove('invalid'); } }
+      out('mw', o.mw != null ? rxnFix(o.mw, 2) : 'n/a');
+      tr.classList.toggle('elnRxnLim', i === calc.limiting);
+      if (r.role === 'reactant') {
+        out('equiv', rxnFix(o.equiv, 2));
+        if (r.basis !== 'mass') put('mass', o.mass, 3);
+        if (r.basis !== 'mmol') put('mmol', o.mmol, 2);
+        if (r.basis !== 'volume') put('volume', o.volume, 2);
+      } else {
+        out('theoMass', o.theoMass != null ? rxnFix(o.theoMass, 3) + ' theor.' : '');
+        out('theoMmol', o.theoMmol != null ? rxnFix(o.theoMmol, 2) + ' theor.' : '');
+        out('yield', o.yieldPct != null ? 'Yield ' + rxnFix(o.yieldPct, 1) + ' %' : '');
+      }
+    });
+    var chk = box.querySelector('.elnRxnChecks'); chk.innerHTML = '';
+    rxnChecks(model, calc).forEach(function (c) {
+      var s = document.createElement('span'); s.className = 'roundBox outline ' + c.cls + ' font12 elnRxnChip'; s.textContent = c.text; chk.appendChild(s);
+    });
+    rxnRenderScheme(box);
+  }
+  // 반응식 미리보기 — 엔진 SVG 를 <img src=data:> 로(구조 SVG 를 DOM 에 직접 넣지 않음)
+  function rxnRenderScheme(box) {
+    // 그림이 의존하는 값(행 id·역할·이름·분자식·계수·구조 길이·시약 이름·조건)이 같으면 다시 만들지 않음(질량·부피 등 입력마다 img 재생성 방지)
+    var model = rxnModel(box), key = JSON.stringify([model.conditions, model.src.map(function (r) {
+      return [r.id, r.role, r.name, r.formula, r.coef, r.svg ? r.svg.length : 0];
+    })]);
+    if (box._rxnKey === key) return;
+    box._rxnKey = key;
+    var svg = ElnReaction.schemeSvg(model), wrap = box.querySelector('.elnRxnScheme'), img = box.querySelector('.elnRxnImg');
+    box.querySelector('.elnRxnEmpty').style.display = svg ? 'none' : '';
+    wrap.style.display = svg ? '' : 'none';
+    if (svg) {
+      var m = /width="([\d.]+)" height="([\d.]+)"/.exec(svg);
+      img.src = 'data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg);
+      if (m) { img.width = +m[1]; img.height = +m[2]; }
+    } else img.removeAttribute('src');
+  }
+
+  /* Export — Image (PNG) / PDF. 읽기만 하므로 승인·잠금 노트에서도 됨. 메뉴는 Copy 메뉴와 같은 틀(버튼 색·폭) */
+  function rxnExportMenu(box, anchor) {
+    var menu = document.createElement('div'); menu.className = 'elnCtxMenu elnCopyMenu elnRxnExpMenu';
+    [{ icon: 'image', label: 'Image (PNG)', run: function () { rxnExportPng(box); } },
+     { icon: 'picture_as_pdf', label: 'PDF', run: function () { rxnExportPdf(box); } }].forEach(function (a) {
+      var it = document.createElement('div'); it.className = 'elnCtxMenuItem';
+      it.innerHTML = '<i class="material-symbols-outlined">' + a.icon + '</i><span class="elnCopyLbl">' + a.label + '</span>';
+      it.addEventListener('click', function () { ref.close(); a.run(); });
+      menu.appendChild(it);
+    });
+    var cs = getComputedStyle(anchor);
+    var ref = ELN.popover({ anchor: anchor, content: menu, width: Math.max(anchor.offsetWidth, 140) });
+    ref.el.classList.add('elnCopyPop');
+    ref.el.style.setProperty('--copy-c', cs.color);
+    ref.el.style.setProperty('--copy-b', cs.borderTopColor);
+  }
+  function rxnExportPng(box) {
+    var svg = rxnSchemeSvg(box);
+    if (!svg) { ELN.toast('Add reactants or products first.', 'warn'); return; }
+    ElnReaction.toPng(svg, 2).then(function (blob) {
+      var a = document.createElement('a');
+      a.href = URL.createObjectURL(blob); a.download = cloneSource().code + '_reaction.png';
+      document.body.appendChild(a); a.click();
+      setTimeout(function () { URL.revokeObjectURL(a.href); a.remove(); }, 1500);
+      auditMod(rxnCard(box), 'Reaction exported', { detail: 'Image (PNG)' });
+      ELN.toast('Reaction image downloaded.', 'ok');
+    }, function () { ELN.toast('Could not create the image.', 'err'); });
+  }
+  // PDF 본문(노트 PDF 의 섹션 본문으로도 씀) — 반응식 그림 + 조건 + 화학량론 표 + 점검 줄
+  function rxnPdfBody(box) {
+    var model = rxnModel(box), calc = ElnReaction.compute(model), svg = ElnReaction.schemeSvg(model);
+    if (!model.rows.length) return '<p class="muted">No structures.</p>';
+    var rows = model.src.map(function (r, i) {
+      var o = calc.rows[i];
+      if (r.role === 'reagent') return [RXN_ROLE[r.role], rxnLabel(r), '', '', '', String(r.amount || '').trim(), '', '', ''];
+      var nm = r.name + (r.formula ? ' (' + r.formula + ')' : ' (no formula)');
+      if (r.role === 'product') {
+        var ms = o.theoMass != null ? rxnFix(o.theoMass, 3) + ' theor.' : '';
+        if (r.actual != null) ms += (ms ? ' / ' : '') + rxnFix(r.actual, 3) + ' actual' + (o.yieldPct != null ? ' (' + rxnFix(o.yieldPct, 1) + ' %)' : '');
+        return [RXN_ROLE[r.role], nm, o.mw != null ? rxnFix(o.mw, 2) : 'n/a', String(o.coef), '', ms, o.theoMmol != null ? rxnFix(o.theoMmol, 2) + ' theor.' : '', '', ''];
+      }
+      return [RXN_ROLE[r.role] + (i === calc.limiting ? ' (limiting)' : ''), nm, o.mw != null ? rxnFix(o.mw, 2) : 'n/a', String(o.coef), rxnFix(o.equiv, 2),
+        rxnFix(o.mass, 3), rxnFix(o.mmol, 2), r.density != null ? String(r.density) : '', rxnFix(o.volume, 2)];
+    });
+    var checks = rxnChecks(model, calc).map(function (c) { return c.text; });
+    return (svg ? '<div class="rxnimg"><img alt="Reaction scheme" src="data:image/svg+xml;charset=utf-8,' + encodeURIComponent(svg) + '"></div>' : '')
+      + (String(model.conditions || '').trim() ? pdfKv([['Conditions', model.conditions.trim()]]) : '')
+      + pdfRows(['Role', 'Name', 'MW (g/mol)', 'Coef.', 'Equiv', 'Mass (g)', 'mmol', 'Density (g/mL)', 'Volume (mL)'], rows)
+      + (checks.length ? '<p class="checks"><b>Checks:</b> ' + esc(checks.join(' · ')) + '</p>' : '');
+  }
+  // Reaction 만 담은 인쇄용 미리보기 — 노트 PDF 와 같은 껍데기·CSS(pdfShell·pdfCss), 사용자가 Save as PDF
+  function rxnExportPdf(box) {
+    if (!rxnState(box).rows.length) { ELN.toast('Add reactants or products first.', 'warn'); return; }
+    var w = null;
+    try { w = window.open('', 'elnRxnPdf_' + Date.now(), 'width=1000,height=900,scrollbars=yes,resizable=yes'); } catch (e) { w = null; }
+    if (!w) { ELN.toast('Allow pop-ups to open the PDF preview.', 'warn'); return; }
+    var src = cloneSource(), card = rxnCard(box), base = location.href.replace(/[^\/]*$/, '');
+    var foot = 'Exported by ' + ELN.currentUser + ' on ' + toMdy(ELN.audit.now()) + ' · Not a controlled copy';
+    var h = '<header class="dochd"><img src="' + esc(base + 'img/MAPISLogo-25.png') + '" alt="MAPIS"><span>Electronic Lab Notebook · Reference Copy</span></header>'
+      + '<h1>' + esc('[' + src.code + '] ' + src.title) + '</h1>'
+      + '<section class="sec"><h2>' + esc(sectionNameOf(card) || 'Reaction') + '</h2>' + rxnPdfBody(box) + '</section>'
+      + '<footer class="docft"><span>' + esc(foot) + '</span><span>[' + esc(src.code) + ']</span></footer>';
+    pdfWrite(w, pdfShell(src.code + '_reaction', '[' + src.code + '] ' + (sectionNameOf(card) || 'Reaction'), h, pdfCss(base, foot), false));
+    try { w.focus(); } catch (e2) {}
+    auditMod(card, 'Reaction exported', { detail: 'PDF' });
+  }
+  ELN.reaction = { receive: rxnReceive };   // 고르기 창 없이 흐름을 시험할 때: ELN.reaction.receive({ name, formula, svg, cas, seq }, card?, role?)
+
   /* ── 우측 패널 가로 리사이즈 — 좌측 가장자리 드래그. 폭은 CSS 변수 --eln-right-w로 공유 ── */
   function initRightResize() {
     var aside = document.getElementById('elnRight');
@@ -4663,6 +5015,8 @@
       } else if (t === 'chem') {
         card.querySelectorAll('.elnChemList').forEach(function (ul) { ul.innerHTML = ''; });
         var cb = card.querySelector('.elnChemBox'); if (cb) syncChemEmpty(cb);
+      } else if (t === 'reaction') {   // 구조·시약·조건 모두 비움(도구는 헤더 툴바에 있어 본문을 다시 만들지 않음)
+        card.querySelectorAll('.elnRxnBox').forEach(rxnClear);
       }
     });
   }
@@ -4672,7 +5026,7 @@
     var title = src.title + ' (copy)';
     var srcProjects = curProjectCodes();   // 연결 프로젝트는 노트 메타 — 섹션 제거 전에 확보해 복제본에 승계
     ELN.audit.mute++;   // 1~4단계(구성 변경·값 비우기)는 감사 로그 없음 — 이후 audit.reset(nn)이 새 이력을 시드
-    var all, kept, DYN = ['editor', 'table', 'chem', 'attach'], modules = [];
+    var all, kept, DYN = ['editor', 'table', 'chem', 'reaction', 'attach'], modules = [];
     try {
     // 1) 승인/잠금/편집잠금 상태를 먼저 초기화 — 새 노트는 항상 완전 편집 가능
     apprView = false; setNoteApproved(false);
@@ -4863,7 +5217,7 @@
   // 덮어쓰기 — 지금 섹션(Basic Data·Approval·Audit 제외)을 모두 걷어내고 원본에서 고른 섹션을 원본 순서대로 다시 만든다.
   // Include data 를 끈 섹션은 모듈별 빈 상태로(Copy To 와 같은 cloneClearData). Basic Data 는 섹션 유지, Include data 면 원본 값(Business·Site·Related Items)으로
   function copyFromApply(src, items, basicData) {   // items: [{ key, data }]
-    var made = [], blank = [], nData = 0, DYN = ['editor', 'table', 'chem', 'attach'];
+    var made = [], blank = [], nData = 0, DYN = ['editor', 'table', 'chem', 'reaction', 'attach'];
     var article = document.getElementById('tab_ov');
     ELN.audit.mute++;
     try {
@@ -5270,6 +5624,7 @@
         var d = li._chemData || {}; return [d.name || pdfTxt(li.querySelector('.elnChemName2')), d.formula || '', d.cas || ''];
       }));
     }
+    if (t === 'reaction') { var rb = card.querySelector('.elnRxnBox'); return rb ? rxnPdfBody(rb) : ''; }   // 반응식 그림 + 화학량론 표 + 점검 줄
     var c = card.cloneNode(true); var tt = c.querySelector('.cardTit2'); if (tt) tt.remove();
     var txt = pdfTxt(c);
     return txt ? '<p>' + esc(txt) + '</p>' : '<p class="muted">No content.</p>';
@@ -5340,7 +5695,19 @@
       h += '<section class="sec audit"><h2><span class="no">' + (++n) + '</span>Audit Trail</h2>' + pdfRows(['Date / Time', 'User', 'Section', 'Action', 'Change'], arows) + '</section>';
     }
     h += '<footer class="docft"><span>' + esc(foot) + '</span><span>[' + esc(src.code) + ']</span></footer>';
-    var css = '@font-face{font-family:"Roboto";src:url(' + base + 'mapis_lib/font/Roboto-Regular.woff2) format("woff2");font-weight:400;}'
+    return pdfShell(src.code + '_' + src.title, '[' + src.code + '] ' + src.title, h, pdfCss(base, foot), o.autoPrint);
+  }
+  // 인쇄용 미리보기 창 껍데기(상단 바 Close · Save as PDF + A4 시트 + 워터마크) — 노트 PDF·Reaction PDF 공용
+  function pdfShell(title, barTitle, inner, css, autoPrint) {
+    return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>' + esc(title) + '</title><style>' + css + '</style></head><body>'
+      + '<div class="bar"><b>PDF Preview · ' + esc(barTitle) + '</b><button type="button" onclick="window.close()">Close</button><button type="button" class="pri" onclick="window.print()">Save as PDF</button></div>'
+      + '<div class="sheet"><div class="wm">NOT A CONTROLLED COPY</div>' + inner + '</div>'
+      + (autoPrint ? '<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},400);});<\/script>' : '')
+      + '</body></html>';
+  }
+  // 인쇄용 문서 CSS — base = 페이지 폴더 URL(폰트), foot = 쪽 아래 문구
+  function pdfCss(base, foot) {
+    return '@font-face{font-family:"Roboto";src:url(' + base + 'mapis_lib/font/Roboto-Regular.woff2) format("woff2");font-weight:400;}'
       + '@font-face{font-family:"Roboto";src:url(' + base + 'mapis_lib/font/Roboto-Medium.woff2) format("woff2");font-weight:600;}'
       + '@page{size:A4;margin:16mm 14mm 18mm;@bottom-left{content:"' + foot.replace(/"/g, '') + '";font:8pt Roboto,Arial,sans-serif;color:#8a7b70;}@bottom-right{content:"Page " counter(page) " of " counter(pages);font:8pt Roboto,Arial,sans-serif;color:#8a7b70;}}'
       + '*{box-sizing:border-box;}html{background:#e9e4de;}body{margin:0;font:10.5pt/1.5 Roboto,"Segoe UI",Arial,sans-serif;color:#2b211b;}'
@@ -5365,13 +5732,8 @@
       + '.errata{margin:8px 0;padding:6px 10px;background:#faf6f2;border:1px solid #e6ddd3;border-radius:6px;font-size:9pt;break-inside:avoid;}'
       + '.audit .grid{font-size:8pt;}.audit .grid td:first-child{white-space:nowrap;}'
       + '.docft{display:flex;justify-content:space-between;margin-top:22px;padding-top:6px;border-top:1px solid #e6ddd3;font-size:8pt;color:#8a7b70;}'
+      + '.rxnimg{margin:4px 0 8px;break-inside:avoid;}.rxnimg img{max-width:100%;height:auto;}.checks{font-size:9pt;color:#5a3e30;margin:4px 0 0;}'
       + '@media print{html{background:#fff;}.bar{display:none;}.sheet{width:auto;min-height:0;margin:0;padding:0;box-shadow:none;overflow:visible;}.docft{display:none;}}';
-    var title = src.code + '_' + src.title;
-    return '<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>' + esc(title) + '</title><style>' + css + '</style></head><body>'
-      + '<div class="bar"><b>PDF Preview · ' + esc('[' + src.code + '] ' + src.title) + '</b><button type="button" onclick="window.close()">Close</button><button type="button" class="pri" onclick="window.print()">Save as PDF</button></div>'
-      + '<div class="sheet"><div class="wm">NOT A CONTROLLED COPY</div>' + h + '</div>'
-      + (o.autoPrint ? '<script>window.addEventListener("load",function(){setTimeout(function(){window.print();},400);});<\/script>' : '')
-      + '</body></html>';
   }
   function pdfWrite(w, html) { w.document.open(); w.document.write(html); w.document.close(); }
   function pdfLoadingHtml() {

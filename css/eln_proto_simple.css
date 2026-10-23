@@ -1351,6 +1351,48 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions,body.elnApprov
 
 .elnChemCasTxt{margin-left:6px;color:#9b8c7e;}
 
+/* ── Reaction 모듈 — 반응식 미리보기(<img>) + 조건 + 화학량론 표(운영 fixedTable hBorderTable) + 점검 칩(roundBox outline) ── */
+/* 도구(+ Reactant · + Product · + Reagent · Export)는 JS 가 헤더 아래 .elnFmlToolbar 로 옮김 — ChemStudio 와 같은 자리 */
+.elnRxnTools,.elnRxnAddBtns{display:flex;gap:8px;flex-wrap:wrap;}
+.elnRxnBox{padding:2px 2px 4px;}
+.elnRxnScheme{margin-bottom:12px;padding:10px;border:1px solid #ece4d8;border-radius:12px;background:#fff;overflow-x:auto;text-align:center;}
+.elnRxnImg{display:inline-block;max-width:100%;height:auto;vertical-align:top;}
+.elnRxnCondRow{margin:4px 2px 6px;}
+.elnRxnCondRow .elnBasicLabel{flex:0 0 auto;}
+.elnRxnTblWrap{margin:8px 0 10px;}
+.elnRxnTable{width:100%;}
+.elnRxnTable th,.elnRxnTable td{white-space:nowrap;}
+.elnRxnTable td.ar{font-variant-numeric:tabular-nums;}
+.elnRxnTable th.elnRxnDelCol{width:36px;}
+.elnRxnNm{font-weight:700;color:#3a2c24;white-space:normal;min-width:120px;}
+.elnRxnFm{font-size:12.5px;color:#7a5240;font-family:ui-monospace,Menlo,Consolas,monospace;}
+.elnRxnFm sub{font-size:.78em;}
+/* 한계 반응물 — 이름 뒤 작은 배지(Data Visualization 표 머리 배지와 같은 모양) */
+.elnRxnTable tr.elnRxnLim .elnRxnNm::after{content:'Limiting';margin-left:6px;font-size:9px;font-weight:700;color:#fff;background:#A47864;border-radius:4px;padding:1px 5px;vertical-align:middle;letter-spacing:.3px;}
+.elnRxnRole,.elnRxnWarn{line-height:20px;padding:0 8px;}
+.elnRxnWarn{margin-top:2px;}
+.elnRxnIn{width:100%;min-width:72px;box-sizing:border-box;height:28px;margin:0;padding:0 7px;border:1px solid #e6ddd0;border-radius:6px;background:#fff;font-size:13px;color:#3a2c24;}
+.elnRxnIn.num{text-align:right;font-variant-numeric:tabular-nums;}
+.elnRxnIn.sm{min-width:44px;width:56px;}
+.elnRxnIn.elnRxnTxt{min-width:150px;}
+.elnRxnIn:focus{outline:none;border-color:#A47864;box-shadow:0 0 0 1px #A47864;}
+.elnRxnIn.invalid{border-color:#d65a5a;box-shadow:0 0 0 1px #d65a5a;}
+.elnRxnTheo{font-size:12px;color:#9b8c7e;text-align:right;}
+.elnRxnYield{font-size:12px;color:#7a5240;text-align:right;margin-top:2px;}
+.elnRxnTheo:empty,.elnRxnYield:empty{display:none;}
+div.elnRxnTheo{margin-bottom:3px;}
+.elnRxnDel{display:inline-block;vertical-align:middle;font-size:18px;color:#c9bcae;cursor:pointer;transition:color .15s;}
+.elnRxnDel:hover{color:#d65a5a;}
+.elnRxnChecks{display:flex;flex-wrap:wrap;gap:6px;}
+.elnRxnChecks:empty{display:none;}
+.elnRxnChip{line-height:22px;padding:0 10px;}
+/* 잠금(결재)·승인 view·번역 보기: 추가 버튼·행 × 숨김, 입력칸은 값만. Export 는 읽기라 남김(툴바 숨김 규칙보다 우선) */
+.cardBox.elnLocked .elnFmlToolbar.elnRxnToolbar,body.elnTranslated .elnFmlToolbar.elnRxnToolbar{display:flex !important;}
+.cardBox.elnLocked .elnRxnAddBtns,body.elnApproved .elnRxnAddBtns,body.elnTranslated .elnRxnAddBtns,
+.cardBox.elnLocked .elnRxnDel,body.elnApproved .elnRxnDel,body.elnTranslated .elnRxnDel{display:none !important;}
+.cardBox.elnLocked .elnRxnIn,body.elnApproved .elnRxnIn,body.elnTranslated .elnRxnIn{border-color:transparent;background:transparent;box-shadow:none;}
+.elnRxnIn[readonly]::placeholder{color:transparent;}
+
 /* ── 시작 템플릿 픽커(New Note 모달) — 모달 본문 폭을 그대로 채워 가로 스크롤 방지 ── */
 .elnTmplPicker{display:flex;flex-direction:column;gap:9px;width:100%;box-sizing:border-box;}
 .elnTmplGroupLabel{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#b1a08e;margin-top:4px;}
