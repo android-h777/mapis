@@ -1352,7 +1352,7 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions,body.elnApprov
 .elnChemCasTxt{margin-left:6px;color:#9b8c7e;}
 
 /* ── Reaction 모듈 — 반응식 미리보기(거른 인라인 SVG) + 조건 + 화학량론 표(운영 fixedTable hBorderTable) + 점검 칩(roundBox outline) ── */
-/* 도구(+ Reactant · + Product · + Reagent · Export)는 JS 가 헤더 아래 .elnFmlToolbar 로 옮김 — ChemStudio 와 같은 자리 */
+/* 도구(Add Structure)는 JS 가 헤더 아래 .elnFmlToolbar 로 옮김 — ChemStudio 와 같은 자리. 내보내기 아이콘은 머리 줄로 */
 .elnRxnTools,.elnRxnAddBtns{display:flex;gap:8px;flex-wrap:wrap;}
 .elnRxnBox{padding:2px 2px 4px;}
 .elnRxnScheme{margin-bottom:12px;padding:10px;border:1px solid #ece4d8;border-radius:12px;background:#fff;overflow-x:auto;text-align:center;}
@@ -1374,11 +1374,20 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions,body.elnApprov
 body.elnRxnDragging,body.elnRxnDragging *{cursor:grabbing !important;user-select:none;}
 .elnRxnDropLine{position:absolute;width:3px;margin-left:-1.5px;border-radius:2px;background:#A47B67;pointer-events:none;}
 .elnRxnDropLine.product{background:#7592ca;}
-.elnRxnArrow{cursor:pointer;}
-.elnRxnCondPh{transition:fill .15s ease;}
-.elnRxnArrow:hover .elnRxnCondPh{fill:#A47864;}
-.cardBox.elnLocked .elnRxnCondPh,body.elnApproved .elnRxnCondPh,body.elnTranslated .elnRxnCondPh{display:none;}
-.cardBox.elnLocked .elnRxnArrow,body.elnApproved .elnRxnArrow,body.elnTranslated .elnRxnArrow{cursor:default;}
+/* 화살표 위 = 시약 · 용매 추가, 화살표와 아래 = Conditions. 안내 글자(elnRxnPh)는 hover 때 모카색, "+ Add"(이미 있을 때)는 hover 때만 */
+.elnRxnArrow,.elnRxnArrowUp{cursor:pointer;}
+.elnRxnPh{transition:fill .15s ease;}
+.elnRxnArrow:hover .elnRxnPh,.elnRxnArrowUp:hover .elnRxnPh{fill:#A47864;}
+.elnRxnPhMore{opacity:0;transition:opacity .15s ease,fill .15s ease;}
+.elnRxnArrowUp:hover .elnRxnPhMore{opacity:1;}
+.cardBox.elnLocked .elnRxnPh,body.elnApproved .elnRxnPh,body.elnTranslated .elnRxnPh{display:none;}
+.cardBox.elnLocked .elnRxnArrow,body.elnApproved .elnRxnArrow,body.elnTranslated .elnRxnArrow,
+.cardBox.elnLocked .elnRxnArrowUp,body.elnApproved .elnRxnArrowUp,body.elnTranslated .elnRxnArrowUp{cursor:default;}
+/* 내보내기 — 카드 머리 줄, 섹션 삭제(×)와 같은 테두리 아이콘 버튼(hover 는 모카) */
+#tab_ov .cardTit2 > a.elnRxnExport{display:inline-flex;align-items:center;justify-content:center;width:28px;height:28px;flex:0 0 auto;box-sizing:border-box;
+  border:1px solid rgba(164,120,100,.35);border-radius:8px;background:#fff;color:#a08b7c;cursor:pointer;transition:color .15s,border-color .15s,background-color .15s;}
+#tab_ov .cardTit2 > a.elnRxnExport:hover{color:#A47864;border-color:#A47864;background:rgba(164,120,100,.08);}
+#tab_ov .cardTit2 > a.elnRxnExport i{font-size:19px;display:block;}
 /* 블록 도구 막대 — 흰 알약, 아이콘 22px 원형 hover(역할색 옅은 바탕) */
 .elnRxnBar{position:absolute;z-index:3;display:flex;align-items:center;gap:2px;height:28px;padding:0 4px;box-sizing:border-box;background:#fff;border:1px solid #e6ddd0;border-radius:14px;box-shadow:0 2px 8px rgba(60,40,30,.12);white-space:nowrap;}
 .elnRxnBar i{width:22px;height:22px;line-height:22px;font-size:16px;text-align:center;border-radius:11px;color:#7a6a5e;cursor:pointer;user-select:none;transition:background-color .15s,color .15s;}
@@ -1459,8 +1468,11 @@ div.elnRxnTheo{margin-bottom:3px;}
 .elnRxnChecks{display:flex;flex-wrap:wrap;gap:6px;}
 .elnRxnChecks:empty{display:none;}
 .elnRxnChip{line-height:22px;padding:0 10px;}
-/* 잠금(결재)·승인 view·번역 보기: 추가 버튼·행 × 숨김, 입력칸은 값만. Export 는 읽기라 남김(툴바 숨김 규칙보다 우선) */
-.cardBox.elnLocked .elnFmlToolbar.elnRxnToolbar,body.elnTranslated .elnFmlToolbar.elnRxnToolbar{display:flex !important;}
+/* 잠금(결재)·승인 view·번역 보기: 추가 버튼·행 × 숨김, 입력칸은 값만. 내보내기 아이콘(머리 줄)은 읽기라 그대로.
+   툴바엔 Add Structure 뿐이라 줄째 숨김(빈 줄 남지 않게), 빈 상태의 시약 · 용매 추가 링크도 숨김 */
+.cardBox.elnLocked .elnFmlToolbar.elnRxnToolbar,body.elnApproved .elnFmlToolbar.elnRxnToolbar,body.elnTranslated .elnFmlToolbar.elnRxnToolbar,
+.cardBox.elnLocked .elnRxnEmptyAdd,body.elnApproved .elnRxnEmptyAdd,body.elnTranslated .elnRxnEmptyAdd{display:none !important;}
+.elnRxnArrow:focus-visible,.elnRxnArrowUp:focus-visible{outline:2px solid #A47864;outline-offset:2px;}
 .cardBox.elnLocked .elnRxnAddBtns,body.elnApproved .elnRxnAddBtns,body.elnTranslated .elnRxnAddBtns,
 .cardBox.elnLocked .elnRxnDel,body.elnApproved .elnRxnDel,body.elnTranslated .elnRxnDel{display:none !important;}
 .cardBox.elnLocked .elnRxnIn,body.elnApproved .elnRxnIn,body.elnTranslated .elnRxnIn{border-color:transparent;background:transparent;box-shadow:none;}

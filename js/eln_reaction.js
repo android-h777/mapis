@@ -281,7 +281,8 @@
      반응물(+로 이음) → 화살표(위 = 시약 이름 ', ' 로, 아래 = 조건) → 생성물. 구조 아래 이름·분자식, coef ≠ 1 이면 구조 앞에 숫자.
      tag(R1·P1 …)가 있으면 이름 첫 줄 앞에 역할 색 작은 태그(속성으로만 칠함 — 페이지 CSS 없이 PNG·PDF 에도 그대로).
      opts.link = 화면용: 구조 블록마다 <g class="elnRxnSch" data-rid> + 투명 바탕판(hover 때 CSS 가 옅게 칠함), 이름 아래 양 줄
-                 <text class="elnRxnAmt">(행의 amt 글자, lim 이면 "Limiting"), 화살표 묶음 <g class="elnRxnArrow">(조건이 비면 "Add conditions"),
+                 <text class="elnRxnAmt">(행의 amt 글자, lim 이면 "Limiting"), 화살표 위 <g class="elnRxnArrowUp">(시약 · 용매 추가, 비면 "+ Reagent or solvent")
+                 · 화살표와 아래 <g class="elnRxnArrow">(Conditions, 비면 "Add conditions"),
                  아래 26px = 블록 도구 막대 자리. 내보내기는 link 없이.
      opts.idp = 구조 id 접두어 앞에 붙일 문자열(화면에 인라인으로 넣을 때 카드끼리 id 가 겹치지 않게).
      흰 바탕·산세리프·내용 크기. 외부 참조가 없어 <img> 와 canvas 에서 똑같이 그려짐. 그릴 구조가 없으면 '' */
@@ -361,7 +362,8 @@
       };
     }
     var reagTxt = reag.join(', '), condTxt = String((model && model.conditions) || '').trim();
-    var arrowW = Math.max(90, textW(reagTxt, LBL_PX) + 24, textW(condTxt, LBL_PX) + 24);
+    var arrowW = Math.max(90, textW(reagTxt, LBL_PX) + 24, textW(condTxt, LBL_PX) + 24,
+      opts.link ? textW('+ Reagent or solvent', LBL_PX) + 24 : 0);   // 화면용 안내 글자도 화살표 폭 안에
     var items = [];   // {kind:'blk'|'plus'|'arrow', w, draw}
     function pushSide(list) {
       list.forEach(function (r, i) {
@@ -377,14 +379,20 @@
     items.forEach(function (it) {
       if (it.kind === 'plus') body += '<text x="' + (x + it.w / 2) + '" y="' + (mid + PLUS_PX * 0.35) + '" font-size="' + PLUS_PX + '" text-anchor="middle">+</text>';
       else if (it.kind === 'arrow') {
-        var x1 = x + GAP, x2 = x + it.w - GAP, ax = (x1 + x2) / 2, ab = '';
-        ab += '<line x1="' + x1 + '" y1="' + mid + '" x2="' + (x2 - 9) + '" y2="' + mid + '" stroke="#2b211b" stroke-width="1.6"/>'
+        var x1 = x + GAP, x2 = x + it.w - GAP, ax = (x1 + x2) / 2;
+        var arrow = '<line x1="' + x1 + '" y1="' + mid + '" x2="' + (x2 - 9) + '" y2="' + mid + '" stroke="#2b211b" stroke-width="1.6"/>'
           + '<polygon points="' + x2 + ',' + mid + ' ' + (x2 - 11) + ',' + (mid - 5) + ' ' + (x2 - 11) + ',' + (mid + 5) + '" fill="#2b211b"/>';
-        if (reagTxt) ab += '<text x="' + ax + '" y="' + (mid - 9) + '" font-size="' + LBL_PX + '" text-anchor="middle">' + xesc(reagTxt) + '</text>';
-        if (condTxt) ab += '<text x="' + ax + '" y="' + (mid + 20) + '" font-size="' + LBL_PX + '" fill="#5a3e30" text-anchor="middle">' + xesc(condTxt) + '</text>';
-        else if (opts.link) ab += '<text class="elnRxnCondPh" x="' + ax + '" y="' + (mid + 20) + '" font-size="' + LBL_PX + '" fill="#c9bcae" text-anchor="middle">Add conditions</text>';
-        // 화면용: 화살표 묶음(투명 판 = 클릭 영역, 클릭하면 Conditions 칸으로)
-        body += opts.link ? '<g class="elnRxnArrow"><rect x="' + x1 + '" y="' + (mid - 26) + '" width="' + (x2 - x1) + '" height="54" fill="#fff" fill-opacity="0"/>' + ab + '</g>' : ab;
+        var up = reagTxt ? '<text x="' + ax + '" y="' + (mid - 9) + '" font-size="' + LBL_PX + '" text-anchor="middle">' + xesc(reagTxt) + '</text>' : '';
+        var dn = condTxt ? '<text x="' + ax + '" y="' + (mid + 20) + '" font-size="' + LBL_PX + '" fill="#5a3e30" text-anchor="middle">' + xesc(condTxt) + '</text>' : '';
+        if (!opts.link) body += arrow + up + dn;
+        else {   // 화면용: 화살표 위쪽 = 시약 · 용매 추가, 아래쪽(화살표 선 포함) = Conditions 칸. 각각 투명 판이 클릭 영역, 비어 있으면 옅은 안내
+          var hw = x2 - x1;
+          body += '<g class="elnRxnArrowUp" tabindex="0" role="button" aria-label="Add a reagent or solvent"><rect x="' + x1 + '" y="' + (mid - 30) + '" width="' + hw + '" height="27" fill="#fff" fill-opacity="0"/>'
+            + (up || '<text class="elnRxnPh" x="' + ax + '" y="' + (mid - 9) + '" font-size="' + LBL_PX + '" fill="#c9bcae" text-anchor="middle">+ Reagent or solvent</text>')
+            + (up ? '<text class="elnRxnPh elnRxnPhMore" x="' + ax + '" y="' + (mid - 24) + '" font-size="' + (LBL_PX - 1) + '" fill="#c9bcae" text-anchor="middle">+ Add</text>' : '') + '</g>'
+            + '<g class="elnRxnArrow" tabindex="0" role="button" aria-label="Edit conditions"><rect x="' + x1 + '" y="' + (mid - 3) + '" width="' + hw + '" height="31" fill="#fff" fill-opacity="0"/>' + arrow
+            + (dn || '<text class="elnRxnPh" x="' + ax + '" y="' + (mid + 20) + '" font-size="' + LBL_PX + '" fill="#c9bcae" text-anchor="middle">Add conditions</text>') + '</g>';
+        }
       } else body += it.draw(x, top);
       x += it.w;
     });
