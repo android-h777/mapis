@@ -1437,14 +1437,15 @@
         // 블록 도구 막대(구조에 마우스를 올리면 그 아래에) — 계수 −/+ · 한계 반응물 · 반응물 ↔ 생성물 · 삭제. 끌 때 놓을 자리 = 세로 선
         + '<div class="elnRxnBar" style="display:none;"><span class="elnRxnBarCoef" title="Coefficient"><i class="material-symbols-outlined" data-a="dec" title="Decrease coefficient">remove</i><b></b>'
         + '<i class="material-symbols-outlined" data-a="inc" title="Increase coefficient">add</i></span>'
-        + '<i class="material-symbols-outlined" data-a="lim"></i><i class="material-symbols-outlined" data-a="role">swap_horiz</i><i class="material-symbols-outlined" data-a="del" title="Remove">close</i></div>'
-        + '<div class="elnRxnDropLine" style="display:none;"></div></div>'
-        + '<div class="elnChemEmptyLine elnRxnEmpty"><i class="material-symbols-outlined">experiment</i>No structures yet. Add reactants and products from ChemStudio'
-        + '<span class="elnRxnEmptyAdd">, or <a href="javascript:;">add a reagent or solvent</a></span>.</div>'   // 반응식이 없을 때도 시약 · 용매를 더할 길
-        + '<div class="elnBasicRow elnRxnCondRow"><label class="elnBasicLabel">Conditions</label>'
-        + '<div class="aniInput"><input type="text" class="browser-default elnRxnCond" placeholder="e.g., 80 °C, 2 h, N2" autocomplete="off" spellcheck="false"><span class="focus-border"></span></div></div>'
+        + '<button type="button" class="elnRxnBarTxt" data-a="lim"></button><i class="material-symbols-outlined" data-a="role">swap_horiz</i><i class="material-symbols-outlined" data-a="del" title="Remove">close</i></div>'
+        + '<div class="elnRxnDropLine" style="display:none;"></div>'
+        // 조건 입력 — 반응식 화살표 아래를 누르면 그 자리에 뜸(Enter · 바깥 클릭 = 저장, Esc = 취소)
+        + '<input type="text" class="browser-default elnRxnCond" style="display:none;" placeholder="e.g., 80 °C, 2 h, N2" autocomplete="off" spellcheck="false" aria-label="Conditions"></div>'
+        // 빈 상태 — 문장은 한 덩어리(span, flex 사이 공백 없게) + 시약 · 용매 추가는 표준 버튼(반응식이 없을 때도 더할 길)
+        + '<div class="elnChemEmptyLine elnRxnEmpty"><i class="material-symbols-outlined">experiment</i><span>No structures yet. Add reactants and products from ChemStudio.</span>'
+        + '<a href="javascript:;" class="waves-effect waves-light hBtn elnRxnEmptyAdd"><i class="material-symbols-outlined left">add</i>Reagent or Solvent</a></div>'
         + '<div class="fixedTable hBorderTable vMiddle hScroll elnRxnTblWrap" style="display:none;"><table class="elnRxnTable">'
-        + '<thead><tr><th class="elnRxnDragCol"></th><th>Role</th><th>Name</th><th>MW (g/mol)</th><th>Coef.</th><th title="Equivalents relative to the limiting reagent, adjusted for coefficients. Click a circle to set the limiting reagent.">Equiv</th><th>Mass (g)</th><th>mmol</th><th>Density (g/mL)</th><th>Volume (mL)</th><th class="elnRxnDelCol"></th></tr></thead>'
+        + '<thead><tr><th class="elnRxnDragCol"></th><th>Role</th><th class="elnRxnNameCol">Name</th><th>MW (g/mol)</th><th>Coef.</th><th title="Equivalents relative to the limiting reagent, adjusted for coefficients. Click a circle to set the limiting reagent.">Equiv</th><th>Mass (g)</th><th>mmol</th><th>Density (g/mL)</th><th>Volume (mL)</th><th class="elnRxnDelCol"></th></tr></thead>'
         + '</table></div>'
         + '<div class="elnRxnSum" style="display:none;">'   // 총 부피 · 몰 농도(입력하면 용매 부피를 역산)
         + '<span class="elnRxnSumItem" title="Solvents plus reactants with a known volume"><span class="elnRxnSumLbl">Total volume</span><b data-o="tv"></b><span class="elnRxnSumU">mL</span></span>'
@@ -4306,6 +4307,10 @@
   var RXN_FIELD = { coef: 'Coef.', mass: 'Mass (g)', mmol: 'mmol', density: 'Density (g/mL)', volume: 'Volume (mL)', actual: 'Actual (g)', name: 'Name', amount: 'Amount' };
   var RXN_ROLES = ['reactant', 'reagent', 'solvent', 'product'];   // 표 tbody 순서(= RXN_ORDER)
   var rxnPending = null;   // 고르기 창을 연 카드 { box } — 받은 구조는 여기로(역할은 고르기 창이 메시지로 보냄)
+  var rxnPtrDown = false;   // 지금 마우스 · 펜 버튼이 눌려 있는지(조건 칸 blur 뒤 다시 그리기를 클릭 끝까지 미룰 때)
+  document.addEventListener('pointerdown', function () { rxnPtrDown = true; }, true);
+  document.addEventListener('pointerup', function () { rxnPtrDown = false; }, true);
+  document.addEventListener('pointercancel', function () { rxnPtrDown = false; }, true);
   var rxnSeq = 0;
 
   function rxnState(box) { if (!box._rxn) box._rxn = { rows: [], conditions: '' }; return box._rxn; }
@@ -4322,12 +4327,14 @@
     var n = Number(s); return isFinite(n) && n >= 0 ? n : NaN;
   }
   function rxnIsText(r) { return r.role === 'reagent' || !!r.text; }   // 이름만 친 행(시약·이름 용매) — 구조·분자식 없음, 역할 바꾸기 없음
-  function rxnLabel(r) { return rxnIsText(r) ? (String(r.name || '').trim() || RXN_ROLE[r.role]) : r.name; }
+  // 표시 이름 — 이름 행은 친 이름(없으면 역할), 구조 행은 고친 이름(비우면 ChemStudio 이름)
+  function rxnLabel(r) { return String(r.name || '').trim() || (rxnIsText(r) ? RXN_ROLE[r.role] : (r.csName || r.formula || 'Structure')); }
+  function rxnRenamed(r) { return !rxnIsText(r) && !!r.csName && String(r.name || '').trim() !== '' && String(r.name).trim() !== r.csName; }
   // 엔진 입력(계산·그림 공용) — 화면 순서대로
   function rxnModel(box) {
     var st = rxnState(box), rows = rxnSorted(st), tags = rxnTags(rows);
     return { rows: rows.map(function (r) {
-      return { role: r.role, name: rxnIsText(r) ? String(r.name || '').trim() : r.name, formula: r.formula, svg: r.svg, coef: r.coef, mass: r.mass, mmol: r.mmol, volume: r.volume,
+      return { role: r.role, name: rxnIsText(r) ? String(r.name || '').trim() : rxnLabel(r), formula: r.formula, svg: r.svg, coef: r.coef, mass: r.mass, mmol: r.mmol, volume: r.volume,
         density: r.density, basis: r.basis, actual: r.actual, limit: st.limitId === r.id, tag: tags[r.id] || '', rid: r.id };
     }), conditions: st.conditions, src: rows };
   }
@@ -4391,12 +4398,20 @@
     var exp = tools.querySelector('.elnRxnExport');
     exp.addEventListener('click', function () { rxnExportMenu(box, exp); });
     // 조건 — 화살표 아래 글자. 감사 로그는 바뀐 채로 칸을 떠날 때 1건
+    // 조건 — 반응식 화살표 아래에 뜨는 입력칸(rxnEditCond). 치는 동안은 값만 담고, 닫을 때 그림을 다시 그림(입력 중 화살표 폭이 바뀌어 칸이 어긋나지 않게)
     var cond = box.querySelector('.elnRxnCond');
-    cond.addEventListener('focus', function () { cond._rxnBefore = cond.value; });
-    cond.addEventListener('input', function () { rxnState(box).conditions = cond.value; rxnRenderScheme(box); });
-    cond.addEventListener('change', function () {
-      if (cond.value !== cond._rxnBefore) auditMod(rxnCard(box), 'Value edited', { field: 'Conditions', before: cond._rxnBefore || '', after: cond.value });
-      cond._rxnBefore = cond.value;
+    cond.addEventListener('input', function () { rxnState(box).conditions = cond.value; });
+    cond.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter') { e.preventDefault(); cond.blur(); }
+      else if (e.key === 'Escape') { e.preventDefault(); e.stopPropagation(); cond.value = cond._rxnBefore || ''; rxnState(box).conditions = cond.value; cond.blur(); }
+    });
+    cond.addEventListener('blur', function () {
+      cond.style.display = 'none'; box.classList.remove('elnRxnCondEditing');
+      if (rxnFrozen(box)) { cond.value = cond._rxnBefore || ''; rxnState(box).conditions = cond.value; }   // 여는 사이 잠겼으면(번역 보기 등) 저장하지 않음
+      else if (cond.value !== (cond._rxnBefore || '')) auditMod(rxnCard(box), 'Value edited', { field: 'Conditions', before: cond._rxnBefore || '', after: cond.value });
+      // 다른 곳을 눌러 칸을 떠난 경우 그 클릭이 끝난 뒤에 그림을 다시 그림 — 바로 그리면 누른 요소(화살표 · 구조)가 사라져 첫 클릭이 먹지 않음
+      if (rxnPtrDown) document.addEventListener('pointerup', function () { setTimeout(function () { rxnRenderScheme(box); }, 0); }, { once: true, capture: true });
+      else rxnRenderScheme(box);
     });
     // 표 입력 — 위임. input = 값 반영·재계산, change = 감사 로그
     var tbody = box.querySelector('.elnRxnTable');   // 역할별 tbody 가 다시 그려지므로 table 에 위임
@@ -4404,7 +4419,11 @@
     tbody.addEventListener('input', function (e) {
       var el = e.target.closest('input[data-f]'); if (!el || rxnFrozen(box)) return;
       var row = rxnRowOf(box, el), f = el.getAttribute('data-f'); if (!row) return;
-      if (f === 'name' || f === 'amount') { row[f] = el.value; if (f === 'name') rxnRenderScheme(box); return; }
+      if (f === 'name' || f === 'amount') {
+        row[f] = el.value;
+        if (f === 'name') { rxnOrigLine(box, row); rxnRefresh(box, el); }   // 반응식 · 점검 칩의 이름도 바로(칸 자체는 건드리지 않음)
+        return;
+      }
       var v = rxnNum(el.value), bad = v !== v || (f === 'coef' && v === 0);   // NaN 이거나 coef 0
       el.classList.toggle('invalid', bad);
       if (f === 'coef') row.coef = bad || v == null ? 1 : v;   // 빈칸·잘못된 값 = 1
@@ -4422,9 +4441,16 @@
     });
     tbody.addEventListener('click', function (e) {
       if (rxnFrozen(box)) return;
-      var rb = e.target.closest('.elnRxnRoleBtn');
-      if (rb) { var r0 = rxnRowOf(box, rb); if (r0) rxnRoleMenu(box, r0, rb); return; }
-      var lb = e.target.closest('.elnRxnLimBtn');
+      var rs = e.target.closest('.elnRxnReset');   // 이름 되돌리기 = ChemStudio 이름
+      if (rs) {
+        var r2 = rxnRowOf(box, rs); if (!r2 || !r2.csName) return;
+        var before = r2.name; r2.name = r2.csName;
+        var ni = rs.closest('tr').querySelector('input[data-f="name"]'); if (ni) ni.value = r2.name;
+        rxnOrigLine(box, r2); rxnRefresh(box, null);
+        auditMod(rxnCard(box), 'Value edited', { field: r2.csName + ' · ' + RXN_FIELD.name, before: before || '', after: r2.name });
+        return;
+      }
+      var lb = e.target.closest('.elnRxnLimSet, .elnRxnLimAuto');   // Set limiting = 이 행 지정, Auto = 지정 풀기(rxnSetLimit 이 켜고 끔)
       if (lb) { var r1 = rxnRowOf(box, lb); if (r1) rxnSetLimit(box, r1); return; }
       var del = e.target.closest('.elnRxnDel'); if (!del) return;
       var row = rxnRowOf(box, del); if (row) rxnRemove(box, row);
@@ -4448,16 +4474,15 @@
       if ((e.key !== 'Enter' && e.key !== ' ') || rxnFrozen(box)) return;
       var t = e.target.closest ? e.target.closest('.elnRxnArrowUp, .elnRxnArrow') : null; if (!t) return;
       e.preventDefault();
-      if (t.classList.contains('elnRxnArrowUp')) rxnAddText(box, 'reagent'); else box.querySelector('.elnRxnCond').focus();
+      if (t.classList.contains('elnRxnArrowUp')) rxnAddPop(box, t); else rxnEditCond(box);
     });
-    box.querySelector('.elnRxnEmptyAdd a').addEventListener('click', function () { rxnAddText(box, 'reagent'); });
+    var emptyAdd = box.querySelector('.elnRxnEmptyAdd');
+    emptyAdd.addEventListener('click', function () { rxnAddPop(box, emptyAdd); });
     sch.addEventListener('click', function (e) {   // 블록 클릭 = 그 행의 첫 입력칸(반응물 Mass, 생성물 Actual)으로. 잠금·승인·번역 보기에서는 아무것도 안 함
       if (box._rxnNoClick || rxnFrozen(box)) return;   // 끌기를 마친 클릭은 무시
       var ba = e.target.closest('.elnRxnBar [data-a]'); if (ba) { rxnBarAct(box, ba.getAttribute('data-a')); return; }
-      if (e.target.closest('.elnRxnArrowUp')) { rxnAddText(box, 'reagent'); return; }   // 화살표 위 = 시약 · 용매 행 추가(표의 칩으로 종류 선택)
-      if (e.target.closest('.elnRxnArrow')) {   // 화살표 = 조건 입력칸으로
-        var cd = box.querySelector('.elnRxnCond'); cd.focus({ preventScroll: true }); cd.scrollIntoView({ behavior: 'smooth', block: 'nearest' }); return;
-      }
+      var au = e.target.closest('.elnRxnArrowUp'); if (au) { rxnAddPop(box, au); return; }   // 화살표 위 = 그 자리 아래에 시약 · 용매 추가 창
+      if (e.target.closest('.elnRxnArrow')) { rxnEditCond(box); return; }   // 화살표 · 아래 = 그 자리에서 조건 입력
       var g = e.target.closest ? e.target.closest('.elnRxnSch') : null; if (!g) return;
       var tr = box.querySelector('.elnRxnTable tr.elnRxnRow[data-id="' + (+g.getAttribute('data-rid')) + '"]'); if (!tr) return;
       var inp = tr.querySelector(tr.classList.contains('product') ? 'input[data-f="actual"]' : 'input[data-f="mass"]'); if (!inp) return;
@@ -4482,6 +4507,64 @@
     var tr = el.closest('tr[data-id]'), id = tr ? +tr.getAttribute('data-id') : -1;
     return rxnRowById(box, id);
   }
+  // 시약 · 용매 추가 창 — 누른 자리(화살표 위 · 빈 안내 링크) 바로 아래 팝오버(모달 아님). 종류는 처음부터 둘 다 보이는 Reagent | Solvent,
+  // 이름 + 양(시약 = 글자 "10 ppm Pt", 용매 = 부피 mL). Enter = Add, Esc · 바깥 클릭 = 닫기
+  function rxnAddPop(box, anchor) {
+    if (rxnFrozen(box) || !anchor) return;
+    rxnBar(box, null);
+    var role = 'reagent', f = document.createElement('div'); f.className = 'elnRxnAddPop';
+    f.innerHTML = '<div class="elnRxnSeg" role="radiogroup" aria-label="Type">'
+      + '<button type="button" data-r="reagent" role="radio">Reagent</button><button type="button" data-r="solvent" role="radio">Solvent</button></div>'
+      + '<label class="elnRxnPopLbl">Name</label><input type="text" class="browser-default elnRxnIn elnRxnPopName" autocomplete="off" spellcheck="false">'
+      + '<label class="elnRxnPopLbl elnRxnPopAmtLbl"></label><input type="text" class="browser-default elnRxnIn elnRxnPopAmt" autocomplete="off" spellcheck="false">'
+      + '<div class="elnRxnPopAct"><a href="javascript:;" class="waves-effect waves-light hBtn hGrey elnRxnPopCancel">Cancel</a>'
+      + '<a href="javascript:;" class="waves-effect waves-light hBtn hViva elnRxnPopAdd"><i class="material-symbols-outlined left">add</i>Add</a></div>';
+    var nm = f.querySelector('.elnRxnPopName'), am = f.querySelector('.elnRxnPopAmt'), lbl = f.querySelector('.elnRxnPopAmtLbl');
+    function setRole(r) {
+      role = r;
+      [].forEach.call(f.querySelectorAll('.elnRxnSeg button'), function (b) { var on = b.getAttribute('data-r') === r; b.classList.toggle('on', on); b.setAttribute('aria-checked', on ? 'true' : 'false'); });
+      nm.placeholder = r === 'solvent' ? 'e.g., Toluene' : 'e.g., Karstedt catalyst';
+      lbl.textContent = r === 'solvent' ? 'Volume (mL)' : 'Amount';
+      am.placeholder = r === 'solvent' ? 'e.g., 20' : 'e.g., 10 ppm Pt';
+      am.classList.toggle('num', r === 'solvent'); am.classList.remove('invalid');
+    }
+    f.querySelector('.elnRxnSeg').addEventListener('click', function (e) { var b = e.target.closest('button[data-r]'); if (b) { setRole(b.getAttribute('data-r')); nm.focus(); } });
+    function add() {
+      var name = nm.value.trim(), vol = null;
+      nm.classList.toggle('invalid', !name);
+      if (role === 'solvent') { vol = rxnNum(am.value); am.classList.toggle('invalid', vol !== vol); if (vol !== vol) return; }
+      if (!name) { nm.focus(); return; }
+      ref.close();
+      var row = { id: ++rxnSeq, role: role, text: true, name: name, amount: role === 'reagent' ? am.value.trim() : '', volume: vol };
+      rxnState(box).rows.push(row);
+      rxnRender(box);
+      auditMod(rxnCard(box), RXN_ROLE[role] + ' added', { detail: name + (role === 'reagent' && row.amount ? ' (' + row.amount + ')' : vol != null ? ' (' + vol + ' mL)' : '') });
+    }
+    f.addEventListener('keydown', function (e) { if (e.key === 'Enter' && e.target.tagName === 'INPUT') { e.preventDefault(); add(); } });
+    f.querySelector('.elnRxnPopAdd').addEventListener('click', add);
+    f.querySelector('.elnRxnPopCancel').addEventListener('click', function () { ref.close(); });
+    setRole('reagent');
+    var ref = ELN.popover({ anchor: anchor, content: f, width: 280, pad: true });
+    nm.focus();
+  }
+  // 조건 입력칸을 화살표 아래 글자 자리에 띄움(화살표 폭 이상, 가운데 맞춤). 그 동안 그림의 조건 글자는 숨김(CSS elnRxnCondEditing)
+  function rxnEditCond(box) {
+    if (rxnFrozen(box)) return;
+    var arr = box.querySelector('.elnRxnArrow'), cond = box.querySelector('.elnRxnCond'); if (!arr) return;
+    var wrap = box.querySelector('.elnRxnScheme'), wr = wrap.getBoundingClientRect(), ar = arr.getBoundingClientRect();
+    rxnBar(box, null);
+    cond.value = rxnState(box).conditions || ''; cond._rxnBefore = cond.value;
+    cond.style.display = ''; box.classList.add('elnRxnCondEditing');
+    var w = Math.max(ar.width, 180);
+    cond.style.width = w + 'px';
+    cond.style.left = Math.max(2, ar.left + ar.width / 2 - w / 2 - wr.left - wrap.clientLeft + wrap.scrollLeft) + 'px';
+    // 아래 글자 줄 가운데에 맞춤 — 클릭 영역(화살표 선 −3 ~ +28, SVG 단위)에서 글자 가운데는 위에서 19/31 지점
+    cond.style.top = (ar.top + ar.height * 19 / 31 - cond.offsetHeight / 2 - wr.top - wrap.clientTop + wrap.scrollTop) + 'px';
+    cond.focus({ preventScroll: true }); cond.select();
+  }
+  function rxnOrigLine(box, row) {   // 고친 이름이면 그 행 분자식 아래 "ChemStudio name: … · Reset" 보이기
+    var o = box.querySelector('tr[data-id="' + row.id + '"] .elnRxnOrig'); if (o) o.hidden = !rxnRenamed(row);
+  }
   function rxnRowById(box, id) { return rxnState(box).rows.filter(function (r) { return r.id === id; })[0] || null; }
 
   // 블록 도구 막대 — id 블록 바탕판 아래쪽에 살짝 겹쳐(블록 → 막대로 옮겨도 끊기지 않게). null = 숨김. 잠금·승인·번역 보기에서는 안 뜸
@@ -4494,13 +4577,12 @@
     bar.querySelector('b').textContent = String(+coef.toFixed(3));
     bar.querySelector('[data-a="dec"]').classList.toggle('off', !(coef - 1 > 0));
     var lim = bar.querySelector('[data-a="lim"]'), reac = row.role === 'reactant';
-    lim.style.display = reac ? '' : 'none';
-    if (reac) {
-      var m = rxnModel(box), c = ElnReaction.compute(m), i = m.src.indexOf(row), man = i === c.pinned, on = man || i === c.limiting;
-      lim.textContent = on ? 'radio_button_checked' : 'radio_button_unchecked';
-      lim.classList.toggle('on', on);
-      lim.title = man ? 'Limiting reagent (set manually). Click to return to auto.' : on ? 'Limiting reagent (auto). Click to keep it as the limiting reagent.' : 'Set as the limiting reagent';
-    }
+    // 한계 반응물 — 표와 같은 글자: 아닌 반응물 "Set limiting", 직접 지정한 것 "Auto"(되돌리기), 자동 한계는 버튼 없음
+    var m = reac ? rxnModel(box) : null, c = m ? ElnReaction.compute(m) : null, i = m ? m.src.indexOf(row) : -1;
+    var man = !!c && i === c.pinned, auto = !!c && !man && i === c.limiting;
+    lim.style.display = reac && !auto ? '' : 'none';
+    lim.textContent = man ? 'Auto' : 'Set limiting';
+    lim.title = man ? 'Let the reactant that runs out first be the limiting reagent' : 'Use this reactant as the basis for Equiv and the theoretical yield';
     bar.querySelector('[data-a="role"]').title = reac ? 'Move to products' : 'Move to reactants';
     bar.classList.toggle('product', !reac);
     var wrap = box.querySelector('.elnRxnScheme'), wr = wrap.getBoundingClientRect(), pr = g.querySelector('.elnRxnPlate').getBoundingClientRect();
@@ -4614,7 +4696,7 @@
     if (role !== before) { row.role = role; if (st.limitId === row.id) st.limitId = null; }
     st.rows = reac.concat(others, prod);
     rxnRender(box);
-    if (role !== before) auditMod(rxnCard(box), 'Role changed', { field: row.name, before: RXN_ROLE[before], after: RXN_ROLE[role] });
+    if (role !== before) auditMod(rxnCard(box), 'Role changed', { field: rxnLabel(row), before: RXN_ROLE[before], after: RXN_ROLE[role] });
     else auditMod(rxnCard(box), 'Structure moved', { detail: rxnLabel(row) });
     return true;
   }
@@ -4658,7 +4740,7 @@
     if (rxnFrozen(box)) { ELN.toast('This section is read-only.', 'warn'); return { ok: false, reason: 'This Reaction section is read-only.' }; }
     var formula = String(item.formula == null ? '' : item.formula).trim();
     var name = String(item.name == null ? '' : item.name).trim() || formula || 'Structure';
-    var row = { id: ++rxnSeq, role: role, name: name, formula: formula, cas: String(item.cas || ''), seq: item.seq, svg: typeof item.svg === 'string' ? item.svg : '',
+    var row = { id: ++rxnSeq, role: role, name: name, csName: name, formula: formula, cas: String(item.cas || ''), seq: item.seq, svg: typeof item.svg === 'string' ? item.svg : '',
       coef: 1, mass: null, mmol: null, density: null, volume: null, basis: 'mass', actual: null };
     rxnState(box).rows.push(row);
     rxnRender(box);
@@ -4666,22 +4748,13 @@
     auditMod(rxnCard(box), 'Structure added', { detail: RXN_ROLE[role] + ': ' + name + (formula ? ' (' + formula + ')' : ' (no formula)') });
     return { ok: true };
   }
-  // 이름만 치는 행 — 시약(이름 + 양 글자) · 용매(이름 + 부피 mL)
-  function rxnAddText(box, role) {
-    if (rxnFrozen(box)) return;
-    var row = { id: ++rxnSeq, role: role === 'solvent' ? 'solvent' : 'reagent', text: true, name: '', amount: '', volume: null };   // 칩으로 시약 ↔ 용매를 바꿔도 각자 값 유지
-    rxnState(box).rows.push(row);
-    rxnRender(box);
-    auditMod(rxnCard(box), RXN_ROLE[role] + ' added');
-    var inp = box.querySelector('tr[data-id="' + row.id + '"] input[data-f="name"]'); if (inp) inp.focus();
-  }
   function rxnRemove(box, row) {
     var st = rxnState(box);
     st.rows = st.rows.filter(function (r) { return r !== row; });
     if (st.limitId === row.id) st.limitId = null;
     rxnRender(box);
     if (rxnIsText(row)) auditMod(rxnCard(box), RXN_ROLE[row.role] + ' removed', { detail: String(row.name || '').trim() || undefined });
-    else auditMod(rxnCard(box), 'Structure removed', { detail: RXN_ROLE[row.role] + ': ' + row.name + (row.formula ? ' (' + row.formula + ')' : '') });
+    else auditMod(rxnCard(box), 'Structure removed', { detail: RXN_ROLE[row.role] + ': ' + rxnLabel(row) + (row.formula ? ' (' + row.formula + ')' : '') });
   }
   // 한계 반응물 지정 — 동그라미 클릭: 지정한 행을 다시 누르면 자동(가장 먼저 떨어지는 반응물)으로. 표 다시 그리기 없이 값만
   function rxnSetLimit(box, row) {
@@ -4689,7 +4762,7 @@
     var st = rxnState(box), off = st.limitId === row.id;
     st.limitId = off ? null : row.id;
     rxnRefresh(box, null);
-    auditMod(rxnCard(box), 'Limiting reagent set', { detail: off ? 'Auto (first to run out)' : row.name });
+    auditMod(rxnCard(box), 'Limiting reagent set', { detail: off ? 'Auto (first to run out)' : rxnLabel(row) });
   }
   // 목표 몰 농도 → 용매 부피 역산. 용매 부피 합이 있으면 그 비율대로 나누고, 모두 비었으면 첫 용매에 전부
   function rxnSetMolarity(box, inp) {
@@ -4713,26 +4786,13 @@
     var el = box.querySelector('tr[data-id="' + r.id + '"] input[data-f="volume"]');
     if (el) { el.value = r.volume == null ? '' : String(r.volume); el.classList.remove('invalid'); }
   }
-  // 역할 바꾸기(반응물 ↔ 생성물 ↔ 용매) — 입력한 값은 행에 그대로 두고 표·그림·점검만 다시. 이름만 친 행은 바꾸지 않음
-  function rxnRoleMenu(box, row, anchor) {
-    var menu = document.createElement('div'); menu.className = 'elnCtxMenu elnRxnRoleMenu';
-    (rxnIsText(row) ? ['reagent', 'solvent'] : ['reactant', 'product', 'solvent']).forEach(function (k) {
-      var it = document.createElement('div'); it.className = 'elnCtxMenuItem' + (row.role === k ? ' on' : '');
-      it.innerHTML = '<i class="material-symbols-outlined">' + (row.role === k ? 'check' : '') + '</i><span>' + RXN_ROLE[k] + '</span>';
-      it.addEventListener('click', function () { ref.close(); rxnSetRole(box, row, k); });
-      menu.appendChild(it);
-    });
-    var ref = ELN.popover({ anchor: anchor, content: menu, width: 140 });
-  }
+  // 역할 바꾸기(표 Role select2 · 반응식 도구 막대) — 입력한 값은 행에 그대로 두고 표·그림·점검만 다시
   function rxnSetRole(box, row, role) {
     if (rxnFrozen(box) || row.role === role) return;
-    if (rxnIsText(row) ? (role !== 'reagent' && role !== 'solvent') : (role !== 'reactant' && role !== 'product' && role !== 'solvent')) return;   // 이름 행 = 시약 ↔ 용매만(양 글자 · 부피는 각자 칸에 남음)
+    // 구조 행 = 반응물 ↔ 생성물, 이름 행 = 시약 ↔ 용매(양 글자 · 부피는 각자 칸에 남음)끼리만
+    if (rxnIsText(row) ? (role !== 'reagent' && role !== 'solvent') : (role !== 'reactant' && role !== 'product')) return;
     var before = row.role, st = rxnState(box);
-    if (role === 'solvent' && before === 'reactant') {   // 반응물 → 용매: 계산된 부피(질량·밀도로 넣었어도)를 용매 부피로 옮김
-      var m = rxnModel(box), c = ElnReaction.compute(m), at = m.src.indexOf(row);
-      var cv = at >= 0 ? c.rows[at].volume : row.volume;
-      row.volume = cv == null ? null : Math.round(cv * 100) / 100;   // 표에 보이던 값(소수 둘째 자리)을 저장
-    } else if (before === 'solvent' && role === 'reactant' && row.volume != null) row.basis = 'volume';   // 용매 → 반응물: 부피를 기준 칸으로(밀도를 넣으면 질량·mmol 유도)
+    if (before === 'solvent' && role === 'reactant' && row.volume != null) row.basis = 'volume';   // 예전 상태(구조 행이 용매) → 반응물: 부피를 기준 칸으로
     row.role = role;
     if (st.limitId === row.id) st.limitId = null;   // 반응물에서 빠지면 지정도 풀림
     rxnRender(box);
@@ -4782,7 +4842,11 @@
   // 전체 다시 그리기(행 추가·삭제) — 표 행을 새로 만들고 값 채움
   function rxnRender(box) {
     var st = rxnState(box), table = box.querySelector('.elnRxnTable');
-    [].forEach.call(table.querySelectorAll('tbody'), function (tb) { if ($(tb).data('ui-sortable')) $(tb).sortable('destroy'); tb.remove(); });   // 옛 sortable 정리
+    [].forEach.call(table.querySelectorAll('tbody'), function (tb) {   // 옛 sortable · select2 정리
+      $(tb).find('select.elnRxnRoleSel').each(function () { if ($(this).data('select2')) $(this).select2('destroy'); });
+      if ($(tb).data('ui-sortable')) $(tb).sortable('destroy');
+      tb.remove();
+    });
     var rows = rxnSorted(st), tags = rxnTags(rows);
     rxnLink(box, null);   // 행을 새로 만들므로 강조 해제(마우스가 움직이면 다시 잡힘)
     RXN_ROLES.forEach(function (role) {
@@ -4790,6 +4854,13 @@
       var tb = document.createElement('tbody'); tb.setAttribute('data-role', role);
       grp.forEach(function (r) { tb.appendChild(rxnRowEl(r, grp.length > 1, tags[r.id])); });   // 한 줄뿐인 묶음은 손잡이 없음
       table.appendChild(tb);
+      [].forEach.call(tb.querySelectorAll('select.elnRxnRoleSel'), function (sel) {   // 문서에 붙은 뒤 표준 select2(검색칸 없음)
+        sel.disabled = rxnFrozen(box);
+        var $s = S2.mount(sel, { width: '104px', minimumResultsForSearch: Infinity });
+        if ($s) $s.on('change', function () {   // select2 이벤트 안에서 자기를 지우지 않도록 다음 턴에 다시 그림
+          var row = rxnRowOf(box, sel), v = sel.value; if (row) setTimeout(function () { rxnSetRole(box, row, v); }, 0);
+        });
+      });
       rxnInitSortable(box, tb, role);
     });
     var tbody = table;   // 아래 잠금 처리는 표 전체
@@ -4810,8 +4881,11 @@
     var tr = document.createElement('tr');
     tr.setAttribute('data-id', r.id); tr.className = 'elnRxnRow ' + r.role;
     var drag = '<td class="ac elnRxnDragTd">' + (canMove ? '<i class="material-symbols-outlined elnRxnDrag" title="Drag to reorder">drag_indicator</i>' : '') + '</td>';
-    var role = drag + '<td><span class="roundBox outline ' + RXN_ROLE_CLS[r.role] + ' font12 elnRxnRole elnRxnRoleBtn" title="'
-      + (rxnIsText(r) ? 'Reagent or solvent' : 'Change role') + '">' + RXN_ROLE[r.role] + '<i class="material-symbols-outlined">arrow_drop_down</i></span></td>';   // 이름 행은 Reagent ↔ Solvent, 구조 행은 Reactant · Product · Solvent
+    // Role = MAPIS 표준 select2(rxnRender 가 문서에 붙인 뒤 mount). 구조 행은 Reactant ↔ Product, 이름 행은 Reagent ↔ Solvent 끼리만
+    var opts = rxnIsText(r) ? ['reagent', 'solvent'] : ['reactant', 'product'];
+    if (opts.indexOf(r.role) < 0) opts.push(r.role);   // 예전 상태(구조 행이 Solvent)도 현재 값은 보이게
+    var role = drag + '<td class="elnRxnRoleTd"><select class="browser-default elnRxnRoleSel" aria-label="Role">'
+      + opts.map(function (k) { return '<option value="' + k + '"' + (k === r.role ? ' selected' : '') + '>' + RXN_ROLE[k] + '</option>'; }).join('') + '</select></td>';
     var del = '<td class="ac"><i class="material-symbols-outlined elnRxnDel" title="Remove">close</i></td>';
     if (r.role === 'reagent') {
       tr.innerHTML = role + '<td>' + rxnIn('name', 'Reagent name', r.name, 'elnRxnTxt') + '</td><td></td><td></td><td></td>'
@@ -4823,9 +4897,12 @@
       tr.innerHTML = role + '<td>' + rxnIn('name', 'Solvent name', r.name, 'elnRxnTxt') + '</td><td></td><td></td><td></td><td></td><td></td><td></td>' + vol + del;
       return tr;
     }
-    var nameTd = '<td><div class="elnRxnNm">' + (tag ? '<span class="elnRxnTag ' + r.role + '">' + esc(tag) + '</span>' : '') + esc(r.name) + '</div>'
+    // 이름은 고칠 수 있음(구조만 ChemStudio 에서 가져옴). 고쳤으면 분자식 아래에 ChemStudio 원래 이름 + Reset 이 늘 보임
+    var nameTd = '<td><div class="elnRxnNm">' + (tag ? '<span class="elnRxnTag ' + r.role + '">' + esc(tag) + '</span>' : '')
+      + rxnIn('name', r.csName || 'Name', r.name, 'elnRxnTxt elnRxnNameIn') + '</div>'
       + (r.formula ? '<div class="elnRxnFm">' + chemFormulaHtml(r.formula) + '</div>'
-        : '<span class="roundBox outline orange font12 elnRxnWarn" title="ChemStudio sent no formula, so MW, amounts and the atom balance are not available for this structure.">No formula</span>') + '</td>';
+        : '<span class="roundBox outline orange font12 elnRxnWarn" title="ChemStudio sent no formula, so MW, amounts and the atom balance are not available for this structure.">No formula</span>')
+      + '<div class="elnRxnOrig"' + (rxnRenamed(r) ? '' : ' hidden') + '>ChemStudio name: <span>' + esc(r.csName || '') + '</span><a href="javascript:;" class="elnRxnReset">Reset</a></div></td>';
     if (r.role === 'solvent') {   // ChemStudio 구조를 용매로: 이름·분자식·MW + 부피(반응식에서는 화살표 위 이름)
       tr.innerHTML = role + nameTd + '<td class="ar" data-o="mw"></td><td></td><td></td><td></td><td></td><td></td>' + vol + del;
       return tr;
@@ -4833,7 +4910,7 @@
     var coef = '<td>' + rxnIn('coef', '1', r.coef === 1 ? '1' : r.coef, 'num sm') + '</td>';
     if (r.role === 'reactant') {   // Equiv 칸 앞 동그라미 = 한계 반응물 지정(라디오처럼 하나만)
       tr.innerHTML = role + nameTd + '<td class="ar" data-o="mw"></td>' + coef
-        + '<td class="ar elnRxnEqTd"><i class="material-symbols-outlined elnRxnLimBtn" role="radio" aria-checked="false">radio_button_unchecked</i><span data-o="equiv"></span></td>'
+        + '<td class="ar elnRxnEqTd"><span data-o="equiv"></span><div class="elnRxnLimCtl"></div></td>'   // 숫자 아래 = 한계 반응물 글자 버튼(rxnRefresh 가 채움)
         + '<td>' + rxnIn('mass', '', r.basis === 'mass' ? r.mass : null, 'num') + '</td>'
         + '<td>' + rxnIn('mmol', '', r.basis === 'mmol' ? r.mmol : null, 'num') + '</td>'
         + '<td>' + rxnIn('density', '', r.density, 'num') + '</td>'
@@ -4857,13 +4934,13 @@
       tr.classList.toggle('elnRxnLim', lim);
       tr.classList.toggle('elnRxnLimMan', man);
       if (r.role === 'reactant') {
-        var lb = tr.querySelector('.elnRxnLimBtn');
-        if (lb) {
-          lb.textContent = lim ? 'radio_button_checked' : 'radio_button_unchecked';
-          lb.classList.toggle('on', lim); lb.classList.toggle('man', man);
-          lb.setAttribute('aria-checked', lim ? 'true' : 'false');
-          lb.title = man ? 'Limiting reagent (set manually). Click to return to auto.'
-            : lim ? 'Limiting reagent (auto: first to run out). Click to keep it as the limiting reagent.' : 'Set as the limiting reagent';
+        // 한계 반응물 — 글자로: 아닌 행 "Set limiting"(버튼), 자동 "Limiting · auto", 직접 지정 "Limiting · fixed" + "Auto"(버튼, 자동으로 되돌림)
+        var lc = tr.querySelector('.elnRxnLimCtl'), st0 = man ? 'fixed' : lim ? 'auto' : 'off';
+        if (lc && lc.getAttribute('data-st') !== st0) {
+          lc.setAttribute('data-st', st0);
+          lc.innerHTML = st0 === 'off' ? '<a href="javascript:;" class="elnRxnLimSet" title="Use this reactant as the basis for Equiv and the theoretical yield">Set limiting</a>'
+            : st0 === 'auto' ? '<span class="elnRxnLimTag" title="Chosen automatically: this reactant runs out first">Limiting · auto</span>'
+            : '<span class="elnRxnLimTag fixed">Limiting · fixed</span><a href="javascript:;" class="elnRxnLimAuto" title="Let the reactant that runs out first be the limiting reagent">Auto</a>';
         }
         tr.classList.toggle('elnRxnShort', calc.short.indexOf(i) >= 0);
         out('equiv', rxnFix(o.equiv, 2));
@@ -4909,7 +4986,8 @@
       model.rows.forEach(function (m, i) { m.amt = amts[i].amt; m.lim = amts[i].lim; });
       var svg = ElnReaction.schemeSvg(model, { link: true, idp: 'k' + box._rxnUid + '_' }), wrap = box.querySelector('.elnRxnScheme');
       var node = svg ? ElnReaction.inlineSvg(svg) : null;
-      box.querySelector('.elnRxnEmpty').style.display = node ? 'none' : '';
+      // 빈 안내(구조를 넣으라는 말 + 시약 · 용매 버튼)는 구조가 없으면 늘 — 시약 · 조건만 있어 화살표만 그려진 때도
+      box.querySelector('.elnRxnEmpty').style.display = model.rows.some(function (m) { return m.role === 'reactant' || m.role === 'product'; }) ? 'none' : '';
       wrap.style.display = node ? '' : 'none';
       while (host.firstChild) host.removeChild(host.firstChild);
       if (node) host.appendChild(node);
@@ -4984,7 +5062,7 @@
       var o = calc.rows[i];
       if (r.role === 'reagent') return [RXN_ROLE[r.role], rxnLabel(r), '', '', '', String(r.amount || '').trim(), '', '', ''];
       if (r.role === 'solvent' && r.text) return [RXN_ROLE[r.role], rxnLabel(r), '', '', '', '', '', '', rxnFix(o.volume, 2)];
-      var nm = r.name + (r.formula ? ' (' + r.formula + ')' : ' (no formula)');
+      var nm = rxnLabel(r) + (r.formula ? ' (' + r.formula + ')' : ' (no formula)') + (rxnRenamed(r) ? ' · ChemStudio: ' + r.csName : '');
       if (r.role === 'solvent') return [RXN_ROLE[r.role], nm, o.mw != null ? rxnFix(o.mw, 2) : 'n/a', '', '', '', '', '', rxnFix(o.volume, 2)];
       if (r.role === 'product') {
         var ms = o.theoMass != null ? rxnFix(o.theoMass, 3) + ' theor.' : '';

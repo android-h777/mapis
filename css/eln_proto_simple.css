@@ -1378,8 +1378,6 @@ body.elnRxnDragging,body.elnRxnDragging *{cursor:grabbing !important;user-select
 .elnRxnArrow,.elnRxnArrowUp{cursor:pointer;}
 .elnRxnPh{transition:fill .15s ease;}
 .elnRxnArrow:hover .elnRxnPh,.elnRxnArrowUp:hover .elnRxnPh{fill:#A47864;}
-.elnRxnPhMore{opacity:0;transition:opacity .15s ease,fill .15s ease;}
-.elnRxnArrowUp:hover .elnRxnPhMore{opacity:1;}
 .cardBox.elnLocked .elnRxnPh,body.elnApproved .elnRxnPh,body.elnTranslated .elnRxnPh{display:none;}
 .cardBox.elnLocked .elnRxnArrow,body.elnApproved .elnRxnArrow,body.elnTranslated .elnRxnArrow,
 .cardBox.elnLocked .elnRxnArrowUp,body.elnApproved .elnRxnArrowUp,body.elnTranslated .elnRxnArrowUp{cursor:default;}
@@ -1406,8 +1404,11 @@ body.elnRxnDragging,body.elnRxnDragging *{cursor:grabbing !important;user-select
 .elnRxnTable tr.elnRxnHl.reactant > td{background-color:color-mix(in srgb, #A47B67 10%, white);}
 .elnRxnTable tr.elnRxnHl.product > td{background-color:color-mix(in srgb, #7592ca 10%, white);}
 .cardBox.elnLocked .elnRxnSch,body.elnApproved .elnRxnSch,body.elnTranslated .elnRxnSch{cursor:default;}
-.elnRxnCondRow{margin:4px 2px 6px;}
-.elnRxnCondRow .elnBasicLabel{flex:0 0 auto;}
+/* 조건 입력 — 반응식 화살표 아래 글자 자리에 뜨는 칸. 여는 동안 그림의 조건 글자는 숨김 */
+.elnRxnScheme .elnRxnCond{position:absolute;z-index:4;height:26px;box-sizing:border-box;margin:0;padding:0 8px;border:1px solid #A47864;border-radius:6px;
+  background:#fff;box-shadow:0 2px 8px rgba(60,40,30,.12);font-size:12px;color:#5a3e30;text-align:center;outline:none;}
+.elnRxnScheme .elnRxnCond::placeholder{color:#c9bcae;}
+.elnRxnBox.elnRxnCondEditing .elnRxnArrow text{visibility:hidden;}
 .elnRxnTblWrap{margin:8px 0 10px;}
 .elnRxnTable{width:100%;}
 .elnRxnTable th,.elnRxnTable td{white-space:nowrap;}
@@ -1416,17 +1417,29 @@ body.elnRxnDragging,body.elnRxnDragging *{cursor:grabbing !important;user-select
 .elnRxnNm{font-weight:700;color:#3a2c24;white-space:normal;min-width:120px;}
 .elnRxnFm{font-size:12.5px;color:#7a5240;font-family:ui-monospace,Menlo,Consolas,monospace;}
 .elnRxnFm sub{font-size:.78em;}
-/* 한계 반응물 — 이름 뒤 작은 배지(Data Visualization 표 머리 배지와 같은 모양) */
-.elnRxnTable tr.elnRxnLim .elnRxnNm::after{content:'Limiting';margin-left:6px;font-size:9px;font-weight:700;color:#fff;background:#A47864;border-radius:4px;padding:1px 5px;vertical-align:middle;letter-spacing:.3px;}
-.elnRxnTable tr.elnRxnLimMan .elnRxnNm::after{content:'Limiting · Manual';}
-/* 한계 반응물 지정 — Equiv 칸 왼쪽 동그라미(라디오처럼 하나만). 숫자는 오른쪽 정렬 그대로 */
-.elnRxnLimBtn{float:left;margin:1px 8px 0 0;font-size:17px;line-height:1;color:#d6cabd;cursor:pointer;user-select:none;transition:color .15s;}
-.elnRxnLimBtn:hover{color:#A47864;}
-.elnRxnLimBtn.on{color:#A47864;}
-.elnRxnLimBtn.man{color:#7a5240;}
+/* 한계 반응물 — Equiv 숫자 아래 글자(늘 보임). 아닌 행 = "Set limiting" 테두리 작은 버튼, 자동 = "Limiting · auto" 옅은 배지,
+   직접 지정 = "Limiting · fixed" 진한 배지 + "Auto" 버튼. 이름 뒤 배지는 두지 않음(같은 말이 한 줄에 두 번 나오지 않게) */
+/* 이름 칸 — 태그 + 고칠 수 있는 이름 입력(굵게). 고쳤으면 분자식 아래 "ChemStudio name: … [Reset]"(늘 보이는 회색 글자) */
+.elnRxnTable .elnRxnNm{display:flex;align-items:center;}
+.elnRxnTable .elnRxnNm .elnRxnTag{flex:0 0 auto;}
+.elnRxnIn.elnRxnNameIn{font-weight:700;}
+.elnRxnOrig{margin-top:3px;font-size:11.5px;color:#8a7a6a;white-space:normal;}
+.elnRxnOrig span{color:#5a3e30;}
+.elnRxnOrig .elnRxnReset{display:inline-block;margin-left:6px;padding:0 6px;line-height:16px;font-size:11px;color:#8a6d5d;border:1px solid #d9cbbd;border-radius:8px;background:#fff;cursor:pointer;}
+.elnRxnOrig .elnRxnReset:hover{color:#7a5240;border-color:#A47864;}
+.cardBox.elnLocked .elnRxnReset,body.elnApproved .elnRxnReset,body.elnTranslated .elnRxnReset{display:none;}
+.elnRxnLimCtl{display:flex;justify-content:flex-end;align-items:center;gap:4px;margin-top:3px;white-space:nowrap;}
+.elnRxnLimCtl:empty{display:none;}
+.elnRxnLimSet,.elnRxnLimAuto{display:inline-block;padding:0 6px;line-height:18px;font-size:11px;color:#8a6d5d;border:1px solid #d9cbbd;border-radius:9px;background:#fff;cursor:pointer;transition:color .15s,border-color .15s,background-color .15s;}
+.elnRxnLimSet:hover,.elnRxnLimAuto:hover{color:#7a5240;border-color:#A47864;background:color-mix(in srgb, #A47B67 10%, white);}
+.elnRxnLimTag{display:inline-block;padding:0 6px;line-height:18px;font-size:11px;font-weight:700;border-radius:9px;color:#7a5240;background:color-mix(in srgb, #A47B67 14%, white);}
+.elnRxnLimTag.fixed{color:#fff;background:#A47864;}
 .elnRxnTable tr.elnRxnShort [data-o="equiv"]{color:#d9822b;font-weight:700;}   /* 지정한 한계보다 먼저 떨어짐(1 미만) */
-.cardBox.elnLocked .elnRxnLimBtn,body.elnApproved .elnRxnLimBtn,body.elnTranslated .elnRxnLimBtn{pointer-events:none;}
-.cardBox.elnLocked .elnRxnLimBtn:not(.on),body.elnApproved .elnRxnLimBtn:not(.on),body.elnTranslated .elnRxnLimBtn:not(.on){visibility:hidden;}
+.cardBox.elnLocked .elnRxnLimSet,body.elnApproved .elnRxnLimSet,body.elnTranslated .elnRxnLimSet,
+.cardBox.elnLocked .elnRxnLimAuto,body.elnApproved .elnRxnLimAuto,body.elnTranslated .elnRxnLimAuto{display:none;}
+/* 도구 막대의 글자 버튼(Set limiting / Auto) — 아이콘 버튼과 같은 높이 */
+.elnRxnBarTxt{height:22px;margin:0 2px;padding:0 8px;border:0;border-radius:11px;background:transparent;font-size:11.5px;color:#7a6a5e;cursor:pointer;white-space:nowrap;transition:background-color .15s,color .15s;}
+.elnRxnBarTxt:hover{background:color-mix(in srgb, #A47B67 12%, white);color:#A47B67;}
 /* 총 부피 · 몰 농도 요약 줄 — 표와 점검 칩 사이 */
 .elnRxnSum{display:flex;flex-wrap:wrap;align-items:center;gap:6px 24px;margin:0 2px 10px;font-size:13px;color:#3a2c24;}
 .elnRxnSumItem{display:inline-flex;align-items:center;gap:6px;}
@@ -1439,6 +1452,11 @@ body.elnRxnDragging,body.elnRxnDragging *{cursor:grabbing !important;user-select
 .elnRxnSumNote:empty{display:none;}
 .elnRxnRole,.elnRxnWarn{line-height:20px;padding:0 8px;}
 .elnRxnWarn{margin-top:2px;}
+/* 폭: Name 이 남는 폭을 다 가짐(긴 이름), 숫자 칸은 내용만큼(입력 84px) */
+.elnRxnTable th{width:1%;}
+.elnRxnTable th.elnRxnNameCol{width:auto;min-width:240px;}
+.elnRxnTable td.elnRxnEqTd{min-width:96px;}   /* 숫자 + 아래 한계 반응물 글자("Limiting · fixed  Auto") */
+.elnRxnTable td .elnRxnIn.num:not(.sm){width:84px;}
 .elnRxnIn{width:100%;min-width:72px;box-sizing:border-box;height:28px;margin:0;padding:0 7px;border:1px solid #e6ddd0;border-radius:6px;background:#fff;font-size:13px;color:#3a2c24;}
 .elnRxnIn.num{text-align:right;font-variant-numeric:tabular-nums;}
 .elnRxnIn.sm{min-width:44px;width:56px;}
@@ -1455,16 +1473,24 @@ div.elnRxnTheo{margin-bottom:3px;}
 .elnRxnTable td.elnRxnDragTd{padding-left:4px;padding-right:0;}
 .elnRxnDrag{display:inline-block;vertical-align:middle;font-size:18px;color:#c9bcae;cursor:grab;user-select:none;transition:color .15s;}
 .elnRxnDrag:hover{color:#A47864;}
-.elnRxnRoleBtn{cursor:pointer;display:inline-flex;align-items:center;}
-.elnRxnRoleBtn i{font-size:16px;margin:0 -4px 0 2px;}
-.elnRxnRoleMenu .elnCtxMenuItem i{width:18px;font-size:16px;}
+/* Role = 운영 표준 select2(밑줄 + 빨간 ▾, 목록은 common.css 스킨 그대로). 칸 폭만 고정 */
+.elnRxnTable td.elnRxnRoleTd{width:112px;}
+/* 시약 · 용매 추가 창(팝오버) — 종류 두 칸(처음부터 둘 다 보임) · 이름 · 양, 아래 Cancel / Add */
+.elnRxnAddPop{display:flex;flex-direction:column;gap:6px;}
+.elnRxnSeg{display:flex;margin-bottom:4px;border:1px solid #e6ddd0;border-radius:8px;overflow:hidden;}
+.elnRxnSeg button{flex:1 1 0;height:30px;margin:0;border:0;background:#fff;font-size:13px;color:#7a6a5e;cursor:pointer;transition:background-color .15s,color .15s;}
+.elnRxnSeg button + button{border-left:1px solid #e6ddd0;}
+.elnRxnSeg button:hover{background:#faf6f1;}
+.elnRxnSeg button.on{background:color-mix(in srgb, #A47B67 14%, white);color:#7a5240;font-weight:700;}
+.elnRxnPopLbl{font-size:12px;color:#7a6a5e;margin-top:2px;}
+.elnRxnAddPop .elnRxnIn{min-width:0;}
+.elnRxnPopAct{display:flex;justify-content:flex-end;gap:8px;margin-top:6px;}
+.elnRxnPopAct .hBtn{margin:0;}
 .elnRxnSortPh{background:rgba(164,120,100,.18);visibility:visible !important;}   /* sortable 자리 표시 — elnSortPhMenu 와 같은 톤 */
 .elnRxnTable tr.ui-sortable-helper{background:#fff;box-shadow:0 4px 12px rgba(60,40,30,.16);}
 /* 역할별 tbody 사이 구분선 — 공통 표의 행 구분선(tr + tr td 위쪽 1px #ddd)이 tbody 경계에선 안 그어지므로 같은 선을 이어 줌 */
 .elnRxnTable tbody + tbody > tr:first-child > td{border-top:1px solid #ddd;}
 .cardBox.elnLocked .elnRxnDragTd i,body.elnApproved .elnRxnDragTd i,body.elnTranslated .elnRxnDragTd i{visibility:hidden;pointer-events:none;}
-.cardBox.elnLocked .elnRxnRoleBtn,body.elnApproved .elnRxnRoleBtn,body.elnTranslated .elnRxnRoleBtn{cursor:default;pointer-events:none;}
-.cardBox.elnLocked .elnRxnRoleBtn i,body.elnApproved .elnRxnRoleBtn i,body.elnTranslated .elnRxnRoleBtn i{display:none;}
 .elnRxnChecks{display:flex;flex-wrap:wrap;gap:6px;}
 .elnRxnChecks:empty{display:none;}
 .elnRxnChip{line-height:22px;padding:0 10px;}
@@ -1472,6 +1498,8 @@ div.elnRxnTheo{margin-bottom:3px;}
    툴바엔 Add Structure 뿐이라 줄째 숨김(빈 줄 남지 않게), 빈 상태의 시약 · 용매 추가 링크도 숨김 */
 .cardBox.elnLocked .elnFmlToolbar.elnRxnToolbar,body.elnApproved .elnFmlToolbar.elnRxnToolbar,body.elnTranslated .elnFmlToolbar.elnRxnToolbar,
 .cardBox.elnLocked .elnRxnEmptyAdd,body.elnApproved .elnRxnEmptyAdd,body.elnTranslated .elnRxnEmptyAdd{display:none !important;}
+.elnRxnEmpty .elnRxnEmptyAdd{margin-left:10px;}
+.elnRxnEmpty .elnRxnEmptyAdd i{color:inherit;}   /* 빈 줄 아이콘 색(.elnChemEmptyLine i)이 버튼 아이콘에 번지지 않게 */
 .elnRxnArrow:focus-visible,.elnRxnArrowUp:focus-visible{outline:2px solid #A47864;outline-offset:2px;}
 .cardBox.elnLocked .elnRxnAddBtns,body.elnApproved .elnRxnAddBtns,body.elnTranslated .elnRxnAddBtns,
 .cardBox.elnLocked .elnRxnDel,body.elnApproved .elnRxnDel,body.elnTranslated .elnRxnDel{display:none !important;}
