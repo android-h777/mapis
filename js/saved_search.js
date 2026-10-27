@@ -10,14 +10,16 @@ window.initSavedSearch = function(opts){
     + '<div class="dashSaveNew"><input type="text" class="browser-default jsSaveName" placeholder="Name this search&hellip;" maxlength="30">'
     + '<a href="javascript:;" class="waves-effect hBtn jsSaveAdd"><i class="material-icons left">add</i><span class="label">Save</span></a></div>');
   function all(){ try{ return JSON.parse(localStorage.getItem(opts.key)||'[]'); }catch(e){ return []; } }
-  function store(l){ localStorage.setItem(opts.key, JSON.stringify(l)); }
+  // 저장 공간이 꽉 찼거나 막힌 브라우저(사생활 보호 창 등)에서도 화면이 멈추지 않게
+  function store(l){ try{ localStorage.setItem(opts.key, JSON.stringify(l)); return true; }catch(e){ if(window.glassToast) glassToast('Could not save searches in this browser.', 'info'); return false; } }
+  function esc(s){ return String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;').replace(/'/g,'&#39;'); }
   var activeName = null;   // 불러온(선택된) 저장 건 — 무명 Save 시 이 건을 갱신
   function render(){
     var list = all();
     $area.find('.dashSaveList').html(list.length ? list.map(function(x){
       var d = /^\d{4}-\d{2}-\d{2}$/.test(x.date||'') ? x.date.slice(5)+'-'+x.date.slice(0,4) : (x.date||'');   // 저장은 ISO, 표시는 MM-DD-YYYY
-      return '<span class="dashSaveChip'+(x.name===activeName?' on':'')+'" data-name="'+x.name+'" title="Saved '+d+'"><i class="material-icons">history</i>'+x.name
-           + '<i class="material-icons jsSaveDel" data-name="'+x.name+'">close</i></span>';
+      return '<span class="dashSaveChip'+(x.name===activeName?' on':'')+'" data-name="'+esc(x.name)+'" data-tip="Saved '+esc(d)+'"><i class="material-icons">history</i>'+esc(x.name)
+           + '<i class="material-icons jsSaveDel" data-name="'+esc(x.name)+'">close</i></span>';
     }).join('') : '<span class="dashSaveEmpty">No saved searches yet. Set options and save with a name.</span>');
   }
   $area.on('click', '.jsSaveAdd', function(){
@@ -26,7 +28,7 @@ window.initSavedSearch = function(opts){
     var existed = all().some(function(x){ return x.name === name; });
     var list = all().filter(function(x){ return x.name !== name; });   // 동명 = 갱신(덮어쓰기)
     list.push({ name:name, crit:opts.collect(), date:new Date().toISOString().slice(0,10) });
-    store(list);
+    if(!store(list)) return;
     activeName = name;   // 저장 건 선택 상태 + 이름 유지 — 계속 수정하면 갱신, 이름 바꾸면 신규
     render();
     if(window.glassToast) glassToast((existed ? 'Updated "' : 'Search saved: "')+name+'"', 'ok');

@@ -4,71 +4,89 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>MAPIS Lab Note — Experiment</title>
+    <title>MAPIS Lab Note</title>
+	<script>document.documentElement.classList.add('elnBoot');   /* 처음 열 때 깜박임 방지 — 준비되면 js/eln.js elnReveal 이 뗌 */</script>
 	<link rel="preload" href="mapis_lib/font/material-symbols-outlined.woff2" as="font" type="font/woff2">
 	<link rel="preload" href="mapis_lib/font/material-symbols-rounded.woff2" as="font" type="font/woff2">
 	<link rel="preload" href="mapis_lib/font/material-symbols-sharp.woff2" as="font" type="font/woff2">
 	<link rel="preload" href="mapis_lib/font/material-icons.woff2" as="font" type="font/woff2">
-    <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/mpm_materialize.css">
-    <link rel="stylesheet" type="text/css" href="mapis_lib/css/common.css">
-    <link type="text/css" rel="stylesheet" href="mapis_lib/css/lib/animate.min.css">
-    <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/sweetalert2.min.css">
-
+    <!-- 기반 = S-NPI 팝업(apis_npdi_pop.html)과 같음: materialize + mpm_common(ELN 구역 body.elnPage 포함) -->
+    <link rel="stylesheet" type="text/css" href="css/materialize.css">
+    <!-- 부품 라이브러리 CSS 를 mpm_common 앞에 — mpm_common 의 ELN 구역이 이들 위에 덮이도록(옛 ELN CSS 가 맨 끝에 오던 순서와 같음) -->
     <link href="mapis_lib/css/material-symbols-local.css" type="text/css" rel="stylesheet">
-    <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-3.7.1.js"></script>
+    <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/select2.min.css">
+    <link rel="stylesheet" type="text/css" href="mapis_lib/css/lib/sweetalert2.min.css">
+    <link type="text/css" rel="stylesheet" href="mapis_lib/css/animapis.css">
+    <link rel="stylesheet" type="text/css" href="mapis_lib/lib/summernote-0.9.0/summernote-lite.min.css">
+    <link rel="stylesheet" type="text/css" href="css/mpm_common.css">
+    <link type="text/css" rel="stylesheet" href="css/animate.min.css">
+    <script type="text/javascript" charset="utf-8" src="js/jquery-3.3.1.min.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/jquery-ui-1.14.1.js"></script>
-    <script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/mpm_materialize.js"></script>
-	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/apis_util.js"></script>
-	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/highcharts-12.3.0/highcharts.js"></script>
-	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/highcharts-12.3.0/highcharts-more.js"></script>
-	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/glass_engine.js"></script>
+    <script type="text/javascript" charset="utf-8" src="js/materialize.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/apis_util.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/highcharts/highcharts.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/highcharts/highcharts-more.js"></script>
+	<script type="text/javascript" charset="utf-8" src="js/glass_engine.js"></script>
+	<!-- 운영 부품 라이브러리 JS(리스트와 같은 것): select2 · sweetalert2(확인 창) · animapis(펼침 애니메이션) · Summernote(Editor 모듈) -->
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/mpm_select2.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/lib/sweetalert2.all.min.js"></script>
-	<!-- Summernote(lite — Bootstrap 불필요). Editor 모듈에서 사용 -->
-	<link rel="stylesheet" type="text/css" href="mapis_lib/lib/summernote-0.9.0/summernote-lite.min.css">
+	<script type="text/javascript" charset="utf-8" src="mapis_lib/js/animapis.js"></script>
 	<script type="text/javascript" charset="utf-8" src="mapis_lib/lib/summernote-0.9.0/summernote-lite.min.js"></script>
 
-    <link rel="stylesheet" type="text/css" href="css/eln_proto.css">
-    <script defer src="js/eln_proto.js"></script>
+    <script defer src="js/eln_notes_data.js"></script>
+    <script defer src="js/eln_reaction.js"></script>
+    <script defer src="js/eln_ui.js"></script>
+    <script defer src="js/eln.js"></script>
   <script defer src="/_vercel/insights/script.js"></script>
 </head>
-<body class="popup type2">
+<body class="popup type2 elnPage elnPopPage">
 	<header class="z-depth-1">
 		<section class="titArea npi">
 			<div><img src="img/MAPISLogo-25.png"></div>
 			<div class="statusTit">
-				<div class="tit">[NT-2605-00142] UV-Curable PSA Viscosity Improvement — RGBOLED</div>
-				<div id="elnApprovalBadge" class="elnApprBadge" style="display:none;"></div>
+				<div class="tit">[LN-2605-00142] UV-Curable PSA Viscosity Improvement (RGBOLED)</div>
+				<!-- status: 수동 드롭다운 제거 → 결재 흐름에 따라 갱신되는 읽기전용 알약(setHeadStatus) -->
+				<div id="elnHeadStatus" class="roundBox blue" data-status="ing">In Progress</div>
+				<div id="elnApprovalBadge" class="elnApprBadge"></div>
 			</div>
-			<div class="elnHeadMeta">
-				<span class="elnHeadK">Author</span><span>J.P. Kim</span>
-				<span class="elnHeadK">Modified</span><span>2026-05-28</span>
+			<!-- 협업 도구: 참여자 아바타(작성자+공동편집자) · 공유 현황 칩 · Share 버튼 (eln.js ELN.coedit이 렌더) -->
+			<div class="elnHeadTools" id="elnHeadTools">
+				<!-- 요구 15: AI 번역 보기(view only) — 언어 메뉴(ELN.popover) → 'AI translating…' → 번역 배너. eln.js trMenu/trSet -->
+				<!-- 노트 동작(2026-10-26 왼쪽 아래에서 이동) — 목차가 늘어나도 자리가 그대로. NPI 처럼 헤더 오른쪽 = 화면 단위 동작. 모양은 번역 버튼과 같은 hBtn hIco -->
+				<!-- Copy — 누르면 Copy To(이 노트로 새 노트) / Copy From(다른 노트의 섹션을 이 노트로) 선택(사용자 2026-10-21) -->
+				<a href="javascript:;" id="elnCopyBtn" class="waves-effect waves-light hBtn hIco" data-tip="Copy: copy this note to a new note, or copy sections from another note" aria-label="Copy"><i class="material-symbols-outlined">content_copy</i></a>
+				<a href="javascript:;" id="elnSaveTemplate" class="waves-effect waves-light hBtn hIco" data-tip="Save Template: save this note's section structure as a reusable template (no data)" aria-label="Save Template"><i class="material-symbols-outlined">bookmark_add</i></a>
+				<!-- 요구 14: Export PDF — 옵션 모달 → 인쇄용 미리보기 새 창 + print(Save as PDF). 승인·잠금 노트에서도 사용 가능 -->
+				<a href="javascript:;" id="elnExportPdf" class="waves-effect waves-light hBtn hIco" data-tip="Export PDF: reference copy, not a controlled copy" aria-label="Export PDF"><i class="material-symbols-outlined">picture_as_pdf</i></a>
+				<!-- Audit Trail — 모달로 열림(2026-10-26 카드에서 변경) -->
+				<a href="javascript:;" id="elnAuditBtn" class="waves-effect waves-light hBtn hIco" data-tip="Audit Trail: change history of this note" aria-label="Audit Trail"><i class="material-symbols-outlined">manage_history</i></a>
+				<a href="javascript:;" id="elnTransBtn" class="waves-effect waves-light hBtn hIco" data-tip="Translate (AI): view this note in another language" aria-label="Translate"><i class="material-symbols-outlined">translate</i></a>
+				<a href="javascript:;" id="elnShareBtn" class="waves-effect waves-light hBtn" data-tip="Share &amp; Access: who can view or edit this note"><i class="material-symbols-outlined left">share</i><span class="modalTabBadge noticeTabBadge elnShareCnt"></span></a>
 			</div>
 		</section>
 	</header>
 
 	<aside class="leftAside z-depth-1 blurArea">
 		<section class="hScroll">
-			<ul class="menuUl">
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor active" data-target="card_basic">
-					<i class="material-symbols-outlined left">inventory_2</i><span>Overview</span>
+			<!-- elnNavPending: 모듈 목차까지 다 만든 뒤 한 번에 순서대로 등장(playNavIntro). 그 전엔 숨김 -->
+			<ul class="menuUl elnNavPending">
+				<li class="menu-item waves-effect waves-hColor active" data-target="card_basic">
+					<i class="material-symbols-outlined left">inventory_2</i><span>Basic Data</span>
 				</li>
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_fml">
-					<i class="material-symbols-outlined left">blender</i><span>Formulation</span>
+				<li class="menu-item waves-effect waves-hColor" data-target="card_fml">
+					<i class="material-symbols-outlined left">science</i><span>Formulation</span>
 				</li>
 				<!-- Process·Results는 Formulation 모듈 내부로 병합 — 별도 목차 없음 -->
-				<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_concl">
+				<li class="menu-item waves-effect waves-hColor" data-target="card_concl">
 					<i class="material-symbols-outlined left">summarize</i><span>Conclusion</span>
 				</li>
-								<li class="menu-item animate__animated animate__fadeInLeft waves-effect waves-hColor" data-target="card_approval">
-						<i class="material-symbols-outlined left">approval</i><span>Approval</span>
+				<li class="menu-item waves-effect waves-hColor" data-target="card_approval">
+						<i class="material-symbols-outlined left">local_library</i><span>Approval</span>
 					</li>
 				</ul>
 		</section>
 		<section class="btnArea">
-			<div><a href="javascript:;" id="elnSaveTemplate" class="waves-effect waves-light hBtn" title="Save this note's section structure as a reusable template (no data)"><i class="material-symbols-outlined left">bookmark_add</i><span class="label">Save template</span></a></div>
-			<div><a href="javascript:;" id="elnAddModule" class="waves-effect waves-light hBtn hViva mt30"><i class="material-symbols-outlined left">add_box</i><span class="label">Add Module</span></a></div>
-			<div><a href="javascript:;" id="elnNewVersion" class="waves-effect waves-light hBtn hViola mt10" title="Create a new version derived from this note"><i class="material-symbols-outlined left">account_tree</i><span class="label">New version</span></a></div>
-			<div><a href="javascript:;" id="elnSaveBtn" class="waves-effect waves-light hBtn hBlue mt30"><i class="material-symbols-outlined left">save</i><span class="label">Save</span></a></div>
+			<div><a href="javascript:;" id="elnSaveBtn" class="waves-effect waves-light hBtn hBlue"><i class="material-symbols-outlined left">save</i><span class="label">Save</span></a></div>
 		</section>
 	</aside>
 
@@ -77,68 +95,91 @@
 
 			<!-- Overview -->
 			<section class="cardBox animate__animated mt10" id="card_basic">
-				<div class="cardTit2"><i class="material-symbols-outlined left">inventory_2</i>Overview</div>
+				<div class="cardTit2"><i class="material-symbols-outlined left">inventory_2</i>Basic Data</div>
 				<div class="elnBasic">
-					<!-- Note 제목: 노트의 주인공 -->
-					<label class="elnBasicLabel"><span class="essential">*</span>Note</label>
-					<div class="elnBasicTitle">
-						<input type="text" class="browser-default" value="UV-Curable PSA Viscosity Improvement — RGBOLED" placeholder="Enter note title">
+					<!-- Notebook — 노트를 담는 폴더(2026-10-21, 맨 위: 사용자 "Title 보다 위로"). 디자인 = 리스트 요약 패널의 노트북 선택과 같은 알약(폴더 아이콘 + 이름 + ▾),
+					     누르면 노트북 목록(Unfiled 맨 위 · ✓ 현재 · 맨 끝 New Notebook…). Unfiled 도 값이라 필수 표시 없음. 처음 값 = 리스트가 넘긴 ?nb= -->
+					<div class="elnBasicRow">
+						<label class="elnBasicLabel">Notebook</label>
+						<div class="elnSchedSel">
+							<span class="elnSumNbPick" id="elnNbPick" role="button" tabindex="0" data-tip="Move to another notebook"><i class="material-symbols-outlined elnNbPickIco"></i><span class="nm"></span><i class="material-symbols-outlined nbCaret">expand_more</i></span>
+						</div>
 					</div>
-					<!-- 상태 + 카테고리: 헤더에서 본문 메타 영역으로 이동. status=칩+드롭다운(변경 가능), category=읽기전용 잠금 배지 -->
-					<div class="elnStateRow">
-						<div class="elnStateField">
-							<span class="elnStateLabel">Status</span>
-							<button type="button" class="elnStatusChip" id="elnStatus" data-status="ing" title="Click to change status">
-								<span class="dot"></span><span class="elnStatusLabel">In Progress</span><i class="material-symbols-outlined chev">expand_more</i>
-							</button>
+					<!-- Note 제목: 노트의 주인공. apis_npdi_pop의 Name 필드 양식(레이블+aniInput 한 줄) 차용 -->
+					<div class="elnBasicRow">
+						<label class="elnBasicLabel"><span class="essential">*</span>Title</label>
+						<div class="elnBasicTitle">
+							<div class="aniInput">
+								<input type="text" value="UV-Curable PSA Viscosity Improvement (RGBOLED)" class="browser-default fontR font14" placeholder="Enter note title" data-required="true" data-label="Title">
+								<span class="focus-border"/>
+							</div>
 						</div>
-						<!-- Category 제거 — 시작 템플릿 선택용으로만(휘발). 저장·표시 안 함 -->
 					</div>
-					<!-- 메타 정보: 아이콘 + 라벨/값, CSS Grid 자동 배치 -->
-					<div class="elnMeta">
-						<div class="elnMetaItem">
-							<i class="material-symbols-outlined">folder</i>
-							<!-- 클릭 → 노트북 픽커 popover(No Notebook→지정 동선). ?nb= 파라미터로 초기 상태 결정 -->
-							<div class="elnMetaText"><span class="k">Notebook</span><span class="v elnProjVal" id="elnNbMeta" data-nb="RGBOLED Adhesive"><span class="elnProjLink elnNbLink">RGBOLED Adhesive</span><a href="javascript:;" class="elnProjChange elnNbChange" title="Change notebook"><i class="material-symbols-outlined">swap_horiz</i></a></span></div>
+					<!-- status: Overview 드롭다운 제거 → 헤더 알약으로. category 제거. Author·Modified는 헤더 우측 상단 -->
+					<!-- 프로젝트 연결(NPI·NPT·TS)은 Related Items 모듈의 'Project' 항목으로 이동(2026-10-16). Primary·Stage 개념 제거 -->
+					<!-- Creation Date — 최초 저장 때 자동으로 찍힘(사용자 2026-10-21). 고칠 수 없는 값이라 입력칸 없이 글자로(사용자 2026-10-21), 저장 전엔 흐린 '(Auto-set on first save)' -->
+					<div class="elnBasicRow">
+						<label class="elnBasicLabel"><span class="essential">*</span>Creation Date</label>
+						<div class="elnSchedSel">
+							<span id="elnCreatedDate" class="elnCreatedVal fontR font14" data-date="05-23-2026">05-23-2026</span>
 						</div>
-						<div class="elnMetaItem">
-							<i class="material-symbols-outlined">rocket_launch</i>
-							<div class="elnMetaText"><span class="k">Project</span><span class="v elnProjVal" id="elnProjVal" data-proj="[SN-26-0031] RGBOLED Display Adhesive"><a class="link elnProjLink" href="javascript:;" title="Open project">[SN-26-0031] RGBOLED Display Adhesive</a><a href="javascript:;" class="elnProjChange" title="Change project"><i class="material-symbols-outlined">swap_horiz</i></a></span></div>
-						</div>
-						<div class="elnMetaItem">
-							<i class="material-symbols-outlined">account_tree</i>
-							<div class="elnMetaText"><span class="k">Parent Note</span><span class="v elnProjVal" id="elnParentVal" data-parent="NT-2605-00118"><a class="link elnProjLink elnParentLink" href="javascript:;" title="Parent note">[NT-2605-00118] Viscosity Modifier ratio tuning</a><a href="javascript:;" class="elnProjChange elnParentChange" title="Change parent note"><i class="material-symbols-outlined">swap_horiz</i></a></span></div>
-						</div>
-						<!-- Author·Modified(읽기전용)는 팝업 헤더 우측 상단으로 이동 -->
 					</div>
-					<!-- Tags + History — 우측 패널에서 Overview로 이동(기본 접힘, 중요도 낮음) -->
-					<details class="elnOvSec" open>
-						<summary><i class="material-symbols-outlined">sell</i>Tags</summary>
+					<!-- Primary Business(단일) · Other Business(es)(다중, 행 폭 전체) — 운영 CNPI/SNPI Basic 의 Business select2,
+					     FMEA Customer 의 select2 multiple 과 같은 부품. 목록은 운영 DEXIF BIZ 코드(프로토타입은 목업, ELN_BIZ). Segment 는 2026-10-21 제외 -->
+					<div class="elnBasicRow">
+						<label class="elnBasicLabel"><span class="essential">*</span>Primary Business</label>
+						<div class="elnSchedSel">
+							<div class="elnSchedField elnBizField"><select id="elnBizPrimary" class="browser-default" data-required="true" data-label="Primary Business"></select></div>
+						</div>
+					</div>
+					<div class="elnBasicRow">
+						<label class="elnBasicLabel">Other Business(es)</label>
+						<div class="elnBizOthers"><select id="elnBizOthers" class="browser-default" multiple="multiple"></select></div>
+					</div>
+					<!-- Site — 운영 TechLib 업로드(techLibNewsub #mSite)와 같은 필드: 공통코드 lib_site(플랜트 마스터 기술 사이트), 표시 '[코드] 이름', select2, 저장 시 필수 -->
+					<div class="elnBasicRow">
+						<label class="elnBasicLabel"><span class="essential">*</span>Site</label>
+						<div class="elnSchedSel">
+							<div class="elnSchedField elnBizField"><select id="elnSite" class="browser-default" data-required="true" data-label="Site"></select></div>
+						</div>
+					</div>
+					<!-- Related Items — 별도 모듈에서 Basic Data 안으로(사용자 2026-10-21). 추가 줄·칩 목록은 JS(initBasicRelated)가 채움 -->
+					<div class="elnBasicRow alignTop elnRelRow">
+						<label class="elnBasicLabel">Related Items</label>
+						<div class="elnBasicRel" id="elnBasicRel"></div>
+					</div>
+					<!-- Keywords(화면 이름 — 운영 TechLib Keywords 와 같은 개념·이름, 값은 '#' 없는 낱말. 내부 id 는 elnTags 그대로) — Basic Data 맨 아래(사용자 2026-10-21). 값 자리는 칩 + 입력 + 추천(멀티라인이라 상단 정렬).
+					     결재 상신 때만 필수(운영 data-required-appronly), 표시는 다른 필수와 같은 * 하나 -->
+					<div class="elnBasicRow alignTop">
+						<label class="elnBasicLabel"><span class="essential">*</span>Keywords</label>
 						<div class="elnTagBox">
 							<div class="elnTags" id="elnTags">
-								<span class="elnTag" data-tag="#viscosity">#viscosity<i class="material-symbols-outlined">close</i></span>
-								<span class="elnTag" data-tag="#RGBOLED">#RGBOLED<i class="material-symbols-outlined">close</i></span>
+								<span class="elnTag" data-tag="viscosity">viscosity<i class="material-symbols-outlined">close</i></span>
+								<span class="elnTag" data-tag="RGBOLED">RGBOLED<i class="material-symbols-outlined">close</i></span>
 							</div>
-							<input type="text" id="elnTagInput" class="browser-default" placeholder="Add a tag, then Enter">
-							<div class="elnRecTags" id="elnRecTags"><!-- Recommended: JS 렌더 --></div>
+							<div class="elnTagAddRow">
+								<div class="aniInput">
+									<input type="text" id="elnTagInput" class="browser-default fontR font14" placeholder="Add a keyword, then Enter">
+									<span class="focus-border"/>
+								</div>
+								<div class="elnRecTags" id="elnRecTags"><!-- Recommended: JS 렌더 --></div>
+							</div>
 						</div>
-					</details>
-					<details class="elnOvSec">
-						<summary><i class="material-symbols-outlined">account_tree</i>History</summary>
-						<div id="elnLineage" class="elnLineage"><!-- renderLineage()가 parent 트리 렌더 --></div>
-					</details>
+					</div>
 				</div>
 			</section>
 
 			<!-- Formulation -->
 			<section class="cardBox animate__animated mt10" id="card_fml">
-				<div class="cardTit2"><i class="material-symbols-outlined left">blender</i>Formulation
-					<a class="waves-effect waves-light hBtn hViva right" id="btnOpenFormulator" href="javascript:;" style="float:right;"><i class="material-symbols-outlined left">open_in_new</i><span class="label">Open in formulator</span></a>
-					<a class="waves-effect waves-light hBtn right" id="btnChangeFml" href="javascript:;" style="float:right;margin-right:6px;"><i class="material-symbols-outlined left">checklist</i><span class="label">Select</span></a>
+				<div class="cardTit2"><i class="material-symbols-outlined left">science</i>Formulation</div>
+				<!-- 타이틀과 분리된 액션 툴바 — 제목 아래 줄로 분리 -->
+				<div class="elnFmlToolbar">
+					<a class="waves-effect waves-light hBtn" id="btnChangeFml" href="javascript:;"><i class="material-symbols-outlined left">link</i><span class="label">Link</span></a>
+					<a class="waves-effect waves-light hBtn hViva" id="btnOpenFormulator" href="javascript:;"><i class="material-symbols-outlined left">open_in_new</i><span class="label">Open in Formulator</span></a>
 				</div>
 				<div class="elnBasic">
 					<!-- 본문은 연결된 배합들을 컬럼으로 나란히 비교 -->
-					<label class="elnBasicLabel">Composition <span class="elnHint">— wt% by formulation · click a material for Rawmathub</span></label>
+					<label class="elnBasicLabel">Composition <span class="elnHint">(wt%)</span></label>
 					<div class="fixedTable hBorderTable hScroll elnFmlCmp">
 						<table>
 							<thead id="fmlCmpCompHead"><!-- JS 렌더: Material | Code | 배합별 컬럼 --></thead>
@@ -147,9 +188,9 @@
 					</div>
 
 					<!-- 분석 임베드 (formulator 분석을 노트 안에 그대로) · 배합별 나란히 비교 -->
-					<label class="elnBasicLabel">Analysis <span class="elnHint">— side-by-side metrics · read-only</span></label>
+					<label class="elnBasicLabel">Analysis</label>
 					<div class="elnFmlAnalysis">
-						<div class="elnFmlChart"><div id="chartFmlAnalysis" style="height:240px;"></div></div>
+						<div class="elnFmlChart"><div id="chartFmlAnalysis"></div></div>
 						<div class="elnFmlMetrics">
 							<div class="fixedTable hBorderTable hScroll elnFmlCmp">
 								<table>
@@ -184,8 +225,8 @@
 					<div class="elnResults">
 						<div class="elnResultsTable">
 							<div class="fixedTable hBorderTable hScroll">
-								<table>
-									<colgroup><col style="width:28%"><col style="width:34%"><col style="width:20%"><col style="width:18%"></colgroup>
+								<table class="elnResultsTbl">
+									<colgroup><col><col><col><col></colgroup>
 									<thead><tr><th>Item</th><th>Spec</th><th>Measured</th><th>Result</th></tr></thead>
 									<tbody>
 										<tr><td>Viscosity</td><td class="ac">4,500 ± 300 cP</td><td class="ar">4,520</td><td class="ac"><span class="cGreen">Pass</span></td></tr>
@@ -196,7 +237,7 @@
 							</div>
 						</div>
 						<div class="elnResultsChart">
-							<div id="chartViscosity" style="height:240px;"></div>
+							<div id="chartViscosity"></div>
 						</div>
 					</div>
 				</div>
@@ -208,15 +249,21 @@
 				<div class="elnBasic">
 					<label class="elnBasicLabel">Conclusion · Summary</label>
 					<div class="elnConcl">
-						<textarea class="browser-default" placeholder="Write the conclusion of this note">v3 reached 4,520 cP viscosity, passing all 3 specs. Recommend transfer to mass-production validation (SN-26-0031). CoC issuance pending.</textarea>
+						<!-- Editor 모듈(wireEditorModule)과 동일 Summernote 패턴 — 미로드 시 contenteditable 폴백 -->
+						<div class="elnSummernote elnConclEditor">v3 reached 4,520 cP viscosity, passing all 3 specs, a clear improvement over the base polymer in <a class="elnNoteRef" data-code="LN-2604-00098" contenteditable="false" href="javascript:;">@LN-2604-00098</a>. Recommend transfer to mass-production validation (SN-26-0031). CoC issuance pending.</div>
 					</div>
 				</div>
 			</section>
 
-			<!-- Approval(전자결재) — 최하단 고정 시스템 카드(모듈 아님). 결재선·액션은 JS 인라인 렌더 -->
+			<!-- Approval — MAPIS 표준 결재 카드(appr_util.js renderApprovalCard: 헤더 cardTit2 + 전체상태 뱃지 + 액션바). 상태 뱃지·액션바·본문은 JS(ELN.signoff)가 렌더 -->
 			<section class="cardBox animate__animated mt10" id="card_approval">
-				<div class="cardTit2"><i class="material-symbols-outlined left">approval</i>Approval</div>
-				<div class="elnBasic" id="elnApprCardBody"><!-- renderApprovalCard() --></div>
+				<div class="fLine vCenter hSB elnApprHd">
+					<div class="fLine vCenter"><div class="cardTit2"><i class="material-symbols-outlined left">local_library</i>Approval</div><span id="elnApprOverall" class="roundBox grey font13 pl10 pr10 fontR ml10"></span></div>
+					<div class="fLine elnApprActs" id="elnApprActs" style="gap: 10px;"></div>
+				</div>
+				<div>
+					<div class="inputArea elnSign" id="elnSignBody"></div>
+				</div>
 			</section>
 
 		</article>
@@ -225,33 +272,113 @@
 	<!-- 우측 패널 토글 손잡이 (패널과 분리된 독립 fixed 버튼 — 항상 화면에 노출) -->
 	<!-- 우측 패널 제거 — Tags·History는 Overview 카드 내부 collapsible로 이동 -->
 
+	<!-- 섹션 추가 — 오른쪽 아래 플로팅 버튼(2026-10-26). 목차가 늘어나도 자리 그대로. Materialize fixed-action-btn = apis_techlib_list Document Basket · apis_main 과 같은 양식 -->
+	<div class="fixed-action-btn">
+		<a href="javascript:;" id="elnAddModule" class="btn-floating btn-large mochaBg waves-effect waves-light" data-position="left" data-tip="Add Module"><i class="large material-icons">add</i></a>
+	</div>
+
+	<!-- Audit Trail 모달(2026-10-26 카드에서 변경 — 목차·본문을 차지하지 않게). 헤더 #elnAuditBtn 으로 열림. 표·필터는 JS(ELN.audit)가 렌더. 모양은 Add Module 과 같은 시스템 Materialize 모달 -->
+	<div id="elnAuditModal" class="modal hooModal elnAuditModal">
+		<div class="modal-header mochaBg">
+			<h5><i class="material-symbols-outlined left">manage_history</i>Audit Trail</h5>
+			<div class="closeBtns modal-close"><i class="material-symbols-outlined">close</i></div>
+		</div>
+		<div class="modal-content">
+					<!-- 운영 구현 위치 안내(사용자 2026-10-21): Audit Trail 은 노트 팝업이 아니라 별도 관리자 메뉴로. 운영 표준 안내 상자(.infoBox, fmeaList 검색 도움말과 같은 구성) -->
+					<div class="infoBox pd10 font14 elnAuditPlan">
+						<div class="fLine vCenter viva-text fontM"><i class="material-icons">admin_panel_settings</i><div class="ml5">Planned for the admin menu</div></div>
+						<div class="ml20 mt5">In MAPIS, the Audit Trail will be built inside a separate admin menu, not in this note pop-up. It is shown here only for the demo.</div>
+					</div>
+					<div class="inputArea">
+						<!-- 소제목 + 필터 한 줄(좌: 제목, 우: 필터) -->
+						<div class="elnAuditHead">
+							<div class="cardSubTit">Change History</div>
+							<div class="elnAuditFilter">
+								<label>Section <select id="elnAuditSec" class="browser-default"></select></label>
+								<label>User <select id="elnAuditUser" class="browser-default"></select></label>
+							</div>
+						</div>
+						<div class="fixedTable hBorderTable hScroll mg10 smallFont elnAuditScroll">
+							<table class="elnAuditTable">
+								<thead>
+									<tr><th>Date / Time</th><th>User</th><th>Section</th><th>Action</th><th>Change</th></tr>
+								</thead>
+								<tbody id="elnAuditBody"></tbody>
+							</table>
+						</div>
+						<div class="elnAuditNote">Entries are recorded automatically and cannot be edited or deleted.</div>
+					</div>
+		</div>
+	</div>
+
+	<!-- Add Module 모달 — 시스템 Materialize 모달(apis_npdi_pop ProcessMap과 동일 패턴).
+	     글래스/오버레이/뒤배경 blur는 기본 .modal 규칙 + glass_engine.js가 처리. 그리드는 JS 렌더 -->
+	<div id="addModuleModal" class="modal hooModal">
+		<div class="modal-header mochaBg">
+			<h5><i class="material-symbols-outlined left">add_box</i>Add Module</h5>
+			<div class="closeBtns modal-close"><i class="material-symbols-outlined">close</i></div>
+		</div>
+		<div class="modal-content">
+			<div class="elnAddPickGrid" id="addModuleGrid"><!-- renderModulePicker() --></div>
+		</div>
+	</div>
+
 	<script>
 	$(document).ready(function(){
 		// 탭 / 셀렉트 초기화
 		if(window.M){
 			if(M.Tabs) M.Tabs.init(document.querySelectorAll('.tabs'), {});
-			if(M.FormSelect) M.FormSelect.init(document.querySelectorAll('select'), {});
+			if(M.FormSelect) M.FormSelect.init(document.querySelectorAll('select:not(.browser-default)'), {});   // select2 대상(.browser-default)은 제외
 			if(M.textareaAutoResize) document.querySelectorAll('.materialize-textarea').forEach(function(t){M.textareaAutoResize(t);});
 		}
 		// 좌측 메뉴 → 카드 스크롤 + 활성
 		// (중복 제거) 메뉴 클릭→스크롤+활성은 eln_proto.js 위임 핸들러가 처리 → sortable 재정렬 후에도 현재 위치로 스크롤
 		// 글래스 행 오버레이
 		if(typeof initAllHBorderTableOverlays === 'function') initAllHBorderTableOverlays();
+		// Conclusion 리치 에디터 — Editor 모듈(wireEditorModule)과 동일 Summernote 설정. 미로드 시 contenteditable 폴백
+		(function(){
+			var el = document.querySelector('.elnConclEditor'); if(!el) return;
+			if(window.$ && $.fn && $.fn.summernote){
+				$(el).summernote({
+					placeholder:'Write the conclusion of this note',
+					height:160,
+						// [주석 처리 2026-10-16] 현업 요청으로 에디터 @노트 참조 제외
+						// hint:(window.ELN && ELN.noteHint) ? ELN.noteHint(el) : [],   // @ 로 다른 노트 참조
+					toolbar:[
+						['style', ['style']],
+						['font', ['bold', 'italic', 'underline', 'strikethrough', 'clear']],
+						['color', ['color']],
+						['para', ['ul', 'ol', 'paragraph']],
+						['table', ['table']],
+						['insert', ['link', 'picture']],
+						['view', ['codeview']]
+					]
+				});
+			} else {
+				el.setAttribute('contenteditable','true');
+				el.classList.add('elnSummernoteFallback');
+				el.setAttribute('data-ph','Write the conclusion…');
+			}
+		})();
 		// 점도 차트 (Highcharts) — 템플릿이 Formulation 카드를 제거했으면 컨테이너가 없으므로 가드
+		// 점·선 그래프: 세로축을 4,000 부터 잘라도 막대처럼 차이가 부풀려 보이지 않음(2026-10-26 막대 → 선).
+		// 점 색 = 목표(4,200~4,800 cP) 안 초록 · 밖 갈색
 		if(window.Highcharts && document.getElementById('chartViscosity')){
+			var VISC = [5200, 4780, 4520], inSpec = function(v){ return v >= 4200 && v <= 4800; };
 			Highcharts.chart('chartViscosity', {
-				chart:{type:'column', height:240, backgroundColor:'transparent'},
+				chart:{type:'line', height:240, backgroundColor:'transparent'},
 				title:{text:'Viscosity Trend (v1→v3)', style:{fontSize:'13px', color:'#5a3e30'}},
 				credits:{enabled:false}, legend:{enabled:false},
-				xAxis:{categories:['v1','v2','v3'], lineColor:'#d9cfc2'},
-				yAxis:{title:{text:'Viscosity (cP)'}, min:4000, max:5400,
-					plotBands:[{from:4200, to:4800, color:'rgba(140,165,113,.18)', label:{text:'Target', style:{color:'#6f7d57', fontSize:'10px'}}}],
-					plotLines:[{value:4500, color:'#8ca571', dashStyle:'Dash', width:1}],
+				xAxis:{categories:['v1','v2','v3'], lineColor:'#d9cfc2', labels:{style:{fontSize:'13px', color:'#5a3e30'}}},
+				yAxis:{title:{text:'Viscosity (cP)', style:{fontSize:'13px'}}, min:4000, max:5400, labels:{style:{fontSize:'13px'}},
+					plotBands:[{from:4200, to:4800, color:'rgba(140,165,113,.18)', label:{text:'Target 4,200–4,800', align:'left', verticalAlign:'top', x:10, y:20, style:{color:'#6f7d57', fontSize:'13px'}}}],
 					gridLineColor:'#eee6da'},
 				tooltip:{valueSuffix:' cP'},
-				series:[{name:'Viscosity', borderRadius:4, data:[
-					{y:5200, color:'#A47864'}, {y:4780, color:'#A47864'}, {y:4520, color:'#8ca571'}
-				]}]
+				plotOptions:{line:{dataLabels:{enabled:true, style:{fontSize:'13px', fontWeight:'normal', color:'#5a3e30', textOutline:'none'}, formatter:function(){ return Highcharts.numberFormat(this.y, 0, '.', ','); }}}},
+				series:[{name:'Viscosity', color:'#c9b8a8', lineWidth:2, data:VISC.map(function(v){
+					var c = inSpec(v) ? '#8ca571' : '#A47864';
+					return {y:v, marker:{radius:6, fillColor:c, lineColor:'#fff', lineWidth:2}};
+				})}]
 			});
 		}
 	});

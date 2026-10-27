@@ -1,6 +1,6 @@
 /* MAPIS ELN — Reaction 모듈 엔진(분자식 파싱·분자량·원자 수지·화학량론 계산·반응식 SVG/PNG).
    계산 함수(parseFormula·formulaWeight·balance·compute)는 DOM 을 쓰지 않는 순수 함수 → node 에서도 그대로 시험 가능.
-   DOM 을 쓰는 것은 schemeSvg(DOMParser·글자 폭 측정)·toPng(Image·canvas)·inlineSvg(화면에 넣을 요소) 셋뿐. 화면 표시 형식(소수 자리)은 UI(eln_proto_simple.js) 몫. */
+   DOM 을 쓰는 것은 schemeSvg(DOMParser·글자 폭 측정)·toPng(Image·canvas)·inlineSvg(화면에 넣을 요소) 셋뿐. 화면 표시 형식(소수 자리)은 UI(eln.js) 몫. */
 (function (root) {
   'use strict';
 

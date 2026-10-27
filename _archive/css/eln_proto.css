@@ -6,18 +6,18 @@
 
 /* ── Task3: status 칩 + 드롭다운 (헤더→Overview 본문으로 이동) ── */
 /* 상태(변경가능 칩) + 카테고리(읽기전용 배지)를 한 줄에. 아래 메타 그리드와 hairline으로 분리. */
-.elnStateRow{display:flex;align-items:flex-end;gap:26px;flex-wrap:wrap;
-  margin-bottom:16px;padding-bottom:14px;border-bottom:1px solid #efe7db;}
+.elnStateRow{display:flex;align-items:flex-end;gap:25px;flex-wrap:wrap;
+  margin-bottom:15px;padding-bottom:15px;border-bottom:1px solid #efe7db;}
 /* 필드 = 미니 레이블(위) + 컨트롤(아래). 메타 그리드의 .k/.v 리듬과 동일. */
-.elnStateField{display:flex;flex-direction:column;gap:6px;}
-.elnStateLabel{font-size:11px;font-weight:600;color:#9b8c7e;letter-spacing:.03em;
-  text-transform:uppercase;margin-left:2px;}
+.elnStateField{display:flex;flex-direction:column;gap:5px;}
+.elnStateLabel{font-size:13px;font-weight:600;color:#9b8c7e;letter-spacing:.03em;
+  text-transform:uppercase;margin-left:0;}
 /* 상태 칩: 점(상태색) + 라벨 + chevron. 칩 전체를 상태색으로 은은히 물들임. */
-.elnStatusChip{display:inline-flex;align-items:center;gap:7px;height:32px;padding:0 12px;
+.elnStatusChip{display:inline-flex;align-items:center;gap:5px;height:32px;padding:0 10px;
   border:1px solid #e6ddd0;border-radius:18px;background:#fff;cursor:pointer;
   font-size:13px;font-weight:600;color:#3a2c24;transition:all .15s;}
 .elnStatusChip .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;}
-.elnStatusChip .chev{font-size:18px;color:#9b8c7e;margin-left:1px;}
+.elnStatusChip .chev{font-size:18px;color:#9b8c7e;margin-left:0;}
 .elnStatusChip[data-status="ing"] {background:rgba(47,128,237,.08);border-color:rgba(47,128,237,.30);color:#1f5fb0;}
 .elnStatusChip[data-status="ok"]  {background:rgba(58,170,111,.10);border-color:rgba(58,170,111,.32);color:#2c7a50;}
 .elnStatusChip[data-status="fail"]{background:rgba(214,90,90,.09);border-color:rgba(214,90,90,.30);color:#b03e3e;}
@@ -29,7 +29,7 @@
 .elnStatusChip:hover{filter:brightness(.97);border-color:#A47864;}
 /* status 드롭다운(popover 내부) — 노트북 픽커 메뉴와 동일한 룩 */
 .elnStatusMenu{display:flex;flex-direction:column;min-width:190px;}
-.elnStatusMenuItem{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;
+.elnStatusMenuItem{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;
   cursor:pointer;font-size:13px;color:#3a2c24;transition:background .12s;}
 .elnStatusMenuItem:hover{background:rgba(164,120,100,.08);}
 .elnStatusMenuItem .dot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;}
@@ -41,9 +41,9 @@
 
 /* ── TaskA0: 액션 인프라(토스트·모달) ── */
 /* 토스트 */
-.elnToastWrap{position:fixed;right:20px;bottom:20px;z-index:2000;display:flex;flex-direction:column;gap:8px;}
-.elnToast{min-width:220px;max-width:340px;padding:12px 16px;border-radius:10px;color:#fff;font-size:13px;
-  box-shadow:0 6px 20px rgba(0,0,0,.18);display:flex;align-items:center;gap:8px;
+.elnToastWrap{position:fixed;right:20px;bottom:20px;z-index:2000;display:flex;flex-direction:column;gap:10px;}
+.elnToast{min-width:220px;max-width:340px;padding:10px 15px;border-radius:10px;color:#fff;font-size:13px;
+  box-shadow:0 6px 20px rgba(0,0,0,.18);display:flex;align-items:center;gap:10px;
   animation:elnToastIn .22s ease;}
 .elnToast i{font-size:18px;}
 .elnToast.info{background:#2f80ed;} .elnToast.ok{background:#3aaa6f;}
@@ -56,70 +56,70 @@
   z-index:1500;display:flex;align-items:center;justify-content:center;animation:elnFadeIn .18s ease;}
 .elnModal{background:#fff;border-radius:14px;width:560px;max-width:92vw;max-height:84vh;overflow:hidden;
   box-shadow:0 20px 60px rgba(0,0,0,.28);display:flex;flex-direction:column;animation:elnPop .2s ease;}
-.elnModalHead{padding:16px 20px;border-bottom:1px solid #eee6da;display:flex;align-items:center;gap:8px;
+.elnModalHead{padding:15px 20px;border-bottom:1px solid #eee6da;display:flex;align-items:center;gap:10px;
   font-weight:600;font-size:15px;}
 .elnModalHead i{color:#A47864;}
 .elnModalHead .x{margin-left:auto;cursor:pointer;border:0;background:transparent;color:#999;font-size:20px;line-height:1;}
-.elnModalBody{padding:18px 20px;overflow-y:auto;}
+.elnModalBody{padding:20px 20px;overflow-y:auto;}
 /* 모달 input: materialize underline 스타일 무력화 → 깔끔한 박스 (browser-default 유무 무관) */
-.elnModalBody input[type=text],.elnModalBody input:not([type]){width:100%;box-sizing:border-box;height:auto;border:1px solid #e6ddd0;border-radius:10px;background:#fff;padding:10px 12px;font-size:14px;color:#3a2c24;box-shadow:none;margin:0;}
+.elnModalBody input[type=text],.elnModalBody input:not([type]){width:100%;box-sizing:border-box;height:auto;border:1px solid #e6ddd0;border-radius:10px;background:#fff;padding:10px 10px;font-size:14px;color:#3a2c24;box-shadow:none;margin:0;}
 .elnModalBody input[type=text]:focus,.elnModalBody input:not([type]):focus{outline:none;border-color:#A47864;box-shadow:0 0 0 1px #A47864;}
 /* Project quick-search 픽커 */
 .elnPickWrap{display:flex;flex-direction:column;}
-.elnPickSearch{width:100%;box-sizing:border-box;border:1px solid #e6ddd0;border-radius:8px;padding:8px 10px;font-size:13px;color:#3a2c24;margin-bottom:8px;}
+.elnPickSearch{width:100%;box-sizing:border-box;border:1px solid #e6ddd0;border-radius:8px;padding:10px 10px;font-size:13px;color:#3a2c24;margin-bottom:10px;}
 .elnPickSearch:focus{outline:none;border-color:#A47864;box-shadow:0 0 0 1px #A47864;}
 .elnPickList{max-height:280px;overflow-y:auto;}
-.elnPickRow{padding:8px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:#3a2c24;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.elnPickRow{padding:10px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:#3a2c24;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .elnPickRow:hover{background:rgba(164,120,100,.10);}
 .elnPickRow.cur{color:#A47864;font-weight:600;}
-.elnPickEmpty{padding:12px;text-align:center;color:#b3a596;font-size:13px;}
+.elnPickEmpty{padding:10px;text-align:center;color:#b3a596;font-size:13px;}
 /* Project 메타: 타이틀=링크(조회), swap 아이콘=변경(quick-search 진입) */
-.elnMetaText .v.elnProjVal{display:flex;align-items:center;gap:6px;min-width:0;overflow:hidden;}  /* .v의 nowrap/overflow 덮어쓰기 */
+.elnMetaText .v.elnProjVal{display:flex;align-items:center;gap:5px;min-width:0;overflow:hidden;}  /* .v의 nowrap/overflow 덮어쓰기 */
 .elnProjVal .elnProjLink{flex:0 1 auto;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}  /* 이름만 ellipsis */
-.elnProjChange{flex:0 0 auto;display:inline-flex;align-items:center;gap:2px;font-size:11px;font-weight:600;color:#9b8c7e;cursor:pointer;border-radius:7px;padding:2px 7px;background:rgba(0,0,0,.045);transition:color .15s,background .15s;}  /* 칩은 절대 안 줄어듦 → 항상 보임 */
+.elnProjChange{flex:0 0 auto;display:inline-flex;align-items:center;gap:0;font-size:13px;font-weight:600;color:#9b8c7e;cursor:pointer;border-radius:7px;padding:0 5px;background:rgba(0,0,0,.045);transition:color .15s,background .15s;}  /* 칩은 절대 안 줄어듦 → 항상 보임 */
 .elnProjChange:hover{color:var(--orangetiger);background:rgba(232,126,5,.12);}
 .elnProjChange i{font-size:14px;}
 .elnMetaText .v.elnProjVal.empty .elnProjLink{color:#9b8c7e;font-style:italic;cursor:default;text-decoration:none;pointer-events:none;}  /* No Project: 비링크 muted */
 .elnPickNone{color:#9b8c7e;font-style:italic;}  /* 픽커의 No Project 행 */
-.elnModalFoot{padding:12px 20px;border-top:1px solid #eee6da;display:flex;justify-content:flex-end;gap:8px;}
+.elnModalFoot{padding:10px 20px;border-top:1px solid #eee6da;display:flex;justify-content:flex-end;gap:10px;}
 @keyframes elnFadeIn{from{opacity:0;}to{opacity:1;}}
 @keyframes elnPop{from{transform:scale(.96);opacity:0;}to{transform:scale(1);opacity:1;}}
 
 /* Overview 내부 collapsible(Tags·History) — 우측 패널 대체. 마커는 caret 대신 +/− */
 .elnOvSec{border:1px solid #efe7db;border-radius:10px;background:#fff;margin-top:10px;user-select:none;}
-.elnOvSec > summary{display:flex;align-items:center;gap:7px;padding:9px 12px;cursor:pointer;font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#9b8c7e;list-style:none;}
+.elnOvSec > summary{display:flex;align-items:center;gap:5px;padding:10px 10px;cursor:pointer;font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#9b8c7e;list-style:none;}
 .elnOvSec > summary::-webkit-details-marker{display:none;}
 .elnOvSec > summary > i:first-child{font-size:15px;color:#A47864;}
 .elnOvSec > summary::after{content:'+';margin-left:auto;font-size:18px;color:#b3a596;line-height:1;}   /* 접힘 = + */
 .elnOvSec[open] > summary::after{content:'−';}                                                          /* 펼침 = − */
-.elnOvSec > summary .more{margin-left:auto;font-weight:600;font-size:11px;color:#A47864;text-decoration:none;display:inline-flex;align-items:center;gap:2px;}
-.elnOvSec > summary .more + ::after,.elnOvSec > summary .more ~ ::after{margin-left:8px;}
-.elnOvSec .elnTagBox,.elnOvSec > .elnLineage{padding:4px 12px 12px;}
+.elnOvSec > summary .more{margin-left:auto;font-weight:600;font-size:13px;color:#A47864;text-decoration:none;display:inline-flex;align-items:center;gap:0;}
+.elnOvSec > summary .more + ::after,.elnOvSec > summary .more ~ ::after{margin-left:10px;}
+.elnOvSec .elnTagBox,.elnOvSec > .elnLineage{padding:5px 10px 10px;}
 /* .elnRightTit 스타일은 .elnSumSecTit 통합 정의로 일원화(아래 .elnSumSec 영역 참조) */
 .elnRefList{list-style:none;margin:0;padding:0;}
 /* 그룹형 related: 타입별(복수 항목) + 개수 배지 + Derived from(부모) */
-.elnRefGroup{margin-bottom:11px;}
-.elnRefHead{display:flex;align-items:center;gap:6px;font-size:11px;font-weight:600;color:#9b8c7e;text-transform:uppercase;letter-spacing:.03em;margin-bottom:3px;}
+.elnRefGroup{margin-bottom:10px;}
+.elnRefHead{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:#9b8c7e;text-transform:uppercase;letter-spacing:.03em;margin-bottom:5px;}
 .elnRefHead i{font-size:16px;color:#A47864;}
-.elnRefCnt{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 4px;border-radius:8px;background:rgba(164,120,100,.16);color:#A47864;font-size:10px;font-weight:700;}
-.elnRefSrc{margin-left:auto;font-weight:500;text-transform:none;letter-spacing:0;color:#b3a596;font-size:10px;}
-.elnRefItem{display:flex;align-items:center;gap:6px;padding:5px 8px;border-radius:8px;cursor:pointer;font-size:13px;color:#3a2c24;text-decoration:none;}
+.elnRefCnt{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 5px;border-radius:8px;background:rgba(164,120,100,.16);color:#A47864;font-size:13px;font-weight:700;}
+.elnRefSrc{margin-left:auto;font-weight:500;text-transform:none;letter-spacing:0;color:#b3a596;font-size:13px;}
+.elnRefItem{display:flex;align-items:center;gap:5px;padding:5px 10px;border-radius:8px;cursor:pointer;font-size:13px;color:#3a2c24;text-decoration:none;}
 .elnRefItem:hover{background:rgba(164,120,100,.12);}
-.elnRefItem em{margin-left:auto;font-style:normal;font-size:11px;color:#9b8c7e;font-weight:400;text-align:right;padding-left:8px;}
-.elnRefMore{color:#5a7d9a;font-size:12px;font-weight:500;}
+.elnRefItem em{margin-left:auto;font-style:normal;font-size:13px;color:#9b8c7e;font-weight:400;text-align:right;padding-left:10px;}
+.elnRefMore{color:#5a7d9a;font-size:13px;font-weight:500;}
 
 /* ── TaskA1: 배합 연계 ── */
 .rmName{color:#5a3e30;text-decoration:underline dotted;text-underline-offset:2px;}
 .rmName:hover{color:#A47864;background:rgba(164,120,100,.08);}
-.elnFmlPick{display:flex;align-items:center;gap:12px;padding:12px 14px;border:1px solid #e6ddd0;border-radius:10px;
-  margin-bottom:8px;cursor:pointer;transition:all .15s;}
+.elnFmlPick{display:flex;align-items:center;gap:10px;padding:10px 15px;border:1px solid #e6ddd0;border-radius:10px;
+  margin-bottom:10px;cursor:pointer;transition:all .15s;}
 .elnFmlPick:hover{border-color:#A47864;background:rgba(164,120,100,.06);}
 .elnFmlPick.on{border-color:#A47864;background:rgba(164,120,100,.12);}
 .elnFmlPick > .chk{font-size:22px;color:#c9bcae;flex:0 0 auto;}      /* 체크박스(다중선택) */
 .elnFmlPick.on > .chk{color:#A47864;}
 .elnFmlPick .txt{min-width:0;}
 .elnFmlPick .tit{font-weight:600;font-size:14px;color:#5a3e30;}
-.elnFmlPick .sub{font-size:12px;color:#999;margin-top:2px;}
+.elnFmlPick .sub{font-size:13px;color:#999;margin-top:0;}
 /* 배합 비교표: 헤더 배합코드 강조, 배합 간 값이 다른 wt% 셀 강조 */
 .elnFmlCmp table{width:100%;}
 .elnFmlCmp th b{color:#A47864;}
@@ -127,146 +127,146 @@
 
 /* ── Task5: 카테고리 + 자유태그 ── */
 /* 카테고리 = 생성 시 1회 고정. 헤더엔 읽기 전용 잠금 배지(변경 불가). */
-.elnCatBadge{display:inline-flex;align-items:center;gap:4px;height:32px;
+.elnCatBadge{display:inline-flex;align-items:center;gap:5px;height:32px;
   border:1px solid #d9cfc2;border-radius:16px;padding:0 10px;background:rgba(164,120,100,.10);
   color:#7a5240;font-size:13px;font-weight:600;vertical-align:middle;cursor:default;}
 .elnCatBadge i.left{font-size:18px;margin-right:0;}
-.elnCatBadge i.lock{font-size:14px;opacity:.5;margin-left:2px;}
+.elnCatBadge i.lock{font-size:14px;opacity:.5;margin-left:0;}
 .elnCatBadge[data-cat="gen"]{background:rgba(0,0,0,.05);color:#666;}
 /* 생성 모달 카테고리 선택 카드 */
-.elnNewCats{display:flex;flex-direction:column;gap:8px;}
-.elnNewCat{display:flex;align-items:center;gap:10px;padding:12px 14px;border:1px solid #e6ddd0;
+.elnNewCats{display:flex;flex-direction:column;gap:10px;}
+.elnNewCat{display:flex;align-items:center;gap:10px;padding:10px 15px;border:1px solid #e6ddd0;
   border-radius:10px;cursor:pointer;transition:all .15s;}
 .elnNewCat:hover{border-color:#A47864;background:rgba(164,120,100,.06);}
 .elnNewCat.on{border-color:#A47864;background:rgba(164,120,100,.12);}
 .elnNewCat i{font-size:22px;color:#A47864;}
 .elnNewCat .tit{font-weight:600;font-size:14px;color:#5a3e30;}
-.elnNewCat .sub{font-size:12px;color:#999;margin-top:1px;}
+.elnNewCat .sub{font-size:13px;color:#999;margin-top:0;}
 .elnNewCat .pick{margin-left:auto;color:#A47864;display:none;}
 .elnNewCat.on .pick{display:inline;}
 
 /* ── 검색 모달 폼(NPI식 필드 검색) + 결과 상태 ── */
-.elnSrchForm{display:flex;flex-direction:column;gap:14px;}
-.elnSrchGrid{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
-.elnSrchRow{display:flex;flex-direction:column;gap:6px;}
-.elnSrchRow label{font-size:12px;font-weight:600;color:#A47864;letter-spacing:.02em;}
+.elnSrchForm{display:flex;flex-direction:column;gap:15px;}
+.elnSrchGrid{display:grid;grid-template-columns:1fr 1fr;gap:15px;}
+.elnSrchRow{display:flex;flex-direction:column;gap:5px;}
+.elnSrchRow label{font-size:13px;font-weight:600;color:#A47864;letter-spacing:.02em;}
 .elnSrchForm input.browser-default,
 .elnSrchForm select.browser-default{
-  height:40px;border:1px solid #d9cfc2;border-radius:8px;padding:0 12px;font-size:14px;
+  height:40px;border:1px solid #d9cfc2;border-radius:8px;padding:0 10px;font-size:14px;
   color:#5a3e30;background:#fff;box-sizing:border-box;width:100%;display:block;}
 .elnSrchForm input.browser-default:focus,
 .elnSrchForm select.browser-default:focus{border-color:#A47864;outline:none;box-shadow:0 0 0 3px rgba(164,120,100,.12);}
-.elnSrchHint{display:flex;align-items:flex-start;gap:8px;padding:10px 12px;border-radius:8px;
-  background:rgba(164,120,100,.07);color:#7a5240;font-size:12px;line-height:1.5;}
-.elnSrchHint i{font-size:16px;color:#A47864;flex:0 0 auto;margin-top:1px;}
-.elnSrchHint b{font-family:monospace;font-size:13px;background:rgba(164,120,100,.16);border-radius:4px;padding:0 4px;}
+.elnSrchHint{display:flex;align-items:flex-start;gap:10px;padding:10px 10px;border-radius:8px;
+  background:rgba(164,120,100,.07);color:#7a5240;font-size:13px;line-height:1.5;}
+.elnSrchHint i{font-size:16px;color:#A47864;flex:0 0 auto;margin-top:0;}
+.elnSrchHint b{font-family:monospace;font-size:13px;background:rgba(164,120,100,.16);border-radius:4px;padding:0 5px;}
 
 /* 헤더 'Clear search' — 검색 결과 모드에서만 노출 */
 /* 검색 결과: 무엇으로 검색했는지(적용된 조건)를 필드별 칩으로 노출 — "어떻게 검색했는지" 한눈에 */
-.elnSrchCrit{display:inline-flex;align-items:center;flex-wrap:wrap;gap:6px;}
-.elnSrchCrit .lead{display:inline-flex;align-items:center;gap:4px;font-size:11px;font-weight:600;
+.elnSrchCrit{display:inline-flex;align-items:center;flex-wrap:wrap;gap:5px;}
+.elnSrchCrit .lead{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;
   color:#b1a08e;letter-spacing:.02em;}
 .elnSrchCrit .lead i{font-size:16px;color:#bcae9d;}
 .elnSrchCritChip{display:inline-flex;align-items:center;gap:5px;max-width:220px;
-  padding:3px 11px 3px 9px;border-radius:999px;background:#fff;border:1px solid #e7ddce;
-  box-shadow:0 1px 2px rgba(90,62,48,.05);font-size:12px;line-height:1.5;}
+  padding:5px 10px 5px 10px;border-radius:999px;background:#fff;border:1px solid #e7ddce;
+  box-shadow:0 1px 2px rgba(90,62,48,.05);font-size:13px;line-height:1.5;}
 .elnSrchCritChip i{font-size:15px;color:#A47864;flex:0 0 auto;}
 .elnSrchCritChip .k{color:#b1a08e;font-weight:500;}
 .elnSrchCritChip .v{color:#5a3e30;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .elnSrchCritChip .dot{width:8px;height:8px;border-radius:50%;flex:0 0 auto;box-shadow:0 0 0 2px rgba(0,0,0,.04);}
 /* Clear filters — 칩과 같은 줄·같은 칩 언어의 '끄는 액션'. 기본은 은은(필터칩보다 흐림),
    hover 시 따뜻하게 점화해 클릭 가능 액션임을 신호. filter_alt_off 아이콘이 리딩 filter_alt와 대칭 */
-.elnSrchClear{display:inline-flex;align-items:center;gap:4px;padding:3px 11px 3px 8px;border-radius:999px;
-  border:1px solid #e7ddce;background:#fff;color:#9b8c7e;font-size:12px;font-weight:600;cursor:pointer;
+.elnSrchClear{display:inline-flex;align-items:center;gap:5px;padding:5px 10px 5px 10px;border-radius:999px;
+  border:1px solid #e7ddce;background:#fff;color:#9b8c7e;font-size:13px;font-weight:600;cursor:pointer;
   transition:background .15s,border-color .15s,color .15s;}
 .elnSrchClear:hover{background:#f6efe6;border-color:#dcae9c;color:#8a5f4d;}
 .elnSrchClear i{font-size:15px;color:#bcae9d;transition:color .15s;}
 .elnSrchClear:hover i{color:#A47864;}
 
 /* 빈 결과 상태(검색 0건) */
-.elnListEmpty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
-  padding:48px 20px;border:0;color:#b3a595;font-size:14px;text-align:center;cursor:default;}
+.elnListEmpty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
+  padding:50px 20px;border:0;color:#b3a595;font-size:14px;text-align:center;cursor:default;}
 .elnListEmpty:hover{background:transparent;}
 .elnListEmpty i{font-size:36px;color:#cdbfae;}
 
 /* ── Basic Data 세련화(row/col 대신 커스텀 레이아웃) ── */
-.elnBasic{padding:6px 4px 4px;}
+.elnBasic{padding:5px 5px 5px;}
 /* 섹션 subtitle — 통일: 14px 볼드 + 상단 margin으로 구획 분리(첫 라벨만 축소) */
-.elnBasicLabel{display:flex;align-items:center;gap:6px;font-size:14px;font-weight:700;color:#3a2c24;letter-spacing:0;margin:20px 2px 8px;}
-.elnBasic > .elnBasicLabel:first-child{margin-top:4px;}
+.elnBasicLabel{display:flex;align-items:center;gap:5px;font-size:14px;font-weight:700;color:#3a2c24;letter-spacing:0;margin:20px 0 10px;}
+.elnBasic > .elnBasicLabel:first-child{margin-top:5px;}
 .elnBasicLabel .essential{color:#d65a5a;margin-right:0;}
 .elnBasicLabel > i{font-size:18px;color:#A47864;flex:0 0 auto;}
-.elnBasicTitle{position:relative;margin-bottom:18px;}
+.elnBasicTitle{position:relative;margin-bottom:20px;}
 .elnBasicTitle input{width:100%;border:0;border-bottom:2px solid #e6ddd0;background:transparent;
-  font-family:inherit;font-size:22px;font-weight:600;color:#3a2c24;padding:4px 2px 8px;
+  font-family:inherit;font-size:22px;font-weight:600;color:#3a2c24;padding:5px 0 10px;
   transition:border-color .2s;}
 .elnBasicTitle input::placeholder{color:#c9bcae;font-weight:500;}
 .elnBasicTitle input:focus{outline:none;border-bottom-color:#A47864;}
 /* 메타: 아이콘 + 라벨/값 카드, 화면 폭에 맞춰 자동 흐름 */
 .elnMeta{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:10px;}
 /* Author·Modified(읽기전용) = 팝업 헤더 우측, 옅은 inline. titArea가 flex → margin-left:auto로 우측 정렬 */
-.elnHeadMeta{margin-left:auto;display:flex;align-items:center;padding-right:6px;}
-.elnHeadMeta span{font-size:12px;color:#5a4a3e;}
-.elnHeadMeta .elnHeadK{color:#b3a596;font-size:10px;text-transform:uppercase;letter-spacing:.04em;margin:0 5px 0 16px;}
+.elnHeadMeta{margin-left:auto;display:flex;align-items:center;padding-right:5px;}
+.elnHeadMeta span{font-size:13px;color:#5a4a3e;}
+.elnHeadMeta .elnHeadK{color:#b3a596;font-size:13px;text-transform:uppercase;letter-spacing:.04em;margin:0 5px 0 15px;}
 .elnHeadMeta .elnHeadK:first-child{margin-left:0;}
-.elnMetaItem{display:flex;align-items:center;gap:11px;padding:11px 14px;border-radius:12px;
+.elnMetaItem{display:flex;align-items:center;gap:10px;padding:10px 15px;border-radius:12px;
   background:rgba(164,120,100,.05);border:1px solid rgba(164,120,100,.10);transition:all .15s;}
 .elnMetaItem:hover{background:rgba(164,120,100,.09);border-color:rgba(164,120,100,.22);}
 .elnMetaItem > i{font-size:22px;color:#A47864;flex:0 0 auto;opacity:.85;}
 .elnMetaText{display:flex;flex-direction:column;min-width:0;}
-.elnMetaText .k{font-size:11px;color:#9b8c7e;letter-spacing:.03em;text-transform:uppercase;}
+.elnMetaText .k{font-size:13px;color:#9b8c7e;letter-spacing:.03em;text-transform:uppercase;}
 .elnMetaText .v{font-size:14px;color:#3a2c24;font-weight:500;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .elnMetaText .v a.link{color:#5a7d9a;}
 /* 공정 조건 = 수치 측정값 강조(같은 그리드, 값만 크게) */
 .elnMetaItem.metric .v{font-size:18px;font-weight:600;}
-.elnMetaItem.metric .v em{font-size:12px;font-weight:500;color:#9b8c7e;font-style:normal;margin-left:2px;}
+.elnMetaItem.metric .v em{font-size:13px;font-weight:500;color:#9b8c7e;font-style:normal;margin-left:0;}
 /* 결론 텍스트영역 */
 .elnConcl textarea{width:100%;min-height:88px;border:1px solid #e6ddd0;border-radius:12px;
   background:rgba(164,120,100,.04);font-family:inherit;font-size:14px;line-height:1.6;color:#3a2c24;
-  padding:12px 14px;transition:border-color .2s,background .2s;}
+  padding:10px 15px;transition:border-color .2s,background .2s;}
 .elnConcl textarea:focus{outline:none;border-color:#A47864;background:#fff;}
 .elnConcl textarea::placeholder{color:#c9bcae;}
 
 /* ── Formulation 섹션 세련화 ── */
-.elnHint{font-weight:500;color:#9b8c7e;font-size:12px;letter-spacing:0;text-transform:none;}
+.elnHint{font-weight:500;color:#9b8c7e;font-size:13px;letter-spacing:0;text-transform:none;}
 /* 배합 식별자 헤더 */
-.elnFmlHead{display:flex;align-items:center;gap:10px;padding:12px 14px;margin-bottom:14px;border-radius:12px;
+.elnFmlHead{display:flex;align-items:center;gap:10px;padding:10px 15px;margin-bottom:15px;border-radius:12px;
   background:linear-gradient(135deg,rgba(164,120,100,.10),rgba(164,120,100,.04));
   border:1px solid rgba(164,120,100,.16);}
 .elnFmlHead > i{font-size:24px;color:#A47864;flex:0 0 auto;}
 .elnFmlId{font-size:16px;font-weight:600;color:#3a2c24;}
 .elnFmlId b{color:#A47864;}
-.elnFmlId .cGray{font-size:12px;font-weight:400;}
-.elnLinkChip{margin-left:auto;display:inline-flex;align-items:center;gap:3px;font-size:11px;font-weight:600;
-  color:#3aaa6f;background:rgba(58,170,111,.12);padding:3px 9px;border-radius:12px;}
+.elnFmlId .cGray{font-size:13px;font-weight:400;}
+.elnLinkChip{margin-left:auto;display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;
+  color:#3aaa6f;background:rgba(58,170,111,.12);padding:5px 10px;border-radius:12px;}
 .elnLinkChip i{font-size:14px;}
 /* 분석: 차트 + 지표표 나란히, 좁아지면 줄바꿈 */
-.elnFmlAnalysis{display:grid;grid-template-columns:1.4fr 1fr;gap:14px;align-items:start;}
-.elnResults{display:grid;grid-template-columns:1fr 1fr;gap:14px;align-items:start;}
+.elnFmlAnalysis{display:grid;grid-template-columns:1.4fr 1fr;gap:15px;align-items:start;}
+.elnResults{display:grid;grid-template-columns:1fr 1fr;gap:15px;align-items:start;}
 /* grid 셀 안에서 Highcharts가 셀을 밀어내지 않도록 min-width:0 */
 .elnFmlChart,.elnFmlMetrics,.elnResultsTable,.elnResultsChart{min-width:0;}
 @media (max-width:900px){
   .elnFmlAnalysis,.elnResults{grid-template-columns:1fr;}
 }
 .elnTagBox{padding:0 5px;}
-.elnTags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:8px;}
-.elnTag{display:inline-flex;align-items:center;gap:2px;padding:4px 4px 4px 10px;border-radius:14px;
+.elnTags{display:flex;flex-wrap:wrap;gap:5px;margin-bottom:10px;}
+.elnTag{display:inline-flex;align-items:center;gap:0;padding:5px 5px 5px 10px;border-radius:14px;
   background:rgba(164,120,100,.12);color:#7a5240;font-size:13px;}
 .elnTag i{font-size:15px;cursor:pointer;opacity:.6;}
 .elnTag i:hover{opacity:1;}
 #elnTagInput{height:34px;border:1px solid #d9cfc2;border-radius:8px;padding:0 10px;width:240px;}
 /* 태그 추천 칩(Recommended) — 적용된 태그와 구분: 점선+'+'아이콘(클릭=추가), hover 시 채움 */
-.elnRecTags{display:flex;flex-wrap:wrap;align-items:center;gap:6px;margin-top:10px;}
-.elnRecLabel{font-size:11px;font-weight:600;color:#9b8c7e;text-transform:uppercase;letter-spacing:.03em;}
-.elnRecChip{display:inline-flex;align-items:center;gap:2px;font-size:12px;color:#5a7d9a;background:rgba(90,125,154,.08);border:1px dashed #c2d0db;border-radius:13px;padding:2px 9px 2px 5px;cursor:pointer;transition:color .15s,background .15s,border-color .15s;}
+.elnRecTags{display:flex;flex-wrap:wrap;align-items:center;gap:5px;margin-top:10px;}
+.elnRecLabel{font-size:13px;font-weight:600;color:#9b8c7e;text-transform:uppercase;letter-spacing:.03em;}
+.elnRecChip{display:inline-flex;align-items:center;gap:0;font-size:13px;color:#5a7d9a;background:rgba(90,125,154,.08);border:1px dashed #c2d0db;border-radius:13px;padding:0 10px 0 5px;cursor:pointer;transition:color .15s,background .15s,border-color .15s;}
 .elnRecChip:hover{color:#fff;background:#5a7d9a;border-color:#5a7d9a;}
 .elnRecChip i{font-size:14px;}
-.elnRecEmpty{font-size:12px;color:#b3a596;font-style:italic;}
+.elnRecEmpty{font-size:13px;color:#b3a596;font-style:italic;}
 
 /* ── Task6: 계보 미니맵 ── */
 /* History = 파생 트리(들여쓰기로 분기 표현). 깊이는 인라인 padding-left */
-.elnLineage{display:flex;flex-direction:column;gap:2px;}
-.elnLineNode{display:flex;align-items:center;gap:7px;font-size:13px;padding:5px 6px;border-radius:7px;cursor:pointer;}
+.elnLineage{display:flex;flex-direction:column;gap:0;}
+.elnLineNode{display:flex;align-items:center;gap:5px;font-size:13px;padding:5px 5px;border-radius:7px;cursor:pointer;}
 .elnLineNode:hover{background:rgba(164,120,100,.08);}
 .elnLineDot{width:9px;height:9px;border-radius:50%;flex:0 0 auto;box-shadow:0 0 0 1px rgba(0,0,0,.06);}
 .elnLineDot.ok{background:#3aaa6f;} .elnLineDot.fail{background:#d65a5a;}
@@ -282,9 +282,9 @@
 .elnLineNode.isNew{background:rgba(58,170,111,.10);animation:elnNewPulse 1.1s ease;}
 .elnLineNode.isNew .nm{color:#2f6f4f;}
 @keyframes elnNewPulse{0%{background:rgba(58,170,111,.34);}100%{background:rgba(58,170,111,.10);}}
-.elnSumNoLin{font-size:12px;color:#9b8c7e;padding:6px 4px;}
-.elnNewVerBtn{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:8px;padding:7px;
-  border:1px dashed #cdbfae;border-radius:8px;color:#8a6f5d;font-size:12.5px;text-decoration:none;transition:all .15s;}
+.elnSumNoLin{font-size:13px;color:#9b8c7e;padding:5px 5px;}
+.elnNewVerBtn{display:flex;align-items:center;justify-content:center;gap:5px;margin-top:10px;padding:5px;
+  border:1px dashed #cdbfae;border-radius:8px;color:#8a6f5d;font-size:13px;text-decoration:none;transition:all .15s;}
 .elnNewVerBtn:hover{background:rgba(164,120,100,.08);border-color:#A47864;color:#7a5240;}
 .elnNewVerBtn i{font-size:17px;}
 
@@ -300,13 +300,13 @@
 .elnHistoryGraph .curRing{fill:none;stroke:#A47864;stroke-width:2.5;}
 .elnHistoryGraph .curRingPing{fill:none;stroke:#A47864;stroke-width:2.5;transform-box:fill-box;transform-origin:center;animation:elnCurPingSvg 1.5s ease-out infinite;}
 @keyframes elnCurPingSvg{0%{transform:scale(.8);opacity:.55;}70%,100%{transform:scale(1.8);opacity:0;}}
-.elnHistoryGraph .gCode{font-size:11px;fill:#a8978a;font-family:ui-monospace,Menlo,Consolas,monospace;}
+.elnHistoryGraph .gCode{font-size:13px;fill:#a8978a;font-family:ui-monospace,Menlo,Consolas,monospace;}
 .elnHistoryGraph .gTitle{font-size:13.5px;fill:#3a2c24;font-weight:600;}
 .elnHistoryGraph .gTitle.cur{fill:#1f1712;font-weight:800;}
-.elnHistoryGraph .gHidden{font-size:10.5px;fill:#b07b53;font-weight:700;}
-.elnHistoryGraph .gPill{font-size:10.5px;font-weight:700;}
-.elnHistoryGraph .gDiff{font-size:10px;fill:#9b8c7e;}   /* 현재와 다른 notebook/project만 표시 */
-.elnHistoryGraph .gCurBadge{font-size:10.5px;font-weight:800;fill:#7a5240;}
+.elnHistoryGraph .gHidden{font-size:13px;fill:#b07b53;font-weight:700;}
+.elnHistoryGraph .gPill{font-size:13px;font-weight:700;}
+.elnHistoryGraph .gDiff{font-size:13px;fill:#9b8c7e;}   /* 현재와 다른 notebook/project만 표시 */
+.elnHistoryGraph .gCurBadge{font-size:13px;font-weight:800;fill:#7a5240;}
 .elnHistoryGraph .gHit{cursor:pointer;}
 .elnHistoryGraph .gNode.lnkHover .gTitle{fill:#7a5240;text-decoration:underline;}
 
@@ -316,17 +316,17 @@
    ═══════════════════════════════════════════════════════════════ */
 
 /* 글로벌 네비(모든 ELN 화면 공통, 헤더 우측) */
-.elnNav{margin-left:auto;display:flex;gap:4px;align-items:center;padding-right:10px;}
-.elnNav a{display:inline-flex;align-items:center;gap:5px;padding:7px 13px;border-radius:9px;font-size:13px;
+.elnNav{margin-left:auto;display:flex;gap:5px;align-items:center;padding-right:10px;}
+.elnNav a{display:inline-flex;align-items:center;gap:5px;padding:5px 15px;border-radius:9px;font-size:13px;
   color:#7a6757;text-decoration:none;transition:all .15s;}
 .elnNav a i{font-size:18px;}
 .elnNav a:hover{background:rgba(164,120,100,.10);}
 .elnNav a.on{background:#A47864;color:#fff;font-weight:600;}
-.statusTit .elnSub{font-size:12px;color:#9b8c7e;margin-top:2px;}
+.statusTit .elnSub{font-size:13px;color:#9b8c7e;margin-top:0;}
 /* mapis .titArea i{font-size:30px}보다 강한 특이도로 네비 아이콘 정상화 + 색 상속(active=흰색) */
 .popup header .titArea .elnNav a i{font-size:18px;color:inherit;}
 /* 새 화면 헤더: 제목+부제 세로 배치([3] statusTit는 row 유지) */
-.statusTit.elnHCol{flex-direction:column;align-items:flex-start;justify-content:center;gap:1px;}
+.statusTit.elnHCol{flex-direction:column;align-items:flex-start;justify-content:center;gap:0;}
 
 /* 공통 status 점 */
 .elnDot{display:inline-block;width:9px;height:9px;border-radius:50%;flex:0 0 auto;}
@@ -334,43 +334,43 @@
 .elnDot.fail{background:#d65a5a;} .elnDot.hold{background:#e0a83e;}
 .elnDot.appr{background:#a893bd;}   /* In Approval — 노트 상태를 결재 상태로 통일(팝업 헤더와 같은 색) */
 /* 공통 섹션 타이틀(계보 모달 등에서 사용) */
-.elnSecTit{display:flex;align-items:center;gap:6px;font-size:15px;font-weight:700;color:#3a2c24;margin:6px 2px 10px;}
+.elnSecTit{display:flex;align-items:center;gap:5px;font-size:15px;font-weight:700;color:#3a2c24;margin:5px 0 10px;}
 .elnSecTit i{color:#A47864;}
 
 /* ── [2] 리스트 ── */
 /* 좌측 노트북 2단 트리 */
-.elnNbTree{list-style:none;margin:0;padding:0 6px;font-size:13px;}
-.elnNbTree .grp{font-size:11px;color:#9b8c7e;text-transform:uppercase;letter-spacing:.04em;margin:14px 8px 4px;}
-.elnNbTree .nb{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:8px;cursor:pointer;color:#5a3e30;}
+.elnNbTree{list-style:none;margin:0;padding:0 5px;font-size:13px;}
+.elnNbTree .grp{font-size:13px;color:#9b8c7e;text-transform:uppercase;letter-spacing:.04em;margin:15px 10px 5px;}
+.elnNbTree .nb{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;cursor:pointer;color:#5a3e30;}
 .elnNbTree .nb:hover{background:rgba(164,120,100,.08);}
 .elnNbTree .nb.on{background:rgba(164,120,100,.14);font-weight:600;color:#3a2c24;}
 .elnNbTree .nb i{font-size:18px;color:#A47864;}
-.elnNbTree .nb .cnt{margin-left:auto;font-size:11px;color:#b3a596;}
+.elnNbTree .nb .cnt{margin-left:auto;font-size:13px;color:#b3a596;}
 
 /* 리스트 헤더 + 필터 */
-.elnListHead{display:flex;align-items:center;gap:10px;padding:4px 2px 14px;flex-wrap:wrap;}
-.elnListHead .lt{font-size:18px;font-weight:700;color:#3a2c24;display:flex;align-items:center;gap:7px;}
+.elnListHead{display:flex;align-items:center;gap:10px;padding:5px 0 15px;flex-wrap:wrap;}
+.elnListHead .lt{font-size:18px;font-weight:700;color:#3a2c24;display:flex;align-items:center;gap:5px;}
 .elnListHead .lt i{color:#A47864;}
-.elnListHead .lcnt{font-size:12px;color:#9b8c7e;}
-.elnListFilter{margin-left:auto;display:flex;gap:6px;flex-wrap:wrap;}
-.elnFilterChip{font-size:12px;padding:5px 12px;border-radius:14px;border:1px solid #e6ddd0;background:#fff;
+.elnListHead .lcnt{font-size:13px;color:#9b8c7e;}
+.elnListFilter{margin-left:auto;display:flex;gap:5px;flex-wrap:wrap;}
+.elnFilterChip{font-size:13px;padding:5px 10px;border-radius:14px;border:1px solid #e6ddd0;background:#fff;
   color:#7a6757;cursor:pointer;display:inline-flex;align-items:center;gap:5px;transition:all .15s;}
 .elnFilterChip:hover{border-color:#A47864;}
 .elnFilterChip.on{background:#A47864;color:#fff;border-color:#A47864;}
 
 /* 노트 리스트 행 */
-.elnNoteList{display:flex;flex-direction:column;gap:8px;}
-.elnNoteRow{display:flex;align-items:center;gap:14px;padding:13px 16px;border-radius:12px;border:1px solid #e6ddd0;
+.elnNoteList{display:flex;flex-direction:column;gap:10px;}
+.elnNoteRow{display:flex;align-items:center;gap:15px;padding:15px 15px;border-radius:12px;border:1px solid #e6ddd0;
   background:#fff;cursor:pointer;transition:all .15s;}
 .elnNoteRow:hover{border-color:#A47864;box-shadow:0 4px 14px rgba(164,120,100,.10);}
 .elnRowMain{flex:1;min-width:0;}
 .elnRowTit{font-size:14px;font-weight:600;color:#3a2c24;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.elnRowMeta{font-size:12px;color:#9b8c7e;margin-top:3px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
+.elnRowMeta{font-size:13px;color:#9b8c7e;margin-top:5px;display:flex;gap:10px;flex-wrap:wrap;align-items:center;}
 .elnRowMeta .tag{color:#A47864;}
-.elnRowDate{flex:0 0 auto;font-size:11px;color:#b3a596;width:80px;text-align:right;}
+.elnRowDate{flex:0 0 auto;font-size:13px;color:#b3a596;width:80px;text-align:right;}
 /* 인라인 status 배지(클릭 시 순환 — 리스트 운영 시연) */
-.elnStatusPill{flex:0 0 auto;display:inline-flex;align-items:center;gap:6px;padding:5px 11px;border-radius:14px;
-  font-size:12px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s;user-select:none;}
+.elnStatusPill{flex:0 0 auto;display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:14px;
+  font-size:13px;font-weight:600;cursor:pointer;border:1px solid transparent;transition:all .15s;user-select:none;}
 .elnStatusPill[data-st="ing"]{color:#2f80ed;background:rgba(47,128,237,.10);}
 .elnStatusPill[data-st="ok"]{color:#2e8c5c;background:rgba(58,170,111,.12);}
 .elnStatusPill[data-st="fail"]{color:#c14b4b;background:rgba(214,90,90,.12);}
@@ -379,33 +379,33 @@
 .elnStatusPill:hover{filter:brightness(.96);border-color:currentColor;}
 
 /* ── [4] 계보(큰 트리) ── */
-.elnLinHead{display:flex;align-items:center;gap:10px;padding:4px 2px 14px;flex-wrap:wrap;}
-.elnLinHead .lt{font-size:18px;font-weight:700;color:#3a2c24;display:flex;align-items:center;gap:7px;}
+.elnLinHead{display:flex;align-items:center;gap:10px;padding:5px 0 15px;flex-wrap:wrap;}
+.elnLinHead .lt{font-size:18px;font-weight:700;color:#3a2c24;display:flex;align-items:center;gap:5px;}
 .elnLinHead .lt i{color:#A47864;}
-.elnLinHead .lsub{font-size:12px;color:#9b8c7e;}
-.elnLinLegend{margin-left:auto;display:flex;gap:12px;font-size:12px;color:#7a6757;}
+.elnLinHead .lsub{font-size:13px;color:#9b8c7e;}
+.elnLinLegend{margin-left:auto;display:flex;gap:10px;font-size:13px;color:#7a6757;}
 .elnLinLegend span{display:inline-flex;align-items:center;gap:5px;}
-.elnBigTree{position:relative;max-width:760px;margin:8px auto;padding-left:8px;}
-.elnBigNode{position:relative;display:flex;gap:16px;padding:0 0 18px 30px;}
+.elnBigTree{position:relative;max-width:760px;margin:10px auto;padding-left:10px;}
+.elnBigNode{position:relative;display:flex;gap:15px;padding:0 0 20px 30px;}
 .elnBigNode::before{content:'';position:absolute;left:11px;top:0;bottom:0;width:2px;background:#e6ddd0;}
 .elnBigNode:last-child::before{display:none;}
 .elnBigNode > .dot{position:absolute;left:5px;top:18px;width:15px;height:15px;border-radius:50%;
   border:3px solid #fff;box-shadow:0 0 0 1px #d9cfc2;flex:0 0 auto;z-index:1;}
 .elnBigNode > .dot.ing{background:#2f80ed;} .elnBigNode > .dot.ok{background:#3aaa6f;}
 .elnBigNode > .dot.fail{background:#d65a5a;} .elnBigNode > .dot.hold{background:#e0a83e;}
-.elnBigCard{flex:1;min-width:0;padding:14px 16px;border-radius:12px;border:1px solid #e6ddd0;background:#fff;
+.elnBigCard{flex:1;min-width:0;padding:15px 15px;border-radius:12px;border:1px solid #e6ddd0;background:#fff;
   cursor:pointer;transition:all .15s;}
 .elnBigCard:hover{border-color:#A47864;box-shadow:0 6px 18px rgba(164,120,100,.12);}
 .elnBigCard.current{border-color:#A47864;background:linear-gradient(135deg,rgba(164,120,100,.08),rgba(164,120,100,.02));}
 .elnBigCard .bctop{display:flex;align-items:center;gap:10px;}
 .elnBigCard .bctit{font-size:14px;font-weight:600;color:#3a2c24;}
-.elnBigCard .bccur{margin-left:auto;font-size:11px;font-weight:600;color:#A47864;}
-.elnBigCard .bcdesc{font-size:12px;color:#7a6757;margin-top:6px;line-height:1.5;}
-.elnBigCard .bcmetrics{margin-top:8px;display:flex;gap:14px;flex-wrap:wrap;}
-.elnBigCard .bcmetrics .m{font-size:12px;color:#5a3e30;}
+.elnBigCard .bccur{margin-left:auto;font-size:13px;font-weight:600;color:#A47864;}
+.elnBigCard .bcdesc{font-size:13px;color:#7a6757;margin-top:5px;line-height:1.5;}
+.elnBigCard .bcmetrics{margin-top:10px;display:flex;gap:15px;flex-wrap:wrap;}
+.elnBigCard .bcmetrics .m{font-size:13px;color:#5a3e30;}
 .elnBigCard .bcmetrics .m b{color:#3a2c24;}
 /* 분기(파생) 노드: 살짝 들여쓰기 + 점선 연결 */
-.elnBigNode.branch{padding-left:64px;}
+.elnBigNode.branch{padding-left:65px;}
 .elnBigNode.branch::before{left:45px;}
 .elnBigNode.branch > .dot{left:39px;}
 .elnBigNode.branch .elnBigCard{border-style:dashed;}
@@ -418,7 +418,7 @@
 /* 타이틀 줄: 제목(왼쪽) + 뷰 토글(List·Chem·Formulation)·New Note(오른쪽). 토글이 노트셋 카운트와 분리돼 위치 고정 */
 .elnWsTitArea{display:flex;align-items:center;padding-left:0px;}
 .elnWsTitArea .mainTit{margin-right:auto;}
-.elnWsTitArea .elnHeadRight{margin-left:12px;}
+.elnWsTitArea .elnHeadRight{margin-left:10px;}
 /* 모듈 타이틀 좌측: ELN Home 돌아가기 버튼(workspace→대시보드 상위 이동) */
 .mainTit .elnCrumbBack{display:inline-flex;align-items:center;justify-content:center;width:32px;height:32px;
   border-radius:8px;background:rgba(164,120,100,.08);color:#A47864;margin-right:10px;vertical-align:-7px;transition:background .15s;}
@@ -427,11 +427,11 @@
 .elnListWrap{display:flex;gap:0;height:calc(100vh - 122px);}
 /* 좌: 노트북 패널 — 좌측에 딱 붙은(flush) 접이식. 카드 라운드/사방테두리 대신 우측 구분선만 */
 .elnNbPanel{width:240px;flex:0 0 auto;background:rgba(255, 255, 255, .3);
-  border-right:1px solid #e6ddd0;padding:12px 10px;overflow:hidden auto;
-  display:flex;flex-direction:column;gap:2px;
+  border-right:1px solid #e6ddd0;padding:10px 10px;overflow:hidden auto;
+  display:flex;flex-direction:column;gap:0;
   transition:width .22s ease,padding .22s ease,opacity .18s ease;}
-.elnNbPanelTit{font-size:11px;font-weight:700;letter-spacing:.06em;color:#9b8c7e;text-transform:uppercase;
-  padding:6px 8px 8px;display:flex;align-items:center;gap:6px;}
+.elnNbPanelTit{font-size:13px;font-weight:700;letter-spacing:.06em;color:#9b8c7e;text-transform:uppercase;
+  padding:5px 10px 10px;display:flex;align-items:center;gap:5px;}
 .elnNbPanelTit i{font-size:16px;color:#A47864;}
 .elnNbItem{display:flex;align-items:center;gap:5px;padding:10px;border-radius:10px;cursor:pointer;
   transition:all .15s;color:#5a3e30;}
@@ -439,22 +439,22 @@
 .elnNbItem.on{background:rgba(164,120,100,.14);font-weight:600;color:#3a2c24;}
 .elnNbItem > i{color:#A47864;flex:0 0 auto;font-variation-settings:'FILL' 1;} /* folder·stacks 상시 fill */
 .elnNbItem .nm{flex:1;min-width:0;font-size:14px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.elnNbItem .ct{font-size:11px;color:#9b8c7e;flex:0 0 auto;}
+.elnNbItem .ct{font-size:13px;color:#9b8c7e;flex:0 0 auto;}
 .elnNbItem.on .ct{color:#A47864;}
 /* hover 시 ⋯ 옵션(이름수정·삭제) — 카운트 자리와 스왑. 시스템 항목(All/No notebook)엔 미부착 */
 .elnNbMore{display:none;align-items:center;justify-content:center;width:22px;height:22px;border-radius:6px;
-  color:#9b8c7e;flex:0 0 auto;margin:-4px -2px -4px 0;}
+  color:#9b8c7e;flex:0 0 auto;margin:-5px 0 -5px 0;}
 .elnNbMore i{font-size:18px;}
 .elnNbMore:hover{background:rgba(164,120,100,.16);color:#A47864;}
 .elnNbItem:hover .elnNbMore{display:inline-flex;}
 .elnNbItem:hover .ct.hasMore{display:none;}
 /* 노트북 그룹 컨테이너 — My끼리/Shared끼리만 드래그 정렬(그룹 간 이동 불가). 패널과 같은 간격 유지 */
-.elnNbGroup{display:flex;flex-direction:column;gap:2px;}
+.elnNbGroup{display:flex;flex-direction:column;gap:0;}
 .elnNbSortPh{box-sizing:border-box;border:2px dashed #A47864;border-radius:10px;background:rgba(164,120,100,.10);}
 /* 헬퍼(드래그 중 항목)는 transition 제거 — 안 그러면 base의 transition:all .15s 때문에 커서를 늦게 따라옴 */
 .elnNbItem.ui-sortable-helper{transition:none;box-shadow:0 8px 20px rgba(0,0,0,.16);background:#fff;}
-.elnNbGrpLabel{font-size:10px;color:#b3a596;letter-spacing:.05em;
-  padding:10px 8px 3px;border-top:1px solid #f0eadf;margin-top:6px;}
+.elnNbGrpLabel{font-size:13px;color:#b3a596;letter-spacing:.05em;
+  padding:10px 10px 5px;border-top:1px solid #f0eadf;margin-top:5px;}
 /* 노트북 패널 하단 New Notebook(노트북 레벨 생성 버튼). margin-top:auto로 하단 고정 */
 .elnNbNew{display:flex;align-items:center;gap:5px;padding:10px;margin-top:auto;border-radius:10px;cursor:pointer;
   color:#A47864;font-size:14px;font-weight:600;border:1px dashed #d9cfc2;text-decoration:none;transition:all .15s;}
@@ -468,17 +468,17 @@
 
 /* ── 모듈러 노트(Add Module — 고정 템플릿 탈피) ── */
 .elnModGrid{display:grid;grid-template-columns:1fr 1fr;gap:10px;}
-.elnModType{display:flex;align-items:center;gap:12px;height:65px;box-sizing:border-box;padding:12px 14px;border:1px solid #e6ddd0;border-radius:10px;cursor:pointer;overflow:hidden;transition:all .15s;}
+.elnModType{display:flex;align-items:center;gap:10px;height:65px;box-sizing:border-box;padding:10px 15px;border:1px solid #e6ddd0;border-radius:10px;cursor:pointer;overflow:hidden;transition:all .15s;}
 .elnModType:hover{border-color:#A47864;background:rgba(164,120,100,.06);}
 .elnModType > i{font-size:24px;color:#A47864;flex:0 0 auto;}
 .elnModType > div{min-width:0;}   /* flex 자식 줄임 허용 → 제목 ellipsis·설명 클램프 동작 */
 .elnModType .tt{font-size:14px;line-height:1.2;font-weight:600;color:#3a2c24;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.elnModType .dd{font-size:12px;line-height:1.25;color:#9b8c7e;margin-top:1px;
+.elnModType .dd{font-size:13px;line-height:1.25;color:#9b8c7e;margin-top:0;
   display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}   /* 설명 항상 2줄 → 타일 높이 통일 */
 /* ── 카드 헤더 레이아웃: flex 전환 — 제목(좌) → 액션버튼 → 닫기(×)는 항상 우측 코너 고정 ──
    닫기(×)는 JS가 마지막에 추가하는 <a> → flex에서 소스순서대로 맨 오른쪽에 놓임(우측 상단 고정).
    첫 <a>에 margin-left:auto를 줘 [액션버튼 + ×]를 한 덩어리로 우측 정렬. 버튼은 ×보다 우선순위 낮음. */
-#tab_ov .cardTit2{display:flex;align-items:center;gap:8px;}
+#tab_ov .cardTit2{display:flex;align-items:center;gap:10px;}
 #tab_ov .cardTit2 > i.left{margin-right:0;}            /* float 무시 + 큰 기본여백 제거 → gap으로 일관 간격 */
 #tab_ov .cardTit2 > a:first-of-type{margin-left:auto;} /* 첫 우측요소부터 오른쪽 정렬(닫기는 맨 끝) */
 /* 노트 전체 view(승인) 모드 — 값은 또렷하게: disabled/readonly 기본 흐림 제거(역설 방지) */
@@ -501,10 +501,10 @@ body.elnApproved #elnTagInput,
 body.elnApproved .elnRecTags,
 body.elnApproved .elnTag i,
 body.elnApproved .elnStatusChip .chev{display:none;}
-body.elnApproved .elnTag{padding-right:11px;}   /* close 아이콘 자리 → 대칭 패딩 보정 */
+body.elnApproved .elnTag{padding-right:10px;}   /* close 아이콘 자리 → 대칭 패딩 보정 */
 /* 실제 입력요소는 JS readOnly/disabled가 차단(텍스트 선택·복사는 허용). 별도 배경/색 변경 없음 — 과한 view-톤 제거(사용자 요청) */
 .elnModText{width:100%;min-height:80px;border:1px solid #e6ddd0;border-radius:12px;background:rgba(164,120,100,.04);
-  font-family:inherit;font-size:14px;line-height:1.6;color:#3a2c24;padding:12px 14px;}
+  font-family:inherit;font-size:14px;line-height:1.6;color:#3a2c24;padding:10px 15px;}
 .elnModText:focus{outline:none;border-color:#A47864;background:#fff;}
 /* 노트 영역 모든 textarea: 수동 resize·스크롤 제거 — 높이는 JS autoGrow가 내용에 맞춤(Summernote codeview 제외) */
 #tab_ov textarea:not(.note-codable){resize:none;overflow:hidden;}
@@ -513,8 +513,8 @@ body.elnApproved .elnTag{padding-right:11px;}   /* close 아이콘 자리 → �
 .hBtn.hSign{color:#2e8c5c;border:2px solid #2e8c5c;}
 .hBtn.hSign::before{background-color:#2e8c5c;}
 /* 헤더 결재 상태 배지 */
-.elnApprBadge{display:inline-flex;align-items:center;gap:5px;margin-top:6px;font-size:12px;font-weight:600;
-  border-radius:9px;padding:3px 10px;width:fit-content;max-width:100%;border:1px solid;}
+.elnApprBadge{display:inline-flex;align-items:center;gap:5px;margin-top:5px;font-size:13px;font-weight:600;
+  border-radius:9px;padding:5px 10px;width:fit-content;max-width:100%;border:1px solid;}
 .elnApprBadge > i{font-size:16px;flex:0 0 auto;}
 .elnApprBadge.pending{color:#c08a3e;background:rgba(224,168,62,.12);border-color:rgba(224,168,62,.35);}
 .elnApprBadge.approved{color:#2e8c5c;background:rgba(58,170,111,.12);border-color:rgba(58,170,111,.3);}
@@ -529,70 +529,70 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 /* 결재 모달 — 결재선 테이블 + 액션 */
 .elnApprBox{width:min(480px,86vw);}
 .elnApprTable{width:100%;border-collapse:collapse;font-size:13px;}
-.elnApprTable th{text-align:left;font-size:11px;font-weight:700;letter-spacing:.02em;color:#b1a08e;padding:4px 8px;border-bottom:1px solid #eee6da;}
-.elnApprTable td{padding:8px;border-bottom:1px solid #f0e9e0;color:#3a2c24;}
-.elnApprTable td.d{color:#9b8c7e;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:12px;}
+.elnApprTable th{text-align:left;font-size:13px;font-weight:700;letter-spacing:.02em;color:#b1a08e;padding:5px 10px;border-bottom:1px solid #eee6da;}
+.elnApprTable td{padding:10px;border-bottom:1px solid #f0e9e0;color:#3a2c24;}
+.elnApprTable td.d{color:#9b8c7e;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;}
 .elnApprTable tr.cur td{background:rgba(164,120,100,.06);}
-.elnApprChip{display:inline-block;font-size:10.5px;font-weight:700;border-radius:8px;padding:2px 8px;}
+.elnApprChip{display:inline-block;font-size:13px;font-weight:700;border-radius:8px;padding:0 10px;}
 .elnApprChip.pending{color:#9b8c7e;background:rgba(120,108,98,.12);}
 .elnApprChip.drafted{color:#3a6ea5;background:rgba(58,110,165,.12);}
 .elnApprChip.approved{color:#2e8c5c;background:rgba(58,170,111,.14);}
 .elnApprChip.rejected{color:#c14b4b;background:rgba(214,90,90,.14);}
 .elnApprChip.returned{color:#c08a3e;background:rgba(224,168,62,.16);}
-.elnApprActions{display:flex;flex-wrap:wrap;align-items:center;gap:8px;margin-top:14px;}
-.elnApprAsName{flex-basis:100%;font-size:12px;color:#7a5240;}
-.elnApprAct{border:0;border-radius:9px;padding:7px 14px;font-size:13px;font-weight:600;cursor:pointer;transition:filter .12s;}
+.elnApprActions{display:flex;flex-wrap:wrap;align-items:center;gap:10px;margin-top:15px;}
+.elnApprAsName{flex-basis:100%;font-size:13px;color:#7a5240;}
+.elnApprAct{border:0;border-radius:9px;padding:5px 15px;font-size:13px;font-weight:600;cursor:pointer;transition:filter .12s;}
 .elnApprAct.go{background:#2e8c5c;color:#fff;}
 .elnApprAct.warn{background:rgba(224,168,62,.16);color:#9a6f24;}
 .elnApprAct.danger{background:rgba(214,90,90,.14);color:#c14b4b;}
 .elnApprAct.ghost{background:#f1ebe2;color:#6b5647;}
 .elnApprAct:hover{filter:brightness(.96);}
-.elnApprDone{display:flex;align-items:center;gap:8px;font-size:13px;color:#2e8c5c;background:rgba(58,170,111,.08);border-radius:10px;padding:11px 13px;width:100%;}
+.elnApprDone{display:flex;align-items:center;gap:10px;font-size:13px;color:#2e8c5c;background:rgba(58,170,111,.08);border-radius:10px;padding:10px 15px;width:100%;}
 .elnApprDone > i{font-size:19px;}
 /* MAPIS 재구성 결재 카드 — 헤더 / 액션바 / 편집·뷰 테이블 */
-.elnApprHead{margin-bottom:12px;gap:10px;flex-wrap:wrap;}
-.elnApprActionBar{gap:8px;flex-wrap:wrap;}
+.elnApprHead{margin-bottom:10px;gap:10px;flex-wrap:wrap;}
+.elnApprActionBar{gap:10px;flex-wrap:wrap;}
 .elnApprActionBar .hBtn{display:inline-flex;align-items:center;}
 .elnApprTableWrap{overflow-x:auto;}
-.elnApprTable.appr-editor-mode td{padding:5px 6px;vertical-align:middle;}
-.elnApprTable select.browser-default{height:32px;border:1px solid #e0d6c8;border-radius:7px;padding:0 6px;font-size:12px;background:#fff;color:#3a2c24;width:100%;min-width:90px;}
+.elnApprTable.appr-editor-mode td{padding:5px 5px;vertical-align:middle;}
+.elnApprTable select.browser-default{height:32px;border:1px solid #e0d6c8;border-radius:7px;padding:0 5px;font-size:13px;background:#fff;color:#3a2c24;width:100%;min-width:90px;}
 .elnApprTable select.browser-default:focus{border-color:#A47864;outline:none;}
-.elnApprTable .appr-assignee{color:#5a4638;font-size:12.5px;white-space:nowrap;}
-.elnApprTable .appr-date{color:#9b8c7e;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:11.5px;}
-.appr-comment-input{height:32px;border:1px solid #e0d6c8;border-radius:7px;padding:0 9px;font-size:12px;width:100%;min-width:120px;color:#3a2c24;background:#fff;}
+.elnApprTable .appr-assignee{color:#5a4638;font-size:13px;white-space:nowrap;}
+.elnApprTable .appr-date{color:#9b8c7e;font-family:ui-monospace,Menlo,Consolas,monospace;font-size:13px;}
+.appr-comment-input{height:32px;border:1px solid #e0d6c8;border-radius:7px;padding:0 10px;font-size:13px;width:100%;min-width:120px;color:#3a2c24;background:#fff;}
 .appr-comment-input:focus{border-color:#A47864;outline:none;}
 .appr-del{display:inline-flex;color:#cabcae;transition:color .12s;}
 .appr-del:hover{color:#d65a5a;}
 .appr-del i{font-size:18px;}
 .elnApprAddRow{margin-top:10px;}
-.elnApprAddRow a{display:inline-flex;align-items:center;gap:4px;font-size:12.5px;font-weight:600;color:#A47864;padding:4px 4px;}
+.elnApprAddRow a{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:#A47864;padding:5px 5px;}
 .elnApprAddRow a:hover{color:#7a5240;}
 .elnApprAddRow i{font-size:18px;}
-.elnApprNote{font-size:11.5px;color:#9b8c7e;line-height:1.5;}
+.elnApprNote{font-size:13px;color:#9b8c7e;line-height:1.5;}
 
 /* ── 포스트잇 — 섹션 우클릭 부착(상대좌표), 드래그·접기·삭제 ── */
 .elnPostitHost{position:relative;}
 .elnPostit{position:absolute;z-index:20;background:#fff7c2;border:1px solid #e8d98a;border-radius:8px;
   box-shadow:0 5px 16px rgba(120,100,40,.2);font-size:13px;}
-.elnPostitBar{display:flex;align-items:center;gap:2px;padding:3px 4px;cursor:move;border-bottom:1px solid rgba(180,160,80,.3);}
+.elnPostitBar{display:flex;align-items:center;gap:0;padding:5px 5px;cursor:move;border-bottom:1px solid rgba(180,160,80,.3);}
 .elnPostitGrip{font-size:16px;color:#b9a96a;margin-right:auto;cursor:move;}
-.elnPostitCollapse,.elnPostitClose{display:inline-flex;color:#a89a5a;padding:1px;border-radius:4px;}
+.elnPostitCollapse,.elnPostitClose{display:inline-flex;color:#a89a5a;padding:0;border-radius:4px;}
 .elnPostitCollapse:hover,.elnPostitClose:hover{background:rgba(180,160,80,.2);color:#7a6a2a;}
 .elnPostitCollapse i,.elnPostitClose i{font-size:15px;}
-.elnPostitBody{padding:7px 9px;min-height:46px;color:#5a4a1a;line-height:1.45;outline:none;word-break:break-word;}
+.elnPostitBody{padding:5px 10px;min-height:46px;color:#5a4a1a;line-height:1.45;outline:none;word-break:break-word;}
 .elnPostitBody:empty::before{content:attr(data-ph);color:#c4b56a;}
 .elnPostit.collapsed{width:auto !important;}
 .elnPostit.collapsed .elnPostitBody{display:none;}
 .elnPostit.collapsed .elnPostitBar{border-bottom:0;}
-.elnModChartPh{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;height:160px;
+.elnModChartPh{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;height:160px;
   border:1px dashed #d9cfc2;border-radius:12px;color:#b3a596;font-size:13px;}
 
 /* ── Data Visualization 모듈 — fixedTable + 차트(타입선택·다중시리즈) + 우클릭 메뉴 ── */
 .elnDataBox{display:flex;flex-direction:column;gap:10px;}
 .elnDataBox .fixedTable{margin:0;}   /* fixedTable 기본 margin → elnDataBox gap과 통일 */
 /* Visualize as — 아이콘+라벨 타일 스위처(아이콘 피커 .elnIconOpt 감성 계승, viola 활성) */
-.elnVizLabel{font-size:12px;font-weight:600;color:#9b8c7e;}
-.elnVizPick{display:flex;flex-wrap:wrap;gap:8px;}
+.elnVizLabel{font-size:13px;font-weight:600;color:#9b8c7e;}
+.elnVizPick{display:flex;flex-wrap:wrap;gap:10px;}
 .elnVizOpt{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:5px;
   width:78px;height:62px;border:1px solid #e6ddd0;border-radius:10px;background:#fff;color:#7a6655;
   cursor:pointer;transition:border-color .14s,background .14s,color .14s;}
@@ -600,21 +600,21 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnVizOpt.on{border-color:#A47864;background:rgba(164,120,100,.12);color:#A47864;}
 .elnVizOpt i{font-size:24px;}
 .elnVizOpt.bar i{transform:rotate(90deg);}   /* 가로막대 — bar_chart를 눕힘 */
-.elnVizOpt span{font-size:11.5px;font-weight:600;letter-spacing:.2px;}
+.elnVizOpt span{font-size:13px;font-weight:600;letter-spacing:.2px;}
 .elnVizStage{display:flex;flex-direction:column;gap:10px;}
-.elnVizEmpty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+.elnVizEmpty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
   height:150px;border:1px dashed #d9cfc2;border-radius:12px;color:#b3a596;font-size:13px;}
 .elnVizEmpty i{font-size:34px;color:#dcae93;}
-.elnDataTableTools{display:flex;align-items:center;gap:8px;flex-wrap:wrap;}
-.elnDataHint{display:inline-flex;align-items:center;gap:4px;font-size:11.5px;color:#9b8c7e;}
+.elnDataTableTools{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.elnDataHint{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:#9b8c7e;}
 .elnDataHint i{font-size:14px;color:#A47864;}
-.elnDataPieHint{display:none;font-size:11.5px;color:#b08a5e;font-style:italic;}
+.elnDataPieHint{display:none;font-size:13px;color:#b08a5e;font-style:italic;}
 .elnDataTable{width:100%;}
 .elnDataTable th,.elnDataTable td{min-width:64px;}   /* 빈 편집셀이 너무 좁아지지 않게 */
 .elnDataTable th:focus,.elnDataTable td:focus{outline:2px solid #A47864;outline-offset:-2px;background:#fffdf9;}
 .elnDataChart{border:1px solid #ece4d8;border-radius:10px;min-height:180px;height:240px;max-height:620px;overflow:hidden;}
 /* 차트 높이 조절 그립 — 위아래 드래그(min~max). Highcharts는 ResizeObserver로 refit */
-.elnChartGrip{display:flex;align-items:center;justify-content:center;height:16px;margin-top:-6px;cursor:ns-resize;color:#cbbdae;}
+.elnChartGrip{display:flex;align-items:center;justify-content:center;height:16px;margin-top:-5px;cursor:ns-resize;color:#cbbdae;}
 .elnChartGrip:hover{color:#A47864;}
 .elnChartGrip i{font-size:20px;line-height:1;}
 /* 차트에 쓰이는 표 열 표시 — 시리즈 열은 차트 색과 동일(헤더 밑줄+색점), 미사용 값열은 흐리게 */
@@ -623,25 +623,25 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnDataTable th.elnColSer::before{content:'';display:inline-block;width:8px;height:8px;border-radius:50%;background:var(--ser,#A47864);margin-right:5px;vertical-align:middle;}
 .elnDataTable th.elnColUsed{box-shadow:inset 0 -3px 0 #A47864;}
 .elnDataTable th.elnColUnused{opacity:.4;}
-.elnDataTable th[data-role]::after{content:attr(data-role);margin-left:5px;font-size:9px;font-weight:700;color:#fff;background:#A47864;border-radius:4px;padding:1px 5px;vertical-align:middle;letter-spacing:.3px;}
+.elnDataTable th[data-role]::after{content:attr(data-role);margin-left:5px;font-size:13px;font-weight:700;color:#fff;background:#A47864;border-radius:4px;padding:0 5px;vertical-align:middle;letter-spacing:.3px;}
 .elnDataTable th.elnColCat[data-role]::after{background:#b9a48f;}   /* 카테고리 배지는 중립색 */
 .elnDataTable td[data-ph]:empty::before{content:attr(data-ph);color:#cdbfae;font-style:italic;pointer-events:none;}   /* 빈 셀 placeholder */
 /* 우클릭 context menu(ELN.popover 내부에 들어감) */
-.elnCtxMenu{display:flex;flex-direction:column;min-width:170px;padding:4px;}
-.elnCtxMenuItem{display:flex;align-items:center;gap:9px;padding:8px 10px;border-radius:8px;cursor:pointer;
+.elnCtxMenu{display:flex;flex-direction:column;min-width:170px;padding:5px;}
+.elnCtxMenuItem{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;cursor:pointer;
   font-size:13px;font-weight:600;color:#4a3a30;transition:background .12s;}
 .elnCtxMenuItem:hover{background:#f4ece0;}
 .elnCtxMenuItem i{font-size:18px;color:#A47864;}
 /* 우클릭 포스트잇 ambient hint — 옅고 정적, 주목 요구 X(클릭도 통과) */
 .elnRclickHint{display:flex;align-items:center;justify-content:flex-end;gap:5px;
-  font-size:11px;color:#b8ada0;margin:0 2px 4px;user-select:none;pointer-events:none;}
+  font-size:13px;color:#b8ada0;margin:0 0 5px;user-select:none;pointer-events:none;}
 .elnRclickHint i{font-size:14px;color:#cdbfae;}
 .elnModChartPh i{font-size:36px;color:#e0d6c8;}
 /* 팝오버(ELN.popover) — 누른 자리에 뜨는 경량 픽커. 모달(1500) 위, 토스트(2000) 아래 */
 .elnPopover{position:fixed;z-index:1800;background:#fff;border:1px solid #e6ddd0;border-radius:12px;
   box-shadow:0 8px 28px rgba(58,44,36,.16);padding:10px;animation:elnFadeIn .15s ease;}
-.elnPopover .elnModGrid{gap:7px;}
-.elnPopover .elnModType{padding:8px 11px;}
+.elnPopover .elnModGrid{gap:5px;}
+.elnPopover .elnModType{padding:10px 10px;}
 /* 카드 사이 hover '+' 라인 — Notion식 위치 지정 삽입.
    top 음수마진 제거(위 카드 겹침 해소) + margin-bottom:-12px로 다음 카드 mt10(10px) 상쇄 → 간격 일정(≈20px). */
 .elnModDivider{position:relative;height:22px;margin:0 0 -10px;display:flex;align-items:center;justify-content:center;
@@ -652,26 +652,26 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
   width:20px;height:20px;display:flex;align-items:center;justify-content:center;}
 .elnModDivider .pl i{font-size:18px;}
 /* 본문 끝 상시 '+ Add module' 점선 블록 */
-.elnAddEnd{display:flex;align-items:center;justify-content:center;gap:7px;margin:14px 0 30px;padding:13px;
+.elnAddEnd{display:flex;align-items:center;justify-content:center;gap:5px;margin:15px 0 30px;padding:15px;
   border:1px dashed #d9cfc2;border-radius:12px;color:#b3a596;font-size:13px;cursor:pointer;transition:all .15s;}
 .elnAddEnd:hover{border-color:#A47864;color:#A47864;background:rgba(164,120,100,.05);}
 .elnAddEnd i{font-size:18px;}
 /* Notebook 메타 클릭(지정/이동) — Unfiled면 주황 강조 */
-.elnNbPick{cursor:pointer;display:inline-flex;align-items:center;gap:2px;
+.elnNbPick{cursor:pointer;display:inline-flex;align-items:center;gap:0;
   border-bottom:1px dashed rgba(164,120,100,.45);transition:color .15s;}
 .elnNbPick:hover{color:#A47864;}
 .elnNbPick i{font-size:15px;color:#A47864;}
 .elnNbPick.unfiled{color:#b9842a;}
 /* Notebook 픽커 popover 목록 */
 .elnNbPopList{display:flex;flex-direction:column;min-width:230px;}
-.elnNbPopItem{display:flex;align-items:center;gap:9px;padding:9px 11px;border-radius:8px;cursor:pointer;
+.elnNbPopItem{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:8px;cursor:pointer;
   font-size:13.5px;color:#3a2c24;}
 .elnNbPopItem:hover{background:rgba(164,120,100,.08);}
 .elnNbPopItem > i{font-size:18px;color:#A47864;font-variation-settings:'FILL' 1;} /* 픽커·메뉴 아이콘도 fill */
 .elnNbPopItem .chk{margin-left:auto;font-size:16px;color:#3aaa6f;}
-.elnNbPopItem.new{border-top:1px solid #efe7db;margin-top:4px;padding-top:11px;color:#7a5240;font-weight:600;}
+.elnNbPopItem.new{border-top:1px solid #efe7db;margin-top:5px;padding-top:10px;color:#7a5240;font-weight:600;}
 /* 픽커 팝오버 내 Unfiled — 리스트 좌패널과 동일한 "임시 보관소" 시각언어(점선·흐림·분리) */
-.elnNbPopItem.unfiled{border:1px dotted #cdbfae;background:rgba(0,0,0,.012);margin-bottom:7px;}
+.elnNbPopItem.unfiled{border:1px dotted #cdbfae;background:rgba(0,0,0,.012);margin-bottom:5px;}
 .elnNbPopItem.unfiled > i{color:#b3a596;}
 .elnNbPopItem.unfiled span{color:#8a7d6f;}
 .elnNbPopItem.unfiled:hover{border-color:#b8a690;background:rgba(164,120,100,.06);}
@@ -680,40 +680,40 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnNbPopItem.danger span{color:#c0392b;}
 .elnNbPopItem.danger:hover{background:rgba(192,57,43,.08);}
 /* ⋯ 메뉴의 Color 행(그룹 기본 리셋 + 팔레트 스와치) */
-.elnNbColorRow{display:flex;flex-direction:column;gap:7px;padding:4px 11px 11px;border-bottom:1px solid #efe7db;margin-bottom:5px;}
-.elnNbColorRow .lb{font-size:11px;font-weight:600;color:#9b8c7e;letter-spacing:.03em;}
+.elnNbColorRow{display:flex;flex-direction:column;gap:5px;padding:5px 10px 10px;border-bottom:1px solid #efe7db;margin-bottom:5px;}
+.elnNbColorRow .lb{font-size:13px;font-weight:600;color:#9b8c7e;letter-spacing:.03em;}
 .elnNbColorRow .sw{display:flex;gap:5px;}                      /* 큐레이션 — 한 줄(nowrap) */
 .elnNbSw{width:18px;height:18px;border-radius:50%;cursor:pointer;box-sizing:border-box;flex:0 0 auto;
   border:2px solid transparent;box-shadow:0 0 0 1px rgba(0,0,0,.08) inset;transition:transform .12s,box-shadow .12s;}
 .elnNbSw:hover{transform:scale(1.18);}
 .elnNbSw.on{border-color:#fff;box-shadow:0 0 0 2px #3a2c24;}   /* 선택 = 흰 간격 + 진한 외곽 링(또렷) */
 /* 노트북 색 점(요약·픽커 등) */
-.elnNbDot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:0 0 auto;margin-right:6px;}
+.elnNbDot{width:9px;height:9px;border-radius:50%;display:inline-block;flex:0 0 auto;margin-right:5px;}
 /* danger 버튼 — mapis .hBtn 아웃라인 idiom(색+테두리+::before 틴트)을 빨강으로 */
 .hBtn.elnDanger{color:#c0392b;border:1px solid rgba(192,57,43,.7);}
 .hBtn.elnDanger::before{background-color:rgba(192,57,43,.08);}
 /* 중: 노트 목록 컬럼 */
-.elnNotePanel{flex:1;min-width:300px;display:flex;flex-direction:column;padding:0 16px;box-sizing:border-box;}
-.elnNotePanelHead{display:flex;align-items:center;gap:10px;padding:2px 4px 10px;flex-wrap:wrap;flex:0 0 auto;}
-.elnNotePanelHead .pt{font-size:18px;font-weight:700;color:#3a2c24;display:flex;align-items:center;gap:7px;}
+.elnNotePanel{flex:1;min-width:300px;display:flex;flex-direction:column;padding:0 15px;box-sizing:border-box;}
+.elnNotePanelHead{display:flex;align-items:center;gap:10px;padding:0 5px 10px;flex-wrap:wrap;flex:0 0 auto;}
+.elnNotePanelHead .pt{font-size:18px;font-weight:700;color:#3a2c24;display:flex;align-items:center;gap:5px;}
 .elnNotePanelHead .pt i{color:#A47864;}
-.elnNotePanelHead .pc{font-size:12px;color:#9b8c7e;display:inline-flex;align-items:center;flex-wrap:wrap;gap:4px;margin-left:auto;}
+.elnNotePanelHead .pc{font-size:13px;color:#9b8c7e;display:inline-flex;align-items:center;flex-wrap:wrap;gap:5px;margin-left:auto;}
 /* 통합 화면: All Notes 항목 + All뷰 노트북명 칩 */
 /* 헤더 status 필터 칩(현황 표시 + 클릭 필터 겸용 — newAppleTab 대체) */
-.elnHdrFilter{display:inline-flex;align-items:center;gap:4px;font-size:13px;color:#7a6757;
-  padding:4px 9px;border-radius:13px;cursor:pointer;border:1px solid transparent;transition:all .15s;}
+.elnHdrFilter{display:inline-flex;align-items:center;gap:5px;font-size:13px;color:#7a6757;
+  padding:5px 10px;border-radius:13px;cursor:pointer;border:1px solid transparent;transition:all .15s;}
 .elnHdrFilter:hover{background:rgba(164,120,100,.08);}
 .elnHdrFilter.on{background:rgba(164,120,100,.12);border-color:rgba(164,120,100,.3);color:#7a5240;font-weight:600;}
 .elnHdrFilter .elnDot{width:8px;height:8px;}
 .elnNbAll > i{color:#A47864;}
 .roundBox.elnNbChip{color:#A47864;background:rgba(164,120,100,.10);font-weight:600;}
 /* All Notes 뷰: 노트북명 라벨(제목 위, 풀네임 — pill 대신) */
-.elnNoteNb{display:flex;align-items:center;gap:4px;font-size:12px;font-weight:600;color:var(--gray60);margin-bottom:2px;}
+.elnNoteNb{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:var(--gray60);margin-bottom:0;}
 .elnNoteNb i{font-size:16px;}
 
 /* ── 뷰 전환 토글 (List · Chem · Formulation) ── */
-.elnViewToggle{display:inline-flex;background:rgba(164,120,100,.08);border-radius:9px;padding:2px;flex:0 0 auto;}
-.elnViewToggle a{display:inline-flex;align-items:center;gap:4px;padding:6px 12px;border-radius:7px;font-size:13px;color:#7a6757;transition:all .15s;}
+.elnViewToggle{display:inline-flex;background:rgba(164,120,100,.08);border-radius:9px;padding:0;flex:0 0 auto;}
+.elnViewToggle a{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:7px;font-size:13px;color:#7a6757;transition:all .15s;}
 .elnViewToggle a.on{background:#fff;color:#A47864;font-weight:600;box-shadow:0 1px 3px rgba(58,44,36,.08);}
 
 /* 헤더 우측 그룹(status필터 + New Note) — 뷰 전환해도 토글/New Note 위치 고정 */
@@ -721,50 +721,50 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 
 /* 우측 요약 'Full view' → 계보 모달(별도 화면 대체) */
 .elnFullView{cursor:pointer;}
-.elnLinModalHead{font-size:14px;font-weight:600;color:#3a2c24;margin-bottom:14px;}
+.elnLinModalHead{font-size:14px;font-weight:600;color:#3a2c24;margin-bottom:15px;}
 .elnLinModalBody .elnBigTree{margin:0;max-width:560px;}
 /* 가운데 칼럼 flex-fill: 헤더 고정 + List/Dash가 남는 높이 자동 흡수(calc 매직넘버 제거). min-height:0 = flex 자식 overflow 핵심 */
 .elnNotePanel .typeList{padding:0;flex:1;min-height:0;display:flex;flex-direction:column;}
 .elnNotePanel .leftSection{flex:1;min-height:0;display:flex;flex-direction:column;}
 .elnNotePanel .mainList{padding:0;flex:1;min-height:0;display:flex;flex-direction:column;}
-.elnNotePanel .mainList ul{flex:1;min-height:0;height:auto;overflow:hidden auto;padding:0 6px;}
+.elnNotePanel .mainList ul{flex:1;min-height:0;height:auto;overflow:hidden auto;padding:0 5px;}
 /* statusBox: 운영 고정 height(40px) 대신 행 높이만큼 stretch(노트북명+제목+칩 다 채움), 최소 40 보장 */
 .elnNotePanel .typeList .mainList li .statusBox{height:auto;min-height:40px;}
 /* 빈 노트북 안내 */
-.elnNoteEmpty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:8px;
+.elnNoteEmpty{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;
   height:240px;color:#b3a596;font-size:13px;}
 .elnNoteEmpty i{font-size:40px;color:#e0d6c8;}
 
 /* 우: 요약 + 계보 패널 (flush) — 노트 클릭 시 채워짐 */
-.cardBox2{background:#fff;padding:12px 10px;border-radius:30px;border:2px solid #a47764;}
+.cardBox2{background:#fff;padding:10px 10px;border-radius:30px;border:2px solid #a47764;}
 .elnSummary{width:384px;flex:0 0 auto;overflow-y:auto;display:flex;flex-direction:column;transition:width .18s ease;}
 .elnSummary.empty{align-items:center;justify-content:center;}
 .elnSumPlaceholder{color:#b3a596;font-size:13px;text-align:center;display:flex;flex-direction:column;
   align-items:center;gap:10px;padding:30px;}
 .elnSumPlaceholder i{font-size:42px;color:#e0d6c8;}
-.elnSumHead{padding:16px 18px 14px;border-bottom:1px solid #efe7db;}
-.elnSumStatusRow{display:flex;align-items:center;gap:8px;margin-bottom:9px;}
-.elnSumPill{display:inline-flex;align-items:center;gap:6px;padding:4px 11px;border-radius:13px;font-size:12px;font-weight:600;}
+.elnSumHead{padding:15px 20px 15px;border-bottom:1px solid #efe7db;}
+.elnSumStatusRow{display:flex;align-items:center;gap:10px;margin-bottom:10px;}
+.elnSumPill{display:inline-flex;align-items:center;gap:5px;padding:5px 10px;border-radius:13px;font-size:13px;font-weight:600;}
 .elnSumPill.dotOnly{padding:0;background:transparent !important;box-shadow:none;}  /* summary head: 점+색만(label 제외) */
 /* summary 헤더 구성 아코디언(<details> 네이티브 collapsible) */
-.elnSecCnt{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 4px;margin-left:6px;border-radius:8px;background:rgba(164,120,100,.16);color:#A47864;font-size:10px;font-weight:700;}
-.elnSecList{display:flex;flex-direction:column;gap:4px;}
+.elnSecCnt{display:inline-flex;align-items:center;justify-content:center;min-width:16px;height:16px;padding:0 5px;margin-left:5px;border-radius:8px;background:rgba(164,120,100,.16);color:#A47864;font-size:13px;font-weight:700;}
+.elnSecList{display:flex;flex-direction:column;gap:5px;}
 .elnSecItem{border:1px solid #efe7db;border-radius:10px;background:#fff;}
-.elnSecItem>summary{display:flex;align-items:center;gap:7px;padding:8px 11px;cursor:pointer;font-size:13px;color:#3a2c24;list-style:none;}
+.elnSecItem>summary{display:flex;align-items:center;gap:5px;padding:10px 10px;cursor:pointer;font-size:13px;color:#3a2c24;list-style:none;}
 .elnSecItem>summary::-webkit-details-marker{display:none;}
 .elnSecItem>summary>i:first-child{font-size:17px;color:#A47864;flex:0 0 auto;}
 .elnSecNm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .elnSecChev{display:none;}   /* caret 대신 +/− 마커(::after) */
 .elnSecItem>summary::after{content:'+';margin-left:auto;font-size:18px;color:#b3a596;line-height:1;}
 .elnSecItem[open]>summary::after{content:'−';}
-.elnSecBody{padding:0 11px 10px 38px;}
-.elnSecDesc{font-size:12px;color:#9b8c7e;}
-.elnSecKV{display:flex;justify-content:space-between;gap:10px;font-size:12px;padding:2px 0;color:#5a3e30;}
+.elnSecBody{padding:0 10px 10px 40px;}
+.elnSecDesc{font-size:13px;color:#9b8c7e;}
+.elnSecKV{display:flex;justify-content:space-between;gap:10px;font-size:13px;padding:0 0;color:#5a3e30;}
 .elnSecKV span{color:#9b8c7e;}
-.elnSecSub{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:#A47864;margin:8px 0 3px;}
-.elnSecMini{font-size:12px;color:#5a3e30;line-height:1.5;}
+.elnSecSub{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.03em;color:#A47864;margin:10px 0 5px;}
+.elnSecMini{font-size:13px;color:#5a3e30;line-height:1.5;}
 .elnSecMini .cGreen{color:#3aaa6f;font-weight:600;}
-.elnLineMore{font-size:12px;color:#b3a596;padding:2px 6px 2px 13px;}  /* history 생략 표식 */
+.elnLineMore{font-size:13px;color:#b3a596;padding:0 5px 0 15px;}  /* history 생략 표식 */
 .elnSumPill[data-st="ing"]{color:#2f80ed;background:rgba(47,128,237,.12);}
 .elnSumPill[data-st="ok"]{color:#2e8c5c;background:rgba(58,170,111,.14);}
 .elnSumPill[data-st="fail"]{color:#c14b4b;background:rgba(214,90,90,.14);}
@@ -772,34 +772,34 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .elnSumPill[data-st="appr"]{color:#7d5f9e;background:rgba(168,147,189,.18);}
 .elnSumCode{font-size:14px;color:#3a2c24;}
 .elnSumTit{font-size:16px;font-weight:700;color:#3a2c24;line-height:1.4;}
-.elnSumSec{padding:14px 18px;border-bottom:1px solid #efe7db;}
+.elnSumSec{padding:15px 20px;border-bottom:1px solid #efe7db;}
 /* 섹션 타이틀 통일 — list의 elnSumSecTit 스타일 기준으로 pop elnRightTit도 맞춤 */
-.elnSumSecTit, .elnRightTit{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#9b8c7e;
+.elnSumSecTit, .elnRightTit{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#9b8c7e;
   margin-bottom:5px;display:flex;align-items:center;gap:5px;}
 .elnSumSecTit i, .elnRightTit i{font-size:15px;color:#A47864;}
-.elnSumSecTit .more, .elnRightTit .more{margin-left:auto;font-weight:600;font-size:11px;color:#A47864;text-decoration:none;
-  display:inline-flex;align-items:center;gap:2px;text-transform:none;letter-spacing:0;}
-.elnSumMeta{display:flex;flex-direction:column;gap:8px;}
-.elnSumMetaRow{display:flex;font-size:13px;gap:8px;}
+.elnSumSecTit .more, .elnRightTit .more{margin-left:auto;font-weight:600;font-size:13px;color:#A47864;text-decoration:none;
+  display:inline-flex;align-items:center;gap:0;text-transform:none;letter-spacing:0;}
+.elnSumMeta{display:flex;flex-direction:column;gap:10px;}
+.elnSumMetaRow{display:flex;font-size:13px;gap:10px;}
 .elnSumMetaRow .k{color:#9b8c7e;width:74px;flex:0 0 auto;}
 .elnSumMetaRow .v{color:#3a2c24;font-weight:500;min-width:0;}
 /* 우측 요약의 Notebook = 클릭해서 다른 노트북으로 이동(팝업 노트북 픽커와 동일 패턴) */
-.elnSumNbPick{display:inline-flex;align-items:center;gap:1px;cursor:pointer;border-radius:6px;
-  padding:1px 5px;margin:-1px -5px;transition:background .15s,color .15s;background:rgba(164,120,100,.10);}
+.elnSumNbPick{display:inline-flex;align-items:center;gap:0;cursor:pointer;border-radius:6px;
+  padding:0 5px;margin:0 -5px;transition:background .15s,color .15s;background:rgba(164,120,100,.10);}
 .elnSumNbPick:hover{color:#A47864;}
 .elnSumNbPick i{font-size:15px;color:#9b8c7e;}
 .elnSumNbPick:hover i{color:#A47864;}
 /* Project 값 — 그냥 텍스트(길면 줄바꿈). 미지정은 muted */
 .elnSumMetaRow .v.elnSumMuted{color:#b3a596;font-weight:400;}
-.elnSumChips{display:flex;flex-wrap:wrap;gap:6px;}
-.elnSumChip{font-size:12px;color:#7a5240;background:rgba(164,120,100,.12);padding:3px 9px;border-radius:11px;
+.elnSumChips{display:flex;flex-wrap:wrap;gap:5px;}
+.elnSumChip{font-size:13px;color:#7a5240;background:rgba(164,120,100,.12);padding:5px 10px;border-radius:11px;
   cursor:pointer;transition:background .15s,color .15s;}
 .elnSumChip:hover{background:rgba(164,120,100,.22);color:#5a3e30;}
 /* 리스트 행의 태그 = 칩이 아니라 별도 줄에 링크처럼(클릭 → 그 태그 검색) */
-.elnNoteTags{display:flex;flex-wrap:wrap;gap:2px 5px;margin-top:5px;}
+.elnNoteTags{display:flex;flex-wrap:wrap;gap:0 5px;margin-top:5px;}
 /* 리스트 li: 카테고리 pill + 태그를 한 줄에(사이 마진 column-gap), General/Formulation pill 너비 106px 고정 */
 .elnNoteMeta{display:flex;align-items:center;flex-wrap:wrap;gap:5px 10px;margin-top:5px;}
-.elnNoteMeta .subInfo{display:flex;flex-wrap:wrap;gap:6px;margin:0;}
+.elnNoteMeta .subInfo{display:flex;flex-wrap:wrap;gap:5px;margin:0;}
 .elnNoteMeta .subInfo .roundBox{width:106px;max-width:none !important;text-align:center;box-sizing:border-box;}
 .elnNoteMeta .elnNoteTags{margin-top:0;}
 /* 카테고리 pill 색은 기존 디자인 시스템 클래스(mocha25/stone25 등) 재사용 — JS CAT_CLASS 매핑 */
@@ -807,15 +807,15 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 #noteListUl li .statusBox.orange{border-color:#3a3a3a!important;color:#3a3a3a!important;}
 /* In Approval = viola(운영 common.css 의 statusBox.viola 와 같은 색 — 이 페이지가 쓰는 mpm_common.css 엔 없어 리스트 스코프로 보충) */
 .typeList .mainList li .statusBox.viola{border-color:#a893bd!important;color:#8a6fa6!important;background-color:#fff!important;}
-.elnTagLink{font-size:12px;color:#5a7d9a;cursor:pointer;text-decoration:none;line-height:1.3;}
+.elnTagLink{font-size:13px;color:#5a7d9a;cursor:pointer;text-decoration:none;line-height:1.3;}
 .elnTagLink:hover{color:#A47864;text-decoration:underline;}
-.elnSumFml{display:flex;align-items:center;gap:9px;padding:10px 12px;border-radius:10px;
+.elnSumFml{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:10px;
   background:rgba(164,120,100,.07);border:1px solid rgba(164,120,100,.14);font-size:13px;color:#5a3e30;}
 .elnSumFml i{color:#A47864;font-size:20px;}
 .elnSumFml b{color:#3a2c24;}
-.elnSumFml .chip{margin-left:auto;font-size:10px;color:#3aaa6f;background:rgba(58,170,111,.12);padding:2px 7px;border-radius:9px;flex:0 0 auto;}
-.elnSumNoLin{font-size:12px;color:#b3a596;font-style:italic;}
-.elnSumFoot{margin-top:auto;padding:14px 18px;border-top:1px solid #efe7db;}
+.elnSumFml .chip{margin-left:auto;font-size:13px;color:#3aaa6f;background:rgba(58,170,111,.12);padding:0 5px;border-radius:9px;flex:0 0 auto;}
+.elnSumNoLin{font-size:13px;color:#b3a596;font-style:italic;}
+.elnSumFoot{margin-top:auto;padding:15px 20px;border-top:1px solid #efe7db;}
 .elnSumFoot .hBtn{width:100%;justify-content:center;display:flex;}
 
 /* ── 드래그 재정렬(jQuery UI sortable) — 카드 & 좌측 목차 ── */
@@ -833,65 +833,65 @@ body.elnApproved #elnChangeTemplate{display:none !important;}
 .leftAside .menuUl .menu-item span{flex:1 1 auto;min-width:0;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;line-height:1.3;word-break:break-word;}
 /* 드래그 핸들 — 좌측 아이콘/레이블 영향 없이 우측에 absolute, hover 시 노출(긴 레이블 위엔 칩 배경으로 가독) */
 .leftAside .menuUl .menu-item .elnNavHandle{position:absolute;right:5px;top:50%;transform:translateY(-50%);
-  color:#A47864;opacity:0;cursor:grab;border-radius:6px;padding:2px;
+  color:#A47864;opacity:0;cursor:grab;border-radius:6px;padding:0;
   transition:opacity .12s,color .12s,background .12s;}
 .leftAside .menuUl .menu-item:hover .elnNavHandle{opacity:1;}
 .leftAside .menuUl .menu-item .elnNavHandle:hover{color:#bb2649;}
 .leftAside .menuUl .menu-item .elnNavHandle:active{cursor:grabbing;}
 
 /* ── 우측 패널: 파일 첨부 + URL 링크 ── */
-.elnAttachBox{display:flex;flex-direction:column;gap:8px;}
+.elnAttachBox{display:flex;flex-direction:column;gap:10px;}
 /* Related Items 모듈 — material/project/note/url 혼합 링크 */
-.elnRelBox{display:flex;flex-direction:column;gap:8px;}
-.elnRelList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;}
-.elnRelItem{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid #efe7db;border-radius:9px;background:#fff;font-size:13px;}
+.elnRelBox{display:flex;flex-direction:column;gap:10px;}
+.elnRelList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;}
+.elnRelItem{display:flex;align-items:center;gap:10px;padding:10px 10px;border:1px solid #efe7db;border-radius:9px;background:#fff;font-size:13px;}
 .elnRelItem > i:first-child{font-size:18px;color:#A47864;flex:0 0 auto;}
-.elnRelType{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#b3a596;flex:0 0 auto;min-width:52px;}
+.elnRelType{font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:#b3a596;flex:0 0 auto;min-width:52px;}
 .elnRelLink{color:#2f6fb3;text-decoration:none;flex:1 1 auto;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
 .elnRelLink:hover{text-decoration:underline;}
 .elnRelDel{margin-left:auto;font-size:16px;color:#c9bcae;cursor:pointer;flex:0 0 auto;}
 .elnRelDel:hover{color:#d65a5a;}
 .elnRelAddBtn{align-self:flex-start;margin-left:0;}
-.elnRelMenu{display:flex;flex-direction:column;padding:4px;}
-.elnRelUrlRow{display:flex;gap:6px;padding:2px 4px 8px;border-bottom:1px solid #efe7db;margin-bottom:4px;}
+.elnRelMenu{display:flex;flex-direction:column;padding:5px;}
+.elnRelUrlRow{display:flex;gap:5px;padding:0 5px 10px;border-bottom:1px solid #efe7db;margin-bottom:5px;}
 .elnRelUrlRow input{flex:1 1 auto;height:34px;margin:0;}
-.elnRelMenuItem{display:flex;align-items:center;gap:8px;padding:8px 10px;border-radius:7px;cursor:pointer;font-size:13px;color:#3a2c24;}
+.elnRelMenuItem{display:flex;align-items:center;gap:10px;padding:10px 10px;border-radius:7px;cursor:pointer;font-size:13px;color:#3a2c24;}
 .elnRelMenuItem:hover{background:rgba(164,120,100,.10);}
 .elnRelMenuItem i{font-size:18px;color:#A47864;}
 .elnRelMenuChev{margin-left:auto;font-size:16px;color:#c9bcae;}
-.elnPickBack{display:flex;align-items:center;gap:3px;font-size:12px;font-weight:600;color:#9b8c7e;cursor:pointer;padding:2px 2px 8px;}
+.elnPickBack{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:600;color:#9b8c7e;cursor:pointer;padding:0 0 10px;}
 .elnPickBack:hover{color:#7a5240;}
 .elnPickBack i{font-size:18px;}
-.elnAttachDrop{display:flex;align-items:center;gap:8px;padding:10px 12px;border:1.5px dashed #d9cfc2;border-radius:10px;
-  cursor:pointer;color:#9b8c7e;font-size:12px;transition:all .15s;}
+.elnAttachDrop{display:flex;align-items:center;gap:10px;padding:10px 10px;border:1.5px dashed #d9cfc2;border-radius:10px;
+  cursor:pointer;color:#9b8c7e;font-size:13px;transition:all .15s;}
 .elnAttachDrop:hover,.elnAttachDrop.drag{border-color:#A47864;background:rgba(164,120,100,.06);color:#7a5240;}
 .elnAttachDrop > i{font-size:20px;color:#A47864;}
 .elnAttachDrop b{color:#A47864;}
-.elnAttachList,.elnLinkList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px;}
-.elnAttachItem,.elnLinkItem{display:flex;align-items:center;gap:8px;padding:7px 9px;border-radius:8px;
-  background:rgba(0,0,0,.03);font-size:12px;}
+.elnAttachList,.elnLinkList{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:5px;}
+.elnAttachItem,.elnLinkItem{display:flex;align-items:center;gap:10px;padding:5px 10px;border-radius:8px;
+  background:rgba(0,0,0,.03);font-size:13px;}
 .elnAttachItem > i,.elnLinkItem a > i{font-size:17px;color:#A47864;flex:0 0 auto;}
 .elnAttachItem .nm,.elnLinkItem .nm{flex:1;min-width:0;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;color:#3a2c24;}
-.elnAttachItem em{font-style:normal;font-size:10px;color:#9b8c7e;flex:0 0 auto;}
-.elnLinkItem a{display:flex;align-items:center;gap:7px;flex:1;min-width:0;text-decoration:none;color:#3a2c24;}
+.elnAttachItem em{font-style:normal;font-size:13px;color:#9b8c7e;flex:0 0 auto;}
+.elnLinkItem a{display:flex;align-items:center;gap:5px;flex:1;min-width:0;text-decoration:none;color:#3a2c24;}
 .elnLinkItem a:hover .nm{color:#A47864;text-decoration:underline;}
 .elnLinkItem a .go{font-size:13px;color:#9b8c7e;flex:0 0 auto;}
 .elnAttachItem .x,.elnLinkItem .x{font-size:15px;color:#c9bcae;cursor:pointer;flex:0 0 auto;}
 .elnAttachItem .x:hover,.elnLinkItem .x:hover{color:#d65a5a;}
 /* URL 입력 줄 */
-.elnLinkAdd{display:flex;align-items:center;gap:6px;margin-top:2px;}
+.elnLinkAdd{display:flex;align-items:center;gap:5px;margin-top:0;}
 .elnLinkAdd > i{font-size:17px;color:#A47864;flex:0 0 auto;}
-.elnLinkAdd input{flex:1;min-width:0;border:1px solid #e6ddd0;border-radius:8px;padding:6px 9px;font-size:12px;background:#fff;}
+.elnLinkAdd input{flex:1;min-width:0;border:1px solid #e6ddd0;border-radius:8px;padding:5px 10px;font-size:13px;background:#fff;}
 .elnLinkAdd input:focus{outline:none;border-color:#A47864;}
-.elnLinkAddBtn{flex:0 0 auto;border:0;border-radius:8px;background:#A47864;color:#fff;font-size:12px;font-weight:600;
-  padding:6px 11px;cursor:pointer;transition:background .15s;}
+.elnLinkAddBtn{flex:0 0 auto;border:0;border-radius:8px;background:#A47864;color:#fff;font-size:13px;font-weight:600;
+  padding:5px 10px;cursor:pointer;transition:background .15s;}
 .elnLinkAddBtn:hover{background:#8a5f4d;}
 
 /* ── 모듈 제목 인라인 편집 + 메모(설명) 줄 ── */
-.elnModTitle{border-radius:0;padding:0 4px;cursor:text;transition:background .12s;}
+.elnModTitle{border-radius:0;padding:0 5px;cursor:text;transition:background .12s;}
 .elnModTitle:hover{background:rgba(164,120,100,.08);}
 .elnModTitle:focus{outline:none;background:#fff;box-shadow:0 0 0 1px #A47864;}
-.elnModMemo{font-size:12px;color:#6f6357;padding:2px 5px;border-radius:0;margin:-4px 2px 10px;
+.elnModMemo{font-size:13px;color:#6f6357;padding:0 5px;border-radius:0;margin:-5px 0 10px;
   outline:none;cursor:text;min-height:18px;line-height:1.5;transition:background .12s;}
 .elnModMemo:hover{background:rgba(164,120,100,.06);}
 .elnModMemo:focus{background:#fff;box-shadow:0 0 0 1px #A47864;}
@@ -917,19 +917,19 @@ body.elnApproved .elnModMemo:empty::before{content:"";}
 body.elnApproved [contenteditable]{box-shadow:none !important;}
 body.elnApproved .elnModMemo{border-bottom-color:transparent;}
 /* ── 헤더 lead 아이콘 변경(클릭 → 후보 그리드 + Fill 토글) ── */
-.cardTit2 i.elnIconPick{cursor:pointer;border-radius:6px;padding:1px;transition:background .12s;}
+.cardTit2 i.elnIconPick{cursor:pointer;border-radius:6px;padding:0;transition:background .12s;}
 .cardTit2 i.elnIconPick:hover{background:rgba(164,120,100,.16);}
 body.elnApproved .cardTit2 i.elnIconPick{cursor:default;}
 body.elnApproved .cardTit2 i.elnIconPick:hover{background:transparent;}
 .elnIconPicker{display:flex;flex-direction:column;gap:10px;}
-.elnIconGrid{display:grid;grid-template-columns:repeat(6,1fr);gap:4px;max-height:264px;overflow-y:auto;}
+.elnIconGrid{display:grid;grid-template-columns:repeat(6,1fr);gap:5px;max-height:264px;overflow-y:auto;}
 .elnIconOpt{display:flex;align-items:center;justify-content:center;width:38px;height:38px;border:1px solid transparent;
   border-radius:8px;background:transparent;cursor:pointer;color:#6b5647;transition:background .12s,border-color .12s,color .12s;}
 .elnIconOpt:hover{background:#faf6f0;}
 .elnIconOpt.on{border-color:#A47864;background:rgba(164,120,100,.12);color:#A47864;}
 .elnIconOpt i{font-size:22px;}
 /* 전체 목록 access — 아이콘 이름 직접 입력 + 라이브 미리보기 */
-.elnIconCustom{display:flex;align-items:center;gap:7px;}
+.elnIconCustom{display:flex;align-items:center;gap:5px;}
 .elnIconInput{flex:1;min-width:0;height:34px;border:1px solid #e2d8c9;border-radius:8px;padding:0 10px;font-size:13px;color:#3a2c24;background:#fff;}
 .elnIconInput:focus{outline:none;border-color:#A47864;box-shadow:0 0 0 2px rgba(164,120,100,.12);}
 .elnIconPreview{flex:0 0 auto;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border:1px solid #e2d8c9;border-radius:8px;cursor:pointer;color:#A47864;transition:background .12s;}
@@ -938,40 +938,40 @@ body.elnApproved .cardTit2 i.elnIconPick:hover{background:transparent;}
 /* 무효 아이콘명: 미리보기 빨강(깨진 텍스트 대신 'block' 아이콘) */
 .elnIconCustom.invalid .elnIconPreview{color:#d65a5a;border-color:#e9b9b9;background:rgba(214,90,90,.06);}
 .elnIconCustom.invalid .elnIconInput{border-color:#e9b9b9;}
-.elnIconHint{font-size:11px;color:#b1a08e;}
+.elnIconHint{font-size:13px;color:#b1a08e;}
 .elnIconLink{color:#A47864;text-decoration:underline;}
 .elnIconLink:hover{color:#8a5f4d;}
-.elnIconFill{display:flex;align-items:center;gap:8px;border-top:1px solid #eee6da;padding-top:9px;}
-.elnIconFill .lbl{font-size:12px;font-weight:600;color:#9b8c7e;}
+.elnIconFill{display:flex;align-items:center;gap:10px;border-top:1px solid #eee6da;padding-top:10px;}
+.elnIconFill .lbl{font-size:13px;font-weight:600;color:#9b8c7e;}
 .elnIconFillToggle{display:inline-flex;margin-left:auto;border:1px solid #e2d8c9;border-radius:8px;overflow:hidden;}
-.elnFillOpt{padding:5px 12px;border:0;background:#fff;cursor:pointer;font-size:12px;color:#6b5647;transition:background .12s,color .12s;}
+.elnFillOpt{padding:5px 10px;border:0;background:#fff;cursor:pointer;font-size:13px;color:#6b5647;transition:background .12s,color .12s;}
 .elnFillOpt.on{background:#A47864;color:#fff;}
 
 /* ── Chem / Formulation 렌즈 뷰 — List 행 구조(statusBox + wd100p) 재사용 + 도메인 요소 ── */
 /* 데이터 없는 행은 비우고 행 자체를 희미하게(덜 강조) */
 .elnLensView li.elnLensDimRow{opacity:.5;}
 /* Chem: 노트의 구조 복수개를 칩 스트립으로 */
-.elnChemStrip{display:flex;flex-wrap:wrap;gap:8px;margin-top:7px;}
-.elnChemChip{display:inline-flex;align-items:center;gap:6px;padding:4px 10px 4px 5px;border:1px solid #ece4d8;border-radius:10px;background:#fff;}
-.elnChemChipNm{font-size:11.5px;color:#5a3e30;white-space:nowrap;}
+.elnChemStrip{display:flex;flex-wrap:wrap;gap:10px;margin-top:5px;}
+.elnChemChip{display:inline-flex;align-items:center;gap:5px;padding:5px 10px 5px 5px;border:1px solid #ece4d8;border-radius:10px;background:#fff;}
+.elnChemChipNm{font-size:13px;color:#5a3e30;white-space:nowrap;}
 .elnChemThumbSvg{width:30px;height:30px;flex:0 0 auto;}
 .elnChemThumbSvg polygon,.elnChemThumbSvg circle{fill:none;stroke:#3a2c24;stroke-width:2.6;stroke-linejoin:round;}
 /* Formulation: 코드 + Process/Results 한 줄 요약 */
 .elnFmlLine{margin-top:5px;}
-.elnFmlCode{display:inline-flex;align-items:center;gap:4px;font-size:12px;font-weight:700;color:#7a5240;
-  background:rgba(164,120,100,.12);border-radius:8px;padding:2px 9px;font-family:ui-monospace,Menlo,Consolas,monospace;}
+.elnFmlCode{display:inline-flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#7a5240;
+  background:rgba(164,120,100,.12);border-radius:8px;padding:0 10px;font-family:ui-monospace,Menlo,Consolas,monospace;}
 .elnFmlCode i{font-size:14px;color:#A47864;}
-.elnFmlMeta{display:flex;gap:8px;font-size:12px;color:#5a3e30;margin-top:5px;line-height:1.45;}
+.elnFmlMeta{display:flex;gap:10px;font-size:13px;color:#5a3e30;margin-top:5px;line-height:1.45;}
 .elnFmlMeta .k{flex:0 0 56px;color:#9b8c7e;font-weight:600;}
 .elnFmlMeta b{font-weight:600;color:#3a2c24;}
 .elnFmlMeta .cPass{color:#3aaa6f;font-weight:700;font-style:normal;}
 
 /* ── Editor 모듈(Summernote) — 승인(전체 view) 시 툴바 숨김·편집 차단. 폴백(contenteditable) 스타일 ── */
-.elnSummernote{margin:2px 0;}
+.elnSummernote{margin:0 0;}
 body.elnApproved .note-editor .note-toolbar{display:none;}
 body.elnApproved .note-editor .note-statusbar{display:none;}
 body.elnApproved .note-editable{pointer-events:none;background:transparent;}
-.elnSummernoteFallback{min-height:160px;border:1px solid #e6ddd0;border-radius:12px;padding:12px 14px;font-size:14px;line-height:1.6;color:#3a2c24;}
+.elnSummernoteFallback{min-height:160px;border:1px solid #e6ddd0;border-radius:12px;padding:10px 15px;font-size:14px;line-height:1.6;color:#3a2c24;}
 .elnSummernoteFallback:focus{outline:none;border-color:#A47864;}
 .elnSummernoteFallback:empty::before{content:attr(data-ph);color:#c9bcae;}
 
@@ -986,30 +986,30 @@ body.elnApproved .note-editable{pointer-events:none;background:transparent;}
 body.elnResizing{cursor:ew-resize;user-select:none;}
 
 /* ── ChemStudio 모듈 (자체 화학구조식 에디터 — 그려서 노트에 삽입) ── */
-.elnChemBox{padding:2px 2px 4px;}
+.elnChemBox{padding:0 0 5px;}
 /* 구조 리스트(복수 — 추가/불러오기) */
-.elnChemList{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:8px;}
+.elnChemList{list-style:none;margin:0 0 10px;padding:0;display:flex;flex-direction:column;gap:10px;}
 .elnChemList:empty{margin:0;}
-.elnChemItem{display:flex;align-items:center;gap:12px;padding:8px 10px;border:1px solid #ece4d8;border-radius:12px;background:#fff;}
+.elnChemItem{display:flex;align-items:center;gap:10px;padding:10px 10px;border:1px solid #ece4d8;border-radius:12px;background:#fff;}
 .elnChemStage{flex:0 0 auto;width:74px;height:54px;display:flex;align-items:center;justify-content:center;
   border:1px solid #ece4d8;border-radius:9px;
   background:radial-gradient(circle at 1px 1px, rgba(164,120,100,.10) 1px, transparent 0) 0 0/12px 12px, #fff;}
 .elnChemStage .elnChemMol{width:100%;height:100%;}
-.elnChemInfo{flex:1;min-width:0;display:flex;flex-direction:column;gap:1px;}
+.elnChemInfo{flex:1;min-width:0;display:flex;flex-direction:column;gap:0;}
 .elnChemName2{font-size:14px;font-weight:700;color:#3a2c24;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.elnChemFormula2{font-size:12.5px;color:#7a5240;font-family:ui-monospace,Menlo,Consolas,monospace;}
+.elnChemFormula2{font-size:13px;color:#7a5240;font-family:ui-monospace,Menlo,Consolas,monospace;}
 .elnChemFormula2 sub{font-size:.78em;}
-.elnChemItemActions{flex:0 0 auto;display:flex;align-items:center;gap:8px;}
+.elnChemItemActions{flex:0 0 auto;display:flex;align-items:center;gap:10px;}
 .elnChemItemActions a{display:inline-flex;color:#9b8c7e;transition:color .15s;}
 .elnChemItemActions a:hover{color:#A47864;}
 .elnChemItemActions i{font-size:18px;}
 .elnChemDel{color:#c9bcae;cursor:pointer;transition:color .15s;}
 .elnChemDel:hover{color:#d65a5a;}
 /* 빈 안내줄 + 추가 바(Open / Link) */
-.elnChemEmptyLine{display:flex;align-items:center;justify-content:center;gap:6px;padding:18px 16px;margin-bottom:10px;
+.elnChemEmptyLine{display:flex;align-items:center;justify-content:center;gap:5px;padding:20px 15px;margin-bottom:10px;
   border:1.5px dashed #d9cfc2;border-radius:12px;background:rgba(164,120,100,.03);color:#9b8c7e;font-size:13px;text-align:center;}
 .elnChemEmptyLine i{font-size:18px;color:#cdbfae;}
-.elnChemAdd{display:flex;gap:8px;flex-wrap:wrap;}
+.elnChemAdd{display:flex;gap:10px;flex-wrap:wrap;}
 /* 분자 SVG 공통 stroke */
 .elnChemMol .bond{fill:none;stroke:#3a2c24;stroke-width:2;stroke-linejoin:round;stroke-linecap:round;}
 .elnChemMol .aromatic{fill:none;stroke:#3a2c24;stroke-width:1.6;}
@@ -1018,37 +1018,37 @@ body.elnResizing{cursor:ew-resize;user-select:none;}
 body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions{display:none;}
 
 /* ── ChemStudio 에디터(모달 내부) ── */
-.elnChemEditor{display:flex;flex-direction:column;gap:12px;width:min(620px,82vw);}
-.elnChemStudioMain{display:flex;gap:12px;}
-.elnChemTools{display:flex;flex-direction:column;gap:6px;flex:0 0 auto;}
+.elnChemEditor{display:flex;flex-direction:column;gap:10px;width:min(620px,82vw);}
+.elnChemStudioMain{display:flex;gap:10px;}
+.elnChemTools{display:flex;flex-direction:column;gap:5px;flex:0 0 auto;}
 .elnChemToolBtn{width:38px;height:38px;display:flex;align-items:center;justify-content:center;
   border:1px solid #e2d8c9;border-radius:9px;background:#fff;cursor:pointer;color:#6b5647;
   font-size:16px;font-weight:700;transition:background .14s,border-color .14s,color .14s,box-shadow .14s;}
 .elnChemToolBtn i{font-size:19px;}
 .elnChemToolBtn:hover{border-color:#cbb6a6;background:#faf6f0;}
 .elnChemToolBtn.on{background:#A47864;border-color:#A47864;color:#fff;box-shadow:0 2px 6px rgba(164,120,100,.3);}
-.elnChemCanvasWrap{flex:1;min-width:0;display:flex;flex-direction:column;gap:8px;}
+.elnChemCanvasWrap{flex:1;min-width:0;display:flex;flex-direction:column;gap:10px;}
 .elnChemCanvas{position:relative;height:300px;border:1px solid #e2d8c9;border-radius:12px;overflow:hidden;
   background:radial-gradient(circle at 1px 1px, rgba(120,100,90,.13) 1px, transparent 0) 0 0/18px 18px, #fffdf9;
   display:flex;align-items:center;justify-content:center;}
 .elnChemCanvas .elnChemMol{width:340px;max-width:90%;height:auto;}
-.elnChemHintBar{display:flex;align-items:center;gap:7px;font-size:12px;color:#9b8c7e;}
+.elnChemHintBar{display:flex;align-items:center;gap:5px;font-size:13px;color:#9b8c7e;}
 .elnChemHintBar i{font-size:15px;color:#A47864;}
-.elnChemMeta{display:flex;gap:14px;}
-.elnChemMeta label{flex:1;display:flex;flex-direction:column;gap:4px;font-size:12px;font-weight:600;color:#A47864;}
-.elnChemMeta input{height:38px;border:1px solid #d9cfc2;border-radius:8px;padding:0 11px;font-size:14px;color:#3a2c24;background:#fff;}
+.elnChemMeta{display:flex;gap:15px;}
+.elnChemMeta label{flex:1;display:flex;flex-direction:column;gap:5px;font-size:13px;font-weight:600;color:#A47864;}
+.elnChemMeta input{height:38px;border:1px solid #d9cfc2;border-radius:8px;padding:0 10px;font-size:14px;color:#3a2c24;background:#fff;}
 .elnChemMeta input:focus{outline:none;border-color:#A47864;box-shadow:0 0 0 3px rgba(164,120,100,.12);}
 /* 외부 앱 임베드 프레임(브라우저 크롬風) — "여긴 별도 ChemStudio 앱"임을 시각화. 실배포 시 iframe */
 .elnChemFrame{border:1px solid #ddd2c4;border-radius:12px;overflow:hidden;background:#fff;}
-.elnChemFrameBar{display:flex;align-items:center;gap:10px;padding:7px 12px;background:#f1ebe2;border-bottom:1px solid #e3d9cb;}
+.elnChemFrameBar{display:flex;align-items:center;gap:10px;padding:5px 10px;background:#f1ebe2;border-bottom:1px solid #e3d9cb;}
 .elnChemFrameBar .dots{display:inline-flex;gap:5px;flex:0 0 auto;}
 .elnChemFrameBar .dots i{width:9px;height:9px;border-radius:50%;background:#cdbfae;}
-.elnChemFrameUrl{flex:1;display:inline-flex;align-items:center;gap:5px;min-width:0;font-size:11.5px;color:#9b8c7e;
-  background:#fff;border:1px solid #e3d9cb;border-radius:7px;padding:3px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.elnChemFrameUrl{flex:1;display:inline-flex;align-items:center;gap:5px;min-width:0;font-size:13px;color:#9b8c7e;
+  background:#fff;border:1px solid #e3d9cb;border-radius:7px;padding:5px 10px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .elnChemFrameUrl i{font-size:13px;color:#8ca571;}
 .elnChemBrand{flex:0 0 auto;font-size:13px;color:#7a5240;letter-spacing:.01em;}
 .elnChemBrand b{font-weight:800;color:#A47864;}
-.elnChemFrame .elnChemStudioMain{padding:12px;}
+.elnChemFrame .elnChemStudioMain{padding:10px;}
 /* Link existing 통합검색 행 — 썸네일 + 이름/식/CAS */
 .elnChemRow{display:flex;align-items:center;gap:10px;}
 .elnChemRowThumb{flex:0 0 auto;width:44px;height:34px;display:flex;align-items:center;justify-content:center;
@@ -1056,42 +1056,42 @@ body.elnApproved .elnChemAdd,body.elnApproved .elnChemItemActions{display:none;}
 .elnChemRowThumb .elnChemMol{width:100%;height:100%;}
 .elnChemRowMeta{display:flex;flex-direction:column;min-width:0;line-height:1.3;}
 .elnChemRowMeta b{font-size:13px;color:#3a2c24;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.elnChemRowMeta span{font-size:11.5px;color:#9b8c7e;font-family:ui-monospace,Menlo,Consolas,monospace;}
+.elnChemRowMeta span{font-size:13px;color:#9b8c7e;font-family:ui-monospace,Menlo,Consolas,monospace;}
 .elnChemRowMeta sub{font-size:.78em;}
-.elnChemCasTxt{margin-left:6px;color:#9b8c7e;}
+.elnChemCasTxt{margin-left:5px;color:#9b8c7e;}
 
 /* ── 시작 템플릿 픽커(New Note 모달) — 모달 본문 폭을 그대로 채워 가로 스크롤 방지 ── */
-.elnTmplPicker{display:flex;flex-direction:column;gap:9px;width:100%;box-sizing:border-box;}
-.elnTmplGroupLabel{font-size:11px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#b1a08e;margin-top:4px;}
+.elnTmplPicker{display:flex;flex-direction:column;gap:10px;width:100%;box-sizing:border-box;}
+.elnTmplGroupLabel{font-size:13px;font-weight:700;letter-spacing:.04em;text-transform:uppercase;color:#b1a08e;margin-top:5px;}
 .elnTmplGrid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:10px;}
-.elnTmplCard{display:flex;flex-direction:column;gap:6px;text-align:left;padding:14px;border:1px solid #e2d8c9;border-radius:12px;
+.elnTmplCard{display:flex;flex-direction:column;gap:5px;text-align:left;padding:15px;border:1px solid #e2d8c9;border-radius:12px;
   background:#fff;cursor:pointer;transition:border-color .15s,box-shadow .15s,transform .1s;}
-.elnTmplCard:hover{border-color:#A47864;box-shadow:0 4px 14px rgba(164,120,100,.16);transform:translateY(-1px);}
-.elnTmplCardTop{display:flex;align-items:center;gap:7px;}
+.elnTmplCard:hover{border-color:#A47864;box-shadow:0 4px 14px rgba(164,120,100,.16);}   /* 위로 뜨기(translateY) 없음 — 제자리 테두리·그림자로만 */
+.elnTmplCardTop{display:flex;align-items:center;gap:5px;}
 .elnTmplCardTop i{font-size:20px;color:#A47864;flex:0 0 auto;}
 .elnTmplName{font-size:14px;font-weight:700;color:#3a2c24;}
-.elnTmplDesc{font-size:12px;color:#9b8c7e;line-height:1.4;}
-.elnTmplChips{display:flex;flex-wrap:wrap;gap:4px;margin-top:auto;padding-top:2px;}
-.elnTmplChip{font-size:10.5px;color:#7a5240;background:rgba(164,120,100,.12);border-radius:7px;padding:1px 7px;}
-.elnTmplEmpty{font-size:12.5px;color:#9b8c7e;padding:14px;border:1.5px dashed #e3d9cb;border-radius:10px;text-align:center;}
+.elnTmplDesc{font-size:13px;color:#9b8c7e;line-height:1.4;}
+.elnTmplChips{display:flex;flex-wrap:wrap;gap:5px;margin-top:auto;padding-top:0;}
+.elnTmplChip{font-size:13px;color:#7a5240;background:rgba(164,120,100,.12);border-radius:7px;padding:0 5px;}
+.elnTmplEmpty{font-size:13px;color:#9b8c7e;padding:15px;border:1.5px dashed #e3d9cb;border-radius:10px;text-align:center;}
 /* Swap template 모달 안내문 */
-.elnTmplSwitchNote{display:flex;align-items:flex-start;gap:7px;font-size:12px;color:#7a5240;
-  background:rgba(164,120,100,.07);border-radius:9px;padding:9px 11px;line-height:1.45;}
-.elnTmplSwitchNote i{font-size:16px;color:#A47864;flex:0 0 auto;margin-top:1px;}
+.elnTmplSwitchNote{display:flex;align-items:flex-start;gap:5px;font-size:13px;color:#7a5240;
+  background:rgba(164,120,100,.07);border-radius:9px;padding:10px 10px;line-height:1.45;}
+.elnTmplSwitchNote i{font-size:16px;color:#A47864;flex:0 0 auto;margin-top:0;}
 /* My Template 공유 버튼(카드 우상단) + 퀵서치 동료 행 */
 .elnTmplCard{position:relative;}
 .elnTmplShare{position:absolute;top:9px;right:9px;display:inline-flex;align-items:center;justify-content:center;
   width:26px;height:26px;border-radius:7px;color:#b1a08e;background:rgba(164,120,100,.08);transition:background .15s,color .15s;}
 .elnTmplShare:hover{background:#A47864;color:#fff;}
 .elnTmplShare i{font-size:16px;}
-.elnShareHead{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:700;color:#7a5240;padding:2px 2px 9px;}
+.elnShareHead{display:flex;align-items:center;gap:5px;font-size:13px;font-weight:700;color:#7a5240;padding:0 0 10px;}
 .elnShareHead i{font-size:16px;color:#A47864;}
 .elnUserRow{display:flex;align-items:center;gap:10px;white-space:normal;}
 .elnUserAv{flex:0 0 auto;width:30px;height:30px;border-radius:50%;display:flex;align-items:center;justify-content:center;
-  background:rgba(164,120,100,.16);color:#7a5240;font-size:11px;font-weight:700;}
+  background:rgba(164,120,100,.16);color:#7a5240;font-size:13px;font-weight:700;}
 .elnUserMeta{display:flex;flex-direction:column;min-width:0;line-height:1.3;}
 .elnUserMeta b{font-size:13px;color:#3a2c24;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
-.elnUserMeta span{font-size:11px;color:#9b8c7e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
+.elnUserMeta span{font-size:13px;color:#9b8c7e;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;}
 .elnUserSend{margin-left:auto;color:#bcae9d;font-size:18px;flex:0 0 auto;}
 .elnUserRow:hover .elnUserSend{color:#A47864;}
 .elnUserSent{margin-left:auto;color:#3aaa6f;font-size:18px;flex:0 0 auto;}
